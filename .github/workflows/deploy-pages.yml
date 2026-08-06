@@ -18,6 +18,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -29,10 +30,67 @@ jobs:
         uses: actions/configure-pages@v6.0.0
 
       - name: Upload site artifact
+        id: upload
         uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5.0.0
+        uses: actions/github-script@v9.0.0
+        env:
+          PAGES_ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+          PAGES_DEPLOY_TIMEOUT_MS: '1800000'
+        with:
+          script: |
+            const artifactId = Number(process.env.PAGES_ARTIFACT_ID)
+            const buildVersion = process.env.GITHUB_SHA
+            const timeoutMs = Number(process.env.PAGES_DEPLOY_TIMEOUT_MS)
+            const { owner, repo } = context.repo
+
+            if (!Number.isInteger(artifactId) || artifactId <= 0) {
+              throw new Error(`Invalid Pages artifact ID: ${process.env.PAGES_ARTIFACT_ID}`)
+            }
+
+            const oidcToken = await core.getIDToken('github-pages')
+            const deploymentResponse = await github.request('POST /repos/{owner}/{repo}/pages/deployments', {
+              owner,
+              repo,
+              artifact_id: artifactId,
+              pages_build_version: buildVersion,
+              oidc_token: oidcToken
+            })
+            const deployment = deploymentResponse.data
+            const deploymentId = deployment.id || deployment.status_url?.split('/').pop() || buildVersion
+            const pageUrl = `https://${owner.toLowerCase()}.github.io/${repo}/`
+            const deadline = Date.now() + timeoutMs
+
+            core.info(`Created Pages deployment ${deploymentId}; polling for up to ${timeoutMs} ms.`)
+
+            const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))
+
+            while (Date.now() < deadline) {
+              await sleep(5000)
+              const statusResponse = await github.request(
+                'GET /repos/{owner}/{repo}/pages/deployments/{deploymentId}',
+                { owner, repo, deploymentId }
+              )
+              const status = statusResponse.data.status
+              core.info(`Current Pages deployment status: ${status}`)
+
+              if (status === 'succeed') {
+                core.setOutput('page_url', statusResponse.data.environment_url || pageUrl)
+                core.info(`Pages deployment succeeded: ${statusResponse.data.environment_url || pageUrl}`)
+                return
+              }
+
+              if (['deployment_failed', 'deployment_content_failed', 'deployment_cancelled', 'deployment_lost'].includes(status)) {
+                throw new Error(`Pages deployment failed with status: ${status}`)
+              }
+            }
+
+            await github.request(
+              'POST /repos/{owner}/{repo}/pages/deployments/{deploymentId}/cancel',
+              { owner, repo, deploymentId }
+            )
+            throw new Error(`Pages deployment timed out after ${timeoutMs} ms`)
