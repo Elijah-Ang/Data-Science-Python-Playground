@@ -16,7 +16,7 @@ The Python runtime runs in a Web Worker through Pyodide. The first load needs in
 
 ## Deployment
 
-The `main` branch is published automatically to GitHub Pages from the repository root.
+The `main` branch deploys automatically to GitHub Pages through [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
 
 Live site: <https://elijah-ang.github.io/Data-Science-Python-Playground/>
 
