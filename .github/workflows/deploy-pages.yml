@@ -52,7 +52,7 @@ jobs:
               throw new Error(`Invalid Pages artifact ID: ${process.env.PAGES_ARTIFACT_ID}`)
             }
 
-            const oidcToken = await core.getIDToken('github-pages')
+            const oidcToken = await core.getIDToken()
             const deploymentResponse = await github.request('POST /repos/{owner}/{repo}/pages/deployments', {
               owner,
               repo,
