@@ -137,6 +137,10 @@
     .brand h1 { margin: 0; color: var(--ink); font: 400 .96rem/1 var(--display); letter-spacing: .02em; white-space: nowrap; }
     .brand p { margin: 4px 0 0; color: var(--muted); font-size: .68rem; line-height: 1; white-space: nowrap; }
     .top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+    .mode-switch { display: inline-flex; align-items: center; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: 5px; background: var(--bg-deep); }
+    .mode-link { padding: 6px 9px; border-radius: 3px; color: var(--muted); font: 700 .57rem/1 var(--mono); letter-spacing: .04em; text-decoration: none; white-space: nowrap; }
+    .mode-link:hover { color: var(--ink); background: var(--panel-2); }
+    .mode-link[aria-current="page"] { background: var(--dataset-wash); color: var(--dataset-accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--dataset-accent) 52%, transparent); }
     .session-chip { color: var(--muted); font: 600 .62rem/1 var(--mono); letter-spacing: .04em; white-space: nowrap; }
     .icon-button, .toolbar-button, .soft-button {
       display: inline-flex;
@@ -304,26 +308,27 @@
     .notebook-layout { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(310px,.8fr); flex: 1 1 auto; gap: 13px; align-items: stretch; height: auto; min-height: 390px; }
     .notebook-panel, .output-panel { min-width: 0; }
     .notebook-panel { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-height: 0; overflow-x: hidden; overflow-y: auto; padding-right: 6px; scrollbar-color: var(--dataset-accent) var(--bg-deep); }
+    .cell-stack { flex: 0 0 auto; min-width: 0; }
     .cell {
       position: relative;
       flex: 0 0 auto;
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 1px solid #3a3b42;
       border-radius: 6px;
-      background: var(--paper);
-      color: var(--paper-ink);
-      box-shadow: var(--shadow);
+      background: #202126;
+      color: #d9deea;
+      box-shadow: 0 8px 17px rgba(0,0,0,.12);
     }
     .cell[data-status="running"] { border-color: var(--gold); }
     .cell[data-status="error"] { border-color: var(--coral); }
-    .cell-head { display: flex; align-items: center; gap: 8px; min-height: 35px; padding: 6px 8px; border-bottom: 1px dashed rgba(29,42,66,.23); background: rgba(255,255,255,.26); }
-    .cell-number { color: var(--orange); font: 700 .62rem var(--mono); }
-    .cell-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--paper-ink); font-size: .72rem; font-weight: 900; white-space: nowrap; }
-    .cell-stage { color: var(--paper-muted); font: 600 .58rem var(--mono); }
+    .cell-head { display: flex; align-items: center; gap: 8px; min-height: 35px; padding: 6px 8px; border-bottom: 1px solid #3a3b42; background: #202126; color: #d9deea; }
+    .cell-number { color: #8aa4c8; font: 600 .62rem var(--mono); }
+    .cell-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; color: #d9deea; font: 700 .64rem/normal var(--display); letter-spacing: .01em; white-space: nowrap; }
+    .cell-stage { padding: 2px 4px; border: 1px solid #444853; border-radius: 2px; color: #9ea9b8; font: 600 .5rem var(--mono); }
     .cell-head-spacer { flex: 1; }
-    .cell-action { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 6px; border: 1px solid rgba(29,42,66,.26); border-radius: 3px; background: transparent; color: var(--paper-muted); font-size: .62rem; font-weight: 900; }
-    .cell-action:hover { border-color: var(--orange); color: var(--paper-ink); }
-    .cell-action.run { border-color: var(--orange); color: var(--orange); }
+    .cell-action { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 6px; border: 1px solid #444853; border-radius: 3px; background: transparent; color: #aeb8c8; font-size: .58rem; font-weight: 900; }
+    .cell-action:hover { border-color: var(--gold); color: #fff; }
+    .cell-action.run { color: var(--mint); }
     .cell-action.delete { color: var(--coral); }
     .code-editor { position: relative; overflow: auto; min-height: 0; background: var(--code); }
     .line-rail { position: absolute; inset: 0 auto auto 0; width: 40px; min-width: 40px; padding-top: 11px; background: rgba(0,0,0,.12); color: #7f8996; text-align: right; font: 500 .67rem/1.62 var(--mono); user-select: none; z-index: 2; pointer-events: none; }
@@ -350,14 +355,16 @@
     .guide-answer .py-operator { color: #ff8796; }
     .guide-answer .py-punct { color: #b9c3d7; }
     .guide-answer .py-name { color: var(--code-ink); }
-    .code-input { position: relative; z-index: 3; display: block; width: max(720px, calc(100% - 40px)); min-width: 720px; min-height: 0; margin-left: 40px; padding: 10px 13px; border: 0; outline: 0; resize: none; overflow: auto; background: transparent; color: transparent; caret-color: #f4e9c8; -webkit-text-fill-color: transparent; font: 500 .72rem/1.62 var(--mono); white-space: pre; tab-size: 4; }
+    .code-input { position: relative; z-index: 3; display: block; width: max(720px, calc(100% - 40px)); min-width: 720px; min-height: 0; margin-left: 40px; padding: 10px 13px; border: 0; outline: 0; resize: none; overflow: auto; background: transparent; color: var(--code-ink); caret-color: #f4e9c8; -webkit-text-fill-color: currentColor; font: 500 .72rem/1.62 var(--mono); white-space: pre; tab-size: 4; }
+    .code-editor.has-highlight .code-input { color: transparent; -webkit-text-fill-color: transparent; }
     .code-input::selection { background: rgba(72,213,255,.28); }
-    .cell-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 29px; padding: 5px 8px; background: var(--paper-2); color: var(--paper-muted); font-size: .64rem; }
+    .cell-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 29px; padding: 5px 8px; background: #202126; color: #7f8998; font: 500 .56rem var(--mono); }
     .cell-state { display: inline-flex; align-items: center; gap: 5px; }
     .cell-state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #abb0b7; }
     .cell[data-status="done"] .cell-state::before { background: var(--mint); }
     .cell[data-status="running"] .cell-state::before { background: var(--gold); }
     .cell[data-status="error"] .cell-state::before { background: var(--coral); }
+    .cell-inline-output { display: none; min-width: 0; }
     .copy-cell { border: 0; padding: 2px 0; background: transparent; color: var(--paper-muted); font: 700 .61rem var(--mono); }
     .copy-cell:hover { color: var(--orange); }
     .empty-notebook { padding: 33px 18px; border: 1px dashed var(--border); border-radius: 6px; background: rgba(0,0,0,.06); color: var(--muted); text-align: center; }
@@ -611,7 +618,22 @@
       .task-caption { display: none; }
       .route-tools { align-items: flex-start; }
       .notebook-bar { align-items: flex-start; flex-direction: column; }
-      .notebook-actions { justify-content: flex-start; }
+      .notebook-actions { justify-content: flex-start; width: 100%; }
+      .notebook-layout { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+      .notebook-panel { gap: 8px; max-height: none; overflow: visible; padding-right: 0; }
+      .output-panel { order: -1; min-height: 0; height: auto; flex: 0 0 auto; }
+      .output-body { display: none; }
+      .output-panel.has-global-message .output-body { display: block; padding: 7px 9px 9px; }
+      .output-panel.has-global-message .output-list { min-height: 0; }
+      .output-panel.has-global-message .output-empty { min-height: 0; padding: 8px; border: 0; }
+      .output-panel.has-global-message .output-glyph { display: none; }
+      .cell-inline-output { display: grid; gap: 9px; max-width: 100%; overflow: hidden; padding: 8px; border: 1px solid var(--border); border-top: 0; border-radius: 0 0 6px 6px; background: var(--panel); }
+      .cell-inline-output:empty { display: none; }
+      .cell-inline-output .output-item { min-width: 0; max-width: 100%; overflow: hidden; }
+      .cell-inline-output .chart-wrap { max-width: 100%; overflow-x: auto; }
+      .cell-inline-output .chart-wrap img { max-width: 100%; height: auto; }
+      .cell-stack.has-output .cell { border-radius: 6px 6px 0 0; }
+      .cell-stack.has-output .cell-inline-output { box-shadow: 0 8px 17px rgba(0,0,0,.08); }
       .guide-challenge-grid { grid-template-columns: 1fr; }
       .guide-challenge-card.is-open { grid-column: auto; }
     }
@@ -644,6 +666,8 @@
       .output-head { flex-wrap: wrap; }
       .output-head .output-actions { width: 100%; margin-left: 0; }
       .footer { flex-direction: column; padding-inline: 11px; }
+      .mode-link { padding-inline: 7px; }
+      .mode-link span { display: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -660,6 +684,10 @@
       </div>
     </div>
     <div class="top-actions">
+      <nav class="mode-switch" aria-label="Playground mode">
+        <a class="mode-link" href="index.html" aria-current="page">DATA <span>PLAYGROUND</span></a>
+        <a class="mode-link" href="ml.html">MACHINE <span>LEARNING</span></a>
+      </nav>
       <button class="icon-button guide-button" id="guideButton" type="button" aria-expanded="false" aria-label="Open challenges" title="Open challenges">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5c2.4-1.5 4.8-1.5 7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3z"></path><path d="M19.5 5.5c-2.4-1.5-4.8-1.5-7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3z"></path><path d="M12 5.8v13"></path></svg>
         <span>Challenges</span>
@@ -811,7 +839,7 @@
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="data/embedded-datasets.js"></script>
+  <script src="data/embedded-datasets.js?v=20260812-4"></script>
   <script>
     const DATASET_ICONS = {
       seoul: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="3.2"></circle><circle cx="18" cy="17" r="3.2"></circle><path d="M6 17l3-8h4l5 8M9 9l3 8M10 6h3"></path></svg>',
@@ -1077,9 +1105,11 @@
     const runtimeStatus = $("#runtimeStatus");
     const runtimeDot = $("#runtimeDot");
     const notebookPanel = $("#notebookPanel");
+    const outputPanel = $(".output-panel");
     const outputBody = $("#outputBody");
     const outputList = $("#outputList");
     const toast = $("#toast");
+    const mobileLayoutQuery = window.matchMedia("(max-width: 820px)");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let currentDataset = null;
@@ -1639,6 +1669,8 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         notebookPanel.append(empty);
       }
       cells.forEach((cell, index) => {
+        const stack = document.createElement("div");
+        stack.className = "cell-stack";
         const article = document.createElement("article");
         article.className = "cell";
         article.dataset.status = cell.status;
@@ -1692,7 +1724,13 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         textarea.setAttribute("aria-label", `Editable Python code for ${cell.label}`);
         textarea.style.height = codeHeightFor(textarea, cell.code);
         const syncCodeHighlight = () => {
-          highlight.innerHTML = highlightPython(cell.code);
+          try {
+            highlight.innerHTML = highlightPython(cell.code);
+            editor.classList.toggle("has-highlight", Boolean(cell.code && highlight.textContent));
+          } catch {
+            highlight.replaceChildren();
+            editor.classList.remove("has-highlight");
+          }
           highlight.style.height = textarea.style.height;
           highlight.style.transform = `translate(${-textarea.scrollLeft}px, ${-textarea.scrollTop}px)`;
         };
@@ -1717,7 +1755,11 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         outputHint.textContent = cell.output?.status === "ok" ? `${cell.output.state?.rows?.toLocaleString?.() || "—"} working rows` : "Python cell";
         footer.append(state, outputHint);
         article.append(head, editor, footer);
-        notebookPanel.append(article);
+        const inlineOutput = document.createElement("div");
+        inlineOutput.className = "cell-inline-output";
+        inlineOutput.dataset.outputFor = cell.id;
+        stack.append(article, inlineOutput);
+        notebookPanel.append(stack);
         renderLineRail(cell, article);
         syncCodeHighlight();
       });
@@ -1756,38 +1798,34 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       }
       const cell = { id: `cell-${++cellSequence}`, number: cellSequence, taskId: task.id, label: task.title, stage: task.stage, code: task.code, guides: task.guides, status: "ready", output: null };
       cells.push(cell);
-      renderNotebook(cell.id);
+      renderNotebookView(cell.id);
       setTimeout(() => runCell(cell), reducedMotion ? 0 : 90);
     }
 
     function addCustomCell() {
       const cell = { id: `cell-${++cellSequence}`, number: cellSequence, taskId: null, label: "Custom question", stage: "custom", code: "# Ask your own question\nprint(df.head())", guides: [], status: "ready", output: null };
       cells.push(cell);
-      renderNotebook(cell.id);
+      renderNotebookView(cell.id);
       showToast("Custom cell added. Edit it, then press Run.");
     }
 
     function deleteCell(cell) {
       cells = cells.filter((item) => item.id !== cell.id);
-      latestChart = [...cells].reverse().find((item) => item.output?.status === "ok" && item.output.charts?.length)?.output.charts[0] || null;
-      renderNotebook();
+      renderNotebookView();
       updateProgress();
-      renderOutputHistory();
-      $("#downloadChartButton").disabled = !latestChart;
-      if (!cells.some((item) => item.output)) $("#outputStatus").textContent = "No cell run yet";
     }
 
     async function runCell(cell) {
       if (!cell.code.trim() || cell.status === "running") return;
       cell.status = "running";
-      renderNotebook();
+      renderNotebookView();
       renderTasksOnlyStates();
+      $("#outputStatus").textContent = `${cell.label} · running`;
       try {
         const response = await sendWorker("run", { code: cell.code });
         cell.output = response.output;
         cell.status = response.output.status === "ok" ? "done" : "error";
         if (cell.output.status === "ok") {
-          if (cell.output.charts?.length) latestChart = cell.output.charts[0];
           renderOutput(cell);
           renderInspector({ ...currentProfile, state: cell.output.state });
         } else {
@@ -1799,7 +1837,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         renderOutput(cell);
         showToast(error.message, true);
       }
-      renderNotebook();
+      renderNotebookView();
       updateProgress();
     }
 
@@ -1815,7 +1853,8 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       return title;
     }
 
-    function renderOutputPlaceholder(glyph, heading, copy) {
+    function renderOutputPlaceholder(glyph, heading, copy, mobileVisible = false) {
+      outputPanel.classList.toggle("has-global-message", mobileVisible);
       outputList.replaceChildren();
       const empty = document.createElement("div");
       empty.className = "output-empty";
@@ -1919,12 +1958,34 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
 
     function renderOutputHistory() {
       const completedCells = cells.filter((cell) => cell.output);
+      latestChart = [...completedCells].reverse().find((cell) => cell.output?.status === "ok" && cell.output.charts?.length)?.output.charts.at(-1) || null;
+      $("#downloadChartButton").disabled = !latestChart;
+      outputPanel.classList.remove("has-global-message");
+      outputList.replaceChildren();
+      $$(".cell-inline-output", notebookPanel).forEach((host) => {
+        host.replaceChildren();
+        host.closest(".cell-stack")?.classList.remove("has-output");
+      });
       if (!completedCells.length) {
         renderOutputPlaceholder("↗", "Pick a task to begin.", "Your results will collect here in cell order. The output list scrolls independently from the notebook.");
+        if (!datasetLoading) $("#outputStatus").textContent = "No cell run yet";
         return;
       }
-      outputList.replaceChildren();
-      completedCells.forEach((cell) => outputList.append(renderOutputItem(cell)));
+      if (mobileLayoutQuery.matches) {
+        const hosts = new Map($$(".cell-inline-output", notebookPanel).map((host) => [host.dataset.outputFor, host]));
+        completedCells.forEach((cell) => {
+          const host = hosts.get(cell.id);
+          if (!host) return;
+          host.append(renderOutputItem(cell));
+          host.closest(".cell-stack")?.classList.add("has-output");
+        });
+        const note = document.createElement("div");
+        note.className = "output-mobile-note";
+        note.textContent = "Results are attached below each cell on this screen.";
+        outputList.append(note);
+      } else {
+        completedCells.forEach((cell) => outputList.append(renderOutputItem(cell)));
+      }
       outputBody.scrollTop = outputBody.scrollHeight;
     }
 
@@ -1932,8 +1993,10 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       const result = cell.output;
       outputState = result;
       $("#outputStatus").textContent = result.status === "ok" ? `${cell.label} · ready` : `${cell.label} · error`;
-      if (result.status === "ok" && result.charts?.length) latestChart = result.charts[0];
-      $("#downloadChartButton").disabled = !latestChart;
+    }
+
+    function renderNotebookView(focusCellId = null) {
+      renderNotebook(focusCellId);
       renderOutputHistory();
     }
 
@@ -1945,9 +2008,9 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       currentProfile = null;
       outputState = null;
       latestChart = null;
-      renderNotebook();
+      renderNotebookView();
       renderTasks();
-      renderOutputPlaceholder("…", "Preparing the dataset.", "Python is reading a fresh working copy. The original stays sealed.");
+      renderOutputPlaceholder("…", "Preparing the dataset.", "Python is reading a fresh working copy. The original stays sealed.", true);
       $("#downloadCsvButton").disabled = true;
       $("#downloadChartButton").disabled = true;
       $("#outputStatus").textContent = "Preparing dataset…";
@@ -1976,7 +2039,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         datasetLoading = false;
         setRuntimeError("Python runtime could not initialize");
         showToast(error.message, true);
-        renderOutputPlaceholder("!", "Python runtime failed.", "The CSV was found, but the browser Python worker could not initialize. Check the runtime message and try again.");
+        renderOutputPlaceholder("!", "Python runtime failed.", "The CSV was found, but the browser Python worker could not initialize. Check the runtime message and try again.", true);
       }
     }
 
@@ -2019,7 +2082,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           ? "This HTML file was opened directly. Use the GitHub Pages link or start a local web server so the browser can read the CSV files."
           : "Make sure the published site includes the data folder beside index.html.";
         setRuntimeError(directFile ? "Use GitHub Pages or a local web server" : "Dataset failed to load");
-        renderOutputPlaceholder("!", "Dataset could not load.", hint);
+        renderOutputPlaceholder("!", "Dataset could not load.", hint, true);
         showToast(`${hint} ${error.message}`, true);
       }
     }
@@ -2039,7 +2102,6 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         if (!cell) {
           cell = { id: `cell-${++cellSequence}`, number: cellSequence, taskId: task.id, label: task.title, stage: task.stage, code: task.code, guides: task.guides, status: "ready", output: null };
           cells.push(cell);
-          renderNotebook();
         }
         await runCell(cell);
       }
@@ -2053,10 +2115,10 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         outputState = null;
         latestChart = null;
         renderInspector(response.profile);
-        renderNotebook();
+        renderNotebookView();
         renderTasks();
         $("#downloadCsvButton").disabled = false;
-        renderOutputPlaceholder("↺", "Original copy restored.", "Nothing was saved. The working dataframe is back at its untouched starting point.");
+        renderOutputPlaceholder("↺", "Original copy restored.", "Nothing was saved. The working dataframe is back at its untouched starting point.", true);
         $("#outputStatus").textContent = "Reset complete";
         $("#downloadChartButton").disabled = true;
         showToast("Working data reset; original copy is ready.");
@@ -2129,7 +2191,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         output: null
       };
       cells.push(cell);
-      renderNotebook(cell.id);
+      renderNotebookView(cell.id);
       showToast("Blank challenge cell added. Write your Python, then press Run.");
     }
 
@@ -2255,7 +2317,9 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     function closeGuide() {
       const guideWindow = $("#guideWindow");
       guideWindow.hidden = true;
-      $("#guideButton").setAttribute("aria-expanded", "false");
+      const opener = $("#guideButton");
+      opener.setAttribute("aria-expanded", "false");
+      opener.focus({ preventScroll: true });
     }
 
     function openGuide() {
@@ -2429,6 +2493,9 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     $("#guideDragHandle").addEventListener("pointerdown", startGuideDrag);
     $("#guideWindow").addEventListener("pointerdown", startGuideResize);
     window.addEventListener("resize", clampGuideToViewport);
+    mobileLayoutQuery.addEventListener("change", () => {
+      if (!outputPanel.classList.contains("has-global-message")) renderOutputHistory();
+    });
     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !$("#guideWindow").hidden) closeGuide(); });
     $("#addCellButton").addEventListener("click", addCustomCell);
     $("#runAllButton").addEventListener("click", runAllSuggested);
@@ -2451,7 +2518,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     });
 
     renderGuide();
-    renderNotebook();
+    renderNotebookView();
     selectDataset("seoul");
   </script>
 </body>

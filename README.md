@@ -1,6 +1,6 @@
 # Data Science Python Playground
 
-A browser-only Python playground for inspecting, wrangling, visualising, and analysing complete real-world datasets.
+A browser-only Python playground for inspecting, wrangling, visualising, and modelling complete real-world datasets.
 
 ## Run locally
 
@@ -12,7 +12,7 @@ python3 -m http.server 8000
 
 Then open <http://127.0.0.1:8000/>.
 
-The Python runtime runs in a Web Worker through Pyodide. The first load needs internet access to fetch Pyodide, pandas, matplotlib, SciPy, and seaborn from their public package sources.
+The Python runtime runs in a Web Worker through Pyodide. The first load needs internet access to fetch Pyodide, pandas, matplotlib, SciPy, seaborn, and—on the Machine Learning page—scikit-learn from their public package sources.
 
 ## Deployment
 
@@ -20,11 +20,16 @@ The `main` branch deploys automatically to GitHub Pages through [`.github/workfl
 
 Live site: <https://elijah-ang.github.io/Data-Science-Python-Playground/>
 
+The main page contains the data-analysis playground. `ml.html` contains the machine-learning workspace with an 80/20 holdout, training-only 5/10-fold cross-validation and tuning, editable pipelines, diagnostics, and a final test step. K-means, hierarchical clustering, and standalone PCA use separate unsupervised discovery routes because they do not have a supervised target or test score.
+
 ## Included data
 
 - Seoul Bike Sharing Demand
 - Candy Power Ranking
 - Gapminder
 - Wine Quality
+- Breast Cancer Wisconsin (Diagnostic)
+- Palmer Penguins (333-row complete-case teaching copy)
+- Car Evaluation
 
 All bundled CSV files remain local to the browser session. Uploaded CSVs are processed in the current tab and are not saved automatically.
