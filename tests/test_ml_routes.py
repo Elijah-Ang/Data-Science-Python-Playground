@@ -20,7 +20,6 @@ import sys
 import traceback
 import warnings
 
-
 ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "tests" / "generate_ml_routes.mjs"
 
@@ -48,28 +47,77 @@ def cell_ids(route: dict) -> list[str]:
     return [cell["id"] for cell in route["cells"]]
 
 
-def assert_route_structure(payload: dict) -> dict:
-    source = (ROOT / "ml-app.js").read_text(encoding="utf-8")
-    required_reset_names = (
+def run_reset_regression(payload: dict) -> dict:
+    baseline_names = {
+        "pd",
+        "np",
+        "sns",
+        "plt",
+        "display",
+        "OneRClassifier",
+        "one_r_rule_table",
+        "BASE_GLOBAL_NAMES",
+        "__builtins__",
+    }
+    generated_names = {
+        "X",
+        "y",
         "X_train",
         "X_test",
+        "Z",
         "pipeline",
         "best_pipeline",
+        "search",
         "diagnostic_model",
+        "final_model",
+        "test_prediction",
+        "macro_f1",
+        "accuracy",
+        "rmse",
+        "mae",
+        "r2",
+        "clusters",
+        "selected_k",
         "full_pca",
         "Z_reduced",
-        "selected_k",
-    )
-    if "if (!data.keepData) resetNames.push(\"df\");" not in source:
-        raise AssertionError("Reset no longer documents raw-data retention.")
+    }
+    namespace = {name: object() for name in baseline_names if name != "__builtins__"}
+    namespace["__builtins__"] = __builtins__
+    namespace["BASE_GLOBAL_NAMES"] = frozenset(namespace) | {"BASE_GLOBAL_NAMES"}
+    namespace["df"] = object()
+    namespace.update({name: object() for name in generated_names})
+    namespace["__keep_data"] = True
+    exec(payload["resetWorkspaceSource"], namespace, namespace)
+    if any(name in namespace for name in generated_names):
+        remaining = sorted(name for name in generated_names if name in namespace)
+        raise AssertionError(f"Reset left generated modelling globals: {remaining}")
+    if "df" not in namespace or any(name not in namespace for name in baseline_names):
+        raise AssertionError("Reset did not retain the baseline runtime and raw df.")
+
+    namespace = {name: object() for name in baseline_names if name != "__builtins__"}
+    namespace["__builtins__"] = __builtins__
+    namespace["BASE_GLOBAL_NAMES"] = frozenset(namespace) | {"BASE_GLOBAL_NAMES"}
+    namespace["df"] = object()
+    namespace.update({name: object() for name in generated_names})
+    namespace["__keep_data"] = False
+    exec(payload["resetWorkspaceSource"], namespace, namespace)
+    if "df" in namespace or any(name in namespace for name in generated_names):
+        raise AssertionError("Reset did not clear raw df when keepData=False.")
+    return {"keep_data": "generated globals removed; df retained", "drop_data": "generated globals and df removed"}
+
+
+def assert_route_structure(payload: dict) -> dict:
+    source = (ROOT / "ml-app.js").read_text(encoding="utf-8")
+    if "BASE_GLOBAL_NAMES = frozenset(globals())" not in source or "globals().pop(__name, None)" not in source:
+        raise AssertionError("Reset does not use automatic baseline-global cleanup.")
     if "async function resetNotebook()" not in source or "await resetWorkerWorkspace(true);" not in source:
         raise AssertionError("Reset button is not wired to the Python workspace reset.")
     if "$(\"#resetButton\").addEventListener(\"click\", () => { void resetNotebook(); });" not in source:
         raise AssertionError("Reset button does not call resetNotebook().")
-    if any(f'"{name}"' not in source for name in required_reset_names):
-        raise AssertionError("Reset list is missing generated modelling state.")
     if "Custom cells are unrestricted" not in source or "walkthrough/setup" not in source:
         raise AssertionError("Holdout wording does not describe the actual reset/custom-cell behaviour.")
+
+    reset_result = run_reset_regression(payload)
 
     expected_counts = {"5": 127, "10": 127}
     route_sets = payload["routes"]
@@ -148,7 +196,10 @@ def assert_route_structure(payload: dict) -> dict:
                 for index, cell in enumerate(route["cells"]):
                     code = cell["code"]
                     if index < final_index and index != split_index and any(
-                        token in code for token in ("X_test", "y_test", "test_prediction", "test_result")
+                        token in code for token in (
+                            "X_test", "y_test", "test_prediction", "test_result", "macro_f1 =", "accuracy =",
+                            "rmse =", "mae =", "r2 =", "final_model ="
+                        )
                     ):
                         raise AssertionError(
                             f"Final test variable used before the final cell: {route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}"
@@ -186,8 +237,27 @@ def assert_route_structure(payload: dict) -> dict:
                     raise AssertionError(f"Preparation cell duplicates UI metadata: {route}")
                 if not route["dataset"]["missing"] and "SimpleImputer" in prepare:
                     raise AssertionError(f"Complete bundled route still imputes: {route}")
+                preparation_comments = [
+                    line for line in prepare.splitlines()
+                    if line.lstrip().startswith("#") and not line.lstrip().startswith("# 4 ·")
+                ]
+                if len(preparation_comments) > 3:
+                    raise AssertionError(f"Preparation cell has too many learner comments: {route}")
+                if "selected scenario already supplies" in prepare:
+                    raise AssertionError(f"Preparation cell exposes generator-internal commentary: {route}")
                 if "pd.DataFrame" in route_code(route, "model"):
                     raise AssertionError(f"Model cell duplicates UI metadata instead of showing pipeline: {route}")
+
+                explore = route_code(route, "explore")
+                if "X_train" not in explore or "y_train" not in explore:
+                    raise AssertionError(f"Supervised exploration does not use training-only inputs: {route}")
+                if any(token in explore for token in ("X_test", "y_test", "test_prediction")):
+                    raise AssertionError(f"Supervised exploration consults the saved test set: {route}")
+                if route["dataset"]["task"] == "regression":
+                    mixed = bool(route["scenario"]["binary"] or route["scenario"]["categorical"])
+                    expected_summary = 'describe(include="all").T' if mixed else "describe().T"
+                    if expected_summary not in explore:
+                        raise AssertionError(f"Regression exploration summary does not match the feature mix: {route}")
 
                 scenario = route["scenario"]
                 numeric_binary = set(scenario["binary"]) & set(route["dataset"]["binaryNumeric"])
@@ -261,6 +331,28 @@ def assert_route_structure(payload: dict) -> dict:
                     if positions != sorted(positions):
                         raise AssertionError(f"Polynomial pipeline order is wrong: {route}")
 
+                if model_id == "qda" and "small amount of regularisation" not in route_code(route, "model"):
+                    raise AssertionError(f"QDA regularisation is not explained for beginners: {route}")
+
+                if model_id == "naive_bayes":
+                    kind = (
+                        "continuous" if route["scenario"]["continuous"] else
+                        "binary" if route["scenario"]["binary"] else
+                        "categorical"
+                    )
+                    model_code = route_code(route, "model")
+                    diagnostic = route_code(route, "diagnose")
+                    if kind == "categorical":
+                        if "OneHotEncoder" not in prepare or "OrdinalEncoder" in prepare or "BernoulliNB" not in model_code:
+                            raise AssertionError(f"Categorical Naive Bayes is not the unseen-category-safe Bernoulli route: {route}")
+                        if "bernoulli_probabilities" not in diagnostic:
+                            raise AssertionError(f"Categorical Naive Bayes interpretation is not feature likelihoods: {route}")
+                    elif kind == "binary":
+                        if "BernoulliNB" not in model_code or "bernoulli_probabilities" not in diagnostic:
+                            raise AssertionError(f"Binary Naive Bayes interpretation is incomplete: {route}")
+                    elif "GaussianNB" not in model_code or "gaussian_means" not in diagnostic:
+                        raise AssertionError(f"Gaussian Naive Bayes interpretation is incomplete: {route}")
+
             else:
                 unsupervised_code = "\n".join(cell["code"] for cell in route["cells"])
                 if any(token in unsupervised_code for token in ("y_train", "y_test", "X_test", "test_prediction")):
@@ -317,8 +409,33 @@ def assert_route_structure(payload: dict) -> dict:
         "preprocessing_structures_per_fold": {
             key: value // len(route_sets) for key, value in preprocessing_counts.items()
         },
-        "reset_state": "raw df retained; generated modelling variables cleared",
+        "reset_state": reset_result,
     }
+
+
+def run_categorical_nb_unseen_test(payload: dict) -> dict:
+    import numpy as np
+    import pandas as pd
+
+    route = next(
+        route for route in payload["routes"]["5"]
+        if route["datasetId"] == "car" and route["modelId"] == "naive_bayes"
+    )
+    feature_names = route["scenario"]["categorical"]
+    namespace = {"pd": pd, "np": np, "__builtins__": __builtins__}
+    namespace["X_train"] = pd.DataFrame(
+        {name: ["low", "medium", "high", "low"] for name in feature_names}
+    )
+    namespace["y_train"] = pd.Series(["unacc", "acc", "good", "unacc"])
+    namespace["X_test"] = namespace["X_train"].iloc[[0]].copy()
+    namespace["X_test"].loc[namespace["X_test"].index[0], feature_names[0]] = "category-never-seen-in-training"
+    exec(route_code(route, "prepare"), namespace, namespace)
+    exec(route_code(route, "model"), namespace, namespace)
+    namespace["pipeline"].fit(namespace["X_train"], namespace["y_train"])
+    prediction = namespace["pipeline"].predict(namespace["X_test"])
+    if len(prediction) != 1:
+        raise AssertionError("Categorical Naive Bayes did not predict the unseen-category row.")
+    return {"route": "car/categorical/naive_bayes", "unseen_category_prediction": str(prediction[0])}
 
 
 def choose_runtime_routes(routes: list[dict], mode: str) -> list[dict]:
@@ -346,6 +463,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     warnings_seen: list[str] = []
     failures: list[dict] = []
     attempted = 0
+    categorical_nb_test = run_categorical_nb_unseen_test(payload)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -386,11 +504,22 @@ def run_python_routes(payload: dict, mode: str) -> dict:
             f"{len(failures)} runtime route(s) failed; first failures:\n"
             + json.dumps(failures[:10], indent=2)
         )
+    if mode == "full" and attempted != 254:
+        raise AssertionError(f"Full runtime mode executed {attempted} routes; expected all 254 routes.")
     unique_warnings = sorted(set(warnings_seen))
     return {
         "runtime_mode": mode,
         "runtime_routes": attempted,
         "runtime_failures": failures,
+        "runtime_versions": {
+            "numpy": np.__version__,
+            "pandas": pd.__version__,
+            "scikit_learn": __import__("sklearn").__version__,
+            "scipy": __import__("scipy").__version__,
+            "matplotlib": matplotlib.__version__,
+            "seaborn": sns.__version__,
+        },
+        "categorical_nb_unseen_test": categorical_nb_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }
