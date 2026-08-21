@@ -6,6 +6,7 @@ Run the fast structural audit:
 
 ```bash
 python tests/test_ml_routes.py
+node tests/test_ml_state.mjs
 ```
 
 Run representative Python execution (one route per model/task/split family at both fold settings):
@@ -21,3 +22,7 @@ python tests/test_ml_routes.py --runtime full
 ```
 
 The structural audit checks Python syntax, route order, splitters, training-only cells, preprocessing shape, imputation, numeric binary handling, tuning defaults, diagnostics, One-R, Naive Bayes compatibility, polynomial pipelines, PCA, clustering, and reset-state wiring. The optional runtime audit executes the cells against the bundled CSV files with a non-interactive Matplotlib backend.
+
+The runtime audit uses the exact scientific-package versions shipped by Pyodide 0.26.4 in CI. The small state harness checks that editing or deleting a completed guided cell stales and clears downstream cells, that the complete walkthrough starts at the earliest stale step, and that custom cells remain independent.
+
+The normal GitHub Actions run executes the representative runtime set. The full 254-route runtime audit is available through `workflow_dispatch` and the scheduled audit; it should be checked before merging substantial ML workflow changes.

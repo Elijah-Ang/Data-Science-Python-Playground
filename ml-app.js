@@ -216,6 +216,13 @@ def one_r_rule_table(fitted, preprocessor, feature_names):
     return table[["feature", "interval", "predicted_class", "training_rows"]]
 `;
 
+  const RESET_WORKSPACE_SOURCE = String.raw`
+__keep_data_flag = bool(__keep_data)
+for __name in list(globals()):
+    if __name not in BASE_GLOBAL_NAMES and not (__keep_data_flag and __name == "df"):
+        globals().pop(__name, None)
+`;
+
   const WORKER_SOURCE = `
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js");
 let pyodide, ready = false, bootPromise = null;
@@ -241,6 +248,7 @@ def display(value):
     __last_display = value
 \`);
     await pyodide.runPythonAsync(${py(ONE_R_HELPER_SOURCE)});
+    await pyodide.runPythonAsync("BASE_GLOBAL_NAMES = frozenset(globals()) | {'BASE_GLOBAL_NAMES'}");
     ready = true;
   })().catch(error => { bootPromise = null; throw error; });
   return bootPromise;
@@ -251,27 +259,8 @@ async function handle(data) {
   try {
     await boot();
     if (type === "reset") {
-      const resetNames = [
-        "model_df","continuous_features","numeric_binary_features","encoded_binary_features","categorical_features","feature_names","X","y",
-        "X_train","X_test","y_train","y_test","cv","preprocessor","model","pipeline","scoring","scores",
-        "cv_scores","parameter_grid","search","best_pipeline","best_params","best_score","diagnostic_prediction",
-        "diagnostic_actual","diagnostic_model","residuals","final_model","test_prediction",
-        "test_result","wrapped_model","fitted","interpretation","encoded_names","prepared_names","term_names",
-        "coefficient_labels","coef","lda_coef","lda_rows","importance","candidate_rows","candidate_scores","kmeans","clusters",
-        "suggested_k","selected_k","quality_index","quality_Z","quality_clusters","sample_silhouette","cluster_quality","profile_df","cluster_profile",
-        "projection","plot_df","full_pca","variance_table","n_components_90","Z_reduced","loadings","loading_view","reference_label","training_view",
-        "analysis_Z","analysis_rows","linkage_matrix","hierarchical","sample_size","silhouette_size","sample_index","correlation",
-        "split_at","last_fit","last_validation","selected_variance","labels","points","limits","one_r_rules"
-      ];
-      if (!data.keepData) resetNames.push("df");
-      pyodide.globals.set("__reset_names_json", JSON.stringify(resetNames));
-      await pyodide.runPythonAsync(\`
-__reset_names = json.loads(__reset_names_json)
-for __name in __reset_names:
-    globals().pop(__name, None)
-globals().pop("__reset_names", None)
-globals().pop("__reset_names_json", None)
-\`);
+      pyodide.globals.set("__keep_data", Boolean(data.keepData));
+      await pyodide.runPythonAsync(${py(RESET_WORKSPACE_SOURCE)});
       post(id, {ok:true});
       return;
     }
@@ -378,6 +367,43 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     value.binary.length ? `${value.binary.length} binary` : "",
     value.categorical.length ? `${value.categorical.length} categorical` : ""
   ].filter(Boolean).join(" · ");
+
+  function invalidateCellsFrom(routeItems, cellList, taskId) {
+    const start = routeItems.findIndex(item => item.id === taskId);
+    if (start < 0) return {changed:false, start:-1};
+    cellList.forEach(cell => {
+      const routeIndex = routeItems.findIndex(item => item.id === cell.taskId);
+      if (routeIndex < start) return;
+      if (cell.output || ["done", "error", "running", "stale"].includes(cell.status)) cell.status = "stale";
+      cell.output = null;
+    });
+    return {changed:true, start};
+  }
+
+  function firstIncompleteRouteIndex(routeItems, cellList) {
+    return routeItems.findIndex(item => cellList.find(cell => cell.taskId === item.id)?.status !== "done");
+  }
+
+  function routeButtonState(routeItems, cellList, index, {runtimeReady = true, testSetOpened = false} = {}) {
+    const item = routeItems[index];
+    const existing = cellList.find(cell => cell.taskId === item.id);
+    const previousIncomplete = routeItems.slice(0, index).some(previous => cellList.find(cell => cell.taskId === previous.id)?.status !== "done");
+    const staleEarlier = routeItems.slice(0, index).some(previous => cellList.find(cell => cell.taskId === previous.id)?.status === "stale");
+    const finalAlreadyUsed = item.id === "final" && testSetOpened;
+    const blocked = !runtimeReady || previousIncomplete || finalAlreadyUsed;
+    const message = !runtimeReady
+      ? "Wait for the Python workspace to finish loading."
+      : previousIncomplete
+        ? staleEarlier
+          ? "Workflow changed — rerun the earlier route step first."
+          : "Run the earlier route steps first."
+        : finalAlreadyUsed
+          ? "The final test has already been used. Select Reset to start a new teaching run."
+          : existing?.status === "stale"
+            ? "Workflow changed — rerun from this step."
+          : `${item.title} — ${item.caption}`;
+    return {status:existing?.status || "ready", previousIncomplete, finalAlreadyUsed, blocked, message};
+  }
 
   function pureNaiveBayesInput(value) {
     if (value.continuous.length && !value.binary.length && !value.categorical.length) return "continuous";
@@ -638,7 +664,9 @@ axes[${index}].set_title(${py(view.name)})`;
     }).join("\n");
     const summary = config.task === "classification"
       ? `summary = y_train.value_counts().rename_axis("target").reset_index(name="rows")`
-      : `summary = X_train.describe().T`;
+      : (value.binary.length || value.categorical.length)
+        ? `summary = X_train.describe(include="all").T`
+        : `summary = X_train.describe().T`;
     return `# 3 · Explore the training data only
 training_view = X_train.copy()
 training_view["target"] = y_train.to_numpy()
@@ -702,7 +730,7 @@ cv_scores.round(3)`;
     const allEncoded = !value.continuous.length && !numericBinary.length && encodedFeatures.length > 0;
     const allContinuous = value.continuous.length > 0 && !numericBinary.length && !encodedFeatures.length;
     const categoricalNB = modelId === "naive_bayes" && allEncoded && !value.binary.length;
-    const useOrdinal = modelId === "one_r" || categoricalNB;
+    const useOrdinal = modelId === "one_r";
     const needsScale = Boolean(model.scale);
     const hasMissing = Boolean(config.missing);
     const keepOriginalUnits = ["simple_linear","multiple_linear"].includes(modelId);
@@ -771,21 +799,20 @@ cv_scores.round(3)`;
       expression = declarations.join("\n") + "\npreprocessor = ColumnTransformer([\n" + branches.join(",\n") + "\n], verbose_feature_names_out=False)";
     }
 
-    const comments = [
-      "# Keep preprocessing inside the pipeline so each CV training fold learns it from its own rows.",
-      "# The selected scenario already supplies the feature names, so there is no second discovery step.",
-      hasMissing ? "# The selected data can contain missing values, so imputation is fitted inside the pipeline." : "# The bundled selected data is complete, so no imputation is needed."
-    ];
-    if (needsScale) comments.push("# Scaling is used where feature magnitude affects distance or optimisation.");
-    else if (["regression_tree","classification_tree"].includes(modelId)) comments.push("# Trees use thresholds and order, so scaling is unnecessary.");
-    else if (modelId === "one_r") comments.push("# One-R learns one-feature rules, so scaling is unnecessary.");
-    else if (modelId === "naive_bayes") comments.push("# This Naive Bayes family estimates probabilities directly, so scaling is unnecessary.");
-    else if (keepOriginalUnits) comments.push("# Original numeric units stay visible so linear coefficients are easier to interpret.");
-    if (numericBinary.length) comments.push("# Numeric 0/1 flags stay as pass-through numeric columns; they are not ordinal-encoded.");
-    if (encodedFeatures.length) comments.push(useOrdinal
-      ? "# Categories use one stable integer code per original feature for this rule/probability model."
-      : "# Text categories use one-hot encoding so the estimator receives numeric columns.");
-    comments.push("# " + model.preprocessNote);
+    const comments = ["# Keep preprocessing inside the pipeline so each CV training fold learns it from its own rows."];
+    if (hasMissing) comments.push("# Missing values are filled inside the pipeline using training rows only.");
+    if (categoricalNB) comments.push("# Each category becomes a yes/no feature, so Bernoulli Naive Bayes can learn category likelihoods safely.");
+    else if (encodedFeatures.length) comments.push(useOrdinal
+      ? "# Categories use one stable code per original feature so One-R can learn one-feature rules."
+      : "# Categories are one-hot encoded so the estimator receives numeric inputs.");
+    if (comments.length < 3) {
+      if (needsScale) comments.push("# " + model.preprocessNote);
+      else if (["regression_tree","classification_tree"].includes(modelId)) comments.push("# Trees split on thresholds, so scaling is unnecessary.");
+      else if (modelId === "one_r") comments.push("# One-R learns one-feature rules, so scaling is unnecessary.");
+      else if (modelId === "naive_bayes") comments.push("# This Naive Bayes family estimates feature probabilities directly, so scaling is unnecessary.");
+      else if (keepOriginalUnits) comments.push("# Original numeric units stay visible so linear coefficients are easier to interpret.");
+      else if (model.preprocessNote) comments.push("# " + model.preprocessNote);
+    }
 
     const assignment = expression.includes("preprocessor =") ? expression : "preprocessor = " + expression;
     return "# 4 · Prepare the selected data\n" + comments.join("\n") + "\n" + imports.join("\n") + "\n\n" + assignment + "\n\npreprocessor";
@@ -806,12 +833,12 @@ cv_scores.round(3)`;
       one_r:{concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R is preloaded as a small beginner-friendly helper.", estimator:"OneRClassifier(bins=5)", grid:readable("{\n    'model__bins': [3, 5, 8]\n}")},
       classification_tree:{concept:"Learn interpretable if/then splits for class labels", imports:"from sklearn.tree import DecisionTreeClassifier", estimator:"DecisionTreeClassifier(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None],\n    'model__min_samples_leaf': [1, 5, 15],\n    'model__criterion': ['gini', 'entropy']\n}")},
       knn_cls:{concept:"Vote using nearby training examples; distance makes scaling essential", imports:"from sklearn.neighbors import KNeighborsClassifier", estimator:"KNeighborsClassifier()", grid:readable("{\n    'model__n_neighbors': [3, 5, 9, 15],\n    'model__weights': ['uniform', 'distance']\n}")},
-      qda:{concept:"Give each class its own covariance shape and curved boundary", imports:"from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis", estimator:"QuadraticDiscriminantAnalysis(reg_param=0.1)", grid:readable("{\n    'model__reg_param': [0.1, 0.2, 0.5, 0.9]\n}")},
+      qda:{concept:"Give each class its own covariance shape and curved boundary", note:"A small amount of regularisation keeps class covariance estimates stable.", imports:"from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis", estimator:"QuadraticDiscriminantAnalysis(reg_param=0.1)", grid:readable("{\n    'model__reg_param': [0.1, 0.2, 0.5, 0.9]\n}")},
       lda:{concept:"Share one covariance shape and learn linear class boundaries", imports:"from sklearn.discriminant_analysis import LinearDiscriminantAnalysis", estimator:"LinearDiscriminantAnalysis(solver='lsqr')", grid:readable("{\n    'model__shrinkage': [None, 'auto']\n}")},
       naive_bayes: allBinary
         ? {concept:"Estimate independent Bernoulli probabilities for binary inputs", imports:"from sklearn.naive_bayes import BernoulliNB", estimator:"BernoulliNB()", grid:readable("{\n    'model__alpha': [0.1, 1.0, 5.0]\n}")}
         : allCategorical
-          ? {concept:"Estimate category probabilities without pretending categories are numeric", imports:"from sklearn.naive_bayes import CategoricalNB", estimator:"CategoricalNB()", grid:readable("{\n    'model__alpha': [0.1, 1.0, 5.0]\n}")}
+          ? {concept:"Turn categories into yes/no features and estimate their likelihood within each class", imports:"from sklearn.naive_bayes import BernoulliNB", estimator:"BernoulliNB()", grid:readable("{\n    'model__alpha': [0.1, 1.0, 5.0]\n}")}
           : allContinuous
             ? {concept:"Estimate class probabilities with a Gaussian distribution per feature", imports:"from sklearn.naive_bayes import GaussianNB", estimator:"GaussianNB()", grid:readable("{\n    'model__var_smoothing': [1e-11, 1e-9, 1e-7]\n}")}
             : null,
@@ -826,6 +853,7 @@ cv_scores.round(3)`;
     return [
       "# 5 · Build the model pipeline",
       "# " + spec.concept,
+      spec.note ? "# " + spec.note : "",
       "from sklearn.pipeline import Pipeline",
       spec.imports,
       "",
@@ -932,10 +960,23 @@ cv_scores.round(3)`;
       "lda_rows = fitted.classes_ if len(fitted.classes_) == lda_coef.shape[0] else [f\"boundary_{i+1}\" for i in range(lda_coef.shape[0])]",
       "pd.DataFrame(lda_coef, index=lda_rows, columns=encoded_names).reset_index(names=\"class_or_boundary\")"
     ].join("\n");
-    if (modelId === "naive_bayes") return [
-      "fitted = diagnostic_model.named_steps[\"model\"]",
-      "pd.DataFrame({\"class\":fitted.classes_, \"prior\":np.exp(fitted.class_log_prior_) if hasattr(fitted, \"class_log_prior_\") else fitted.class_prior_})"
-    ].join("\n");
+    if (modelId === "naive_bayes") {
+      const kind = pureNaiveBayesInput(value);
+      if (kind === "continuous") return [
+        preparedNames,
+        "fitted = diagnostic_model.named_steps[\"model\"]",
+        "gaussian_means = pd.DataFrame(fitted.theta_, index=fitted.classes_, columns=encoded_names)",
+        "gaussian_means.index.name = \"class\"",
+        "gaussian_means.reset_index().iloc[:, :min(9, len(encoded_names) + 1)].round(3)"
+      ].join("\n");
+      return [
+        preparedNames,
+        "fitted = diagnostic_model.named_steps[\"model\"]",
+        "bernoulli_probabilities = pd.DataFrame(np.exp(fitted.feature_log_prob_), index=fitted.classes_, columns=encoded_names)",
+        "bernoulli_probabilities.index.name = \"class\"",
+        "bernoulli_probabilities.reset_index().iloc[:, :min(9, len(encoded_names) + 1)].round(3)"
+      ].join("\n");
+    }
     if (["mlp_cls","mlp_reg"].includes(modelId)) return [
       "wrapped_model = diagnostic_model.named_steps[\"model\"]",
       "fitted = wrapped_model.regressor_ if hasattr(wrapped_model, \"regressor_\") else wrapped_model",
@@ -1251,22 +1292,13 @@ plot_df.head(12)`,"What does the two-dimensional representation look like when l
   function renderRoute() {
     const strip = $("#routeStrip"); strip.replaceChildren();
     routeTasks.forEach((item, index) => {
-      const existing = cells.find(cell => cell.taskId === item.id);
-      const previousIncomplete = routeTasks.slice(0, index).some(previous => cells.find(cell => cell.taskId === previous.id)?.status !== "done");
-      const finalAlreadyUsed = item.id === "final" && testSetOpened;
-      const blocked = !runtimeReady || previousIncomplete || finalAlreadyUsed;
+      const state = routeButtonState(routeTasks, cells, index, {runtimeReady, testSetOpened});
       const button = document.createElement("button"); button.type = "button"; button.className = "route-card";
       button.style.setProperty("--stage-color", colorFor(index));
-      button.dataset.state = existing?.status || "ready";
-      button.disabled = blocked;
-      button.title = !runtimeReady
-        ? "Wait for the Python workspace to finish loading."
-        : previousIncomplete
-          ? "Run the earlier route steps first."
-          : finalAlreadyUsed
-            ? "The final test has already been used. Select Reset to start a new teaching run."
-            : `${item.title} — ${item.caption}`;
-      button.innerHTML = `<span class="route-number">${String(index + 1).padStart(2,"0")}</span><span><span class="route-title"></span><span class="route-caption"></span></span><span class="route-arrow">${existing?.status === "done" ? "✓" : "→"}</span>`;
+      button.dataset.state = state.status;
+      button.disabled = state.blocked;
+      button.title = state.message;
+      button.innerHTML = `<span class="route-number">${String(index + 1).padStart(2,"0")}</span><span><span class="route-title"></span><span class="route-caption"></span></span><span class="route-arrow">${state.status === "done" ? "✓" : state.status === "stale" ? "↻" : "→"}</span>`;
       $(".route-title", button).textContent = item.title;
       $(".route-caption", button).textContent = item.caption;
       button.addEventListener("click", async () => {
@@ -1279,7 +1311,7 @@ plot_df.head(12)`,"What does the two-dimensional representation look like when l
   }
 
   function addCell(code = "# pandas, NumPy, Seaborn and Matplotlib are ready as pd, np, sns and plt\n", label = "Custom Python", taskId = null, render = true) {
-    const cell = {id:`cell-${++cellSequence}`, number:cellSequence, taskId, label, stage:taskId || "custom", code, status:"ready", output:null};
+    const cell = {id:`cell-${++cellSequence}`, number:cellSequence, taskId, label, stage:taskId || "custom", code, status:"ready", output:null, lastRunCode:null};
     cells.push(cell);
     if (render) { renderNotebookView(); renderRoute(); }
     return cell;
@@ -1287,6 +1319,38 @@ plot_df.head(12)`,"What does the two-dimensional representation look like when l
 
   function addRouteCell(item, render = true) {
     return addCell(item.code, item.title, item.id, render);
+  }
+
+  function syncNotebookStatusLabels() {
+    $$(".cell", $("#notebookPanel")).forEach(article => {
+      const cell = cells.find(value => value.id === article.dataset.cellId);
+      if (!cell) return;
+      article.dataset.status = cell.status;
+      const statusLabel = $(".cell-footer span:last-child", article);
+      if (statusLabel) statusLabel.textContent = cell.status;
+    });
+  }
+
+  function invalidateRouteFrom(taskId, {renderNotebook = false, message = "Workflow changed — rerun from this step."} = {}) {
+    const result = invalidateCellsFrom(routeTasks, cells, taskId);
+    if (!result.changed) return false;
+    workspaceToken += 1;
+    if (renderNotebook) renderNotebookView();
+    else {
+      syncNotebookStatusLabels();
+      renderOutputs();
+    }
+    renderRoute();
+    updateSeal();
+    showToast(message);
+    return true;
+  }
+
+  function removeCell(cell) {
+    const routeTaskId = cell.taskId;
+    cells = cells.filter(value => value.id !== cell.id);
+    if (routeTaskId) invalidateRouteFrom(routeTaskId);
+    renderNotebookView(); renderRoute(); updateSeal();
   }
 
   function addExplorationCell() {
@@ -1324,7 +1388,7 @@ explore_df.head(10)`;
       $(".cell-label", head).textContent = cell.label; $(".cell-stage", head).textContent = cell.stage;
       const finalLocked = cell.stage === "final" && testSetOpened;
       const run = document.createElement("button"); run.type = "button"; run.className = "cell-action run"; run.textContent = cell.status === "running" ? "running…" : finalLocked ? "used once" : "▶ run"; run.disabled = cell.status === "running" || finalLocked; run.addEventListener("click", () => runCell(cell));
-      const remove = document.createElement("button"); remove.type = "button"; remove.className = "cell-action delete"; remove.textContent = "delete"; remove.addEventListener("click", () => { cells = cells.filter(value => value.id !== cell.id); renderNotebookView(); renderRoute(); updateSeal(); });
+      const remove = document.createElement("button"); remove.type = "button"; remove.className = "cell-action delete"; remove.textContent = "delete"; remove.addEventListener("click", () => removeCell(cell));
       head.append(run, remove);
       const editor = document.createElement("div"); editor.className = "code-editor";
       const rail = document.createElement("div"); rail.className = "line-rail";
@@ -1350,7 +1414,12 @@ explore_df.head(10)`;
         rail.style.height = input.style.height;
         syncHighlight();
       };
-      input.addEventListener("input", () => { cell.code = input.value; updateLines(); });
+      input.addEventListener("input", () => {
+        const changedAfterRun = Boolean(cell.taskId && cell.lastRunCode !== null && cell.lastRunCode !== input.value);
+        cell.code = input.value;
+        if (changedAfterRun && cell.status !== "stale") invalidateRouteFrom(cell.taskId);
+        updateLines();
+      });
       input.addEventListener("scroll", syncHighlight);
       input.addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") { event.preventDefault(); runCell(cell); } });
       editor.append(rail, highlight, input);
@@ -1375,13 +1444,13 @@ explore_df.head(10)`;
     try {
       const response = await sendWorker("run", {code:cell.code});
       if (token !== workspaceToken) return;
-      cell.output = response.output; cell.status = response.output.status === "ok" ? "done" : "error";
+      cell.output = response.output; cell.status = response.output.status === "ok" ? "done" : "error"; cell.lastRunCode = cell.code;
       if (cell.stage === "final" && cell.status === "done") testSetOpened = true;
       if (response.output.charts?.length) latestChart = response.output.charts.at(-1);
       $("#outputStatus").textContent = `${cell.label} · ${cell.status === "done" ? "ready" : "Python error"}`;
     } catch (error) {
       if (token !== workspaceToken) return;
-      cell.status = "error"; cell.output = {status:"error", error:error.message, charts:[]};
+      cell.status = "error"; cell.output = {status:"error", error:error.message, charts:[]}; cell.lastRunCode = cell.code;
       $("#outputStatus").textContent = `${cell.label} · Python error`;
       showToast(error.message, true);
     }
@@ -1391,13 +1460,15 @@ explore_df.head(10)`;
   async function runAll() {
     if (!runtimeReady) { showToast("Wait for the Python workspace to finish loading.", true); return; }
     const token = workspaceToken;
-    for (const item of routeTasks) {
+    const firstIncomplete = firstIncompleteRouteIndex(routeTasks, cells);
+    if (firstIncomplete < 0) return;
+    for (const item of routeTasks.slice(firstIncomplete)) {
       if (token !== workspaceToken) return;
       let cell = cells.find(value => value.taskId === item.id);
       if (!cell) cell = addRouteCell(item, false);
       if (cell.status !== "done") await runCell(cell);
       if (token !== workspaceToken) return;
-      if (cell.status === "error") break;
+      if (cell.status !== "done") break;
     }
   }
 
@@ -1493,7 +1564,7 @@ explore_df.head(10)`;
       await resetWorkerWorkspace(true);
       if (token !== workspaceToken) return;
       $("#runtimeDot").className = "runtime-dot ready";
-      setRuntimeReady(true, "Python ready · raw data retained · modelling state reset");
+      setRuntimeReady(true, "Pyodide 0.26.4 ready · raw data retained · modelling state reset");
     } catch (error) {
       if (token !== workspaceToken) return;
       $("#runtimeDot").className = "runtime-dot error";
@@ -1514,7 +1585,7 @@ explore_df.head(10)`;
       await resetWorkerWorkspace(true);
       if (token !== workspaceToken) return;
       $("#runtimeDot").className = "runtime-dot ready";
-      setRuntimeReady(true, "Python ready · modelling workspace reset");
+      setRuntimeReady(true, "Pyodide 0.26.4 ready · modelling workspace reset");
     } catch (error) {
       if (token !== workspaceToken) return;
       $("#runtimeDot").className = "runtime-dot error";
@@ -1549,7 +1620,7 @@ explore_df.head(10)`;
       if (token !== workspaceToken) return;
       $("#rowMetric").textContent = response.profile.rows.toLocaleString();
       tablePayload($("#preview"), response.profile.preview, true);
-      $("#runtimeStatus").textContent = `Python ready · ${response.profile.missing} missing values in selected data`;
+      $("#runtimeStatus").textContent = `Pyodide 0.26.4 ready · ${response.profile.missing} missing values in selected data`;
       $("#runtimeDot").className = "runtime-dot ready";
       $("#outputStatus").textContent = "No cell run yet";
       setRuntimeReady(true);
@@ -1710,7 +1781,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });

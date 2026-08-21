@@ -70,5 +70,6 @@ process.stdout.write(JSON.stringify({
   datasets: api.DATASETS,
   models: api.MODELS,
   oneRHelperSource: api.ONE_R_HELPER_SOURCE,
+  resetWorkspaceSource: api.RESET_WORKSPACE_SOURCE,
   routes
 }));

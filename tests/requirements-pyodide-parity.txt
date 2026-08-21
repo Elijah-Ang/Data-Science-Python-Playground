@@ -1,0 +1,10 @@
+# Scientific packages shipped by Pyodide 0.26.4.
+# Source: https://pyodide.org/en/0.26.4/usage/packages-in-pyodide.html
+numpy==1.26.4
+pandas==2.2.0
+scikit-learn==1.4.2
+scipy==1.12.0
+matplotlib==3.5.2
+
+# The site installs this pure-Python package with micropip during Pyodide boot.
+seaborn==0.13.2
