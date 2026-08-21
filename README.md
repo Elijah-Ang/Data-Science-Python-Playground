@@ -20,7 +20,7 @@ The `main` branch deploys automatically to GitHub Pages through [`.github/workfl
 
 Live site: <https://elijah-ang.github.io/Data-Science-Python-Playground/>
 
-The main page contains the data-analysis playground. `ml.html` contains the machine-learning workspace with an 80/20 holdout, training-only 5/10-fold cross-validation and tuning, editable pipelines, diagnostics, and a final test step. K-means, hierarchical clustering, and standalone PCA use separate unsupervised discovery routes because they do not have a supervised target or test score.
+The main page is a light-mode quick-start tutorial for the two active labs. It explains the shared workflow and links directly to the Data Playground and Machine Learning Playground. The paused Guided Learning gateway and its space-route curriculum are preserved in [`archive/guided-learning-legacy/`](archive/guided-learning-legacy/). `playground.html` contains the browser-only data-analysis workspace, while `ml.html` contains the machine-learning workspace with an 80/20 holdout, training-only 5/10-fold cross-validation and tuning, editable pipelines, diagnostics, and a final test step. K-means, hierarchical clustering, and standalone PCA use separate unsupervised discovery routes because they do not have a supervised target or test score.
 
 ## Included data
 

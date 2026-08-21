@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A browser-only machine-learning playground with sealed holdout testing, cross-validation, preprocessing, tuning, and editable Python.">
+  <meta name="description" content="A browser-only machine-learning playground with a saved final test, cross-validation, preprocessing, tuning, and editable Python.">
   <title>Machine Learning · Data Science Python Playground</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,10 +130,10 @@
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
-      <div class="brand-copy"><h1>MACHINE LEARNING PLAYGROUND</h1><p>Validate honestly. Tune inside the training set. Open the test set once.</p></div>
+      <div class="brand-copy"><h1>MACHINE LEARNING PLAYGROUND</h1><p>Validate honestly. Tune inside training data. Use the saved test set once.</p></div>
     </div>
     <div class="top-actions">
-      <nav class="mode-switch" aria-label="Playground mode"><a class="mode-link" href="index.html">DATA <span>PLAYGROUND</span></a><a class="mode-link" href="ml.html" aria-current="page">MACHINE <span>LEARNING</span></a></nav>
+      <nav class="mode-switch" aria-label="Playground mode"><a class="mode-link" href="index.html">HOME</a><a class="mode-link" href="playground.html">DATA <span>PLAYGROUND</span></a><a class="mode-link" href="ml.html" aria-current="page">MACHINE <span>LEARNING</span></a></nav>
       <button class="icon-button guide-button" id="guideButton" type="button" aria-expanded="false" aria-controls="guideWindow" aria-label="Open workflow reference" title="Open workflow reference"><svg viewBox="0 0 24 24"><path d="M4.5 5.5c2.4-1.5 4.8-1.5 7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3zM19.5 5.5c-2.4-1.5-4.8-1.5-7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3zM12 5.8v13"></path></svg><span>Workflow</span></button>
       <button class="icon-button theme-button" id="themeButton" type="button" aria-label="Switch to dark theme"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path></svg></button>
     </div>
@@ -161,18 +161,18 @@
         <section class="inspector-section inspector-preview-section"><h3>First look <span>clean preview</span></h3><div class="preview inspector-preview" id="preview"><div style="padding:9px;color:#697084;font-size:.6rem">Waiting for Python…</div></div></section>
         <div class="source-block"><span>Source: <a id="sourceLink" href="#" target="_blank" rel="noreferrer"></a><br><span id="sourceNote"></span></span></div>
       </div>
-      <p class="privacy-note">The 20% holdout stays sealed while cross-validation and tuning use only the training portion.</p>
+      <p class="privacy-note">The saved 20% test set stays untouched while cross-validation and tuning use only the training portion.</p>
     </aside>
     <section class="lab" aria-labelledby="labTitle">
       <h2 class="sr-only" id="labTitle">Machine learning notebook</h2>
-      <div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">Ten guided steps from framing to a sealed final result. Run them in order; every block is editable.</span></div></div>
+      <div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">A guided route from choosing the question to the final test. Run each step in order; every block is editable.</span></div></div>
       <div class="route-strip" id="routeStrip" aria-label="Suggested machine-learning route"></div>
       <div class="notebook-bar"><h3>Notebook</h3><div class="notebook-actions"><button class="toolbar-button" id="exploreButton" type="button">＋ Explore with pandas / plots</button><button class="toolbar-button" id="addCellButton" type="button">＋ Add cell</button><button class="toolbar-button" id="runAllButton" type="button">▶ Run complete walkthrough</button><button class="toolbar-button" id="resetButton" type="button">↺ Reset</button></div></div>
       <div class="notebook-layout">
         <section class="notebook-panel" id="notebookPanel" aria-label="Editable Python notebook"></section>
         <aside class="output-panel" aria-labelledby="outputTitle">
           <div class="output-head"><h3 id="outputTitle">Output</h3><span id="outputStatus">No cell run yet</span><button class="toolbar-button" id="downloadChartButton" type="button" disabled>↓ chart</button></div>
-          <div class="output-meta"><span>holdout <b id="holdoutState">sealed</b></span><span>metric <b id="metricLabel">macro F1</b></span><span>runtime <b>Pyodide</b></span></div>
+          <div class="output-meta"><span>final test <b id="holdoutState">sealed</b></span><span>metric <b id="metricLabel">macro F1</b></span><span>runtime <b>Pyodide</b></span></div>
           <div class="output-body" id="outputBody"><div class="output-list" id="outputList"></div></div>
         </aside>
       </div>
@@ -190,6 +190,6 @@
 
   <script src="data/embedded-datasets.js?v=20260814-10"></script>
   <script src="data/ml-embedded-datasets.js?v=20260814-10"></script>
-  <script src="ml-app.js?v=20260814-10"></script>
+  <script src="ml-app.js?v=20260821-01"></script>
 </body>
 </html>

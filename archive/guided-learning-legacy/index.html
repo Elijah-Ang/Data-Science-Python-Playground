@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A friendly gateway to guided data science learning and an open Python playground.">
+  <title>Data Science Python Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #efe8d7;
+      --bg-deep: #e6ddc6;
+      --rail: #e8dec8;
+      --panel: #f3ead7;
+      --panel-2: #ebe0c6;
+      --panel-3: #e3d5b6;
+      --border: #b9a87d;
+      --border-soft: #cbbd9d;
+      --ink: #1d2945;
+      --muted: #6c634e;
+      --faint: #857b61;
+      --orange: #c75b20;
+      --gold: #946300;
+      --cyan: #137c9c;
+      --violet: #7651a6;
+      --mint: #197d5c;
+      --coral: #bd4f5d;
+      --code: #27282b;
+      --code-ink: #e7edf7;
+      --display: "Silkscreen", "Press Start 2P", ui-monospace, monospace;
+      --body: "Nunito", ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      --shadow: 0 18px 40px rgba(91, 74, 36, .15), 0 0 0 1px rgba(40, 33, 15, .05) inset;
+      --grid-line: rgba(72, 61, 31, .08);
+      --hero-glow-a: rgba(22, 128, 159, .15);
+      --hero-glow-b: rgba(122, 86, 167, .13);
+      --learning-accent: #b65229;
+      --learning-wash: rgba(182, 82, 41, .12);
+      --play-accent: #16809f;
+      --play-wash: rgba(22, 128, 159, .12);
+      --radius: 7px;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #0c1125;
+      --bg-deep: #080d1d;
+      --rail: #0f1428;
+      --panel: #171d39;
+      --panel-2: #1e2749;
+      --panel-3: #263154;
+      --border: #384473;
+      --border-soft: #29355d;
+      --ink: #f4e9c8;
+      --muted: #b6a887;
+      --faint: #7f89a7;
+      --orange: #f97316;
+      --gold: #f5c518;
+      --cyan: #48d5ff;
+      --violet: #c08aff;
+      --mint: #58e0b5;
+      --coral: #ff7c87;
+      --grid-line: rgba(244, 233, 200, .045);
+      --hero-glow-a: rgba(72, 213, 255, .14);
+      --hero-glow-b: rgba(192, 138, 255, .12);
+      --learning-accent: #f5c518;
+      --learning-wash: rgba(249, 115, 22, .12);
+      --play-accent: #48d5ff;
+      --play-wash: rgba(72, 213, 255, .11);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { min-width: 320px; scroll-behavior: smooth; background: var(--bg); }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% -9%, var(--hero-glow-a), transparent 28rem),
+        radial-gradient(circle at 98% 15%, var(--hero-glow-b), transparent 25rem),
+        var(--bg);
+      font: 15px/1.5 var(--body);
+      -webkit-font-smoothing: antialiased;
+      transition: background .2s ease, color .2s ease;
+    }
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      opacity: .9;
+      background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(#000, transparent 92%);
+    }
+    button, a { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    a { color: inherit; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+    .landing-shell { width: min(1420px, 100%); min-height: 100vh; margin: 0 auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 76px;
+      padding: 12px clamp(16px, 3vw, 34px);
+      border: 1px solid var(--border);
+      border-top: 0;
+      border-radius: 0 0 7px 7px;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      box-shadow: 0 4px 0 color-mix(in srgb, var(--border) 70%, transparent), var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; }
+    .brand-mark { display: grid; grid-template-columns: repeat(3, 7px); align-items: end; gap: 3px; width: 27px; height: 30px; flex: 0 0 auto; }
+    .brand-mark span { display: block; height: 15px; border-radius: 1px; transform: skew(-13deg); background: var(--orange); }
+    .brand-mark span:nth-child(2) { height: 22px; background: var(--gold); }
+    .brand-mark span:nth-child(3) { height: 29px; background: var(--cyan); }
+    .brand-copy { min-width: 0; }
+    .brand-copy h1 { margin: 0; color: var(--ink); font: 400 clamp(.75rem, 1.5vw, 1.02rem)/1.2 var(--display); letter-spacing: .02em; white-space: nowrap; }
+    .brand-copy p { margin: 5px 0 0; color: var(--muted); font: 600 .63rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; }
+    .top-actions { display: flex; align-items: center; justify-content: flex-end; gap: 9px; }
+    .top-link, .theme-button {
+      min-height: 38px;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-bottom-width: 3px;
+      border-radius: 5px;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, #fff 8%), var(--panel-2));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 2px 0 color-mix(in srgb, var(--border) 75%, #000 25%);
+      color: var(--muted);
+      font: 700 .62rem/1 var(--display);
+      letter-spacing: .09em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: border-color .15s, color .15s, background .15s, transform .1s;
+    }
+    .top-link:hover, .theme-button:hover { border-color: var(--orange); background: var(--learning-wash); color: var(--ink); }
+    .top-link:active, .theme-button:active { border-bottom-width: 1px; transform: translateY(2px); }
+    .theme-button { display: grid; place-items: center; width: 42px; padding: 8px; border-color: color-mix(in srgb, var(--gold) 78%, var(--border)); color: var(--gold); }
+    .theme-button svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+    main { padding: 0 clamp(16px, 3.5vw, 52px) 30px; }
+    .hero { max-width: 980px; margin: 0 auto; padding: clamp(58px, 8vw, 98px) 0 30px; text-align: center; }
+    .hero-kicker { margin-bottom: 20px; color: var(--cyan); font: 700 .68rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .hero-kicker::before { content: "// "; color: var(--orange); }
+    .hero h2 { margin: 0; color: var(--ink); font: 400 clamp(2rem, 5.5vw, 4.2rem)/1.08 var(--display); letter-spacing: .015em; text-shadow: 1px 2px 0 color-mix(in srgb, var(--border) 38%, transparent); }
+    .hero p { margin: 22px 0 0; color: var(--muted); font: 500 clamp(.87rem, 1.5vw, 1.1rem)/1.5 var(--mono); }
+    .mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(15px, 2vw, 26px); max-width: 1310px; margin: 0 auto; }
+    .mode-card {
+      position: relative;
+      min-width: 0;
+      min-height: 570px;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(18px, 2.3vw, 28px);
+      overflow: hidden;
+      border: 2px solid var(--card-accent);
+      border-radius: var(--radius);
+      background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 94%, #fff 6%), var(--bg-deep));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 2px 0 color-mix(in srgb, var(--border) 77%, #000 23%), 0 10px 24px rgba(91, 74, 36, .1);
+    }
+    .mode-card::after { position: absolute; inset: 0; z-index: 0; pointer-events: none; content: ""; opacity: .65; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(transparent, #000 30%, transparent 94%); }
+    .mode-card > * { position: relative; z-index: 1; }
+    .learning-card { --card-accent: var(--learning-accent); --card-wash: var(--learning-wash); }
+    .play-card { --card-accent: var(--play-accent); --card-wash: var(--play-wash); }
+    .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .card-badge { display: inline-flex; align-items: center; min-height: 26px; padding: 5px 9px; border: 1px solid var(--card-accent); border-radius: 3px; background: var(--card-wash); color: var(--card-accent); font: 700 .58rem/1 var(--mono); letter-spacing: .07em; text-transform: uppercase; }
+    .card-index { color: var(--faint); font: 600 .58rem/1 var(--mono); letter-spacing: .08em; }
+    .mode-card h3 { margin: 22px 0 9px; color: var(--ink); font: 400 clamp(1.2rem, 2.5vw, 2rem)/1.15 var(--display); letter-spacing: .01em; }
+    .mode-card .card-copy { max-width: 620px; min-height: 50px; margin: 0; color: var(--muted); font: 500 .79rem/1.55 var(--mono); }
+
+    .route-preview { min-height: 245px; display: flex; flex-direction: column; justify-content: center; margin: 23px 0 18px; padding: 14px 4px 0; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); }
+    .route-line { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); align-items: start; gap: 6px; padding: 15px 1px 0; }
+    .route-line::before { position: absolute; top: 37px; right: 8%; left: 8%; height: 3px; content: ""; background: repeating-linear-gradient(90deg, var(--card-accent) 0 9px, transparent 9px 16px); }
+    .route-stop { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+    .route-stop b { display: grid; place-items: center; width: 48px; height: 48px; border: 2px solid var(--card-accent); border-radius: 50%; background: var(--panel); color: var(--card-accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--panel) 86%, transparent); font: 700 .86rem var(--mono); }
+    .route-stop span { max-width: 105px; color: var(--ink); font: 700 .57rem/1.35 var(--display); letter-spacing: .02em; text-transform: uppercase; }
+    .route-flag { align-self: flex-end; margin: -10px 8% 0 0; color: var(--card-accent); font-size: 1.45rem; transform: rotate(4deg); }
+    .route-stats { display: grid; grid-template-columns: auto minmax(90px, 1fr) auto; align-items: center; gap: 12px; margin-top: 17px; }
+    .level-copy, .streak-copy { display: flex; flex-direction: column; gap: 4px; white-space: nowrap; }
+    .level-copy strong, .streak-copy strong { color: var(--card-accent); font: 700 .8rem/1 var(--mono); }
+    .level-copy small, .streak-copy small { color: var(--faint); font: 600 .56rem/1 var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+    .xp-meter { height: 11px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-deep); }
+    .xp-meter span { display: block; width: 68%; height: 100%; background: repeating-linear-gradient(90deg, var(--card-accent) 0 12px, color-mix(in srgb, var(--card-accent) 70%, #fff 30%) 12px 15px); }
+    .streak-copy { align-items: center; }
+    .streak-copy strong::first-letter { color: var(--orange); }
+    .streak-icon { color: var(--orange); font-size: 1.3rem; line-height: .8; }
+
+    .play-preview { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 9px; min-height: 245px; margin: 23px 0 18px; padding: 14px 0 0; border-top: 1px dashed var(--border); border-bottom: 1px dashed var(--border); }
+    .code-window, .chart-window { min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 4px; background: var(--code); box-shadow: 0 5px 10px rgba(0, 0, 0, .12); }
+    .window-head { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 30px; padding: 6px 8px; border-bottom: 1px solid #444853; color: #d9deea; font: 600 .56rem var(--mono); }
+    .window-head span:last-child { color: var(--mint); }
+    .code-window pre { min-height: 205px; margin: 0; padding: 9px; color: var(--code-ink); font: 500 .53rem/1.7 var(--mono); white-space: pre-wrap; }
+    .py-keyword { color: #ff9f68; }
+    .py-name { color: #7dd8ff; }
+    .py-fn { color: #71e2b0; }
+    .py-string { color: #f2c38f; }
+    .py-comment { color: #7f89a7; }
+    .chart-window { display: flex; flex-direction: column; background: var(--paper, #fffaf0); }
+    .chart-window .window-head { background: var(--panel-2); color: var(--muted); }
+    .chart-window svg { display: block; width: 100%; height: 160px; padding: 9px 8px 0; }
+    .chart-table { width: calc(100% - 14px); margin: auto 7px 8px; border-collapse: collapse; color: var(--paper-ink, #1d2a42); font: 500 .47rem var(--mono); }
+    .chart-table th, .chart-table td { padding: 4px 3px; border: 1px solid #d8ccb4; text-align: right; }
+    .chart-table th { color: #946300; background: #efe3cb; font-weight: 700; }
+    .data-chips { display: flex; flex-wrap: wrap; gap: 5px; grid-column: 1 / -1; align-self: end; padding-bottom: 9px; }
+    .data-chip { padding: 4px 6px; border: 1px solid var(--border); border-radius: 3px; color: var(--muted); background: var(--bg-deep); font: 600 .5rem var(--mono); }
+    .data-chip::before { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; content: ""; background: var(--play-accent); }
+    .data-chip:nth-child(3)::before { background: var(--violet); }
+    .data-chip:nth-child(4)::before { background: var(--orange); }
+    .data-chip:nth-child(5)::before { background: var(--mint); }
+
+    .mode-cta { display: flex; align-items: center; justify-content: center; gap: 15px; min-height: 58px; margin-top: auto; padding: 13px 17px; border: 2px solid var(--card-accent); border-bottom-width: 5px; border-radius: 5px; background: linear-gradient(180deg, color-mix(in srgb, var(--card-accent) 16%, var(--panel-2) 84%), color-mix(in srgb, var(--card-accent) 27%, var(--panel-3) 73%)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 3px 0 color-mix(in srgb, var(--card-accent) 60%, #000 40%); color: var(--card-accent); font: 700 .82rem/1 var(--display); letter-spacing: .08em; text-decoration: none; text-transform: uppercase; transition: transform .1s, background .15s, color .15s, border-color .15s; }
+    .mode-cta span { font-size: 1.15rem; line-height: .7; }
+    .mode-cta:hover { background: color-mix(in srgb, var(--card-accent) 28%, var(--panel-2) 72%); color: var(--ink); }
+    .mode-cta:active { border-bottom-width: 2px; transform: translateY(3px); }
+    .landing-foot { max-width: 1310px; margin: 22px auto 0; padding: 0 2px; color: var(--muted); font: 600 .61rem/1.4 var(--mono); letter-spacing: .05em; text-align: center; text-transform: uppercase; }
+    .landing-foot .accent-learning { color: var(--learning-accent); }
+    .landing-foot .accent-play { color: var(--play-accent); }
+    .landing-foot .dot { display: inline-block; margin: 0 13px; color: var(--gold); }
+    footer { display: flex; justify-content: space-between; gap: 18px; max-width: 1310px; margin: 0 auto; padding: 27px 2px 4px; border-top: 1px dashed var(--border); color: var(--faint); font: 500 .56rem/1.5 var(--mono); }
+
+    @media (max-width: 900px) {
+      .mode-card { min-height: 540px; }
+      .route-stop b { width: 42px; height: 42px; }
+      .route-stop span { font-size: .5rem; }
+      .play-preview { grid-template-columns: 1fr; }
+      .code-window { min-height: 140px; }
+      .code-window pre { min-height: 140px; }
+      .chart-window { display: none; }
+      .data-chips { grid-column: 1; }
+    }
+    @media (max-width: 680px) {
+      .topbar { align-items: flex-start; min-height: 68px; padding: 10px 12px; }
+      .brand-mark { width: 22px; height: 25px; grid-template-columns: repeat(3, 5px); }
+      .brand-mark span { height: 12px; }
+      .brand-mark span:nth-child(2) { height: 18px; }
+      .brand-mark span:nth-child(3) { height: 24px; }
+      .brand-copy h1 { font-size: .64rem; }
+      .brand-copy p { font-size: .51rem; letter-spacing: .08em; }
+      .top-actions { gap: 5px; }
+      .top-link { min-height: 31px; padding: 6px 8px; font-size: .5rem; }
+      .theme-button { width: 34px; min-height: 31px; padding: 5px; }
+      .theme-button svg { width: 15px; height: 15px; }
+      main { padding-inline: 11px; }
+      .hero { padding-top: 51px; }
+      .hero-kicker { margin-bottom: 16px; font-size: .58rem; }
+      .hero h2 { font-size: clamp(1.48rem, 7.5vw, 2.5rem); line-height: 1.2; }
+      .hero p { margin-top: 15px; font-size: .68rem; }
+      .mode-grid { grid-template-columns: 1fr; gap: 16px; }
+      .mode-card { min-height: 0; padding: 17px 15px 15px; }
+      .mode-card h3 { margin-top: 17px; font-size: 1.2rem; }
+      .mode-card .card-copy { min-height: 0; font-size: .65rem; }
+      .route-preview, .play-preview { margin-top: 18px; }
+      .route-preview { min-height: 205px; }
+      .route-line { gap: 0; }
+      .route-stop b { width: 37px; height: 37px; font-size: .65rem; }
+      .route-line::before { top: 32px; right: 7%; left: 7%; }
+      .route-stop span { max-width: 72px; font-size: .42rem; }
+      .route-stats { grid-template-columns: auto 1fr auto; gap: 7px; }
+      .level-copy strong, .streak-copy strong { font-size: .65rem; }
+      .level-copy small, .streak-copy small { font-size: .46rem; }
+      .mode-cta { min-height: 52px; font-size: .7rem; }
+      .landing-foot { font-size: .51rem; }
+      .landing-foot .dot { margin: 0 7px; }
+      footer { flex-direction: column; gap: 4px; padding-bottom: 15px; font-size: .5rem; }
+    }
+    @media (max-width: 430px) {
+      .brand-copy { overflow: hidden; }
+      .brand-copy h1 { max-width: 108px; overflow: hidden; font-size: .54rem; text-overflow: ellipsis; }
+      .brand-copy p { font-size: .43rem; }
+      .top-actions { flex: 0 0 auto; }
+      .top-link { min-height: 29px; padding-inline: 5px; font-size: .43rem; letter-spacing: .04em; }
+      .theme-button { width: 31px; min-height: 29px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="landing-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Data Science Python Playground home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><h1>DATA SCIENCE PYTHON</h1><p>PLAYGROUND</p></span>
+      </a>
+      <div class="top-actions">
+        <a class="top-link" href="#about">About</a>
+        <a class="top-link" href="#sign-in">Sign in</a>
+        <button class="theme-button" id="themeButton" type="button" aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="about" aria-labelledby="heroTitle">
+        <div class="hero-kicker">Choose your mode</div>
+        <h2 id="heroTitle">LEARN DATA SCIENCE YOUR WAY</h2>
+        <p>Follow a guided path or open the lab and explore freely.</p>
+      </section>
+
+      <section class="mode-grid" id="modes" aria-label="Choose how to learn">
+        <article class="mode-card learning-card">
+          <div class="card-heading"><span class="card-badge">Structured path</span><span class="card-index">01 / 02</span></div>
+          <h3>GUIDED LEARNING</h3>
+          <p class="card-copy">Build Python, statistics, visualization and machine learning skills through bite-sized lessons.</p>
+          <div class="route-preview" aria-label="A four-step learning path">
+            <div class="route-line">
+              <div class="route-stop"><b>1</b><span>Python<br>Basics</span></div>
+              <div class="route-stop"><b>2</b><span>Data<br>Analysis</span></div>
+              <div class="route-stop"><b>3</b><span>Machine<br>Learning</span></div>
+              <div class="route-stop"><b>4</b><span>Modeling &amp;<br>Evaluation</span></div>
+            </div>
+            <div class="route-flag" aria-hidden="true">⚑</div>
+            <div class="route-stats">
+              <div class="level-copy"><strong>LEVEL 07</strong><small>Data explorer</small></div>
+              <div class="xp-meter" aria-label="620 of 900 XP"><span></span></div>
+              <div class="streak-copy"><strong><span class="streak-icon" aria-hidden="true">♨</span> 12</strong><small>Day streak</small></div>
+            </div>
+          </div>
+          <a class="mode-cta" href="learning.html">Start learning <span aria-hidden="true">→</span></a>
+        </article>
+
+        <article class="mode-card play-card">
+          <div class="card-heading"><span class="card-badge">Open workspace</span><span class="card-index">02 / 02</span></div>
+          <h3>DATA SCIENCE PLAYGROUND</h3>
+          <p class="card-copy">Inspect data, write Python, build visualizations and experiment with machine learning.</p>
+          <div class="play-preview" aria-label="Preview of the Python notebook and chart workspace">
+            <div class="code-window">
+              <div class="window-head"><span>[1]</span><span>● RUN</span></div>
+              <pre><span class="py-keyword">import</span> pandas <span class="py-keyword">as</span> pd
+<span class="py-keyword">import</span> seaborn <span class="py-keyword">as</span> sns
+<span class="py-keyword">import</span> matplotlib.pyplot <span class="py-keyword">as</span> plt
+
+df = sns.load_dataset(<span class="py-string">"tips"</span>)
+df.head()
+
+sns.scatterplot(
+  data=df,
+  x=<span class="py-string">"total_bill"</span>,
+  y=<span class="py-string">"tip"</span>,
+  hue=<span class="py-string">"time"</span>
+)
+plt.show()</pre>
+            </div>
+            <div class="chart-window">
+              <div class="window-head"><span>OUTPUT / SCATTER</span><span>tips</span></div>
+              <svg viewBox="0 0 240 150" role="img" aria-label="Scatter plot preview">
+                <rect x="0" y="0" width="240" height="150" fill="#fffaf0"></rect>
+                <g stroke="#d8ccb4" stroke-dasharray="3 3" stroke-width="1"><path d="M35 20v105M83 20v105M131 20v105M179 20v105M227 20v105"></path><path d="M35 25h192M35 58h192M35 91h192M35 124h192"></path></g>
+                <g fill="none" stroke="#697084" stroke-width="1.2"><path d="M35 20v105h192"></path></g>
+                <g fill="#2b72b8" opacity=".9"><circle cx="52" cy="111" r="3.2"></circle><circle cx="65" cy="103" r="3.2"></circle><circle cx="78" cy="99" r="3.2"></circle><circle cx="88" cy="90" r="3.2"></circle><circle cx="96" cy="84" r="3.2"></circle><circle cx="110" cy="91" r="3.2"></circle><circle cx="122" cy="76" r="3.2"></circle><circle cx="140" cy="72" r="3.2"></circle><circle cx="157" cy="61" r="3.2"></circle></g>
+                <g fill="#7651a6" opacity=".92"><circle cx="115" cy="96" r="3.2"></circle><circle cx="129" cy="81" r="3.2"></circle><circle cx="145" cy="78" r="3.2"></circle><circle cx="161" cy="60" r="3.2"></circle><circle cx="176" cy="53" r="3.2"></circle><circle cx="190" cy="44" r="3.2"></circle><circle cx="207" cy="34" r="3.2"></circle></g>
+                <g fill="#1d2a42" font-family="JetBrains Mono, monospace" font-size="7"><text x="176" y="143">total_bill</text><text x="8" y="27" transform="rotate(-90 8 27)">tip</text><text x="188" y="17" fill="#2b72b8">● Lunch</text><text x="188" y="27" fill="#7651a6">● Dinner</text></g>
+              </svg>
+              <table class="chart-table" aria-label="Chart summary"><thead><tr><th>count</th><th>mean</th><th>std</th></tr></thead><tbody><tr><td>244</td><td>19.79</td><td>8.90</td></tr><tr><td>244</td><td>2.99</td><td>1.38</td></tr></tbody></table>
+            </div>
+            <div class="data-chips" aria-label="Datasets"><span class="data-chip">tips</span><span class="data-chip">iris</span><span class="data-chip">gapminder</span><span class="data-chip">seoul</span></div>
+          </div>
+          <a class="mode-cta" href="../../playground.html">Open playground <span aria-hidden="true">→</span></a>
+        </article>
+      </section>
+
+      <p class="landing-foot" id="sign-in">New here? Start with <span class="accent-learning">guided learning</span><span class="dot">•</span>Ready to experiment? <a class="accent-play" href="../../playground.html">open the playground</a></p>
+    </main>
+
+    <footer><span><strong>Browser-only Python.</strong> Learn in small steps or explore in the lab.</span><span>Built for curious data people.</span></footer>
+  </div>
+
+  <script>
+    (() => {
+      const body = document.body;
+      const themeButton = document.querySelector("#themeButton");
+      const themeIcon = document.querySelector("#themeIcon");
+      const storedTheme = window.localStorage.getItem("pythonds-theme");
+      const setTheme = (theme, persist = true) => {
+        const isLight = theme !== "dark";
+        body.dataset.theme = isLight ? "light" : "dark";
+        themeButton.setAttribute("aria-pressed", String(!isLight));
+        themeButton.setAttribute("aria-label", `Switch to ${isLight ? "dark" : "light"} theme`);
+        themeButton.title = `Switch to ${isLight ? "dark" : "light"} theme`;
+        themeIcon.innerHTML = isLight
+          ? '<path d="M20 15.3A8.5 8.5 0 1 1 8.7 4 8.5 8.5 0 0 0 20 15.3z"></path>'
+          : '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>';
+        if (persist) window.localStorage.setItem("pythonds-theme", isLight ? "light" : "dark");
+      };
+      setTheme(storedTheme === "dark" ? "dark" : "light", false);
+      themeButton.addEventListener("click", () => setTheme(body.dataset.theme === "light" ? "dark" : "light"));
+    })();
+  </script>
+</body>
+</html>

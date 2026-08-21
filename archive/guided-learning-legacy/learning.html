@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A light, space-inspired guided path for learning Python data science.">
+  <title>Guided Learning · Data Science Python</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="learning.css">
+</head>
+<body data-theme="light">
+  <div class="app-frame">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Data Science Python Playground home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>DATA SCIENCE PYTHON</strong><small>PLAYGROUND</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Site navigation">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link is-current" href="learning.html" aria-current="page">Guided Learning</a>
+        <a class="nav-link" href="../../playground.html">Data Playground</a>
+        <a class="nav-link" href="../../ml.html">ML Playground</a>
+        <button class="icon-button theme-button" id="themeButton" type="button" aria-pressed="false" aria-label="Switch to dark theme" title="Switch to dark theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path></svg>
+        </button>
+      </nav>
+    </header>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <main id="learningApp" class="learning-app" tabindex="-1">
+      <section class="loading-screen" data-autofocus aria-label="Loading Guided Learning">
+        <div class="loading-orbit" aria-hidden="true"><span></span><i></i></div>
+        <p class="eyebrow">GUIDED LEARNING / LOADING</p>
+        <h1>Preparing your learning map</h1>
+        <p>Loading the planets, lessons, and notebook runtime.</p>
+      </section>
+    </main>
+
+    <div class="celebration" id="celebration" hidden aria-live="polite" role="dialog" aria-modal="true" aria-labelledby="celebrationTitle"></div>
+
+    <noscript><p class="noscript-note">Guided Learning uses a small in-browser notebook. Enable JavaScript to fly the lessons.</p></noscript>
+  </div>
+
+  <!-- Keep direct file:// previews useful by loading the same compressed
+       dataset fallbacks used by the playground and ML pages. HTTP still
+       prefers the adjacent CSV files in learning-app.js. -->
+  <script src="../../data/embedded-datasets.js"></script>
+  <script src="../../data/ml-embedded-datasets.js"></script>
+  <script src="data/cleaning-mini-datasets.js"></script>
+  <script src="data/learning-curriculum.js"></script>
+  <script src="learning-app.js"></script>
+</body>
+</html>
