@@ -48,16 +48,41 @@ def cell_ids(route: dict) -> list[str]:
 
 
 def run_reset_regression(payload: dict) -> dict:
-    baseline_names = {
-        "pd",
-        "np",
-        "sns",
-        "plt",
-        "display",
-        "OneRClassifier",
-        "one_r_rule_table",
-        "BASE_GLOBAL_NAMES",
-        "__builtins__",
+    class ResetTestFrame:
+        """Small dependency-free dataframe double for the structural reset test."""
+
+        def __init__(self, columns, rows, dtypes):
+            self.columns = list(columns)
+            self.rows = [list(row) for row in rows]
+            self.dtypes = dict(dtypes)
+
+        def copy(self, deep=True):
+            return ResetTestFrame(self.columns, self.rows, self.dtypes)
+
+        def drop(self, columns, inplace=False):
+            keep = [column for column in self.columns if column not in columns]
+            positions = [self.columns.index(column) for column in keep]
+            reduced = ResetTestFrame(
+                keep,
+                [[row[index] for index in positions] for row in self.rows],
+                {column: self.dtypes[column] for column in keep},
+            )
+            if inplace:
+                self.columns, self.rows, self.dtypes = reduced.columns, reduced.rows, reduced.dtypes
+                return None
+            return reduced
+
+        def signature(self):
+            return (self.columns, self.rows, self.dtypes)
+
+    baseline_values = {
+        "pd": object(),
+        "np": object(),
+        "sns": object(),
+        "plt": object(),
+        "display": object(),
+        "OneRClassifier": object(),
+        "one_r_rule_table": object(),
     }
     generated_names = {
         "X",
@@ -81,29 +106,57 @@ def run_reset_regression(payload: dict) -> dict:
         "full_pca",
         "Z_reduced",
     }
-    namespace = {name: object() for name in baseline_names if name != "__builtins__"}
-    namespace["__builtins__"] = __builtins__
-    namespace["BASE_GLOBAL_NAMES"] = frozenset(namespace) | {"BASE_GLOBAL_NAMES"}
-    namespace["df"] = object()
-    namespace.update({name: object() for name in generated_names})
-    namespace["__keep_data"] = True
-    exec(payload["resetWorkspaceSource"], namespace, namespace)
-    if any(name in namespace for name in generated_names):
-        remaining = sorted(name for name in generated_names if name in namespace)
-        raise AssertionError(f"Reset left generated modelling globals: {remaining}")
-    if "df" not in namespace or any(name not in namespace for name in baseline_names):
-        raise AssertionError("Reset did not retain the baseline runtime and raw df.")
+    original = ResetTestFrame(
+        ["category", "value"],
+        [["a", 1], ["b", 2], ["a", 3]],
+        {"category": "string", "value": "int64"},
+    )
 
-    namespace = {name: object() for name in baseline_names if name != "__builtins__"}
-    namespace["__builtins__"] = __builtins__
-    namespace["BASE_GLOBAL_NAMES"] = frozenset(namespace) | {"BASE_GLOBAL_NAMES"}
-    namespace["df"] = object()
+    def make_namespace(keep_data):
+        namespace = dict(baseline_values)
+        namespace["__builtins__"] = __builtins__
+        namespace["BASE_GLOBAL_NAMES"] = frozenset(namespace) | {"BASE_GLOBAL_NAMES"}
+        baseline_snapshot = dict(namespace)
+        namespace["__baseline_values_from_worker"] = baseline_snapshot
+        namespace["df"] = original.copy(deep=True)
+        namespace["__raw_df_snapshot_from_worker"] = original.copy(deep=True)
+        namespace["__keep_data"] = keep_data
+        return namespace, baseline_snapshot
+
+    namespace, baseline_snapshot = make_namespace(True)
+    namespace["df"].drop(columns=["value"], inplace=True)
+    namespace["pd"] = None
+    namespace["np"] = "broken"
+    namespace.pop("sns")
+    namespace["some_random_variable"] = 123
     namespace.update({name: object() for name in generated_names})
-    namespace["__keep_data"] = False
+    exec(payload["resetWorkspaceSource"], namespace, namespace)
+    if any(name in namespace for name in generated_names) or "some_random_variable" in namespace:
+        raise AssertionError("Reset left generated or custom globals after restoring the workspace.")
+    for name in baseline_values:
+        if namespace.get(name) is not baseline_snapshot[name]:
+            raise AssertionError(f"Reset did not restore baseline binding {name!r}.")
+    if "df" not in namespace or namespace["df"].signature() != original.signature():
+        raise AssertionError("Reset did not restore the original raw dataframe state.")
+
+    namespace, baseline_snapshot = make_namespace(False)
+    namespace["df"].drop(columns=["category"], inplace=True)
+    namespace["pd"] = None
+    namespace.pop("sns")
+    namespace.update({name: object() for name in generated_names})
     exec(payload["resetWorkspaceSource"], namespace, namespace)
     if "df" in namespace or any(name in namespace for name in generated_names):
-        raise AssertionError("Reset did not clear raw df when keepData=False.")
-    return {"keep_data": "generated globals removed; df retained", "drop_data": "generated globals and df removed"}
+        raise AssertionError("Reset did not clear raw df and modelling globals when keepData=False.")
+    for name in baseline_values:
+        if namespace.get(name) is not baseline_snapshot[name]:
+            raise AssertionError(f"keepData=False reset did not restore baseline binding {name!r}.")
+
+    return {
+        "baseline_aliases_restored": True,
+        "raw_df_restored": True,
+        "generated_globals_removed": True,
+        "keep_data_false_clears_df": True,
+    }
 
 
 def assert_route_structure(payload: dict) -> dict:
@@ -189,6 +242,12 @@ def assert_route_structure(payload: dict) -> dict:
                 raise AssertionError(f"Frame rediscovered or declared empty feature groups: {route}")
             if "pd.DataFrame" in frame:
                 raise AssertionError(f"Frame duplicates UI metadata instead of showing X.head(): {route}")
+            route_source = "\n".join(cell["code"] for cell in route["cells"])
+            if route["dataset"]["prepare"] == "df":
+                if "model_df" in route_source or "X = df[feature_names].copy()" not in frame:
+                    raise AssertionError(f"Direct dataset route still creates model_df: {route['datasetId']}/{route['scenarioId']}/{route['modelId']}")
+            elif "model_df = " not in frame:
+                raise AssertionError(f"Transformed dataset route does not expose its modelling dataframe: {route}")
 
             if task_type != "unsupervised":
                 split_index = ids.index("split")
@@ -399,6 +458,12 @@ def assert_route_structure(payload: dict) -> dict:
             if pure_kind != 1:
                 raise AssertionError(f"Mixed Naive Bayes route was generated: {route}")
 
+    model_df_sources = {
+        dataset_id: config["prepare"]
+        for dataset_id, config in payload["datasets"].items()
+        if config["prepare"] != "df"
+    }
+
     return {
         "route_counts": {key: len(value) for key, value in route_sets.items()},
         "total_cells_per_fold": total_cells // len(route_sets),
@@ -409,6 +474,7 @@ def assert_route_structure(payload: dict) -> dict:
         "preprocessing_structures_per_fold": {
             key: value // len(route_sets) for key, value in preprocessing_counts.items()
         },
+        "model_df_sources": model_df_sources,
         "reset_state": reset_result,
     }
 
@@ -438,6 +504,72 @@ def run_categorical_nb_unseen_test(payload: dict) -> dict:
     return {"route": "car/categorical/naive_bayes", "unseen_category_prediction": str(prediction[0])}
 
 
+def run_pandas_reset_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Exercise the reset source with real pandas objects and mutated aliases/data."""
+
+    generated_names = {
+        "X", "X_train", "X_test", "Z", "pipeline", "best_pipeline", "search",
+        "diagnostic_model", "final_model", "test_prediction", "macro_f1", "accuracy",
+        "rmse", "mae", "r2", "clusters", "selected_k", "full_pca", "Z_reduced",
+    }
+    original = pd.DataFrame({
+        "category": pd.Series(["a", "b", "a"], dtype="string"),
+        "value": pd.Series([1, 2, 3], dtype="int64"),
+    })
+
+    def make_namespace(keep_data):
+        namespace = {
+            "pd": pd,
+            "np": np,
+            "plt": plt,
+            "sns": sns,
+            "display": lambda value: None,
+            "__builtins__": __builtins__,
+        }
+        exec(payload["oneRHelperSource"], namespace, namespace)
+        namespace["BASE_GLOBAL_NAMES"] = frozenset(namespace) | {"BASE_GLOBAL_NAMES"}
+        baseline_snapshot = dict(namespace)
+        namespace["__baseline_values_from_worker"] = baseline_snapshot
+        namespace["df"] = original.copy(deep=True)
+        namespace["__raw_df_snapshot_from_worker"] = original.copy(deep=True)
+        namespace["__keep_data"] = keep_data
+        return namespace, baseline_snapshot
+
+    namespace, baseline_snapshot = make_namespace(True)
+    namespace["df"].drop(columns=["value"], inplace=True)
+    namespace["pd"] = None
+    namespace["np"] = "broken"
+    namespace.pop("sns")
+    namespace["some_random_variable"] = 123
+    namespace.update({name: object() for name in generated_names})
+    exec(payload["resetWorkspaceSource"], namespace, namespace)
+    for name in ("pd", "np", "plt", "sns", "display", "OneRClassifier", "one_r_rule_table"):
+        if namespace.get(name) is not baseline_snapshot[name]:
+            raise AssertionError(f"Real-data reset did not restore baseline binding {name!r}.")
+    if "some_random_variable" in namespace or any(name in namespace for name in generated_names):
+        raise AssertionError("Real-data reset left a generated or custom global.")
+    pd.testing.assert_frame_equal(namespace["df"], original, check_exact=True, check_dtype=True)
+
+    namespace, baseline_snapshot = make_namespace(False)
+    namespace["df"].drop(columns=["category"], inplace=True)
+    namespace["pd"] = None
+    namespace.pop("sns")
+    namespace.update({name: object() for name in generated_names})
+    exec(payload["resetWorkspaceSource"], namespace, namespace)
+    if "df" in namespace or any(name in namespace for name in generated_names):
+        raise AssertionError("Real-data keepData=False reset did not clear the dataset and modelling globals.")
+    for name in ("pd", "np", "plt", "sns", "display"):
+        if namespace.get(name) is not baseline_snapshot[name]:
+            raise AssertionError(f"keepData=False reset did not restore baseline binding {name!r}.")
+
+    return {
+        "baseline_aliases_restored": True,
+        "raw_df_columns_rows_values_dtypes_order_restored": True,
+        "generated_globals_removed": True,
+        "keep_data_false_clears_df": True,
+    }
+
+
 def choose_runtime_routes(routes: list[dict], mode: str) -> list[dict]:
     if mode == "full":
         return routes
@@ -463,6 +595,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     warnings_seen: list[str] = []
     failures: list[dict] = []
     attempted = 0
+    reset_runtime = run_pandas_reset_regression(payload, pd, np, plt, sns)
     categorical_nb_test = run_categorical_nb_unseen_test(payload)
 
     for folds, routes in payload["routes"].items():
@@ -519,6 +652,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
             "matplotlib": matplotlib.__version__,
             "seaborn": sns.__version__,
         },
+        "reset_runtime": reset_runtime,
         "categorical_nb_unseen_test": categorical_nb_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),

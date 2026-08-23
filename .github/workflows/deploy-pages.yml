@@ -48,8 +48,34 @@ jobs:
       - name: Run structural and representative runtime audits
         run: python tests/test_ml_routes.py --runtime representative
 
-  deploy:
+  browser-pyodide-smoke:
+    name: Browser/Pyodide smoke gate before deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
     needs: validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Playwright
+        run: python -m pip install playwright==1.52.0
+
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Start local site
+        run: nohup python -m http.server 8000 > /tmp/ml-playground-http.log 2>&1 &
+
+      - name: Run complete browser/Pyodide smoke test
+        run: python tests/test_ml_browser.py --base-url http://127.0.0.1:8000/ml.html
+
+  deploy:
+    needs: [validate, browser-pyodide-smoke]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     environment:
