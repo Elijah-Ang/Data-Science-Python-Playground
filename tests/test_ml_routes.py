@@ -47,6 +47,15 @@ def cell_ids(route: dict) -> list[str]:
     return [cell["id"] for cell in route["cells"]]
 
 
+def assert_exact_namespace(namespace: dict, expected_names: set[str], label: str) -> None:
+    expected = set(expected_names)
+    actual = set(namespace)
+    unexpected = sorted(actual - expected)
+    missing = sorted(expected - actual)
+    if unexpected or missing:
+        raise AssertionError(f"{label} namespace mismatch; unexpected={unexpected}, missing={missing}")
+
+
 def run_reset_regression(payload: dict) -> dict:
     class ResetTestFrame:
         """Small dependency-free dataframe double for the structural reset test."""
@@ -131,6 +140,7 @@ def run_reset_regression(payload: dict) -> dict:
     namespace["some_random_variable"] = 123
     namespace.update({name: object() for name in generated_names})
     exec(payload["resetWorkspaceSource"], namespace, namespace)
+    assert_exact_namespace(namespace, set(baseline_snapshot) | {"df"}, "keepData=True reset")
     if any(name in namespace for name in generated_names) or "some_random_variable" in namespace:
         raise AssertionError("Reset left generated or custom globals after restoring the workspace.")
     for name in baseline_values:
@@ -145,6 +155,7 @@ def run_reset_regression(payload: dict) -> dict:
     namespace.pop("sns")
     namespace.update({name: object() for name in generated_names})
     exec(payload["resetWorkspaceSource"], namespace, namespace)
+    assert_exact_namespace(namespace, set(baseline_snapshot), "keepData=False reset")
     if "df" in namespace or any(name in namespace for name in generated_names):
         raise AssertionError("Reset did not clear raw df and modelling globals when keepData=False.")
     for name in baseline_values:
@@ -152,6 +163,8 @@ def run_reset_regression(payload: dict) -> dict:
             raise AssertionError(f"keepData=False reset did not restore baseline binding {name!r}.")
 
     return {
+        "keep_data_true_namespace_exact": True,
+        "keep_data_false_namespace_exact": True,
         "baseline_aliases_restored": True,
         "raw_df_restored": True,
         "generated_globals_removed": True,
@@ -161,7 +174,7 @@ def run_reset_regression(payload: dict) -> dict:
 
 def assert_route_structure(payload: dict) -> dict:
     source = (ROOT / "ml-app.js").read_text(encoding="utf-8")
-    if "BASE_GLOBAL_NAMES = frozenset(globals())" not in source or "globals().pop(__name, None)" not in source:
+    if "BASE_GLOBAL_NAMES = frozenset(globals())" not in source or 'globals().pop("__name", None)' not in source:
         raise AssertionError("Reset does not use automatic baseline-global cleanup.")
     if "async function resetNotebook()" not in source or "await resetWorkerWorkspace(true);" not in source:
         raise AssertionError("Reset button is not wired to the Python workspace reset.")
@@ -543,6 +556,7 @@ def run_pandas_reset_regression(payload: dict, pd, np, plt, sns) -> dict:
     namespace["some_random_variable"] = 123
     namespace.update({name: object() for name in generated_names})
     exec(payload["resetWorkspaceSource"], namespace, namespace)
+    assert_exact_namespace(namespace, set(baseline_snapshot) | {"df"}, "real-data keepData=True reset")
     for name in ("pd", "np", "plt", "sns", "display", "OneRClassifier", "one_r_rule_table"):
         if namespace.get(name) is not baseline_snapshot[name]:
             raise AssertionError(f"Real-data reset did not restore baseline binding {name!r}.")
@@ -556,6 +570,7 @@ def run_pandas_reset_regression(payload: dict, pd, np, plt, sns) -> dict:
     namespace.pop("sns")
     namespace.update({name: object() for name in generated_names})
     exec(payload["resetWorkspaceSource"], namespace, namespace)
+    assert_exact_namespace(namespace, set(baseline_snapshot), "real-data keepData=False reset")
     if "df" in namespace or any(name in namespace for name in generated_names):
         raise AssertionError("Real-data keepData=False reset did not clear the dataset and modelling globals.")
     for name in ("pd", "np", "plt", "sns", "display"):
@@ -563,6 +578,8 @@ def run_pandas_reset_regression(payload: dict, pd, np, plt, sns) -> dict:
             raise AssertionError(f"keepData=False reset did not restore baseline binding {name!r}.")
 
     return {
+        "keep_data_true_namespace_exact": True,
+        "keep_data_false_namespace_exact": True,
         "baseline_aliases_restored": True,
         "raw_df_columns_rows_values_dtypes_order_restored": True,
         "generated_globals_removed": True,

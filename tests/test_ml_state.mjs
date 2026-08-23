@@ -35,10 +35,14 @@ for (const marker of [
   "__raw_df_snapshot_from_worker",
   "__pd_from_worker",
   "__plt_from_worker",
+  "__warnings_from_worker",
 ]) {
   if (!api.WORKER_SOURCE.includes(marker)) {
     throw new Error(`Worker does not protect ${marker} from learner mutations.`);
   }
+}
+if (!api.RESET_WORKSPACE_SOURCE.includes("globals().pop(\"__name\", None)")) {
+  throw new Error("Reset does not remove its temporary __name helper.");
 }
 if (!api.RESET_WORKSPACE_SOURCE.includes("copy(deep=True)")) {
   throw new Error("Reset does not restore a deep copy of the pristine raw dataframe.");
