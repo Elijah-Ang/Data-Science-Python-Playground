@@ -21,7 +21,7 @@
     breast: {
       name:"Breast Cancer Wisconsin (Diagnostic)", file:"data/breast-cancer.csv", embedded:"breast", sep:",", rows:569, task:"classification", target:"diagnosis", split:"stratified", missing:false, binaryNumeric:[],
       description:"Clean cell-nucleus measurements with a malignant/benign target.", question:"Can continuous measurements separate the two diagnoses?",
-      source:"https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-diagnostic", sourceLabel:"UCI Breast Cancer Wisconsin", sourceNote:"569 rows · 30 continuous predictors · no missing values", prepare:"df.copy()",
+      source:"https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-diagnostic", sourceLabel:"UCI Breast Cancer Wisconsin", sourceNote:"569 rows · 30 continuous predictors · no missing values", prepare:"df",
       scenarios:[
         scenario("continuous5","All features continuous · 5 less-redundant measures",["radius_mean","texture_mean","smoothness_mean","concavity_mean","symmetry_mean"]),
         scenario("continuous30","All features continuous · all 30",ALL_BREAST)
@@ -30,7 +30,7 @@
     penguins: {
       name:"Palmer Penguins · cleaned", file:"data/palmer-penguins.csv", embedded:"penguins", sep:",", rows:333, task:"classification", target:"species", split:"stratified", missing:false, binaryNumeric:[],
       description:"Complete measurements and context for three penguin species.", question:"How does preprocessing change as feature types are combined?",
-      source:"https://allisonhorst.github.io/palmerpenguins/", sourceLabel:"Palmer Penguins", sourceNote:"333 official complete cases · island can be a strong geography shortcut", prepare:"df.copy()",
+      source:"https://allisonhorst.github.io/palmerpenguins/", sourceLabel:"Palmer Penguins", sourceNote:"333 official complete cases · island can be a strong geography shortcut", prepare:"df",
       scenarios:[
         scenario("continuous","All features continuous",["bill_length_mm","bill_depth_mm","flipper_length_mm","body_mass_g"]),
         scenario("continuous_binary","Continuous + binary",["bill_length_mm","bill_depth_mm","flipper_length_mm","body_mass_g"],["sex"]),
@@ -41,7 +41,7 @@
     car: {
       name:"Car Evaluation", file:"data/car-evaluation.csv", embedded:"car", sep:",", rows:1728, task:"classification", target:"acceptability", split:"stratified", missing:false, binaryNumeric:[],
       description:"Six fully categorical car attributes with four acceptability classes.", question:"What changes when every predictor is categorical?",
-      source:"https://archive.ics.uci.edu/dataset/19/car+evaluation", sourceLabel:"UCI Car Evaluation", sourceNote:"1,728 rows · all categorical · no missing values", prepare:"df.copy()",
+      source:"https://archive.ics.uci.edu/dataset/19/car+evaluation", sourceLabel:"UCI Car Evaluation", sourceNote:"1,728 rows · all categorical · no missing values", prepare:"df",
       scenarios:[scenario("categorical","All features categorical",[],[],["buying","maintenance","doors","persons","luggage_boot","safety"])]
     },
     candy_class: {
@@ -87,7 +87,7 @@
     candy: {
       name:"Candy Power Ranking", file:"data/candy-power-ranking.csv", embedded:"candy", sep:",", rows:85, task:"regression", target:"winpercent", split:"random", missing:false, binaryNumeric:CANDY_BINARY,
       description:"Ingredient flags, dataset-relative sugar/price percentiles and head-to-head win rate.", question:"How do percentile measures and binary ingredients relate to popularity?",
-      source:"https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking", sourceLabel:"FiveThirtyEight Candy Power Ranking", sourceNote:"85 rows · clean numeric and binary predictors", prepare:"df.copy()",
+      source:"https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking", sourceLabel:"FiveThirtyEight Candy Power Ranking", sourceNote:"85 rows · clean numeric and binary predictors", prepare:"df",
       scenarios:[
         scenario("simple","1 continuous feature · simple regression",["sugarpercent"]),
         scenario("continuous","Multiple continuous features",["sugarpercent","pricepercent"]),
@@ -218,14 +218,33 @@ def one_r_rule_table(fitted, preprocessor, feature_names):
 
   const RESET_WORKSPACE_SOURCE = String.raw`
 __keep_data_flag = bool(__keep_data)
+__baseline_values = globals().get("__baseline_values_from_worker")
+if __baseline_values is None:
+    __baseline_values = globals().get("BASE_GLOBAL_VALUES")
+if not __baseline_values:
+    __baseline_values = {__name:globals()[__name] for __name in globals().get("BASE_GLOBAL_NAMES", ()) if __name in globals()}
+__baseline_names = set(__baseline_values)
+__protected_names = {"df", "__baseline_values_from_worker", "__raw_df_snapshot_from_worker"}
+__reset_helpers = {"__keep_data_flag", "__baseline_values", "__baseline_names", "__protected_names", "__reset_helpers"}
 for __name in list(globals()):
-    if __name not in BASE_GLOBAL_NAMES and not (__keep_data_flag and __name == "df"):
+    if __name not in __baseline_names and __name not in __protected_names and __name not in __reset_helpers:
         globals().pop(__name, None)
+globals().update(__baseline_values)
+if __keep_data_flag and "__raw_df_snapshot_from_worker" in globals():
+    globals()["df"] = __raw_df_snapshot_from_worker.copy(deep=True)
+elif not __keep_data_flag:
+    globals().pop("df", None)
+globals().pop("__baseline_values_from_worker", None)
+globals().pop("__raw_df_snapshot_from_worker", None)
+for __name in __reset_helpers:
+    globals().pop(__name, None)
 `;
 
   const WORKER_SOURCE = `
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js");
 let pyodide, ready = false, bootPromise = null;
+let baselineValues = null;
+let rawDataSnapshot = null;
 let queue = Promise.resolve();
 async function boot() {
   if (ready) return;
@@ -249,6 +268,7 @@ def display(value):
 \`);
     await pyodide.runPythonAsync(${py(ONE_R_HELPER_SOURCE)});
     await pyodide.runPythonAsync("BASE_GLOBAL_NAMES = frozenset(globals()) | {'BASE_GLOBAL_NAMES'}");
+    baselineValues = await pyodide.runPythonAsync("dict(globals())");
     ready = true;
   })().catch(error => { bootPromise = null; throw error; });
   return bootPromise;
@@ -259,8 +279,12 @@ async function handle(data) {
   try {
     await boot();
     if (type === "reset") {
-      pyodide.globals.set("__keep_data", Boolean(data.keepData));
+      const keepData = Boolean(data.keepData);
+      pyodide.globals.set("__keep_data", keepData);
+      if (baselineValues) pyodide.globals.set("__baseline_values_from_worker", baselineValues);
+      if (keepData && rawDataSnapshot) pyodide.globals.set("__raw_df_snapshot_from_worker", rawDataSnapshot);
       await pyodide.runPythonAsync(${py(RESET_WORKSPACE_SOURCE)});
+      if (!keepData) rawDataSnapshot = null;
       post(id, {ok:true});
       return;
     }
@@ -270,6 +294,7 @@ async function handle(data) {
       pyodide.globals.set("__profile_prepare", data.prepare);
       const raw = await pyodide.runPythonAsync(\`
 df = pd.read_csv(io.StringIO(__csv_text), sep=__csv_sep)
+__raw_df_snapshot_from_worker = df.copy(deep=True)
 profile_df = eval(__profile_prepare, globals())
 preview = profile_df.head(5).copy()
 json.dumps({
@@ -278,45 +303,57 @@ json.dumps({
   "missing": int(profile_df.isna().sum().sum())
 }, default=str)
 \`);
+      rawDataSnapshot = pyodide.globals.get("__raw_df_snapshot_from_worker");
+      pyodide.globals.delete("__raw_df_snapshot_from_worker");
       post(id, {ok:true, profile:JSON.parse(raw)});
       return;
     }
     if (type === "run") {
       pyodide.globals.set("__cell_code", data.code);
       const raw = await pyodide.runPythonAsync(\`
-__stdout, __stderr = io.StringIO(), io.StringIO()
+__io_from_worker = io
+__json_from_worker = json
+__base64_from_worker = base64
+__contextlib_from_worker = contextlib
+__ast_from_worker = ast
+__traceback_from_worker = traceback
+__pd_from_worker = pd
+__plt_from_worker = plt
+__stdout, __stderr = __io_from_worker.StringIO(), __io_from_worker.StringIO()
 __result, __error, __last_display = None, None, None
-plt.close("all")
+if __plt_from_worker is not None:
+    __plt_from_worker.close("all")
 try:
-    __tree = ast.parse(__cell_code, mode="exec")
-    with contextlib.redirect_stdout(__stdout), contextlib.redirect_stderr(__stderr):
-        if __tree.body and isinstance(__tree.body[-1], ast.Expr):
+    __tree = __ast_from_worker.parse(__cell_code, mode="exec")
+    with __contextlib_from_worker.redirect_stdout(__stdout), __contextlib_from_worker.redirect_stderr(__stderr):
+        if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
             __last = __tree.body.pop()
             exec(compile(__tree, "<cell>", "exec"), globals())
-            __result = eval(compile(ast.Expression(__last.value), "<cell>", "eval"), globals())
+            __result = eval(compile(__ast_from_worker.Expression(__last.value), "<cell>", "eval"), globals())
         else:
             exec(compile(__tree, "<cell>", "exec"), globals())
             __result = __last_display
 except Exception:
-    __error = traceback.format_exc()
+    __error = __traceback_from_worker.format_exc()
 __table = None
-if __error is None and isinstance(__result, pd.Series):
+if __error is None and __pd_from_worker is not None and isinstance(__result, __pd_from_worker.Series):
     __result = __result.to_frame()
-if __error is None and isinstance(__result, pd.DataFrame):
+if __error is None and __pd_from_worker is not None and isinstance(__result, __pd_from_worker.DataFrame):
     __shown = __result.head(50).iloc[:, :20]
-    __table = {"columns":[str(c) for c in __shown.columns], "rows":[[None if pd.isna(v) else v.item() if hasattr(v, "item") else v for v in row] for row in __shown.to_numpy().tolist()], "rowCount":int(len(__result)), "columnCount":int(len(__result.columns))}
+    __table = {"columns":[str(c) for c in __shown.columns], "rows":[[None if __pd_from_worker.isna(v) else v.item() if hasattr(v, "item") else v for v in row] for row in __shown.to_numpy().tolist()], "rowCount":int(len(__result)), "columnCount":int(len(__result.columns))}
 __charts = []
-for __number in plt.get_fignums():
-    __fig = plt.figure(__number)
-    __buffer = io.BytesIO()
-    __fig.savefig(__buffer, format="png", dpi=125, bbox_inches="tight", facecolor="#fffaf0")
-    __charts.append("data:image/png;base64," + base64.b64encode(__buffer.getvalue()).decode("ascii"))
-plt.close("all")
+if __plt_from_worker is not None:
+    for __number in __plt_from_worker.get_fignums():
+        __fig = __plt_from_worker.figure(__number)
+        __buffer = __io_from_worker.BytesIO()
+        __fig.savefig(__buffer, format="png", dpi=125, bbox_inches="tight", facecolor="#fffaf0")
+        __charts.append("data:image/png;base64," + __base64_from_worker.b64encode(__buffer.getvalue()).decode("ascii"))
+    __plt_from_worker.close("all")
 __value = None
 if __error is None and __table is None and __result is not None and not hasattr(__result, "figure"):
     try: __value = str(__result)
     except Exception: pass
-json.dumps({"status":"error" if __error else "ok", "error":__error, "stdout":__stdout.getvalue(), "stderr":__stderr.getvalue(), "table":__table, "charts":__charts, "value":__value}, default=str)
+__json_from_worker.dumps({"status":"error" if __error else "ok", "error":__error, "stdout":__stdout.getvalue(), "stderr":__stderr.getvalue(), "table":__table, "charts":__charts, "value":__value}, default=str)
 \`);
       post(id, {ok:true, output:JSON.parse(raw)});
       return;
@@ -621,13 +658,22 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     return html || " ";
   }
 
+  function modelFrameName(config) {
+    return config.prepare === "df" ? "df" : "model_df";
+  }
+
+  function modelFrameSetup(config) {
+    return config.prepare === "df" ? "" : `model_df = ${config.prepare}`;
+  }
+
   function frameCode(config, value, unsupervised = false) {
-    const targetLine = unsupervised ? "" : `y = model_df[${py(config.target)}].copy()`;
+    const frameName = modelFrameName(config);
+    const targetLine = unsupervised ? "" : `y = ${frameName}[${py(config.target)}].copy()`;
     return `# 1 · Frame the ${unsupervised ? "unsupervised question" : "prediction problem"}
 feature_names = ${py(featureNames(value))}
 
-model_df = ${config.prepare}
-X = model_df[feature_names].copy()
+${modelFrameSetup(config)}
+X = ${frameName}[feature_names].copy()
 ${targetLine}
 
 X.head()`;
@@ -635,13 +681,14 @@ X.head()`;
 
   function exploreCode(config, value, unsupervised = false) {
     if (unsupervised) {
+      const frameName = modelFrameName(config);
       const first = featureNames(value)[0], second = featureNames(value)[1] || featureNames(value)[0];
       return `# 2 · Explore inputs without consulting the reference target
-summary = model_df[feature_names].describe(include="all").T
+summary = ${frameName}[feature_names].describe(include="all").T
 fig, axes = plt.subplots(1, 2, figsize=(10, 3.6))
-${value.continuous.includes(first) ? `sns.histplot(data=model_df, x=${py(first)}, kde=True, ax=axes[0], color="#137c9c")` : `model_df[${py(first)}].value_counts().head(10).plot.bar(ax=axes[0], color="#137c9c")`}
+${value.continuous.includes(first) ? `sns.histplot(data=${frameName}, x=${py(first)}, kde=True, ax=axes[0], color="#137c9c")` : `${frameName}[${py(first)}].value_counts().head(10).plot.bar(ax=axes[0], color="#137c9c")`}
 axes[0].set_title(${py(first)})
-${value.continuous.includes(second) ? `sns.histplot(data=model_df, x=${py(second)}, kde=True, ax=axes[1], color="#7651a6")` : `model_df[${py(second)}].value_counts().head(10).plot.bar(ax=axes[1], color="#7651a6")`}
+${value.continuous.includes(second) ? `sns.histplot(data=${frameName}, x=${py(second)}, kde=True, ax=axes[1], color="#7651a6")` : `${frameName}[${py(second)}].value_counts().head(10).plot.bar(ax=axes[1], color="#7651a6")`}
 axes[1].set_title(${py(second)})
 fig.tight_layout()
 summary`;
@@ -1109,6 +1156,7 @@ test_result.round(3)`;
   }
 
   function kmeansRoute(config, value) {
+    const frameName = modelFrameName(config);
     return [
       task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),"What structure am I trying to discover without a target?"),
       task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),"What does my data look like?"),
@@ -1145,7 +1193,7 @@ sample_silhouette = silhouette_samples(quality_Z, quality_clusters)
 cluster_quality = pd.DataFrame({"cluster":quality_clusters, "silhouette":sample_silhouette}).groupby("cluster").agg(rows=("silhouette","size"), mean_silhouette=("silhouette","mean"), weakest=("silhouette","min")).reset_index()
 cluster_quality.round(3)`,"Are the groups balanced and well separated?"),
       task("profile","Explain the clusters","original feature units",`# 7 · Translate cluster IDs back into the original features
-profile_df = model_df[feature_names].copy()
+profile_df = ${frameName}[feature_names].copy()
 profile_df["cluster"] = clusters
 cluster_profile = profile_df.groupby("cluster")[feature_names].mean().round(2)
 cluster_profile.reset_index()`,"What does each group mean in the original features?"),
@@ -1162,6 +1210,7 @@ plot_df.head(12)`,"Can I see the discovered groups clearly in two dimensions?")
   }
 
   function hierarchicalRoute(config, value) {
+    const frameName = modelFrameName(config);
     return [
       task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),"What structure am I trying to discover without a target?"),
       task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),"What does my data look like?"),
@@ -1170,7 +1219,7 @@ plot_df.head(12)`,"Can I see the discovered groups clearly in two dimensions?")
 sample_size = min(500, len(Z))
 sample_index = np.random.default_rng(42).choice(len(Z), size=sample_size, replace=False)
 analysis_Z = Z[sample_index]
-analysis_rows = model_df.iloc[sample_index].copy()`,"What needs to be cleaned or transformed before measuring distances?"),
+analysis_rows = ${frameName}.iloc[sample_index].copy()`,"What needs to be cleaned or transformed before measuring distances?"),
       task("dendrogram","Build the dendrogram","Ward linkage sample",`# 4 · Inspect the hierarchy before choosing a cut
 from scipy.cluster.hierarchy import linkage, dendrogram
 linkage_matrix = linkage(analysis_Z, method="ward")
@@ -1218,15 +1267,16 @@ plot_df.head(12)`,"Can I see the sampled groups clearly in two dimensions?")
   }
 
   function pcaRoute(config, value) {
+    const frameName = modelFrameName(config);
     return [
       task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),"What structure am I trying to discover without a target?"),
       task("explore","Explore the data","correlation + scale",`# 2 · Inspect redundancy before PCA
-correlation = model_df[feature_names].corr()
+correlation = ${frameName}[feature_names].corr()
 fig, ax = plt.subplots(figsize=(7, 5))
 sns.heatmap(correlation, cmap="vlag", center=0, ax=ax)
 ax.set_title("Correlation among continuous inputs")
 fig.tight_layout()
-model_df[feature_names].describe().T`,"What does my data look like, and which inputs overlap?"),
+${frameName}[feature_names].describe().T`,"What does my data look like, and which inputs overlap?"),
       task("prepare","Prepare the data","scaled numeric inputs",clusterPreprocessing(config),"What needs to be cleaned or transformed?"),
       task("variance","Fit PCA and inspect explained variance","scree + cumulative variance",`# 4 · Fit PCA and inspect how much variance each component explains
 # Retaining 90% is a common rule of thumb, not a universal requirement.
@@ -1257,7 +1307,7 @@ loading_view["largest_absolute_loading"] = loading_view.abs().max(axis=1)
 loading_view.sort_values("largest_absolute_loading", ascending=False).head(20).round(3)`,"Which original inputs contribute most to each principal component?"),
       task("project","Project the rows","labels only for interpretation",`# 7 · Project rows, then add labels only for interpretation
 projection = full_pca.transform(Z)[:, :2]
-reference_label = model_df[${py(config.target)}].copy()
+reference_label = ${frameName}[${py(config.target)}].copy()
 plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "reference":reference_label.to_numpy()})
 fig, ax = plt.subplots(figsize=(6.6, 4.5), layout="constrained")
 ${config.task === "classification" ? `plot_df["reference"] = plot_df["reference"].astype(str)
