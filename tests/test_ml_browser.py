@@ -100,6 +100,52 @@ def main() -> int:
             raise AssertionError("A downstream route step remained enabled after editing an earlier cell.")
         run_steps(page, 1)
 
+        page.locator("#addCellButton").click()
+        warning_editor = page.locator("#notebookPanel textarea").last
+        warning_editor.fill(
+            "import warnings\n"
+            "warnings.warn('This is a harmless teaching warning', UserWarning)\n"
+            "print('warning cell completed')"
+        )
+        page.locator("#notebookPanel article").last.locator("button.run").click()
+        warning_index = page.locator("#notebookPanel article").count() - 1
+        wait_for_cell(page, warning_index)
+        if page.locator("#notebookPanel article").nth(warning_index).get_attribute("data-status") != "done":
+            raise AssertionError("A harmless Python warning incorrectly failed its cell.")
+        warning_item = page.locator("#outputList .output-item[data-warnings='true']").last
+        if warning_item.count() != 1 or "This is a harmless teaching warning" not in warning_item.inner_text():
+            raise AssertionError("The browser did not render the captured Python warning.")
+        if page.locator("#outputList .output-item[data-status='error']").count():
+            raise AssertionError("A harmless Python warning produced a red/error result.")
+        next_route = page.locator("#routeStrip .route-card").nth(1)
+        if next_route.is_disabled():
+            raise AssertionError("A warning cell incorrectly blocked the next guided route step.")
+        next_route.click()
+        next_route_index = page.locator("#notebookPanel article").count() - 1
+        wait_for_cell(page, next_route_index)
+
+        page.locator("#addCellButton").click()
+        error_editor = page.locator("#notebookPanel textarea").last
+        error_editor.fill(
+            "import warnings\n"
+            "warnings.warn('warning before exception', UserWarning)\n"
+            "raise ValueError('intentional error rendering check')"
+        )
+        page.locator("#notebookPanel article").last.locator("button.run").click()
+        error_index = page.locator("#notebookPanel article").count() - 1
+        page.wait_for_function(
+            "index => ['done', 'error'].includes(document.querySelectorAll('#notebookPanel article')[index]?.dataset.status)",
+            arg=error_index,
+            timeout=120_000,
+        )
+        if page.locator("#notebookPanel article").nth(error_index).get_attribute("data-status") != "error":
+            raise AssertionError("A genuine exception did not fail its cell.")
+        error_item = page.locator("#outputList .output-item[data-status='error']").last
+        if error_item.count() != 1 or "intentional error rendering check" not in error_item.inner_text():
+            raise AssertionError("The browser did not render the genuine exception as an error.")
+        if error_item.locator(".console-output.warning").count():
+            raise AssertionError("A warning emitted before an exception was rendered as a successful warning.")
+
         select_route(page, "gapminder", "simple", "simple_linear", 9)
         run_steps(page, 9)
         supervised_statuses = page.locator("#notebookPanel article").evaluate_all(

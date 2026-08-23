@@ -238,6 +238,7 @@ globals().pop("__baseline_values_from_worker", None)
 globals().pop("__raw_df_snapshot_from_worker", None)
 for __name in __reset_helpers:
     globals().pop(__name, None)
+globals().pop("__name", None)
 `;
 
   const WORKER_SOURCE = `
@@ -254,7 +255,7 @@ async function boot() {
     await pyodide.loadPackage(["pandas","numpy","matplotlib","scipy","scikit-learn","micropip"]);
     await pyodide.runPythonAsync("import micropip; await micropip.install('seaborn==0.13.2')");
     await pyodide.runPythonAsync(\`
-import io, json, base64, contextlib, ast, traceback
+import io, json, base64, contextlib, ast, traceback, warnings
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -319,22 +320,28 @@ __ast_from_worker = ast
 __traceback_from_worker = traceback
 __pd_from_worker = pd
 __plt_from_worker = plt
+__warnings_from_worker = warnings
 __stdout, __stderr = __io_from_worker.StringIO(), __io_from_worker.StringIO()
 __result, __error, __last_display = None, None, None
+__caught_warnings = []
 if __plt_from_worker is not None:
     __plt_from_worker.close("all")
 try:
-    __tree = __ast_from_worker.parse(__cell_code, mode="exec")
-    with __contextlib_from_worker.redirect_stdout(__stdout), __contextlib_from_worker.redirect_stderr(__stderr):
-        if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
-            __last = __tree.body.pop()
-            exec(compile(__tree, "<cell>", "exec"), globals())
-            __result = eval(compile(__ast_from_worker.Expression(__last.value), "<cell>", "eval"), globals())
-        else:
-            exec(compile(__tree, "<cell>", "exec"), globals())
-            __result = __last_display
+    with __warnings_from_worker.catch_warnings(record=True) as __warning_records:
+        __caught_warnings = __warning_records
+        __warnings_from_worker.simplefilter("always")
+        __tree = __ast_from_worker.parse(__cell_code, mode="exec")
+        with __contextlib_from_worker.redirect_stdout(__stdout), __contextlib_from_worker.redirect_stderr(__stderr):
+            if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
+                __last = __tree.body.pop()
+                exec(compile(__tree, "<cell>", "exec"), globals())
+                __result = eval(compile(__ast_from_worker.Expression(__last.value), "<cell>", "eval"), globals())
+            else:
+                exec(compile(__tree, "<cell>", "exec"), globals())
+                __result = __last_display
 except Exception:
     __error = __traceback_from_worker.format_exc()
+__warnings = [{"category":__warning.category.__name__, "message":str(__warning.message)} for __warning in __caught_warnings]
 __table = None
 if __error is None and __pd_from_worker is not None and isinstance(__result, __pd_from_worker.Series):
     __result = __result.to_frame()
@@ -353,7 +360,7 @@ __value = None
 if __error is None and __table is None and __result is not None and not hasattr(__result, "figure"):
     try: __value = str(__result)
     except Exception: pass
-__json_from_worker.dumps({"status":"error" if __error else "ok", "error":__error, "stdout":__stdout.getvalue(), "stderr":__stderr.getvalue(), "table":__table, "charts":__charts, "value":__value}, default=str)
+__json_from_worker.dumps({"status":"error" if __error else "ok", "error":__error, "warnings":__warnings, "stdout":__stdout.getvalue(), "stderr":__stderr.getvalue(), "table":__table, "charts":__charts, "value":__value}, default=str)
 \`);
       post(id, {ok:true, output:JSON.parse(raw)});
       return;
@@ -1528,8 +1535,9 @@ explore_df.head(10)`;
   }
 
   function renderOutputItem(cell) {
-    const result = cell.output, item = document.createElement("article"); item.className = "output-item"; item.dataset.status = result.status;
-    item.innerHTML = `<span class="output-number">${String(cell.number).padStart(2,"0")}</span><div class="output-item-head"><strong></strong><span>${result.status === "ok" ? "OK" : "ERROR"}</span></div>`;
+    const result = cell.output, warnings = Array.isArray(result.warnings) ? result.warnings : [], item = document.createElement("article"); item.className = "output-item"; item.dataset.status = result.status; item.dataset.warnings = warnings.length ? "true" : "false";
+    const statusLabel = result.status === "ok" ? warnings.length ? "WARNING" : "OK" : "ERROR";
+    item.innerHTML = `<span class="output-number">${String(cell.number).padStart(2,"0")}</span><div class="output-item-head"><strong></strong><span>${statusLabel}</span></div>`;
     $("strong", item).textContent = cell.label;
     if (result.status !== "ok") {
       item.append(outputTitle("Python needs a repair", "traceback"));
@@ -1540,9 +1548,13 @@ explore_df.head(10)`;
       item.append(outputTitle(`Chart ${index + 1}`, "PNG preview"));
       const wrap = document.createElement("div"); wrap.className = "chart-wrap"; const image = document.createElement("img"); image.src = chart; image.alt = `Chart ${index + 1} generated by ${cell.label}`; wrap.append(image); item.append(wrap);
     });
+    if (warnings.length) {
+      item.append(outputTitle("Python warning", `${warnings.length} captured · cell succeeded`));
+      const pre = document.createElement("pre"); pre.className = "console-output warning"; pre.textContent = warnings.map(warning => `${warning.category || "Warning"}: ${warning.message || warning}`).join("\n"); item.append(pre);
+    }
     if (result.value) { item.append(outputTitle("Value", "Python expression")); const pre = document.createElement("pre"); pre.className = "console-output"; pre.textContent = result.value; item.append(pre); }
-    if (result.stdout || result.stderr) { item.append(outputTitle("Console", result.stderr ? "stderr included" : "stdout")); const pre = document.createElement("pre"); pre.className = `console-output${result.stderr ? " error" : ""}`; pre.textContent = (result.stdout || "") + (result.stderr ? `\n${result.stderr}` : ""); item.append(pre); }
-    if (!result.table && !result.charts?.length && !result.value && !result.stdout && !result.stderr) { const note = document.createElement("p"); note.className = "result-note"; note.textContent = "Cell ran successfully and updated the shared Python workspace."; item.append(note); }
+    if (result.stdout || result.stderr) { item.append(outputTitle("Console", result.stdout && result.stderr ? "stdout + stderr" : result.stderr ? "stderr" : "stdout")); const pre = document.createElement("pre"); pre.className = "console-output"; pre.textContent = [result.stdout, result.stderr].filter(Boolean).join("\n"); item.append(pre); }
+    if (!result.table && !result.charts?.length && !result.value && !warnings.length && !result.stdout && !result.stderr) { const note = document.createElement("p"); note.className = "result-note"; note.textContent = "Cell ran successfully and updated the shared Python workspace."; item.append(note); }
     return item;
   }
 
