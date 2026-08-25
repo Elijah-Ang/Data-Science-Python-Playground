@@ -38,8 +38,8 @@ def wait_for_cell(page, index: int, timeout: int = 120_000) -> None:
         raise AssertionError(f"Browser cell {index + 1} failed:\n{output}")
 
 
-def run_steps(page, count: int) -> None:
-    for index in range(count):
+def run_steps(page, count: int, start: int = 0) -> None:
+    for index in range(start, start + count):
         button = page.locator("#routeStrip .route-card").nth(index)
         button.wait_for(state="visible", timeout=15_000)
         if button.is_disabled():
@@ -147,7 +147,11 @@ def main() -> int:
             raise AssertionError("A warning emitted before an exception was rendered as a successful warning.")
 
         select_route(page, "gapminder", "simple", "simple_linear", 9)
-        run_steps(page, 9)
+        run_steps(page, 3)
+        describe_text = page.locator("#outputList .output-item").last.inner_text()
+        if "gdpPercap" not in describe_text:
+            raise AssertionError("Regression describe().T output did not preserve the feature name gdpPercap.")
+        run_steps(page, 6, start=3)
         supervised_statuses = page.locator("#notebookPanel article").evaluate_all(
             "articles => articles.map(article => article.dataset.status)"
         )
@@ -166,6 +170,57 @@ def main() -> int:
         if not page.locator("#notebookPanel article").nth(8).locator("button.run").is_disabled():
             raise AssertionError("The final notebook cell remained rerunnable after using the test set.")
 
+        select_route(page, "car", "categorical", "one_r", 9)
+        run_steps(page, 9)
+        one_r_item = page.locator("#outputList .output-item").nth(7)
+        one_r_table = one_r_item.locator("table")
+        headers = one_r_table.locator("thead th").all_inner_texts()
+        if headers != ["feature", "interval", "predicted_class", "training_rows"]:
+            raise AssertionError(f"Car One-R rule table has unexpected columns: {headers}")
+        row_nodes = one_r_table.locator("tbody tr")
+        if not row_nodes.count():
+            raise AssertionError("Car One-R diagnostic did not render any rules.")
+        categories = {
+            "buying": {"low", "med", "high", "vhigh"},
+            "maintenance": {"low", "med", "high", "vhigh"},
+            "doors": {"2", "3", "4", "5more"},
+            "persons": {"2", "4", "more"},
+            "luggage_boot": {"small", "med", "big"},
+            "safety": {"low", "med", "high"},
+        }
+        parsed_rows = [
+            dict(zip(headers, row_nodes.nth(index).locator("td").all_inner_texts()))
+            for index in range(row_nodes.count())
+        ]
+        selected_feature = parsed_rows[0]["feature"]
+        if selected_feature not in categories:
+            raise AssertionError(f"Car One-R selected an unknown feature: {selected_feature}")
+        displayed_values = {row["interval"] for row in parsed_rows}
+        if not displayed_values <= categories[selected_feature] or any("[" in value for value in displayed_values):
+            raise AssertionError(f"Car One-R displayed a false or numeric interval for {selected_feature}: {parsed_rows}")
+        if sum(int(row["training_rows"]) for row in parsed_rows) != 1382:
+            raise AssertionError(f"Car One-R rule counts do not sum to the 1,382 training rows: {parsed_rows}")
+
+        page.locator("#addCellButton").click()
+        count_check_editor = page.locator("#notebookPanel textarea").last
+        count_check_editor.fill(
+            "selected_feature = feature_names[fitted.best_feature_]\n"
+            "rule_count_check = (\n"
+            "    set(one_r_rules['interval']) == set(X_train[selected_feature].astype(str).unique())\n"
+            "    and int(one_r_rules['training_rows'].sum()) == len(X_train)\n"
+            "    and all(\n"
+            "        int(row.training_rows) == int((X_train[selected_feature].astype(str) == row.interval).sum())\n"
+            "        for row in one_r_rules.itertuples()\n"
+            "    )\n"
+            ")\n"
+            "rule_count_check"
+        )
+        page.locator("#notebookPanel article").last.locator("button.run").click()
+        count_check_index = page.locator("#notebookPanel article").count() - 1
+        wait_for_cell(page, count_check_index)
+        if "True" not in page.locator("#outputList .output-item").last.inner_text():
+            raise AssertionError("Car One-R rule counts did not match original category membership.")
+
         select_route(page, "breast", "continuous5", "pca", 7)
         run_steps(page, 4)
         pca_statuses = page.locator("#notebookPanel article").evaluate_all(
@@ -176,6 +231,10 @@ def main() -> int:
         pca_text = page.locator("#outputList").inner_text()
         if "explained_variance" not in pca_text or "cumulative_variance" not in pca_text:
             raise AssertionError("PCA variance output was not produced in the browser runtime.")
+        run_steps(page, 2, start=4)
+        loadings_text = page.locator("#outputList .output-item").nth(5).inner_text()
+        if "radius_mean" not in loadings_text:
+            raise AssertionError("PCA loadings output did not preserve the source feature name radius_mean.")
         page.locator("#addCellButton").click()
         custom_editor = page.locator("#notebookPanel textarea").last
         custom_editor.fill("type(full_pca).__name__")
@@ -224,7 +283,10 @@ def main() -> int:
 
     if browser_errors:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
-    print("Browser/Pyodide smoke test passed: invalidation, complete supervised 9-step route, and fitted PCA route.")
+    print(
+        "Browser/Pyodide smoke test passed: invalidation, indexed describe/PCA tables, "
+        "Car One-R rules, complete supervised route, fitted PCA route, and reset recovery."
+    )
     return 0
 
 
