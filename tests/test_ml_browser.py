@@ -146,7 +146,7 @@ def main() -> int:
         if error_item.locator(".console-output.warning").count():
             raise AssertionError("A warning emitted before an exception was rendered as a successful warning.")
 
-        select_route(page, "breast", "continuous5", "logistic", 9)
+        select_route(page, "breast", "continuous5", "knn_cls", 9)
         run_steps(page, 9)
         first_teaching = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='question']")
         first_cue = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='reading-cue']")
@@ -154,6 +154,24 @@ def main() -> int:
             raise AssertionError("Classification journey did not show the guided learner question beside Step 1.")
         if first_cue.count() != 1 or "X contains" not in first_cue.inner_text():
             raise AssertionError("Classification journey did not show the Step 1 reading cue.")
+        frame_concept_text = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in frame_concept_text for value in ("FEATURE / TARGET", "X / y", "one tumour sample")):
+            raise AssertionError("Classification Step 1 did not explain feature/target/X/y and row meaning.")
+        split_concept_text = page.locator("#notebookPanel article").nth(1).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in split_concept_text for value in ("TRAINING / FINAL TEST", "80 / 20", "random_state=42", "stratify=y")):
+            raise AssertionError("Classification Step 2 did not explain training/test, reproducibility, and stratification.")
+        prepare_concept_text = page.locator("#notebookPanel article").nth(3).locator("[data-teaching-role='concept']").inner_text()
+        if "KNN compares distances" not in prepare_concept_text or "scaled" not in prepare_concept_text:
+            raise AssertionError("KNN preparation did not explain why scaling is used.")
+        model_concept_text = page.locator("#notebookPanel article").nth(4).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in model_concept_text for value in ("PIPELINE", "fit()", "predict()", "validation rows do not leak")):
+            raise AssertionError("Pipeline/fit/predict teaching was not visible beside the model cell.")
+        cv_concept_text = page.locator("#notebookPanel article").nth(5).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in cv_concept_text for value in ("FOLD", "trains on 4 parts", "final test set is not involved", "Stratified folds")):
+            raise AssertionError("Classification cross-validation mechanics were not explained.")
+        tune_concept_text = page.locator("#notebookPanel article").nth(6).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in tune_concept_text for value in ("n_neighbors (k)", "GridSearchCV", "final test set stays untouched")):
+            raise AssertionError("KNN hyperparameter/GridSearchCV teaching was not visible.")
         classification_baseline = page.locator("#outputList .output-item").nth(5)
         if classification_baseline.locator("table").count() != 1:
             raise AssertionError("The classification fold table disappeared when the CV teaching summary was added.")
@@ -170,6 +188,12 @@ def main() -> int:
 
         select_route(page, "gapminder", "simple", "simple_linear", 9)
         run_steps(page, 3)
+        gapminder_frame = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in gapminder_frame for value in ("GDP per person", "life expectancy", "one country in 2007", "X / y")):
+            raise AssertionError("Gapminder did not explain its feature, target, row, and X/y objects.")
+        gapminder_split = page.locator("#notebookPanel article").nth(1).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in gapminder_split for value in ("Training data", "final test set", "80%", "random_state=42")):
+            raise AssertionError("Gapminder split concepts were not visible.")
         describe_text = page.locator("#outputList .output-item").last.inner_text()
         if "gdpPercap" not in describe_text:
             raise AssertionError("Regression describe().T output did not preserve the feature name gdpPercap.")
@@ -196,6 +220,30 @@ def main() -> int:
             raise AssertionError("The final supervised route remained rerunnable after using the test set.")
         if not page.locator("#notebookPanel article").nth(8).locator("button.run").is_disabled():
             raise AssertionError("The final notebook cell remained rerunnable after using the test set.")
+
+        gapminder_model = page.locator("#notebookPanel article").nth(4).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in gapminder_model for value in ("PIPELINE", "fit()", "predict()", "numeric values")):
+            raise AssertionError("Gapminder Pipeline/fit/predict teaching was incomplete.")
+        if "keeps the model's current/default settings" not in page.locator("#notebookPanel article").nth(6).locator("[data-teaching-role='concept']").inner_text():
+            raise AssertionError("Gapminder keep-defaults teaching was missing.")
+
+        select_route(page, "penguins", "all_types", "logistic", 9)
+        run_steps(page, 9)
+        penguins_prepare = page.locator("#notebookPanel article").nth(3).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in penguins_prepare for value in ("ColumnTransformer", "scale", "one-hot encode")):
+            raise AssertionError("Mixed Penguins preprocessing did not explain the ColumnTransformer plan.")
+        penguins_model = page.locator("#notebookPanel article").nth(4).locator("[data-teaching-role='concept']").inner_text()
+        if "validation rows do not leak" not in penguins_model:
+            raise AssertionError("Mixed Penguins Pipeline leakage explanation was missing.")
+
+        select_route(page, "car", "categorical", "naive_bayes", 9)
+        run_steps(page, 5)
+        car_prepare = page.locator("#notebookPanel article").nth(3).locator("[data-teaching-role='concept']").inner_text()
+        if not all(value in car_prepare for value in ("one-hot encoding", "SAFE PREDICTION")):
+            raise AssertionError("Car categorical preprocessing did not explain one-hot encoding and unknown categories.")
+        car_model = page.locator("#notebookPanel article").nth(4).locator("[data-teaching-role='concept']").inner_text()
+        if "class labels" not in car_model:
+            raise AssertionError("Classification predict teaching did not identify class labels.")
 
         select_route(page, "car", "categorical", "one_r", 9)
         run_steps(page, 9)
@@ -251,6 +299,12 @@ def main() -> int:
         select_route(page, "seoul", "simple", "simple_linear", 9)
         run_steps(page, 6)
         seoul_baseline = page.locator("#outputList .output-item").nth(5)
+        seoul_split_text = page.locator("#notebookPanel article").nth(1).locator("[data-teaching-role='concept']").inner_text()
+        if "CHRONOLOGICAL SPLIT" not in seoul_split_text or "random_state=42" in seoul_split_text:
+            raise AssertionError("Seoul split teaching did not distinguish chronological evaluation from random splitting.")
+        seoul_cv_concept_text = page.locator("#notebookPanel article").nth(5).locator("[data-teaching-role='concept']").inner_text()
+        if "training window grows" not in seoul_cv_concept_text or "shuffle=True" in seoul_cv_concept_text:
+            raise AssertionError("Seoul TimeSeriesSplit mechanics were not explained correctly.")
         seoul_summary = seoul_baseline.locator("[data-teaching-result='cv-summary']")
         if seoul_summary.count() != 1 or seoul_summary.get_attribute("data-summary-time-series") != "true":
             raise AssertionError("Seoul did not render a time-series CV summary.")
@@ -321,9 +375,9 @@ def main() -> int:
     if browser_errors:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
     print(
-        "Browser/Pyodide smoke test passed: teaching questions/cues, metric help, CV/final comparisons, "
-        "Seoul time-aware wording, invalidation, indexed describe/PCA tables, Car One-R rules, "
-        "complete supervised route, fitted PCA route, and reset recovery."
+        "Browser/Pyodide smoke test passed: Phase 1A evidence teaching, Phase 1B shared concepts, "
+        "classification/regression/mixed/categorical/time-aware journeys, invalidation, indexed tables, "
+        "Car One-R rules, fitted PCA route, and reset recovery."
     )
     return 0
 

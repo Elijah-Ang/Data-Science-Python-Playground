@@ -20,7 +20,7 @@
   const DATASETS = {
     breast: {
       name:"Breast Cancer Wisconsin (Diagnostic)", file:"data/breast-cancer.csv", embedded:"breast", sep:",", rows:569, task:"classification", target:"diagnosis", split:"stratified", missing:false, binaryNumeric:[],
-      description:"Clean cell-nucleus measurements with a malignant/benign target.", question:"Can continuous measurements separate the two diagnoses?",
+      description:"Clean cell-nucleus measurements with a malignant/benign target.", question:"Can continuous measurements separate the two diagnoses?", rowMeaning:"one tumour sample",
       source:"https://archive.ics.uci.edu/dataset/17/breast-cancer-wisconsin-diagnostic", sourceLabel:"UCI Breast Cancer Wisconsin", sourceNote:"569 rows · 30 continuous predictors · no missing values", prepare:"df",
       scenarios:[
         scenario("continuous5","All features continuous · 5 less-redundant measures",["radius_mean","texture_mean","smoothness_mean","concavity_mean","symmetry_mean"]),
@@ -29,7 +29,7 @@
     },
     penguins: {
       name:"Palmer Penguins · cleaned", file:"data/palmer-penguins.csv", embedded:"penguins", sep:",", rows:333, task:"classification", target:"species", split:"stratified", missing:false, binaryNumeric:[],
-      description:"Complete measurements and context for three penguin species.", question:"How does preprocessing change as feature types are combined?",
+      description:"Complete measurements and context for three penguin species.", question:"How does preprocessing change as feature types are combined?", rowMeaning:"one penguin",
       source:"https://allisonhorst.github.io/palmerpenguins/", sourceLabel:"Palmer Penguins", sourceNote:"333 official complete cases · island can be a strong geography shortcut", prepare:"df",
       scenarios:[
         scenario("continuous","All features continuous",["bill_length_mm","bill_depth_mm","flipper_length_mm","body_mass_g"]),
@@ -40,13 +40,13 @@
     },
     car: {
       name:"Car Evaluation", file:"data/car-evaluation.csv", embedded:"car", sep:",", rows:1728, task:"classification", target:"acceptability", split:"stratified", missing:false, binaryNumeric:[],
-      description:"Six fully categorical car attributes with four acceptability classes.", question:"What changes when every predictor is categorical?",
+      description:"Six fully categorical car attributes with four acceptability classes.", question:"What changes when every predictor is categorical?", rowMeaning:"one car",
       source:"https://archive.ics.uci.edu/dataset/19/car+evaluation", sourceLabel:"UCI Car Evaluation", sourceNote:"1,728 rows · all categorical · no missing values", prepare:"df",
       scenarios:[scenario("categorical","All features categorical",[],[],["buying","maintenance","doors","persons","luggage_boot","safety"])]
     },
     candy_class: {
       name:"Candy Popularity · binary target", file:"data/candy-power-ranking.csv", embedded:"candy", sep:",", rows:85, task:"classification", target:"popular", split:"stratified", missing:false, binaryNumeric:CANDY_BINARY, theme:"candy",
-      description:"Ingredient flags and dataset-relative percentiles with a fixed majority-win target.", question:"Can binary ingredients classify a candy as winning at least half its matchups?",
+      description:"Ingredient flags and dataset-relative percentiles with a fixed majority-win target.", question:"Can binary ingredients classify a candy as winning at least half its matchups?", rowMeaning:"one candy",
       source:"https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking", sourceLabel:"FiveThirtyEight Candy Power Ranking", sourceNote:"85 rows · clean · target fixed at a 50% win rate", prepare:"df.assign(popular=np.where(df['winpercent'] >= 50, '50% or above', 'below 50%'))",
       scenarios:[
         scenario("binary","All features binary",[],CANDY_BINARY),
@@ -55,7 +55,7 @@
     },
     wine: {
       name:"Wine Quality", file:"data/wine-quality.csv", embedded:"wine", sep:";", rows:5320, task:"regression", target:"quality", split:"random", missing:false, binaryNumeric:[],
-      description:"Wine chemistry and type with an ordered 0–10 sensory score treated as regression.", question:"Can chemistry estimate quality, and does the relationship curve?",
+      description:"Wine chemistry and type with an ordered 0–10 sensory score treated as regression.", question:"Can chemistry estimate quality, and does the relationship curve?", rowMeaning:"one wine sample",
       source:"https://archive.ics.uci.edu/dataset/186/wine+quality", sourceLabel:"UCI Wine Quality", sourceNote:"5,320 distinct rows · exact duplicates removed before splitting", prepare:"df.drop_duplicates().reset_index(drop=True)",
       scenarios:[
         scenario("simple","1 continuous feature · simple regression",["alcohol"]),
@@ -65,7 +65,7 @@
     },
     seoul: {
       name:"Seoul Bike Sharing Demand", file:"data/seoul-bike.csv", embedded:"seoul", sep:",", rows:8760, task:"regression", target:"Rented Bike Count", split:"time", missing:false, binaryNumeric:[],
-      description:"Hourly demand, weather and calendar context in chronological order.", question:"Can we predict later demand without leaking future rows backward?",
+      description:"Hourly demand, weather and calendar context in chronological order.", question:"Can we predict later demand without leaking future rows backward?", rowMeaning:"one hourly rental observation",
       source:"https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand", sourceLabel:"UCI Seoul Bike Sharing", sourceNote:"8,760 hourly rows · chronological 80/20 holdout", prepare:"df.assign(_date=pd.to_datetime(df['Date'], dayfirst=True)).sort_values(['_date','Hour']).reset_index(drop=True)",
       scenarios:[
         scenario("simple","1 continuous feature · simple regression",["Temperature(°C)"]),
@@ -77,7 +77,7 @@
     },
     gapminder: {
       name:"Gapminder · 2007 snapshot", file:"data/gapminder.csv", embedded:"gapminder", sep:",", rows:142, task:"regression", target:"lifeExp", split:"random", missing:false, binaryNumeric:[],
-      description:"A 2007 snapshot from the archived five-year Gapminder teaching extract.", question:"Is the wealth–longevity relationship straight or curved?",
+      description:"A 2007 snapshot from the archived five-year Gapminder teaching extract.", question:"Is the wealth–longevity relationship straight or curved?", rowMeaning:"one country in 2007",
       source:"https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv", sourceLabel:"Plotly Gapminder CSV", sourceNote:"142 countries in 2007 · one leakage-safe snapshot", prepare:"df[df['year'].eq(2007)].copy()",
       scenarios:[
         scenario("simple","1 continuous feature · simple regression",["gdpPercap"]),
@@ -86,7 +86,7 @@
     },
     candy: {
       name:"Candy Power Ranking", file:"data/candy-power-ranking.csv", embedded:"candy", sep:",", rows:85, task:"regression", target:"winpercent", split:"random", missing:false, binaryNumeric:CANDY_BINARY,
-      description:"Ingredient flags, dataset-relative sugar/price percentiles and head-to-head win rate.", question:"How do percentile measures and binary ingredients relate to popularity?",
+      description:"Ingredient flags, dataset-relative sugar/price percentiles and head-to-head win rate.", question:"How do percentile measures and binary ingredients relate to popularity?", rowMeaning:"one candy",
       source:"https://github.com/fivethirtyeight/data/tree/master/candy-power-ranking", sourceLabel:"FiveThirtyEight Candy Power Ranking", sourceNote:"85 rows · clean numeric and binary predictors", prepare:"df",
       scenarios:[
         scenario("simple","1 continuous feature · simple regression",["sugarpercent"]),
@@ -774,12 +774,218 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     return "Look for a pass-through or model-appropriate numeric preparation without unnecessary transformation.";
   }
 
-  function supervisedTeaching(config, value, modelId) {
+  function concept(key, label, text, keys = [key]) {
+    return {key, label, text, keys};
+  }
+
+  const FRIENDLY_COLUMN_NAMES = Object.freeze({
+    gdpPercap:"GDP per person",
+    lifeExp:"life expectancy",
+    diagnosis:"diagnosis class",
+    species:"penguin species",
+    acceptability:"car acceptability",
+    popular:"popularity class",
+    quality:"wine quality",
+    winpercent:"candy win rate",
+    "Rented Bike Count":"bike-rental demand",
+    "Temperature(°C)":"temperature",
+    "Humidity(%)":"humidity",
+    "Wind speed (m/s)":"wind speed",
+    "Visibility (10m)":"visibility",
+    "Solar Radiation (MJ/m2)":"solar radiation",
+    "Rainfall(mm)":"rainfall",
+    "Snowfall (cm)":"snowfall"
+  });
+
+  function friendlyColumnName(name) {
+    return FRIENDLY_COLUMN_NAMES[name] || name;
+  }
+
+  function featureGrounding(config, value) {
+    const names = [...value.continuous, ...value.binary, ...value.categorical];
+    const labels = names.map(name => `${friendlyColumnName(name)} (${name})`);
+    const featureText = labels.length === 1
+      ? `Feature: ${labels[0]}`
+      : labels.length <= 3
+        ? `Features: ${labels.join(", ")}`
+        : `Features: ${labels.length} selected inputs, including ${labels.slice(0, 3).map(friendlyColumnName).join(", ")}`;
+    const targetText = friendlyColumnName(config.target);
+    const derived = config.target === "popular" ? " It is derived from winpercent at the 50% cutoff before modelling." : "";
+    return {featureText, targetText:targetText + derived, rowText:config.rowMeaning || "one row in the selected modelling frame"};
+  }
+
+  function frameConcepts(config, value) {
+    const grounding = featureGrounding(config, value);
+    const frameText = config.prepare === "df"
+      ? "X is the selected feature table and y is the target vector. The letters are a common convention, not mandatory names."
+      : "X is the selected feature table and y is the target vector from the modelling frame created for this route. The letters are a common convention, not mandatory names.";
+    return [
+      concept("feature-target", "FEATURE / TARGET", `A feature is information the model can use; the target is what we want it to predict. ${grounding.featureText}; target: ${grounding.targetText}.`, ["feature", "target"]),
+      concept("X-y", "X / y", frameText, ["X", "y"]),
+      concept("row", "ROW", `Here, one row represents ${grounding.rowText}.`)
+    ];
+  }
+
+  function splitConcepts(config) {
+    const concepts = [
+      concept("training-final", "TRAINING / FINAL TEST", "Training data are the rows used while fitting, validating, tuning, and diagnosing. The final test set is saved until the end and is not used for fitting, tuning, or model selection.", ["training-data", "final-test-set"]),
+      concept("eighty-twenty", "80 / 20", "This walkthrough uses 80% for training plus cross-validation and saves 20% for the final test. That is a practical teaching choice, not a universal rule.", ["80-20-split"])
+    ];
+    if (config.split === "time") {
+      concepts.push(concept("chronological", "CHRONOLOGICAL SPLIT", "For time-based prediction, earlier rows stay in training and the latest rows form the final test. Random splitting could let later observations influence evaluation of earlier periods.", ["chronological-split"]));
+    } else {
+      const stratified = config.task === "classification" ? " For classification, stratify=y keeps class proportions roughly similar in both parts; it does not make them identical." : "";
+      concepts.push(concept("random-reproducible", "RANDOM / REPRODUCIBLE", `Ordinary routes divide rows randomly rather than by original order. random_state=42 makes the same split reproducible; 42 itself is not special.${stratified}`, ["random-split", "random-state", ...(config.task === "classification" ? ["stratification"] : [])]));
+    }
+    return concepts;
+  }
+
+  function scalingReason(modelId) {
+    if (modelId === "knn_cls") return "KNN compares distances. Without scaling, a feature with larger numbers could dominate the distance.";
+    if (modelId === "svm_cls") return "SVM uses distances and boundaries, so similar numeric scales help prevent one measurement scale from dominating.";
+    if (modelId === "logistic") return "Scaling helps optimisation and lets regularisation treat coefficients more comparably when measurement scales differ.";
+    if (["mlp_cls", "mlp_reg"].includes(modelId)) return "Neural networks usually train more smoothly when numeric inputs are on similar scales.";
+    if (modelId === "polynomial") return "The model scales its expanded terms before Ridge regularisation so terms with different sizes are treated more comparably.";
+    return MODELS[modelId]?.preprocessNote || "Scaling puts numeric inputs on more comparable scales.";
+  }
+
+  function preprocessingPlan(config, value, modelId) {
+    const model = MODELS[modelId];
+    const numericBinary = value.binary.filter(name => (config.binaryNumeric || []).includes(name));
+    const encodedBinary = value.binary.filter(name => !numericBinary.includes(name));
+    const encodedFeatures = [...encodedBinary, ...value.categorical];
+    const allNumeric = value.continuous.length + numericBinary.length === featureCount(value) && !encodedFeatures.length;
+    const allEncoded = !value.continuous.length && !numericBinary.length && encodedFeatures.length > 0;
+    const allContinuous = value.continuous.length > 0 && !numericBinary.length && !encodedFeatures.length;
+    const useOrdinal = modelId === "one_r";
+    const needsScale = Boolean(model.scale);
+    const hasMissing = Boolean(config.missing);
+    const needsSeparateNumericBinary = value.continuous.length && numericBinary.length && (needsScale || hasMissing);
+    let structure;
+    if (allNumeric && !needsSeparateNumericBinary) {
+      if (hasMissing) structure = "simple_pipeline";
+      else if (needsScale && allContinuous) structure = "direct_scaler";
+      else structure = "direct_passthrough";
+    } else if (allEncoded) {
+      structure = hasMissing ? "simple_pipeline" : "direct_encoder";
+    } else {
+      structure = "column_transformer";
+    }
+    const operation = (kind, encode = false) => {
+      const parts = [];
+      if (hasMissing) parts.push("fill missing values");
+      if (kind === "continuous" && needsScale) parts.push("scale");
+      if (encode) parts.push(useOrdinal ? "use one stable category code" : "one-hot encode");
+      return parts.length ? parts.join(" → ") : "passthrough";
+    };
+    const groups = [];
+    if (value.continuous.length) groups.push({label:"Numeric measurements", columns:value.continuous, operation:operation("continuous")});
+    if (numericBinary.length) groups.push({label:"Binary indicators", columns:numericBinary, operation:operation("binary")});
+    if (encodedFeatures.length) groups.push({label:"Categorical features", columns:encodedFeatures, operation:operation("categorical", true)});
+    return {
+      structure,
+      numericBinary,
+      encodedFeatures,
+      allNumeric,
+      allEncoded,
+      allContinuous,
+      useOrdinal,
+      needsScale,
+      hasMissing,
+      groups,
+      scaleApplied:needsScale && Boolean(value.continuous.length),
+      encodingApplied:Boolean(encodedFeatures.length),
+      handleUnknown:Boolean(encodedFeatures.length)
+    };
+  }
+
+  function preprocessingConcepts(config, value, modelId) {
+    const plan = preprocessingPlan(config, value, modelId);
+    const concepts = [concept("preprocessing", "PREPARATION", "Preprocessing is model-specific preparation: we change only what this selected model needs before it uses the features.")];
+    const planText = plan.structure === "column_transformer"
+      ? `Different columns need different preparation, so ColumnTransformer applies the appropriate job to each group: ${plan.groups.map(group => `${group.label} → ${group.operation}`).join("; ")}.`
+      : plan.structure === "direct_passthrough"
+        ? "These features are already in a form this model can use, so they pass through unchanged."
+        : plan.structure === "direct_scaler"
+          ? "The numeric features are scaled before this model fits."
+          : plan.structure === "direct_encoder"
+            ? `Category values are represented numerically with ${plan.useOrdinal ? "one stable code per original feature" : "one-hot encoding"}.`
+            : plan.groups.length
+              ? `The preparation step applies ${plan.groups.map(group => `${group.operation} to ${group.label.toLowerCase()}`).join(" and ")}.`
+              : "The selected preparation step handles the model's input requirements.";
+    concepts.push(concept("preparation-plan", "PLAN", planText, [plan.structure === "column_transformer" ? "column-transformer" : plan.structure === "direct_passthrough" ? "passthrough" : plan.structure === "direct_scaler" ? "scaling" : plan.encodingApplied ? "categorical-encoding" : "preprocessing"]));
+    if (plan.scaleApplied) concepts.push(concept("scaling-reason", "WHY SCALE", scalingReason(modelId), ["scaling"]));
+    if (plan.numericBinary.length) concepts.push(concept("binary", "BINARY", "Binary 0/1 indicators are already numeric yes/no signals, so they do not need categorical encoding.", ["binary-features", "passthrough"]));
+    if (plan.encodingApplied) {
+      const encodingText = plan.useOrdinal
+        ? "This beginner One-R route uses one stable numeric code for each original category; category values are not quantile-binned."
+        : "Models work with numbers, so one-hot encoding creates a separate yes/no column for each category.";
+      concepts.push(concept("categorical", "CATEGORIES", encodingText, ["categorical-encoding"]));
+      if (plan.handleUnknown) concepts.push(concept("unknown-categories", "SAFE PREDICTION", "The unknown-category setting lets a later category be handled safely instead of crashing prediction.", ["unknown-categories"]));
+    }
+    return concepts;
+  }
+
+  function pipelineConcepts(config) {
+    return [
+      concept("pipeline", "PIPELINE", "A Pipeline connects data preparation and the model into one workflow. During cross-validation, each training fold learns its own preparation before fitting, so validation rows do not leak into preparation."),
+      concept("fit", "FIT", "fit() means the model learns from the training data; different estimators learn different kinds of values."),
+      concept("predict", "PREDICT", `predict() asks the fitted model for outputs for new rows: ${config.task === "classification" ? "class labels" : "numeric values"}.`)
+    ];
+  }
+
+  function cvConcepts(config, folds) {
+    const concepts = [
+      concept("fold", "FOLD", `A fold is one part of the training data temporarily held out for validation. With ${folds}-fold CV, each round trains on ${folds - 1} parts and validates on 1; each part gets one turn.`, ["cross-validation", "fold"]),
+      concept("cv-purpose", "WHY CV", "Cross-validation gives several training-only validation results instead of relying on one lucky or unlucky split. The final test set is not involved in any of these rounds.", ["cv-purpose", "final-test-exclusion"])
+    ];
+    if (config.split === "time") {
+      concepts.push(concept("time-folds", "TIME FOLDS", `TimeSeriesSplit keeps earlier rows for training and later rows for validation. Across rounds the training window grows, and every validation period comes after the data used to train that fold.`, ["time-series-split", "ordered-validation"]));
+    } else {
+      const classification = config.task === "classification" ? " Stratified folds try to keep class proportions similar in each fold." : "";
+      concepts.push(concept("fold-order", "FOLD SETUP", `Before standard folds are made, shuffle=True mixes the row order so folds are not based on the dataset's original order.${classification}`, ["shuffle", ...(config.task === "classification" ? ["stratified-folds"] : [])]));
+    }
+    return concepts;
+  }
+
+  function hyperparameterExample(modelId, value) {
+    const examples = {
+      knn_cls:"For KNN, n_neighbors (k) controls how many nearby rows vote.",
+      regression_tree:"For a tree, max_depth limits how deep the learned if/then structure may grow.",
+      classification_tree:"For a tree, max_depth limits how deep the learned if/then structure may grow.",
+      logistic:"For logistic regression, C controls the strength of regularisation.",
+      svm_cls:"For an SVM, C controls the margin/error trade-off and gamma controls RBF curvature.",
+      polynomial:"For polynomial regression, degree controls the allowed curvature and alpha controls regularisation.",
+      qda:"For QDA, reg_param controls how much covariance estimates are regularised.",
+      lda:"For LDA, shrinkage controls whether covariance estimates are regularised.",
+      mlp_cls:"For a neural network, hidden_layer_sizes changes the hidden layers and alpha controls regularisation.",
+      mlp_reg:"For a neural network, hidden_layer_sizes changes the hidden layers and alpha controls regularisation.",
+      one_r:"For continuous One-R, bins controls candidate numeric intervals; it does not group categorical values."
+    };
+    return examples[modelId] || "The allowed settings control how the model learns.";
+  }
+
+  function tuningConcepts(config, modelId, value) {
+    const spec = modelSpec(modelId, value);
+    const hasHyperparameters = spec.grid !== "{}";
+    const concepts = [concept("hyperparameter", "SETTING / LEARNING", "A hyperparameter is chosen before fitting and controls how a model learns. A learned parameter is estimated from the training rows during fit().", ["hyperparameter", "learned-parameter"] )];
+    if (!hasHyperparameters) {
+      concepts.push(concept("keep-defaults", "THIS WALKTHROUGH", "This route keeps the model's current/default settings rather than searching alternatives. The fitted model still learns from training data, and the final test remains untouched.", ["keep-defaults"]));
+      return concepts;
+    }
+    const routing = spec.grid.includes("model__") ? " The model__ prefix tells Pipeline that a setting belongs to the model step; additional prefixes identify inner steps when needed." : "";
+    concepts.push(concept("model-setting", "EXAMPLE", `${hyperparameterExample(modelId, value)}${routing}`, ["model-hyperparameter", ...(routing ? ["pipeline-parameter-routing"] : [])]));
+    concepts.push(concept("grid-search", "GRIDSEARCHCV", "GridSearchCV tries the allowed settings with cross-validation and selects the strongest validation result. The final test set stays untouched during this search.", ["GridSearchCV", "tuning", "final-test-exclusion"]));
+    return concepts;
+  }
+
+  function supervisedTeaching(config, value, modelId, folds = 5) {
     const metricMeta = primaryMetricMetadata(config);
     return {
       frame: {
         question:"What are we trying to predict, and which features are we using?",
-        readingCue:"Check that X contains the selected features and y contains the target."
+        readingCue:"Check that X contains the selected features and y contains the target.",
+        concepts:frameConcepts(config, value)
       },
       split: {
         question:"Which rows are available for learning, and which are being saved for the final check?",
@@ -787,7 +993,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           ? "Check the training/test sizes and that the saved test rows come after the training rows."
           : config.task === "classification"
             ? "Check the training/test sizes and whether class proportions stay similar."
-            : "Check the training/test sizes and whether both partitions cover the target range."
+            : "Check the training/test sizes and whether both partitions cover the target range.",
+        concepts:splitConcepts(config)
       },
       explore: {
         question:"What patterns or differences can I see in the training data?",
@@ -795,11 +1002,13 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       },
       prepare: {
         question:"What preparation does this particular model need?",
-        readingCue:preprocessingReadingCue(config, value, modelId)
+        readingCue:preprocessingReadingCue(config, value, modelId),
+        concepts:preprocessingConcepts(config, value, modelId)
       },
       model: {
         question:"What kind of pattern will this model try to learn?",
-        readingCue:"Look for whether the model is linear, rule-based, distance-based, or nonlinear, and connect that idea to the selected data."
+        readingCue:"Look for whether the model is linear, rule-based, distance-based, or nonlinear, and connect that idea to the selected data.",
+        concepts:pipelineConcepts(config)
       },
       baseline: {
         question:"Does this model perform similarly across different validation folds?",
@@ -807,13 +1016,15 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           ? "Look for whether validation scores change across later time windows; these folds are ordered rather than random."
           : "Look for whether validation scores stay fairly similar and whether training scores are consistently much better.",
         metricMeta,
-        metricHelp:metricHelpFor(config, "baseline")
+        metricHelp:metricHelpFor(config, "baseline"),
+        concepts:cvConcepts(config, folds)
       },
       tune: {
         question:"Do alternative settings improve validation performance enough to prefer one?",
         readingCue:"Compare settings using cross-validation only; the final test remains untouched.",
         metricMeta,
-        metricHelp:metricHelpFor(config, "reminder")
+        metricHelp:metricHelpFor(config, "reminder"),
+        concepts:tuningConcepts(config, modelId, value)
       },
       diagnose: {
         question:"Where does the selected model make mistakes or show patterns in its errors?",
@@ -950,12 +1161,15 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
 
   const task = (id, title, caption, code, teaching = {}) => {
     const details = typeof teaching === "string" ? {question:teaching} : (teaching || {});
+    const concepts = Array.isArray(details.concepts) ? details.concepts : [];
     return {
       id,
       title,
       caption,
       question:details.question || "",
       readingCue:details.readingCue || "",
+      concepts,
+      conceptKeys:[...new Set(details.conceptKeys || concepts.flatMap(item => Array.isArray(item.keys) ? item.keys : [item.key]).filter(Boolean))],
       metricHelp:Array.isArray(details.metricHelp) ? details.metricHelp : [],
       metricMeta:details.metricMeta || null,
       comparison:Boolean(details.comparison),
@@ -1118,22 +1332,15 @@ cv_scores.round(3)`;
 
   function preprocessingCode(config, value, modelId) {
     const model = MODELS[modelId];
-    const numericBinary = value.binary.filter(name => (config.binaryNumeric || []).includes(name));
-    const encodedBinary = value.binary.filter(name => !numericBinary.includes(name));
-    const encodedFeatures = [...encodedBinary, ...value.categorical];
+    const plan = preprocessingPlan(config, value, modelId);
+    const {numericBinary, encodedFeatures, allNumeric, allEncoded, allContinuous, useOrdinal, needsScale, hasMissing} = plan;
     const oneRCategoricalMask = [
       ...value.continuous.map(() => false),
       ...numericBinary.map(() => true),
       ...encodedFeatures.map(() => true)
     ];
     const oneRCategoricalMaskSource = "[" + oneRCategoricalMask.map(flag => flag ? "True" : "False").join(",") + "]";
-    const allNumeric = value.continuous.length + numericBinary.length === featureCount(value) && !encodedFeatures.length;
-    const allEncoded = !value.continuous.length && !numericBinary.length && encodedFeatures.length > 0;
-    const allContinuous = value.continuous.length > 0 && !numericBinary.length && !encodedFeatures.length;
     const categoricalNB = modelId === "naive_bayes" && allEncoded && !value.binary.length;
-    const useOrdinal = modelId === "one_r";
-    const needsScale = Boolean(model.scale);
-    const hasMissing = Boolean(config.missing);
     const keepOriginalUnits = ["simple_linear","multiple_linear"].includes(modelId);
     const imports = [];
     const addImport = line => { if (!imports.includes(line)) imports.push(line); };
@@ -1484,7 +1691,7 @@ test_result.round(3)`;
 
   function supervisedRoute(config, value, modelId, folds) {
     const hasHyperparameters = modelSpec(modelId, value).grid !== "{}";
-    const teaching = supervisedTeaching(config, value, modelId);
+    const teaching = supervisedTeaching(config, value, modelId, folds);
     return [
       task("frame","Choose what to predict","define X and y",frameCode(config, value),teaching.frame),
       task("split","Split data and save the test set",config.split === "time" ? "latest 20%" : "stratified / random 20%",splitCode(config),teaching.split),
@@ -1820,14 +2027,39 @@ explore_df.head(10)`;
     return block;
   }
 
+  function conceptBlock(concepts, className = "teaching-concepts") {
+    if (!Array.isArray(concepts) || !concepts.length) return null;
+    const block = document.createElement("div");
+    block.className = className;
+    block.dataset.teachingRole = "concept";
+    const heading = document.createElement("div");
+    heading.className = "teaching-label teaching-concept-heading";
+    heading.textContent = "CONCEPT";
+    block.append(heading);
+    concepts.forEach(item => {
+      const line = document.createElement("p");
+      line.className = "teaching-concept-line";
+      line.dataset.conceptKey = item.key;
+      const label = document.createElement("strong");
+      label.textContent = item.label;
+      const copy = document.createElement("span");
+      copy.textContent = item.text;
+      line.append(label, copy);
+      block.append(line);
+    });
+    return block;
+  }
+
   function renderTeachingBlock(cell) {
     const task = routeTaskForCell(cell);
-    if (!task || (!task.question && !task.readingCue && !task.metricHelp?.length)) return null;
+    if (!task || (!task.question && !task.readingCue && !task.concepts?.length && !task.metricHelp?.length)) return null;
     const block = document.createElement("section");
     block.className = "teaching-block";
     block.dataset.teachingStep = task.id;
     block.setAttribute("aria-label", `Teaching guidance for ${task.title}`);
     if (task.question) block.append(teachingLine("QUESTION", task.question, "teaching-line teaching-question", "question"));
+    const concepts = conceptBlock(task.concepts);
+    if (concepts) block.append(concepts);
     if (task.readingCue) block.append(teachingLine("LOOK FOR", task.readingCue, "teaching-line teaching-cue", "reading-cue"));
     const metrics = metricHelpBlock(task.metricHelp);
     if (metrics) block.append(metrics);
@@ -2256,12 +2488,14 @@ explore_df.head(10)`;
       const caption = document.createElement("span"); caption.className = "workflow-step-caption"; caption.textContent = item.caption;
       copy.append(kicker, title); head.append(copy, caption);
       const note = item.question ? teachingLine("QUESTION", item.question, "workflow-step-note", "question") : null;
+      const concepts = conceptBlock(item.concepts, "workflow-step-concepts");
       const cue = item.readingCue ? teachingLine("LOOK FOR", item.readingCue, "workflow-step-cue", "reading-cue") : null;
       const metric = metricHelpBlock(item.metricHelp, "workflow-step-metric");
       const typeNote = document.createElement("p"); typeNote.className = "workflow-type-note"; typeNote.textContent = "Type, run, and inspect this cell";
       const code = document.createElement("pre"); code.className = "workflow-code"; code.dataset.taskId = item.id; code.innerHTML = highlightPython(item.code); code.setAttribute("aria-label", `Exact Python for ${item.title}`);
       step.append(number, head);
       if (note) step.append(note);
+      if (concepts) step.append(concepts);
       if (cue) step.append(cue);
       if (metric) step.append(metric);
       step.append(typeNote, code); story.append(step);
@@ -2363,7 +2597,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
