@@ -111,11 +111,78 @@ if (!finalRegressionHelp.find(metric => metric.key === "mae").text.includes("ave
   throw new Error("MAE definition is missing at its first use.");
 }
 
+const conceptKeys = (route, step) => new Set(route.find(cell => cell.id === step).conceptKeys || []);
+const conceptText = (route, step) => route.find(cell => cell.id === step).concepts.map(item => item.text).join(" ");
+const requireConcepts = (route, step, expected) => {
+  const actual = conceptKeys(route, step);
+  for (const key of expected) if (!actual.has(key)) throw new Error(`Missing ${key} concept on ${step}.`);
+};
+
+const gapminderRoute = api.routeForSelection(api.DATASETS.gapminder, api.DATASETS.gapminder.scenarios[0], "simple_linear", 5);
+requireConcepts(gapminderRoute, "frame", ["feature", "target", "X", "y", "row"]);
+if (!conceptText(gapminderRoute, "frame").includes("GDP per person") || !conceptText(gapminderRoute, "frame").includes("one country in 2007")) {
+  throw new Error("Gapminder feature/target/row grounding is incomplete.");
+}
+requireConcepts(gapminderRoute, "split", ["training-data", "final-test-set", "80-20-split", "random-split", "random-state"]);
+if (!conceptText(gapminderRoute, "split").includes("42 itself is not special")) throw new Error("random_state teaching is incomplete.");
+requireConcepts(gapminderRoute, "prepare", ["preprocessing", "passthrough"]);
+
+const breastKnnRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "knn_cls", 5);
+requireConcepts(breastKnnRoute, "prepare", ["scaling"]);
+if (!conceptText(breastKnnRoute, "prepare").includes("compares distances")) throw new Error("KNN scaling reason is missing.");
+requireConcepts(breastKnnRoute, "baseline", ["cross-validation", "fold", "cv-purpose", "final-test-exclusion", "shuffle", "stratified-folds"]);
+if (!conceptText(breastKnnRoute, "baseline").includes("trains on 4 parts") || !conceptText(breastKnnRoute, "baseline").includes("final test set is not involved")) {
+  throw new Error("Classification fold mechanics are incomplete.");
+}
+requireConcepts(breastKnnRoute, "model", ["pipeline", "fit", "predict"]);
+if (!conceptText(breastKnnRoute, "model").includes("validation rows do not leak")) throw new Error("Pipeline leakage-prevention teaching is missing.");
+requireConcepts(breastKnnRoute, "tune", ["hyperparameter", "learned-parameter", "model-hyperparameter", "GridSearchCV", "tuning", "final-test-exclusion"]);
+if (!conceptText(breastKnnRoute, "tune").includes("n_neighbors (k)")) throw new Error("KNN hyperparameter teaching is missing.");
+
+const penguinsMixedRoute = api.routeForSelection(api.DATASETS.penguins, api.DATASETS.penguins.scenarios.at(-1), "logistic", 5);
+requireConcepts(penguinsMixedRoute, "prepare", ["column-transformer", "scaling", "categorical-encoding"]);
+if (!conceptText(penguinsMixedRoute, "prepare").includes("ColumnTransformer applies") || !conceptText(penguinsMixedRoute, "prepare").includes("one-hot encode")) {
+  throw new Error("Mixed ColumnTransformer teaching is incomplete.");
+}
+
+const candyBinaryRoute = api.routeForSelection(api.DATASETS.candy_class, api.DATASETS.candy_class.scenarios[0], "logistic", 5);
+requireConcepts(candyBinaryRoute, "prepare", ["binary-features", "passthrough"]);
+if (!conceptText(candyBinaryRoute, "prepare").includes("0/1 indicators")) throw new Error("Binary-feature handling teaching is missing.");
+
+const carRoute = api.routeForSelection(api.DATASETS.car, api.DATASETS.car.scenarios[0], "naive_bayes", 5);
+requireConcepts(carRoute, "prepare", ["categorical-encoding", "unknown-categories"]);
+if (!conceptText(carRoute, "prepare").includes("one-hot encoding")) throw new Error("Categorical encoding teaching is missing.");
+requireConcepts(carRoute, "tune", ["hyperparameter", "learned-parameter", "GridSearchCV", "tuning"]);
+
+const categoricalOneRRoute = api.routeForSelection(api.DATASETS.car, api.DATASETS.car.scenarios[0], "one_r", 5);
+requireConcepts(categoricalOneRRoute, "tune", ["hyperparameter", "learned-parameter", "keep-defaults"]);
+if (conceptKeys(categoricalOneRRoute, "tune").has("GridSearchCV") || !conceptText(categoricalOneRRoute, "tune").includes("keeps the model's current/default settings")) {
+  throw new Error("Pure-categorical One-R defaults teaching is incorrect.");
+}
+
+const seoulConceptRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "simple_linear", 10);
+requireConcepts(seoulConceptRoute, "split", ["training-data", "final-test-set", "80-20-split", "chronological-split"]);
+if (conceptKeys(seoulConceptRoute, "split").has("random-split") || conceptKeys(seoulConceptRoute, "split").has("random-state")) {
+  throw new Error("Seoul split teaching incorrectly claims random splitting.");
+}
+requireConcepts(seoulConceptRoute, "baseline", ["cross-validation", "fold", "time-series-split", "ordered-validation"]);
+if (conceptKeys(seoulConceptRoute, "baseline").has("shuffle") || conceptText(seoulConceptRoute, "baseline").includes("random folds")) {
+  throw new Error("Seoul fold teaching incorrectly claims random folds.");
+}
+if (!conceptText(seoulConceptRoute, "baseline").includes("training window grows")) throw new Error("TimeSeriesSplit mechanics are incomplete.");
+
 console.log(JSON.stringify({
   supervised_steps_checked:9,
   classification_summary:true,
   regression_summary:true,
   final_comparisons:true,
   seoul_time_series_wording:true,
-  metric_definitions:true
+  metric_definitions:true,
+  feature_target_X_y:true,
+  split_concepts:true,
+  preprocessing_concepts:true,
+  pipeline_fit_predict:true,
+  cross_validation_mechanics:true,
+  hyperparameter_tuning:true,
+  preferred_vocabulary:true
 }, null, 2));

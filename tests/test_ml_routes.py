@@ -227,6 +227,16 @@ def assert_route_structure(payload: dict) -> dict:
         "supervised_routes_with_step_guidance": 0,
         "supervised_baseline_metric_help": 0,
         "supervised_final_comparison_metadata": 0,
+        "supervised_concept_metadata": 0,
+    }
+
+    required_concepts = {
+        "frame": {"feature", "target", "X", "y", "row"},
+        "split": {"training-data", "final-test-set", "80-20-split"},
+        "prepare": {"preprocessing"},
+        "model": {"pipeline", "fit", "predict"},
+        "baseline": {"cross-validation", "fold", "cv-purpose", "final-test-exclusion"},
+        "tune": {"hyperparameter", "learned-parameter"},
     }
 
     for folds, routes in route_sets.items():
@@ -268,6 +278,53 @@ def assert_route_structure(payload: dict) -> dict:
 
             if task_type != "unsupervised":
                 teaching_checks["supervised_routes_with_step_guidance"] += 1
+                for step_id, expected_keys in required_concepts.items():
+                    metadata = next(cell for cell in route["cells"] if cell["id"] == step_id)
+                    actual_keys = set(metadata.get("conceptKeys", []))
+                    missing_keys = expected_keys - actual_keys
+                    if missing_keys:
+                        raise AssertionError(
+                            f"Missing Phase 1B concepts {sorted(missing_keys)} for "
+                            f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{step_id}"
+                        )
+                split_metadata = next(cell for cell in route["cells"] if cell["id"] == "split")
+                split_keys = set(split_metadata["conceptKeys"])
+                if route["dataset"]["split"] == "time":
+                    if "chronological-split" not in split_keys or "random-split" in split_keys or "random-state" in split_keys:
+                        raise AssertionError(f"Chronological split metadata is inaccurate: {route}")
+                else:
+                    if not {"random-split", "random-state"}.issubset(split_keys):
+                        raise AssertionError(f"Random split metadata is incomplete: {route}")
+                    if route["dataset"]["task"] == "classification" and "stratification" not in split_keys:
+                        raise AssertionError(f"Classification stratification metadata is missing: {route}")
+
+                prepare_metadata = next(cell for cell in route["cells"] if cell["id"] == "prepare")
+                prepare_code = route_code(route, "prepare")
+                prepare_keys = set(prepare_metadata["conceptKeys"])
+                if "ColumnTransformer" in prepare_code and "column-transformer" not in prepare_keys:
+                    raise AssertionError(f"ColumnTransformer concept is missing: {route}")
+                if "StandardScaler" in prepare_code and "scaling" not in prepare_keys:
+                    raise AssertionError(f"Scaling concept is missing: {route}")
+                if any(token in prepare_code for token in ("OneHotEncoder", "OrdinalEncoder")) and "categorical-encoding" not in prepare_keys:
+                    raise AssertionError(f"Categorical encoding concept is missing: {route}")
+                if "handle_unknown" in prepare_code and "unknown-categories" not in prepare_keys:
+                    raise AssertionError(f"Unknown-category safety concept is missing: {route}")
+                numeric_binary = set(route["scenario"]["binary"]) & set(route["dataset"]["binaryNumeric"])
+                if numeric_binary and "binary-features" not in prepare_keys:
+                    raise AssertionError(f"Binary-feature concept is missing: {route}")
+
+                baseline_code = route_code(route, "baseline")
+                baseline_metadata = next(cell for cell in route["cells"] if cell["id"] == "baseline")
+                baseline_keys = set(baseline_metadata["conceptKeys"])
+                if route["dataset"]["split"] == "time":
+                    if not {"time-series-split", "ordered-validation"}.issubset(baseline_keys) or "shuffle" in baseline_keys:
+                        raise AssertionError(f"Time-series CV metadata is inaccurate: {route}")
+                else:
+                    if "shuffle" not in baseline_keys or "shuffle=True" not in baseline_code:
+                        raise AssertionError(f"Standard CV shuffle metadata is incomplete: {route}")
+                    if route["dataset"]["task"] == "classification" and "stratified-folds" not in baseline_keys:
+                        raise AssertionError(f"Stratified-fold metadata is missing: {route}")
+
                 baseline_metadata = next(cell for cell in route["cells"] if cell["id"] == "baseline")
                 if not baseline_metadata.get("metricHelp") or not baseline_metadata.get("metricMeta"):
                     raise AssertionError(f"Baseline CV teaching metadata is incomplete: {route}")
@@ -277,9 +334,27 @@ def assert_route_structure(payload: dict) -> dict:
                 tune_metadata = next(cell for cell in route["cells"] if cell["id"] == "tune")
                 if not tune_metadata.get("metricHelp") or not tune_metadata.get("metricMeta"):
                     raise AssertionError(f"Tuning metric reminder metadata is incomplete: {route}")
+                tune_keys = set(tune_metadata.get("conceptKeys", []))
+                tune_code = route_code(route, "tune")
+                if "GridSearchCV" in tune_code:
+                    if not {"model-hyperparameter", "GridSearchCV", "tuning", "final-test-exclusion"}.issubset(tune_keys):
+                        raise AssertionError(f"GridSearchCV teaching metadata is incomplete: {route}")
+                    if "model__" in tune_code and "pipeline-parameter-routing" not in tune_keys:
+                        raise AssertionError(f"Pipeline parameter-routing explanation is missing: {route}")
+                elif "keep-defaults" not in tune_keys:
+                    raise AssertionError(f"Keep-defaults teaching metadata is missing: {route}")
                 final_metadata = next(cell for cell in route["cells"] if cell["id"] == "final")
                 if not final_metadata.get("comparison") or not final_metadata.get("metricMeta"):
                     raise AssertionError(f"Final-test comparison metadata is incomplete: {route}")
+                if route["dataset"]["target"] == "popular":
+                    frame_metadata = next(cell for cell in route["cells"] if cell["id"] == "frame")
+                    if "derived from winpercent" not in " ".join(item["text"] for item in frame_metadata["concepts"]):
+                        raise AssertionError(f"Derived Candy target is not grounded in Step 1 teaching: {route}")
+                if route["dataset"]["prepare"] != "df":
+                    frame_metadata = next(cell for cell in route["cells"] if cell["id"] == "frame")
+                    if "modelling frame" not in " ".join(item["text"] for item in frame_metadata["concepts"]):
+                        raise AssertionError(f"Derived modelling frame is not explained: {route}")
+                teaching_checks["supervised_concept_metadata"] += 1
                 teaching_checks["supervised_final_comparison_metadata"] += 1
 
             frame = route_code(route, "frame")
