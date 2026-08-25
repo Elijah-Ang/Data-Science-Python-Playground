@@ -146,6 +146,28 @@ def main() -> int:
         if error_item.locator(".console-output.warning").count():
             raise AssertionError("A warning emitted before an exception was rendered as a successful warning.")
 
+        select_route(page, "breast", "continuous5", "logistic", 9)
+        run_steps(page, 9)
+        first_teaching = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='question']")
+        first_cue = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='reading-cue']")
+        if first_teaching.count() != 1 or "what are we trying to predict" not in first_teaching.inner_text().lower():
+            raise AssertionError("Classification journey did not show the guided learner question beside Step 1.")
+        if first_cue.count() != 1 or "X contains" not in first_cue.inner_text():
+            raise AssertionError("Classification journey did not show the Step 1 reading cue.")
+        classification_baseline = page.locator("#outputList .output-item").nth(5)
+        if classification_baseline.locator("table").count() != 1:
+            raise AssertionError("The classification fold table disappeared when the CV teaching summary was added.")
+        if classification_baseline.locator("[data-teaching-result='cv-summary']").count() != 1:
+            raise AssertionError("Classification CV summary was not rendered.")
+        if page.locator("#notebookPanel article").nth(5).locator("[data-teaching-role='metric']").count() != 1 or "Macro F1" not in page.locator("#notebookPanel article").nth(5).inner_text():
+            raise AssertionError("Classification metric meaning was not rendered at first use.")
+        classification_final = page.locator("#outputList .output-item").nth(8)
+        if classification_final.locator("[data-teaching-result='final-comparison']").count() != 1:
+            raise AssertionError("Classification final output did not compare against prior CV evidence.")
+        final_comparison_text = classification_final.locator("[data-teaching-result='final-comparison']").inner_text()
+        if not all(label in final_comparison_text for label in ("Mean CV", "CV range", "Final test")):
+            raise AssertionError("Classification final comparison is missing one of its evidence rows.")
+
         select_route(page, "gapminder", "simple", "simple_linear", 9)
         run_steps(page, 3)
         describe_text = page.locator("#outputList .output-item").last.inner_text()
@@ -163,6 +185,11 @@ def main() -> int:
         for metric in ("RMSE", "MAE", "R²", "test rows"):
             if metric not in final_text:
                 raise AssertionError(f"Final supervised output is missing expected metric {metric!r}.")
+        if page.locator("#outputList .output-item").nth(5).locator("[data-teaching-result='cv-summary']").count() != 1:
+            raise AssertionError("Regression CV summary was not rendered.")
+        regression_final_comparison = page.locator("#outputList .output-item").nth(8).locator("[data-teaching-result='final-comparison']")
+        if regression_final_comparison.count() != 1 or "RMSE" not in regression_final_comparison.inner_text() or "MAE" not in page.locator("#outputList .output-item").nth(8).inner_text():
+            raise AssertionError("Regression final output did not include metric teaching and CV comparison.")
         if page.locator("#holdoutState").text_content().strip() != "opened once":
             raise AssertionError("The final supervised step did not open the saved test set exactly once.")
         if not page.locator("#routeStrip .route-card").nth(8).is_disabled():
@@ -220,6 +247,16 @@ def main() -> int:
         wait_for_cell(page, count_check_index)
         if "True" not in page.locator("#outputList .output-item").last.inner_text():
             raise AssertionError("Car One-R rule counts did not match original category membership.")
+
+        select_route(page, "seoul", "simple", "simple_linear", 9)
+        run_steps(page, 6)
+        seoul_baseline = page.locator("#outputList .output-item").nth(5)
+        seoul_summary = seoul_baseline.locator("[data-teaching-result='cv-summary']")
+        if seoul_summary.count() != 1 or seoul_summary.get_attribute("data-summary-time-series") != "true":
+            raise AssertionError("Seoul did not render a time-series CV summary.")
+        seoul_summary_text = seoul_summary.inner_text()
+        if "ordered windows" not in seoul_summary_text or "random folds" in seoul_summary_text:
+            raise AssertionError("Seoul CV teaching incorrectly described time windows as random folds.")
 
         select_route(page, "breast", "continuous5", "pca", 7)
         run_steps(page, 4)
@@ -284,8 +321,9 @@ def main() -> int:
     if browser_errors:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
     print(
-        "Browser/Pyodide smoke test passed: invalidation, indexed describe/PCA tables, "
-        "Car One-R rules, complete supervised route, fitted PCA route, and reset recovery."
+        "Browser/Pyodide smoke test passed: teaching questions/cues, metric help, CV/final comparisons, "
+        "Seoul time-aware wording, invalidation, indexed describe/PCA tables, Car One-R rules, "
+        "complete supervised route, fitted PCA route, and reset recovery."
     )
     return 0
 

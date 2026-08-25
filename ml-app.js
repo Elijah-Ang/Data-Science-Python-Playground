@@ -712,7 +712,256 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       .replace(/fig\.tight_layout\(\)\n(?=\S)/g, "fig.tight_layout()\n\n")
       .replace(/\n{3,}/g, "\n\n");
   }
-  const task = (id, title, caption, code, question) => ({id, title, caption, question, code:formatRouteCode(code)});
+  function primaryMetricMetadata(config) {
+    return config.task === "classification"
+      ? {key:"macro_f1", label:"Macro F1", direction:"higher", directionSymbol:"↑", trainColumn:"train_macro_f1", validationColumn:"validation_macro_f1"}
+      : {key:"rmse", label:"RMSE", direction:"lower", directionSymbol:"↓", trainColumn:"train_rmse", validationColumn:"validation_rmse"};
+  }
+
+  function metricHelpFor(config, stage = "baseline") {
+    if (config.task === "classification") {
+      const full = [
+        {key:"macro_f1", label:"Macro F1", direction:"higher", text:"Macro F1: measures classification quality for each class and then gives every class equal weight. Higher is better, which makes it useful when smaller classes should matter too."},
+        {key:"accuracy", label:"Accuracy", direction:"higher", text:"Accuracy: the fraction of predictions that were correct. Higher is better, but it can look good when one class is much more common than the others."}
+      ];
+      return stage === "baseline" ? full : full.map(metric => ({
+        ...metric,
+        text:`${metric.direction === "higher" ? "Higher is better" : "Lower is better"}.`
+      }));
+    }
+    const full = [
+      {key:"rmse", label:"RMSE", direction:"lower", text:`RMSE: measures prediction error in the target's units, but larger mistakes count more heavily. Lower is better.`},
+      {key:"r2", label:"R²", direction:"higher", text:"R²: compares the model with simply predicting the training average. Higher is usually better; 1 is perfect, 0 is roughly the average-baseline level, and it can be negative."}
+    ];
+    if (stage === "baseline") return full;
+    if (stage === "final") return [
+      {key:"mae", label:"MAE", direction:"lower", text:`MAE: the average absolute prediction error, in the original units of ${config.target}. Lower is better.`},
+      ...full.map(metric => ({
+        ...metric,
+        text:`${metric.direction === "higher" ? "Higher is better" : "Lower is better"}.`
+      }))
+    ];
+    return full.map(metric => ({
+      ...metric,
+      text:`${metric.direction === "higher" ? "Higher is better" : "Lower is better"}.`
+    }));
+  }
+
+  function exploreReadingCue(config, value) {
+    if (config.task === "classification") {
+      return value.continuous.length
+        ? "Look for how much the class distributions overlap."
+        : "Look for groups whose class mixes differ, while remembering that overlap can remain.";
+    }
+    return value.continuous.length
+      ? "Look for direction, curvature, unusual points, and how widely the target varies."
+      : "Look for target differences between groups and whether those groups overlap.";
+  }
+
+  function preprocessingReadingCue(config, value, modelId) {
+    const model = MODELS[modelId];
+    const hasCategorical = Boolean(value.binary.length || value.categorical.length);
+    if (modelId === "one_r" && hasCategorical) {
+      return "Look for categorical features being encoded while each original category stays a separate One-R value.";
+    }
+    if (hasCategorical && model?.scale) {
+      return "Look for categorical features being encoded and numeric features scaled inside the pipeline.";
+    }
+    if (hasCategorical) {
+      return "Look for categorical features being encoded while continuous features keep their numeric role inside the pipeline.";
+    }
+    if (model?.scale) return "Look for the numeric features being scaled before this model fits.";
+    return "Look for a pass-through or model-appropriate numeric preparation without unnecessary transformation.";
+  }
+
+  function supervisedTeaching(config, value, modelId) {
+    const metricMeta = primaryMetricMetadata(config);
+    return {
+      frame: {
+        question:"What are we trying to predict, and which features are we using?",
+        readingCue:"Check that X contains the selected features and y contains the target."
+      },
+      split: {
+        question:"Which rows are available for learning, and which are being saved for the final check?",
+        readingCue:config.split === "time"
+          ? "Check the training/test sizes and that the saved test rows come after the training rows."
+          : config.task === "classification"
+            ? "Check the training/test sizes and whether class proportions stay similar."
+            : "Check the training/test sizes and whether both partitions cover the target range."
+      },
+      explore: {
+        question:"What patterns or differences can I see in the training data?",
+        readingCue:exploreReadingCue(config, value)
+      },
+      prepare: {
+        question:"What preparation does this particular model need?",
+        readingCue:preprocessingReadingCue(config, value, modelId)
+      },
+      model: {
+        question:"What kind of pattern will this model try to learn?",
+        readingCue:"Look for whether the model is linear, rule-based, distance-based, or nonlinear, and connect that idea to the selected data."
+      },
+      baseline: {
+        question:"Does this model perform similarly across different validation folds?",
+        readingCue:config.split === "time"
+          ? "Look for whether validation scores change across later time windows; these folds are ordered rather than random."
+          : "Look for whether validation scores stay fairly similar and whether training scores are consistently much better.",
+        metricMeta,
+        metricHelp:metricHelpFor(config, "baseline")
+      },
+      tune: {
+        question:"Do alternative settings improve validation performance enough to prefer one?",
+        readingCue:"Compare settings using cross-validation only; the final test remains untouched.",
+        metricMeta,
+        metricHelp:metricHelpFor(config, "reminder")
+      },
+      diagnose: {
+        question:"Where does the selected model make mistakes or show patterns in its errors?",
+        readingCue:config.task === "classification"
+          ? "Look for which actual classes are most often confused and whether errors cluster by class."
+          : "Look for whether residuals form a roughly random cloud around zero or show a pattern."
+      },
+      final: {
+        question:"Is the final-test result consistent with what cross-validation suggested?",
+        readingCue:"Look for whether the final score is broadly consistent with the range seen during validation.",
+        metricMeta,
+        metricHelp:metricHelpFor(config, "final"),
+        comparison:true
+      }
+    };
+  }
+
+  function normalizeTeachingNumber(value) {
+    if (value === null || value === undefined || value === "" || value === "—") return null;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function meanTeachingValues(values) {
+    return values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
+  }
+
+  function cvSummaryFromTable(table, taskType, split = "random", target = null) {
+    const metric = taskType === "classification"
+      ? {key:"macro_f1", label:"Macro F1", direction:"higher", directionSymbol:"↑", trainColumn:"train_macro_f1", validationColumn:"validation_macro_f1"}
+      : {key:"rmse", label:"RMSE", direction:"lower", directionSymbol:"↓", trainColumn:"train_rmse", validationColumn:"validation_rmse"};
+    const columns = Array.isArray(table?.columns) ? table.columns : [];
+    const rows = Array.isArray(table?.rows) ? table.rows : [];
+    const columnIndex = name => columns.indexOf(name);
+    const valuesFor = name => {
+      const index = columnIndex(name);
+      if (index < 0) return [];
+      return rows.map(row => normalizeTeachingNumber(row?.[index])).filter(value => value !== null);
+    };
+    const validation = valuesFor(metric.validationColumn);
+    const training = valuesFor(metric.trainColumn);
+    if (!validation.length || validation.length !== training.length) return null;
+    const validationMean = meanTeachingValues(validation);
+    const trainingMean = meanTeachingValues(training);
+    const gap = metric.direction === "higher" ? trainingMean - validationMean : validationMean - trainingMean;
+    return {
+      task:taskType,
+      target,
+      split,
+      timeSeries:split === "time",
+      metric,
+      foldCount:validation.length,
+      validationMean,
+      validationMin:Math.min(...validation),
+      validationMax:Math.max(...validation),
+      trainingMean,
+      gap
+    };
+  }
+
+  function formatTeachingNumber(value) {
+    const number = normalizeTeachingNumber(value);
+    if (number === null) return "—";
+    return Number(number.toFixed(3)).toString();
+  }
+
+  function cvStabilityText(summary) {
+    const range = summary.validationMax - summary.validationMin;
+    const scale = summary.task === "classification" ? 1 : Math.max(Math.abs(summary.validationMean), 1);
+    const relativeRange = range / scale;
+    const fairlySimilar = summary.task === "classification" ? range <= 0.05 : relativeRange <= 0.15;
+    const noticeable = summary.task === "classification" ? range <= 0.10 : relativeRange <= 0.30;
+    if (summary.timeSeries) {
+      if (fairlySimilar) return "Validation scores are fairly similar across the later time windows, but these folds are ordered windows rather than interchangeable random samples.";
+      if (noticeable) return "Validation scores move somewhat across the later time windows, suggesting that some periods are harder than others; these are ordered windows rather than interchangeable random samples.";
+      return "Validation scores vary substantially across the later time windows, suggesting that the prediction problem is harder in some periods than others; these are ordered windows rather than interchangeable random samples.";
+    }
+    if (fairlySimilar) return "The validation scores are fairly similar across folds, so performance does not appear to depend on one unusually easy split.";
+    if (noticeable) return "Validation results show some variation across folds, so performance is not identical across different subsets.";
+    return "Validation results vary substantially across folds, so performance is less stable across different subsets.";
+  }
+
+  function cvGapText(summary) {
+    const gap = summary.gap;
+    if (gap <= 0) {
+      return summary.metric.direction === "higher"
+        ? "Training performance is not higher than validation performance in this run."
+        : "Training error is not lower than validation error in this run.";
+    }
+    const scale = summary.task === "classification" ? 1 : Math.max(Math.abs(summary.validationMean), 1);
+    const relativeGap = gap / scale;
+    const small = summary.task === "classification" ? gap <= 0.03 : relativeGap <= 0.10;
+    const moderate = summary.task === "classification" ? gap <= 0.08 : relativeGap <= 0.25;
+    if (small) {
+      return summary.metric.direction === "higher"
+        ? "Training performance is only slightly higher than validation performance."
+        : "Training error is only slightly lower than validation error.";
+    }
+    if (moderate) {
+      return "Training performance is moderately stronger than validation performance, which may indicate that the model is fitting the training rows more closely than it generalizes.";
+    }
+    return "Training performance is much stronger than validation performance, which may indicate overfitting.";
+  }
+
+  function finalComparisonFromTable(summary, table) {
+    if (!summary || !Array.isArray(table?.columns) || !Array.isArray(table?.rows)) return null;
+    const metricIndex = table.columns.indexOf("metric");
+    const valueIndex = table.columns.indexOf("value");
+    if (metricIndex < 0 || valueIndex < 0) return null;
+    const wanted = summary.metric.label.toLowerCase().replace("²", "2").replace(/\s+/g, "_");
+    const row = table.rows.find(values => String(values?.[metricIndex] || "").toLowerCase().replace("²", "2").replace(/\s+/g, "_") === wanted);
+    const finalTest = normalizeTeachingNumber(row?.[valueIndex]);
+    if (finalTest === null) return null;
+    const insideRange = finalTest >= summary.validationMin && finalTest <= summary.validationMax;
+    let interpretation;
+    if (insideRange) {
+      interpretation = "The final-test result is broadly consistent with the validation results, so the one-time test does not reveal a large surprise.";
+    } else {
+      const worse = summary.metric.direction === "higher" ? finalTest < summary.validationMin : finalTest > summary.validationMax;
+      interpretation = worse
+        ? "The final-test result is worse than the validation folds suggested. That does not automatically mean something is wrong, but it is evidence that performance on new data may be less reliable than CV implied."
+        : "The final-test result is stronger than the validation folds suggested. One test split can be easier or harder by chance, so treat this as one estimate rather than proof that the model improved.";
+    }
+    return {
+      metric:summary.metric,
+      meanCV:summary.validationMean,
+      cvMin:summary.validationMin,
+      cvMax:summary.validationMax,
+      finalTest,
+      insideRange,
+      interpretation
+    };
+  }
+
+  const task = (id, title, caption, code, teaching = {}) => {
+    const details = typeof teaching === "string" ? {question:teaching} : (teaching || {});
+    return {
+      id,
+      title,
+      caption,
+      question:details.question || "",
+      readingCue:details.readingCue || "",
+      metricHelp:Array.isArray(details.metricHelp) ? details.metricHelp : [],
+      metricMeta:details.metricMeta || null,
+      comparison:Boolean(details.comparison),
+      code:formatRouteCode(code)
+    };
+  };
   const PYTHON_KEYWORDS = new Set(["and","as","assert","async","await","break","class","continue","def","del","elif","else","except","finally","for","from","global","if","import","in","is","lambda","not","or","pass","raise","return","try","while","with","yield"]);
   const PYTHON_BUILTINS = new Set(["bool","dict","display","enumerate","float","int","len","list","map","max","min","print","range","set","sorted","str","sum","tuple","zip"]);
   const escapeCodeHtml = value => String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -1235,16 +1484,17 @@ test_result.round(3)`;
 
   function supervisedRoute(config, value, modelId, folds) {
     const hasHyperparameters = modelSpec(modelId, value).grid !== "{}";
+    const teaching = supervisedTeaching(config, value, modelId);
     return [
-      task("frame","Choose what to predict","define X and y",frameCode(config, value),"What am I trying to predict?"),
-      task("split","Split data and save the test set",config.split === "time" ? "latest 20%" : "stratified / random 20%",splitCode(config),"What will I train on, and what will I save until the end?"),
-      task("explore","Explore training data","training inputs + plots",exploreCode(config, value),"What does the training data look like?"),
-      task("prepare","Prepare the data","only selected feature types",preprocessingCode(config, value, modelId),"What needs to be cleaned or transformed?"),
-      task("model","Build the model pipeline",modelSpec(modelId, value).concept,modelCode(modelId, value),"What algorithm am I using?"),
-      task("baseline","Check the baseline with cross-validation",`${folds}-fold training-only CV`,baselineCode(config, folds),"Does the baseline model work consistently?"),
-      task("tune",hasHyperparameters ? "Tune the model" : "Keep the model defaults",hasHyperparameters ? `GridSearchCV · ${folds} folds` : "no meaningful settings to search",tuningCode(config, modelId, value),"Can better settings improve it?"),
-      task("diagnose","Diagnose and understand the chosen model","training-only diagnostics",diagnosticsCode(config, modelId, value),"What does the chosen model get right, get wrong, and how does it behave?"),
-      task("final","Final test","saved test set · one walkthrough",finalCode(config),"How well does it perform on genuinely unseen data?")
+      task("frame","Choose what to predict","define X and y",frameCode(config, value),teaching.frame),
+      task("split","Split data and save the test set",config.split === "time" ? "latest 20%" : "stratified / random 20%",splitCode(config),teaching.split),
+      task("explore","Explore training data","training inputs + plots",exploreCode(config, value),teaching.explore),
+      task("prepare","Prepare the data","only selected feature types",preprocessingCode(config, value, modelId),teaching.prepare),
+      task("model","Build the model pipeline",modelSpec(modelId, value).concept,modelCode(modelId, value),teaching.model),
+      task("baseline","Check the baseline with cross-validation",`${folds}-fold training-only CV`,baselineCode(config, folds),teaching.baseline),
+      task("tune",hasHyperparameters ? "Tune the model" : "Keep the model defaults",hasHyperparameters ? `GridSearchCV · ${folds} folds` : "no meaningful settings to search",tuningCode(config, modelId, value),teaching.tune),
+      task("diagnose","Diagnose and understand the chosen model","training-only diagnostics",diagnosticsCode(config, modelId, value),teaching.diagnose),
+      task("final","Final test","saved test set · one walkthrough",finalCode(config),teaching.final)
     ];
   }
 
@@ -1530,6 +1780,162 @@ explore_df.head(10)`;
     return cell;
   }
 
+  function routeTaskForCell(cell) {
+    return cell?.taskId ? routeTasks.find(item => item.id === cell.taskId) || null : null;
+  }
+
+  function teachingLine(label, text, className = "teaching-line", role = "") {
+    const line = document.createElement("p");
+    line.className = className;
+    if (role) line.dataset.teachingRole = role;
+    const marker = document.createElement("span");
+    marker.className = "teaching-label";
+    marker.textContent = `${label}:`;
+    const copy = document.createElement("span");
+    copy.textContent = text;
+    line.append(marker, copy);
+    return line;
+  }
+
+  function metricHelpBlock(metricHelp, className = "teaching-metric-help") {
+    if (!Array.isArray(metricHelp) || !metricHelp.length) return null;
+    const block = document.createElement("div");
+    block.className = className;
+    block.dataset.teachingRole = "metric";
+    const heading = document.createElement("div");
+    heading.className = "teaching-label teaching-metric-heading";
+    heading.textContent = "METRIC MEANING";
+    block.append(heading);
+    metricHelp.forEach(metric => {
+      const line = document.createElement("p");
+      line.className = "teaching-metric-line";
+      const label = document.createElement("strong");
+      label.textContent = `${metric.label} ${metric.direction === "higher" ? "↑" : "↓"}`;
+      const copy = document.createElement("span");
+      const prefix = `${metric.label}:`;
+      copy.textContent = metric.text.startsWith(prefix) ? metric.text.slice(prefix.length).trim() : metric.text;
+      line.append(label, copy);
+      block.append(line);
+    });
+    return block;
+  }
+
+  function renderTeachingBlock(cell) {
+    const task = routeTaskForCell(cell);
+    if (!task || (!task.question && !task.readingCue && !task.metricHelp?.length)) return null;
+    const block = document.createElement("section");
+    block.className = "teaching-block";
+    block.dataset.teachingStep = task.id;
+    block.setAttribute("aria-label", `Teaching guidance for ${task.title}`);
+    if (task.question) block.append(teachingLine("QUESTION", task.question, "teaching-line teaching-question", "question"));
+    if (task.readingCue) block.append(teachingLine("LOOK FOR", task.readingCue, "teaching-line teaching-cue", "reading-cue"));
+    const metrics = metricHelpBlock(task.metricHelp);
+    if (metrics) block.append(metrics);
+    return block;
+  }
+
+  function summaryMetricLabel(summary, includeDirection = true) {
+    const target = summary.task === "regression" && summary.target ? ` (${summary.target})` : "";
+    return `${summary.metric.label}${target}${includeDirection ? ` ${summary.metric.directionSymbol}` : ""}`;
+  }
+
+  function currentCVSummary() {
+    const baseline = cells.find(cell => cell.stage === "baseline" && cell.output?.status === "ok" && cell.output.table);
+    const config = selectedConfig();
+    return baseline ? cvSummaryFromTable(baseline.output.table, config.task, config.split, config.target) : null;
+  }
+
+  function renderCVSummaryTeaching(cell) {
+    const task = routeTaskForCell(cell), config = selectedConfig();
+    if (!task || !cell.output?.table || config.task === "unsupervised") return null;
+    const summary = cvSummaryFromTable(cell.output.table, config.task, config.split, config.target);
+    if (!summary) return null;
+    const section = document.createElement("section");
+    section.className = "teaching-result cv-summary";
+    section.dataset.teachingResult = "cv-summary";
+    section.dataset.summaryTask = summary.task;
+    section.dataset.summaryTimeSeries = String(summary.timeSeries);
+    section.dataset.primaryMetric = summary.metric.key;
+    const heading = document.createElement("h4");
+    heading.textContent = "What this suggests from cross-validation";
+    section.append(heading);
+    const stats = document.createElement("div");
+    stats.className = "teaching-stats";
+    const statValues = [
+      ["validation-mean", `Typical validation ${summaryMetricLabel(summary)}`, formatTeachingNumber(summary.validationMean)],
+      ["validation-range", "Fold range", `${formatTeachingNumber(summary.validationMin)}–${formatTeachingNumber(summary.validationMax)}`],
+      ["training-mean", `Typical training ${summaryMetricLabel(summary, false)}`, formatTeachingNumber(summary.trainingMean)],
+      ["train-validation-gap", "Typical train–validation gap", formatTeachingNumber(summary.gap)]
+    ];
+    statValues.forEach(([key, label, value]) => {
+      const stat = document.createElement("div");
+      stat.className = "teaching-stat";
+      stat.dataset.summaryKey = key;
+      const statLabel = document.createElement("span"); statLabel.textContent = label;
+      const statValue = document.createElement("strong"); statValue.textContent = value;
+      stat.append(statLabel, statValue); stats.append(stat);
+    });
+    section.append(stats);
+    const stability = document.createElement("p");
+    stability.className = "teaching-interpretation";
+    stability.dataset.teachingRole = "validation-stability";
+    stability.textContent = cvStabilityText(summary);
+    const gap = document.createElement("p");
+    gap.className = "teaching-interpretation";
+    gap.dataset.teachingRole = "train-validation-gap";
+    gap.textContent = cvGapText(summary);
+    section.append(stability, gap);
+    return section;
+  }
+
+  function renderFinalComparisonTeaching(cell) {
+    const task = routeTaskForCell(cell), summary = currentCVSummary();
+    if (!task || !summary || !cell.output?.table) return null;
+    const comparison = finalComparisonFromTable(summary, cell.output.table);
+    if (!comparison) return null;
+    const section = document.createElement("section");
+    section.className = "teaching-result final-comparison";
+    section.dataset.teachingResult = "final-comparison";
+    section.dataset.finalMetric = comparison.metric.key;
+    section.dataset.finalInsideRange = String(comparison.insideRange);
+    section.dataset.finalCvMean = String(comparison.meanCV);
+    section.dataset.finalCvMin = String(comparison.cvMin);
+    section.dataset.finalCvMax = String(comparison.cvMax);
+    section.dataset.finalTest = String(comparison.finalTest);
+    const heading = document.createElement("h4");
+    heading.textContent = "Compare the final test with cross-validation";
+    section.append(heading);
+    const table = document.createElement("table");
+    table.className = "teaching-comparison";
+    const head = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["Evidence", summaryMetricLabel(summary)].forEach(label => { const cell = document.createElement("th"); cell.textContent = label; headRow.append(cell); });
+    head.append(headRow);
+    const body = document.createElement("tbody");
+    [["Mean CV", formatTeachingNumber(comparison.meanCV)], ["CV range", `${formatTeachingNumber(comparison.cvMin)}–${formatTeachingNumber(comparison.cvMax)}`], ["Final test", formatTeachingNumber(comparison.finalTest)]].forEach(([label, value]) => {
+      const row = document.createElement("tr");
+      const labelCell = document.createElement("th"); labelCell.scope = "row"; labelCell.textContent = label;
+      const valueCell = document.createElement("td"); valueCell.textContent = value;
+      row.append(labelCell, valueCell); body.append(row);
+    });
+    table.append(head, body); section.append(table);
+    const interpretation = document.createElement("p");
+    interpretation.className = "teaching-interpretation";
+    interpretation.dataset.teachingRole = "final-interpretation";
+    interpretation.textContent = comparison.interpretation;
+    const independence = document.createElement("p");
+    independence.className = "teaching-independence";
+    independence.textContent = "The final test used data that was not used for fitting, tuning, or model selection.";
+    section.append(interpretation, independence);
+    return section;
+  }
+
+  function renderTeachingResult(cell) {
+    if (cell.stage === "baseline") return renderCVSummaryTeaching(cell);
+    if (cell.stage === "final") return renderFinalComparisonTeaching(cell);
+    return null;
+  }
+
   function renderNotebook() {
     const panel = $("#notebookPanel"); panel.replaceChildren();
     if (!cells.length) {
@@ -1587,7 +1993,10 @@ explore_df.head(10)`;
       const inlineOutput = document.createElement("div");
       inlineOutput.className = "cell-inline-output";
       inlineOutput.dataset.outputFor = cell.id;
-      article.append(head, editor, foot);
+      const teaching = renderTeachingBlock(cell);
+      article.append(head);
+      if (teaching) article.append(teaching);
+      article.append(editor, foot);
       stack.append(article, inlineOutput);
       panel.append(stack);
       updateLines();
@@ -1651,6 +2060,8 @@ explore_df.head(10)`;
       item.append(outputTitle(`Chart ${index + 1}`, "PNG preview"));
       const wrap = document.createElement("div"); wrap.className = "chart-wrap"; const image = document.createElement("img"); image.src = chart; image.alt = `Chart ${index + 1} generated by ${cell.label}`; wrap.append(image); item.append(wrap);
     });
+    const teachingResult = renderTeachingResult(cell);
+    if (teachingResult) item.append(teachingResult);
     if (warnings.length) {
       item.append(outputTitle("Python warning", `${warnings.length} captured · cell succeeded`));
       const pre = document.createElement("pre"); pre.className = "console-output warning"; pre.textContent = warnings.map(warning => `${warning.category || "Warning"}: ${warning.message || warning}`).join("\n"); item.append(pre);
@@ -1844,10 +2255,16 @@ explore_df.head(10)`;
       const title = document.createElement("strong"); title.className = "workflow-step-title"; title.textContent = item.title;
       const caption = document.createElement("span"); caption.className = "workflow-step-caption"; caption.textContent = item.caption;
       copy.append(kicker, title); head.append(copy, caption);
-      const note = document.createElement("p"); note.className = "workflow-step-note"; note.textContent = item.question;
+      const note = item.question ? teachingLine("QUESTION", item.question, "workflow-step-note", "question") : null;
+      const cue = item.readingCue ? teachingLine("LOOK FOR", item.readingCue, "workflow-step-cue", "reading-cue") : null;
+      const metric = metricHelpBlock(item.metricHelp, "workflow-step-metric");
       const typeNote = document.createElement("p"); typeNote.className = "workflow-type-note"; typeNote.textContent = "Type, run, and inspect this cell";
       const code = document.createElement("pre"); code.className = "workflow-code"; code.dataset.taskId = item.id; code.innerHTML = highlightPython(item.code); code.setAttribute("aria-label", `Exact Python for ${item.title}`);
-      step.append(number, head, note, typeNote, code); story.append(step);
+      step.append(number, head);
+      if (note) step.append(note);
+      if (cue) step.append(cue);
+      if (metric) step.append(metric);
+      step.append(typeNote, code); story.append(step);
     });
     const foot = document.createElement("p"); foot.className = "workflow-foot";
     foot.textContent = "Changing the dataset, feature scenario, model, or fold count rebuilds this workflow from the same source as the route above. The final test is used once per walkthrough/setup; changing the model or using editable cells can reuse the deterministic holdout. Custom cells are unrestricted. Reset starts a new teaching run.";
@@ -1946,7 +2363,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
