@@ -174,6 +174,12 @@ def run_reset_regression(payload: dict) -> dict:
 
 def assert_route_structure(payload: dict) -> dict:
     source = (ROOT / "ml-app.js").read_text(encoding="utf-8")
+    if "serialize_dataframe_result" not in payload.get("dataFrameSerializerSource", ""):
+        raise AssertionError("The general DataFrame serializer source was not exported for regression testing.")
+    if "len(np.unique(values)) <= self.bins" in payload["oneRHelperSource"]:
+        raise AssertionError("One-R still infers categorical features from numeric uniqueness.")
+    if "_OneRFeaturePreprocessor" not in payload["oneRHelperSource"]:
+        raise AssertionError("One-R preprocessing does not retain explicit feature-type metadata.")
     if "BASE_GLOBAL_NAMES = frozenset(globals())" not in source or 'globals().pop("__name", None)' not in source:
         raise AssertionError("Reset does not use automatic baseline-global cleanup.")
     if "async function resetNotebook()" not in source or "await resetWorkerWorkspace(true);" not in source:
@@ -364,6 +370,8 @@ def assert_route_structure(payload: dict) -> dict:
                     "Simple Linear Regression",
                     "Multiple Linear Regression",
                 }
+                if model_id == "one_r" and not scenario["continuous"]:
+                    has_grid = False
                 if has_grid and "GridSearchCV" not in tune:
                     raise AssertionError(f"Expected a readable grid for {route}")
                 if not has_grid and "GridSearchCV" in tune:
@@ -517,6 +525,203 @@ def run_categorical_nb_unseen_test(payload: dict) -> dict:
     return {"route": "car/categorical/naive_bayes", "unseen_category_prediction": str(prediction[0])}
 
 
+def run_dataframe_serializer_regression(payload: dict, pd, np) -> dict:
+    """Exercise the same Python DataFrame payload serializer used by the worker."""
+
+    namespace = {"pd": pd, "np": np, "__builtins__": __builtins__}
+    exec(payload["dataFrameSerializerSource"], namespace, namespace)
+    serialize = namespace["serialize_dataframe_result"]
+
+    default_index = serialize(pd.DataFrame({"a": [1, 2]}))
+    if default_index["columns"] != ["a"] or default_index["rows"] != [[1], [2]]:
+        raise AssertionError(f"Default RangeIndex was rendered as an unnecessary or incorrect column: {default_index}")
+
+    unnamed_index = serialize(pd.DataFrame({"mean": [1.2, 3.4]}, index=["height", "weight"]))
+    if unnamed_index["columns"][:2] != ["index", "mean"] or [row[0] for row in unnamed_index["rows"]] != ["height", "weight"]:
+        raise AssertionError(f"Unnamed semantic index was not preserved: {unnamed_index}")
+
+    named_index_frame = pd.DataFrame({"mean": [1.2, 3.4]}, index=["height", "weight"])
+    named_index_frame.index.name = "feature"
+    named_index = serialize(named_index_frame)
+    if named_index["columns"][:2] != ["feature", "mean"]:
+        raise AssertionError(f"Named index was not rendered as the first visible column: {named_index}")
+
+    describe_frame = pd.DataFrame(
+        {"radius_mean": [10.0, 11.0, 12.0], "texture_mean": [8.0, 9.0, 10.0]}
+    ).describe().T
+    describe_result = serialize(describe_frame)
+    if {row[0] for row in describe_result["rows"]} != {"radius_mean", "texture_mean"}:
+        raise AssertionError(f"describe().T lost its feature-name index: {describe_result}")
+
+    loading_frame = pd.DataFrame(
+        {"PC1": [0.4, -0.2], "PC2": [0.1, 0.7]},
+        index=["radius_mean", "texture_mean"],
+    )
+    loading_result = serialize(loading_frame)
+    if {row[0] for row in loading_result["rows"]} != {"radius_mean", "texture_mean"}:
+        raise AssertionError(f"PCA-style loadings lost their source-feature index: {loading_result}")
+
+    multi_index_frame = pd.DataFrame(
+        {"value": [1, 2]},
+        index=pd.MultiIndex.from_tuples(
+            [("train", "a"), ("test", "b")], names=["split", "row"]
+        ),
+    )
+    multi_index = serialize(multi_index_frame)
+    if multi_index["columns"][:2] != ["split", "row"] or multi_index["rows"][:2] != [["train", "a", 1], ["test", "b", 2]]:
+        raise AssertionError(f"MultiIndex levels were not preserved: {multi_index}")
+
+    truncated_frame = pd.DataFrame(
+        {f"column_{index}": range(55) for index in range(21)},
+        index=[f"row-{index}" for index in range(55)],
+    )
+    truncated = serialize(truncated_frame)
+    if (
+        len(truncated["rows"]) != 50
+        or len(truncated["columns"]) != 21
+        or truncated["rowCount"] != 55
+        or truncated["columnCount"] != 21
+        or truncated["rows"][49][0] != "row-49"
+        or truncated["rows"][49][20] != 49
+    ):
+        raise AssertionError(f"Index columns were not aligned with the truncated visible rows: {truncated}")
+
+    return {
+        "default_range_index_clean": True,
+        "unnamed_index_preserved": True,
+        "named_index_first": True,
+        "describe_transpose_feature_names": True,
+        "pca_loading_feature_names": True,
+        "multiindex_levels_preserved": True,
+        "truncation_alignment_preserved": True,
+    }
+
+
+def run_one_r_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Guard categorical, mixed, and continuous One-R semantics, including bins=3."""
+
+    def base_namespace():
+        namespace = {
+            "pd": pd,
+            "np": np,
+            "plt": plt,
+            "sns": sns,
+            "__builtins__": __builtins__,
+        }
+        exec(payload["oneRHelperSource"], namespace, namespace)
+        return namespace
+
+    car_route = next(
+        route
+        for route in payload["routes"]["5"]
+        if route["datasetId"] == "car"
+        and route["scenarioId"] == "categorical"
+        and route["modelId"] == "one_r"
+    )
+    fixture = base_namespace()
+    exec(route_code(car_route, "prepare"), fixture, fixture)
+    exec(route_code(car_route, "model"), fixture, fixture)
+    fixture_features = {
+        "buying": ["low", "med", "high", "vhigh"] * 3,
+        "maintenance": ["low"] * 12,
+        "doors": ["2"] * 12,
+        "persons": ["2"] * 12,
+        "luggage_boot": ["small"] * 12,
+        "safety": ["low"] * 12,
+    }
+    fixture_X = pd.DataFrame(fixture_features)
+    fixture_y = pd.Series(["low-class", "med-class", "high-class", "vhigh-class"] * 3)
+    fixture["pipeline"].fit(fixture_X, fixture_y)
+    fixture_model = fixture["pipeline"].named_steps["model"]
+    fixture_table = fixture["one_r_rule_table"](
+        fixture_model, fixture["pipeline"].named_steps["prepare"], list(fixture_X.columns)
+    )
+    expected_buying = {"low", "med", "high", "vhigh"}
+    if (
+        fixture_model.best_feature_ != 0
+        or not fixture_model.is_discrete_
+        or set(fixture_table["interval"]) != expected_buying
+        or len(fixture_table) != 4
+        or int(fixture_table["training_rows"].sum()) != len(fixture_X)
+    ):
+        raise AssertionError(f"The bins=3 four-category buying fixture was merged or mislabeled: {fixture_table}")
+    fixture_counts = dict(zip(fixture_table["interval"], fixture_table["training_rows"]))
+    if any(int(fixture_counts[category]) != int((fixture_X["buying"] == category).sum()) for category in expected_buying):
+        raise AssertionError(f"Buying rule counts do not match the original category membership: {fixture_table}")
+
+    actual = base_namespace()
+    actual["df"] = pd.read_csv(ROOT / car_route["dataset"]["file"], sep=car_route["dataset"]["sep"])
+    for cell_id in ("frame", "split", "prepare", "model", "baseline", "tune", "diagnose"):
+        exec(route_code(car_route, cell_id), actual, actual)
+    actual_table = actual["one_r_rules"]
+    actual_feature = str(actual_table["feature"].iloc[0])
+    actual_values = actual["X_train"][actual_feature].astype(str)
+    actual_counts = dict(actual_values.value_counts())
+    actual_rule_counts = dict(zip(actual_table["interval"], actual_table["training_rows"]))
+    if set(actual_rule_counts) != set(actual_counts) or int(actual_table["training_rows"].sum()) != len(actual_values):
+        raise AssertionError(f"Car One-R displayed categories or total row counts are inconsistent: {actual_table}")
+    if any(int(actual_rule_counts[label]) != int(actual_counts[label]) for label in actual_counts):
+        raise AssertionError(f"Car One-R displayed row counts do not match original category membership: {actual_table}")
+
+    mixed_route = next(
+        route
+        for route in payload["routes"]["5"]
+        if route["datasetId"] == "penguins"
+        and route["scenarioId"] == "continuous_category"
+        and route["modelId"] == "one_r"
+    )
+    mixed = base_namespace()
+    mixed["df"] = pd.read_csv(ROOT / mixed_route["dataset"]["file"], sep=mixed_route["dataset"]["sep"])
+    for cell_id in ("frame", "split", "prepare"):
+        exec(route_code(mixed_route, cell_id), mixed, mixed)
+    mixed["preprocessor"].fit(mixed["X_train"], mixed["y_train"])
+    mixed_values = mixed["preprocessor"].transform(mixed["X_train"])
+    mixed_mask = np.asarray(mixed_values.categorical_mask, dtype=bool)
+    if mixed_mask.tolist() != [False, False, False, False, True]:
+        raise AssertionError(f"Mixed One-R preprocessing exposed the wrong feature-type mask: {mixed_mask}")
+    continuous_candidate = mixed["OneRClassifier"](bins=3).fit(
+        mixed["_OneRFeatureMatrix"](mixed_values[:, [0]], [False]), mixed["y_train"]
+    )
+    categorical_candidate = mixed["OneRClassifier"](bins=3).fit(
+        mixed["_OneRFeatureMatrix"](mixed_values[:, [4]], [True]), mixed["y_train"]
+    )
+    if continuous_candidate.edges_ is None or not any(str(row["interval"]).startswith("[") for row in continuous_candidate.rule_rows_):
+        raise AssertionError("Mixed-route continuous One-R candidates no longer use numeric intervals.")
+    if categorical_candidate.edges_ is not None:
+        raise AssertionError("Mixed-route categorical One-R candidates were quantile-binned.")
+    if len(categorical_candidate.rule_rows_) != mixed["X_train"]["island"].nunique():
+        raise AssertionError("Mixed-route categorical One-R did not retain one rule per original category.")
+
+    continuous_route = next(
+        route
+        for route in payload["routes"]["5"]
+        if route["datasetId"] == "breast"
+        and route["scenarioId"] == "continuous5"
+        and route["modelId"] == "one_r"
+    )
+    continuous = base_namespace()
+    continuous["df"] = pd.read_csv(ROOT / continuous_route["dataset"]["file"], sep=continuous_route["dataset"]["sep"])
+    for cell_id in ("frame", "prepare"):
+        exec(route_code(continuous_route, cell_id), continuous, continuous)
+    continuous["preprocessor"].fit(continuous["X"], continuous["y"])
+    continuous_values = continuous["preprocessor"].transform(continuous["X"])
+    pure_continuous = continuous["OneRClassifier"](bins=3).fit(
+        continuous["_OneRFeatureMatrix"](continuous_values[:, [0]], [False]), continuous["y"]
+    )
+    if pure_continuous.edges_ is None or pure_continuous.is_discrete_:
+        raise AssertionError("Pure-continuous One-R binning was disabled.")
+
+    return {
+        "car_bins_3_buying_categories_distinct": sorted(expected_buying),
+        "car_fixture_rule_counts_exact": True,
+        "car_actual_route_rule_counts_exact": True,
+        "mixed_mask_explicit": mixed_mask.tolist(),
+        "mixed_continuous_intervals": True,
+        "mixed_categorical_values": True,
+        "pure_continuous_intervals": True,
+    }
+
+
 def run_pandas_reset_regression(payload: dict, pd, np, plt, sns) -> dict:
     """Exercise the reset source with real pandas objects and mutated aliases/data."""
 
@@ -614,6 +819,8 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     attempted = 0
     reset_runtime = run_pandas_reset_regression(payload, pd, np, plt, sns)
     categorical_nb_test = run_categorical_nb_unseen_test(payload)
+    dataframe_serializer_test = run_dataframe_serializer_regression(payload, pd, np)
+    one_r_test = run_one_r_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -671,6 +878,8 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         },
         "reset_runtime": reset_runtime,
         "categorical_nb_unseen_test": categorical_nb_test,
+        "dataframe_serializer": dataframe_serializer_test,
+        "one_r_regression": one_r_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }

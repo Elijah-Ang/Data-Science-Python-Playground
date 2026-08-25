@@ -118,7 +118,7 @@
   };
 
   const ONE_R_HELPER_SOURCE = String.raw`
-from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin, clone
 
 
 class OneRClassifier(ClassifierMixin, BaseEstimator):
@@ -127,13 +127,20 @@ class OneRClassifier(ClassifierMixin, BaseEstimator):
         self.bins = bins
 
     def fit(self, X, y):
+        categorical_mask = getattr(X, "categorical_mask", None)
+        if categorical_mask is None:
+            raise ValueError("One-R requires explicit feature-type metadata.")
         X, y = np.asarray(X, dtype=float), np.asarray(y)
+        categorical_mask = np.asarray(categorical_mask, dtype=bool)
+        if categorical_mask.shape != (X.shape[1],):
+            raise ValueError("One-R feature-type metadata does not match the transformed features.")
+        self.categorical_mask_ = categorical_mask.copy()
         self.classes_, counts = np.unique(y, return_counts=True)
         self.default_ = self.classes_[np.argmax(counts)]
         best = None
         for feature_index in range(X.shape[1]):
             values = X[:, feature_index]
-            is_discrete = len(np.unique(values)) <= self.bins
+            is_discrete = bool(self.categorical_mask_[feature_index])
             edges = None if is_discrete else np.unique(np.quantile(values, np.linspace(0, 1, self.bins + 1))[1:-1])
             encoded = values if is_discrete else np.digitize(values, edges)
             rules, rows = {}, []
@@ -163,7 +170,51 @@ class OneRClassifier(ClassifierMixin, BaseEstimator):
         return np.array([self.rules_.get(bucket, self.default_) for bucket in encoded])
 
 
+class _OneRFeatureMatrix(np.ndarray):
+    """Keep preprocessing feature-type metadata attached to the transformed matrix."""
+    def __new__(cls, values, categorical_mask):
+        result = np.asarray(values, dtype=float).view(cls)
+        result.categorical_mask = np.asarray(categorical_mask, dtype=bool)
+        return result
+
+    def __array_finalize__(self, source):
+        if source is not None:
+            self.categorical_mask = getattr(source, "categorical_mask", None)
+
+
+class _OneRFeaturePreprocessor(BaseEstimator, TransformerMixin):
+    """Wrap the generated preprocessor without exposing metadata in the model cell."""
+    def __init__(self, transformer, categorical_mask):
+        self.transformer = transformer
+        self.categorical_mask = categorical_mask
+
+    def fit(self, X, y=None):
+        if isinstance(self.transformer, str) and self.transformer == "passthrough":
+            self.transformer_ = "passthrough"
+        else:
+            self.transformer_ = clone(self.transformer)
+            self.transformer_.fit(X, y)
+        return self
+
+    def transform(self, X):
+        values = X if self.transformer_ == "passthrough" else self.transformer_.transform(X)
+        return _OneRFeatureMatrix(values, self.categorical_mask)
+
+    def get_feature_names_out(self, input_features=None):
+        transformer = getattr(self, "transformer_", self.transformer)
+        if hasattr(transformer, "get_feature_names_out"):
+            return transformer.get_feature_names_out(input_features)
+        if input_features is None:
+            return np.arange(len(self.categorical_mask), dtype=object)
+        return np.asarray(input_features, dtype=object)
+
+
+def _one_r_base_preprocessor(preprocessor):
+    return getattr(preprocessor, "transformer_", preprocessor)
+
+
 def _one_r_categories(preprocessor, feature_index):
+    preprocessor = _one_r_base_preprocessor(preprocessor)
     if isinstance(preprocessor, str):
         return None
     if hasattr(preprocessor, "categories_"):
@@ -187,6 +238,7 @@ def _one_r_categories(preprocessor, feature_index):
 
 
 def _one_r_feature_name(preprocessor, feature_names, feature_index):
+    preprocessor = _one_r_base_preprocessor(preprocessor)
     if isinstance(preprocessor, str) or hasattr(preprocessor, "categories_"):
         return feature_names[feature_index]
     position = 0
@@ -208,12 +260,51 @@ def _one_r_feature_name(preprocessor, feature_names, feature_index):
 
 def one_r_rule_table(fitted, preprocessor, feature_names):
     table = pd.DataFrame(fitted.rule_rows_).copy()
-    categories = _one_r_categories(preprocessor, fitted.best_feature_)
+    categories = _one_r_categories(preprocessor, fitted.best_feature_) if fitted.is_discrete_ else None
     if categories is not None:
         labels = {float(index):str(value) for index, value in enumerate(categories)}
         table["interval"] = table["encoded_value"].map(labels).fillna(table["interval"])
     table.insert(0, "feature", _one_r_feature_name(preprocessor, feature_names, fitted.best_feature_))
     return table[["feature", "interval", "predicted_class", "training_rows"]]
+`;
+
+  const DATAFRAME_SERIALIZER_SOURCE = String.raw`
+def _serialize_table_cell(value):
+    missing = pd.isna(value)
+    if isinstance(missing, (bool, np.bool_)) and missing:
+        return None
+    return value.item() if hasattr(value, "item") else value
+
+
+def serialize_dataframe_result(frame, max_rows=50, max_columns=20):
+    shown = frame.head(max_rows).iloc[:, :max_columns]
+    index = shown.index
+    is_default_range = (
+        isinstance(index, pd.RangeIndex)
+        and index.name is None
+        and index.start == 0
+        and index.step == 1
+    )
+    if is_default_range:
+        display = shown.reset_index(drop=True)
+    else:
+        index_frame = index.to_frame(index=False)
+        index_names = list(index.names) if isinstance(index, pd.MultiIndex) else [index.name]
+        index_columns = [
+            str(name) if name is not None else ("index" if position == 0 else f"index_{position}")
+            for position, name in enumerate(index_names)
+        ]
+        index_frame.columns = index_columns
+        display = pd.concat(
+            [index_frame.reset_index(drop=True), shown.reset_index(drop=True)],
+            axis=1,
+        )
+    return {
+        "columns": [str(column) for column in display.columns],
+        "rows": [[_serialize_table_cell(value) for value in row] for row in display.to_numpy().tolist()],
+        "rowCount": int(len(frame)),
+        "columnCount": int(len(frame.columns)),
+    }
 `;
 
   const RESET_WORKSPACE_SOURCE = String.raw`
@@ -267,6 +358,7 @@ def display(value):
     global __last_display
     __last_display = value
 \`);
+    await pyodide.runPythonAsync(${py(DATAFRAME_SERIALIZER_SOURCE)});
     await pyodide.runPythonAsync(${py(ONE_R_HELPER_SOURCE)});
     await pyodide.runPythonAsync("BASE_GLOBAL_NAMES = frozenset(globals()) | {'BASE_GLOBAL_NAMES'}");
     baselineValues = await pyodide.runPythonAsync("dict(globals())");
@@ -298,9 +390,10 @@ df = pd.read_csv(io.StringIO(__csv_text), sep=__csv_sep)
 __raw_df_snapshot_from_worker = df.copy(deep=True)
 profile_df = eval(__profile_prepare, globals())
 preview = profile_df.head(5).copy()
+preview_payload = serialize_dataframe_result(profile_df, max_rows=5)
 json.dumps({
   "rows": int(len(profile_df)), "columns": [str(c) for c in profile_df.columns],
-  "preview": {"columns":[str(c) for c in preview.columns], "rows":[[None if pd.isna(v) else v.item() if hasattr(v, "item") else v for v in row] for row in preview.to_numpy().tolist()]},
+  "preview": {"columns":preview_payload["columns"], "rows":preview_payload["rows"]},
   "missing": int(profile_df.isna().sum().sum())
 }, default=str)
 \`);
@@ -346,8 +439,7 @@ __table = None
 if __error is None and __pd_from_worker is not None and isinstance(__result, __pd_from_worker.Series):
     __result = __result.to_frame()
 if __error is None and __pd_from_worker is not None and isinstance(__result, __pd_from_worker.DataFrame):
-    __shown = __result.head(50).iloc[:, :20]
-    __table = {"columns":[str(c) for c in __shown.columns], "rows":[[None if __pd_from_worker.isna(v) else v.item() if hasattr(v, "item") else v for v in row] for row in __shown.to_numpy().tolist()], "rowCount":int(len(__result)), "columnCount":int(len(__result.columns))}
+    __table = serialize_dataframe_result(__result)
 __charts = []
 if __plt_from_worker is not None:
     for __number in __plt_from_worker.get_fignums():
@@ -780,6 +872,12 @@ cv_scores.round(3)`;
     const numericBinary = value.binary.filter(name => (config.binaryNumeric || []).includes(name));
     const encodedBinary = value.binary.filter(name => !numericBinary.includes(name));
     const encodedFeatures = [...encodedBinary, ...value.categorical];
+    const oneRCategoricalMask = [
+      ...value.continuous.map(() => false),
+      ...numericBinary.map(() => true),
+      ...encodedFeatures.map(() => true)
+    ];
+    const oneRCategoricalMaskSource = "[" + oneRCategoricalMask.map(flag => flag ? "True" : "False").join(",") + "]";
     const allNumeric = value.continuous.length + numericBinary.length === featureCount(value) && !encodedFeatures.length;
     const allEncoded = !value.continuous.length && !numericBinary.length && encodedFeatures.length > 0;
     const allContinuous = value.continuous.length > 0 && !numericBinary.length && !encodedFeatures.length;
@@ -869,7 +967,10 @@ cv_scores.round(3)`;
     }
 
     const assignment = expression.includes("preprocessor =") ? expression : "preprocessor = " + expression;
-    return "# 4 · Prepare the selected data\n" + comments.join("\n") + "\n" + imports.join("\n") + "\n\n" + assignment + "\n\npreprocessor";
+    const wrappedAssignment = modelId === "one_r"
+      ? assignment + "\npreprocessor = _OneRFeaturePreprocessor(preprocessor, " + oneRCategoricalMaskSource + ")"
+      : assignment;
+    return "# 4 · Prepare the selected data\n" + comments.join("\n") + "\n" + imports.join("\n") + "\n\n" + wrappedAssignment + "\n\npreprocessor";
   }
 
   function modelSpec(modelId, value) {
@@ -884,7 +985,9 @@ cv_scores.round(3)`;
       regression_tree:{concept:"Learn if/then splits for nonlinear numeric predictions", imports:"from sklearn.tree import DecisionTreeRegressor", estimator:"DecisionTreeRegressor(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None],\n    'model__min_samples_leaf': [1, 5, 15]\n}")},
       logistic:{concept:"Model class log-odds with a regularised linear boundary", imports:"from sklearn.linear_model import LogisticRegression", estimator:"LogisticRegression(max_iter=2000, random_state=42)", grid:readable("{\n    'model__C': [0.1, 1.0, 10.0],\n    'model__class_weight': [None, 'balanced']\n}")},
       svm_cls:{concept:"Find a maximum-margin boundary; RBF allows curvature", imports:"from sklearn.svm import SVC", estimator:"SVC(random_state=42)", grid:readable("{\n    'model__C': [0.5, 2, 10],\n    'model__gamma': ['scale', 0.1]\n}")},
-      one_r:{concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R is preloaded as a small beginner-friendly helper.", estimator:"OneRClassifier(bins=5)", grid:readable("{\n    'model__bins': [3, 5, 8]\n}")},
+      one_r: !value.continuous.length
+        ? {concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R is preloaded as a small beginner-friendly helper.", estimator:"OneRClassifier(bins=5)", grid:"{}"}
+        : {concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R is preloaded as a small beginner-friendly helper.", estimator:"OneRClassifier(bins=5)", grid:readable("{\n    'model__bins': [3, 5, 8]\n}")},
       classification_tree:{concept:"Learn interpretable if/then splits for class labels", imports:"from sklearn.tree import DecisionTreeClassifier", estimator:"DecisionTreeClassifier(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None],\n    'model__min_samples_leaf': [1, 5, 15],\n    'model__criterion': ['gini', 'entropy']\n}")},
       knn_cls:{concept:"Vote using nearby training examples; distance makes scaling essential", imports:"from sklearn.neighbors import KNeighborsClassifier", estimator:"KNeighborsClassifier()", grid:readable("{\n    'model__n_neighbors': [3, 5, 9, 15],\n    'model__weights': ['uniform', 'distance']\n}")},
       qda:{concept:"Give each class its own covariance shape and curved boundary", note:"A small amount of regularisation keeps class covariance estimates stable.", imports:"from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis", estimator:"QuadraticDiscriminantAnalysis(reg_param=0.1)", grid:readable("{\n    'model__reg_param': [0.1, 0.2, 0.5, 0.9]\n}")},
@@ -1843,7 +1946,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
