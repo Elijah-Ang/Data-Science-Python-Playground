@@ -223,6 +223,11 @@ def assert_route_structure(payload: dict) -> dict:
     }
     removed_naive_bayes = []
     total_cells = 0
+    teaching_checks = {
+        "supervised_routes_with_step_guidance": 0,
+        "supervised_baseline_metric_help": 0,
+        "supervised_final_comparison_metadata": 0,
+    }
 
     for folds, routes in route_sets.items():
         for route in routes:
@@ -255,6 +260,27 @@ def assert_route_structure(payload: dict) -> dict:
                     ) from error
                 if not cell["question"].strip() or not cell["caption"].strip():
                     raise AssertionError(f"Missing beginner explanation in {route}")
+                if task_type != "unsupervised" and not cell.get("readingCue", "").strip():
+                    raise AssertionError(
+                        f"Missing Phase 1A reading cue for supervised step: "
+                        f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}"
+                    )
+
+            if task_type != "unsupervised":
+                teaching_checks["supervised_routes_with_step_guidance"] += 1
+                baseline_metadata = next(cell for cell in route["cells"] if cell["id"] == "baseline")
+                if not baseline_metadata.get("metricHelp") or not baseline_metadata.get("metricMeta"):
+                    raise AssertionError(f"Baseline CV teaching metadata is incomplete: {route}")
+                if not any(metric.get("key") == "macro_f1" if route["dataset"]["task"] == "classification" else metric.get("key") == "rmse" for metric in baseline_metadata["metricHelp"]):
+                    raise AssertionError(f"Baseline teaching metadata does not define the primary metric: {route}")
+                teaching_checks["supervised_baseline_metric_help"] += 1
+                tune_metadata = next(cell for cell in route["cells"] if cell["id"] == "tune")
+                if not tune_metadata.get("metricHelp") or not tune_metadata.get("metricMeta"):
+                    raise AssertionError(f"Tuning metric reminder metadata is incomplete: {route}")
+                final_metadata = next(cell for cell in route["cells"] if cell["id"] == "final")
+                if not final_metadata.get("comparison") or not final_metadata.get("metricMeta"):
+                    raise AssertionError(f"Final-test comparison metadata is incomplete: {route}")
+                teaching_checks["supervised_final_comparison_metadata"] += 1
 
             frame = route_code(route, "frame")
             if any(token in frame for token in ("continuous_features = []", "binary_features = []", "categorical_features = []", "target_name")):
@@ -497,6 +523,7 @@ def assert_route_structure(payload: dict) -> dict:
         },
         "model_df_sources": model_df_sources,
         "reset_state": reset_result,
+        "teaching_metadata": teaching_checks,
     }
 
 
@@ -805,6 +832,94 @@ def choose_runtime_routes(routes: list[dict], mode: str) -> list[dict]:
     return selected
 
 
+def _route_for_teaching_runtime(payload: dict, dataset_id: str, scenario_id: str, model_id: str) -> dict:
+    for route in payload["routes"]["5"]:
+        if (
+            route["datasetId"] == dataset_id
+            and route["scenarioId"] == scenario_id
+            and route["modelId"] == model_id
+        ):
+            return route
+    raise AssertionError(f"Teaching runtime fixture route is missing: {dataset_id}/{scenario_id}/{model_id}")
+
+
+def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at: str) -> dict:
+    namespace = {
+        "pd": pd,
+        "np": np,
+        "plt": plt,
+        "sns": sns,
+        "__builtins__": __builtins__,
+    }
+    dataset = route["dataset"]
+    namespace["df"] = pd.read_csv(ROOT / dataset["file"], sep=dataset["sep"])
+    exec(payload["oneRHelperSource"], namespace, namespace)
+    for cell in route["cells"]:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            exec(cell["code"], namespace, namespace)
+        plt.close("all")
+        if cell["id"] == stop_at:
+            return namespace
+    raise AssertionError(f"Route did not contain requested teaching runtime cell {stop_at!r}.")
+
+
+def run_teaching_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
+    fixtures = [
+        ("classification", "breast", "continuous5", "logistic"),
+        ("regression", "gapminder", "simple", "simple_linear"),
+        ("time_series", "seoul", "simple", "simple_linear"),
+    ]
+    results = {}
+    for kind, dataset_id, scenario_id, model_id in fixtures:
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
+        baseline_namespace = _execute_route_to_cell(payload, route, pd, np, plt, sns, "baseline")
+        cv_scores = baseline_namespace["cv_scores"].copy()
+        if kind == "classification":
+            validation = cv_scores["validation_macro_f1"].to_numpy(dtype=float)
+            training = cv_scores["train_macro_f1"].to_numpy(dtype=float)
+            gap = float(training.mean() - validation.mean())
+            metric = "macro_f1"
+        else:
+            validation = cv_scores["validation_rmse"].to_numpy(dtype=float)
+            training = cv_scores["train_rmse"].to_numpy(dtype=float)
+            if np.any(validation < 0) or np.any(training < 0):
+                raise AssertionError(f"{dataset_id} generated a negative learner-facing RMSE.")
+            gap = float(validation.mean() - training.mean())
+            metric = "rmse"
+        if not np.isclose(validation.mean(), validation.sum() / len(validation)):
+            raise AssertionError(f"{dataset_id} validation mean is not calculated from the fold values.")
+        if not np.isclose(validation.min(), min(validation)) or not np.isclose(validation.max(), max(validation)):
+            raise AssertionError(f"{dataset_id} validation range is not calculated from the fold values.")
+        if not np.isclose(training.mean(), training.sum() / len(training)):
+            raise AssertionError(f"{dataset_id} training mean is not calculated from the fold values.")
+
+        final_namespace = _execute_route_to_cell(payload, route, pd, np, plt, sns, "final")
+        if not np.allclose(cv_scores.to_numpy(dtype=float), final_namespace["cv_scores"].to_numpy(dtype=float)):
+            raise AssertionError(f"{dataset_id} final evaluation changed the prior CV evidence.")
+        final_result = final_namespace["test_result"]
+        final_metric_row = final_result.loc[final_result["metric"].astype(str).str.lower().eq(metric.replace("_", " "))]
+        if final_metric_row.empty:
+            label = "macro F1" if metric == "macro_f1" else "RMSE"
+            final_metric_row = final_result.loc[final_result["metric"].eq(label)]
+        if final_metric_row.empty or not np.isfinite(float(final_metric_row.iloc[0]["value"])):
+            raise AssertionError(f"{dataset_id} final result did not contain a finite {metric} value.")
+        results[dataset_id] = {
+            "fold_count": int(len(validation)),
+            "validation_mean": float(validation.mean()),
+            "validation_min": float(validation.min()),
+            "validation_max": float(validation.max()),
+            "training_mean": float(training.mean()),
+            "gap": gap,
+            "primary_metric": metric,
+            "final_test_value": float(final_metric_row.iloc[0]["value"]),
+            "cv_unchanged_after_final": True,
+            "time_series": route["dataset"]["split"] == "time",
+        }
+    if not results["seoul"]["time_series"]:
+        raise AssertionError("Seoul teaching fixture did not retain the chronological split metadata.")
+    return results
+
+
 def run_python_routes(payload: dict, mode: str) -> dict:
     import matplotlib
 
@@ -821,6 +936,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     categorical_nb_test = run_categorical_nb_unseen_test(payload)
     dataframe_serializer_test = run_dataframe_serializer_regression(payload, pd, np)
     one_r_test = run_one_r_regression(payload, pd, np, plt, sns)
+    teaching_runtime_test = run_teaching_runtime_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -880,6 +996,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "categorical_nb_unseen_test": categorical_nb_test,
         "dataframe_serializer": dataframe_serializer_test,
         "one_r_regression": one_r_test,
+        "teaching_runtime": teaching_runtime_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }
