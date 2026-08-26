@@ -126,9 +126,34 @@ for (const [modelId, [config, scenario]] of Object.entries(phase2aFixtures)) {
     }
   }
 }
-const outOfScopeRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "svm_cls", 5);
-if (outOfScopeRoute.find(step => step.id === "diagnose").modelTeaching !== null) {
-  throw new Error("Phase 2A model-specific teaching leaked into an out-of-scope model.");
+const phase2bFixtures = {
+  svm_cls:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  lda:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  qda:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  naive_bayes:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]]
+};
+const phase2bTokens = {
+  svm_cls:["boundary", "margin", "support vectors", "C", "gamma"],
+  lda:["class", "shared spread/shape", "straight decision boundaries"],
+  qda:["separate spread/shape", "curve", "more data"],
+  naive_bayes:["prior", "likelihood", "posterior", "independent"]
+};
+for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
+  const route = api.routeForSelection(config, scenario, modelId, 5);
+  const diagnose = route.find(step => step.id === "diagnose");
+  if (!diagnose.modelTeaching || diagnose.modelTeaching.modelId !== modelId) {
+    throw new Error(`Missing Phase 2B-1 model-specific teaching for ${modelId}.`);
+  }
+  const modelTeachingText = Object.values(diagnose.modelTeaching).join(" ");
+  for (const token of phase2bTokens[modelId]) {
+    if (!modelTeachingText.toLowerCase().includes(token.toLowerCase())) {
+      throw new Error(`Phase 2B-1 ${modelId} teaching is missing ${token}.`);
+    }
+  }
+}
+const neuralRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "mlp_cls", 5);
+if (neuralRoute.find(step => step.id === "diagnose").modelTeaching !== null) {
+  throw new Error("Phase 2B-1 model-specific teaching leaked into the deferred neural-network model.");
 }
 
 const seoulRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "simple_linear", 5);
@@ -223,5 +248,6 @@ console.log(JSON.stringify({
   cross_validation_mechanics:true,
   hyperparameter_tuning:true,
   phase2a_model_specific:true,
+  phase2b1_model_specific:true,
   preferred_vocabulary:true
 }, null, 2));
