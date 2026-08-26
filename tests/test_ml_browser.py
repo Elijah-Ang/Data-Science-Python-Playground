@@ -290,30 +290,39 @@ def main() -> int:
         run_steps(page, 8)
         assert_model_teaching(page, ("separate spread/shape", "curve", "more data"))
         qda_diagnostic = page.locator("#outputList .output-item").nth(7)
-        if not all(value in qda_diagnostic.inner_text() for value in ("Class-specific spread summary", "QDA regularisation parameter", "separate spread/shape", "Predicted class probabilities")):
-            raise AssertionError("QDA Step 8 did not show separate spread and prediction evidence.")
+        if not all(value in qda_diagnostic.inner_text() for value in ("Per-feature spread by class", "The table shows each class's centre and per-feature spread.", "vary together within each class", "covariance/shape", "boundary can curve", "QDA regularisation parameter", "Predicted class probabilities")):
+            raise AssertionError("QDA Step 8 did not show precise spread/covariance and prediction evidence.")
         if qda_diagnostic.locator("table").count() != 1:
             raise AssertionError("QDA class-centre evidence was not rendered as a table.")
 
         select_route(page, "breast", "continuous5", "naive_bayes", 9)
         run_steps(page, 8)
-        assert_model_teaching(page, ("prior", "likelihood", "posterior", "independent"))
+        assert_model_teaching(page, ("prior", "density", "posterior", "independent"))
         gaussian_nb_diagnostic = page.locator("#outputList .output-item").nth(7)
-        if not all(value in gaussian_nb_diagnostic.inner_text() for value in ("Gaussian Naive Bayes", "Prior P(class)", "Likelihood P(feature", "Predicted P(class | features)", "independence assumption")):
-            raise AssertionError("Gaussian Naive Bayes Step 8 did not show explicit prior, likelihood, and posterior evidence.")
+        if not all(value in gaussian_nb_diagnostic.inner_text() for value in ("Gaussian Naive Bayes", "Prior probability", "Class-conditional density", "Posterior probability", "not the probability of one exact continuous value", "independence assumption")):
+            raise AssertionError("Gaussian Naive Bayes Step 8 did not show typed prior, density, and posterior evidence.")
         gaussian_headers = gaussian_nb_diagnostic.locator("table thead th").all_inner_texts()
-        if gaussian_headers != ["probability_type", "class", "feature", "probability_label", "estimated_probability"]:
-            raise AssertionError(f"Gaussian Naive Bayes probability table has ambiguous columns: {gaussian_headers}")
+        if gaussian_headers != ["quantity_type", "class", "feature", "quantity_label", "quantity_value"]:
+            raise AssertionError(f"Gaussian Naive Bayes evidence table has ambiguous columns: {gaussian_headers}")
+        gaussian_density_values = []
+        for row_text in gaussian_nb_diagnostic.locator("table tbody tr").all_inner_texts():
+            if "Class-conditional density" in row_text:
+                try:
+                    gaussian_density_values.append(float(row_text.split()[-1]))
+                except ValueError:
+                    pass
+        if not gaussian_density_values or max(gaussian_density_values) <= 1:
+            raise AssertionError("Gaussian Naive Bayes browser output did not retain a valid density above 1.")
 
         select_route(page, "car", "categorical", "naive_bayes", 9)
         run_steps(page, 8)
         assert_model_teaching(page, ("prior", "likelihood", "posterior", "independent"))
         categorical_nb_diagnostic = page.locator("#outputList .output-item").nth(7)
-        if not all(value in categorical_nb_diagnostic.inner_text() for value in ("Bernoulli Naive Bayes", "buying=low", "Likelihood P(feature = 1 | class)", "P(buying=", "independence assumption")):
+        if not all(value in categorical_nb_diagnostic.inner_text() for value in ("Bernoulli Naive Bayes", "buying=low", "Class-conditional probability", "P(buying=", "independence assumption")):
             raise AssertionError("Categorical Naive Bayes Step 8 did not preserve original category probability labels.")
         categorical_headers = categorical_nb_diagnostic.locator("table thead th").all_inner_texts()
-        if categorical_headers != ["probability_type", "class", "feature", "probability_label", "estimated_probability"]:
-            raise AssertionError(f"Categorical Naive Bayes probability table has ambiguous columns: {categorical_headers}")
+        if categorical_headers != ["quantity_type", "class", "feature", "quantity_label", "quantity_value"]:
+            raise AssertionError(f"Categorical Naive Bayes evidence table has ambiguous columns: {categorical_headers}")
 
         select_route(page, "breast", "continuous5", "classification_tree", 9)
         run_steps(page, 9)

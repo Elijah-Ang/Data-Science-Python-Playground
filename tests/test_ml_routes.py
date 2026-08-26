@@ -24,6 +24,145 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "tests" / "generate_ml_routes.mjs"
 
 
+# This is an explicit audit record for the Phase 2A/2B-1 primary Step 8
+# surface.  The baseline counts were measured from the merged Phase 2B-1
+# route generator before this checkpoint.  They make intentional additions
+# for mathematical precision visible instead of treating line count as the
+# only success criterion.
+STEP8_CODE_SURFACE_AUDIT = {
+    "simple_linear": {
+        "route": ("gapminder", "simple"),
+        "baseline_lines": 50,
+        "core": ("simple_curve", "simple_slope", "simple_interpretation"),
+        "retained_optional": ("simple_grid", "simple_oof_x"),
+        "retained_plumbing": ("diagnostic_model.named_steps",),
+        "moved_or_deferred": ("np.atleast_1d", "np.ravel(fitted.coef_)",),
+        "reason": "The fitted line and slope are transferable model evidence; array-shape normalization is not.",
+    },
+    "multiple_linear": {
+        "route": ("wine", "continuous"),
+        "baseline_lines": 34,
+        "core": ("linear_coefficients", "linear_interpretation", "plain_english"),
+        "retained_optional": ("meaningful_unit", "direction"),
+        "retained_plumbing": ("get_feature_names_out", "named_steps"),
+        "moved_or_deferred": (),
+        "reason": "Encoded feature names are necessary to keep coefficient rows identifiable after preprocessing.",
+    },
+    "polynomial_simple": {
+        "model_id": "polynomial",
+        "route": ("gapminder", "simple"),
+        "baseline_lines": 37,
+        "core": ("poly_curve", "polynomial_degree", "fitted curve"),
+        "retained_optional": ("poly_grid",),
+        "retained_plumbing": ("named_steps",),
+        "moved_or_deferred": ("np.asarray(diagnostic_model.predict",),
+        "reason": "The curve and degree teach model flexibility; prediction-array normalization does not.",
+    },
+    "polynomial_multiple": {
+        "model_id": "polynomial",
+        "route": ("wine", "continuous"),
+        "baseline_lines": 26,
+        "core": ("polynomial_terms", "regularized_weight"),
+        "retained_optional": (),
+        "retained_plumbing": ("get_feature_names_out", "named_steps"),
+        "moved_or_deferred": (),
+        "reason": "There is no faithful single curve; named transformed terms are the useful evidence for this route.",
+    },
+    "regression_tree": {
+        "route": ("wine", "simple"),
+        "baseline_lines": 58,
+        "core": ("tree_path", "tree_importance", "plot_tree"),
+        "retained_optional": ("max_depth=2",),
+        "retained_plumbing": ("tree_transformed", "fitted.tree_"),
+        "moved_or_deferred": (),
+        "reason": "Estimator traversal is retained because it makes the displayed path exactly match the fitted tree.",
+    },
+    "logistic": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 33,
+        "core": ("logistic_coefficients", "logistic_interpretation", "pushes_model_toward"),
+        "retained_optional": ("logistic_positive_class",),
+        "retained_plumbing": ("get_feature_names_out", "named_steps"),
+        "moved_or_deferred": ("np.atleast_2d",),
+        "reason": "Class-labelled weights are the transferable concept; LogisticRegression.coef_ already has the needed 2-D shape.",
+    },
+    "classification_tree": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 55,
+        "core": ("tree_path", "tree_importance", "plot_tree"),
+        "retained_optional": ("max_depth=2",),
+        "retained_plumbing": ("tree_transformed", "fitted.tree_"),
+        "moved_or_deferred": (),
+        "reason": "The row path and fitted tree view explain the model; sparse/encoded traversal keeps them faithful.",
+    },
+    "knn_cls": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 56,
+        "core": ("kneighbors", "knn_neighbor_table", "knn_vote_scores"),
+        "retained_optional": ("knn_vote_weights",),
+        "retained_plumbing": ("knn_fit_indices", "knn_self_neighbour_check"),
+        "moved_or_deferred": ("knn_preparer", "knn_row_values"),
+        "reason": "Fold bookkeeping protects the honest out-of-fold example; a single pipeline transform replaces preparer plumbing.",
+    },
+    "one_r": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 31,
+        "core": ("one_r_rules", "one_r_comparison", "one_r_majority_prediction"),
+        "retained_optional": (),
+        "retained_plumbing": ("one_r_rule_table", "named_steps"),
+        "moved_or_deferred": (),
+        "reason": "The helper call exposes the fitted one-feature rules and baseline comparison that define One-R.",
+    },
+    "svm_cls": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 46,
+        "core": ("svm_support_positions", "svm_decision_values", "svm_prediction_story"),
+        "retained_optional": ("svm_grid_predictions", "support vectors"),
+        "retained_plumbing": ("svm_fit_indices", "support_"),
+        "moved_or_deferred": (),
+        "reason": "Support-vector positions and fold mapping are required to show the fitted evidence without leakage.",
+    },
+    "lda": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 53,
+        "core": ("lda_class_centres", "lda_probability_table", "lda_prediction_story"),
+        "retained_optional": ("lda_grid_predictions", "discriminant_score"),
+        "retained_plumbing": ("lda_fit_indices", "lda_fold_fitted"),
+        "moved_or_deferred": ("lda_preparer", "lda_row_values"),
+        "reason": "The public pipeline APIs preserve the fitted prediction story while removing duplicate preprocessing inspection.",
+    },
+    "qda": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 51,
+        "core": ("qda_class_centres", "qda_spread_summary", "qda_probability_table"),
+        "retained_optional": ("qda_grid_predictions", "qda_regularization"),
+        "retained_plumbing": ("qda_fit_indices",),
+        "moved_or_deferred": ("qda_preparer", "qda_row_values"),
+        "reason": "QDA’s public pipeline prediction is sufficient; unused transformed-row bookkeeping was removed.",
+    },
+    "naive_bayes_gaussian": {
+        "model_id": "naive_bayes",
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 65,
+        "core": ("nb_quantity_evidence", "nb_gaussian_means", "nb_gaussian_stds"),
+        "retained_optional": ("nb_prediction_story",),
+        "retained_plumbing": ("nb_fit_indices", "nb_row_values"),
+        "moved_or_deferred": ("estimated_probability", "probability_label"),
+        "reason": "Prior, density, and posterior rows directly teach NB evidence; mixed semantic names were replaced by typed quantities.",
+    },
+    "naive_bayes_categorical": {
+        "model_id": "naive_bayes",
+        "route": ("car", "categorical"),
+        "baseline_lines": 63,
+        "core": ("nb_quantity_evidence", "nb_one_probabilities", "nb_feature_labels"),
+        "retained_optional": ("nb_prediction_story",),
+        "retained_plumbing": ("nb_fit_indices", "nb_encoder"),
+        "moved_or_deferred": ("nb_row_values", "estimated_probability", "probability_label"),
+        "reason": "Original category labels and class-conditional probabilities are useful; categorical row transformation was not.",
+    },
+}
+
+
 def load_routes() -> dict:
     result = subprocess.run(
         ["node", str(GENERATOR)],
@@ -41,6 +180,46 @@ def load_routes() -> dict:
 
 def route_code(route: dict, cell_id: str) -> str:
     return next(cell["code"] for cell in route["cells"] if cell["id"] == cell_id)
+
+
+def run_step8_code_surface_audit(payload: dict) -> dict:
+    """Measure the audited primary Step 8 cells and guard intentional cleanup."""
+
+    counts = {}
+    for audit_id, metadata in STEP8_CODE_SURFACE_AUDIT.items():
+        model_id = metadata.get("model_id", audit_id)
+        dataset_id, scenario_id = metadata["route"]
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
+        code = route_code(route, "diagnose")
+        counts[audit_id] = len(code.splitlines())
+        missing_core = [token for token in metadata["core"] if token not in code]
+        if missing_core:
+            raise AssertionError(f"{audit_id} lost core Step 8 evidence: {missing_core}")
+        removed = [token for token in metadata["moved_or_deferred"] if token in code]
+        if removed:
+            raise AssertionError(f"{audit_id} still exposes deferred Step 8 plumbing: {removed}")
+
+    if counts["knn_cls"] >= STEP8_CODE_SURFACE_AUDIT["knn_cls"]["baseline_lines"]:
+        raise AssertionError("KNN Step 8 did not reduce duplicate preprocessing plumbing.")
+    if counts["lda"] >= STEP8_CODE_SURFACE_AUDIT["lda"]["baseline_lines"]:
+        raise AssertionError("LDA Step 8 did not reduce duplicate preprocessing plumbing.")
+    if counts["naive_bayes_categorical"] >= STEP8_CODE_SURFACE_AUDIT["naive_bayes_categorical"]["baseline_lines"]:
+        raise AssertionError("Categorical Naive Bayes Step 8 did not defer unused row transformation plumbing.")
+
+    return {
+        "baseline_lines": {key: value["baseline_lines"] for key, value in STEP8_CODE_SURFACE_AUDIT.items()},
+        "current_lines": counts,
+        "audit": {
+            key: {
+                "core": list(value["core"]),
+                "retained_optional": list(value["retained_optional"]),
+                "retained_plumbing": list(value["retained_plumbing"]),
+                "moved_or_deferred": list(value["moved_or_deferred"]),
+                "reason": value["reason"],
+            }
+            for key, value in STEP8_CODE_SURFACE_AUDIT.items()
+        },
+    }
 
 
 def cell_ids(route: dict) -> list[str]:
@@ -238,7 +417,7 @@ def assert_route_structure(payload: dict) -> dict:
         "svm_cls": ("svm_fit_indices", "svm_support_positions", "svm_decision_values", "svm_prediction_story", "Support vectors per class"),
         "lda": ("lda_class_centres", "lda_fit_indices", "lda_probability_table", "lda_prediction_story", "shared"),
         "qda": ("qda_class_centres", "qda_spread_summary", "qda_fit_indices", "qda_probability_table", "regularisation"),
-        "naive_bayes": ("nb_fit_indices", "nb_probability_evidence", "nb_prediction_story", "Prior P(class)", "Predicted P(class | features)"),
+        "naive_bayes": ("nb_fit_indices", "nb_quantity_evidence", "nb_prediction_story", "Prior probability", "Posterior probability"),
     }
 
     preprocessing_counts = {
@@ -582,10 +761,17 @@ def assert_route_structure(payload: dict) -> dict:
                     model_code = route_code(route, "model")
                     diagnostic = route_code(route, "diagnose")
                     if '"probability":' in diagnostic or '"score":' in diagnostic or '"value":' in diagnostic:
-                        raise AssertionError(f"Naive Bayes probability output has an ambiguous generic heading: {route}")
-                    for label in ("Prior P(class)", "Likelihood P(feature", "Predicted P(class | features)"):
+                        raise AssertionError(f"Naive Bayes quantity output has an ambiguous generic heading: {route}")
+                    for label in ("Prior probability", "Posterior probability"):
                         if label not in diagnostic:
-                            raise AssertionError(f"Naive Bayes probability output is missing an explicit {label} label: {route}")
+                            raise AssertionError(f"Naive Bayes quantity output is missing an explicit {label} label: {route}")
+                    expected_quantity = "Class-conditional density" if kind == "continuous" else "Class-conditional probability"
+                    if expected_quantity not in diagnostic:
+                        raise AssertionError(f"Naive Bayes output is missing its typed class-conditional quantity: {route}")
+                    if kind == "continuous" and any(token in diagnostic for token in ("Likelihood P(feature", "estimated_probability", "probability_label")):
+                        raise AssertionError(f"Gaussian Naive Bayes still labels density evidence as probability: {route}")
+                    if kind != "continuous" and "Likelihood P(feature" in diagnostic:
+                        raise AssertionError(f"Bernoulli Naive Bayes still uses an untyped likelihood heading: {route}")
                     if kind == "categorical":
                         if "OneHotEncoder" not in prepare or "OrdinalEncoder" in prepare or "BernoulliNB" not in model_code:
                             raise AssertionError(f"Categorical Naive Bayes is not the unseen-category-safe Bernoulli route: {route}")
@@ -688,17 +874,28 @@ def assert_route_structure(payload: dict) -> dict:
         fixture_tokens = {
             "svm_cls": ("svm_grid_points", "svm_grid_predictions", "support vectors"),
             "lda": ("lda_grid_points", "lda_grid_predictions", "class centres"),
-            "qda": ("qda_grid_points", "qda_grid_predictions", "class-specific spread"),
+            "qda": ("qda_grid_points", "qda_grid_predictions", "per-feature spread"),
         }[model_id]
         fixture_diagnostic_lower = fixture_diagnostic.lower()
         if any(token.lower() not in fixture_diagnostic_lower for token in fixture_tokens):
             raise AssertionError(f"Phase 2B-1 {model_id} boundary fixture is not model-faithful: {fixture_tokens}")
+
+    density_fixture = payload.get("phase2bGaussianDensityFixture")
+    if (
+        not isinstance(density_fixture, dict)
+        or density_fixture.get("observed") != density_fixture.get("mean")
+        or density_fixture.get("variance") != 0.001
+        or float(density_fixture.get("expected_density", 0)) <= 1
+    ):
+        raise AssertionError("The deterministic Gaussian density-above-one fixture is missing or invalid.")
 
     model_df_sources = {
         dataset_id: config["prepare"]
         for dataset_id, config in payload["datasets"].items()
         if config["prepare"] != "df"
     }
+
+    code_surface = run_step8_code_surface_audit(payload)
 
     return {
         "route_counts": {key: len(value) for key, value in route_sets.items()},
@@ -713,6 +910,8 @@ def assert_route_structure(payload: dict) -> dict:
         "model_df_sources": model_df_sources,
         "reset_state": reset_result,
         "teaching_metadata": teaching_checks,
+        "step8_code_surface": code_surface,
+        "gaussian_density_fixture": True,
     }
 
 
@@ -1366,8 +1565,9 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         raise AssertionError("QDA predicted probabilities do not match the fitted fold model.")
     if not _same_value(qda["qda_prediction"], qda["qda_fold_model"].predict(qda["qda_row"])[0], np):
         raise AssertionError("QDA out-of-fold prediction story does not match the fitted fold model.")
-    if "separate spread/shape" not in route_code(qda_route, "diagnose").lower() or "curve" not in route_code(qda_route, "diagnose").lower():
-        raise AssertionError("QDA diagnostic does not explain separate spread/shape and curved boundaries.")
+    qda_diagnostic = route_code(qda_route, "diagnose").lower()
+    if any(token not in qda_diagnostic for token in ("per-feature spread", "vary together", "covariance/shape", "curve")):
+        raise AssertionError("QDA diagnostic does not distinguish per-feature spread from covariance/shape or explain curved boundaries.")
 
     multiclass_qda_route, multiclass_qda = run("penguins", "continuous", "qda")
     multiclass_qda_fitted = multiclass_qda["qda_fold_model"].named_steps["model"]
@@ -1377,75 +1577,84 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     qda_boundary_route, qda_boundary = run(None, None, "qda", fixture=True)
     assert_region_fidelity(qda_boundary, "qda")
 
-    def probability_row(table, probability_type, class_label, feature):
+    def quantity_row(table, quantity_type, class_label, feature):
         rows = table.loc[
-            table["probability_type"].eq(probability_type)
+            table["quantity_type"].eq(quantity_type)
             & table["class"].eq(class_label)
             & table["feature"].eq(feature)
         ]
         if len(rows) != 1:
-            raise AssertionError(f"Expected one labelled Naive Bayes probability row, got {len(rows)} for {class_label}/{feature}.")
+            raise AssertionError(f"Expected one labelled Naive Bayes quantity row, got {len(rows)} for {class_label}/{feature}.")
         return rows.iloc[0]
 
-    def assert_probability_columns(namespace):
-        expected = ["probability_type", "class", "feature", "probability_label", "estimated_probability"]
-        if list(namespace["nb_probability_evidence"].columns) != expected:
-            raise AssertionError("Naive Bayes probability evidence has unexpected columns.")
-        if any(value in {"probability", "score", "value"} for value in namespace["nb_probability_evidence"].columns):
-            raise AssertionError("Naive Bayes probability evidence contains an ambiguous heading.")
+    def assert_quantity_columns(namespace):
+        expected = ["quantity_type", "class", "feature", "quantity_label", "quantity_value"]
+        if list(namespace["nb_quantity_evidence"].columns) != expected:
+            raise AssertionError("Naive Bayes typed evidence has unexpected columns.")
+        if any(value in {"probability", "score"} for value in namespace["nb_quantity_evidence"].columns):
+            raise AssertionError("Naive Bayes typed evidence contains an ambiguous heading.")
 
     gaussian_route, gaussian = run("breast", "continuous5", "naive_bayes")
     gaussian_fitted = gaussian["nb_fold_model"].named_steps["model"]
     assert_oof_is_external(gaussian, "nb")
-    assert_probability_columns(gaussian)
-    gaussian_table = gaussian["nb_probability_evidence"]
+    assert_quantity_columns(gaussian)
+    gaussian_table = gaussian["nb_quantity_evidence"]
     gaussian_classes = [friendly(gaussian, label, "nb_class_labels") for label in gaussian_fitted.classes_]
-    prior_rows = gaussian_table.loc[gaussian_table["probability_type"].eq("Prior P(class)")]
-    posterior_rows = gaussian_table.loc[gaussian_table["probability_type"].eq("Predicted P(class | features)")]
+    prior_rows = gaussian_table.loc[gaussian_table["quantity_type"].eq("Prior probability")]
+    density_rows = gaussian_table.loc[gaussian_table["quantity_type"].eq("Class-conditional density")]
+    posterior_rows = gaussian_table.loc[gaussian_table["quantity_type"].eq("Posterior probability")]
     if list(prior_rows["class"]) != gaussian_classes or list(posterior_rows["class"]) != gaussian_classes:
         raise AssertionError("Gaussian Naive Bayes prior/posterior rows are not class-aligned.")
-    if not np.allclose(prior_rows["estimated_probability"].to_numpy(dtype=float), np.asarray(gaussian_fitted.class_prior_)):
+    if not np.allclose(prior_rows["quantity_value"].to_numpy(dtype=float), np.asarray(gaussian_fitted.class_prior_)):
         raise AssertionError("Gaussian Naive Bayes priors do not match the fitted estimator.")
-    if not np.allclose(posterior_rows["estimated_probability"].to_numpy(dtype=float), gaussian["nb_fold_model"].predict_proba(gaussian["nb_row"])[0]):
+    if not np.allclose(posterior_rows["quantity_value"].to_numpy(dtype=float), gaussian["nb_fold_model"].predict_proba(gaussian["nb_row"])[0]):
         raise AssertionError("Gaussian Naive Bayes posterior rows do not match fitted probabilities.")
+    if density_rows.empty or density_rows["quantity_type"].str.contains("probability", case=False).any() or density_rows["quantity_label"].str.contains("P\\(").any():
+        raise AssertionError("Gaussian Naive Bayes density rows are labelled as probabilities.")
+    if float(density_rows["quantity_value"].max()) <= 1:
+        raise AssertionError("The deterministic Gaussian route did not retain a density value above 1.")
     gaussian_features = [str(name) for name in gaussian["encoded_names"][:3]]
     for class_index, class_value in enumerate(gaussian_fitted.classes_):
         class_label = friendly(gaussian, class_value, "nb_class_labels")
         for feature_index, feature_name in enumerate(gaussian_features):
             observed = float(gaussian["nb_row_values"][0, feature_index])
             variance = max(float(gaussian_fitted.var_[class_index, feature_index]), np.finfo(float).eps)
-            expected_likelihood = np.exp(-0.5 * ((observed - gaussian_fitted.theta_[class_index, feature_index]) ** 2) / variance) / np.sqrt(2 * np.pi * variance)
-            row = probability_row(gaussian_table, "Likelihood P(feature ≈ value | class)", class_label, feature_name)
-            if not np.isclose(float(row["estimated_probability"]), expected_likelihood):
-                raise AssertionError("Gaussian Naive Bayes likelihood does not match the fitted mean/spread.")
-            if "| class=" not in row["probability_label"] or "≈" not in row["probability_label"]:
-                raise AssertionError("Gaussian Naive Bayes likelihood label is ambiguous.")
+            expected_density = np.exp(-0.5 * ((observed - gaussian_fitted.theta_[class_index, feature_index]) ** 2) / variance) / np.sqrt(2 * np.pi * variance)
+            row = quantity_row(gaussian_table, "Class-conditional density", class_label, feature_name)
+            if not np.isclose(float(row["quantity_value"]), expected_density):
+                raise AssertionError("Gaussian Naive Bayes density does not match the fitted mean/spread.")
+            if "| class=" not in row["quantity_label"] or "P(" in row["quantity_label"] or "probability" in row["quantity_label"].lower():
+                raise AssertionError("Gaussian Naive Bayes density label is ambiguous.")
+    density_fixture = payload["phase2bGaussianDensityFixture"]
+    fixture_density = np.exp(-0.5 * ((density_fixture["observed"] - density_fixture["mean"]) ** 2) / density_fixture["variance"]) / np.sqrt(2 * np.pi * density_fixture["variance"])
+    if not np.isclose(fixture_density, density_fixture["expected_density"]) or fixture_density <= 1:
+        raise AssertionError("The deterministic Gaussian density fixture does not demonstrate a density above 1.")
     if "independence assumption" not in route_code(gaussian_route, "diagnose").lower():
         raise AssertionError("Naive Bayes independence teaching is missing from the diagnostic.")
 
     categorical_route, categorical = run("car", "categorical", "naive_bayes")
     categorical_fitted = categorical["nb_fold_model"].named_steps["model"]
     assert_oof_is_external(categorical, "nb")
-    assert_probability_columns(categorical)
+    assert_quantity_columns(categorical)
     if not {"buying=low", "buying=med", "buying=high", "buying=vhigh"}.issubset(set(categorical["nb_feature_labels"])):
         raise AssertionError("Categorical Naive Bayes did not retain original category labels.")
-    categorical_table = categorical["nb_probability_evidence"]
+    categorical_table = categorical["nb_quantity_evidence"]
     for class_index, class_value in enumerate(categorical_fitted.classes_):
         class_label = friendly(categorical, class_value, "nb_class_labels")
         for feature_index, feature_label in enumerate(categorical["nb_feature_labels"][:6]):
-            row = probability_row(categorical_table, "Likelihood P(feature = 1 | class)", class_label, feature_label)
-            if not np.isclose(float(row["estimated_probability"]), np.exp(categorical_fitted.feature_log_prob_[class_index, feature_index])):
+            row = quantity_row(categorical_table, "Class-conditional probability", class_label, feature_label)
+            if not np.isclose(float(row["quantity_value"]), np.exp(categorical_fitted.feature_log_prob_[class_index, feature_index])):
                 raise AssertionError("Categorical Naive Bayes category likelihood does not match the fitted encoder/model.")
-            if f"P({feature_label} | class={class_label})" not in row["probability_label"]:
+            if f"P({feature_label} | class={class_label})" not in row["quantity_label"]:
                 raise AssertionError("Categorical Naive Bayes likelihood label does not identify the original category.")
 
     binary_route, binary = run("candy_class", "binary", "naive_bayes")
     binary_fitted = binary["nb_fold_model"].named_steps["model"]
     assert_oof_is_external(binary, "nb")
-    assert_probability_columns(binary)
+    assert_quantity_columns(binary)
     if binary["nb_feature_labels"] != [f"{name}=1" for name in binary["feature_names"]]:
         raise AssertionError("Binary Naive Bayes feature labels do not identify 1-valued indicators.")
-    binary_likelihoods = binary["nb_probability_evidence"].loc[binary["nb_probability_evidence"]["probability_type"].eq("Likelihood P(feature = 1 | class)")]
+    binary_likelihoods = binary["nb_quantity_evidence"].loc[binary["nb_quantity_evidence"]["quantity_type"].eq("Class-conditional probability")]
     if len(binary_likelihoods) != len(binary_fitted.classes_) * min(6, len(binary["nb_feature_labels"])):
         raise AssertionError("Binary Naive Bayes likelihood evidence has the wrong shape.")
 
@@ -1460,10 +1669,10 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         "qda_spread_and_regularization": True,
         "qda_lda_contrast": True,
         "qda_boundary_fidelity": True,
-        "naive_bayes_gaussian_probabilities": True,
+        "naive_bayes_gaussian_densities": True,
         "naive_bayes_categorical_probabilities": True,
         "naive_bayes_binary_probabilities": True,
-        "naive_bayes_probability_labels": True,
+        "naive_bayes_typed_quantity_labels": True,
         "naive_bayes_oof_prediction_stories": True,
     }
 
