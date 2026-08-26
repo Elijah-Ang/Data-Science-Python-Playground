@@ -93,6 +93,44 @@ if (api.formatTeachingNumber(regressionSummary.validationMean) !== "460") {
   throw new Error("Teaching number formatting is not deterministic.");
 }
 
+const phase2aFixtures = {
+  simple_linear:[api.DATASETS.gapminder, api.DATASETS.gapminder.scenarios[0]],
+  multiple_linear:[api.DATASETS.wine, api.DATASETS.wine.scenarios[1]],
+  polynomial:[api.DATASETS.gapminder, api.DATASETS.gapminder.scenarios[0]],
+  regression_tree:[api.DATASETS.seoul, api.DATASETS.seoul.scenarios[1]],
+  logistic:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  classification_tree:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  knn_cls:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  one_r:[api.DATASETS.car, api.DATASETS.car.scenarios[0]]
+};
+const phase2aTokens = {
+  simple_linear:["straight-line", "fitted line", "intercept"],
+  multiple_linear:["additive", "other included features are kept fixed", "own unit"],
+  polynomial:["bend", "fitted curve", "noise"],
+  regression_tree:["if/then", "leaf", "Feature usage"],
+  logistic:["score", "probabilities", "prepared feature scales"],
+  classification_tree:["if/then", "actual and predicted class", "generalize"],
+  knn_cls:["nearby prepared training examples", "out-of-fold", "cannot vote for itself"],
+  one_r:["individual features", "exact fitted values", "majority baseline"]
+};
+for (const [modelId, [config, scenario]] of Object.entries(phase2aFixtures)) {
+  const route = api.routeForSelection(config, scenario, modelId, 5);
+  const diagnose = route.find(step => step.id === "diagnose");
+  if (!diagnose.modelTeaching || diagnose.modelTeaching.modelId !== modelId) {
+    throw new Error(`Missing Phase 2A model-specific teaching for ${modelId}.`);
+  }
+  const modelTeachingText = Object.values(diagnose.modelTeaching).join(" ");
+  for (const token of phase2aTokens[modelId]) {
+    if (!modelTeachingText.toLowerCase().includes(token.toLowerCase())) {
+      throw new Error(`Phase 2A ${modelId} teaching is missing ${token}.`);
+    }
+  }
+}
+const outOfScopeRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "svm_cls", 5);
+if (outOfScopeRoute.find(step => step.id === "diagnose").modelTeaching !== null) {
+  throw new Error("Phase 2A model-specific teaching leaked into an out-of-scope model.");
+}
+
 const seoulRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "simple_linear", 5);
 const seoulBaseline = seoulRoute.find(step => step.id === "baseline");
 if (!seoulBaseline.readingCue.includes("later time windows")) throw new Error("Seoul baseline cue does not describe ordered validation windows.");
@@ -184,5 +222,6 @@ console.log(JSON.stringify({
   pipeline_fit_predict:true,
   cross_validation_mechanics:true,
   hyperparameter_tuning:true,
+  phase2a_model_specific:true,
   preferred_vocabulary:true
 }, null, 2));

@@ -797,8 +797,39 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     "Snowfall (cm)":"snowfall"
   });
 
+  const FRIENDLY_CLASS_LABELS = Object.freeze({
+    diagnosis:Object.freeze({B:"benign", M:"malignant"}),
+    acceptability:Object.freeze({unacc:"unacceptable", acc:"acceptable", good:"good", vgood:"very good"}),
+    popular:Object.freeze({"50% or above":"50% or above", "below 50%":"below 50%"})
+  });
+
+  const FEATURE_UNIT_INFO = Object.freeze({
+    gdpPercap:Object.freeze({factor:1000, phrase:"per $1,000 of GDP per person", unit:"$1,000 of GDP per person"}),
+    sugarpercent:Object.freeze({factor:10, phrase:"per 10 percentile points", unit:"percentile points"}),
+    pricepercent:Object.freeze({factor:10, phrase:"per 10 percentile points", unit:"percentile points"}),
+    "Temperature(°C)":Object.freeze({factor:1, phrase:"per 1 °C", unit:"°C"}),
+    "Humidity(%)":Object.freeze({factor:1, phrase:"per 1 percentage point of humidity", unit:"percentage points"}),
+    "Wind speed (m/s)":Object.freeze({factor:1, phrase:"per 1 m/s of wind speed", unit:"m/s"}),
+    "Visibility (10m)":Object.freeze({factor:1, phrase:"per 1 visibility unit (10 m)", unit:"visibility units"}),
+    "Solar Radiation (MJ/m2)":Object.freeze({factor:1, phrase:"per 1 MJ/m² of solar radiation", unit:"MJ/m²"}),
+    "Rainfall(mm)":Object.freeze({factor:1, phrase:"per 1 mm of rainfall", unit:"mm"}),
+    "Snowfall (cm)":Object.freeze({factor:1, phrase:"per 1 cm of snowfall", unit:"cm"})
+  });
+
   function friendlyColumnName(name) {
     return FRIENDLY_COLUMN_NAMES[name] || name;
+  }
+
+  function friendlyClassLabel(target, label) {
+    return FRIENDLY_CLASS_LABELS[target]?.[String(label)] || String(label);
+  }
+
+  function featureUnitInfo(name) {
+    return FEATURE_UNIT_INFO[name] || {factor:1, phrase:`per 1 unit of ${friendlyColumnName(name)}`, unit:"original data units"};
+  }
+
+  function classLabelMap(config) {
+    return FRIENDLY_CLASS_LABELS[config.target] || {};
   }
 
   function featureGrounding(config, value) {
@@ -979,6 +1010,72 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     return concepts;
   }
 
+  function modelSpecificTeaching(config, modelId, value) {
+    const names = featureNames(value);
+    const feature = names[0] || "the selected feature";
+    const featureLabel = names.length === 1
+      ? `${friendlyColumnName(feature)} (${feature})`
+      : `${names.length} selected features`;
+    const targetLabel = `${friendlyColumnName(config.target)} (${config.target})`;
+    const targetName = friendlyColumnName(config.target);
+    const templates = {
+      simple_linear:{
+        learned:`The model learned a straight-line relationship between ${featureLabel} and ${targetLabel}.`,
+        see:`See the training points and fitted line. The slope table translates the line into a change in predicted ${targetName} for a useful change in ${friendlyColumnName(feature)}.`,
+        read:"Use the slope sign to read the direction of this model's association; the intercept is the mathematical line value when the feature is 0.",
+        watchOut:`Association is not causation, and a straight line cannot represent strong curvature. If 0 is outside the observed ${friendlyColumnName(feature)} range, the intercept is mainly mathematical.`
+      },
+      multiple_linear:{
+        learned:`The model learned an additive straight-line contribution for each of the ${names.length} selected features.`,
+        see:"Each row describes a change in one feature while the other included features are kept fixed in the fitted model.",
+        read:"Read each coefficient in that feature's own unit. The table stays in selected-feature order instead of ranking raw coefficient magnitudes.",
+        watchOut:"These are model associations, not causal effects. Additive straight-line relationships can miss interactions or curvature."
+      },
+      polynomial:{
+        learned:names.length === 1
+          ? `The model learned a relationship that can bend between ${featureLabel} and ${targetLabel} by using powers such as x² and x³.`
+          : `The model learned curved terms from the ${names.length} selected inputs, so the relationship need not stay straight.`,
+        see:names.length === 1
+          ? "See the original training points and fitted curve across the observed feature range."
+          : "This route has multiple inputs, so no single 2D curve would be faithful; use the term summary and residuals instead.",
+        read:"Look for broad curvature versus a curve that follows individual points, then use the validation evidence to judge whether extra flexibility helped.",
+        watchOut:"A flexible curve can follow real structure or noise. A higher polynomial degree is not automatically better."
+      },
+      regression_tree:{
+        learned:`The tree learned if/then splits that group training rows with similar ${targetName} values.`,
+        see:"Trace the displayed training-row path from the root to its leaf. The top tree and feature-usage table show the fitted structure.",
+        read:"Each condition narrows the group; the leaf prediction is the average target for rows that reach that leaf. Feature usage is not causation.",
+        watchOut:"Small changes in training data can change the exact tree rules."
+      },
+      logistic:{
+        learned:"The model combines prepared features into a score, converts that score into class probabilities, and uses those probabilities to classify a row.",
+        see:"Read each weight as pushing the model's score toward one class or another after this route's preparation; the confusion matrix shows where predictions fail.",
+        read:"For binary routes, the positive/referenced class is named in the table. For multiclass routes, each weight column names its class.",
+        watchOut:"Weights are relative to the prepared feature scales. Logistic regression uses a linear boundary, and its weights describe association within this fitted model rather than causal effects."
+      },
+      classification_tree:{
+        learned:"The tree learned if/then questions that end at a leaf predicting a class.",
+        see:"Follow the displayed real training-row path; its actual and predicted class make the leaf decision concrete.",
+        read:"Each condition selects a smaller group; the leaf predicts the class most common there. Feature usage measures split improvement, not causal influence.",
+        watchOut:"A tree can learn very specific rules, so deeper trees may fit training details that do not generalize as well."
+      },
+      knn_cls:{
+        learned:"KNN does not learn a global equation; it uses nearby prepared training examples to vote.",
+        see:"The displayed out-of-fold row is compared with training neighbours only; the table shows their classes and post-preprocessing distances.",
+        read:"Count the neighbour classes, or compare their weighted contributions, to see why the prediction was made. The explained row cannot vote for itself.",
+        watchOut:"Nearby rows are not always similar in useful ways; many irrelevant features can distort distance."
+      },
+      one_r:{
+        learned:"One-R tests individual features and chooses the one whose simple rules make the fewest training errors.",
+        see:"The table shows the selected feature, its exact fitted values or intervals, predicted classes, and training-row counts. The baseline compares against always choosing the majority class.",
+        read:"Compare One-R with the majority baseline, then read each rule as the class the fitted rule predicts.",
+        watchOut:"One-R deliberately uses one feature, so it is a simple baseline rather than a flexible final model. Its purpose is simplicity."
+      }
+    };
+    const selected = templates[modelId];
+    return selected ? {modelId, ...selected} : null;
+  }
+
   function supervisedTeaching(config, value, modelId, folds = 5) {
     const metricMeta = primaryMetricMetadata(config);
     return {
@@ -1030,7 +1127,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         question:"Where does the selected model make mistakes or show patterns in its errors?",
         readingCue:config.task === "classification"
           ? "Look for which actual classes are most often confused and whether errors cluster by class."
-          : "Look for whether residuals form a roughly random cloud around zero or show a pattern."
+          : "Look for whether residuals form a roughly random cloud around zero or show a pattern.",
+        modelTeaching:modelSpecificTeaching(config, modelId, value)
       },
       final: {
         question:"Is the final-test result consistent with what cross-validation suggested?",
@@ -1170,6 +1268,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       readingCue:details.readingCue || "",
       concepts,
       conceptKeys:[...new Set(details.conceptKeys || concepts.flatMap(item => Array.isArray(item.keys) ? item.keys : [item.key]).filter(Boolean))],
+      modelTeaching:details.modelTeaching || null,
       metricHelp:Array.isArray(details.metricHelp) ? details.metricHelp : [],
       metricMeta:details.metricMeta || null,
       comparison:Boolean(details.comparison),
@@ -1511,55 +1610,214 @@ cv_scores.round(3)`;
       "best_params"
     ].join("\n");
   }
-  function interpretationCode(modelId, value) {
+  function interpretationCode(config, modelId, value) {
+    const targetLabel = `${friendlyColumnName(config.target)} (${config.target})`;
+    const selectedFeatures = featureNames(value);
+    const classLabels = py(classLabelMap(config));
+    const unitLabels = py(Object.fromEntries(selectedFeatures.map(name => [name, featureUnitInfo(name).unit])));
     const preparedNames = [
       "prepare = diagnostic_model.named_steps[\"prepare\"]",
       "encoded_names = prepare.get_feature_names_out() if hasattr(prepare, \"get_feature_names_out\") else np.array(feature_names)"
     ].join("\n");
-    if (["simple_linear","multiple_linear"].includes(modelId)) return [
+    if (modelId === "simple_linear") {
+      const feature = selectedFeatures[0];
+      const unitInfo = featureUnitInfo(feature);
+      return [
+        "fitted = diagnostic_model.named_steps[\"model\"]",
+        `simple_feature = ${py(feature)}`,
+        `simple_target = ${py(config.target)}`,
+        "simple_x = X_train[simple_feature].astype(float).to_numpy()",
+        "simple_grid = np.linspace(float(simple_x.min()), float(simple_x.max()), 160)",
+        "simple_grid_frame = pd.DataFrame({simple_feature:simple_grid})",
+        "simple_curve = np.asarray(diagnostic_model.predict(simple_grid_frame), dtype=float).ravel()",
+        "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
+        "ax.scatter(simple_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
+        "simple_oof_x = X_train.loc[diagnostic_actual.index, simple_feature].astype(float).to_numpy()",
+        "ax.scatter(simple_oof_x, diagnostic_prediction, alpha=.7, facecolors=\"none\", edgecolors=\"#7651a6\", label=\"OOF predictions\")",
+        "ax.plot(simple_grid, simple_curve, color=\"#c75b20\", linewidth=2.4, label=\"fitted line\")",
+        `ax.set(title=${py(`Fitted line: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
+        "ax.legend()",
+        "fig.tight_layout()",
+        "simple_slope = float(np.ravel(fitted.coef_)[0])",
+        "simple_intercept = float(np.ravel(np.atleast_1d(fitted.intercept_))[0])",
+        `simple_unit_factor = ${unitInfo.factor}`,
+        `simple_unit_phrase = ${py(unitInfo.phrase)}`,
+        "simple_interpretation = pd.DataFrame({",
+        "    \"feature\":[simple_feature],",
+        "    \"target\":[simple_target],",
+        "    \"slope_per_original_unit\":[simple_slope],",
+        "    \"meaningful_change\":[simple_unit_phrase],",
+        "    \"predicted_change_for_meaningful_change\":[simple_slope * simple_unit_factor],",
+        "    \"intercept_at_feature_0\":[simple_intercept]",
+        "})",
+        "simple_interpretation.round(3)"
+      ].join("\n");
+    }
+    if (modelId === "multiple_linear") return [
       preparedNames,
       "fitted = diagnostic_model.named_steps[\"model\"]",
-      "interpretation = pd.DataFrame({\"feature\":encoded_names, \"coefficient\":np.ravel(fitted.coef_)})",
-      "interpretation.reindex(interpretation.coefficient.abs().sort_values(ascending=False).index).head(15)"
+      "linear_coefficients = np.ravel(fitted.coef_)",
+      `linear_unit_map = ${unitLabels}`,
+      "linear_feature_units = [linear_unit_map.get(str(name), \"prepared/encoded feature units\") for name in encoded_names]",
+      "linear_directions = np.where(linear_coefficients >= 0, \"higher predicted target\", \"lower predicted target\")",
+      "linear_interpretation = pd.DataFrame({",
+      "    \"feature\":encoded_names,",
+      "    \"coefficient\":linear_coefficients,",
+      "    \"meaningful_unit\":linear_feature_units,",
+      "    \"direction\":linear_directions,",
+      "    \"plain_english\":[f\"Within this fitted model, a change in {name} is associated with a {direction.lower()}.\" for name, direction in zip(encoded_names, linear_directions)]",
+      "})",
+      "linear_interpretation.head(50)"
     ].join("\n");
     if (modelId === "polynomial") return [
-      preparedNames,
+      ...(selectedFeatures.length === 1 ? [] : [preparedNames]),
       "fitted = diagnostic_model.named_steps[\"model\"]",
-      "term_names = fitted.named_steps[\"poly\"].get_feature_names_out(encoded_names)",
-      "interpretation = pd.DataFrame({\"term\":term_names, \"coefficient\":np.ravel(fitted.named_steps[\"regression\"].coef_)})",
-      "interpretation.reindex(interpretation.coefficient.abs().sort_values(ascending=False).index).head(15)"
+      ...(selectedFeatures.length === 1 ? [
+        "poly_feature = feature_names[0]",
+        "poly_x = X_train[poly_feature].astype(float).to_numpy()",
+        "poly_grid = np.linspace(float(poly_x.min()), float(poly_x.max()), 160)",
+        "poly_grid_frame = pd.DataFrame({poly_feature:poly_grid})",
+        "poly_curve = np.asarray(diagnostic_model.predict(poly_grid_frame), dtype=float).ravel()",
+        "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
+        "ax.scatter(poly_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
+        "ax.plot(poly_grid, poly_curve, color=\"#7651a6\", linewidth=2.4, label=\"fitted curve\")",
+        `ax.set(title=${py(`Fitted curve: ${friendlyColumnName(selectedFeatures[0])} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(selectedFeatures[0])} (${selectedFeatures[0]})`)}, ylabel=${py(targetLabel)})`,
+        "ax.legend()",
+        "fig.tight_layout()",
+        "polynomial_degree = int(fitted.named_steps[\"poly\"].degree)",
+        "polynomial_summary = pd.DataFrame({\"feature\":[poly_feature], \"target\":[" + py(config.target) + "], \"degree\":[polynomial_degree], \"curve_points\":[len(poly_grid)]})",
+        "polynomial_summary"
+      ] : [
+        "term_names = fitted.named_steps[\"poly\"].get_feature_names_out(encoded_names)",
+        "polynomial_terms = pd.DataFrame({\"term\":term_names, \"regularized_weight\":np.ravel(fitted.named_steps[\"regression\"].coef_)})",
+        "print(\"This route uses multiple inputs, so no single 2D fitted curve is shown.\")",
+        "polynomial_terms.head(20)"
+      ])
     ].join("\n");
-    if (["regression_tree","classification_tree"].includes(modelId)) return [
-      "from sklearn.tree import plot_tree",
-      preparedNames,
-      "fitted = diagnostic_model.named_steps[\"model\"]",
-      "importance = pd.DataFrame({\"feature\":encoded_names, \"importance\":fitted.feature_importances_}).sort_values(\"importance\", ascending=False)",
-      "fig, ax = plt.subplots(figsize=(12, 5))",
-      "plot_tree(fitted, max_depth=3, feature_names=encoded_names, filled=True, rounded=True, fontsize=6, ax=ax)",
-      "ax.set_title(\"Top of the fitted tree (training data only)\")",
-      "fig.tight_layout()",
-      "importance.head(15)"
-    ].join("\n");
+    if (["regression_tree","classification_tree"].includes(modelId)) {
+      const classificationTree = modelId === "classification_tree";
+      return [
+        "from sklearn.tree import plot_tree",
+        preparedNames,
+        "fitted = diagnostic_model.named_steps[\"model\"]",
+        "tree_example_position = 0",
+        "tree_preparer = diagnostic_model.named_steps[\"prepare\"]",
+        "tree_row = X_train.iloc[[tree_example_position]]",
+        "tree_transformed = tree_row.to_numpy() if isinstance(tree_preparer, str) else tree_preparer.transform(tree_row)",
+        "if hasattr(tree_transformed, \"toarray\"): tree_transformed = tree_transformed.toarray()",
+        "tree_node = 0",
+        "tree_path_rows = []",
+        "while fitted.tree_.children_left[tree_node] != fitted.tree_.children_right[tree_node]:",
+        "    tree_feature_index = int(fitted.tree_.feature[tree_node])",
+        "    tree_threshold = float(fitted.tree_.threshold[tree_node])",
+        "    tree_value = float(tree_transformed[0, tree_feature_index])",
+        "    tree_go_left = tree_value <= tree_threshold",
+        "    tree_path_rows.append({\"step\":len(tree_path_rows) + 1, \"condition\":f\"{encoded_names[tree_feature_index]} <= {tree_threshold:.3g}\" if tree_go_left else f\"{encoded_names[tree_feature_index]} > {tree_threshold:.3g}\", \"observed_value\":tree_value, \"next_branch\":\"left\" if tree_go_left else \"right\"})",
+        "    tree_node = int(fitted.tree_.children_left[tree_node] if tree_go_left else fitted.tree_.children_right[tree_node])",
+        "tree_path = pd.DataFrame(tree_path_rows, columns=[\"step\", \"condition\", \"observed_value\", \"next_branch\"])",
+        "tree_actual = y_train.iloc[tree_example_position]",
+        "tree_prediction = diagnostic_model.predict(tree_row)[0]",
+        `tree_class_labels = ${classLabels}`,
+        "tree_importance = pd.DataFrame({\"feature\":encoded_names, \"importance\":fitted.feature_importances_}).sort_values(\"importance\", ascending=False)",
+        "fig, ax = plt.subplots(figsize=(9, 4.6))",
+        "plot_tree(fitted, max_depth=2, feature_names=encoded_names, filled=True, rounded=True, fontsize=7, ax=ax)",
+        "ax.set_title(\"Top of the fitted tree (training data only)\")",
+        "fig.tight_layout()",
+        "print(\"Training-only example row:\", tree_example_position)",
+        ...(classificationTree ? [
+          "print(\"Actual class:\", tree_class_labels.get(str(tree_actual), str(tree_actual)))",
+          "print(\"Predicted class:\", tree_class_labels.get(str(tree_prediction), str(tree_prediction)))",
+          "print(\"The leaf predicts the class most common among rows reaching it.\")"
+        ] : [
+          `print(\"Actual ${friendlyColumnName(config.target)}:\", tree_actual)`,
+          `print(\"Leaf prediction for ${friendlyColumnName(config.target)}:\", tree_prediction)`,
+          "print(\"The leaf prediction is the average target among rows reaching it.\")"
+        ]),
+        "print(\"Feature usage is split improvement within this fitted tree, not causation.\")",
+        "print(\"Feature usage:\")",
+        "print(tree_importance.head(15).round(3).to_string(index=False))",
+        "tree_path"
+      ].join("\n");
+    }
     if (modelId === "logistic") return [
       preparedNames,
       "fitted = diagnostic_model.named_steps[\"model\"]",
-      "coef = np.atleast_2d(fitted.coef_)",
-      "coefficient_labels = [fitted.classes_[1]] if coef.shape[0] == 1 else fitted.classes_",
-      "interpretation = pd.DataFrame(coef.T, index=encoded_names, columns=[f\"weight_{label}\" for label in coefficient_labels]).reset_index(names=\"feature\")",
-      "interpretation.head(15)"
+      "logistic_coefficients = np.atleast_2d(fitted.coef_)",
+      `logistic_class_labels = ${classLabels}`,
+      "if logistic_coefficients.shape[0] == 1:",
+      "    logistic_positive_class = fitted.classes_[1]",
+      "    logistic_negative_class = fitted.classes_[0]",
+      "    logistic_interpretation = pd.DataFrame({",
+      "        \"feature\":encoded_names,",
+      "        \"pushes_model_toward\":[logistic_class_labels.get(str(logistic_positive_class), str(logistic_positive_class)) if weight >= 0 else logistic_class_labels.get(str(logistic_negative_class), str(logistic_negative_class)) for weight in logistic_coefficients[0]],",
+      "        \"relative_model_weight\":logistic_coefficients[0]",
+      "    })",
+      "    print(\"Positive/referenced class:\", logistic_class_labels.get(str(logistic_positive_class), str(logistic_positive_class)))",
+      "else:",
+      "    logistic_interpretation = pd.DataFrame(logistic_coefficients.T, index=encoded_names, columns=[f\"weight_toward_{logistic_class_labels.get(str(label), str(label))}\" for label in fitted.classes_]).reset_index(names=\"feature\")",
+      "logistic_interpretation.head(50)"
     ].join("\n");
     if (modelId === "svm_cls") return [
       "fitted = diagnostic_model.named_steps[\"model\"]",
       "pd.DataFrame({\"class\":fitted.classes_, \"support_vectors\":fitted.n_support_})"
     ].join("\n");
     if (modelId === "one_r") return [
+      "from sklearn.metrics import accuracy_score, f1_score",
       "fitted = diagnostic_model.named_steps[\"model\"]",
       "one_r_rules = one_r_rule_table(fitted, diagnostic_model.named_steps[\"prepare\"], feature_names)",
+      "one_r_prediction = diagnostic_model.predict(X_train)",
+      "one_r_majority_prediction = np.repeat(fitted.default_, len(y_train))",
+      "one_r_comparison = pd.DataFrame({",
+      "    \"baseline\":[\"Majority class\", \"One-R\"],",
+      "    \"accuracy\":[accuracy_score(y_train, one_r_majority_prediction), accuracy_score(y_train, one_r_prediction)],",
+      "    \"macro_f1\":[f1_score(y_train, one_r_majority_prediction, average=\"macro\", zero_division=0), f1_score(y_train, one_r_prediction, average=\"macro\", zero_division=0)]",
+      "})",
+      "print(\"Chosen feature:\", one_r_rules[\"feature\"].iloc[0])",
+      "print(\"Training-only comparison:\")",
+      "print(one_r_comparison.round(3).to_string(index=False))",
       "one_r_rules"
     ].join("\n");
     if (modelId === "knn_cls") return [
-      "fitted = diagnostic_model.named_steps[\"model\"]",
-      "pd.DataFrame({\"n_neighbors\":[fitted.n_neighbors], \"weights\":[fitted.weights]})"
+      "knn_fit_indices, knn_validation_indices = next(cv.split(X_train, y_train))",
+      "knn_example_position = int(knn_validation_indices[0])",
+      "knn_fold_model = clone(best_pipeline).fit(X_train.iloc[knn_fit_indices], y_train.iloc[knn_fit_indices])",
+      "knn_fitted = knn_fold_model.named_steps[\"model\"]",
+      "knn_preparer = knn_fold_model.named_steps[\"prepare\"]",
+      "knn_row = X_train.iloc[[knn_example_position]]",
+      "knn_row_values = knn_row.to_numpy() if isinstance(knn_preparer, str) else knn_preparer.transform(knn_row)",
+      "knn_distances, knn_local_positions = knn_fitted.kneighbors(knn_row_values, n_neighbors=int(knn_fitted.n_neighbors), return_distance=True)",
+      "knn_neighbor_positions = np.asarray(knn_fit_indices)[knn_local_positions[0]]",
+      "knn_neighbor_distances = knn_distances[0]",
+      "knn_neighbor_labels = y_train.iloc[knn_neighbor_positions].to_numpy()",
+      "knn_prediction = knn_fold_model.predict(knn_row)[0]",
+      "knn_actual = y_train.iloc[knn_example_position]",
+      `knn_class_labels = ${classLabels}`,
+      "knn_self_neighbour_check = int(knn_example_position) not in set(int(index) for index in np.asarray(knn_neighbor_positions).tolist())",
+      "if not knn_self_neighbour_check:",
+      "    raise ValueError(\"The KNN diagnostic row leaked into its own neighbour set.\")",
+      "knn_is_distance_weighted = knn_fitted.weights == \"distance\"",
+      "knn_vote_weights = (1 / np.maximum(knn_neighbor_distances, np.finfo(float).eps)) if knn_is_distance_weighted else np.ones(len(knn_neighbor_labels))",
+      "knn_vote_scores = {}",
+      "for label, weight in zip(knn_neighbor_labels, knn_vote_weights):",
+      "    key = str(label)",
+      "    knn_vote_scores[key] = knn_vote_scores.get(key, 0.0) + float(weight)",
+      "knn_neighbor_table = pd.DataFrame({",
+      "    \"selected_row\":[knn_example_position] * len(knn_neighbor_labels),",
+      "    \"actual_class\":[knn_class_labels.get(str(knn_actual), str(knn_actual))] * len(knn_neighbor_labels),",
+      "    \"neighbor\":np.arange(1, len(knn_neighbor_labels) + 1),",
+      "    \"training_row\":knn_neighbor_positions,",
+      "    \"neighbor_class\":[knn_class_labels.get(str(label), str(label)) for label in knn_neighbor_labels],",
+      "    \"distance_after_preprocessing\":knn_neighbor_distances,",
+      "    \"vote_weight\":knn_vote_weights,",
+      "    \"prediction\":[knn_class_labels.get(str(knn_prediction), str(knn_prediction))] * len(knn_neighbor_labels),",
+      "})",
+      "print(\"Selected out-of-fold row:\", knn_example_position)",
+      "print(\"Actual class:\", knn_class_labels.get(str(knn_actual), str(knn_actual)))",
+      "print(\"Prediction:\", knn_class_labels.get(str(knn_prediction), str(knn_prediction)))",
+      "print(\"Selected k:\", knn_fitted.n_neighbors, \"· weights:\", knn_fitted.weights)",
+      "print(\"Closer neighbours contribute more strongly.\" if knn_is_distance_weighted else \"Each neighbour contributes one vote.\")",
+      "print(\"Weighted vote:\" if knn_is_distance_weighted else \"Vote counts:\", {key:round(knn_vote_scores[key], 3) for key in sorted(knn_vote_scores)})",
+      "knn_neighbor_table"
     ].join("\n");
     if (modelId === "qda") return [
       preparedNames,
@@ -1602,7 +1860,7 @@ cv_scores.round(3)`;
     return "";
   }
   function diagnosticsCode(config, modelId, value) {
-    const interpretation = interpretationCode(modelId, value);
+    const interpretation = interpretationCode(config, modelId, value);
     if (config.task === "classification") return [
       "# 8 · Diagnose and understand the chosen model",
       "# These diagnostics explain behaviour; they are not another headline performance score.",
@@ -2050,9 +2308,34 @@ explore_df.head(10)`;
     return block;
   }
 
+  function modelTeachingBlock(teaching, className = "model-teaching") {
+    if (!teaching) return null;
+    const block = document.createElement("section");
+    block.className = className;
+    block.dataset.teachingRole = "model-specific";
+    block.dataset.modelId = teaching.modelId || "";
+    const heading = document.createElement("div");
+    heading.className = "teaching-label model-teaching-heading";
+    heading.textContent = "MODEL INTERPRETATION";
+    block.append(heading);
+    [["WHAT IT LEARNED", "learned"], ["SEE IT", "see"], ["READ IT", "read"], ["WATCH OUT", "watchOut"]].forEach(([label, key]) => {
+      if (!teaching[key]) return;
+      const line = document.createElement("p");
+      line.className = "model-teaching-line";
+      line.dataset.teachingRole = `model-${key}`;
+      const marker = document.createElement("strong");
+      marker.textContent = label;
+      const copy = document.createElement("span");
+      copy.textContent = teaching[key];
+      line.append(marker, copy);
+      block.append(line);
+    });
+    return block;
+  }
+
   function renderTeachingBlock(cell) {
     const task = routeTaskForCell(cell);
-    if (!task || (!task.question && !task.readingCue && !task.concepts?.length && !task.metricHelp?.length)) return null;
+    if (!task || (!task.question && !task.readingCue && !task.concepts?.length && !task.modelTeaching && !task.metricHelp?.length)) return null;
     const block = document.createElement("section");
     block.className = "teaching-block";
     block.dataset.teachingStep = task.id;
@@ -2060,6 +2343,8 @@ explore_df.head(10)`;
     if (task.question) block.append(teachingLine("QUESTION", task.question, "teaching-line teaching-question", "question"));
     const concepts = conceptBlock(task.concepts);
     if (concepts) block.append(concepts);
+    const modelTeaching = modelTeachingBlock(task.modelTeaching);
+    if (modelTeaching) block.append(modelTeaching);
     if (task.readingCue) block.append(teachingLine("LOOK FOR", task.readingCue, "teaching-line teaching-cue", "reading-cue"));
     const metrics = metricHelpBlock(task.metricHelp);
     if (metrics) block.append(metrics);
@@ -2489,6 +2774,7 @@ explore_df.head(10)`;
       copy.append(kicker, title); head.append(copy, caption);
       const note = item.question ? teachingLine("QUESTION", item.question, "workflow-step-note", "question") : null;
       const concepts = conceptBlock(item.concepts, "workflow-step-concepts");
+      const modelTeaching = modelTeachingBlock(item.modelTeaching, "workflow-step-model-teaching");
       const cue = item.readingCue ? teachingLine("LOOK FOR", item.readingCue, "workflow-step-cue", "reading-cue") : null;
       const metric = metricHelpBlock(item.metricHelp, "workflow-step-metric");
       const typeNote = document.createElement("p"); typeNote.className = "workflow-type-note"; typeNote.textContent = "Type, run, and inspect this cell";
@@ -2496,6 +2782,7 @@ explore_df.head(10)`;
       step.append(number, head);
       if (note) step.append(note);
       if (concepts) step.append(concepts);
+      if (modelTeaching) step.append(modelTeaching);
       if (cue) step.append(cue);
       if (metric) step.append(metric);
       step.append(typeNote, code); story.append(step);
@@ -2597,7 +2884,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
