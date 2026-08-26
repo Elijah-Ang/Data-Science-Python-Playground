@@ -109,7 +109,7 @@
     knn_cls:{name:"K-Nearest Neighbours (KNN)", family:"Classification", task:"classification", metric:"macro F1 · accuracy", scale:true, preprocessNote:"Scaling matters because neighbour selection is based on distance."},
     qda:{name:"Quadratic Discriminant Analysis", family:"Classification", task:"classification", metric:"macro F1 · accuracy", requires:"continuous", maxFeatures:10, scale:false, preprocessNote:"Scaling is not required here because each class estimates its own feature relationships."},
     lda:{name:"Linear Discriminant Analysis", family:"Classification", task:"classification", metric:"macro F1 · accuracy", requires:"continuous", scale:false, preprocessNote:"Scaling is not required here because the class boundaries use each feature's estimated relationships."},
-    naive_bayes:{name:"Naive Bayes", family:"Classification", task:"classification", metric:"macro F1 · accuracy", pureInput:true, scale:false, preprocessNote:"Scaling is not required because the selected Naive Bayes family estimates its own feature probabilities."},
+    naive_bayes:{name:"Naive Bayes", family:"Classification", task:"classification", metric:"macro F1 · accuracy", pureInput:true, scale:false, preprocessNote:"Scaling is not required because the selected Naive Bayes family models class-conditional feature evidence/distributions directly."},
     mlp_cls:{name:"Neural Network · classification", family:"Neural Networks", task:"classification", metric:"macro F1 · accuracy", minRows:150, scale:true, preprocessNote:"Comparable feature scales make neural-network optimisation easier."},
     mlp_reg:{name:"Neural Network · regression", family:"Neural Networks", task:"regression", metric:"RMSE · R²", minRows:150, scale:true, preprocessNote:"Comparable feature scales make neural-network optimisation easier."},
     kmeans:{name:"K-Means Clustering", family:"Unsupervised", task:"unsupervised", metric:"silhouette", requires:"continuous", minFeatures:2},
@@ -989,8 +989,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       polynomial:"For polynomial regression, degree controls the allowed curvature and alpha controls regularisation.",
       qda:"For QDA, reg_param controls how much covariance estimates are regularised.",
       lda:"For LDA, shrinkage controls whether covariance estimates are regularised.",
-      mlp_cls:"For a neural network, hidden_layer_sizes changes the hidden layers and alpha controls regularisation.",
-      mlp_reg:"For a neural network, hidden_layer_sizes changes the hidden layers and alpha controls regularisation.",
+      mlp_cls:"For a neural network, hidden_layer_sizes chooses the hidden layers and alpha controls regularisation.",
+      mlp_reg:"For a neural network, hidden_layer_sizes chooses the hidden layers and alpha controls regularisation; model__regressor__ routes settings through the target-scaling wrapper to the inner MLP.",
       one_r:"For continuous One-R, bins controls candidate numeric intervals; it does not group categorical values."
     };
     return examples[modelId] || "The allowed settings control how the model learns.";
@@ -1097,6 +1097,18 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           : "Follow the order: how common the class is before the row (prior), how compatible each feature is with that class (likelihood), then the resulting class probability after combining the evidence (posterior).",
         watchOut:"Feature independence is a simplifying assumption, not a fact. Related measurements can make the model count similar evidence more than once, and probabilities may be overconfident when its assumptions are poor."
       },
+      mlp_cls:{
+        learned:"The network learned weights connecting layers of simple units. Hidden units combine prepared inputs in different ways, allowing the model to represent nonlinear patterns; an individual hidden unit does not automatically represent a human concept.",
+        see:"See the fitted network structure, training loss during optimization, one honest out-of-fold probability prediction, and the training-only confusion matrix.",
+        read:"A falling training loss means the optimizer is fitting its training objective better. It is optimization evidence, not final model performance; use cross-validation and the final test to judge generalization.",
+        watchOut:"A larger or deeper network is not automatically better. Neural networks can overfit, learned weights are hard to interpret directly, and initialization or data can affect training; this walkthrough fixes random_state=42 for reproducibility."
+      },
+      mlp_reg:{
+        learned:"The network learned weights connecting layers of simple units. Hidden units combine prepared inputs in different ways, allowing the model to represent nonlinear patterns; an individual hidden unit does not automatically represent a human concept.",
+        see:"See the fitted network structure, training loss during optimization, one honest out-of-fold prediction in the target's original units, and the training-only residual evidence.",
+        read:"A falling training loss means the optimizer is fitting its objective better in the internally scaled target space. It is not final model performance; use cross-validation and the final test to judge generalization in the target's original units.",
+        watchOut:"A larger or deeper network is not automatically better. Neural networks can overfit, learned weights are hard to interpret directly, and initialization or data can affect training; this walkthrough fixes random_state=42 for reproducibility."
+      },
       one_r:{
         learned:"One-R tests individual features and chooses the one whose simple rules make the fewest training errors.",
         see:"The table shows the selected feature, its exact fitted values or intervals, predicted classes, and training-row counts. The baseline compares against always choosing the majority class.",
@@ -1106,6 +1118,22 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     };
     const selected = templates[modelId];
     return selected ? {modelId, ...selected} : null;
+  }
+
+  function neuralNetworkBuildConcepts(config, modelId) {
+    const concepts = [
+      concept("hidden-layer", "HIDDEN LAYER", "A layer between the inputs and final output. Its units learn weighted combinations of earlier signals.", ["hidden-layer", "hidden-layers"]),
+      concept("hidden-layer-sizes", "hidden_layer_sizes", "(24,) means one hidden layer with 24 units; (32, 16) means two hidden layers: 32 units, then 16. The tuple is compact configuration syntax.", ["hidden-layer-sizes"]),
+      concept("weights", "WEIGHTS", "Weights are numbers the network learns during fit(); they determine how strongly signals are passed between units.", ["weights", "learned-parameter"]),
+      concept("loss", "LOSS", "Loss is a training objective measuring how wrong the network currently is according to its optimization rule. Training tries to reduce it.", ["loss", "training-objective"]),
+      concept("backpropagation", "BACKPROPAGATION", "Backpropagation works backward from error and adjusts weights in directions that reduce loss.", ["backpropagation"]),
+      concept("alpha", "ALPHA", "alpha is regularisation strength: it discourages excessively large weights. It is a hyperparameter, not a learned weight.", ["alpha", "regularisation"]),
+      concept("early-stopping", "EARLY STOPPING", "With early_stopping=True, the network can hold aside a small internal part of the current training fold and stop when that internal validation performance stops improving. This is not outer CV or the final test, and it does not replace either.", ["early-stopping", "internal-validation"]),
+      concept("optimization-settings", "MAX_ITER", "max_iter controls the maximum number of optimization iterations; it is a runtime/optimization setting, not a core modelling idea.", ["max-iter"])
+    ];
+    if (modelId === "mlp_reg") concepts.push(concept("tolerance", "TOL", "tol controls how precisely optimization must improve before it can stop; it is a runtime/optimization setting, not a core modelling idea.", ["tol"]));
+    if (modelId === "mlp_reg") concepts.push(concept("target-scaling", "TARGET SCALING", "TransformedTargetRegressor scales y while the inner MLP trains and automatically converts predictions back to the target's original units. In the tuning grid, model__regressor__... routes settings to that inner MLP.", ["TransformedTargetRegressor", "target-scaling", "nested-parameter-routing"]));
+    return concepts;
   }
 
   function supervisedTeaching(config, value, modelId, folds = 5) {
@@ -1137,7 +1165,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       model: {
         question:"What kind of pattern will this model try to learn?",
         readingCue:"Look for whether the model is linear, rule-based, distance-based, or nonlinear, and connect that idea to the selected data.",
-        concepts:pipelineConcepts(config)
+        concepts:[...pipelineConcepts(config), ...(["mlp_cls", "mlp_reg"].includes(modelId) ? neuralNetworkBuildConcepts(config, modelId) : [])]
       },
       baseline: {
         question:"Does this model perform similarly across different validation folds?",
@@ -1548,7 +1576,7 @@ cv_scores.round(3)`;
       if (needsScale) comments.push("# " + model.preprocessNote);
       else if (["regression_tree","classification_tree"].includes(modelId)) comments.push("# Trees split on thresholds, so scaling is unnecessary.");
       else if (modelId === "one_r") comments.push("# One-R learns one-feature rules, so scaling is unnecessary.");
-      else if (modelId === "naive_bayes") comments.push("# This Naive Bayes family estimates feature probabilities directly, so scaling is unnecessary.");
+      else if (modelId === "naive_bayes") comments.push("# This Naive Bayes family models class-conditional feature evidence/distributions directly, so scaling is unnecessary.");
       else if (keepOriginalUnits) comments.push("# Original numeric units stay visible so linear coefficients are easier to interpret.");
       else if (model.preprocessNote) comments.push("# " + model.preprocessNote);
     }
@@ -2085,15 +2113,79 @@ cv_scores.round(3)`;
         "nb_quantity_evidence.round(4)"
       ].join("\n");
     }
-    if (["mlp_cls","mlp_reg"].includes(modelId)) return [
-      "wrapped_model = diagnostic_model.named_steps[\"model\"]",
-      "fitted = wrapped_model.regressor_ if hasattr(wrapped_model, \"regressor_\") else wrapped_model",
-      "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
-      "ax.plot(fitted.loss_curve_, color=\"#7651a6\")",
-      "ax.set(title=\"Neural-network training loss\", xlabel=\"iteration\", ylabel=\"loss\")",
-      "fig.tight_layout()",
-      "pd.DataFrame({\"layers\":[fitted.hidden_layer_sizes], \"iterations\":[fitted.n_iter_], \"final_loss\":[fitted.loss_]})"
-    ].join("\n");
+    if (["mlp_cls","mlp_reg"].includes(modelId)) {
+      const classification = modelId === "mlp_cls";
+      const fittedSetup = classification
+        ? [
+            "mlp_fitted = diagnostic_model.named_steps[\"model\"]",
+            `mlp_class_labels = ${classLabels}`,
+            "mlp_output_labels = [mlp_class_labels.get(str(label), str(label)) for label in mlp_fitted.classes_]",
+            "mlp_output_text = \"class probabilities for \" + \" / \".join(mlp_output_labels)"
+          ]
+        : [
+            "mlp_wrapper = diagnostic_model.named_steps[\"model\"]",
+            "mlp_fitted = mlp_wrapper.regressor_",
+            `mlp_output_text = ${py(`numeric ${friendlyColumnName(config.target)} prediction in original target units`)}`
+          ];
+      const foldSelection = config.split === "time"
+        ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
+        : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))";
+      const oofModelLine = config.split === "time"
+        ? "mlp_oof_model = diagnostic_model"
+        : "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])";
+      const predictionEvidence = classification
+        ? [
+            oofModelLine,
+            "mlp_row = X_train.iloc[[mlp_example_position]]",
+            "mlp_actual = y_train.iloc[mlp_example_position]",
+            "mlp_prediction = mlp_oof_model.predict(mlp_row)[0]",
+            "mlp_probability_values = mlp_oof_model.predict_proba(mlp_row)[0]",
+            "mlp_probability_table = pd.DataFrame({\"class\":[mlp_class_labels.get(str(label), str(label)) for label in mlp_oof_model.classes_], \"predicted_probability\":mlp_probability_values})",
+            "mlp_prediction_story = pd.DataFrame({\"selected_out_of_fold_row\":[mlp_example_position], \"actual_class\":[mlp_class_labels.get(str(mlp_actual), str(mlp_actual))], \"predicted_class\":[mlp_class_labels.get(str(mlp_prediction), str(mlp_prediction))]})",
+            "for label, probability in zip(mlp_output_labels, mlp_probability_values): mlp_prediction_story[f\"probability_{label}\"] = float(probability)",
+            "print(\"Selected out-of-fold row:\", mlp_example_position)",
+            "print(\"Predicted probabilities by class:\")",
+            "print(mlp_probability_table.round(3).to_string(index=False))",
+            "mlp_prediction_story"
+        ]
+        : [
+            oofModelLine,
+            "mlp_row = X_train.iloc[[mlp_example_position]]",
+            "mlp_actual = float(y_train.iloc[mlp_example_position])",
+            "mlp_prediction = float(mlp_oof_model.predict(mlp_row)[0])",
+            "mlp_absolute_error = abs(mlp_actual - mlp_prediction)",
+            "mlp_prediction_story = pd.DataFrame({\"selected_out_of_fold_row\":[mlp_example_position], \"actual_target_original_units\":[mlp_actual], \"predicted_target_original_units\":[mlp_prediction], \"absolute_error_original_units\":[mlp_absolute_error]})",
+            "print(\"Selected out-of-fold row:\", mlp_example_position)",
+            `print(${py(`Actual ${friendlyColumnName(config.target)} (original units):`)}, mlp_actual)`,
+            `print(${py(`Predicted ${friendlyColumnName(config.target)} (original units):`)}, mlp_prediction)`,
+            "mlp_prediction_story"
+          ];
+      return [
+        ...fittedSetup,
+        "mlp_hidden_layers = (mlp_fitted.hidden_layer_sizes,) if isinstance(mlp_fitted.hidden_layer_sizes, int) else tuple(mlp_fitted.hidden_layer_sizes)",
+        "mlp_hidden_text = \" → \".join(str(width) for width in mlp_hidden_layers)",
+        "mlp_architecture = pd.DataFrame({\"prepared_inputs\":[int(mlp_fitted.n_features_in_)], \"hidden_layers\":[mlp_hidden_text], \"output\":[mlp_output_text], \"training_iterations\":[int(mlp_fitted.n_iter_)], \"early_stopping\":[\"on\" if mlp_fitted.early_stopping else \"off\"]})",
+        "print(\"Fitted network structure:\")",
+        "print(f\"{int(mlp_fitted.n_features_in_)} prepared inputs → {mlp_hidden_text} → {mlp_output_text}\")",
+        "print(mlp_architecture.to_string(index=False))",
+        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "print(\"Training loss during optimization:\")",
+        "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
+        "ax.set(title=\"Training loss during optimization\", xlabel=\"iteration\", ylabel=\"loss\")",
+        "fig.tight_layout()",
+        "print(\"A falling training loss means the optimizer is fitting its training objective better. It does not show generalization by itself; use CV and the final test for new-data evidence.\")",
+        ...(classification ? [] : [
+          "print(\"The inner MLP trained on a scaled target, so this loss is in transformed target space. Predictions and RMSE/MAE are converted back automatically to original target units.\")"
+        ]),
+        ...(config.split === "time" ? [
+          "print(\"The out-of-fold example uses the last validation window; all fitting rows precede it in time.\")"
+        ] : []),
+        foldSelection,
+        "mlp_example_position = int(mlp_validation_indices[0])",
+        ...predictionEvidence
+      ].join("\n");
+    }
     return "";
   }
   function diagnosticsCode(config, modelId, value) {

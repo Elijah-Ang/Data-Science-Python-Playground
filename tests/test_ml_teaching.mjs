@@ -171,9 +171,58 @@ for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
     }
   }
 }
-const neuralRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "mlp_cls", 5);
-if (neuralRoute.find(step => step.id === "diagnose").modelTeaching !== null) {
-  throw new Error("Phase 2B-1 model-specific teaching leaked into the deferred neural-network model.");
+const neuralFixtures = {
+  mlp_cls:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  mlp_reg:[api.DATASETS.wine, api.DATASETS.wine.scenarios[0]]
+};
+const neuralCodeTokens = {
+  mlp_cls:["mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "predict_proba", "loss_curve_", "early_stopping", "Training loss during optimization", "Predicted probabilities by class"],
+  mlp_reg:["mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "loss_curve_", "regressor_", "scaled target", "transformed target space", "original target units", "absolute_error_original_units"]
+};
+const neuralBuildKeys = ["hidden-layer", "hidden-layer-sizes", "weights", "loss", "backpropagation", "alpha", "early-stopping", "max-iter"];
+for (const [modelId, [config, scenario]] of Object.entries(neuralFixtures)) {
+  const neuralRoute = api.routeForSelection(config, scenario, modelId, 5);
+  const modelStep = neuralRoute.find(step => step.id === "model");
+  const diagnoseStep = neuralRoute.find(step => step.id === "diagnose");
+  if (!diagnoseStep.modelTeaching || diagnoseStep.modelTeaching.modelId !== modelId) {
+    throw new Error(`Missing Phase 2B-2 model-specific teaching for ${modelId}.`);
+  }
+  for (const key of ["learned", "see", "read", "watchOut"]) {
+    if (!diagnoseStep.modelTeaching[key].trim()) throw new Error(`Neural-network ${modelId} teaching is missing ${key}.`);
+  }
+  const buildKeys = new Set(modelStep.conceptKeys || []);
+  for (const key of neuralBuildKeys) {
+    if (!buildKeys.has(key)) throw new Error(`Neural-network ${modelId} build teaching is missing ${key}.`);
+  }
+  if (modelId === "mlp_reg" && !buildKeys.has("tol")) throw new Error("Neural-network regression build teaching is missing tol.");
+  const buildText = modelStep.concepts.map(item => `${item.label} ${item.text}`).join(" ");
+  for (const token of ["hidden_layer_sizes", "backpropagation", "alpha", "early_stopping", "max_iter"]) {
+    if (!buildText.toLowerCase().includes(token.toLowerCase())) throw new Error(`Neural-network ${modelId} build copy is missing ${token}.`);
+  }
+  if (modelId === "mlp_reg" && !buildText.toLowerCase().includes("tol")) throw new Error("Neural-network regression build copy is missing tol.");
+  if (modelId === "mlp_reg" && (!buildKeys.has("target-scaling") || !buildKeys.has("TransformedTargetRegressor") || !buildKeys.has("nested-parameter-routing") || !buildText.includes("TransformedTargetRegressor"))) {
+    throw new Error("Neural-network regression build teaching is missing target-wrapper guidance.");
+  }
+  for (const token of neuralCodeTokens[modelId]) {
+    if (!diagnoseStep.code.includes(token)) throw new Error(`Neural-network ${modelId} Step 8 is missing ${token}.`);
+  }
+  for (const token of ["X_test", "y_test", "test_prediction", "test_result", "coefs_", "intercept_", "np.matmul", "np.dot"]) {
+    if (diagnoseStep.code.includes(token)) throw new Error(`Neural-network ${modelId} exposes forbidden Step 8 plumbing: ${token}.`);
+  }
+  if (modelId === "mlp_reg") {
+    for (const token of ["transformer_", "inverse_transform", "hasattr"]) {
+      if (diagnoseStep.code.includes(token)) throw new Error(`Neural-network regression exposes wrapper internals: ${token}.`);
+    }
+  }
+}
+
+const gaussianRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "naive_bayes", 5);
+const gaussianPreparationAndModel = gaussianRoute
+  .filter(step => step.id === "prepare" || step.id === "model")
+  .map(step => step.code)
+  .join("\n");
+if (gaussianPreparationAndModel.includes("feature probabilities") || !gaussianPreparationAndModel.includes("class-conditional feature evidence/distributions")) {
+  throw new Error("Gaussian Naive Bayes still has probability-only preprocessing/model copy.");
 }
 
 const seoulRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "simple_linear", 5);
@@ -269,5 +318,7 @@ console.log(JSON.stringify({
   hyperparameter_tuning:true,
   phase2a_model_specific:true,
   phase2b1_model_specific:true,
+  phase2b2_neural_networks:true,
+  gaussian_nb_copy_precision:true,
   preferred_vocabulary:true
 }, null, 2));
