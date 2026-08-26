@@ -38,14 +38,14 @@ def wait_for_cell(page, index: int, timeout: int = 120_000) -> None:
         raise AssertionError(f"Browser cell {index + 1} failed:\n{output}")
 
 
-def run_steps(page, count: int, start: int = 0) -> None:
+def run_steps(page, count: int, start: int = 0, timeout: int = 120_000) -> None:
     for index in range(start, start + count):
         button = page.locator("#routeStrip .route-card").nth(index)
         button.wait_for(state="visible", timeout=15_000)
         if button.is_disabled():
             raise AssertionError(f"Route step {index + 1} was disabled unexpectedly.")
         button.click()
-        wait_for_cell(page, index)
+        wait_for_cell(page, index, timeout=timeout)
         if page.locator("#outputList .output-item[data-status='error']").count():
             raise AssertionError(f"Route step {index + 1} produced a Python error.")
 
@@ -68,6 +68,19 @@ def assert_model_teaching(page, tokens: tuple[str, ...]) -> None:
     missing = [token for token in tokens if token.lower() not in text]
     if missing:
         raise AssertionError(f"Step 8 model-specific teaching is missing {missing}: {block.inner_text()}")
+
+
+def assert_mlp_step8(page, model: str, tokens: tuple[str, ...]) -> None:
+    assert_model_teaching(page, ("weights", "nonlinear", "training loss", "generalization"))
+    diagnostic = page.locator("#outputList .output-item").nth(7)
+    text = diagnostic.inner_text()
+    missing = [token for token in tokens if token not in text]
+    if missing:
+        raise AssertionError(f"{model} Step 8 is missing {missing}: {text}")
+    if "coefs_" in text or "transformer_" in text or "inverse_transform" in text:
+        raise AssertionError(f"{model} Step 8 exposed implementation plumbing in the learner output: {text}")
+    if page.locator("#holdoutState").text_content().strip() != "sealed":
+        raise AssertionError(f"{model} Step 8 opened the final test set unexpectedly.")
 
 
 def main() -> int:
@@ -324,6 +337,34 @@ def main() -> int:
         if categorical_headers != ["quantity_type", "class", "feature", "quantity_label", "quantity_value"]:
             raise AssertionError(f"Categorical Naive Bayes evidence table has ambiguous columns: {categorical_headers}")
 
+        select_route(page, "breast", "continuous5", "mlp_cls", 9)
+        run_steps(page, 8)
+        assert_mlp_step8(page, "Breast Cancer MLP classification", ("Fitted network structure", "prepared_inputs", "hidden_layers", "class probabilities", "training_iterations", "early_stopping", "Training loss during optimization", "Selected out-of-fold row", "Predicted probabilities by class", "actual_class", "predicted_class", "probability_"))
+        breast_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if breast_mlp_diagnostic.locator(".chart-wrap").count() < 2:
+            raise AssertionError("Breast Cancer MLP classification did not render both the confusion matrix and loss curve.")
+
+        select_route(page, "penguins", "all_types", "mlp_cls", 9)
+        run_steps(page, 8)
+        assert_mlp_step8(page, "Penguins mixed-feature MLP classification", ("prepared inputs", "class probabilities", "Predicted probabilities by class", "actual_class", "predicted_class"))
+        penguins_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if "Fitted network structure" not in penguins_mlp_diagnostic.inner_text() or penguins_mlp_diagnostic.locator("table").count() < 1:
+            raise AssertionError("Penguins mixed-feature MLP classification did not render architecture and probability evidence.")
+
+        select_route(page, "wine", "continuous", "mlp_reg", 9)
+        run_steps(page, 8)
+        assert_mlp_step8(page, "Wine MLP regression", ("Fitted network structure", "numeric wine quality prediction in original target units", "Training loss during optimization", "scaled target", "transformed target space", "original target units", "Selected out-of-fold row", "actual_target_original_units", "predicted_target_original_units", "absolute_error_original_units"))
+        wine_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if wine_mlp_diagnostic.locator(".chart-wrap").count() < 2:
+            raise AssertionError("Wine MLP regression did not render both the residual evidence and loss curve.")
+
+        select_route(page, "seoul", "continuous", "mlp_reg", 9)
+        run_steps(page, 8, timeout=300_000)
+        assert_mlp_step8(page, "Seoul time-aware MLP regression", ("numeric bike-rental demand prediction in original target units", "transformed target space", "Selected out-of-fold row", "absolute_error_original_units", "last validation window"))
+        seoul_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if "ordered" not in seoul_mlp_diagnostic.inner_text().lower() and "time" not in seoul_mlp_diagnostic.inner_text().lower():
+            raise AssertionError("Seoul MLP regression did not retain time-aware diagnostic wording.")
+
         select_route(page, "breast", "continuous5", "classification_tree", 9)
         run_steps(page, 9)
         assert_model_teaching(page, ("if/then", "actual and predicted class", "generalize"))
@@ -491,7 +532,8 @@ def main() -> int:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
     print(
         "Browser/Pyodide smoke test passed: Phase 1A evidence teaching, Phase 1B shared concepts, "
-        "Phase 2A model-specific interpretations, classification/regression/mixed/categorical/time-aware "
+        "Phase 2A/2B-1/2B-2 model-specific interpretations, neural-network classification/regression, "
+        "classification/regression/mixed/categorical/time-aware "
         "journeys, invalidation, indexed tables, Car One-R rules, fitted PCA route, and reset recovery."
     )
     return 0

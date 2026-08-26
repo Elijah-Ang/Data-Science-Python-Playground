@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "tests" / "generate_ml_routes.mjs"
 
 
-# This is an explicit audit record for the Phase 2A/2B-1 primary Step 8
+# This is an explicit audit record for the Phase 2A/2B-1/2B-2 primary Step 8
 # surface.  The baseline counts were measured from the merged Phase 2B-1
 # route generator before this checkpoint.  They make intentional additions
 # for mathematical precision visible instead of treating line count as the
@@ -159,6 +159,24 @@ STEP8_CODE_SURFACE_AUDIT = {
         "retained_plumbing": ("nb_fit_indices", "nb_encoder"),
         "moved_or_deferred": ("nb_row_values", "estimated_probability", "probability_label"),
         "reason": "Original category labels and class-conditional probabilities are useful; categorical row transformation was not.",
+    },
+    "mlp_cls": {
+        "route": ("breast", "continuous5"),
+        "baseline_lines": 26,
+        "core": ("mlp_architecture", "mlp_loss_curve", "mlp_prediction_story"),
+        "retained_optional": ("mlp_probability_table",),
+        "retained_plumbing": ("diagnostic_model.named_steps", "mlp_fit_indices", "mlp_oof_model"),
+        "moved_or_deferred": ("coefs_", "intercept_", "np.matmul", "np.dot", "hasattr"),
+        "reason": "The compact structure, real loss curve, and held-out probability story teach the network; raw weights and wrapper inspection do not.",
+    },
+    "mlp_reg": {
+        "route": ("wine", "continuous"),
+        "baseline_lines": 29,
+        "core": ("mlp_architecture", "mlp_loss_curve", "mlp_prediction_story", "original target units"),
+        "retained_optional": ("mlp_wrapper.regressor_",),
+        "retained_plumbing": ("diagnostic_model.named_steps", "mlp_fit_indices", "mlp_oof_model"),
+        "moved_or_deferred": ("coefs_", "intercept_", "np.matmul", "np.dot", "hasattr", "transformer_", "inverse_transform"),
+        "reason": "The wrapper is named in the build teaching and only one fitted-regressor line is retained for the real loss curve; target-transform internals are not the lesson.",
     },
 }
 
@@ -403,7 +421,8 @@ def assert_route_structure(payload: dict) -> dict:
         "one_r",
     }
     phase2b1_model_ids = {"svm_cls", "lda", "qda", "naive_bayes"}
-    phase2_model_ids = phase2a_model_ids | phase2b1_model_ids
+    phase2b2_model_ids = {"mlp_cls", "mlp_reg"}
+    phase2_model_ids = phase2a_model_ids | phase2b1_model_ids | phase2b2_model_ids
     phase2a_required_tokens = {
         "simple_linear": ("simple_grid", "simple_curve", "simple_oof_x", "simple_slope", "intercept_at_feature_0", "fitted line"),
         "multiple_linear": ("linear_interpretation", "meaningful_unit", "direction", "plain_english"),
@@ -418,6 +437,10 @@ def assert_route_structure(payload: dict) -> dict:
         "lda": ("lda_class_centres", "lda_fit_indices", "lda_probability_table", "lda_prediction_story", "shared"),
         "qda": ("qda_class_centres", "qda_spread_summary", "qda_fit_indices", "qda_probability_table", "regularisation"),
         "naive_bayes": ("nb_fit_indices", "nb_quantity_evidence", "nb_prediction_story", "Prior probability", "Posterior probability"),
+    }
+    phase2b2_required_tokens = {
+        "mlp_cls": ("mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "predict_proba", "loss_curve_", "early_stopping"),
+        "mlp_reg": ("mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "original target units", "loss_curve_", "regressor_"),
     }
 
     preprocessing_counts = {
@@ -438,9 +461,12 @@ def assert_route_structure(payload: dict) -> dict:
         "phase2a_model_ids": [],
         "phase2b1_model_specific_routes": 0,
         "phase2b1_model_ids": [],
+        "phase2b2_model_specific_routes": 0,
+        "phase2b2_model_ids": [],
     }
     phase2a_models_seen = set()
     phase2b1_models_seen = set()
+    phase2b2_models_seen = set()
 
     required_concepts = {
         "frame": {"feature", "target", "X", "y", "row"},
@@ -499,6 +525,23 @@ def assert_route_structure(payload: dict) -> dict:
                             f"Missing Phase 1B concepts {sorted(missing_keys)} for "
                             f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{step_id}"
                         )
+                if model_id in {"mlp_cls", "mlp_reg"}:
+                    model_metadata = next(cell for cell in route["cells"] if cell["id"] == "model")
+                    expected_mlp_concepts = {
+                        "hidden-layer",
+                        "hidden-layer-sizes",
+                        "weights",
+                        "loss",
+                        "backpropagation",
+                        "alpha",
+                        "early-stopping",
+                        "max-iter",
+                    }
+                    if model_id == "mlp_reg":
+                        expected_mlp_concepts.update({"target-scaling", "TransformedTargetRegressor", "nested-parameter-routing", "tol"})
+                    missing_mlp_concepts = expected_mlp_concepts - set(model_metadata.get("conceptKeys", []))
+                    if missing_mlp_concepts:
+                        raise AssertionError(f"Neural Network build teaching is incomplete: {sorted(missing_mlp_concepts)}")
                 split_metadata = next(cell for cell in route["cells"] if cell["id"] == "split")
                 split_keys = set(split_metadata["conceptKeys"])
                 if route["dataset"]["split"] == "time":
@@ -714,11 +757,20 @@ def assert_route_structure(payload: dict) -> dict:
                     if model_id in phase2b1_model_ids:
                         phase2b1_models_seen.add(model_id)
                         teaching_checks["phase2b1_model_specific_routes"] += 1
+                    if model_id in phase2b2_model_ids:
+                        phase2b2_models_seen.add(model_id)
+                        teaching_checks["phase2b2_model_specific_routes"] += 1
                     if not isinstance(model_teaching, dict) or model_teaching.get("modelId") != model_id:
                         raise AssertionError(f"Model-specific teaching metadata is missing: {route}")
                     if any(not str(model_teaching.get(key, "")).strip() for key in ("learned", "see", "read", "watchOut")):
                         raise AssertionError(f"Model-specific teaching metadata is incomplete: {route}")
-                    required_tokens = phase2a_required_tokens.get(model_id, ()) if model_id in phase2a_model_ids else phase2b1_required_tokens.get(model_id, ())
+                    required_tokens = (
+                        phase2a_required_tokens.get(model_id, ())
+                        if model_id in phase2a_model_ids
+                        else phase2b1_required_tokens.get(model_id, ())
+                        if model_id in phase2b1_model_ids
+                        else phase2b2_required_tokens.get(model_id, ())
+                    )
                     missing_tokens = [token for token in required_tokens if token not in diagnostic]
                     if model_id == "polynomial":
                         expected_polynomial_tokens = ("poly_grid", "poly_curve", "polynomial_degree") if len(route["scenario"]["continuous"]) == 1 else ("polynomial_terms", "no single 2D fitted curve")
@@ -727,6 +779,12 @@ def assert_route_structure(payload: dict) -> dict:
                         raise AssertionError(f"{model_id} diagnostic is missing {missing_tokens}: {route}")
                     if model_id == "multiple_linear" and "sort_values" in diagnostic:
                         raise AssertionError(f"Multiple linear coefficients are being ranked by raw magnitude: {route}")
+                    if model_id in phase2b2_model_ids:
+                        forbidden = ("X_test", "y_test", "test_prediction", "test_result", "coefs_", "intercept_", "np.matmul", "np.dot")
+                        if any(token in diagnostic for token in forbidden):
+                            raise AssertionError(f"Neural Network Step 8 exposes forbidden test/weight plumbing: {route}")
+                        if model_id == "mlp_reg" and any(token in diagnostic for token in ("transformer_", "inverse_transform", "hasattr")):
+                            raise AssertionError(f"Neural Network regression Step 8 exposes target-wrapper internals: {route}")
                 elif model_teaching:
                     raise AssertionError(f"A Phase 2 model-specific diagnostic leaked into an out-of-scope model: {route}")
 
@@ -770,6 +828,12 @@ def assert_route_structure(payload: dict) -> dict:
                         raise AssertionError(f"Naive Bayes output is missing its typed class-conditional quantity: {route}")
                     if kind == "continuous" and any(token in diagnostic for token in ("Likelihood P(feature", "estimated_probability", "probability_label")):
                         raise AssertionError(f"Gaussian Naive Bayes still labels density evidence as probability: {route}")
+                    if kind == "continuous":
+                        preparation_and_model = prepare + "\n" + model_code
+                        if "feature probabilities" in preparation_and_model.lower():
+                            raise AssertionError(f"Gaussian Naive Bayes preparation still calls continuous density evidence feature probabilities: {route}")
+                        if "class-conditional feature evidence/distributions" not in preparation_and_model:
+                            raise AssertionError(f"Gaussian Naive Bayes preparation is missing variant-safe evidence wording: {route}")
                     if kind != "continuous" and "Likelihood P(feature" in diagnostic:
                         raise AssertionError(f"Bernoulli Naive Bayes still uses an untyped likelihood heading: {route}")
                     if kind == "categorical":
@@ -861,6 +925,22 @@ def assert_route_structure(payload: dict) -> dict:
             f"saw {teaching_checks['phase2b1_model_specific_routes']}"
         )
     teaching_checks["phase2b1_model_ids"] = sorted(phase2b1_models_seen)
+    expected_phase2b2_routes = sum(
+        route["modelId"] in phase2b2_model_ids
+        for routes in route_sets.values()
+        for route in routes
+    )
+    if phase2b2_models_seen != phase2b2_model_ids:
+        raise AssertionError(
+            f"Phase 2B-2 model-specific coverage is incomplete; expected {sorted(phase2b2_model_ids)}, "
+            f"saw {sorted(phase2b2_models_seen)}"
+        )
+    if teaching_checks["phase2b2_model_specific_routes"] != expected_phase2b2_routes:
+        raise AssertionError(
+            f"Phase 2B-2 model-specific metadata count mismatch; expected {expected_phase2b2_routes}, "
+            f"saw {teaching_checks['phase2b2_model_specific_routes']}"
+        )
+    teaching_checks["phase2b2_model_ids"] = sorted(phase2b2_models_seen)
 
     boundary_fixtures = payload.get("phase2bFixtures", {})
     if set(boundary_fixtures) != {"svm_cls", "lda", "qda"}:
@@ -1453,6 +1533,129 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
     }
 
 
+def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Check that the MLP teaching evidence is fitted, held out, and unit-safe."""
+
+    def run(dataset_id, scenario_id, model_id):
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
+        diagnostic = route_code(route, "diagnose")
+        forbidden = ("X_test", "y_test", "test_prediction", "test_result")
+        if any(token in diagnostic for token in forbidden):
+            raise AssertionError(f"Neural Network Step 8 accesses final-test data: {route}")
+        return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "diagnose")
+
+    def assert_common(route, namespace, model_id):
+        diagnostic = route_code(route, "diagnose")
+        forbidden = ("coefs_", "intercept_", "np.matmul", "np.dot")
+        if any(token in diagnostic for token in forbidden):
+            raise AssertionError(f"Neural Network Step 8 exposes raw-weight or manual-forward plumbing: {route}")
+        fitted = namespace["diagnostic_model"].named_steps["model"]
+        inner = fitted.regressor_ if model_id == "mlp_reg" else fitted
+        loss_curve = np.asarray(namespace["mlp_loss_curve"], dtype=float)
+        if not np.all(np.isfinite(loss_curve)):
+            raise AssertionError(f"{model_id} loss curve contains non-finite values.")
+        if len(loss_curve) != int(inner.n_iter_):
+            raise AssertionError(f"{model_id} loss curve length does not match n_iter_.")
+        if not np.allclose(loss_curve, np.asarray(inner.loss_curve_, dtype=float)):
+            raise AssertionError(f"{model_id} teaching loss curve does not come from the fitted estimator.")
+        architecture = namespace["mlp_architecture"].iloc[0]
+        expected_hidden = inner.hidden_layer_sizes if isinstance(inner.hidden_layer_sizes, tuple) else (inner.hidden_layer_sizes,)
+        expected_hidden_text = " → ".join(str(width) for width in expected_hidden)
+        if int(architecture["prepared_inputs"]) != int(inner.n_features_in_):
+            raise AssertionError(f"{model_id} architecture input count does not match the fitted estimator.")
+        if str(architecture["hidden_layers"]) != expected_hidden_text:
+            raise AssertionError(f"{model_id} architecture hidden-layer summary does not match hidden_layer_sizes.")
+        if int(architecture["training_iterations"]) != int(inner.n_iter_):
+            raise AssertionError(f"{model_id} architecture iteration count does not match n_iter_.")
+        expected_stopping = "on" if inner.early_stopping else "off"
+        if str(architecture["early_stopping"]) != expected_stopping:
+            raise AssertionError(f"{model_id} architecture early-stopping state is incorrect.")
+        position = int(namespace["mlp_example_position"])
+        validation = set(int(index) for index in np.asarray(namespace["mlp_validation_indices"]).tolist())
+        fit = set(int(index) for index in np.asarray(namespace["mlp_fit_indices"]).tolist())
+        if position not in validation or position in fit:
+            raise AssertionError(f"{model_id} example row was not held out from its fitted fold.")
+        if not isinstance(namespace["mlp_oof_model"], type(namespace["diagnostic_model"])):
+            raise AssertionError(f"{model_id} OOF example did not use the same pipeline type.")
+        return fitted, inner, position, fit
+
+    classification_route, classification = run("breast", "continuous5", "mlp_cls")
+    classification_fitted, _, _, _ = assert_common(classification_route, classification, "mlp_cls")
+    classification_build_copy = " ".join(f'{item["label"]} {item["text"]}' for item in next(cell for cell in classification_route["cells"] if cell["id"] == "model")["concepts"])
+    if "early stopping" not in classification_build_copy.lower() and "early_stopping" not in classification_build_copy.lower():
+        raise AssertionError("MLP classification build teaching does not explain early stopping.")
+    if not np.allclose(
+        np.asarray(classification["mlp_probability_values"], dtype=float),
+        np.asarray(classification["mlp_oof_model"].predict_proba(classification["mlp_row"])[0], dtype=float),
+    ):
+        raise AssertionError("MLP classification probabilities do not match the fitted OOF pipeline.")
+    if not np.isclose(float(np.asarray(classification["mlp_probability_values"], dtype=float).sum()), 1.0):
+        raise AssertionError("MLP classification probabilities do not sum to one.")
+    expected_prediction = classification["mlp_oof_model"].predict(classification["mlp_row"])[0]
+    if not _same_value(classification["mlp_prediction"], expected_prediction, np):
+        raise AssertionError("MLP classification OOF prediction does not match the fitted pipeline.")
+    expected_classes = [str(label) for label in classification_fitted.classes_]
+    actual_classes = [str(label) for label in classification["mlp_oof_model"].classes_]
+    if expected_classes != actual_classes:
+        raise AssertionError("MLP classification OOF class ordering changed between fitted estimators.")
+    probability_columns = [column for column in classification["mlp_prediction_story"].columns if str(column).startswith("probability_")]
+    if len(probability_columns) != len(expected_classes):
+        raise AssertionError("MLP classification prediction story does not show one probability per class.")
+
+    mixed_route, mixed = run("penguins", "all_types", "mlp_cls")
+    assert_common(mixed_route, mixed, "mlp_cls")
+    if int(mixed["mlp_architecture"].iloc[0]["prepared_inputs"]) <= len(mixed["feature_names"]):
+        raise AssertionError("Mixed-feature MLP did not expose the expanded prepared input count.")
+
+    regression_route, regression = run("wine", "continuous", "mlp_reg")
+    _, regression_inner, regression_position, _ = assert_common(regression_route, regression, "mlp_reg")
+    regression_build_copy = " ".join(f'{item["label"]} {item["text"]}' for item in next(cell for cell in regression_route["cells"] if cell["id"] == "model")["concepts"])
+    if "target scaling" not in regression_build_copy.lower() and "scales y" not in regression_build_copy.lower():
+        raise AssertionError("MLP regression build teaching does not explain target scaling.")
+    expected_prediction = float(regression["mlp_oof_model"].predict(regression["mlp_row"])[0])
+    if not np.isclose(float(regression["mlp_prediction"]), expected_prediction):
+        raise AssertionError("MLP regression OOF prediction does not match the fitted pipeline.")
+    expected_actual = float(regression["y_train"].iloc[regression_position])
+    if not np.isclose(float(regression["mlp_actual"]), expected_actual):
+        raise AssertionError("MLP regression actual value is not in original target units.")
+    if not np.isclose(float(regression["mlp_absolute_error"]), abs(float(regression["mlp_actual"]) - float(regression["mlp_prediction"]))):
+        raise AssertionError("MLP regression absolute error is incorrect.")
+    if list(regression["mlp_prediction_story"].columns) != [
+        "selected_out_of_fold_row",
+        "actual_target_original_units",
+        "predicted_target_original_units",
+        "absolute_error_original_units",
+    ]:
+        raise AssertionError("MLP regression prediction story does not identify original target units.")
+    prepared_row = regression["mlp_oof_model"][:-1].transform(regression["mlp_row"])
+    transformed_prediction = regression["mlp_oof_model"].named_steps["model"].regressor_.predict(prepared_row)
+    oof_wrapper = regression["mlp_oof_model"].named_steps["model"]
+    converted_prediction = oof_wrapper.transformer_.inverse_transform(np.asarray(transformed_prediction).reshape(-1, 1)).ravel()[0]
+    if not np.isclose(float(converted_prediction), expected_prediction):
+        raise AssertionError("TransformedTargetRegressor conversion does not match the public pipeline prediction.")
+    # The random wine split deliberately does not promise temporal ordering;
+    # chronology is asserted separately for the Seoul TimeSeriesSplit route.
+
+    seoul_route, seoul = run("seoul", "continuous", "mlp_reg")
+    assert_common(seoul_route, seoul, "mlp_reg")
+    seoul_position = int(seoul["mlp_example_position"])
+    if not np.all(int(index) < seoul_position for index in np.asarray(seoul["mlp_fit_indices"]).tolist()):
+        raise AssertionError("Seoul MLP regression OOF row is not after its chronological fitting rows.")
+    if "last validation window" not in route_code(seoul_route, "diagnose"):
+        raise AssertionError("Seoul MLP regression did not retain the forward-only diagnostic window.")
+
+    return {
+        "classification_oof_and_probabilities": True,
+        "mixed_feature_classification": True,
+        "regression_oof_original_units": True,
+        "transformed_target_fidelity": True,
+        "loss_curve_fidelity": True,
+        "architecture_fidelity": True,
+        "early_stopping_concept": True,
+        "seoul_forward_oof": True,
+    }
+
+
 def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     """Check that Phase 2B-1 explanations match fitted classifiers and labels."""
 
@@ -1753,6 +1956,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     teaching_runtime_test = run_teaching_runtime_regression(payload, pd, np, plt, sns)
     phase2a_model_runtime_test = run_phase2a_model_runtime_regression(payload, pd, np, plt, sns)
     phase2b1_model_runtime_test = run_phase2b1_model_runtime_regression(payload, pd, np, plt, sns)
+    phase2b2_model_runtime_test = run_neural_network_runtime_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -1815,6 +2019,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "teaching_runtime": teaching_runtime_test,
         "phase2a_model_runtime": phase2a_model_runtime_test,
         "phase2b1_model_runtime": phase2b1_model_runtime_test,
+        "phase2b2_model_runtime": phase2b2_model_runtime_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }
