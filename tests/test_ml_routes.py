@@ -213,6 +213,25 @@ def assert_route_structure(payload: dict) -> dict:
     kmeans_ids = ["frame", "explore", "prepare", "compare", "fit", "diagnose", "profile", "visualise"]
     hierarchical_ids = ["frame", "explore", "prepare", "dendrogram", "compare", "fit", "profile", "visualise"]
     pca_ids = ["frame", "explore", "prepare", "variance", "select", "loadings", "project"]
+    phase2a_model_ids = {
+        "simple_linear",
+        "multiple_linear",
+        "polynomial",
+        "regression_tree",
+        "logistic",
+        "classification_tree",
+        "knn_cls",
+        "one_r",
+    }
+    phase2a_required_tokens = {
+        "simple_linear": ("simple_grid", "simple_curve", "simple_oof_x", "simple_slope", "intercept_at_feature_0", "fitted line"),
+        "multiple_linear": ("linear_interpretation", "meaningful_unit", "direction", "plain_english"),
+        "regression_tree": ("tree_path", "tree_example_position", "tree_prediction", "tree_importance", "max_depth=2", "Training-only example row"),
+        "classification_tree": ("tree_path", "tree_example_position", "tree_prediction", "tree_importance", "max_depth=2", "Training-only example row"),
+        "logistic": ("logistic_coefficients", "logistic_interpretation", "pushes_model_toward", "logistic_positive_class", "weight_toward_"),
+        "knn_cls": ("knn_fit_indices", "knn_neighbor_positions", "knn_self_neighbour_check", "kneighbors", "knn_neighbor_table"),
+        "one_r": ("one_r_rules", "one_r_comparison", "one_r_majority_prediction"),
+    }
 
     preprocessing_counts = {
         "direct_passthrough": 0,
@@ -228,7 +247,10 @@ def assert_route_structure(payload: dict) -> dict:
         "supervised_baseline_metric_help": 0,
         "supervised_final_comparison_metadata": 0,
         "supervised_concept_metadata": 0,
+        "phase2a_model_specific_routes": 0,
+        "phase2a_model_ids": [],
     }
+    phase2a_models_seen = set()
 
     required_concepts = {
         "frame": {"feature", "target", "X", "y", "row"},
@@ -485,13 +507,33 @@ def assert_route_structure(payload: dict) -> dict:
                 diagnostic = route_code(route, "diagnose")
                 if any(
                     token in diagnostic
-                    for token in ("classification_report", "diagnostic_rmse", "diagnostic_r2", "root_mean_squared_error", "r2_score", "test_result")
+                    for token in ("classification_report", "diagnostic_rmse", "diagnostic_r2", "root_mean_squared_error", "r2_score", "X_test", "y_test", "test_prediction", "test_result")
                 ):
                     raise AssertionError(f"Diagnostic cell contains an aggregate score/report: {route}")
                 if ids.index("tune") >= ids.index("diagnose") or "best_pipeline" not in diagnostic:
                     raise AssertionError(f"Diagnostic does not follow tuning/default selection: {route}")
                 if "best_pipeline" not in route_code(route, "final"):
                     raise AssertionError(f"Final cell does not use best_pipeline: {route}")
+
+                diagnose_metadata = next(cell for cell in route["cells"] if cell["id"] == "diagnose")
+                model_teaching = diagnose_metadata.get("modelTeaching")
+                if model_id in phase2a_model_ids:
+                    phase2a_models_seen.add(model_id)
+                    teaching_checks["phase2a_model_specific_routes"] += 1
+                    if not isinstance(model_teaching, dict) or model_teaching.get("modelId") != model_id:
+                        raise AssertionError(f"Phase 2A model-specific teaching metadata is missing: {route}")
+                    if any(not str(model_teaching.get(key, "")).strip() for key in ("learned", "see", "read", "watchOut")):
+                        raise AssertionError(f"Phase 2A model-specific teaching metadata is incomplete: {route}")
+                    missing_tokens = [token for token in phase2a_required_tokens.get(model_id, ()) if token not in diagnostic]
+                    if model_id == "polynomial":
+                        expected_polynomial_tokens = ("poly_grid", "poly_curve", "polynomial_degree") if len(route["scenario"]["continuous"]) == 1 else ("polynomial_terms", "no single 2D fitted curve")
+                        missing_tokens.extend(token for token in expected_polynomial_tokens if token not in diagnostic)
+                    if missing_tokens:
+                        raise AssertionError(f"Phase 2A {model_id} diagnostic is missing {missing_tokens}: {route}")
+                    if model_id == "multiple_linear" and "sort_values" in diagnostic:
+                        raise AssertionError(f"Multiple linear coefficients are being ranked by raw magnitude: {route}")
+                elif model_teaching:
+                    raise AssertionError(f"A Phase 2A model-specific diagnostic leaked into an out-of-scope model: {route}")
 
                 if model_id == "one_r":
                     full_code = "\n".join(cell["code"] for cell in route["cells"])
@@ -579,6 +621,23 @@ def assert_route_structure(payload: dict) -> dict:
             pure_kind = sum(bool(source[key]) for key in ("continuous", "binary", "categorical"))
             if pure_kind != 1:
                 raise AssertionError(f"Mixed Naive Bayes route was generated: {route}")
+
+    expected_phase2a_routes = sum(
+        route["modelId"] in phase2a_model_ids
+        for routes in route_sets.values()
+        for route in routes
+    )
+    if phase2a_models_seen != phase2a_model_ids:
+        raise AssertionError(
+            f"Phase 2A model-specific coverage is incomplete; expected {sorted(phase2a_model_ids)}, "
+            f"saw {sorted(phase2a_models_seen)}"
+        )
+    if teaching_checks["phase2a_model_specific_routes"] != expected_phase2a_routes:
+        raise AssertionError(
+            f"Phase 2A model-specific metadata count mismatch; expected {expected_phase2a_routes}, "
+            f"saw {teaching_checks['phase2a_model_specific_routes']}"
+        )
+    teaching_checks["phase2a_model_ids"] = sorted(phase2a_models_seen)
 
     model_df_sources = {
         dataset_id: config["prepare"]
@@ -918,7 +977,7 @@ def _route_for_teaching_runtime(payload: dict, dataset_id: str, scenario_id: str
     raise AssertionError(f"Teaching runtime fixture route is missing: {dataset_id}/{scenario_id}/{model_id}")
 
 
-def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at: str) -> dict:
+def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at: str, before_cell=None) -> dict:
     namespace = {
         "pd": pd,
         "np": np,
@@ -930,12 +989,214 @@ def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at
     namespace["df"] = pd.read_csv(ROOT / dataset["file"], sep=dataset["sep"])
     exec(payload["oneRHelperSource"], namespace, namespace)
     for cell in route["cells"]:
+        if before_cell:
+            before_cell(namespace, cell)
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             exec(cell["code"], namespace, namespace)
         plt.close("all")
         if cell["id"] == stop_at:
             return namespace
     raise AssertionError(f"Route did not contain requested teaching runtime cell {stop_at!r}.")
+
+
+def _same_value(left, right, np) -> bool:
+    try:
+        return bool(np.asarray(left == right).all())
+    except Exception:  # noqa: BLE001
+        return str(left) == str(right)
+
+
+def _assert_tree_path_fidelity(namespace: dict, classification: bool, np) -> None:
+    if namespace.get("tree_example_position") != 0:
+        raise AssertionError("Tree diagnostic did not use its deterministic first training row.")
+    fitted = namespace["fitted"]
+    tree_row = namespace["tree_row"]
+    preparer = namespace["tree_preparer"]
+    transformed = tree_row.to_numpy() if isinstance(preparer, str) else preparer.transform(tree_row)
+    if hasattr(transformed, "toarray"):
+        transformed = transformed.toarray()
+    encoded_names = [str(name) for name in namespace["encoded_names"]]
+    expected_rows = []
+    node = 0
+    while fitted.tree_.children_left[node] != fitted.tree_.children_right[node]:
+        feature_index = int(fitted.tree_.feature[node])
+        threshold = float(fitted.tree_.threshold[node])
+        observed = float(transformed[0, feature_index])
+        go_left = observed <= threshold
+        expected_rows.append({
+            "step": len(expected_rows) + 1,
+            "condition": f"{encoded_names[feature_index]} <= {threshold:.3g}" if go_left else f"{encoded_names[feature_index]} > {threshold:.3g}",
+            "observed_value": observed,
+            "next_branch": "left" if go_left else "right",
+        })
+        node = int(fitted.tree_.children_left[node] if go_left else fitted.tree_.children_right[node])
+    actual_path = namespace["tree_path"]
+    if len(actual_path) != len(expected_rows):
+        raise AssertionError(f"Displayed tree path length does not match the fitted tree: {actual_path}")
+    for actual, expected in zip(actual_path.to_dict("records"), expected_rows):
+        if actual["step"] != expected["step"] or actual["condition"] != expected["condition"] or actual["next_branch"] != expected["next_branch"]:
+            raise AssertionError(f"Displayed tree path does not match the fitted split sequence: {actual_path}")
+        if not np.isclose(float(actual["observed_value"]), expected["observed_value"]):
+            raise AssertionError(f"Displayed tree path value does not match the fitted row: {actual_path}")
+    applied_input = namespace["pd"].DataFrame(transformed, columns=encoded_names) if hasattr(fitted, "feature_names_in_") else transformed
+    applied_node = int(fitted.apply(applied_input)[0])
+    if node != applied_node or int(namespace["tree_node"]) != applied_node:
+        raise AssertionError("Displayed tree path did not end at the fitted row's leaf.")
+    expected_prediction = namespace["diagnostic_model"].predict(tree_row)[0]
+    if not _same_value(namespace["tree_prediction"], expected_prediction, np):
+        raise AssertionError("Displayed tree prediction does not match the fitted tree leaf.")
+    if not _same_value(namespace["tree_actual"], namespace["y_train"].iloc[0], np):
+        raise AssertionError("Tree diagnostic did not display the selected training row's actual value.")
+    importance = namespace["tree_importance"]
+    importance_by_feature = dict(zip(importance["feature"].astype(str), importance["importance"].astype(float)))
+    for feature, expected in zip(encoded_names, fitted.feature_importances_):
+        if feature not in importance_by_feature or not np.isclose(importance_by_feature[feature], expected):
+            raise AssertionError("Displayed tree feature usage does not match the fitted estimator.")
+    if classification and "tree_class_labels" not in namespace:
+        raise AssertionError("Classification-tree diagnostic did not retain class labels.")
+
+
+def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Check that each Phase 2A interpretation is derived from its fitted model."""
+
+    def run(dataset_id, scenario_id, model_id, before_cell=None):
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
+        diagnostic = route_code(route, "diagnose")
+        forbidden = ("X_test", "y_test", "test_prediction", "test_result")
+        if any(token in diagnostic for token in forbidden):
+            raise AssertionError(f"Phase 2A diagnostic accesses final-test data: {route}")
+        return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "diagnose", before_cell)
+
+    simple_route, simple = run("gapminder", "simple", "simple_linear")
+    simple_model = simple["diagnostic_model"].named_steps["model"]
+    if not np.isclose(simple["simple_slope"], float(np.ravel(simple_model.coef_)[0])) or not np.isclose(simple["simple_intercept"], float(np.ravel(np.atleast_1d(simple_model.intercept_))[0])):
+        raise AssertionError("Simple linear interpretation does not match the fitted slope/intercept.")
+    if len(simple["simple_grid"]) != 160 or not np.isclose(simple["simple_grid"][0], simple["X_train"][simple["simple_feature"]].min()) or not np.isclose(simple["simple_grid"][-1], simple["X_train"][simple["simple_feature"]].max()):
+        raise AssertionError("Simple linear fitted line does not span the observed training feature range.")
+    if not np.allclose(simple["simple_curve"], simple["diagnostic_model"].predict(simple["simple_grid_frame"])) or not np.allclose(simple["simple_oof_x"], simple["X_train"].loc[simple["diagnostic_actual"].index, simple["simple_feature"]].astype(float).to_numpy()):
+        raise AssertionError("Simple linear chart evidence is not aligned with the fitted line/OOF rows.")
+
+    polynomial_route, polynomial = run("gapminder", "simple", "polynomial")
+    polynomial_model = polynomial["diagnostic_model"].named_steps["model"]
+    polynomial_feature = polynomial["poly_feature"]
+    if polynomial["polynomial_degree"] != polynomial_model.named_steps["poly"].degree or len(polynomial["poly_grid"]) != 160:
+        raise AssertionError("Polynomial interpretation does not report the fitted degree/grid.")
+    if not np.isclose(polynomial["poly_grid"][0], polynomial["X_train"][polynomial_feature].min()) or not np.isclose(polynomial["poly_grid"][-1], polynomial["X_train"][polynomial_feature].max()):
+        raise AssertionError("Polynomial fitted curve does not span the observed training feature range.")
+    if not np.allclose(polynomial["poly_curve"], polynomial["diagnostic_model"].predict(polynomial["poly_grid_frame"])):
+        raise AssertionError("Polynomial fitted curve does not match the fitted pipeline predictions.")
+
+    multiple_route, multiple = run("wine", "continuous", "multiple_linear")
+    multiple_model = multiple["diagnostic_model"].named_steps["model"]
+    multiple_table = multiple["linear_interpretation"]
+    if list(multiple_table.columns) != ["feature", "coefficient", "meaningful_unit", "direction", "plain_english"]:
+        raise AssertionError("Multiple linear interpretation table is missing its teaching columns.")
+    if [str(name) for name in multiple_table["feature"]] != [str(name) for name in multiple["encoded_names"]] or not np.allclose(multiple_table["coefficient"].to_numpy(dtype=float), np.ravel(multiple_model.coef_)):
+        raise AssertionError("Multiple linear coefficients or feature order do not match the fitted estimator.")
+    if "sort_values" in route_code(multiple_route, "diagnose") or not all("associated with" in text for text in multiple_table["plain_english"]):
+        raise AssertionError("Multiple linear interpretation ranks raw coefficient magnitudes or omits association wording.")
+
+    seoul_multiple_route, seoul_multiple = run("seoul", "continuous", "multiple_linear")
+    if seoul_multiple_route["dataset"]["split"] != "time":
+        raise AssertionError("Seoul multiple-linear fixture lost its time-series split metadata.")
+    seoul_folds = list(seoul_multiple["cv"].split(seoul_multiple["X_train"], seoul_multiple["y_train"]))
+    if not all(max(train) < min(validation) for train, validation in seoul_folds):
+        raise AssertionError("Seoul Phase 2A diagnostics changed forward-only validation ordering.")
+
+    regression_tree_results = {}
+    for dataset_id, scenario_id in (("wine", "continuous"), ("seoul", "continuous")):
+        route, namespace = run(dataset_id, scenario_id, "regression_tree")
+        _assert_tree_path_fidelity(namespace, False, np)
+        regression_tree_results[dataset_id] = int(len(namespace["tree_path"]))
+
+    classification_tree_results = {}
+    for dataset_id, scenario_id in (("breast", "continuous5"), ("penguins", "all_types")):
+        route, namespace = run(dataset_id, scenario_id, "classification_tree")
+        _assert_tree_path_fidelity(namespace, True, np)
+        classification_tree_results[dataset_id] = int(len(namespace["tree_path"]))
+
+    binary_logistic_route, binary_logistic = run("breast", "continuous5", "logistic")
+    binary_fitted = binary_logistic["diagnostic_model"].named_steps["model"]
+    binary_table = binary_logistic["logistic_interpretation"]
+    if not np.allclose(binary_logistic["logistic_coefficients"], np.atleast_2d(binary_fitted.coef_)):
+        raise AssertionError("Binary logistic interpretation does not match the fitted coefficients.")
+    expected_directions = [
+        binary_logistic["logistic_class_labels"].get(str(binary_fitted.classes_[1]), str(binary_fitted.classes_[1]))
+        if weight >= 0 else binary_logistic["logistic_class_labels"].get(str(binary_fitted.classes_[0]), str(binary_fitted.classes_[0]))
+        for weight in binary_fitted.coef_[0]
+    ]
+    if list(binary_table["pushes_model_toward"]) != expected_directions or binary_logistic["logistic_positive_class"] != binary_fitted.classes_[1] or binary_logistic["logistic_negative_class"] != binary_fitted.classes_[0]:
+        raise AssertionError("Binary logistic class-direction mapping is incorrect.")
+
+    multiclass_route, multiclass = run("penguins", "all_types", "logistic")
+    multiclass_fitted = multiclass["diagnostic_model"].named_steps["model"]
+    multiclass_table = multiclass["logistic_interpretation"]
+    expected_class_columns = [
+        f"weight_toward_{multiclass['logistic_class_labels'].get(str(label), str(label))}"
+        for label in multiclass_fitted.classes_
+    ]
+    if list(multiclass_table.columns) != ["feature", *expected_class_columns] or not np.allclose(multiclass_table[expected_class_columns].to_numpy(dtype=float), multiclass_fitted.coef_.T):
+        raise AssertionError("Multiclass logistic class-labelled weights are incorrect.")
+    if "X_test" in route_code(binary_logistic_route, "diagnose") or "X_test" in route_code(multiclass_route, "diagnose"):
+        raise AssertionError("Logistic interpretation references the sealed test set.")
+
+    knn_route, knn = run("breast", "continuous5", "knn_cls")
+    knn_neighbors = np.asarray(knn["knn_neighbor_positions"])
+    knn_fit = set(int(index) for index in np.asarray(knn["knn_fit_indices"]).tolist())
+    if not knn["knn_self_neighbour_check"] or int(knn["knn_example_position"]) in knn_fit or int(knn["knn_example_position"]) in set(int(index) for index in knn_neighbors.tolist()) or not set(int(index) for index in knn_neighbors.tolist()).issubset(knn_fit):
+        raise AssertionError("KNN diagnostic row leaked into its own or non-fold neighbour set.")
+    if len(knn_neighbors) != knn["knn_fitted"].n_neighbors or not np.all(np.diff(knn["knn_neighbor_distances"]) >= -1e-12):
+        raise AssertionError("KNN neighbour evidence is not the fitted fold's ordered neighbour set.")
+    expected_labels = knn["y_train"].iloc[knn_neighbors].to_numpy()
+    if not np.array_equal(knn["knn_neighbor_labels"], expected_labels) or not _same_value(knn["knn_prediction"], knn["knn_fold_model"].predict(knn["knn_row"])[0], np):
+        raise AssertionError("KNN neighbour labels or prediction do not match the fold-fitted model.")
+
+    def force_distance_weights(namespace, cell):
+        if cell["id"] == "diagnose":
+            namespace["best_pipeline"] = namespace["best_pipeline"].set_params(model__n_neighbors=3, model__weights="distance")
+
+    weighted_route, weighted = run("breast", "continuous5", "knn_cls", force_distance_weights)
+    if not weighted["knn_is_distance_weighted"] or not np.allclose(weighted["knn_vote_weights"], 1 / np.maximum(weighted["knn_neighbor_distances"], np.finfo(float).eps)) or np.allclose(weighted["knn_vote_weights"], 1):
+        raise AssertionError("Distance-weighted KNN evidence does not reflect the fitted weights setting.")
+    if "X_test" in route_code(knn_route, "diagnose") or "X_test" in route_code(weighted_route, "diagnose"):
+        raise AssertionError("KNN interpretation references the sealed test set.")
+
+    car_route, car = run("car", "categorical", "one_r")
+    car_fitted = car["diagnostic_model"].named_steps["model"]
+    selected_feature = car["feature_names"][car_fitted.best_feature_]
+    car_rules = car["one_r_rules"]
+    original_values = car["X_train"][selected_feature].astype(str)
+    if set(car_rules["interval"]) != set(original_values.unique()) or int(car_rules["training_rows"].sum()) != len(original_values):
+        raise AssertionError("Car One-R rules do not preserve the selected feature's exact categories.")
+    if any(int(row.training_rows) != int((original_values == row.interval).sum()) for row in car_rules.itertuples()):
+        raise AssertionError("Car One-R training-row counts do not match original category membership.")
+    from sklearn.metrics import accuracy_score, f1_score
+    comparison = car["one_r_comparison"].set_index("baseline")
+    expected_majority = np.repeat(car_fitted.default_, len(car["y_train"]))
+    if not np.array_equal(car["one_r_majority_prediction"], expected_majority):
+        raise AssertionError("One-R majority baseline is not the fitted default class.")
+    for label, prediction in (("Majority class", expected_majority), ("One-R", car["one_r_prediction"])):
+        if not np.isclose(comparison.loc[label, "accuracy"], accuracy_score(car["y_train"], prediction)) or not np.isclose(comparison.loc[label, "macro_f1"], f1_score(car["y_train"], prediction, average="macro", zero_division=0)):
+            raise AssertionError("One-R comparison does not use the displayed training-only predictions.")
+
+    continuous_one_r_route, continuous_one_r = run("breast", "continuous5", "one_r")
+    if continuous_one_r["diagnostic_model"].named_steps["model"].edges_ is None or not all(str(interval).startswith("[") for interval in continuous_one_r["one_r_rules"]["interval"]):
+        raise AssertionError("Continuous One-R lost its numeric interval rules.")
+
+    return {
+        "simple_line_matches_fitted_model": True,
+        "polynomial_curve_matches_fitted_model": True,
+        "multiple_coefficients_match_fitted_model": True,
+        "seoul_forward_cv_unchanged": True,
+        "regression_tree_paths": regression_tree_results,
+        "classification_tree_paths": classification_tree_results,
+        "binary_logistic_class_mapping": True,
+        "multiclass_logistic_labels": True,
+        "knn_oof_self_neighbour_guard": True,
+        "knn_weighted_vote_fixture": True,
+        "car_one_r_rules_and_baseline": True,
+        "continuous_one_r_intervals": True,
+    }
 
 
 def run_teaching_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
@@ -1012,6 +1273,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     dataframe_serializer_test = run_dataframe_serializer_regression(payload, pd, np)
     one_r_test = run_one_r_regression(payload, pd, np, plt, sns)
     teaching_runtime_test = run_teaching_runtime_regression(payload, pd, np, plt, sns)
+    phase2a_model_runtime_test = run_phase2a_model_runtime_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -1072,6 +1334,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "dataframe_serializer": dataframe_serializer_test,
         "one_r_regression": one_r_test,
         "teaching_runtime": teaching_runtime_test,
+        "phase2a_model_runtime": phase2a_model_runtime_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }

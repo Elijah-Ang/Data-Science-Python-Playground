@@ -60,6 +60,16 @@ def select_route(page, dataset: str, scenario: str, model: str, expected_steps: 
     wait_for_route(page, expected_steps)
 
 
+def assert_model_teaching(page, tokens: tuple[str, ...]) -> None:
+    block = page.locator("#notebookPanel article").nth(7).locator("[data-teaching-role='model-specific']")
+    if block.count() != 1:
+        raise AssertionError("Step 8 did not render the model-specific interpretation block.")
+    text = block.inner_text().lower()
+    missing = [token for token in tokens if token.lower() not in text]
+    if missing:
+        raise AssertionError(f"Step 8 model-specific teaching is missing {missing}: {block.inner_text()}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", required=True)
@@ -148,6 +158,12 @@ def main() -> int:
 
         select_route(page, "breast", "continuous5", "knn_cls", 9)
         run_steps(page, 9)
+        assert_model_teaching(page, ("nearby prepared training examples", "out-of-fold", "cannot vote for itself"))
+        knn_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in knn_diagnostic.inner_text() for value in ("Selected out-of-fold row", "Actual class", "Prediction", "Selected k", "neighbor_class", "distance_after_preprocessing")):
+            raise AssertionError("KNN Step 8 did not show the selected row, fitted neighbour evidence, and prediction.")
+        if knn_diagnostic.locator("table").count() != 1:
+            raise AssertionError("KNN Step 8 neighbour table was not rendered.")
         first_teaching = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='question']")
         first_cue = page.locator("#notebookPanel article").nth(0).locator("[data-teaching-role='reading-cue']")
         if first_teaching.count() != 1 or "what are we trying to predict" not in first_teaching.inner_text().lower():
@@ -226,6 +242,31 @@ def main() -> int:
             raise AssertionError("Gapminder Pipeline/fit/predict teaching was incomplete.")
         if "keeps the model's current/default settings" not in page.locator("#notebookPanel article").nth(6).locator("[data-teaching-role='concept']").inner_text():
             raise AssertionError("Gapminder keep-defaults teaching was missing.")
+        assert_model_teaching(page, ("straight-line", "fitted line", "intercept", "association"))
+        simple_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if simple_diagnostic.locator(".chart-wrap").count() < 2 or not all(value in simple_diagnostic.inner_text() for value in ("feature", "slope_per_original_unit", "predicted_change_for_meaningful_change")):
+            raise AssertionError("Simple-linear Step 8 did not render the fitted line and slope interpretation.")
+
+        select_route(page, "gapminder", "simple", "polynomial", 9)
+        run_steps(page, 9)
+        assert_model_teaching(page, ("bend", "fitted curve", "noise"))
+        polynomial_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if polynomial_diagnostic.locator(".chart-wrap").count() < 2 or not all(value in polynomial_diagnostic.inner_text() for value in ("feature", "degree", "curve_points")):
+            raise AssertionError("Polynomial Step 8 did not render the fitted curve and degree summary.")
+
+        select_route(page, "breast", "continuous5", "logistic", 9)
+        run_steps(page, 9)
+        assert_model_teaching(page, ("score", "probabilities", "prepared feature scales"))
+        logistic_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in logistic_diagnostic.inner_text() for value in ("Positive/referenced class", "feature", "pushes_model_toward")) or logistic_diagnostic.locator("table").count() != 1:
+            raise AssertionError("Logistic Step 8 did not name the binary class direction or weight table.")
+
+        select_route(page, "breast", "continuous5", "classification_tree", 9)
+        run_steps(page, 9)
+        assert_model_teaching(page, ("if/then", "actual and predicted class", "generalize"))
+        classification_tree_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in classification_tree_diagnostic.inner_text() for value in ("Training-only example row", "Actual class", "Predicted class", "condition", "next_branch")) or classification_tree_diagnostic.locator("table").count() != 1:
+            raise AssertionError("Classification-tree Step 8 did not show the fitted row path and class prediction.")
 
         select_route(page, "penguins", "all_types", "logistic", 9)
         run_steps(page, 9)
@@ -247,7 +288,10 @@ def main() -> int:
 
         select_route(page, "car", "categorical", "one_r", 9)
         run_steps(page, 9)
+        assert_model_teaching(page, ("individual features", "exact fitted values", "majority baseline"))
         one_r_item = page.locator("#outputList .output-item").nth(7)
+        if not all(value in one_r_item.inner_text() for value in ("Chosen feature", "Training-only comparison", "Majority class", "One-R")):
+            raise AssertionError("Car One-R Step 8 did not show the selected feature and majority baseline comparison.")
         one_r_table = one_r_item.locator("table")
         headers = one_r_table.locator("thead th").all_inner_texts()
         if headers != ["feature", "interval", "predicted_class", "training_rows"]:
@@ -295,6 +339,14 @@ def main() -> int:
         wait_for_cell(page, count_check_index)
         if "True" not in page.locator("#outputList .output-item").last.inner_text():
             raise AssertionError("Car One-R rule counts did not match original category membership.")
+
+        select_route(page, "wine", "continuous", "multiple_linear", 9)
+        run_steps(page, 9)
+        assert_model_teaching(page, ("additive", "other included features are kept fixed", "own unit"))
+        multiple_diagnostic = page.locator("#outputList .output-item").nth(7)
+        multiple_headers = multiple_diagnostic.locator("table thead th").all_inner_texts()
+        if multiple_headers != ["feature", "coefficient", "meaningful_unit", "direction", "plain_english"]:
+            raise AssertionError(f"Multiple-linear Step 8 has unexpected coefficient columns: {multiple_headers}")
 
         select_route(page, "seoul", "simple", "simple_linear", 9)
         run_steps(page, 6)
@@ -376,8 +428,8 @@ def main() -> int:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
     print(
         "Browser/Pyodide smoke test passed: Phase 1A evidence teaching, Phase 1B shared concepts, "
-        "classification/regression/mixed/categorical/time-aware journeys, invalidation, indexed tables, "
-        "Car One-R rules, fitted PCA route, and reset recovery."
+        "Phase 2A model-specific interpretations, classification/regression/mixed/categorical/time-aware "
+        "journeys, invalidation, indexed tables, Car One-R rules, fitted PCA route, and reset recovery."
     )
     return 0
 
