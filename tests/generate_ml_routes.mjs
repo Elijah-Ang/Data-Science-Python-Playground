@@ -66,11 +66,48 @@ for (const folds of [5, 10]) {
   }
 }
 
+// These deterministic two-feature fixtures exercise the optional, model-faithful
+// decision-region branches without changing the compatible production route set.
+const phase2bBoundaryScenario = {
+  id: "phase2b-two-feature",
+  name: "Two continuous features · boundary test fixture",
+  continuous: ["radius_mean", "texture_mean"],
+  binary: [],
+  categorical: []
+};
+const phase2bFixtures = {};
+for (const modelId of ["svm_cls", "lda", "qda"]) {
+  const config = api.DATASETS.breast;
+  const model = api.MODELS[modelId];
+  phase2bFixtures[modelId] = {
+    datasetId: "breast",
+    datasetName: config.name,
+    dataset: {
+      file: config.file,
+      sep: config.sep,
+      prepare: config.prepare,
+      target: config.target,
+      task: config.task,
+      split: config.split,
+      missing: config.missing,
+      binaryNumeric: config.binaryNumeric || []
+    },
+    scenarioId: phase2bBoundaryScenario.id,
+    scenarioName: phase2bBoundaryScenario.name,
+    scenario: phase2bBoundaryScenario,
+    modelId,
+    modelName: model.name,
+    modelTask: model.task,
+    cells: api.routeForSelection(config, phase2bBoundaryScenario, modelId, 5)
+  };
+}
+
 process.stdout.write(JSON.stringify({
   datasets: api.DATASETS,
   models: api.MODELS,
   oneRHelperSource: api.ONE_R_HELPER_SOURCE,
   dataFrameSerializerSource: api.DATAFRAME_SERIALIZER_SOURCE,
   resetWorkspaceSource: api.RESET_WORKSPACE_SOURCE,
+  phase2bFixtures,
   routes
 }));

@@ -261,6 +261,60 @@ def main() -> int:
         if not all(value in logistic_diagnostic.inner_text() for value in ("Positive/referenced class", "feature", "pushes_model_toward")) or logistic_diagnostic.locator("table").count() != 1:
             raise AssertionError("Logistic Step 8 did not name the binary class direction or weight table.")
 
+        select_route(page, "breast", "continuous5", "svm_cls", 9)
+        run_steps(page, 8)
+        assert_model_teaching(page, ("boundary", "margin", "support vectors", "gamma"))
+        svm_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in svm_diagnostic.inner_text() for value in ("Support vectors per class", "Selected out-of-fold row", "Decision score", "Actual class", "Predicted class")):
+            raise AssertionError("Binary SVM Step 8 did not show support-vector and decision-score evidence.")
+        if svm_diagnostic.locator("table").count() != 1:
+            raise AssertionError("Binary SVM support-vector examples were not rendered as a table.")
+
+        select_route(page, "penguins", "continuous", "svm_cls", 9)
+        run_steps(page, 8)
+        assert_model_teaching(page, ("multiple class-separation decisions", "no single universal boundary"))
+        multiclass_svm_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if "Multiclass SVM combines multiple class-separation decisions" not in multiclass_svm_diagnostic.inner_text() or "no single universal boundary" not in multiclass_svm_diagnostic.inner_text():
+            raise AssertionError("Multiclass SVM Step 8 used unsafe single-boundary wording.")
+
+        select_route(page, "breast", "continuous5", "lda", 9)
+        run_steps(page, 8)
+        assert_model_teaching(page, ("class", "shared spread/shape", "straight decision boundaries"))
+        lda_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in lda_diagnostic.inner_text() for value in ("Class centres", "fitted means in prepared feature units", "shared spread/shape", "Selected out-of-fold row", "Predicted class probabilities")):
+            raise AssertionError("LDA Step 8 did not show class centres, shared spread, and a prediction story.")
+        if lda_diagnostic.locator("table").count() != 1:
+            raise AssertionError("LDA class-centre evidence was not rendered as a table.")
+
+        select_route(page, "breast", "continuous5", "qda", 9)
+        run_steps(page, 8)
+        assert_model_teaching(page, ("separate spread/shape", "curve", "more data"))
+        qda_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in qda_diagnostic.inner_text() for value in ("Class-specific spread summary", "QDA regularisation parameter", "separate spread/shape", "Predicted class probabilities")):
+            raise AssertionError("QDA Step 8 did not show separate spread and prediction evidence.")
+        if qda_diagnostic.locator("table").count() != 1:
+            raise AssertionError("QDA class-centre evidence was not rendered as a table.")
+
+        select_route(page, "breast", "continuous5", "naive_bayes", 9)
+        run_steps(page, 8)
+        assert_model_teaching(page, ("prior", "likelihood", "posterior", "independent"))
+        gaussian_nb_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in gaussian_nb_diagnostic.inner_text() for value in ("Gaussian Naive Bayes", "Prior P(class)", "Likelihood P(feature", "Predicted P(class | features)", "independence assumption")):
+            raise AssertionError("Gaussian Naive Bayes Step 8 did not show explicit prior, likelihood, and posterior evidence.")
+        gaussian_headers = gaussian_nb_diagnostic.locator("table thead th").all_inner_texts()
+        if gaussian_headers != ["probability_type", "class", "feature", "probability_label", "estimated_probability"]:
+            raise AssertionError(f"Gaussian Naive Bayes probability table has ambiguous columns: {gaussian_headers}")
+
+        select_route(page, "car", "categorical", "naive_bayes", 9)
+        run_steps(page, 8)
+        assert_model_teaching(page, ("prior", "likelihood", "posterior", "independent"))
+        categorical_nb_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if not all(value in categorical_nb_diagnostic.inner_text() for value in ("Bernoulli Naive Bayes", "buying=low", "Likelihood P(feature = 1 | class)", "P(buying=", "independence assumption")):
+            raise AssertionError("Categorical Naive Bayes Step 8 did not preserve original category probability labels.")
+        categorical_headers = categorical_nb_diagnostic.locator("table thead th").all_inner_texts()
+        if categorical_headers != ["probability_type", "class", "feature", "probability_label", "estimated_probability"]:
+            raise AssertionError(f"Categorical Naive Bayes probability table has ambiguous columns: {categorical_headers}")
+
         select_route(page, "breast", "continuous5", "classification_tree", 9)
         run_steps(page, 9)
         assert_model_teaching(page, ("if/then", "actual and predicted class", "generalize"))
