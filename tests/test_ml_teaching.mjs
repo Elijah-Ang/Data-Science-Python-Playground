@@ -136,7 +136,7 @@ const phase2bTokens = {
   svm_cls:["boundary", "margin", "support vectors", "C", "gamma"],
   lda:["class", "shared spread/shape", "straight decision boundaries"],
   qda:["separate spread/shape", "curve", "more data"],
-  naive_bayes:["prior", "likelihood", "posterior", "independent"]
+  naive_bayes:["prior", "class-conditional density", "posterior", "independent"]
 };
 for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
   const route = api.routeForSelection(config, scenario, modelId, 5);
@@ -148,6 +148,26 @@ for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
   for (const token of phase2bTokens[modelId]) {
     if (!modelTeachingText.toLowerCase().includes(token.toLowerCase())) {
       throw new Error(`Phase 2B-1 ${modelId} teaching is missing ${token}.`);
+    }
+  }
+  if (modelId === "qda") {
+    const qdaCode = diagnose.code;
+    for (const token of ["per-feature spread", "vary together within each class", "covariance/shape", "boundary can curve"]) {
+      if (!qdaCode.toLowerCase().includes(token)) {
+        throw new Error(`QDA precision wording is missing ${token}.`);
+      }
+    }
+  }
+  if (modelId === "naive_bayes") {
+    for (const token of ["Class-conditional density", "quantity_value", "not the probability of one exact continuous value"]) {
+      if (!diagnose.code.includes(token)) {
+        throw new Error(`Gaussian Naive Bayes precision wording is missing ${token}.`);
+      }
+    }
+    for (const token of ["estimated_probability", "probability_label", "Likelihood P(feature ≈ value | class)"]) {
+      if (diagnose.code.includes(token)) {
+        throw new Error(`Gaussian Naive Bayes still exposes ambiguous density terminology: ${token}.`);
+      }
     }
   }
 }

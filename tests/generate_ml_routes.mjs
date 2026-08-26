@@ -102,6 +102,16 @@ for (const modelId of ["svm_cls", "lda", "qda"]) {
   };
 }
 
+// A deterministic PDF-only fixture protects the distinction between a
+// continuous density and a probability.  At a narrow bell-curve centre the
+// density is intentionally greater than 1, which is mathematically valid.
+const phase2bGaussianDensityFixture = {
+  observed: 0,
+  mean: 0,
+  variance: 0.001,
+  expected_density: 1 / Math.sqrt(2 * Math.PI * 0.001)
+};
+
 process.stdout.write(JSON.stringify({
   datasets: api.DATASETS,
   models: api.MODELS,
@@ -109,5 +119,6 @@ process.stdout.write(JSON.stringify({
   dataFrameSerializerSource: api.DATAFRAME_SERIALIZER_SOURCE,
   resetWorkspaceSource: api.RESET_WORKSPACE_SOURCE,
   phase2bFixtures,
+  phase2bGaussianDensityFixture,
   routes
 }));

@@ -1081,18 +1081,20 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       },
       qda:{
         learned:"QDA learned a centre and a separate spread/shape structure for each class, allowing the decision boundary to curve.",
-        see:"See the fitted class centres, a class-specific spread summary, and one out-of-fold prediction story; a two-feature route also shows the fitted curved decision regions.",
-        read:"Compare the example's class probabilities and predicted region with the class-specific centres and spreads. The extra freedom is the contrast with LDA.",
+        see:"See the fitted class centres, each class's per-feature spread, and one out-of-fold prediction story; internally, QDA also models how the features vary together within each class. A two-feature route also shows the fitted curved decision regions.",
+        read:"Compare the example's class probabilities and predicted region with the class-specific centres and per-feature spreads. The extra class-specific covariance/shape freedom is the contrast with LDA.",
         watchOut:"QDA estimates more class-specific information than LDA, so it can be more flexible but needs more data to estimate those class shapes reliably. Regularisation can stabilise estimates; a curved boundary is not automatically better."
       },
       naive_bayes:{
         learned:"The model learned class priors and class-specific feature evidence, then combines that evidence as if the features were independent once the class is known.",
         see:pureNaiveBayesInput(value) === "continuous"
-          ? "See explicit prior P(class), Gaussian likelihood P(feature ≈ value | class), and predicted P(class | features) evidence, plus fitted class means and spreads."
+          ? "See explicit prior probability, Gaussian class-conditional density at each observed continuous value, and posterior probability evidence, plus fitted class means and spreads."
           : pureNaiveBayesInput(value) === "categorical"
             ? "See explicit prior P(class), one-hot category likelihood P(category | class), and predicted P(class | features) evidence using the original category labels."
             : "See explicit prior P(class), binary likelihood P(feature = 1 | class), and predicted P(class | features) evidence.",
-        read:"Follow the order: how common the class is before the row (prior), how compatible each feature is with that class (likelihood), then the resulting class probability after combining the evidence (posterior).",
+        read:pureNaiveBayesInput(value) === "continuous"
+          ? "Follow the order: how common the class is before the row (prior), how typical each observed value is under that class's fitted bell-shaped distribution (class-conditional density), then the resulting class probability (posterior)."
+          : "Follow the order: how common the class is before the row (prior), how compatible each feature is with that class (likelihood), then the resulting class probability after combining the evidence (posterior).",
         watchOut:"Feature independence is a simplifying assumption, not a fact. Related measurements can make the model count similar evidence more than once, and probabilities may be overconfident when its assumptions are poor."
       },
       one_r:{
@@ -1582,7 +1584,7 @@ cv_scores.round(3)`;
         : allCategorical
           ? {concept:"Turn categories into yes/no features and estimate their likelihood within each class", imports:"from sklearn.naive_bayes import BernoulliNB", estimator:"BernoulliNB()", grid:readable("{\n    'model__alpha': [0.1, 1.0, 5.0]\n}")}
           : allContinuous
-            ? {concept:"Estimate class probabilities with a Gaussian distribution per feature", imports:"from sklearn.naive_bayes import GaussianNB", estimator:"GaussianNB()", grid:readable("{\n    'model__var_smoothing': [1e-11, 1e-9, 1e-7]\n}")}
+            ? {concept:"Estimate class-conditional feature densities and class probabilities with a Gaussian distribution per feature", imports:"from sklearn.naive_bayes import GaussianNB", estimator:"GaussianNB()", grid:readable("{\n    'model__var_smoothing': [1e-11, 1e-9, 1e-7]\n}")}
             : null,
       mlp_cls:{concept:"Learn nonlinear layers of weighted features with backpropagation", imports:"from sklearn.neural_network import MLPClassifier", estimator:"MLPClassifier(\n    max_iter=500,\n    early_stopping=True,\n    random_state=42\n)", grid:readable("{\n    'model__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__alpha': [0.0001, 0.01]\n}")},
       mlp_reg:{concept:"Learn nonlinear layers while scaling the target inside the model", imports:"from sklearn.neural_network import MLPRegressor\nfrom sklearn.compose import TransformedTargetRegressor\nfrom sklearn.preprocessing import StandardScaler", estimator:"TransformedTargetRegressor(\n    regressor=MLPRegressor(\n        max_iter=800,\n        early_stopping=True,\n        tol=1e-3,\n        random_state=42\n    ),\n    transformer=StandardScaler()\n)", grid:readable("{\n    'model__regressor__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__regressor__alpha': [0.0001, 0.01]\n}")}
@@ -1660,7 +1662,7 @@ cv_scores.round(3)`;
         "simple_x = X_train[simple_feature].astype(float).to_numpy()",
         "simple_grid = np.linspace(float(simple_x.min()), float(simple_x.max()), 160)",
         "simple_grid_frame = pd.DataFrame({simple_feature:simple_grid})",
-        "simple_curve = np.asarray(diagnostic_model.predict(simple_grid_frame), dtype=float).ravel()",
+        "simple_curve = diagnostic_model.predict(simple_grid_frame)",
         "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
         "ax.scatter(simple_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
         "simple_oof_x = X_train.loc[diagnostic_actual.index, simple_feature].astype(float).to_numpy()",
@@ -1669,8 +1671,8 @@ cv_scores.round(3)`;
         `ax.set(title=${py(`Fitted line: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
         "ax.legend()",
         "fig.tight_layout()",
-        "simple_slope = float(np.ravel(fitted.coef_)[0])",
-        "simple_intercept = float(np.ravel(np.atleast_1d(fitted.intercept_))[0])",
+        "simple_slope = float(fitted.coef_[0])",
+        "simple_intercept = float(fitted.intercept_)",
         `simple_unit_factor = ${unitInfo.factor}`,
         `simple_unit_phrase = ${py(unitInfo.phrase)}`,
         "simple_interpretation = pd.DataFrame({",
@@ -1687,7 +1689,7 @@ cv_scores.round(3)`;
     if (modelId === "multiple_linear") return [
       preparedNames,
       "fitted = diagnostic_model.named_steps[\"model\"]",
-      "linear_coefficients = np.ravel(fitted.coef_)",
+      "linear_coefficients = fitted.coef_",
       `linear_unit_map = ${unitLabels}`,
       "linear_feature_units = [linear_unit_map.get(str(name), \"prepared/encoded feature units\") for name in encoded_names]",
       "linear_directions = np.where(linear_coefficients >= 0, \"higher predicted target\", \"lower predicted target\")",
@@ -1708,7 +1710,7 @@ cv_scores.round(3)`;
         "poly_x = X_train[poly_feature].astype(float).to_numpy()",
         "poly_grid = np.linspace(float(poly_x.min()), float(poly_x.max()), 160)",
         "poly_grid_frame = pd.DataFrame({poly_feature:poly_grid})",
-        "poly_curve = np.asarray(diagnostic_model.predict(poly_grid_frame), dtype=float).ravel()",
+        "poly_curve = diagnostic_model.predict(poly_grid_frame)",
         "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
         "ax.scatter(poly_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
         "ax.plot(poly_grid, poly_curve, color=\"#7651a6\", linewidth=2.4, label=\"fitted curve\")",
@@ -1773,7 +1775,7 @@ cv_scores.round(3)`;
     if (modelId === "logistic") return [
       preparedNames,
       "fitted = diagnostic_model.named_steps[\"model\"]",
-      "logistic_coefficients = np.atleast_2d(fitted.coef_)",
+      "logistic_coefficients = fitted.coef_",
       `logistic_class_labels = ${classLabels}`,
       "if logistic_coefficients.shape[0] == 1:",
       "    logistic_positive_class = fitted.classes_[1]",
@@ -1860,10 +1862,9 @@ cv_scores.round(3)`;
       "knn_example_position = int(knn_validation_indices[0])",
       "knn_fold_model = clone(best_pipeline).fit(X_train.iloc[knn_fit_indices], y_train.iloc[knn_fit_indices])",
       "knn_fitted = knn_fold_model.named_steps[\"model\"]",
-      "knn_preparer = knn_fold_model.named_steps[\"prepare\"]",
       "knn_row = X_train.iloc[[knn_example_position]]",
-      "knn_row_values = knn_row.to_numpy() if isinstance(knn_preparer, str) else knn_preparer.transform(knn_row)",
-      "knn_distances, knn_local_positions = knn_fitted.kneighbors(knn_row_values, n_neighbors=int(knn_fitted.n_neighbors), return_distance=True)",
+      "knn_prepared_row = knn_fold_model[:-1].transform(knn_row)",
+      "knn_distances, knn_local_positions = knn_fitted.kneighbors(knn_prepared_row, n_neighbors=int(knn_fitted.n_neighbors), return_distance=True)",
       "knn_neighbor_positions = np.asarray(knn_fit_indices)[knn_local_positions[0]]",
       "knn_neighbor_distances = knn_distances[0]",
       "knn_neighbor_labels = y_train.iloc[knn_neighbor_positions].to_numpy()",
@@ -1906,22 +1907,21 @@ cv_scores.round(3)`;
       "lda_fit_indices, lda_validation_indices = next(cv.split(X_train, y_train))",
       "lda_example_position = int(lda_validation_indices[0])",
       "lda_fold_model = clone(best_pipeline).fit(X_train.iloc[lda_fit_indices], y_train.iloc[lda_fit_indices])",
-      "lda_preparer = lda_fold_model.named_steps[\"prepare\"]",
+      "lda_fold_fitted = lda_fold_model.named_steps[\"model\"]",
       "lda_row = X_train.iloc[[lda_example_position]]",
-      "lda_row_values = lda_row if isinstance(lda_preparer, str) else lda_preparer.transform(lda_row)",
       "lda_actual = y_train.iloc[lda_example_position]",
       "lda_prediction = lda_fold_model.predict(lda_row)[0]",
-      "lda_decision_values = np.asarray(lda_fold_model.named_steps[\"model\"].decision_function(lda_row_values)).reshape(-1)",
+      "lda_decision_values = np.asarray(lda_fold_model.decision_function(lda_row)).reshape(-1)",
       "lda_probability_values = np.asarray(lda_fold_model.predict_proba(lda_row)[0])",
-      "lda_probability_table = pd.DataFrame({\"class\":[lda_class_labels.get(str(label), str(label)) for label in lda_fold_model.named_steps[\"model\"].classes_], \"predicted_probability\":lda_probability_values})",
-      "if len(lda_fold_model.named_steps[\"model\"].classes_) == 2:",
+      "lda_probability_table = pd.DataFrame({\"class\":[lda_class_labels.get(str(label), str(label)) for label in lda_fold_fitted.classes_], \"predicted_probability\":lda_probability_values})",
+      "if len(lda_fold_fitted.classes_) == 2:",
       "    lda_decision_score = float(lda_decision_values[0])",
-      "    lda_score_class = lda_fold_model.named_steps[\"model\"].classes_[1] if lda_decision_score >= 0 else lda_fold_model.named_steps[\"model\"].classes_[0]",
-      "    print(\"Decision score toward\", lda_class_labels.get(str(lda_fold_model.named_steps[\"model\"].classes_[1]), str(lda_fold_model.named_steps[\"model\"].classes_[1])) + \":\", round(lda_decision_score, 3))",
+      "    lda_score_class = lda_fold_fitted.classes_[1] if lda_decision_score >= 0 else lda_fold_fitted.classes_[0]",
+      "    print(\"Decision score toward\", lda_class_labels.get(str(lda_fold_fitted.classes_[1]), str(lda_fold_fitted.classes_[1])) + \":\", round(lda_decision_score, 3))",
       "else:",
       "    lda_decision_score = None",
-      "    lda_score_class = lda_fold_model.named_steps[\"model\"].classes_[int(np.argmax(lda_decision_values))]",
-      "    lda_discriminant_scores = pd.DataFrame({\"class\":[lda_class_labels.get(str(label), str(label)) for label in lda_fold_model.named_steps[\"model\"].classes_], \"discriminant_score\":lda_decision_values})",
+      "    lda_score_class = lda_fold_fitted.classes_[int(np.argmax(lda_decision_values))]",
+      "    lda_discriminant_scores = pd.DataFrame({\"class\":[lda_class_labels.get(str(label), str(label)) for label in lda_fold_fitted.classes_], \"discriminant_score\":lda_decision_values})",
       "    print(\"Discriminant evidence by class:\")",
       "    print(lda_discriminant_scores.to_string(index=False))",
       "lda_prediction_story = pd.DataFrame({\"selected_out_of_fold_row\":[lda_example_position], \"actual_class\":[lda_class_labels.get(str(lda_actual), str(lda_actual))], \"predicted_class\":[lda_class_labels.get(str(lda_prediction), str(lda_prediction))], \"closest_discriminant_class\":[lda_class_labels.get(str(lda_score_class), str(lda_score_class))]})",
@@ -1968,9 +1968,7 @@ cv_scores.round(3)`;
       "qda_fit_indices, qda_validation_indices = next(cv.split(X_train, y_train))",
       "qda_example_position = int(qda_validation_indices[0])",
       "qda_fold_model = clone(best_pipeline).fit(X_train.iloc[qda_fit_indices], y_train.iloc[qda_fit_indices])",
-      "qda_preparer = qda_fold_model.named_steps[\"prepare\"]",
       "qda_row = X_train.iloc[[qda_example_position]]",
-      "qda_row_values = qda_row.to_numpy() if isinstance(qda_preparer, str) else qda_preparer.transform(qda_row)",
       "qda_actual = y_train.iloc[qda_example_position]",
       "qda_prediction = qda_fold_model.predict(qda_row)[0]",
       "qda_probability_values = np.asarray(qda_fold_model.predict_proba(qda_row)[0])",
@@ -1979,9 +1977,11 @@ cv_scores.round(3)`;
       "qda_regularization = float(fitted.reg_param)",
       "print(\"Class centres (fitted means in prepared feature units):\")",
       "print(qda_class_centres.round(3).to_string(index=False))",
-      "print(\"Class-specific spread summary (training-data standard deviations):\")",
+      "print(\"Per-feature spread by class (training-data standard deviations):\")",
       "print(qda_spread_summary.round(3).to_string(index=False))",
-      "print(\"QDA allows separate spread/shape structures for each class, so its boundary can curve.\")",
+      "print(\"The table shows each class's centre and per-feature spread.\")",
+      "print(\"Internally, QDA also models how the features vary together within each class, giving each class its own covariance/shape.\")",
+      "print(\"Separate class covariance structures → more flexible decision boundary → boundary can curve.\")",
       "print(\"QDA regularisation parameter:\", qda_regularization)",
       "print(\"Selected out-of-fold row:\", qda_example_position)",
       "print(\"Actual class:\", qda_class_labels.get(str(qda_actual), str(qda_actual)))",
@@ -2021,18 +2021,18 @@ cv_scores.round(3)`;
         "nb_fitted = nb_fold_model.named_steps[\"model\"]",
         "nb_preparer = nb_fold_model.named_steps[\"prepare\"]",
         "nb_row = X_train.iloc[[nb_example_position]]",
-        "nb_row_values = nb_row.to_numpy() if isinstance(nb_preparer, str) else nb_preparer.transform(nb_row)",
-        "if hasattr(nb_row_values, \"toarray\"): nb_row_values = nb_row_values.toarray()",
-        "nb_row_values = np.asarray(nb_row_values, dtype=float)",
         "nb_actual = y_train.iloc[nb_example_position]",
         "nb_prediction = nb_fold_model.predict(nb_row)[0]",
         "nb_posterior_values = np.asarray(nb_fold_model.predict_proba(nb_row)[0])",
         "nb_prior_values = np.exp(np.asarray(nb_fitted.class_log_prior_)) if hasattr(nb_fitted, \"class_log_prior_\") else np.asarray(nb_fitted.class_prior_)",
-        "nb_probability_rows = []",
+        "nb_quantity_rows = []",
         "for class_index, class_value in enumerate(nb_fitted.classes_):",
         "    class_label = nb_class_labels.get(str(class_value), str(class_value))",
-        "    nb_probability_rows.append({\"probability_type\":\"Prior P(class)\", \"class\":class_label, \"feature\":\"—\", \"probability_label\":f\"P(class={class_label})\", \"estimated_probability\":float(nb_prior_values[class_index])})",
+        "    nb_quantity_rows.append({\"quantity_type\":\"Prior probability\", \"class\":class_label, \"feature\":\"—\", \"quantity_label\":f\"P(class={class_label})\", \"quantity_value\":float(nb_prior_values[class_index])})",
         ...(gaussian ? [
+          "nb_row_values = nb_row.to_numpy() if isinstance(nb_preparer, str) else nb_preparer.transform(nb_row)",
+          "if hasattr(nb_row_values, \"toarray\"): nb_row_values = nb_row_values.toarray()",
+          "nb_row_values = np.asarray(nb_row_values, dtype=float)",
           "nb_gaussian_means = np.asarray(nb_fitted.theta_, dtype=float)",
           "nb_gaussian_stds = np.sqrt(np.maximum(np.asarray(nb_fitted.var_, dtype=float), np.finfo(float).eps))",
           "nb_gaussian_summary_rows = []",
@@ -2046,10 +2046,12 @@ cv_scores.round(3)`;
           "    for feature_index in nb_evidence_indices:",
           "        observed = float(nb_row_values[0, feature_index])",
           "        variance = max(float(nb_fitted.var_[class_index, feature_index]), np.finfo(float).eps)",
-          "        likelihood = float(np.exp(-0.5 * ((observed - nb_fitted.theta_[class_index, feature_index]) ** 2) / variance) / np.sqrt(2 * np.pi * variance))",
+          "        density = float(np.exp(-0.5 * ((observed - nb_fitted.theta_[class_index, feature_index]) ** 2) / variance) / np.sqrt(2 * np.pi * variance))",
           "        feature_name = str(encoded_names[feature_index])",
-          "        nb_probability_rows.append({\"probability_type\":\"Likelihood P(feature ≈ value | class)\", \"class\":class_label, \"feature\":feature_name, \"probability_label\":f\"P({feature_name}≈{observed:.3g} | class={class_label})\", \"estimated_probability\":likelihood})",
+          "        nb_quantity_rows.append({\"quantity_type\":\"Class-conditional density\", \"class\":class_label, \"feature\":feature_name, \"quantity_label\":f\"p({feature_name}={observed:.3g} | class={class_label})\", \"quantity_value\":density})",
           "print(\"Gaussian Naive Bayes: each continuous feature uses a class-specific bell-shaped distribution.\")",
+          "print(\"The Gaussian PDF gives a class-conditional density at each observed value: how typical that value is under the class's fitted bell-shaped distribution.\")",
+          "print(\"This is not the probability of one exact continuous value, and a density can be greater than 1.\")",
           "print(\"Class means and spreads for the selected features:\")",
           "print(nb_gaussian_feature_summary.head(30).round(3).to_string(index=False))"
         ] : [
@@ -2067,20 +2069,20 @@ cv_scores.round(3)`;
           "    class_label = nb_class_labels.get(str(class_value), str(class_value))",
           "    for feature_index in nb_evidence_indices:",
           "        feature_label = str(nb_feature_labels[feature_index])",
-          "        nb_probability_rows.append({\"probability_type\":\"Likelihood P(feature = 1 | class)\", \"class\":class_label, \"feature\":feature_label, \"probability_label\":f\"P({feature_label} | class={class_label})\", \"estimated_probability\":float(nb_one_probabilities[class_index, feature_index])})",
+          "        nb_quantity_rows.append({\"quantity_type\":\"Class-conditional probability\", \"class\":class_label, \"feature\":feature_label, \"quantity_label\":f\"P({feature_label} | class={class_label})\", \"quantity_value\":float(nb_one_probabilities[class_index, feature_index])})",
           `print(${py(kind === "categorical" ? "Bernoulli Naive Bayes: each original category is represented by a labelled yes/no feature." : "Bernoulli Naive Bayes: each binary feature is a labelled yes/no signal.")})`,
           "print(\"The likelihood rows show the probability of the indicated feature being 1 within each class.\")"
         ]),
         "for class_index, class_value in enumerate(nb_fitted.classes_):",
         "    class_label = nb_class_labels.get(str(class_value), str(class_value))",
-        "    nb_probability_rows.append({\"probability_type\":\"Predicted P(class | features)\", \"class\":class_label, \"feature\":\"all selected features\", \"probability_label\":f\"P(class={class_label} | observed features)\", \"estimated_probability\":float(nb_posterior_values[class_index])})",
-        "nb_probability_evidence = pd.DataFrame(nb_probability_rows, columns=[\"probability_type\", \"class\", \"feature\", \"probability_label\", \"estimated_probability\"])",
+        "    nb_quantity_rows.append({\"quantity_type\":\"Posterior probability\", \"class\":class_label, \"feature\":\"all selected features\", \"quantity_label\":f\"P(class={class_label} | observed features)\", \"quantity_value\":float(nb_posterior_values[class_index])})",
+        "nb_quantity_evidence = pd.DataFrame(nb_quantity_rows, columns=[\"quantity_type\", \"class\", \"feature\", \"quantity_label\", \"quantity_value\"])",
         "nb_prediction_story = pd.DataFrame({\"selected_out_of_fold_row\":[nb_example_position], \"actual_class\":[nb_class_labels.get(str(nb_actual), str(nb_actual))], \"predicted_class\":[nb_class_labels.get(str(nb_prediction), str(nb_prediction))]})",
         "print(\"Selected out-of-fold row:\", nb_example_position)",
         "print(\"Actual class:\", nb_class_labels.get(str(nb_actual), str(nb_actual)))",
         "print(\"Predicted class:\", nb_class_labels.get(str(nb_prediction), str(nb_prediction)))",
-        "print(\"Prior → likelihood → posterior: the model combines all selected features under an independence assumption.\")",
-        "nb_probability_evidence.round(4)"
+        `print(${py(gaussian ? "Prior → class-conditional density → posterior: the model combines all selected features under an independence assumption." : "Prior → likelihood → posterior: the model combines all selected features under an independence assumption.")})`,
+        "nb_quantity_evidence.round(4)"
       ].join("\n");
     }
     if (["mlp_cls","mlp_reg"].includes(modelId)) return [
