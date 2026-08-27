@@ -203,6 +203,9 @@ for (const [modelId, [config, scenario]] of Object.entries(neuralFixtures)) {
   if (modelId === "mlp_reg" && (!buildKeys.has("target-scaling") || !buildKeys.has("TransformedTargetRegressor") || !buildKeys.has("nested-parameter-routing") || !buildText.includes("TransformedTargetRegressor"))) {
     throw new Error("Neural-network regression build teaching is missing target-wrapper guidance.");
   }
+  if (!modelStep.code.includes("early_stopping=True")) {
+    throw new Error(`Ordinary ${modelId} route should retain built-in early stopping.`);
+  }
   for (const token of neuralCodeTokens[modelId]) {
     if (!diagnoseStep.code.includes(token)) throw new Error(`Neural-network ${modelId} Step 8 is missing ${token}.`);
   }
@@ -223,6 +226,18 @@ const gaussianPreparationAndModel = gaussianRoute
   .join("\n");
 if (gaussianPreparationAndModel.includes("feature probabilities") || !gaussianPreparationAndModel.includes("class-conditional feature evidence/distributions")) {
   throw new Error("Gaussian Naive Bayes still has probability-only preprocessing/model copy.");
+}
+
+const seoulMlpRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "mlp_reg", 5);
+const seoulMlpModel = seoulMlpRoute.find(step => step.id === "model");
+const seoulMlpBuildText = seoulMlpModel.concepts.map(item => `${item.label} ${item.text}`).join(" ");
+if (!seoulMlpModel.code.includes("early_stopping=False")) {
+  throw new Error("Seoul MLP regression model construction must disable built-in early stopping.");
+}
+for (const token of ["disabled", "not time-aware", "outer TimeSeriesSplit", "normal convergence criterion"]) {
+  if (!seoulMlpBuildText.toLowerCase().includes(token.toLowerCase())) {
+    throw new Error(`Seoul MLP regression build teaching is missing ${token}.`);
+  }
 }
 
 const seoulRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "simple_linear", 5);
