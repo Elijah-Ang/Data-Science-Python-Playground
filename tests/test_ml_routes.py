@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "tests" / "generate_ml_routes.mjs"
 
 
-# This is an explicit audit record for the Phase 2A/2B-1/2B-2 primary Step 8
+# This is an explicit audit record for the Phase 2A/2B-1/2B-2/2B-2.1 primary Step 8
 # surface.  The baseline counts were measured from the merged Phase 2B-1
 # route generator before this checkpoint.  They make intentional additions
 # for mathematical precision visible instead of treating line count as the
@@ -785,6 +785,18 @@ def assert_route_structure(payload: dict) -> dict:
                             raise AssertionError(f"Neural Network Step 8 exposes forbidden test/weight plumbing: {route}")
                         if model_id == "mlp_reg" and any(token in diagnostic for token in ("transformer_", "inverse_transform", "hasattr")):
                             raise AssertionError(f"Neural Network regression Step 8 exposes target-wrapper internals: {route}")
+                        model_code = route_code(route, "model")
+                        expected_early_stopping = "early_stopping=False" if route["dataset"]["split"] == "time" and model_id == "mlp_reg" else "early_stopping=True"
+                        if expected_early_stopping not in model_code:
+                            raise AssertionError(f"Neural Network route has the wrong built-in early-stopping setting: {route}")
+                        if model_id == "mlp_reg" and route["dataset"]["split"] == "time":
+                            build_text = " ".join(
+                                f'{item.get("label", "")} {item.get("text", "")}'
+                                for item in next(cell for cell in route["cells"] if cell["id"] == "model").get("concepts", [])
+                            ).lower()
+                            for token in ("disabled", "not time-aware", "outer timeseriessplit", "normal convergence criterion"):
+                                if token not in build_text:
+                                    raise AssertionError(f"Seoul MLP route is missing route-specific early-stopping teaching {token!r}: {route}")
                 elif model_teaching:
                     raise AssertionError(f"A Phase 2 model-specific diagnostic leaked into an out-of-scope model: {route}")
 
@@ -1549,8 +1561,12 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         forbidden = ("coefs_", "intercept_", "np.matmul", "np.dot")
         if any(token in diagnostic for token in forbidden):
             raise AssertionError(f"Neural Network Step 8 exposes raw-weight or manual-forward plumbing: {route}")
-        fitted = namespace["diagnostic_model"].named_steps["model"]
+        if namespace["diagnostic_model"] is not namespace["mlp_oof_model"]:
+            raise AssertionError(f"{model_id} architecture/loss model is not the OOF prediction model.")
+        fitted = namespace["mlp_oof_model"].named_steps["model"]
         inner = fitted.regressor_ if model_id == "mlp_reg" else fitted
+        if namespace["mlp_fitted"] is not inner:
+            raise AssertionError(f"{model_id} architecture/loss estimator is not the fitted OOF estimator.")
         loss_curve = np.asarray(namespace["mlp_loss_curve"], dtype=float)
         if not np.all(np.isfinite(loss_curve)):
             raise AssertionError(f"{model_id} loss curve contains non-finite values.")
@@ -1580,7 +1596,9 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         return fitted, inner, position, fit
 
     classification_route, classification = run("breast", "continuous5", "mlp_cls")
-    classification_fitted, _, _, _ = assert_common(classification_route, classification, "mlp_cls")
+    classification_fitted, classification_inner, _, _ = assert_common(classification_route, classification, "mlp_cls")
+    if not classification_inner.early_stopping:
+        raise AssertionError("Ordinary MLP classification unexpectedly disabled built-in early stopping.")
     classification_build_copy = " ".join(f'{item["label"]} {item["text"]}' for item in next(cell for cell in classification_route["cells"] if cell["id"] == "model")["concepts"])
     if "early stopping" not in classification_build_copy.lower() and "early_stopping" not in classification_build_copy.lower():
         raise AssertionError("MLP classification build teaching does not explain early stopping.")
@@ -1609,6 +1627,8 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
 
     regression_route, regression = run("wine", "continuous", "mlp_reg")
     _, regression_inner, regression_position, _ = assert_common(regression_route, regression, "mlp_reg")
+    if not regression_inner.early_stopping:
+        raise AssertionError("Ordinary MLP regression unexpectedly disabled built-in early stopping.")
     regression_build_copy = " ".join(f'{item["label"]} {item["text"]}' for item in next(cell for cell in regression_route["cells"] if cell["id"] == "model")["concepts"])
     if "target scaling" not in regression_build_copy.lower() and "scales y" not in regression_build_copy.lower():
         raise AssertionError("MLP regression build teaching does not explain target scaling.")
@@ -1637,7 +1657,18 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     # chronology is asserted separately for the Seoul TimeSeriesSplit route.
 
     seoul_route, seoul = run("seoul", "continuous", "mlp_reg")
-    assert_common(seoul_route, seoul, "mlp_reg")
+    _, seoul_inner, _, _ = assert_common(seoul_route, seoul, "mlp_reg")
+    if seoul_inner.early_stopping:
+        raise AssertionError("Seoul MLP regression still enables sklearn's non-time-aware built-in early stopping.")
+    if "early_stopping=False" not in route_code(seoul_route, "model"):
+        raise AssertionError("Seoul MLP regression model code does not disable built-in early stopping.")
+    seoul_build_copy = " ".join(
+        f'{item["label"]} {item["text"]}'
+        for item in next(cell for cell in seoul_route["cells"] if cell["id"] == "model")["concepts"]
+    ).lower()
+    for token in ("disabled", "not time-aware", "outer timeseriessplit", "normal convergence criterion"):
+        if token not in seoul_build_copy:
+            raise AssertionError(f"Seoul MLP teaching does not explain route-specific early stopping: {token}")
     seoul_position = int(seoul["mlp_example_position"])
     if not np.all(int(index) < seoul_position for index in np.asarray(seoul["mlp_fit_indices"]).tolist()):
         raise AssertionError("Seoul MLP regression OOF row is not after its chronological fitting rows.")

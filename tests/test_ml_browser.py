@@ -340,6 +340,10 @@ def main() -> int:
         select_route(page, "breast", "continuous5", "mlp_cls", 9)
         run_steps(page, 8)
         assert_mlp_step8(page, "Breast Cancer MLP classification", ("Fitted network structure", "prepared_inputs", "hidden_layers", "class probabilities", "training_iterations", "early_stopping", "Training loss during optimization", "Selected out-of-fold row", "Predicted probabilities by class", "actual_class", "predicted_class", "probability_"))
+        breast_mlp_article = page.locator("#notebookPanel article").nth(4)
+        breast_mlp_model = breast_mlp_article.locator("[data-teaching-role='concept']").inner_text().lower()
+        if "internal part" not in breast_mlp_model or "early_stopping=true" not in breast_mlp_article.inner_text().lower():
+            raise AssertionError(f"Ordinary MLP classification did not explain built-in early stopping: {breast_mlp_article.inner_text()}")
         breast_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
         if breast_mlp_diagnostic.locator(".chart-wrap").count() < 2:
             raise AssertionError("Breast Cancer MLP classification did not render both the confusion matrix and loss curve.")
@@ -354,6 +358,10 @@ def main() -> int:
         select_route(page, "wine", "continuous", "mlp_reg", 9)
         run_steps(page, 8)
         assert_mlp_step8(page, "Wine MLP regression", ("Fitted network structure", "numeric wine quality prediction in original target units", "Training loss during optimization", "scaled target", "transformed target space", "original target units", "Selected out-of-fold row", "actual_target_original_units", "predicted_target_original_units", "absolute_error_original_units"))
+        wine_mlp_article = page.locator("#notebookPanel article").nth(4)
+        wine_mlp_model = wine_mlp_article.locator("[data-teaching-role='concept']").inner_text().lower()
+        if "internal part" not in wine_mlp_model or "early_stopping=true" not in wine_mlp_article.inner_text().lower():
+            raise AssertionError(f"Ordinary MLP regression did not explain built-in early stopping: {wine_mlp_article.inner_text()}")
         wine_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
         if wine_mlp_diagnostic.locator(".chart-wrap").count() < 2:
             raise AssertionError("Wine MLP regression did not render both the residual evidence and loss curve.")
@@ -361,7 +369,14 @@ def main() -> int:
         select_route(page, "seoul", "continuous", "mlp_reg", 9)
         run_steps(page, 8, timeout=300_000)
         assert_mlp_step8(page, "Seoul time-aware MLP regression", ("numeric bike-rental demand prediction in original target units", "transformed target space", "Selected out-of-fold row", "absolute_error_original_units", "last validation window"))
+        seoul_mlp_model = page.locator("#notebookPanel article").nth(4).locator("[data-teaching-role='concept']").inner_text().lower()
+        if not all(value in seoul_mlp_model for value in ("disabled", "not time-aware", "outer timeseriessplit", "normal convergence criterion")):
+            raise AssertionError("Seoul MLP regression did not explain why built-in early stopping is disabled.")
         seoul_mlp_diagnostic = page.locator("#outputList .output-item").nth(7)
+        if "early_stopping" not in seoul_mlp_diagnostic.inner_text() or "off" not in seoul_mlp_diagnostic.inner_text().lower():
+            raise AssertionError("Seoul MLP architecture did not show built-in early stopping as off.")
+        if "early stopping: on" in seoul_mlp_diagnostic.inner_text().lower():
+            raise AssertionError("Seoul MLP diagnostic incorrectly claims built-in early stopping is on.")
         if "ordered" not in seoul_mlp_diagnostic.inner_text().lower() and "time" not in seoul_mlp_diagnostic.inner_text().lower():
             raise AssertionError("Seoul MLP regression did not retain time-aware diagnostic wording.")
 

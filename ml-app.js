@@ -1121,6 +1121,9 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   }
 
   function neuralNetworkBuildConcepts(config, modelId) {
+    const earlyStopping = modelId === "mlp_reg" && config.split === "time"
+      ? concept("early-stopping", "EARLY STOPPING ON THIS ROUTE", "Built-in early stopping is disabled on this chronological route because sklearn's internal early-stopping split is not time-aware. The outer TimeSeriesSplit remains the validation evidence, while optimization stops using the model's normal convergence criterion.", ["early-stopping", "time-aware-validation"])
+      : concept("early-stopping", "EARLY STOPPING", "With early_stopping=True, the network can hold aside a small internal part of the current training fold and stop when that internal validation performance stops improving. This is not outer CV or the final test, and it does not replace either.", ["early-stopping", "internal-validation"]);
     const concepts = [
       concept("hidden-layer", "HIDDEN LAYER", "A layer between the inputs and final output. Its units learn weighted combinations of earlier signals.", ["hidden-layer", "hidden-layers"]),
       concept("hidden-layer-sizes", "hidden_layer_sizes", "(24,) means one hidden layer with 24 units; (32, 16) means two hidden layers: 32 units, then 16. The tuple is compact configuration syntax.", ["hidden-layer-sizes"]),
@@ -1128,7 +1131,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       concept("loss", "LOSS", "Loss is a training objective measuring how wrong the network currently is according to its optimization rule. Training tries to reduce it.", ["loss", "training-objective"]),
       concept("backpropagation", "BACKPROPAGATION", "Backpropagation works backward from error and adjusts weights in directions that reduce loss.", ["backpropagation"]),
       concept("alpha", "ALPHA", "alpha is regularisation strength: it discourages excessively large weights. It is a hyperparameter, not a learned weight.", ["alpha", "regularisation"]),
-      concept("early-stopping", "EARLY STOPPING", "With early_stopping=True, the network can hold aside a small internal part of the current training fold and stop when that internal validation performance stops improving. This is not outer CV or the final test, and it does not replace either.", ["early-stopping", "internal-validation"]),
+      earlyStopping,
       concept("optimization-settings", "MAX_ITER", "max_iter controls the maximum number of optimization iterations; it is a runtime/optimization setting, not a core modelling idea.", ["max-iter"])
     ];
     if (modelId === "mlp_reg") concepts.push(concept("tolerance", "TOL", "tol controls how precisely optimization must improve before it can stop; it is a runtime/optimization setting, not a core modelling idea.", ["tol"]));
@@ -1588,7 +1591,7 @@ cv_scores.round(3)`;
     return "# 4 · Prepare the selected data\n" + comments.join("\n") + "\n" + imports.join("\n") + "\n\n" + wrappedAssignment + "\n\npreprocessor";
   }
 
-  function modelSpec(modelId, value) {
+  function modelSpec(modelId, value, config = null) {
     const allBinary = value.continuous.length === 0 && value.categorical.length === 0 && value.binary.length > 0;
     const allCategorical = value.continuous.length === 0 && value.binary.length === 0 && value.categorical.length > 0;
     const allContinuous = value.continuous.length > 0 && value.binary.length === 0 && value.categorical.length === 0;
@@ -1615,13 +1618,13 @@ cv_scores.round(3)`;
             ? {concept:"Estimate class-conditional feature densities and class probabilities with a Gaussian distribution per feature", imports:"from sklearn.naive_bayes import GaussianNB", estimator:"GaussianNB()", grid:readable("{\n    'model__var_smoothing': [1e-11, 1e-9, 1e-7]\n}")}
             : null,
       mlp_cls:{concept:"Learn nonlinear layers of weighted features with backpropagation", imports:"from sklearn.neural_network import MLPClassifier", estimator:"MLPClassifier(\n    max_iter=500,\n    early_stopping=True,\n    random_state=42\n)", grid:readable("{\n    'model__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__alpha': [0.0001, 0.01]\n}")},
-      mlp_reg:{concept:"Learn nonlinear layers while scaling the target inside the model", imports:"from sklearn.neural_network import MLPRegressor\nfrom sklearn.compose import TransformedTargetRegressor\nfrom sklearn.preprocessing import StandardScaler", estimator:"TransformedTargetRegressor(\n    regressor=MLPRegressor(\n        max_iter=800,\n        early_stopping=True,\n        tol=1e-3,\n        random_state=42\n    ),\n    transformer=StandardScaler()\n)", grid:readable("{\n    'model__regressor__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__regressor__alpha': [0.0001, 0.01]\n}")}
+      mlp_reg:{concept:"Learn nonlinear layers while scaling the target inside the model", imports:"from sklearn.neural_network import MLPRegressor\nfrom sklearn.compose import TransformedTargetRegressor\nfrom sklearn.preprocessing import StandardScaler", estimator:"TransformedTargetRegressor(\n    regressor=MLPRegressor(\n        max_iter=800,\n        early_stopping=" + (config && config.split === "time" ? "False" : "True") + ",\n        tol=1e-3,\n        random_state=42\n    ),\n    transformer=StandardScaler()\n)", grid:readable("{\n    'model__regressor__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__regressor__alpha': [0.0001, 0.01]\n}")}
     };
     return specs[modelId];
   }
 
-  function modelCode(modelId, value) {
-    const spec = modelSpec(modelId, value);
+  function modelCode(modelId, value, config = null) {
+    const spec = modelSpec(modelId, value, config);
     return [
       "# 5 · Build the model pipeline",
       "# " + spec.concept,
@@ -2117,25 +2120,18 @@ cv_scores.round(3)`;
       const classification = modelId === "mlp_cls";
       const fittedSetup = classification
         ? [
-            "mlp_fitted = diagnostic_model.named_steps[\"model\"]",
+            "mlp_fitted = mlp_oof_model.named_steps[\"model\"]",
             `mlp_class_labels = ${classLabels}`,
             "mlp_output_labels = [mlp_class_labels.get(str(label), str(label)) for label in mlp_fitted.classes_]",
             "mlp_output_text = \"class probabilities for \" + \" / \".join(mlp_output_labels)"
           ]
         : [
-            "mlp_wrapper = diagnostic_model.named_steps[\"model\"]",
+            "mlp_wrapper = mlp_oof_model.named_steps[\"model\"]",
             "mlp_fitted = mlp_wrapper.regressor_",
             `mlp_output_text = ${py(`numeric ${friendlyColumnName(config.target)} prediction in original target units`)}`
           ];
-      const foldSelection = config.split === "time"
-        ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
-        : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))";
-      const oofModelLine = config.split === "time"
-        ? "mlp_oof_model = diagnostic_model"
-        : "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])";
       const predictionEvidence = classification
         ? [
-            oofModelLine,
             "mlp_row = X_train.iloc[[mlp_example_position]]",
             "mlp_actual = y_train.iloc[mlp_example_position]",
             "mlp_prediction = mlp_oof_model.predict(mlp_row)[0]",
@@ -2149,7 +2145,6 @@ cv_scores.round(3)`;
             "mlp_prediction_story"
         ]
         : [
-            oofModelLine,
             "mlp_row = X_train.iloc[[mlp_example_position]]",
             "mlp_actual = float(y_train.iloc[mlp_example_position])",
             "mlp_prediction = float(mlp_oof_model.predict(mlp_row)[0])",
@@ -2181,7 +2176,6 @@ cv_scores.round(3)`;
         ...(config.split === "time" ? [
           "print(\"The out-of-fold example uses the last validation window; all fitting rows precede it in time.\")"
         ] : []),
-        foldSelection,
         "mlp_example_position = int(mlp_validation_indices[0])",
         ...predictionEvidence
       ].join("\n");
@@ -2190,6 +2184,26 @@ cv_scores.round(3)`;
   }
   function diagnosticsCode(config, modelId, value) {
     const interpretation = interpretationCode(config, modelId, value);
+    const isMlp = ["mlp_cls", "mlp_reg"].includes(modelId);
+    const mlpFoldSetup = isMlp ? [
+      config.split === "time"
+        ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
+        : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
+      "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+      "diagnostic_model = mlp_oof_model"
+    ] : ["diagnostic_model = clone(best_pipeline).fit(X_train, y_train)"];
+    const mlpRegressionSetup = isMlp ? [
+      ...mlpFoldSetup,
+      ...(config.split === "time"
+        ? [
+            "diagnostic_actual = y_train.iloc[mlp_validation_indices]",
+            "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[mlp_validation_indices])"
+          ]
+        : [
+            "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+            "diagnostic_actual = y_train"
+          ])
+    ] : null;
     if (config.task === "classification") return [
       "# 8 · Diagnose and understand the chosen model",
       "# These diagnostics explain behaviour; they are not another headline performance score.",
@@ -2197,7 +2211,7 @@ cv_scores.round(3)`;
       "from sklearn.model_selection import cross_val_predict",
       "from sklearn.metrics import confusion_matrix",
       "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
-      "diagnostic_model = clone(best_pipeline).fit(X_train, y_train)",
+      ...mlpFoldSetup,
       "",
       "fig, ax = plt.subplots(figsize=(5.4, 4.2))",
       "sns.heatmap(confusion_matrix(y_train, diagnostic_prediction), annot=True, fmt=\"d\", cmap=\"Purples\", ax=ax,",
@@ -2206,7 +2220,7 @@ cv_scores.round(3)`;
       "fig.tight_layout()",
       interpretation
     ].join("\n");
-    const diagnosticSetup = config.split === "time"
+    const diagnosticSetup = isMlp ? mlpRegressionSetup.join("\n") : config.split === "time"
       ? [
           "last_fit, last_validation = list(cv.split(X_train, y_train))[-1]",
           "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
@@ -2277,14 +2291,14 @@ test_result.round(3)`;
   }
 
   function supervisedRoute(config, value, modelId, folds) {
-    const hasHyperparameters = modelSpec(modelId, value).grid !== "{}";
+    const hasHyperparameters = modelSpec(modelId, value, config).grid !== "{}";
     const teaching = supervisedTeaching(config, value, modelId, folds);
     return [
       task("frame","Choose what to predict","define X and y",frameCode(config, value),teaching.frame),
       task("split","Split data and save the test set",config.split === "time" ? "latest 20%" : "stratified / random 20%",splitCode(config),teaching.split),
       task("explore","Explore training data","training inputs + plots",exploreCode(config, value),teaching.explore),
       task("prepare","Prepare the data","only selected feature types",preprocessingCode(config, value, modelId),teaching.prepare),
-      task("model","Build the model pipeline",modelSpec(modelId, value).concept,modelCode(modelId, value),teaching.model),
+      task("model","Build the model pipeline",modelSpec(modelId, value, config).concept,modelCode(modelId, value, config),teaching.model),
       task("baseline","Check the baseline with cross-validation",`${folds}-fold training-only CV`,baselineCode(config, folds),teaching.baseline),
       task("tune",hasHyperparameters ? "Tune the model" : "Keep the model defaults",hasHyperparameters ? `GridSearchCV · ${folds} folds` : "no meaningful settings to search",tuningCode(config, modelId, value),teaching.tune),
       task("diagnose","Diagnose and understand the chosen model","training-only diagnostics",diagnosticsCode(config, modelId, value),teaching.diagnose),
