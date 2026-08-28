@@ -1158,6 +1158,12 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         see:"See the reproducible sample's dendrogram, merge heights, silhouette evidence, original-unit profiles and PCA map.",
         read:"Read leaves as observations or small groups, joins as merges, and height as Ward merge dissimilarity. A horizontal cut represents a cluster count; silhouette supports the choice but does not decide it.",
         watchOut:"The hierarchy is fitted on a sample of at most 500 rows, so a different sample can produce somewhat different branches. Cluster IDs are arbitrary, and the PCA map is only a two-dimensional projection."
+      },
+      pca:{
+        learned:"PCA learned new weighted axes that capture decreasing amounts of variance in the scaled inputs.",
+        see:"See the explained-variance plots, strongest feature loadings, and row coordinates on the first two principal components.",
+        read:"Use explained variance to judge how much variation each component represents, and loadings to understand which original features shape each axis. A loading describes a feature's contribution; a score describes a row's position.",
+        watchOut:"PCA is a linear projection that prioritises variance, not prediction usefulness. A two-dimensional map can hide variation in later components, and component directions are not causal effects or supervised feature importance."
       }
     };
     const selected = templates[modelId];
@@ -2430,6 +2436,86 @@ test_result.round(3)`;
     sampling: {
       label:"REPRODUCIBLE SAMPLE",
       text:"The hierarchy uses a reproducible sample of at most 500 rows because storing and comparing all pairwise relationships becomes expensive; another sample can produce somewhat different branches."
+    },
+    principal_component: {
+      label:"PRINCIPAL COMPONENT",
+      text:"A principal component is a new axis made from a weighted combination of the original features."
+    },
+    pc1: {
+      label:"PC1",
+      text:"PC1 points in the direction where the prepared rows vary the most."
+    },
+    pc2: {
+      label:"PC2",
+      text:"PC2 captures as much remaining variation as possible while pointing in a different, perpendicular direction."
+    },
+    not_clustering: {
+      label:"PCA IS NOT CLUSTERING",
+      text:"PCA creates new axes and row coordinates; it does not assign cluster labels. Any apparent groups come from where rows fall in the new coordinate system."
+    },
+    pca_scaling: {
+      label:"WHY SCALE FOR PCA",
+      text:"PCA looks for directions with large variance. A feature with a larger numerical scale can dominate that direction, so this walkthrough scales selected features so different units are compared on a common scale."
+    },
+    redundancy: {
+      label:"REDUNDANCY",
+      text:"Correlated features may contain overlapping variation, which can make a smaller set of component axes useful; PCA does not require strong correlation."
+    },
+    explained_variance: {
+      label:"EXPLAINED VARIANCE RATIO",
+      text:"Explained variance ratio is the fraction of total variance represented by one principal component. For example, 0.42 means that component represents 42% of the variance in the prepared data."
+    },
+    cumulative_variance: {
+      label:"CUMULATIVE VARIANCE",
+      text:"Cumulative explained variance adds the component ratios from the beginning, so PC1 plus PC2 tells how much the first two components represent together."
+    },
+    scree: {
+      label:"SCREE PLOT",
+      text:"A scree plot shows the variance explained by each component. Look for components whose added variance becomes relatively small; an elbow is not always obvious."
+    },
+    ninety_rule: {
+      label:"90% RULE OF THUMB",
+      text:"90% is a criterion chosen for this walkthrough, not a universal PCA law or an objectively correct component count."
+    },
+    reduced_representation: {
+      label:"REDUCED REPRESENTATION",
+      text:"A reduced representation keeps fewer component coordinates as a chosen trade-off between compactness and variance retained."
+    },
+    loading: {
+      label:"LOADING",
+      text:"A loading is the weight of an original feature in a principal component. It tells how that feature contributes to the component direction."
+    },
+    loading_magnitude: {
+      label:"LOADING MAGNITUDE",
+      text:"A larger absolute loading means the feature contributes more strongly to that component's direction."
+    },
+    loading_sign: {
+      label:"LOADING SIGN",
+      text:"Positive and negative loadings point in opposite directions along a component; positive is not automatically good and negative is not automatically bad."
+    },
+    loading_sign_arbitrary: {
+      label:"ARBITRARY COMPONENT SIGN",
+      text:"PCA component signs are arbitrary as a whole. Flipping every loading and every row score for one component describes the same axis."
+    },
+    score: {
+      label:"COMPONENT SCORE",
+      text:"Once the axes are learned, a component score is the coordinate showing where one row lies on a component."
+    },
+    loading_vs_score: {
+      label:"LOADING VS SCORE",
+      text:"A loading describes how an original feature contributes to an axis; a score describes where a row lies on that axis."
+    },
+    projection: {
+      label:"2D PROJECTION",
+      text:"A two-dimensional PCA projection shows only PC1 and PC2. It is a teaching view, not automatically the same as the selected reduced representation."
+    },
+    reference_after_fit: {
+      label:"REFERENCE LABEL AFTER FIT",
+      text:"Reference labels can be added after PCA is fitted for descriptive colouring only. They do not choose the axes, component count, or quality of the projection."
+    },
+    pca_limitations: {
+      label:"PCA LIMITATIONS",
+      text:"PCA is linear and prioritises variance rather than prediction usefulness. High variance is not automatically scientifically important, and later components may contain structure hidden by a 2D view."
     }
   });
 
@@ -2452,6 +2538,15 @@ test_result.round(3)`;
     return "# 3 · Prepare the numeric inputs\n# Scaling makes feature magnitudes comparable for distance-based methods and PCA.\n"
       + (config.missing ? "# Imputation is included only because the selected data can contain missing values.\n" : "# The bundled selected data is complete, so no imputation is needed.\n")
       + imports.join("\n") + "\n\npreprocessor = " + expression + "\nZ = preprocessor.fit_transform(X)\n\nZ[:5]";
+  }
+
+  function pcaExploreCode(config, value) {
+    const frameName = modelFrameName(config);
+    const names = featureNames(value);
+    if (names.length <= 12) {
+      return `# 2 · Inspect redundancy before PCA\ncorrelation = ${frameName}[feature_names].corr()\nfig, ax = plt.subplots(figsize=(7, 5))\nsns.heatmap(correlation, cmap="vlag", center=0, ax=ax)\nax.set_title("Correlation among selected inputs")\nfig.tight_layout()\nprint("Correlated features may contain overlapping variation, but PCA does not require strong correlation.")\ncorrelation.round(2)`;
+    }
+    return `# 2 · Summarise redundancy before PCA without a giant heatmap\ncorrelation = ${frameName}[feature_names].corr()\nredundancy_pairs = []\nfor left_index, left_name in enumerate(feature_names):\n    for right_index in range(left_index + 1, len(feature_names)):\n        right_name = feature_names[right_index]\n        pair_correlation = correlation.loc[left_name, right_name]\n        redundancy_pairs.append({\n            "feature_a":left_name,\n            "feature_b":right_name,\n            "correlation":pair_correlation,\n            "absolute_correlation":abs(pair_correlation)\n        })\nstrongest_pairs = pd.DataFrame(redundancy_pairs).sort_values("absolute_correlation", ascending=False).head(12).reset_index(drop=True)\nprint("This compact table shows the strongest unique feature pairs, not the full correlation matrix.")\nstrongest_pairs`;
   }
 
   function kmeansRoute(config, value) {
@@ -2655,52 +2750,93 @@ plot_df.head(12)`,{
   function pcaRoute(config, value) {
     const frameName = modelFrameName(config);
     return [
-      task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),"What structure am I trying to discover without a target?"),
-      task("explore","Explore the data","correlation + scale",`# 2 · Inspect redundancy before PCA
-correlation = ${frameName}[feature_names].corr()
-fig, ax = plt.subplots(figsize=(7, 5))
-sns.heatmap(correlation, cmap="vlag", center=0, ax=ax)
-ax.set_title("Correlation among continuous inputs")
-fig.tight_layout()
-${frameName}[feature_names].describe().T`,"What does my data look like, and which inputs overlap?"),
-      task("prepare","Prepare the data","scaled numeric inputs",clusterPreprocessing(config),"What needs to be cleaned or transformed?"),
-      task("variance","Fit PCA and inspect explained variance","scree + cumulative variance",`# 4 · Fit PCA and inspect how much variance each component explains
-# Retaining 90% is a common rule of thumb, not a universal requirement.
+      task("frame","Choose what to discover","new axes · target stays hidden",unsupervisedFrameCode(config, value),{
+        question:"What new axes can summarise variation in the selected inputs without using a reference target?",
+        readingCue:"Check that PCA is fitted from X and Z only; the reference label is reserved for interpretation after fitting.",
+        concepts:unsupervisedConcepts(["principal_component", "pc1", "pc2", "not_clustering", "reference_after_fit"])
+      }),
+      task("explore","Explore redundancy","unique correlation pairs",pcaExploreCode(config, value),{
+        question:"Which selected inputs may contain overlapping variation before PCA creates new axes?",
+        readingCue:"Look for correlated input pairs that may repeat some variation; PCA can still be useful without strong correlations.",
+        concepts:unsupervisedConcepts(["redundancy", "principal_component"])
+      }),
+      task("prepare","Scale the inputs","common numeric scale",clusterPreprocessing(config),{
+        question:"Why does this walkthrough scale the inputs before PCA?",
+        readingCue:"Look for the selected features being placed on a common scale before PCA searches for high-variance directions.",
+        concepts:unsupervisedConcepts(["pca_scaling"])
+      }),
+      task("variance","Fit PCA and inspect explained variance","scree + cumulative variance",`# 4 · Fit PCA and inspect variance explained by each component
+from matplotlib.ticker import PercentFormatter
 from sklearn.decomposition import PCA
 full_pca = PCA().fit(Z)
+explained_variance_ratio = full_pca.explained_variance_ratio_
+cumulative_explained_variance = np.cumsum(explained_variance_ratio)
 variance_table = pd.DataFrame({
-    "component":np.arange(1, len(full_pca.explained_variance_ratio_) + 1),
-    "explained_variance":full_pca.explained_variance_ratio_,
-    "cumulative_variance":np.cumsum(full_pca.explained_variance_ratio_)
+    "component":np.arange(1, len(explained_variance_ratio) + 1),
+    "explained_variance_ratio":explained_variance_ratio,
+    "cumulative_explained_variance":cumulative_explained_variance
 })
 fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
-sns.lineplot(data=variance_table, x="component", y="explained_variance", marker="o", ax=axes[0])
-sns.lineplot(data=variance_table, x="component", y="cumulative_variance", marker="o", color="#7651a6", ax=axes[1])
-axes[1].axhline(.90, color="#c75b20", linestyle="--", label="90%")
-axes[0].set_title("Scree plot")
-axes[1].set_title("Cumulative variance")
+sns.lineplot(data=variance_table, x="component", y="explained_variance_ratio", marker="o", ax=axes[0])
+sns.lineplot(data=variance_table, x="component", y="cumulative_explained_variance", marker="o", color="#7651a6", ax=axes[1])
+axes[1].axhline(.90, color="#c75b20", linestyle="--", label="90% criterion")
+axes[0].set(title="Scree plot: variance explained by each component", ylabel="Variance explained")
+axes[1].set(title="Cumulative variance retained", ylabel="Cumulative variance")
+axes[0].yaxis.set_major_formatter(PercentFormatter(1.0))
+axes[1].yaxis.set_major_formatter(PercentFormatter(1.0))
 axes[1].legend()
 fig.tight_layout()
-variance_table.round(4)`,"How quickly does information concentrate into fewer components?"),
-      task("select","Select components","retain at least 90%",`# 5 · Select the smallest representation retaining at least 90% variance
-n_components_90 = int(np.argmax(variance_table["cumulative_variance"].to_numpy() >= .90) + 1)
-Z_reduced = full_pca.transform(Z)[:, :n_components_90]
-pd.DataFrame({"original_dimensions":[Z.shape[1]], "selected_components":[n_components_90], "variance_retained":[variance_table.loc[n_components_90 - 1, "cumulative_variance"]]}).round(4)`,"How many components should I keep while retaining at least 90% of the variance?"),
-      task("loadings","Understand the component loadings","which inputs shape each axis",`# 6 · Connect the components back to the original inputs
+print("Scree plot: variance explained by each component. Cumulative variance retained: see how the ratios add from the beginning. Explained variance is variance evidence, not prediction accuracy.")
+variance_table.round(4)`,{
+        question:"How much variation does each component represent, and how does cumulative variance grow?",
+        readingCue:"Look for components whose added variance becomes relatively small, and how many are needed for the chosen 90% criterion.",
+        concepts:unsupervisedConcepts(["explained_variance", "cumulative_variance", "scree", "ninety_rule"])
+      }),
+      task("select","Select components","chosen 90% criterion",`# 5 · Select the smallest representation reaching the chosen 90% variance criterion
+components_for_90pct = int(np.flatnonzero(cumulative_explained_variance >= .90)[0] + 1)
+variance_retained_at_90pct = float(cumulative_explained_variance[components_for_90pct - 1])
+Z_reduced = full_pca.transform(Z)[:, :components_for_90pct]
+print(f"For this walkthrough we keep the first {components_for_90pct} components because they reach {variance_retained_at_90pct:.1%} cumulative variance. 90% is a chosen rule of thumb; another project could choose a different trade-off.")
+pd.DataFrame({"original_dimensions":[Z.shape[1]], "components_for_90pct":[components_for_90pct], "cumulative_variance_retained":[variance_retained_at_90pct]}).round(4)`,{
+        question:"How many components should this walkthrough keep for its chosen variance-retention rule?",
+        readingCue:"Check the first component count where cumulative variance reaches at least 90%; this is a chosen trade-off, not a universal answer.",
+        concepts:unsupervisedConcepts(["ninety_rule", "reduced_representation", "cumulative_variance"])
+      }),
+      task("loadings","Understand the component loadings","which features shape each axis",`# 6 · Connect the component axes back to the original inputs
 loadings = pd.DataFrame(full_pca.components_.T, index=feature_names, columns=[f"PC{i}" for i in range(1, len(full_pca.components_) + 1)])
+loadings.index.name = "feature"
 loading_view = loadings[["PC1", "PC2"]].copy()
-loading_view["largest_absolute_loading"] = loading_view.abs().max(axis=1)
-loading_view.sort_values("largest_absolute_loading", ascending=False).head(20).round(3)`,"Which original inputs contribute most to each principal component?"),
-      task("project","Project the rows","labels only for interpretation",`# 7 · Project rows, then add labels only for interpretation
-projection = full_pca.transform(Z)[:, :2]
+loading_view["strongest_component"] = loading_view[["PC1", "PC2"]].abs().idxmax(axis=1)
+loading_view["absolute_contribution"] = loading_view[["PC1", "PC2"]].abs().max(axis=1)
+loading_view = loading_view.sort_values("absolute_contribution", ascending=False).head(12)
+print("A loading is the weight of an original feature in a component. Larger absolute values mean a stronger contribution; the sign gives direction, not good or bad. The full loadings matrix remains available in loadings; this view shows the strongest PC1/PC2 contributors.")
+loading_view.round(3)`,{
+        question:"Which original features shape each principal-component axis, and how should I read their signs?",
+        readingCue:"Compare absolute loading sizes for contribution and compare signs as opposite directions; do not treat a sign as good or bad.",
+        concepts:unsupervisedConcepts(["loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"])
+      }),
+      task("project","Project the rows","PC1 + PC2 · labels after fitting",`# 7 · Give each row coordinates on the learned axes, then add labels for interpretation
+component_scores = full_pca.transform(Z)
+projection = component_scores[:, :2]
+pc1_variance = float(full_pca.explained_variance_ratio_[0])
+pc2_variance = float(full_pca.explained_variance_ratio_[1])
+two_dimensional_variance = pc1_variance + pc2_variance
 reference_label = ${frameName}[${py(config.target)}].copy()
 plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "reference":reference_label.to_numpy()})
 fig, ax = plt.subplots(figsize=(6.6, 4.5), layout="constrained")
 ${config.task === "classification" ? `plot_df["reference"] = plot_df["reference"].astype(str)
 sns.scatterplot(data=plot_df, x="PC1", y="PC2", hue="reference", alpha=.7, ax=ax)` : `points = ax.scatter(plot_df["PC1"], plot_df["PC2"], c=plot_df["reference"], cmap="viridis", alpha=.7)
 fig.colorbar(points, ax=ax, label=${py(config.target)})`}
-ax.set_title("PCA projection; labels added only after fitting")
-plot_df.head(12)`,"What does the two-dimensional representation look like when labels are added only for interpretation?")
+ax.set_xlabel(f"PC1 ({pc1_variance:.1%} variance)")
+ax.set_ylabel(f"PC2 ({pc2_variance:.1%} variance)")
+ax.set_title("2D PCA projection (PC1 + PC2)")
+print(f"2D PCA projection: PC1 and PC2 show {two_dimensional_variance:.1%} of total prepared-data variance; the remaining variation lies in later components. This 2D teaching view is separate from the {components_for_90pct}-component reduced representation selected by the 90% criterion. Reference labels were added only after PCA was fitted for descriptive interpretation.")
+plot_df.head(12)`,{
+        question:"Where do rows lie on the new axes, and what can a 2D view leave out?",
+        readingCue:"Read scores as row coordinates, check the actual PC1/PC2 variance percentages, and remember labels were added only after fitting.",
+        concepts:unsupervisedConcepts(["score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"]),
+        modelTeaching:modelSpecificTeaching(config, "pca", value)
+      })
     ];
   }
 
