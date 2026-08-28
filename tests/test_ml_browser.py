@@ -589,19 +589,30 @@ def main() -> int:
             raise AssertionError("Seoul CV teaching incorrectly described time windows as random folds.")
 
         select_route(page, "breast", "continuous5", "pca", 7)
-        run_steps(page, 4)
-        pca_statuses = page.locator("#notebookPanel article").evaluate_all(
-            "articles => articles.map(article => article.dataset.status)"
-        )
-        if pca_statuses != ["done"] * 4:
-            raise AssertionError(f"PCA route did not reach its fitted variance step: {pca_statuses}")
-        pca_text = page.locator("#outputList").inner_text()
-        if "explained_variance" not in pca_text or "cumulative_variance" not in pca_text:
-            raise AssertionError("PCA variance output was not produced in the browser runtime.")
-        run_steps(page, 2, start=4)
-        loadings_text = page.locator("#outputList .output-item").nth(5).inner_text()
-        if "radius_mean" not in loadings_text:
-            raise AssertionError("PCA loadings output did not preserve the source feature name radius_mean.")
+        assert_unsupervised_preview_hidden(page, "diagnosis")
+        run_steps(page, 7)
+        assert_unsupervised_guidance(page, 0, "new axes", "reference label")
+        assert_unsupervised_guidance(page, 2, "scale", "common scale")
+        assert_unsupervised_guidance(page, 3, "how much variation", "90% criterion")
+        assert_unsupervised_guidance(page, 5, "which original features", "absolute loading")
+        assert_unsupervised_guidance(page, 6, "where do rows", "row coordinates")
+        pca_variance = page.locator("#outputList .output-item").nth(3)
+        pca_variance_text = pca_variance.inner_text()
+        if not all(value in pca_variance_text for value in ("explained_variance_ratio", "cumulative_explained_variance", "variance explained by each component", "Cumulative variance retained")):
+            raise AssertionError("PCA variance output did not use precise, learner-readable labels.")
+        pca_select = page.locator("#outputList .output-item").nth(4)
+        if "components_for_90pct" not in pca_select.inner_text() or "90% is a chosen rule of thumb" not in pca_select.inner_text():
+            raise AssertionError("PCA did not explain the selected 90% criterion as a chosen rule of thumb.")
+        loadings_item = page.locator("#outputList .output-item").nth(5)
+        loadings_text = loadings_item.inner_text()
+        if not all(value in loadings_text for value in ("feature", "radius_mean", "strongest_component", "absolute_contribution")):
+            raise AssertionError("PCA loadings output did not preserve feature labels and contribution evidence.")
+        pca_project = page.locator("#outputList .output-item").nth(6)
+        if not all(value in pca_project.inner_text() for value in ("2D PCA projection", "PC1 and PC2 show", "later components", "labels were added only after")):
+            raise AssertionError("PCA projection output did not distinguish the 2D view from later variance or post-fit labels.")
+        pca_model_teaching = page.locator("#notebookPanel article").nth(6).locator("[data-teaching-role='model-specific']")
+        if pca_model_teaching.count() != 1 or not all(value in pca_model_teaching.inner_text().lower() for value in ("linear", "prediction usefulness", "later components", "loading", "score")):
+            raise AssertionError("PCA model-specific teaching was not rendered beside the projection evidence.")
         page.locator("#addCellButton").click()
         custom_editor = page.locator("#notebookPanel textarea").last
         custom_editor.fill("type(full_pca).__name__")
@@ -609,6 +620,36 @@ def main() -> int:
         wait_for_cell(page, page.locator("#notebookPanel article").count() - 1)
         if "PCA" not in page.locator("#outputList .output-item").last.inner_text():
             raise AssertionError("The fitted PCA object was not available after the browser route step.")
+
+        select_route(page, "breast", "continuous30", "pca", 7)
+        assert_unsupervised_preview_hidden(page, "diagnosis")
+        run_steps(page, 7)
+        pca30_explore = page.locator("#outputList .output-item").nth(1)
+        pca30_headers = pca30_explore.locator("table thead th").all_inner_texts()
+        if pca30_explore.locator(".chart-wrap").count() or pca30_headers != ["feature_a", "feature_b", "correlation", "absolute_correlation"]:
+            raise AssertionError("Breast Cancer continuous30 PCA did not render the compact redundancy summary.")
+        pca30_loadings = page.locator("#outputList .output-item").nth(5).inner_text()
+        if "radius_mean" not in pca30_loadings:
+            raise AssertionError("Breast Cancer continuous30 PCA loading evidence did not retain source feature labels.")
+
+        select_route(page, "penguins", "continuous", "pca", 7)
+        assert_unsupervised_preview_hidden(page, "species")
+        run_steps(page, 7)
+        penguins_pca_project = page.locator("#outputList .output-item").nth(6).inner_text()
+        if "reference" not in penguins_pca_project or "Adelie" not in penguins_pca_project:
+            raise AssertionError("Penguins PCA did not add descriptive reference classes after fitting.")
+
+        select_route(page, "wine", "continuous", "pca", 7)
+        assert_unsupervised_preview_hidden(page, "quality")
+        run_steps(page, 7, timeout=180_000)
+        wine_pca_project = page.locator("#outputList .output-item").nth(6).inner_text()
+        if "2D PCA projection" not in wine_pca_project or "PC1 and PC2 show" not in wine_pca_project:
+            raise AssertionError("Wine PCA did not render its numeric post-fit projection interpretation.")
+
+        select_route(page, "wine", "continuous", "multiple_linear", 9)
+        if "quality" not in preview_headers(page):
+            raise AssertionError("Supervised preview did not restore the reference target after PCA.")
+        select_route(page, "breast", "continuous5", "logistic", 9)
 
         page.locator("#addCellButton").click()
         reset_mutation = page.locator("#notebookPanel textarea").last

@@ -466,6 +466,8 @@ def assert_route_structure(payload: dict) -> dict:
         "phase2b2_model_ids": [],
         "unsupervised_routes_with_teaching": 0,
         "unsupervised_model_ids": [],
+        "pca_routes_with_teaching": 0,
+        "pca_model_ids": [],
     }
     phase2a_models_seen = set()
     phase2b1_models_seen = set()
@@ -512,7 +514,7 @@ def assert_route_structure(payload: dict) -> dict:
                     ) from error
                 if not cell["question"].strip() or not cell["caption"].strip():
                     raise AssertionError(f"Missing beginner explanation in {route}")
-                if (task_type != "unsupervised" or model_id in {"kmeans", "hierarchical"}) and not cell.get("readingCue", "").strip():
+                if (task_type != "unsupervised" or model_id in {"kmeans", "hierarchical", "pca"}) and not cell.get("readingCue", "").strip():
                     raise AssertionError(
                         f"Missing reading cue for guided step: "
                         f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}"
@@ -928,12 +930,66 @@ def assert_route_structure(payload: dict) -> dict:
                             if token not in unsupervised_code:
                                 raise AssertionError(f"Hierarchical teaching evidence is incomplete: {token}")
                 if model_id == "pca":
+                    teaching_checks["pca_routes_with_teaching"] += 1
+                    pca_cells = {cell["id"]: cell for cell in route["cells"]}
+                    if any(not pca_cells[cell_id]["question"].strip() or not pca_cells[cell_id]["readingCue"].strip() for cell_id in pca_ids):
+                        raise AssertionError(f"PCA route is missing question/reading guidance: {route}")
+                    pca_required_concepts = {
+                        "frame": {"principal_component", "pc1", "pc2", "not_clustering", "reference_after_fit"},
+                        "explore": {"redundancy", "principal_component"},
+                        "prepare": {"pca_scaling"},
+                        "variance": {"explained_variance", "cumulative_variance", "scree", "ninety_rule"},
+                        "select": {"ninety_rule", "reduced_representation", "cumulative_variance"},
+                        "loadings": {"loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"},
+                        "project": {"score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"},
+                    }
+                    for step_id, expected_keys in pca_required_concepts.items():
+                        missing_keys = expected_keys - set(pca_cells[step_id].get("conceptKeys", []))
+                        if missing_keys:
+                            raise AssertionError(f"Missing PCA concepts {sorted(missing_keys)} for {route['datasetId']}/{route['scenarioId']}/{step_id}")
+                    project_teaching = pca_cells["project"].get("modelTeaching")
+                    if not isinstance(project_teaching, dict) or project_teaching.get("modelId") != "pca" or any(
+                        not str(project_teaching.get(key, "")).strip() for key in ("learned", "see", "read", "watchOut")
+                    ):
+                        raise AssertionError(f"PCA model-specific teaching is incomplete: {route}")
+                    if "information concentrate" in source.lower():
+                        raise AssertionError("The vague PCA information-concentrate wording has returned.")
                     if "full_pca = PCA().fit(Z)" not in unsupervised_code:
                         raise AssertionError(f"PCA does not fit one full model: {route}")
-                    if "Z_reduced = full_pca.transform(Z)[:, :n_components_90]" not in unsupervised_code:
-                        raise AssertionError(f"PCA does not derive Z_reduced from full_pca: {route}")
+                    if "explained_variance_ratio_" not in unsupervised_code or "cumulative_explained_variance" not in unsupervised_code:
+                        raise AssertionError(f"PCA variance terminology/evidence is incomplete: {route}")
+                    if "components_for_90pct" not in unsupervised_code or "90% is a chosen rule of thumb" not in unsupervised_code:
+                        raise AssertionError(f"PCA 90% selection is not taught as a chosen criterion: {route}")
+                    if "Z_reduced = full_pca.transform(Z)[:, :components_for_90pct]" not in unsupervised_code:
+                        raise AssertionError(f"PCA does not derive the reduced representation from full_pca: {route}")
                     if "\npca = PCA(" in unsupervised_code:
                         raise AssertionError(f"PCA refits a second selected model: {route}")
+                    pre_project_code = "\n".join(pca_cells[cell_id]["code"] for cell_id in pca_ids[:-1])
+                    project_code = pca_cells["project"]["code"]
+                    target = route["dataset"]["target"]
+                    target_literal = re.compile(rf"['\"]{re.escape(target)}['\"]")
+                    if target_literal.search(pre_project_code):
+                        raise AssertionError(f"PCA accesses its reference target before the interpretation step: {route}")
+                    if target_literal.search(project_code) is None or "added only after PCA was fitted" not in project_code:
+                        raise AssertionError(f"PCA interpretation does not explicitly add the reference label after fitting: {route}")
+                    if "full_pca.components_.T" not in pca_cells["loadings"]["code"] or "index.name = \"feature\"" not in pca_cells["loadings"]["code"]:
+                        raise AssertionError(f"PCA loadings are not feature-labelled: {route}")
+                    if route["scenarioId"] == "continuous30":
+                        explore_code = pca_cells["explore"]["code"]
+                        if "sns.heatmap" in explore_code or "strongest_pairs" not in explore_code or "absolute_correlation" not in explore_code:
+                            raise AssertionError(f"High-dimensional PCA redundancy evidence is not compact: {route}")
+
+    expected_pca_routes = sum(
+        route["modelId"] == "pca"
+        for routes in route_sets.values()
+        for route in routes
+    )
+    if teaching_checks["pca_routes_with_teaching"] != expected_pca_routes:
+        raise AssertionError(
+            f"PCA model-specific metadata count mismatch; expected {expected_pca_routes}, "
+            f"saw {teaching_checks['pca_routes_with_teaching']}"
+        )
+    teaching_checks["pca_model_ids"] = ["pca"] if expected_pca_routes else []
 
     for config in payload["datasets"].values():
         for scenario in config["scenarios"]:
@@ -1835,6 +1891,120 @@ def run_unsupervised_runtime_regression(payload: dict, pd, np, plt, sns) -> dict
     }
 
 
+def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Check PCA variance, loading, score, and post-fit reference-label fidelity."""
+
+    pca_step_ids = ["frame", "explore", "prepare", "variance", "select", "loadings", "project"]
+
+    def run(dataset_id: str, scenario_id: str) -> tuple[dict, dict]:
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, "pca")
+        code_by_id = {cell["id"]: cell["code"] for cell in route["cells"]}
+        target = route["dataset"]["target"]
+        pre_project_code = "\n".join(code_by_id[step_id] for step_id in pca_step_ids[:-1])
+        target_literal = re.compile(rf"['\"]{re.escape(target)}['\"]")
+        if target_literal.search(pre_project_code):
+            raise AssertionError(f"PCA runtime accessed the reference target before fitting: {route}")
+        project_code = code_by_id["project"]
+        target_position = project_code.find(f'"{target}"')
+        if target_position < 0:
+            target_position = project_code.find(f"'{target}'")
+        fit_position = project_code.find("full_pca.transform(Z)")
+        if target_position < 0 or fit_position < 0 or target_position < fit_position:
+            raise AssertionError(f"PCA project code does not access reference labels after fitting: {route}")
+        forbidden = ("X_test", "y_test", "test_prediction", "test_result", "y_train", "cv_scores")
+        if any(token in "\n".join(code_by_id.values()) for token in forbidden):
+            raise AssertionError(f"PCA route introduced supervised evaluation plumbing: {route}")
+        return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "project")
+
+    route, namespace = run("breast", "continuous5")
+    Z = np.asarray(namespace["Z"], dtype=float)
+    full_pca = namespace["full_pca"]
+    ratios = np.asarray(full_pca.explained_variance_ratio_, dtype=float)
+    cumulative = np.asarray(namespace["cumulative_explained_variance"], dtype=float)
+    if Z.shape[0] != len(namespace["X"]) or not np.isfinite(Z).all():
+        raise AssertionError("PCA preprocessing changed row alignment or produced non-finite values.")
+    if int(full_pca.n_components_) != Z.shape[1] or not np.isfinite(ratios).all() or (ratios < 0).any():
+        raise AssertionError("PCA fitted-component or explained-variance evidence is invalid.")
+    if not np.all(np.diff(cumulative) >= -1e-12) or not np.isclose(cumulative[-1], 1.0, atol=1e-6):
+        raise AssertionError("PCA cumulative explained variance is not monotonic or approximately complete.")
+    variance_table = namespace["variance_table"]
+    if list(variance_table.columns) != ["component", "explained_variance_ratio", "cumulative_explained_variance"]:
+        raise AssertionError("PCA variance table does not use precise ratio terminology.")
+    if not np.allclose(variance_table["explained_variance_ratio"].to_numpy(dtype=float), ratios) or not np.allclose(
+        variance_table["cumulative_explained_variance"].to_numpy(dtype=float), cumulative
+    ):
+        raise AssertionError("PCA variance table does not match the fitted estimator.")
+    expected_components = int(np.flatnonzero(cumulative >= 0.90)[0] + 1)
+    if int(namespace["components_for_90pct"]) != expected_components:
+        raise AssertionError("PCA 90% component selection did not choose the first qualifying count.")
+    if namespace["Z_reduced"].shape != (Z.shape[0], expected_components) or float(namespace["variance_retained_at_90pct"]) < 0.90:
+        raise AssertionError("PCA reduced representation does not retain the selected variance.")
+
+    loadings = namespace["loadings"]
+    if [str(name) for name in loadings.index] != [str(name) for name in namespace["feature_names"]]:
+        raise AssertionError("PCA loading feature labels are not preserved in selected order.")
+    if not np.allclose(loadings.to_numpy(dtype=float), np.asarray(full_pca.components_).T):
+        raise AssertionError("PCA loading matrix does not equal full_pca.components_.T.")
+    expected_view = loadings[["PC1", "PC2"]].copy()
+    expected_view["strongest_component"] = expected_view[["PC1", "PC2"]].abs().idxmax(axis=1)
+    expected_view["absolute_contribution"] = expected_view[["PC1", "PC2"]].abs().max(axis=1)
+    expected_view = expected_view.sort_values("absolute_contribution", ascending=False).head(12)
+    actual_view = namespace["loading_view"]
+    if list(actual_view.index) != list(expected_view.index) or list(actual_view.columns) != list(expected_view.columns):
+        raise AssertionError("PCA strongest loading view is not selected by absolute contribution.")
+    if not np.allclose(actual_view[["PC1", "PC2", "absolute_contribution"]].to_numpy(dtype=float), expected_view[["PC1", "PC2", "absolute_contribution"]].to_numpy(dtype=float)):
+        raise AssertionError("PCA strongest loading values do not match the fitted components.")
+
+    expected_scores = full_pca.transform(Z)
+    if not np.allclose(namespace["component_scores"], expected_scores) or not np.allclose(namespace["projection"], expected_scores[:, :2]):
+        raise AssertionError("PCA row scores or PC1/PC2 projection do not match full_pca.transform(Z).")
+    if not np.isclose(float(namespace["pc1_variance"]), ratios[0]) or not np.isclose(float(namespace["pc2_variance"]), ratios[1]):
+        raise AssertionError("PCA projection axis labels do not use fitted explained-variance ratios.")
+    plot_df = namespace["plot_df"]
+    frame_name = "df" if route["dataset"]["prepare"] == "df" else "model_df"
+    reference_frame = namespace[frame_name]
+    if not np.allclose(plot_df[["PC1", "PC2"]].to_numpy(dtype=float), expected_scores[:, :2]):
+        raise AssertionError("PCA plotted coordinates do not match the fitted scores.")
+    if not np.array_equal(plot_df["reference"].to_numpy().astype(str), reference_frame[route["dataset"]["target"]].to_numpy().astype(str)):
+        raise AssertionError("PCA interpretation reference labels are not aligned with projected rows.")
+
+    high_route, high_namespace = run("breast", "continuous30")
+    high_explore = _execute_route_to_cell(payload, high_route, pd, np, plt, sns, "explore")
+    high_pairs = high_explore["strongest_pairs"]
+    if len(high_pairs) > 12 or list(high_pairs.columns) != ["feature_a", "feature_b", "correlation", "absolute_correlation"]:
+        raise AssertionError("Breast Cancer continuous30 PCA did not produce a compact redundancy table.")
+    if any(str(left) == str(right) for left, right in zip(high_pairs["feature_a"], high_pairs["feature_b"])):
+        raise AssertionError("PCA redundancy summary contains a self-correlation.")
+    if len({frozenset((str(left), str(right))) for left, right in zip(high_pairs["feature_a"], high_pairs["feature_b"])}) != len(high_pairs):
+        raise AssertionError("PCA redundancy summary contains duplicate feature pairs.")
+    if not np.isfinite(high_pairs[["correlation", "absolute_correlation"]].to_numpy(dtype=float)).all():
+        raise AssertionError("PCA redundancy summary contains non-finite correlations.")
+    if int(high_namespace["full_pca"].n_components_) != 30 or len(high_namespace["loadings"]) != 30:
+        raise AssertionError("Breast Cancer continuous30 PCA did not use and label all 30 selected inputs.")
+    if "sns.heatmap" in route_code(high_route, "explore"):
+        raise AssertionError("Breast Cancer continuous30 PCA still renders the giant primary correlation heatmap.")
+
+    penguins_route, penguins = run("penguins", "continuous")
+    penguins_frame = penguins["df"] if penguins_route["dataset"]["prepare"] == "df" else penguins["model_df"]
+    if not np.array_equal(penguins["plot_df"]["reference"].to_numpy().astype(str), penguins_frame["species"].to_numpy().astype(str)):
+        raise AssertionError("Penguins PCA reference colouring is not aligned after fitting.")
+    wine_route, wine = run("wine", "continuous")
+    wine_frame = wine["df"] if wine_route["dataset"]["prepare"] == "df" else wine["model_df"]
+    if not np.array_equal(wine["plot_df"]["reference"].to_numpy().astype(str), wine_frame["quality"].to_numpy().astype(str)):
+        raise AssertionError("Wine PCA numeric reference colouring is not aligned after fitting.")
+
+    return {
+        "preprocessing_alignment": True,
+        "variance_fidelity": True,
+        "ninety_percent_selection": True,
+        "loading_fidelity": True,
+        "score_projection_fidelity": True,
+        "post_fit_reference_labels": True,
+        "large_feature_redundancy_summary": True,
+        "no_target_based_pca_selection": True,
+    }
+
+
 def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     """Check that Phase 2B-1 explanations match fitted classifiers and labels."""
 
@@ -2137,6 +2307,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     phase2b1_model_runtime_test = run_phase2b1_model_runtime_regression(payload, pd, np, plt, sns)
     phase2b2_model_runtime_test = run_neural_network_runtime_regression(payload, pd, np, plt, sns)
     unsupervised_runtime_test = run_unsupervised_runtime_regression(payload, pd, np, plt, sns)
+    pca_runtime_test = run_pca_runtime_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -2201,6 +2372,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "phase2b1_model_runtime": phase2b1_model_runtime_test,
         "phase2b2_model_runtime": phase2b2_model_runtime_test,
         "phase3a_unsupervised_runtime": unsupervised_runtime_test,
+        "phase3b_pca_runtime": pca_runtime_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }

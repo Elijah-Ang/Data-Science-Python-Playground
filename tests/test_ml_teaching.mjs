@@ -381,6 +381,73 @@ for (const token of ["Ward", "dissimilar", "horizontal", "sample", "PCA"]) {
   if (!hierarchicalText.toLowerCase().includes(token.toLowerCase())) throw new Error(`Hierarchical teaching is missing ${token}.`);
 }
 
+const pcaFixtures = {
+  breast5:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  breast30:[api.DATASETS.breast, api.DATASETS.breast.scenarios[1]],
+  penguins:[api.DATASETS.penguins, api.DATASETS.penguins.scenarios[0]],
+  wine:[api.DATASETS.wine, api.DATASETS.wine.scenarios[1]]
+};
+const pcaConceptRequirements = {
+  frame:["principal_component", "pc1", "pc2", "not_clustering", "reference_after_fit"],
+  explore:["redundancy", "principal_component"],
+  prepare:["pca_scaling"],
+  variance:["explained_variance", "cumulative_variance", "scree", "ninety_rule"],
+  select:["ninety_rule", "reduced_representation", "cumulative_variance"],
+  loadings:["loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"],
+  project:["score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"]
+};
+for (const [fixtureId, [config, scenario]] of Object.entries(pcaFixtures)) {
+  const route = api.routeForSelection(config, scenario, "pca", 5);
+  if (route.length !== 7 || route.map(step => step.id).join(",") !== "frame,explore,prepare,variance,select,loadings,project") {
+    throw new Error(`PCA route structure is incomplete for ${fixtureId}.`);
+  }
+  for (const step of route) {
+    if (!step.question || !step.readingCue) throw new Error(`Missing PCA question/cue for ${fixtureId}/${step.id}.`);
+    for (const key of pcaConceptRequirements[step.id] || []) {
+      if (!step.conceptKeys.includes(key)) throw new Error(`Missing PCA ${step.id} concept ${key} for ${fixtureId}.`);
+    }
+  }
+  const project = route.find(step => step.id === "project");
+  if (!project.modelTeaching || project.modelTeaching.modelId !== "pca") throw new Error(`Missing PCA model teaching for ${fixtureId}.`);
+  for (const key of ["learned", "see", "read", "watchOut"]) {
+    if (!project.modelTeaching[key]?.trim()) throw new Error(`PCA model teaching is missing ${key}.`);
+  }
+  const routeCode = route.map(step => step.code).join("\n");
+  if (routeCode.toLowerCase().includes("information concentrate") || routeCode.includes("X_test") || routeCode.includes("y_test")) {
+    throw new Error(`PCA route contains stale wording or supervised holdout concepts for ${fixtureId}.`);
+  }
+  const preProjectCode = route.filter(step => step.id !== "project").map(step => step.code).join("\n");
+  if (preProjectCode.includes(`"${config.target}"`) || preProjectCode.includes(`'${config.target}'`)) {
+    throw new Error(`PCA ${fixtureId} accesses the reference target before interpretation.`);
+  }
+  if (!project.code.includes(`"${config.target}"`) && !project.code.includes(`'${config.target}'`)) {
+    throw new Error(`PCA ${fixtureId} does not include the post-fit reference-label interpretation.`);
+  }
+  if (!project.code.includes("component_scores = full_pca.transform(Z)") || !project.code.includes("PC1 (")) {
+    throw new Error(`PCA ${fixtureId} does not teach row scores and actual projection variance.`);
+  }
+}
+const pca30Route = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[1], "pca", 5);
+const pca30Explore = pca30Route.find(step => step.id === "explore").code;
+if (pca30Explore.includes("sns.heatmap") || !pca30Explore.includes("strongest_pairs") || !pca30Explore.includes("absolute_correlation") || !pca30Explore.includes("not the full correlation matrix")) {
+  throw new Error("High-dimensional PCA does not use the compact unique-pair redundancy summary.");
+}
+const pcaVarianceCode = pca30Route.find(step => step.id === "variance").code;
+if (!pcaVarianceCode.includes("Scree plot: variance explained by each component") || !pcaVarianceCode.includes("Cumulative variance retained") || !pcaVarianceCode.includes("PercentFormatter")) {
+  throw new Error("PCA variance plots are missing precise variance labels or percentage formatting.");
+}
+const pcaLoadingText = pca30Route
+  .filter(step => ["frame", "loadings"].includes(step.id))
+  .flatMap(step => step.concepts.map(item => item.text))
+  .join(" ");
+for (const token of ["weighted combination", "absolute loading", "opposite directions", "arbitrary as a whole"]) {
+  if (!pcaLoadingText.toLowerCase().includes(token.toLowerCase())) throw new Error(`PCA loading teaching is missing ${token}.`);
+}
+const pcaProjectText = Object.values(pca30Route.find(step => step.id === "project").modelTeaching).join(" ");
+for (const token of ["linear", "variance", "prediction usefulness", "later components"]) {
+  if (!pcaProjectText.toLowerCase().includes(token.toLowerCase())) throw new Error(`PCA limitation teaching is missing ${token}.`);
+}
+
 console.log(JSON.stringify({
   supervised_steps_checked:9,
   classification_summary:true,
@@ -402,5 +469,9 @@ console.log(JSON.stringify({
   target_isolation_preview:true,
   kmeans_choice_teaching:true,
   hierarchical_dendrogram_teaching:true,
+  pca_teaching:true,
+  pca_target_isolation:true,
+  pca_large_feature_summary:true,
+  pca_variance_and_loading_vocabulary:true,
   preferred_vocabulary:true
 }, null, 2));
