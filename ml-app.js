@@ -481,6 +481,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   });
 
   let currentDatasetId = "breast";
+  let cachedPreviewPayload = null;
   let cells = [];
   let routeTasks = [];
   let cellSequence = 0;
@@ -605,22 +606,53 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     return {columns:rows[0], rows:rows.slice(1, limit + 1)};
   }
 
+  function filterPreviewPayload(payload, target, hideTarget) {
+    if (!payload || !hideTarget) return payload;
+    target = String(target);
+    const visiblePositions = payload.columns
+      .map((column, index) => String(column) === target ? -1 : index)
+      .filter(index => index >= 0);
+    return {
+      columns: visiblePositions.map(index => payload.columns[index]),
+      rows: payload.rows.map(row => visiblePositions.map(index => row?.[index] ?? null))
+    };
+  }
+
+  function previewPayloadForSelection(payload = cachedPreviewPayload) {
+    return filterPreviewPayload(payload, selectedConfig().target, selectedModel()?.task === "unsupervised");
+  }
+
+  function renderDatasetPreview() {
+    const payload = previewPayloadForSelection();
+    if (payload) tablePayload($("#preview"), payload, true);
+  }
+
   function staticSetup() {
     const config = selectedConfig(), value = selectedScenario(), model = selectedModel();
+    const unsupervised = model?.task === "unsupervised";
     document.body.dataset.dataset = config.theme || currentDatasetId;
     $("#datasetName").textContent = config.name;
-    $("#datasetDescription").textContent = config.description;
-    $("#datasetQuestion").textContent = config.question;
+    $("#datasetDescription").textContent = unsupervised
+      ? "Explore similarity among rows using the selected inputs; the reference label is reserved for later interpretation."
+      : config.description;
+    $("#datasetQuestion").textContent = unsupervised
+      ? "Which rows look similar when we compare the selected inputs?"
+      : config.question;
     $("#sourceLink").href = config.source;
     $("#sourceLink").textContent = config.sourceLabel;
-    $("#sourceNote").textContent = config.sourceNote;
+    $("#sourceNote").textContent = unsupervised
+      ? `${config.sourceNote.split(" · ")[0]} · reference label hidden during discovery`
+      : config.sourceNote;
     $("#rowMetric").textContent = config.rows.toLocaleString();
     $("#featureMetric").textContent = featureCount(value);
     $("#featureMix").textContent = typeMix(value);
     $("#metricLabel").textContent = model?.metric || "—";
     const tags = $("#problemTags");
     tags.replaceChildren();
-    [model?.task === "unsupervised" ? "unsupervised" : config.task, config.target, value.name, model?.task === "unsupervised" ? "no target for fitting" : (config.split === "time" ? "chronological saved 80 / 20" : "saved 80 / 20")].forEach(label => {
+    const tagLabels = unsupervised
+      ? ["unsupervised", value.name, "reference label not used for fitting"]
+      : [config.task, config.target, value.name, config.split === "time" ? "chronological saved 80 / 20" : "saved 80 / 20"];
+    tagLabels.forEach(label => {
       const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = label; tags.append(tag);
     });
     const list = $("#featureList"); list.replaceChildren();
@@ -633,7 +665,6 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       const line = document.createElement("div"); line.className = "feature-row"; line.innerHTML = "<b></b><span>selected</span>";
       line.children[0].textContent = `+ ${typed.length - 12} more`; list.append(line);
     }
-    const unsupervised = model?.task === "unsupervised";
     $(".route-tools-label").textContent = "SUGGESTED ROUTE";
     $("#routeDescription").textContent = unsupervised
       ? "Discovery workflow · run in order; reference labels stay out of fitting and appear only for interpretation."
@@ -642,6 +673,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     $("#foldLabel").textContent = unsupervised ? "Cross-validation · not used" : "Cross-validation";
     $("#runAllButton").textContent = unsupervised ? "▶ Run complete walkthrough" : `▶ Run complete ${$("#foldSelect").value}-fold walkthrough`;
     $("#runAllButton").disabled = !runtimeReady;
+    renderDatasetPreview();
   }
 
   function tablePayload(container, payload, compact = false) {
@@ -1114,6 +1146,18 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         see:"The table shows the selected feature, its exact fitted values or intervals, predicted classes, and training-row counts. The baseline compares against always choosing the majority class.",
         read:"Compare One-R with the majority baseline, then read each rule as the class the fitted rule predicts.",
         watchOut:"One-R deliberately uses one feature, so it is a simple baseline rather than a flexible final model. Its purpose is simplicity."
+      },
+      kmeans:{
+        learned:"K-Means starts with k centres, assigns each row to its nearest centroid, moves each centroid to the average of its assigned rows, and repeats until the assignments or centres settle.",
+        see:"See cluster sizes, silhouette values, original-unit profiles and centroids, plus a PCA map. The fit used all selected prepared dimensions; the map is only a two-dimensional view.",
+        read:"Compare inertia and silhouette with cluster sizes and original-unit profiles. Cluster IDs are arbitrary, and a small cluster may be meaningful, rare, an outlier pattern, or a fragmented solution.",
+        watchOut:"Inertia usually decreases as k increases, so the smallest inertia is not a valid choice. K-Means works best for compact, roughly spherical groups and can be pulled by outliers or unlucky initial centres; multiple n_init starts reduce dependence on one starting set."
+      },
+      hierarchical:{
+        learned:"Agglomerative clustering starts with each row as its own group and repeatedly merges groups. Ward linkage chooses merges that add the least within-group variation.",
+        see:"See the reproducible sample's dendrogram, merge heights, silhouette evidence, original-unit profiles and PCA map.",
+        read:"Read leaves as observations or small groups, joins as merges, and height as Ward merge dissimilarity. A horizontal cut represents a cluster count; silhouette supports the choice but does not decide it.",
+        watchOut:"The hierarchy is fitted on a sample of at most 500 rows, so a different sample can produce somewhat different branches. Cluster IDs are arbitrary, and the PCA map is only a two-dimensional projection."
       }
     };
     const selected = templates[modelId];
@@ -2310,6 +2354,93 @@ test_result.round(3)`;
     return frameCode(config, value, true);
   }
 
+  const UNSUPERVISED_CONCEPT_LIBRARY = Object.freeze({
+    cluster: {
+      label:"CLUSTER",
+      text:"A cluster is a group of rows that are similar according to the selected features and clustering method."
+    },
+    cluster_label: {
+      label:"CLUSTER LABEL",
+      text:"Numbers such as 0, 1, and 2 are arbitrary names. Cluster 2 is not automatically better or larger than cluster 1."
+    },
+    distance: {
+      label:"DISTANCE",
+      text:"Clustering often depends on how close rows are in feature space."
+    },
+    scaling: {
+      label:"SCALING",
+      text:"If one feature uses much larger numbers than another, it can dominate distance calculations. The numeric clustering routes scale the features so magnitudes are comparable."
+    },
+    no_target_score: {
+      label:"NO TARGET SCORE",
+      text:"There is no known correct target or class label being predicted here. Silhouette describes properties of the discovered grouping; it is not supervised accuracy."
+    },
+    choice_not_truth: {
+      label:"CHOICE, NOT TRUTH",
+      text:"Different defensible clusterings may answer different descriptive questions; the data does not contain one guaranteed correct grouping."
+    },
+    centroid: {
+      label:"CENTROID",
+      text:"A centroid is the centre or average position of one K-Means cluster in the prepared feature space."
+    },
+    k: {
+      label:"k",
+      text:"k is the number of clusters we ask K-Means to form. The analyst chooses it rather than reading a guaranteed answer from the data."
+    },
+    inertia: {
+      label:"INERTIA",
+      text:"Inertia adds the squared distances from rows to their assigned centres. Lower means a tighter fit, but inertia almost always falls as k increases."
+    },
+    silhouette: {
+      label:"SILHOUETTE",
+      text:"Silhouette asks whether a row is closer to its own cluster than to the nearest competing cluster. Near +1 is comfortably inside, around 0 is between or overlapping, and below 0 may fit another cluster better. A higher average usually indicates stronger separation, but silhouette is evidence, not an oracle."
+    },
+    profile: {
+      label:"CLUSTER PROFILE",
+      text:"Cluster IDs become meaningful only after comparing original feature values, such as a group with higher temperature and lower humidity."
+    },
+    pca_projection: {
+      label:"PCA MAP",
+      text:"The clustering used all selected prepared dimensions; this PCA chart is only a two-dimensional visual projection, so it is not a complete quality test."
+    },
+    agglomerative: {
+      label:"AGGLOMERATIVE",
+      text:"Agglomerative clustering starts with each row as its own group and repeatedly merges the closest groups, building a hierarchy."
+    },
+    ward: {
+      label:"WARD LINKAGE",
+      text:"Ward chooses merges that cause the smallest increase in within-group variation, or spread."
+    },
+    leaves: {
+      label:"LEAVES",
+      text:"Leaves at the bottom of a dendrogram represent observations or small groups before later merges."
+    },
+    join: {
+      label:"JOIN",
+      text:"A join is where two branches combine into one larger group."
+    },
+    merge_height: {
+      label:"MERGE HEIGHT",
+      text:"Height shows how dissimilar the groups were when Ward merged them; a large vertical gap suggests a larger jump in dissimilarity."
+    },
+    horizontal_cut: {
+      label:"HORIZONTAL CUT",
+      text:"Imagine drawing a horizontal line through the dendrogram: the separated branches below that line correspond to the clustering at that cut. The line is evidence for a choice, not an objectively correct answer."
+    },
+    sampling: {
+      label:"REPRODUCIBLE SAMPLE",
+      text:"The hierarchy uses a reproducible sample of at most 500 rows because storing and comparing all pairwise relationships becomes expensive; another sample can produce somewhat different branches."
+    }
+  });
+
+  function unsupervisedConcepts(keys) {
+    return [...new Set(keys)].map(key => {
+      const item = UNSUPERVISED_CONCEPT_LIBRARY[key];
+      if (!item) throw new Error(`Unknown unsupervised teaching concept: ${key}`);
+      return concept(key, item.label, item.text);
+    });
+  }
+
   function clusterPreprocessing(config) {
     const imports = ["from sklearn.preprocessing import StandardScaler"];
     const expression = config.missing
@@ -2326,9 +2457,21 @@ test_result.round(3)`;
   function kmeansRoute(config, value) {
     const frameName = modelFrameName(config);
     return [
-      task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),"What structure am I trying to discover without a target?"),
-      task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),"What does my data look like?"),
-      task("prepare","Prepare the data","scaled numeric inputs",clusterPreprocessing(config),"What needs to be cleaned or transformed?"),
+      task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),{
+        question:"Why is there no target used for fitting, and what structure can I discover from the selected inputs?",
+        readingCue:"Check that X contains the selected features and that the clustering code never uses the reference labels.",
+        concepts:unsupervisedConcepts(["cluster", "no_target_score", "cluster_label"])
+      }),
+      task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),{
+        question:"What similarities, ranges, or unusual rows can I see before clustering?",
+        readingCue:"Look for ranges, overlap, and unusual rows in the selected inputs; this is descriptive evidence, not a target score.",
+        concepts:unsupervisedConcepts(["cluster"])
+      }),
+      task("prepare","Prepare the data","scaled numeric inputs",clusterPreprocessing(config),{
+        question:"Why does this distance-based method need this preparation?",
+        readingCue:"Look for comparable feature scales before rows are compared by distance.",
+        concepts:unsupervisedConcepts(["distance", "scaling"])
+      }),
       task("compare","Compare possible group counts","exploratory inertia + silhouette",`# 4 · Compare possible group counts; this is exploratory, not a test score
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -2345,26 +2488,56 @@ sns.lineplot(data=candidate_scores, x="k", y="silhouette", marker="o", ax=axes[1
 axes[0].set_title("Elbow: within-cluster inertia")
 axes[1].set_title("Higher silhouette is better")
 fig.tight_layout()
-candidate_scores.round(3)`,"Which group count looks most useful?"),
-      task("fit","Fit K-means","suggested silhouette k",`# 5 · Fit the selected K-means solution
-suggested_k = int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "k"])
-selected_k = suggested_k  # Edit this if another solution is more useful.
+silhouette_suggestion = int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "k"])
+print(f"Mechanical silhouette suggestion (not a final answer): k={silhouette_suggestion}")
+candidate_scores.round(3)`,{
+        question:"How do the candidate values of k trade off compactness and separation?",
+        readingCue:"Look for an elbow in inertia and for silhouette values, but treat both as evidence rather than an automatic answer.",
+        concepts:unsupervisedConcepts(["k", "inertia", "silhouette", "choice_not_truth"])
+      }),
+      task("fit","Fit K-means","neutral runnable starting k",`# 5 · Fit a runnable starting K-means solution
+selected_k = min(3, max_k)  # Edit this after comparing the evidence if another k is more useful.
 kmeans = KMeans(n_clusters=selected_k, n_init=30, random_state=42).fit(Z)
 clusters = kmeans.labels_
-pd.DataFrame({"selected_k":[selected_k], "silhouette":[silhouette_score(Z, clusters, sample_size=sample_size, random_state=42)], "inertia":[kmeans.inertia_]}).round(3)`,"What does the selected solution look like?"),
+print(f"This walkthrough starts at k={selected_k} so it can run. Compare the elbow, silhouette, cluster sizes, and profiles, then edit selected_k if another solution is more useful.")
+pd.DataFrame({"selected_k":[selected_k], "silhouette":[silhouette_score(Z, clusters, sample_size=sample_size, random_state=42)], "inertia":[kmeans.inertia_]}).round(3)`,{
+        question:"What does this chosen grouping look like when I use a runnable starting k?",
+        readingCue:"Compare the starting k with the elbow, silhouette, cluster sizes, and profiles; edit selected_k when another solution answers your question better.",
+        concepts:unsupervisedConcepts(["centroid", "k", "choice_not_truth", "cluster_label"])
+      }),
       task("diagnose","Check the clusters","size + separation",`# 6 · Check whether the solution is balanced and separated
 from sklearn.metrics import silhouette_samples
 quality_index = np.random.default_rng(42).choice(len(Z), size=sample_size, replace=False)
 quality_Z = Z[quality_index]
 quality_clusters = clusters[quality_index]
 sample_silhouette = silhouette_samples(quality_Z, quality_clusters)
-cluster_quality = pd.DataFrame({"cluster":quality_clusters, "silhouette":sample_silhouette}).groupby("cluster").agg(rows=("silhouette","size"), mean_silhouette=("silhouette","mean"), weakest=("silhouette","min")).reset_index()
-cluster_quality.round(3)`,"Are the groups balanced and well separated?"),
+sample_quality = pd.DataFrame({"cluster":quality_clusters, "silhouette":sample_silhouette}).groupby("cluster").agg(mean_silhouette=("silhouette","mean"), weakest=("silhouette","min")).reset_index()
+full_cluster_sizes = pd.Series(clusters, name="cluster").value_counts().sort_index().rename("rows").reset_index()
+cluster_quality = full_cluster_sizes.merge(sample_quality, on="cluster", how="left")
+print("Very tiny clusters may represent a genuine rare pattern, outliers, or an overly fragmented solution; do not label them bad from size alone.")
+cluster_quality.round(3)`,{
+        question:"Are the groups compact, separated, and large enough to interpret?",
+        readingCue:"Look for mean and weakest silhouette values and the full-row count; a tiny cluster may be meaningful, rare, an outlier pattern, or fragmented.",
+        concepts:unsupervisedConcepts(["silhouette", "cluster_label"]),
+        modelTeaching:modelSpecificTeaching(config, "kmeans", value)
+      }),
       task("profile","Explain the clusters","original feature units",`# 7 · Translate cluster IDs back into the original features
 profile_df = ${frameName}[feature_names].copy()
 profile_df["cluster"] = clusters
-cluster_profile = profile_df.groupby("cluster")[feature_names].mean().round(2)
-cluster_profile.reset_index()`,"What does each group mean in the original features?"),
+cluster_means = profile_df.groupby("cluster")[feature_names].mean().round(2).reset_index()
+centroid_profile = pd.DataFrame(preprocessor.inverse_transform(kmeans.cluster_centers_), columns=feature_names).round(2)
+centroid_profile.insert(0, "cluster", np.arange(len(centroid_profile)))
+cluster_profile_view = pd.concat([
+    cluster_means.assign(view="rows in cluster"),
+    centroid_profile.assign(view="K-Means centroid")
+], ignore_index=True)
+cluster_profile_view = cluster_profile_view[["view", "cluster", *feature_names]]
+print("Cluster IDs are arbitrary. Compare the original-unit row means and centroids to describe what each group represents.")
+cluster_profile_view`,{
+        question:"How can I describe the groups in original feature units?",
+        readingCue:"Compare cluster means and centroids in original units; labels such as cluster 0 have no meaning by themselves.",
+        concepts:unsupervisedConcepts(["profile", "centroid", "cluster_label"])
+      }),
       task("visualise","Map the clusters","PCA view only",`# 8 · Project to two dimensions for a visual map (the model used all dimensions)
 from sklearn.decomposition import PCA
 projection = PCA(n_components=2).fit_transform(Z)
@@ -2373,29 +2546,53 @@ fig, ax = plt.subplots(figsize=(6.5, 4.5))
 sns.scatterplot(data=plot_df, x="PC1", y="PC2", hue="cluster", palette="tab10", alpha=.75, ax=ax)
 ax.set_title(f"K-means clusters (k={selected_k}) in a PCA view")
 fig.tight_layout()
-plot_df.head(12)`,"Can I see the discovered groups clearly in two dimensions?")
+print("The clustering used all selected prepared dimensions; this PCA chart is only a two-dimensional view, so apparent overlap here does not settle cluster quality.")
+plot_df.head(12)`,{
+        question:"What can this two-dimensional map show—and what can it hide?",
+        readingCue:"Use the PCA map as a visual summary; remember the fit used all dimensions and two-dimensional overlap does not settle cluster quality.",
+        concepts:unsupervisedConcepts(["pca_projection"])
+      })
     ];
   }
 
   function hierarchicalRoute(config, value) {
     const frameName = modelFrameName(config);
     return [
-      task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),"What structure am I trying to discover without a target?"),
-      task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),"What does my data look like?"),
+      task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),{
+        question:"Why is there no target used for fitting, and what hierarchy can I discover from the selected inputs?",
+        readingCue:"Check that the hierarchy is fitted from selected inputs only; the reference labels stay out of discovery.",
+        concepts:unsupervisedConcepts(["cluster", "no_target_score", "cluster_label", "choice_not_truth"])
+      }),
+      task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),{
+        question:"What similarities, ranges, or unusual rows can I see before building the hierarchy?",
+        readingCue:"Look for ranges, overlap, and unusual rows in the selected inputs; this is descriptive evidence, not a target score.",
+        concepts:unsupervisedConcepts(["cluster", "distance"])
+      }),
       task("prepare","Prepare the data","scaled numeric sample",clusterPreprocessing(config) + `
 # Hierarchical clustering is quadratic in memory, so every later step uses one reproducible sample.
 sample_size = min(500, len(Z))
 sample_index = np.random.default_rng(42).choice(len(Z), size=sample_size, replace=False)
 analysis_Z = Z[sample_index]
-analysis_rows = ${frameName}.iloc[sample_index].copy()`,"What needs to be cleaned or transformed before measuring distances?"),
+analysis_rows = ${frameName}.iloc[sample_index].copy()
+print(f"This hierarchy uses a reproducible sample of {sample_size} rows out of {len(Z)} because pairwise comparisons become expensive as the dataset grows.")
+pd.DataFrame({"dataset_rows":[len(Z)], "sampled_rows":[sample_size]})`,{
+        question:"Why are the inputs scaled, and why does this route use a reproducible sample?",
+        readingCue:"Look for comparable feature scales and the displayed sample size; the hierarchy is fitted on that sample, not every row.",
+        concepts:unsupervisedConcepts(["distance", "scaling", "sampling"])
+      }),
       task("dendrogram","Build the dendrogram","Ward linkage sample",`# 4 · Inspect the hierarchy before choosing a cut
 from scipy.cluster.hierarchy import linkage, dendrogram
 linkage_matrix = linkage(analysis_Z, method="ward")
 fig, ax = plt.subplots(figsize=(10, 4))
 dendrogram(linkage_matrix, truncate_mode="level", p=5, no_labels=True, color_threshold=None, ax=ax)
-ax.set(title="Ward-linkage dendrogram", xlabel="merged groups", ylabel="distance")
+ax.set(title="Ward-linkage dendrogram", xlabel="merged groups", ylabel="Ward merge height")
 fig.tight_layout()
-pd.DataFrame(linkage_matrix[-10:], columns=["left_group","right_group","merge_distance","members"]).round(2)`,"What patterns of merging appear before I choose a cut?"),
+print("Leaves represent observations or small groups; joins are merges; Ward merge height is the dissimilarity when groups combine. A large vertical gap suggests a larger jump in dissimilarity.")
+pd.DataFrame(linkage_matrix[-10:], columns=["left_group","right_group","merge_height","members"]).round(2)`,{
+        question:"What do the leaves, joins, and merge heights tell me before I choose a cut?",
+        readingCue:"Look for joins that happen at noticeably different heights and imagine where a horizontal cut might leave separate branches.",
+        concepts:unsupervisedConcepts(["agglomerative", "ward", "leaves", "join", "merge_height", "horizontal_cut"])
+      }),
       task("compare","Compare possible cuts","exploratory silhouette",`# 5 · Compare cuts on the same sample; this is exploratory, not a test score
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
@@ -2410,27 +2607,48 @@ fig, ax = plt.subplots(figsize=(6, 3.4))
 sns.lineplot(data=candidate_scores, x="clusters", y="silhouette", marker="o", color="#7651a6", ax=ax)
 ax.set_title("Choose a defensible dendrogram cut")
 fig.tight_layout()
-candidate_scores.round(3)`,"Which cut looks most useful for describing the sample?"),
-      task("fit","Fit the hierarchy","suggested silhouette cut",`# 6 · Fit the selected hierarchy
-suggested_k = int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "clusters"])
-selected_k = suggested_k  # Edit this if another cut is more useful.
+silhouette_suggestion = int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "clusters"])
+print(f"Mechanical silhouette suggestion (not a final answer): {silhouette_suggestion} clusters")
+candidate_scores.round(3)`,{
+        question:"How do possible cuts compare using silhouette and cluster size?",
+        readingCue:"Use dendrogram gaps, silhouette, resulting cluster sizes, and profiles together; silhouette supports the choice but does not decide it.",
+        concepts:unsupervisedConcepts(["silhouette", "horizontal_cut", "choice_not_truth"])
+      }),
+      task("fit","Fit the hierarchy","neutral runnable starting cut",`# 6 · Fit a runnable starting hierarchy
+selected_k = min(3, max_k)  # Edit this after comparing the dendrogram and evidence if another cut is more useful.
 hierarchical = AgglomerativeClustering(n_clusters=selected_k, linkage="ward")
 clusters = hierarchical.fit_predict(analysis_Z)
-pd.Series(clusters).value_counts().sort_index().rename_axis("cluster").reset_index(name="rows")`,"What does the selected hierarchy produce?"),
+print(f"This walkthrough starts at {selected_k} clusters so it can run. A horizontal cut through the dendrogram represents this choice; edit selected_k if another cut answers your question better.")
+pd.Series(clusters).value_counts().sort_index().rename_axis("cluster").reset_index(name="rows")`,{
+        question:"What does this chosen hierarchy produce at a runnable starting cut?",
+        readingCue:"Compare the starting cut with the dendrogram, merge heights, silhouette, cluster sizes, and profiles; edit selected_k if another cut is more useful.",
+        concepts:unsupervisedConcepts(["agglomerative", "horizontal_cut", "choice_not_truth", "cluster_label"])
+      }),
       task("profile","Explain the groups","original feature units",`# 7 · Describe the discovered groups in original units
 profile_df = analysis_rows[feature_names].copy()
 profile_df["cluster"] = clusters
 cluster_profile = profile_df.groupby("cluster")[feature_names].mean().round(2)
-cluster_profile.reset_index()`,"What does each group mean in the original features?"),
+print("Cluster IDs are arbitrary. These original-unit means describe the sampled rows assigned to each group; the hierarchy was fitted on the displayed reproducible sample.")
+cluster_profile.reset_index()`,{
+        question:"How can I describe the groups in original feature units?",
+        readingCue:"Compare the sampled cluster means in original units; cluster IDs are labels, not meanings.",
+        concepts:unsupervisedConcepts(["profile", "cluster_label", "sampling"]),
+        modelTeaching:modelSpecificTeaching(config, "hierarchical", value)
+      }),
       task("visualise","Map the hierarchy","PCA teaching view",`# 8 · Visualise the sampled hierarchy in two dimensions
 from sklearn.decomposition import PCA
 projection = PCA(n_components=2).fit_transform(analysis_Z)
 plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "cluster":clusters.astype(str)})
 fig, ax = plt.subplots(figsize=(6.5, 4.5))
 sns.scatterplot(data=plot_df, x="PC1", y="PC2", hue="cluster", palette="tab10", alpha=.75, ax=ax)
-ax.set_title(f"Hierarchical groups (k={selected_k})")
+ax.set_title(f"Hierarchical groups (k={selected_k}) in a PCA projection")
 fig.tight_layout()
-plot_df.head(12)`,"Can I see the sampled groups clearly in two dimensions?")
+print("This PCA map is a two-dimensional projection of the sampled rows. Groups that overlap here may still differ in the higher-dimensional feature space used for the hierarchy.")
+plot_df.head(12)`,{
+        question:"What can this two-dimensional projection show—and what can it hide?",
+        readingCue:"Use the PCA map as a visual summary of the sampled groups, not as the complete hierarchy or a supervised score.",
+        concepts:unsupervisedConcepts(["pca_projection", "sampling"])
+      })
     ];
   }
 
@@ -3033,6 +3251,7 @@ explore_df.head(10)`;
   async function loadDataset(id) {
     const token = ++workspaceToken;
     currentDatasetId = id;
+    cachedPreviewPayload = null;
     populateScenarios(); populateModels(); staticSetup(); buildRoute(); clearNotebook("");
     setRuntimeReady(false, `Reading ${selectedConfig().name}…`);
     $("#preview").innerHTML = "<div style='padding:9px;color:#697084;font-size:.6rem'>Loading clean preview…</div>";
@@ -3041,7 +3260,8 @@ explore_df.head(10)`;
     try {
       csv = await getDatasetText(selectedConfig());
       if (token !== workspaceToken) return;
-      tablePayload($("#preview"), parsePreview(csv, selectedConfig().sep), true);
+      cachedPreviewPayload = parsePreview(csv, selectedConfig().sep);
+      renderDatasetPreview();
       $("#runtimeStatus").textContent = "Dataset ready · starting Python runtime…";
     } catch (error) {
       if (token !== workspaceToken) return;
@@ -3055,7 +3275,8 @@ explore_df.head(10)`;
       const response = await sendWorker("init", {csv, sep:selectedConfig().sep, prepare:selectedConfig().prepare});
       if (token !== workspaceToken) return;
       $("#rowMetric").textContent = response.profile.rows.toLocaleString();
-      tablePayload($("#preview"), response.profile.preview, true);
+      cachedPreviewPayload = response.profile.preview;
+      renderDatasetPreview();
       $("#runtimeStatus").textContent = `Pyodide 0.26.4 ready · ${response.profile.missing} missing values in selected data`;
       $("#runtimeDot").className = "runtime-dot ready";
       $("#outputStatus").textContent = "No cell run yet";
@@ -3227,7 +3448,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });

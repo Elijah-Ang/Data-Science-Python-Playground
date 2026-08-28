@@ -15,6 +15,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import traceback
@@ -463,10 +464,13 @@ def assert_route_structure(payload: dict) -> dict:
         "phase2b1_model_ids": [],
         "phase2b2_model_specific_routes": 0,
         "phase2b2_model_ids": [],
+        "unsupervised_routes_with_teaching": 0,
+        "unsupervised_model_ids": [],
     }
     phase2a_models_seen = set()
     phase2b1_models_seen = set()
     phase2b2_models_seen = set()
+    unsupervised_models_seen = set()
 
     required_concepts = {
         "frame": {"feature", "target", "X", "y", "row"},
@@ -508,9 +512,9 @@ def assert_route_structure(payload: dict) -> dict:
                     ) from error
                 if not cell["question"].strip() or not cell["caption"].strip():
                     raise AssertionError(f"Missing beginner explanation in {route}")
-                if task_type != "unsupervised" and not cell.get("readingCue", "").strip():
+                if (task_type != "unsupervised" or model_id in {"kmeans", "hierarchical"}) and not cell.get("readingCue", "").strip():
                     raise AssertionError(
-                        f"Missing Phase 1A reading cue for supervised step: "
+                        f"Missing reading cue for guided step: "
                         f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}"
                     )
 
@@ -864,12 +868,65 @@ def assert_route_structure(payload: dict) -> dict:
                 if any(token in unsupervised_code for token in ("y_train", "y_test", "X_test", "test_prediction")):
                     raise AssertionError(f"Unsupervised route contains supervised target/test fitting: {route}")
                 if model_id in {"kmeans", "hierarchical"}:
-                    if "suggested_k" not in unsupervised_code or "selected_k" not in unsupervised_code or "best_k" in unsupervised_code:
-                        raise AssertionError(f"Cluster route does not separate suggestion from selection: {route}")
+                    unsupervised_models_seen.add(model_id)
+                    teaching_checks["unsupervised_routes_with_teaching"] += 1
+                    required_unsupervised_concepts = {
+                        "kmeans": {
+                            "frame": {"cluster", "no_target_score", "cluster_label"},
+                            "prepare": {"distance", "scaling"},
+                            "compare": {"k", "inertia", "silhouette", "choice_not_truth"},
+                            "fit": {"centroid", "k", "choice_not_truth"},
+                            "diagnose": {"silhouette"},
+                            "profile": {"profile", "centroid"},
+                            "visualise": {"pca_projection"},
+                        },
+                        "hierarchical": {
+                            "frame": {"cluster", "no_target_score", "cluster_label"},
+                            "prepare": {"distance", "scaling", "sampling"},
+                            "dendrogram": {"agglomerative", "ward", "leaves", "join", "merge_height", "horizontal_cut"},
+                            "compare": {"silhouette", "horizontal_cut", "choice_not_truth"},
+                            "fit": {"agglomerative", "horizontal_cut", "choice_not_truth"},
+                            "profile": {"profile", "sampling"},
+                            "visualise": {"pca_projection", "sampling"},
+                        },
+                    }[model_id]
+                    for step_id, expected_keys in required_unsupervised_concepts.items():
+                        metadata = next(cell for cell in route["cells"] if cell["id"] == step_id)
+                        missing_keys = expected_keys - set(metadata.get("conceptKeys", []))
+                        if missing_keys:
+                            raise AssertionError(
+                                f"Missing Phase 3A concepts {sorted(missing_keys)} for "
+                                f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{step_id}"
+                            )
+                    interpretation_step_id = "diagnose" if model_id == "kmeans" else "profile"
+                    model_metadata = next(cell for cell in route["cells"] if cell["id"] == interpretation_step_id)
+                    model_teaching = model_metadata.get("modelTeaching")
+                    if not isinstance(model_teaching, dict) or model_teaching.get("modelId") != model_id:
+                        raise AssertionError(f"Unsupervised model-specific teaching metadata is missing: {route}")
+                    if any(not str(model_teaching.get(key, "")).strip() for key in ("learned", "see", "read", "watchOut")):
+                        raise AssertionError(f"Unsupervised model-specific teaching is incomplete: {route}")
+                    target = route["dataset"]["target"]
+                    target_literal = re.compile(rf"['\"]{re.escape(target)}['\"]")
+                    if target_literal.search(unsupervised_code):
+                        raise AssertionError(f"{model_id} discovery code references the hidden reference target: {route}")
+                    if "silhouette_suggestion" not in unsupervised_code or "not a final answer" not in unsupervised_code:
+                        raise AssertionError(f"{model_id} does not retain a clearly non-decisive silhouette suggestion: {route}")
+                    if "suggested_k" in unsupervised_code or "selected_k = suggested_k" in unsupervised_code or "best_k" in unsupervised_code:
+                        raise AssertionError(f"{model_id} still ties the selected grouping to silhouette argmax: {route}")
+                    if "selected_k = min(3, max_k)" not in unsupervised_code:
+                        raise AssertionError(f"{model_id} does not use a neutral runnable selected_k default: {route}")
                     if "sample_size = min(2000" not in unsupervised_code and "silhouette_size = min(2000" not in unsupervised_code:
                         raise AssertionError(f"Cluster silhouette is not bounded by a reproducible sample: {route}")
                     if "random_state=42" not in unsupervised_code:
                         raise AssertionError(f"Cluster sampling is not reproducible: {route}")
+                    if model_id == "kmeans":
+                        for token in ("inertia", "centroid_profile", "inverse_transform(kmeans.cluster_centers_)", "all selected prepared dimensions"):
+                            if token not in unsupervised_code:
+                                raise AssertionError(f"K-Means teaching evidence is incomplete: {token}")
+                    else:
+                        for token in ("sampled_rows", "linkage_matrix", "method=\"ward\"", "merge_height", "Ward merge height", "pairwise comparisons"):
+                            if token not in unsupervised_code:
+                                raise AssertionError(f"Hierarchical teaching evidence is incomplete: {token}")
                 if model_id == "pca":
                     if "full_pca = PCA().fit(Z)" not in unsupervised_code:
                         raise AssertionError(f"PCA does not fit one full model: {route}")
@@ -951,8 +1008,23 @@ def assert_route_structure(payload: dict) -> dict:
         raise AssertionError(
             f"Phase 2B-2 model-specific metadata count mismatch; expected {expected_phase2b2_routes}, "
             f"saw {teaching_checks['phase2b2_model_specific_routes']}"
-        )
+    )
     teaching_checks["phase2b2_model_ids"] = sorted(phase2b2_models_seen)
+    expected_unsupervised_routes = sum(
+        route["modelId"] in {"kmeans", "hierarchical"}
+        for routes in route_sets.values()
+        for route in routes
+    )
+    if unsupervised_models_seen != {"kmeans", "hierarchical"}:
+        raise AssertionError(
+            f"Phase 3A model-specific coverage is incomplete; saw {sorted(unsupervised_models_seen)}"
+        )
+    if teaching_checks["unsupervised_routes_with_teaching"] != expected_unsupervised_routes:
+        raise AssertionError(
+            f"Phase 3A model-specific metadata count mismatch; expected {expected_unsupervised_routes}, "
+            f"saw {teaching_checks['unsupervised_routes_with_teaching']}"
+        )
+    teaching_checks["unsupervised_model_ids"] = sorted(unsupervised_models_seen)
 
     boundary_fixtures = payload.get("phase2bFixtures", {})
     if set(boundary_fixtures) != {"svm_cls", "lda", "qda"}:
@@ -1687,6 +1759,82 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     }
 
 
+def run_unsupervised_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Check target-free clustering, neutral k choices, and aligned evidence."""
+
+    def run(dataset_id: str, scenario_id: str, model_id: str) -> tuple[dict, dict]:
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
+        code = "\n".join(cell["code"] for cell in route["cells"])
+        target = route["dataset"]["target"]
+        if re.search(rf"['\"]{re.escape(target)}['\"]", code):
+            raise AssertionError(f"{model_id} runtime route references its target column: {route}")
+        return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "visualise")
+
+    kmeans_route, kmeans = run("breast", "continuous5", "kmeans")
+    candidate_scores = kmeans["candidate_scores"]
+    if not np.isfinite(candidate_scores[["inertia", "silhouette"]].to_numpy(dtype=float)).all():
+        raise AssertionError("K-Means candidate evidence contains non-finite values.")
+    if not ((candidate_scores["silhouette"] >= -1).all() and (candidate_scores["silhouette"] <= 1).all()):
+        raise AssertionError("K-Means silhouette evidence is outside its valid range.")
+    expected_k = min(3, int(kmeans["max_k"]))
+    if int(kmeans["selected_k"]) != expected_k:
+        raise AssertionError("K-Means selected_k is not the neutral runnable default.")
+    if int(kmeans["selected_k"]) != len(np.unique(kmeans["clusters"])) or len(kmeans["clusters"]) != len(kmeans["Z"]):
+        raise AssertionError("K-Means labels do not represent exactly one cluster for every row.")
+    profile = kmeans["cluster_profile_view"]
+    if not set(profile["cluster"].astype(int)).issuperset(set(np.unique(kmeans["clusters"]).astype(int))):
+        raise AssertionError("K-Means cluster profiles are not aligned with fitted cluster IDs.")
+    if not np.allclose(
+        kmeans["centroid_profile"].drop(columns=["cluster"]).to_numpy(dtype=float),
+        kmeans["preprocessor"].inverse_transform(kmeans["kmeans"].cluster_centers_),
+        atol=0.01,
+    ):
+        raise AssertionError("K-Means centroid evidence is not in the fitted scaler's original units.")
+    if int(kmeans["silhouette_suggestion"]) != int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "k"]):
+        raise AssertionError("K-Means silhouette suggestion does not match its mechanical evidence.")
+
+    hierarchical_route, hierarchical = run("breast", "continuous5", "hierarchical")
+    first_sample = np.asarray(hierarchical["sample_index"])
+    if len(first_sample) != len(np.unique(first_sample)):
+        raise AssertionError("Hierarchical sample contains duplicate indices.")
+    if not np.array_equal(np.asarray(hierarchical["analysis_rows"].index), first_sample):
+        raise AssertionError("Hierarchical analysis rows are not aligned with sampled indices.")
+    if hierarchical["analysis_Z"].shape[0] != len(first_sample) or hierarchical["linkage_matrix"].shape != (len(first_sample) - 1, 4):
+        raise AssertionError("Hierarchical sample and linkage matrix shapes are inconsistent.")
+    if not np.isfinite(hierarchical["candidate_scores"]["silhouette"].to_numpy(dtype=float)).all():
+        raise AssertionError("Hierarchical silhouette evidence contains non-finite values.")
+    expected_hierarchical_k = min(3, int(hierarchical["max_k"]))
+    if int(hierarchical["selected_k"]) != expected_hierarchical_k:
+        raise AssertionError("Hierarchical selected_k is not the neutral runnable default.")
+    if int(hierarchical["selected_k"]) != len(np.unique(hierarchical["clusters"])) or len(hierarchical["clusters"]) != len(hierarchical["analysis_Z"]):
+        raise AssertionError("Hierarchical labels do not represent exactly one cluster for every sampled row.")
+    if not set(hierarchical["cluster_profile"].index.astype(int)).issuperset(set(np.unique(hierarchical["clusters"]).astype(int))):
+        raise AssertionError("Hierarchical cluster profiles are not aligned with sampled cluster IDs.")
+    if int(hierarchical["silhouette_suggestion"]) != int(hierarchical["candidate_scores"].loc[hierarchical["candidate_scores"]["silhouette"].idxmax(), "clusters"]):
+        raise AssertionError("Hierarchical silhouette suggestion does not match its mechanical evidence.")
+    _, hierarchical_repeat = run("breast", "continuous5", "hierarchical")
+    if not np.array_equal(first_sample, np.asarray(hierarchical_repeat["sample_index"])):
+        raise AssertionError("Hierarchical reproducible sampling changed between identical runs.")
+
+    wine_route, wine = run("wine", "continuous", "hierarchical")
+    if re.search(r"['\"]quality['\"]", "\n".join(cell["code"] for cell in wine_route["cells"])):
+        raise AssertionError("Wine hierarchical discovery code consumed the numeric reference target.")
+    if not len(wine["analysis_rows"]):
+        raise AssertionError("Wine hierarchical route did not retain its sampled analysis rows.")
+
+    return {
+        "kmeans_candidate_evidence": True,
+        "kmeans_neutral_selection": True,
+        "kmeans_labels_and_profiles": True,
+        "kmeans_original_unit_centroids": True,
+        "hierarchical_sample_alignment": True,
+        "hierarchical_neutral_selection": True,
+        "hierarchical_profiles": True,
+        "hierarchical_reproducible_sample": True,
+        "target_free_discovery": True,
+    }
+
+
 def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     """Check that Phase 2B-1 explanations match fitted classifiers and labels."""
 
@@ -1988,6 +2136,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     phase2a_model_runtime_test = run_phase2a_model_runtime_regression(payload, pd, np, plt, sns)
     phase2b1_model_runtime_test = run_phase2b1_model_runtime_regression(payload, pd, np, plt, sns)
     phase2b2_model_runtime_test = run_neural_network_runtime_regression(payload, pd, np, plt, sns)
+    unsupervised_runtime_test = run_unsupervised_runtime_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -2051,6 +2200,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "phase2a_model_runtime": phase2a_model_runtime_test,
         "phase2b1_model_runtime": phase2b1_model_runtime_test,
         "phase2b2_model_runtime": phase2b2_model_runtime_test,
+        "phase3a_unsupervised_runtime": unsupervised_runtime_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }

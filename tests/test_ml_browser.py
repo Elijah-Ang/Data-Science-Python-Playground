@@ -83,6 +83,29 @@ def assert_mlp_step8(page, model: str, tokens: tuple[str, ...]) -> None:
         raise AssertionError(f"{model} Step 8 opened the final test set unexpectedly.")
 
 
+def preview_headers(page) -> list[str]:
+    return page.locator("#preview table thead th").all_inner_texts()
+
+
+def assert_unsupervised_preview_hidden(page, target: str) -> None:
+    headers = preview_headers(page)
+    if target in headers:
+        raise AssertionError(f"Unsupervised Inspector preview exposed the reference target {target!r}: {headers}")
+    for selector in ("#problemTags", "#datasetDescription", "#datasetQuestion", "#sourceNote", "#routeDescription"):
+        if target.lower() in page.locator(selector).inner_text().lower():
+            raise AssertionError(f"Unsupervised discovery copy exposed the reference target {target!r} in {selector}.")
+
+
+def assert_unsupervised_guidance(page, article_index: int, question: str, cue: str) -> None:
+    article = page.locator("#notebookPanel article").nth(article_index)
+    question_node = article.locator("[data-teaching-role='question']")
+    cue_node = article.locator("[data-teaching-role='reading-cue']")
+    if question_node.count() != 1 or question.lower() not in question_node.inner_text().lower():
+        raise AssertionError(f"Unsupervised question was not visible beside step {article_index + 1}.")
+    if cue_node.count() != 1 or cue.lower() not in cue_node.inner_text().lower():
+        raise AssertionError(f"Unsupervised reading cue was not visible beside step {article_index + 1}.")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", required=True)
@@ -168,6 +191,88 @@ def main() -> int:
             raise AssertionError("The browser did not render the genuine exception as an error.")
         if error_item.locator(".console-output.warning").count():
             raise AssertionError("A warning emitted before an exception was rendered as a successful warning.")
+
+        select_route(page, "wine", "continuous", "multiple_linear", 9)
+        if "diagnosis" not in preview_headers(page):
+            if "quality" not in preview_headers(page):
+                raise AssertionError("Supervised Inspector preview did not show the reference target before clustering.")
+        page.select_option("#modelSelect", "kmeans")
+        wait_for_ready(page)
+        wait_for_route(page, 8)
+        assert_unsupervised_preview_hidden(page, "quality")
+        page.select_option("#modelSelect", "multiple_linear")
+        wait_for_ready(page)
+        wait_for_route(page, 9)
+        if "quality" not in preview_headers(page):
+            raise AssertionError("Switching back to a supervised model did not restore the target preview.")
+
+        select_route(page, "breast", "continuous5", "kmeans", 8)
+        assert_unsupervised_preview_hidden(page, "diagnosis")
+        run_steps(page, 8)
+        assert_unsupervised_guidance(page, 0, "what structure", "reference labels")
+        assert_unsupervised_guidance(page, 3, "candidate values of k", "elbow")
+        assert_unsupervised_guidance(page, 4, "runnable starting k", "edit selected_k")
+        kmeans_compare = page.locator("#outputList .output-item").nth(3)
+        if "Mechanical silhouette suggestion (not a final answer)" not in kmeans_compare.inner_text():
+            raise AssertionError("K-Means did not label silhouette argmax as a non-decisive suggestion.")
+        kmeans_fit = page.locator("#outputList .output-item").nth(4)
+        if "selected_k" not in kmeans_fit.inner_text() or "silhouette" not in kmeans_fit.inner_text():
+            raise AssertionError("K-Means selected solution evidence was not rendered.")
+        kmeans_diagnostic = page.locator("#outputList .output-item").nth(5)
+        kmeans_article = page.locator("#notebookPanel article").nth(5)
+        if kmeans_article.locator("[data-teaching-role='model-specific']").count() != 1 or not all(
+            token.lower() in kmeans_article.inner_text().lower()
+            for token in ("centroid", "PCA", "WHAT IT LEARNED")
+        ) or "Very tiny clusters" not in kmeans_diagnostic.inner_text():
+            raise AssertionError("K-Means model-specific interpretation was not rendered beside its evidence.")
+        kmeans_profile = page.locator("#outputList .output-item").nth(6)
+        if not all(token in kmeans_profile.inner_text() for token in ("view", "cluster", "radius_mean", "K-Means centroid")):
+            raise AssertionError("K-Means original-unit profile/centroid evidence was not rendered.")
+        kmeans_map = page.locator("#outputList .output-item").nth(7)
+        if "all selected prepared dimensions" not in kmeans_map.inner_text():
+            raise AssertionError("K-Means PCA projection warning was not rendered.")
+        if page.locator("#holdoutState").text_content().strip() == "opened once":
+            raise AssertionError("K-Means discovery opened the supervised holdout.")
+
+        select_route(page, "penguins", "continuous", "kmeans", 8)
+        assert_unsupervised_preview_hidden(page, "species")
+        run_steps(page, 8)
+        penguins_kmeans_text = page.locator("#outputList").inner_text()
+        if "inertia" not in penguins_kmeans_text or "silhouette" not in penguins_kmeans_text or "PCA" not in penguins_kmeans_text:
+            raise AssertionError("Penguins K-Means did not render the shared clustering evidence.")
+
+        select_route(page, "breast", "continuous5", "hierarchical", 8)
+        assert_unsupervised_preview_hidden(page, "diagnosis")
+        run_steps(page, 8)
+        assert_unsupervised_guidance(page, 2, "reproducible sample", "sample size")
+        assert_unsupervised_guidance(page, 3, "leaves, joins", "horizontal cut")
+        hierarchical_prepare = page.locator("#outputList .output-item").nth(2)
+        if not all(token in hierarchical_prepare.inner_text() for token in ("dataset_rows", "sampled_rows", "500")):
+            raise AssertionError("Hierarchical sample-size evidence was not rendered.")
+        hierarchical_dendrogram = page.locator("#outputList .output-item").nth(3)
+        if not all(token in hierarchical_dendrogram.inner_text() for token in ("Ward merge height", "merge_height", "Leaves represent")):
+            raise AssertionError("Hierarchical dendrogram evidence did not explain merge heights.")
+        hierarchical_compare = page.locator("#outputList .output-item").nth(4)
+        if "Mechanical silhouette suggestion (not a final answer)" not in hierarchical_compare.inner_text():
+            raise AssertionError("Hierarchical clustering still presented silhouette argmax as the final cut.")
+        hierarchical_fit = page.locator("#outputList .output-item").nth(5)
+        if "runnable starting cut" not in page.locator("#notebookPanel article").nth(5).inner_text().lower() or "selected_k" not in page.locator("#notebookPanel article").nth(5).inner_text():
+            raise AssertionError("Hierarchical neutral cut teaching was not rendered.")
+        hierarchical_profile = page.locator("#outputList .output-item").nth(6)
+        hierarchical_profile_article = page.locator("#notebookPanel article").nth(6)
+        if hierarchical_profile_article.locator("[data-teaching-role='model-specific']").count() != 1 or "WHAT IT LEARNED" not in hierarchical_profile_article.inner_text() or not all(token in hierarchical_profile.inner_text() for token in ("cluster", "radius_mean")):
+            raise AssertionError("Hierarchical original-unit profile was not rendered.")
+        hierarchical_map = page.locator("#outputList .output-item").nth(7)
+        if "two-dimensional projection" not in hierarchical_map.inner_text():
+            raise AssertionError("Hierarchical PCA projection limitation was not rendered.")
+        if page.locator("#holdoutState").text_content().strip() == "opened once":
+            raise AssertionError("Hierarchical discovery opened the supervised holdout.")
+
+        select_route(page, "wine", "continuous", "hierarchical", 8)
+        assert_unsupervised_preview_hidden(page, "quality")
+        run_steps(page, 8, timeout=180_000)
+        if "reference target" in page.locator("#problemTags").inner_text().lower() or "quality" in page.locator("#preview").inner_text().lower():
+            raise AssertionError("Wine hierarchical discovery exposed its numeric reference target.")
 
         select_route(page, "breast", "continuous5", "knn_cls", 9)
         run_steps(page, 9)
@@ -547,7 +652,8 @@ def main() -> int:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
     print(
         "Browser/Pyodide smoke test passed: Phase 1A evidence teaching, Phase 1B shared concepts, "
-        "Phase 2A/2B-1/2B-2 model-specific interpretations, neural-network classification/regression, "
+        "Phase 2A/2B-1/2B-2 model-specific interpretations, Phase 3A target isolation and clustering, "
+        "neural-network classification/regression, "
         "classification/regression/mixed/categorical/time-aware "
         "journeys, invalidation, indexed tables, Car One-R rules, fitted PCA route, and reset recovery."
     )

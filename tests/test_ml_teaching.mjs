@@ -318,6 +318,69 @@ if (conceptKeys(seoulConceptRoute, "baseline").has("shuffle") || conceptText(seo
 }
 if (!conceptText(seoulConceptRoute, "baseline").includes("training window grows")) throw new Error("TimeSeriesSplit mechanics are incomplete.");
 
+const previewPayload = {
+  columns:["radius_mean", "texture_mean", "diagnosis"],
+  rows:[[10.1, 12.2, "B"], [11.4, 15.8, "M"]]
+};
+const hiddenPreview = api.filterPreviewPayload(previewPayload, "diagnosis", true);
+if (hiddenPreview.columns.includes("diagnosis") || hiddenPreview.rows.some(row => row.length !== 2) || hiddenPreview.rows[0][0] !== 10.1) {
+  throw new Error("Unsupervised preview filtering did not remove only the reference target column.");
+}
+const restoredPreview = api.filterPreviewPayload(hiddenPreview, "diagnosis", false);
+if (restoredPreview !== hiddenPreview || previewPayload.columns.length !== 3) {
+  throw new Error("Preview filtering mutated cached data or failed its supervised no-filter path.");
+}
+
+const unsupervisedFixtures = {
+  kmeans:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  hierarchical:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]]
+};
+const unsupervisedConceptRequirements = {
+  kmeans:{
+    frame:["cluster", "no_target_score", "cluster_label"],
+    prepare:["distance", "scaling"],
+    compare:["k", "inertia", "silhouette", "choice_not_truth"],
+    fit:["centroid", "k", "choice_not_truth"],
+    diagnose:["silhouette"],
+    profile:["profile", "centroid"],
+    visualise:["pca_projection"]
+  },
+  hierarchical:{
+    frame:["cluster", "no_target_score", "cluster_label"],
+    prepare:["distance", "scaling", "sampling"],
+    dendrogram:["agglomerative", "ward", "leaves", "join", "merge_height", "horizontal_cut"],
+    compare:["silhouette", "horizontal_cut", "choice_not_truth"],
+    fit:["agglomerative", "horizontal_cut", "choice_not_truth"],
+    profile:["profile", "sampling"],
+    visualise:["pca_projection", "sampling"]
+  }
+};
+for (const [modelId, [config, scenario]] of Object.entries(unsupervisedFixtures)) {
+  const route = api.routeForSelection(config, scenario, modelId, 5);
+  for (const step of route) {
+    if (!step.question || !step.readingCue) throw new Error(`Missing Phase 3A question/cue for ${modelId}/${step.id}.`);
+    for (const key of unsupervisedConceptRequirements[modelId][step.id] || []) {
+      if (!step.conceptKeys.includes(key)) throw new Error(`Missing ${modelId} ${step.id} concept ${key}.`);
+    }
+  }
+  const interpretationStep = route.find(step => step.id === (modelId === "kmeans" ? "diagnose" : "profile"));
+  if (!interpretationStep.modelTeaching || interpretationStep.modelTeaching.modelId !== modelId) {
+    throw new Error(`Missing model-specific teaching for ${modelId}.`);
+  }
+  const routeCode = route.map(step => step.code).join("\n");
+  if (routeCode.includes(`"${config.target}"`) || routeCode.includes(`'${config.target}'`)) {
+    throw new Error(`${modelId} route code references the hidden reference target.`);
+  }
+  if (!routeCode.includes("silhouette_suggestion") || routeCode.includes("selected_k = suggested_k") || !routeCode.includes("selected_k = min(3, max_k)")) {
+    throw new Error(`${modelId} still makes silhouette argmax the automatic cluster-count decision.`);
+  }
+}
+const hierarchicalRouteForText = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "hierarchical", 5);
+const hierarchicalText = hierarchicalRouteForText.map(step => `${step.question} ${step.readingCue} ${step.concepts.map(item => item.text).join(" ")} ${Object.values(step.modelTeaching || {}).join(" ")}`).join(" ");
+for (const token of ["Ward", "dissimilar", "horizontal", "sample", "PCA"]) {
+  if (!hierarchicalText.toLowerCase().includes(token.toLowerCase())) throw new Error(`Hierarchical teaching is missing ${token}.`);
+}
+
 console.log(JSON.stringify({
   supervised_steps_checked:9,
   classification_summary:true,
@@ -335,5 +398,9 @@ console.log(JSON.stringify({
   phase2b1_model_specific:true,
   phase2b2_neural_networks:true,
   gaussian_nb_copy_precision:true,
+  unsupervised_phase3a:true,
+  target_isolation_preview:true,
+  kmeans_choice_teaching:true,
+  hierarchical_dendrogram_teaching:true,
   preferred_vocabulary:true
 }, null, 2));
