@@ -98,10 +98,50 @@ if (api.invalidateCellsFrom(route, customCells, null).changed || customCells[0].
   throw new Error("A custom cell unexpectedly invalidated the Suggested Route.");
 }
 
+const identity = api.practiceRouteIdentity("breast", "continuous5", "knn_cls", 5);
+if (identity !== "breast::continuous5::knn_cls::5") throw new Error("Practice route identity is not deterministic.");
+if (identity === api.practiceRouteIdentity("breast", "continuous5", "knn_cls", 10)) throw new Error("Practice state identity ignores fold count.");
+if (api.practiceStateKey(identity, "model") !== "breast::continuous5::knn_cls::5::model") {
+  throw new Error("Practice state key does not include the route identity and step.");
+}
+const practiceModel = api.routeForSelection(config, scenario, "knn_cls", 5).find(item => item.id === "model").practice;
+if (!practiceModel?.beforeRun || !practiceModel?.experiment) throw new Error("KNN practice metadata is incomplete.");
+if (api.normalizePracticeAnswer("less", practiceModel.beforeRun) !== "less" || api.normalizePracticeAnswer("not-a-choice", practiceModel.beforeRun) !== null) {
+  throw new Error("Practice answer normalization accepted an invalid choice.");
+}
+const mutation = api.applyPracticeMutation(
+  api.routeForSelection(config, scenario, "knn_cls", 5).find(item => item.id === "model").code,
+  practiceModel.experiment
+);
+if (!mutation.changed || !mutation.code.includes("n_neighbors=9")) throw new Error("The KNN safe experiment did not produce its intended one-variable edit.");
+if (api.applyPracticeMutation("model = KNeighborsClassifier()\nmodel = KNeighborsClassifier()", practiceModel.experiment).changed) {
+  throw new Error("The safe experiment applied a non-unique edit.");
+}
+const experimentFixtures = [
+  [api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "svm_cls", "model"],
+  [api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "classification_tree", "model"],
+  [api.DATASETS.wine, api.DATASETS.wine.scenarios[1], "mlp_reg", "tune"],
+  [api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "kmeans", "fit"],
+  [api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "hierarchical", "fit"],
+  [api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "pca", "select"]
+];
+for (const [fixtureConfig, fixtureScenario, modelId, taskId] of experimentFixtures) {
+  const route = api.routeForSelection(fixtureConfig, fixtureScenario, modelId, 5);
+  const task = route.find(item => item.id === taskId);
+  const experiment = api.safeExperimentForTask(fixtureConfig, fixtureScenario, modelId, taskId);
+  const result = api.applyPracticeMutation(task.code, experiment);
+  if (!result.changed) throw new Error(`Safe ${modelId}/${taskId} experiment does not match its route cell.`);
+}
+if (api.practicePrediction("prediction", "Question", [{value:"yes", label:"Yes"}]).options.filter(option => option.value === "not_sure").length !== 1) {
+  throw new Error("Practice predictions did not provide exactly one Not sure option.");
+}
+
 console.log(JSON.stringify({
   edited_step:"prepare",
   invalidated_downstream:route.slice(3).map(item => item.id),
   rerun_starts_at:route[api.firstIncompleteRouteIndex(route, editedCells)].id,
   deletion_checked:true,
-  custom_cell_unrestricted:true
+  custom_cell_unrestricted:true,
+  practice_identity:true,
+  safe_experiment:true
 }, null, 2));

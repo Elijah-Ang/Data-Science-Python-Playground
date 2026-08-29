@@ -50,6 +50,69 @@ def run_steps(page, count: int, start: int = 0, timeout: int = 120_000) -> None:
             raise AssertionError(f"Route step {index + 1} produced a Python error.")
 
 
+def set_practice_mode(page) -> None:
+    page.get_by_role("button", name="Practice", exact=True).click()
+    page.wait_for_function(
+        "() => document.querySelector('#practiceModeButton')?.getAttribute('aria-pressed') === 'true'",
+        timeout=10_000,
+    )
+
+
+def set_guided_mode(page) -> None:
+    page.get_by_role("button", name="Guided", exact=True).click()
+    page.wait_for_function(
+        "() => document.querySelector('#guidedModeButton')?.getAttribute('aria-pressed') === 'true'",
+        timeout=10_000,
+    )
+
+
+def commit_practice_choice(page, task_id: str, value: str, role: str = "before-run") -> None:
+    panel = page.locator(
+        f"[data-practice-role='{role}'][data-practice-task='{task_id}']"
+    )
+    if panel.count() != 1:
+        raise AssertionError(f"Practice {role} panel is missing for {task_id}.")
+    panel.locator(f"input[value='{value}']").check()
+    button_name = "Commit prediction" if role == "before-run" else "Commit decision"
+    panel.get_by_role("button", name=button_name).click()
+
+
+def run_practice_step(
+    page,
+    index: int,
+    prediction: str | None = None,
+    timeout: int = 120_000,
+) -> None:
+    button = page.locator("#routeStrip .route-card").nth(index)
+    button.wait_for(state="visible", timeout=15_000)
+    if button.is_disabled():
+        raise AssertionError(f"Practice route step {index + 1} was disabled unexpectedly.")
+    button.click()
+    article = page.locator("#notebookPanel article").nth(index)
+    article.wait_for(state="visible", timeout=15_000)
+    panel = article.locator("[data-practice-role='before-run']")
+    if panel.count() == 1:
+        choice = prediction if prediction is not None else "not_sure"
+        panel.locator(f"input[value='{choice}']").check()
+        panel.get_by_role("button", name="Commit prediction").click()
+    article = page.locator("#notebookPanel article").nth(index)
+    article.locator("button.run").click()
+    wait_for_cell(page, index, timeout=timeout)
+
+
+def commit_first_practice_choice(page, task_id: str, role: str = "before-run") -> str:
+    panel = page.locator(
+        f"[data-practice-role='{role}'][data-practice-task='{task_id}']"
+    )
+    if panel.count() != 1:
+        raise AssertionError(f"Practice {role} panel is missing for {task_id}.")
+    choice = panel.locator("input").first.get_attribute("value")
+    if not choice:
+        raise AssertionError(f"Practice {role} panel has no choices for {task_id}.")
+    commit_practice_choice(page, task_id, choice, role)
+    return choice
+
+
 def select_route(page, dataset: str, scenario: str, model: str, expected_steps: int) -> None:
     page.select_option("#datasetSelect", dataset)
     wait_for_ready(page)
@@ -127,6 +190,34 @@ def main() -> int:
 
         if page.locator("#holdoutState").text_content().strip() != "sealed":
             raise AssertionError("The supervised route did not start with a sealed test set.")
+
+        # Phase 4A mode/reveal regression: Guided keeps the trusted walkthrough,
+        # while Practice requires deliberate step-by-step work and hides exact
+        # reference code until the learner asks for it.
+        if page.locator("#guidedModeButton").get_attribute("aria-pressed") != "true":
+            raise AssertionError("The ML Playground did not start in Guided mode.")
+        if page.locator("#runAllButton").is_disabled():
+            raise AssertionError("Run Complete was unavailable in Guided mode.")
+        page.locator("#guideButton").click()
+        page.locator("#guideWindow").wait_for(state="visible", timeout=10_000)
+        if page.locator("#guideBody .workflow-code").count() == 0:
+            raise AssertionError("Guided Workflow Reference did not show exact route code.")
+        page.locator("#guideClose").click()
+        set_practice_mode(page)
+        if not page.locator("#runAllButton").is_disabled():
+            raise AssertionError("Run Complete remained available in Practice mode.")
+        page.locator("#guideButton").click()
+        page.locator("#guideWindow").wait_for(state="visible", timeout=10_000)
+        if page.locator("#guideBody .workflow-code").count() != 0:
+            raise AssertionError("Practice Workflow Reference exposed exact code before reveal.")
+        page.locator("#guideBody .workflow-reveal-button").first.click()
+        if page.locator("#guideBody .workflow-code").count() != 1 or "reference solution" not in page.locator("#guideBody").inner_text().lower():
+            raise AssertionError("Practice Workflow Reference did not reveal a labelled solution on demand.")
+        page.locator("#guideClose").click()
+        set_guided_mode(page)
+        if page.locator("#runAllButton").is_disabled():
+            raise AssertionError("Switching back to Guided mode did not restore Run Complete.")
+
         run_steps(page, 3)
         supervised_output_count = page.locator("#outputList .output-item[data-status='ok']").count()
         if supervised_output_count < 3:
@@ -649,6 +740,116 @@ def main() -> int:
         select_route(page, "wine", "continuous", "multiple_linear", 9)
         if "quality" not in preview_headers(page):
             raise AssertionError("Supervised preview did not restore the reference target after PCA.")
+        select_route(page, "breast", "continuous5", "logistic", 9)
+
+        # Phase 4A Practice-mode regressions: selected prompts are attached to
+        # evidence, decisions are required before advancing, and one safe edit
+        # uses the normal stale-state path without running automatically.
+        select_route(page, "breast", "continuous5", "knn_cls", 9)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1, "yes")
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "larger_scale")
+        run_practice_step(page, 4, "less")
+        knn_practice_output = page.locator("#outputList .output-item").nth(4)
+        if knn_practice_output.locator("[data-practice-role='prediction-feedback']").count() != 1:
+            raise AssertionError("KNN Practice did not compare the committed prediction with evidence.")
+        experiment = knn_practice_output.locator("[data-practice-role='experiment']")
+        if experiment.count() != 1 or "KNeighborsClassifier" not in experiment.inner_text():
+            raise AssertionError("KNN Practice did not offer its safe one-variable experiment.")
+        experiment.get_by_role("button", name="Apply experiment").click()
+        if page.locator("#notebookPanel article").nth(4).get_attribute("data-status") != "stale":
+            raise AssertionError("Applying the KNN experiment did not stale the edited cell.")
+        if not page.locator("#routeStrip .route-card").nth(5).is_disabled():
+            raise AssertionError("Applying the KNN experiment left downstream evidence runnable.")
+        if "n_neighbors=9" not in page.locator("#notebookPanel article").nth(4).locator("textarea").input_value():
+            raise AssertionError("The KNN safe experiment did not edit the existing learner cell.")
+        run_practice_step(page, 4, "less")
+        knn_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if "What changed in the evidence" not in knn_rerun_experiment.inner_text():
+            raise AssertionError("KNN Practice did not ask the learner to reflect after the experiment reran.")
+        knn_rerun_experiment.get_by_role("button", name="Mark comparison complete").click()
+        if "Experiment comparison recorded" not in page.locator("#outputList .output-item").nth(4).inner_text():
+            raise AssertionError("KNN Practice did not record the experiment comparison.")
+
+        select_route(page, "breast", "continuous5", "kmeans", 8)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1)
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "no")
+        commit_practice_choice(page, "compare", "2", "decision")
+        run_practice_step(page, 4)
+        kmeans_practice_compare = page.locator("#outputList .output-item").nth(3)
+        if "defensible candidate" not in kmeans_practice_compare.inner_text() or "no single candidate is graded as truth" not in kmeans_practice_compare.inner_text().lower():
+            raise AssertionError("K-Means Practice did not treat candidate k as an evidence-based decision.")
+        if "wrong" in kmeans_practice_compare.inner_text().lower() or page.locator("#holdoutState").text_content().strip() == "opened once":
+            raise AssertionError("K-Means Practice used punitive feedback or opened the supervised holdout.")
+        assert_unsupervised_preview_hidden(page, "diagnosis")
+
+        select_route(page, "breast", "continuous5", "pca", 7)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1)
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "some")
+        pca_practice_variance = page.locator("#outputList .output-item").nth(3)
+        if "COMPARE YOUR PREDICTION" not in pca_practice_variance.inner_text() or "components retain" not in pca_practice_variance.inner_text():
+            raise AssertionError("PCA Practice did not compare the variance prediction with fitted evidence.")
+        commit_practice_choice(page, "variance", "variance", "decision")
+        run_practice_step(page, 4)
+        run_practice_step(page, 5, "absolute")
+        run_practice_step(page, 6, "no")
+        pca_practice_feedback = page.locator("#outputList [data-practice-role]").all_inner_texts()
+        if any("diagnosis" in text.lower() for text in pca_practice_feedback):
+            raise AssertionError("PCA Practice used the hidden reference label in its feedback.")
+        if page.locator("#holdoutState").text_content().strip() == "opened once":
+            raise AssertionError("PCA Practice opened the supervised holdout.")
+
+        select_route(page, "breast", "continuous5", "logistic", 9)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1, "yes")
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "yes")
+        run_practice_step(page, 4, "no")
+        run_practice_step(page, 5, "similar")
+        run_practice_step(page, 6)
+        commit_practice_choice(page, "tune", "use_tuned", "decision")
+        run_practice_step(page, 7, "no")
+        if page.locator("#holdoutState").text_content().strip() != "sealed":
+            raise AssertionError("Practice opened the final test before the final route step.")
+        run_practice_step(page, 8, "inside")
+        final_practice = page.locator("#outputList .output-item").nth(8)
+        if not all(label in final_practice.inner_text() for label in ("Mean CV", "Final test", "COMPARE YOUR PREDICTION")):
+            raise AssertionError("Practice final-test feedback did not connect the result to prior CV evidence.")
+        if page.locator("#holdoutState").text_content().strip() != "opened once":
+            raise AssertionError("Practice final test did not preserve the one-use holdout behavior.")
+
+        select_route(page, "wine", "continuous", "mlp_reg", 9)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1, "no")
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "smoother")
+        run_practice_step(page, 4, "no")
+        mlp_practice_model = page.locator("#outputList .output-item").nth(4)
+        mlp_practice_article = page.locator("#notebookPanel article").nth(4)
+        if "COMPARE YOUR PREDICTION" not in mlp_practice_model.inner_text() or "larger or deeper" not in mlp_practice_article.inner_text().lower():
+            raise AssertionError("MLP Practice did not attach a model-capacity prediction to the build evidence.")
+        set_guided_mode(page)
+
+        select_route(page, "seoul", "continuous", "mlp_reg", 9)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1, "yes")
+        seoul_practice_split = page.locator("#notebookPanel article").nth(1)
+        if "later rows validate later" not in seoul_practice_split.inner_text().lower() or "validation" not in seoul_practice_split.inner_text().lower():
+            raise AssertionError("Seoul Practice did not present the chronological validation prompt.")
+        if any("random" in text.lower() for text in page.locator("[data-practice-role='experiment']").all_inner_texts()):
+            raise AssertionError("Seoul Practice offered an experiment that could randomize chronology.")
+        set_guided_mode(page)
         select_route(page, "breast", "continuous5", "logistic", 9)
 
         page.locator("#addCellButton").click()
