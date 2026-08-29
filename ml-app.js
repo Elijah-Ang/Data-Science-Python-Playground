@@ -923,18 +923,17 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
 
   function renderPracticeModeControls() {
     const guided = $("#guidedModeButton"), practice = $("#practiceModeButton"), note = $("#practiceModeNote"), runAllButton = $("#runAllButton");
-    if (!guided || !practice || !note || !runAllButton) return;
     const isPractice = playgroundMode === "practice";
     document.body.dataset.learningMode = playgroundMode;
-    guided.setAttribute("aria-pressed", String(!isPractice));
-    practice.setAttribute("aria-pressed", String(isPractice));
-    runAllButton.disabled = !runtimeReady || isPractice;
-    runAllButton.setAttribute("aria-describedby", isPractice ? "practiceModeNote" : "");
-    runAllButton.textContent = isPractice
-      ? "Run complete unavailable in Practice"
-      : selectedModel()?.task === "unsupervised"
-        ? "▶ Run complete walkthrough"
-        : `▶ Run complete ${$("#foldSelect").value}-fold walkthrough`;
+    if (guided) guided.setAttribute("aria-pressed", String(!isPractice));
+    if (practice) practice.setAttribute("aria-pressed", String(isPractice));
+    if (runAllButton) {
+      runAllButton.disabled = !runtimeReady || isPractice;
+      if (isPractice && note) runAllButton.setAttribute("aria-describedby", "practiceModeNote");
+      else runAllButton.removeAttribute("aria-describedby");
+      runAllButton.textContent = isPractice ? "Run all unavailable in Practice" : "▶ Run all";
+    }
+    if (!note) return;
     note.hidden = !isPractice;
     if (isPractice) {
       const counts = practiceCounts();
@@ -1130,7 +1129,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     container.replaceChildren();
     const wrap = document.createElement("div");
     wrap.className = compact ? "" : "result-table-wrap";
-    const table = document.createElement("table"); table.className = compact ? "" : "result-table";
+    const table = document.createElement("table"); table.className = compact ? "mini-table" : "result-table";
     const head = document.createElement("thead"), headRow = document.createElement("tr");
     payload.columns.forEach(column => { const th = document.createElement("th"); th.textContent = column; headRow.append(th); });
     head.append(headRow);
@@ -4632,14 +4631,11 @@ explore_df.head(10)`;
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
   $("#modelSelect").addEventListener("change", () => { void rebuildSetup(); });
   $("#foldSelect").addEventListener("change", () => { void rebuildSetup(); });
-  $("#exploreButton").addEventListener("click", addExplorationCell);
   $("#addCellButton").addEventListener("click", () => addCell());
   $("#runAllButton").addEventListener("click", runAll);
   $("#resetButton").addEventListener("click", () => { void resetNotebook(); });
   $("#downloadChartButton").addEventListener("click", downloadChart);
   $("#themeButton").addEventListener("click", toggleTheme);
-  $("#guidedModeButton").addEventListener("click", () => setPlaygroundMode("guided"));
-  $("#practiceModeButton").addEventListener("click", () => setPlaygroundMode("practice"));
   $("#guideButton").addEventListener("click", openWorkflow);
   $("#guideClose").addEventListener("click", closeWorkflow);
   $("#guideDragHandle").addEventListener("pointerdown", startGuideDrag);
