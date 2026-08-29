@@ -129,8 +129,10 @@
     @media(max-width:560px){.inspector{width:auto}.inspector-body{display:block;overflow:visible}.inspector-preview-section{margin-top:10px}.feature-list{max-height:150px;overflow:auto}.lab{padding-inline:10px}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
   </style>
+  <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
+  <link rel="stylesheet" href="playground-shared.css?v=20260830-01">
 </head>
-<body data-theme="light" data-dataset="breast">
+<body data-playground="ml" data-theme="light" data-dataset="breast">
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -171,8 +173,7 @@
       <h2 class="sr-only" id="labTitle">Machine learning notebook</h2>
       <div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">A guided route from choosing the question to the final test. Run each step in order; every block is editable.</span></div></div>
       <div class="route-strip" id="routeStrip" aria-label="Suggested machine-learning route"></div>
-      <div class="notebook-bar"><h3>Notebook</h3><div class="notebook-actions"><div class="learning-mode" role="group" aria-label="Learning mode"><span class="learning-mode-label">MODE</span><button class="learning-mode-button" id="guidedModeButton" type="button" aria-pressed="true">Guided</button><button class="learning-mode-button" id="practiceModeButton" type="button" aria-pressed="false">Practice</button></div><button class="toolbar-button" id="exploreButton" type="button">＋ Explore with pandas / plots</button><button class="toolbar-button" id="addCellButton" type="button">＋ Add cell</button><button class="toolbar-button" id="runAllButton" type="button">▶ Run complete walkthrough</button><button class="toolbar-button" id="resetButton" type="button">↺ Reset</button></div></div>
-      <p class="practice-mode-note" id="practiceModeNote" hidden></p>
+      <div class="notebook-bar"><h3>Notebook</h3><div class="notebook-actions"><button class="toolbar-button" id="addCellButton" type="button">＋ Add cell</button><button class="toolbar-button" id="runAllButton" type="button">▶ Run all</button><button class="toolbar-button" id="resetButton" type="button">↺ Reset data</button></div></div>
       <div class="notebook-layout">
         <section class="notebook-panel" id="notebookPanel" aria-label="Editable Python notebook"></section>
         <aside class="output-panel" aria-labelledby="outputTitle">

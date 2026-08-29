@@ -673,8 +673,10 @@
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
   </style>
+  <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
+  <link rel="stylesheet" href="playground-shared.css?v=20260830-01">
 </head>
-  <body data-theme="light" data-dataset="seoul">
+  <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
