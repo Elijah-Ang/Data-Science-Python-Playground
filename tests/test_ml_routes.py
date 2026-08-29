@@ -553,6 +553,20 @@ def assert_route_structure(payload: dict) -> dict:
                     values = [option.get("value") for option in interaction["options"]]
                     if "not_sure" not in values or len(values) != len(set(values)):
                         raise AssertionError(f"Practice {interaction_key} lacks a unique Not sure option: {route}/{step_id}")
+                experiment = practice.get("experiment")
+                if experiment:
+                    for key in ("id", "title", "instruction", "find", "replace", "change", "targetTaskId", "evidenceTaskId"):
+                        if not str(experiment.get(key, "")).strip():
+                            raise AssertionError(f"Practice experiment is missing {key}: {route}/{step_id}")
+                    route_positions = {cell["id"]: index for index, cell in enumerate(route["cells"])}
+                    target_task = experiment["targetTaskId"]
+                    evidence_task = experiment["evidenceTaskId"]
+                    if target_task not in route_positions or evidence_task not in route_positions:
+                        raise AssertionError(f"Practice experiment points outside its route: {route}/{step_id}")
+                    if route_positions[evidence_task] < route_positions[target_task]:
+                        raise AssertionError(f"Practice experiment asks for evidence before its mutation can run: {route}/{step_id}")
+                    if experiment["find"] not in route["cells"][route_positions[target_task]]["code"]:
+                        raise AssertionError(f"Practice experiment does not match its target cell: {route}/{step_id}")
 
             if task_type != "unsupervised":
                 teaching_checks["supervised_routes_with_step_guidance"] += 1
@@ -992,9 +1006,13 @@ def assert_route_structure(payload: dict) -> dict:
                         raise AssertionError(f"PCA does not fit one full model: {route}")
                     if "explained_variance_ratio_" not in unsupervised_code or "cumulative_explained_variance" not in unsupervised_code:
                         raise AssertionError(f"PCA variance terminology/evidence is incomplete: {route}")
-                    if "components_for_90pct" not in unsupervised_code or "90% is a chosen rule of thumb" not in unsupervised_code:
-                        raise AssertionError(f"PCA 90% selection is not taught as a chosen criterion: {route}")
-                    if "Z_reduced = full_pca.transform(Z)[:, :components_for_90pct]" not in unsupervised_code:
+                    if "variance_target = 0.90" not in unsupervised_code or "components_for_target" not in unsupervised_code or "variance_retained" not in unsupervised_code:
+                        raise AssertionError(f"PCA selection does not use one active variance target: {route}")
+                    if "components_for_90pct" in unsupervised_code or "variance_retained_at_90pct" in unsupervised_code:
+                        raise AssertionError(f"PCA still uses fixed 90%-specific variable names: {route}")
+                    if "The {variance_target:.0%} target is a chosen rule of thumb" not in unsupervised_code:
+                        raise AssertionError(f"PCA active target is not taught as a chosen criterion: {route}")
+                    if "Z_reduced = full_pca.transform(Z)[:, :components_for_target]" not in unsupervised_code:
                         raise AssertionError(f"PCA does not derive the reduced representation from full_pca: {route}")
                     if "\npca = PCA(" in unsupervised_code:
                         raise AssertionError(f"PCA refits a second selected model: {route}")
@@ -1512,6 +1530,27 @@ def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at
     raise AssertionError(f"Route did not contain requested teaching runtime cell {stop_at!r}.")
 
 
+def _execute_route_to_cell_with_stdout(payload: dict, route: dict, pd, np, plt, sns, stop_at: str) -> tuple[dict, str]:
+    namespace = {
+        "pd": pd,
+        "np": np,
+        "plt": plt,
+        "sns": sns,
+        "__builtins__": __builtins__,
+    }
+    dataset = route["dataset"]
+    namespace["df"] = pd.read_csv(ROOT / dataset["file"], sep=dataset["sep"])
+    exec(payload["oneRHelperSource"], namespace, namespace)
+    captured = io.StringIO()
+    for cell in route["cells"]:
+        with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(io.StringIO()):
+            exec(cell["code"], namespace, namespace)
+        plt.close("all")
+        if cell["id"] == stop_at:
+            return namespace, captured.getvalue()
+    raise AssertionError(f"Route did not contain requested teaching runtime cell {stop_at!r}.")
+
+
 def _same_value(left, right, np) -> bool:
     try:
         return bool(np.asarray(left == right).all())
@@ -1973,10 +2012,11 @@ def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
         variance_table["cumulative_explained_variance"].to_numpy(dtype=float), cumulative
     ):
         raise AssertionError("PCA variance table does not match the fitted estimator.")
-    expected_components = int(np.flatnonzero(cumulative >= 0.90)[0] + 1)
-    if int(namespace["components_for_90pct"]) != expected_components:
-        raise AssertionError("PCA 90% component selection did not choose the first qualifying count.")
-    if namespace["Z_reduced"].shape != (Z.shape[0], expected_components) or float(namespace["variance_retained_at_90pct"]) < 0.90:
+    variance_target = float(namespace["variance_target"])
+    expected_components = int(np.flatnonzero(cumulative >= variance_target)[0] + 1)
+    if not np.isclose(variance_target, 0.90) or int(namespace["components_for_target"]) != expected_components:
+        raise AssertionError("PCA component selection did not choose the first count qualifying for the active variance target.")
+    if namespace["Z_reduced"].shape != (Z.shape[0], expected_components) or float(namespace["variance_retained"]) < variance_target:
         raise AssertionError("PCA reduced representation does not retain the selected variance.")
 
     loadings = namespace["loadings"]
@@ -2041,6 +2081,48 @@ def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
         "post_fit_reference_labels": True,
         "large_feature_redundancy_summary": True,
         "no_target_based_pca_selection": True,
+    }
+
+
+def run_pca_practice_experiment_regression(payload: dict, pd, np, plt, sns) -> dict:
+    """Ensure the PCA practice mutation changes one active criterion everywhere it is used."""
+
+    route = _route_for_teaching_runtime(payload, "breast", "continuous5", "pca")
+    select_cell = next(cell for cell in route["cells"] if cell["id"] == "select")
+    experiment = select_cell["practice"]["experiment"]
+    if experiment["find"] != "variance_target = 0.90" or experiment["replace"] != "variance_target = 0.80":
+        raise AssertionError("PCA Practice experiment does not edit the active variance target.")
+    edited_cells = []
+    for cell in route["cells"]:
+        edited = dict(cell)
+        if cell["id"] == "select":
+            edited["code"] = cell["code"].replace(experiment["find"], experiment["replace"])
+        edited_cells.append(edited)
+    edited_route = dict(route)
+    edited_route["cells"] = edited_cells
+    namespace, output = _execute_route_to_cell_with_stdout(payload, edited_route, pd, np, plt, sns, "project")
+    cumulative = np.asarray(namespace["cumulative_explained_variance"], dtype=float)
+    expected_components = int(np.flatnonzero(cumulative >= 0.80)[0] + 1)
+    if not np.isclose(float(namespace["variance_target"]), 0.80):
+        raise AssertionError("PCA Practice mutation did not set variance_target to 0.80 at runtime.")
+    if int(namespace["components_for_target"]) != expected_components:
+        raise AssertionError("PCA Practice mutation did not select the first component count reaching 80%.")
+    if float(namespace["variance_retained"]) < 0.80 or namespace["Z_reduced"].shape[1] != expected_components:
+        raise AssertionError("PCA Practice mutation produced an incoherent reduced representation.")
+    if "80% target is a chosen rule of thumb" not in output or "80% criterion" not in output:
+        raise AssertionError("PCA Practice mutation did not update learner-facing criterion copy to 80%.")
+    if "90%" in output:
+        raise AssertionError("PCA Practice mutation left stale 90% criterion narration in the edited run.")
+
+    normal_namespace, normal_output = _execute_route_to_cell_with_stdout(payload, route, pd, np, plt, sns, "project")
+    if not np.isclose(float(normal_namespace["variance_target"]), 0.90) or "90% criterion" not in normal_output:
+        raise AssertionError("The unmodified Guided PCA route did not retain its 90% default and narration.")
+
+    return {
+        "edited_target": 0.80,
+        "edited_component_count": expected_components,
+        "edited_copy_consistent": True,
+        "guided_default": 0.90,
     }
 
 
@@ -2347,6 +2429,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     phase2b2_model_runtime_test = run_neural_network_runtime_regression(payload, pd, np, plt, sns)
     unsupervised_runtime_test = run_unsupervised_runtime_regression(payload, pd, np, plt, sns)
     pca_runtime_test = run_pca_runtime_regression(payload, pd, np, plt, sns)
+    pca_practice_experiment_test = run_pca_practice_experiment_regression(payload, pd, np, plt, sns)
 
     for folds, routes in payload["routes"].items():
         for route in choose_runtime_routes(routes, mode):
@@ -2412,6 +2495,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "phase2b2_model_runtime": phase2b2_model_runtime_test,
         "phase3a_unsupervised_runtime": unsupervised_runtime_test,
         "phase3b_pca_runtime": pca_runtime_test,
+        "phase4a1_pca_experiment": pca_practice_experiment_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
     }

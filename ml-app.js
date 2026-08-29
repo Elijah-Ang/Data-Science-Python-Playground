@@ -589,7 +589,11 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         change:"PolynomialFeatures(include_bias=False) → PolynomialFeatures(degree=3, include_bias=False)"
       }
     };
-    if (taskId === "model" && modelChanges[modelId]) return {...modelChanges[modelId], targetTaskId:"model"};
+    if (taskId === "model" && modelChanges[modelId]) return {
+      ...modelChanges[modelId],
+      targetTaskId:"model",
+      evidenceTaskId:"baseline"
+    };
     if (taskId === "tune" && ["mlp_cls", "mlp_reg"].includes(modelId)) {
       const parameterName = modelId === "mlp_reg" ? "model__regressor__hidden_layer_sizes" : "model__hidden_layer_sizes";
       const originalGrid = modelId === "mlp_reg" ? "'model__regressor__hidden_layer_sizes': [(24,), (32, 16)]" : "'model__hidden_layer_sizes': [(24,), (32, 16)]";
@@ -600,7 +604,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         find:originalGrid,
         replace:`'${parameterName}': [(24,)]`,
         change:"search both architectures → search the existing (24,) architecture",
-        targetTaskId:"tune"
+        targetTaskId:"tune",
+        evidenceTaskId:"tune"
       };
     }
     if (taskId === "fit" && modelId === "kmeans") {
@@ -611,7 +616,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         find:"selected_k = min(3, max_k)",
         replace:"selected_k = min(2, max_k)",
         change:"selected_k = min(3, max_k) → selected_k = min(2, max_k)",
-        targetTaskId:"fit"
+        targetTaskId:"fit",
+        evidenceTaskId:"profile"
       };
     }
     if (taskId === "fit" && modelId === "hierarchical") {
@@ -622,18 +628,20 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         find:"selected_k = min(3, max_k)",
         replace:"selected_k = min(2, max_k)",
         change:"selected_k = min(3, max_k) → selected_k = min(2, max_k)",
-        targetTaskId:"fit"
+        targetTaskId:"fit",
+        evidenceTaskId:"profile"
       };
     }
     if (taskId === "select" && modelId === "pca") {
       return {
         id:"pca-variance-criterion",
         title:"Try a different variance trade-off",
-        instruction:"Change the chosen 90% criterion to 80%, then rerun this step and compare the retained representation.",
-        find:">= .90",
-        replace:">= .80",
-        change:"cumulative variance >= .90 → cumulative variance >= .80",
-        targetTaskId:"select"
+        instruction:"Change variance_target from 0.90 to 0.80, then rerun this step and compare the retained representation.",
+        find:"variance_target = 0.90",
+        replace:"variance_target = 0.80",
+        change:"variance_target = 0.90 → variance_target = 0.80",
+        targetTaskId:"select",
+        evidenceTaskId:"select"
       };
     }
     return null;
@@ -862,7 +870,17 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
 
   function practiceStateFor(taskId) {
     const key = practiceStateKey(practiceSetupIdentity, taskId);
-    if (!practiceStates.has(key)) practiceStates.set(key, {prediction:null, decision:null, experimentAttempted:false, experimentApplied:false, reflection:false, referenceRevealed:false});
+    if (!practiceStates.has(key)) practiceStates.set(key, {
+      prediction:null,
+      decision:null,
+      experimentAttempted:false,
+      experimentApplied:false,
+      experimentBaseline:null,
+      experimentAfter:null,
+      experimentEvidenceReady:false,
+      reflection:false,
+      referenceRevealed:false
+    });
     return practiceStates.get(key);
   }
 
@@ -870,10 +888,24 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     practiceStates.clear();
   }
 
-  function clearPracticeStatesFrom(taskId) {
+  function clearPracticeStatesFrom(taskId, preserveTaskIds = []) {
     const start = routeTasks.findIndex(item => item.id === taskId);
     if (start < 0) return;
-    routeTasks.slice(start).forEach(item => practiceStates.delete(practiceStateKey(practiceSetupIdentity, item.id)));
+    const preserved = new Set(preserveTaskIds);
+    routeTasks.slice(start).forEach(item => {
+      if (!preserved.has(item.id)) practiceStates.delete(practiceStateKey(practiceSetupIdentity, item.id));
+    });
+  }
+
+  function clearLinkedPracticeExperimentStates(taskId, preserveTaskIds = []) {
+    const preserved = new Set(preserveTaskIds);
+    routeTasks.forEach(item => {
+      const experiment = item.practice?.experiment;
+      if (!experiment || preserved.has(item.id)) return;
+      if (experiment.targetTaskId === taskId || experiment.evidenceTaskId === taskId) {
+        practiceStates.delete(practiceStateKey(practiceSetupIdentity, item.id));
+      }
+    });
   }
 
   function practiceCounts() {
@@ -2901,8 +2933,8 @@ test_result.round(3)`;
       text:"A scree plot shows the variance explained by each component. Look for components whose added variance becomes relatively small; an elbow is not always obvious."
     },
     ninety_rule: {
-      label:"90% RULE OF THUMB",
-      text:"90% is a criterion chosen for this walkthrough, not a universal PCA law or an objectively correct component count."
+      label:"CHOSEN VARIANCE CRITERION",
+      text:"A variance-retention percentage is a criterion chosen for this walkthrough, not a universal PCA law or an objectively correct component count."
     },
     reduced_representation: {
       label:"REDUCED REPRESENTATION",
@@ -3212,28 +3244,27 @@ variance_table = pd.DataFrame({
 fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
 sns.lineplot(data=variance_table, x="component", y="explained_variance_ratio", marker="o", ax=axes[0])
 sns.lineplot(data=variance_table, x="component", y="cumulative_explained_variance", marker="o", color="#7651a6", ax=axes[1])
-axes[1].axhline(.90, color="#c75b20", linestyle="--", label="90% criterion")
 axes[0].set(title="Scree plot: variance explained by each component", ylabel="Variance explained")
 axes[1].set(title="Cumulative variance retained", ylabel="Cumulative variance")
 axes[0].yaxis.set_major_formatter(PercentFormatter(1.0))
 axes[1].yaxis.set_major_formatter(PercentFormatter(1.0))
-axes[1].legend()
 fig.tight_layout()
-print("Scree plot: variance explained by each component. Cumulative variance retained: see how the ratios add from the beginning. Explained variance is variance evidence, not prediction accuracy.")
+print("Scree plot: variance explained by each component. Cumulative variance retained: see how the ratios add from the beginning. A variance-retention target is chosen explicitly in the next step. Explained variance is variance evidence, not prediction accuracy.")
 variance_table.round(4)`,{
         question:"How much variation does each component represent, and how does cumulative variance grow?",
-        readingCue:"Look for components whose added variance becomes relatively small, and how many are needed for the chosen 90% criterion.",
+        readingCue:"Look for components whose added variance becomes relatively small; the next step makes the chosen variance-retention target explicit.",
         concepts:unsupervisedConcepts(["explained_variance", "cumulative_variance", "scree", "ninety_rule"]),
         practice:practiceForTask(config, value, "pca", "variance")
       }),
-      task("select","Select components","chosen 90% criterion",`# 5 · Select the smallest representation reaching the chosen 90% variance criterion
-components_for_90pct = int(np.flatnonzero(cumulative_explained_variance >= .90)[0] + 1)
-variance_retained_at_90pct = float(cumulative_explained_variance[components_for_90pct - 1])
-Z_reduced = full_pca.transform(Z)[:, :components_for_90pct]
-print(f"For this walkthrough we keep the first {components_for_90pct} components because they reach {variance_retained_at_90pct:.1%} cumulative variance. 90% is a chosen rule of thumb; another project could choose a different trade-off.")
-pd.DataFrame({"original_dimensions":[Z.shape[1]], "components_for_90pct":[components_for_90pct], "cumulative_variance_retained":[variance_retained_at_90pct]}).round(4)`,{
+      task("select","Select components","chosen variance criterion",`# 5 · Select the smallest representation reaching the chosen variance target
+variance_target = 0.90
+components_for_target = int(np.flatnonzero(cumulative_explained_variance >= variance_target)[0] + 1)
+variance_retained = float(cumulative_explained_variance[components_for_target - 1])
+Z_reduced = full_pca.transform(Z)[:, :components_for_target]
+print(f"For this walkthrough we keep the first {components_for_target} components because they reach {variance_retained:.1%} cumulative variance. The {variance_target:.0%} target is a chosen rule of thumb; another project could choose a different trade-off.")
+pd.DataFrame({"original_dimensions":[Z.shape[1]], "variance_target":[variance_target], "components_for_target":[components_for_target], "cumulative_variance_retained":[variance_retained]}).round(4)`,{
         question:"How many components should this walkthrough keep for its chosen variance-retention rule?",
-        readingCue:"Check the first component count where cumulative variance reaches at least 90%; this is a chosen trade-off, not a universal answer.",
+        readingCue:"Check the first component count where cumulative variance reaches the active target; it is a chosen trade-off, not a universal answer.",
         concepts:unsupervisedConcepts(["ninety_rule", "reduced_representation", "cumulative_variance"]),
         practice:practiceForTask(config, value, "pca", "select")
       }),
@@ -3266,7 +3297,7 @@ fig.colorbar(points, ax=ax, label=${py(config.target)})`}
 ax.set_xlabel(f"PC1 ({pc1_variance:.1%} variance)")
 ax.set_ylabel(f"PC2 ({pc2_variance:.1%} variance)")
 ax.set_title("2D PCA projection (PC1 + PC2)")
-print(f"2D PCA projection: PC1 and PC2 show {two_dimensional_variance:.1%} of total prepared-data variance; the remaining variation lies in later components. This 2D teaching view is separate from the {components_for_90pct}-component reduced representation selected by the 90% criterion. Reference labels were added only after PCA was fitted for descriptive interpretation.")
+print(f"2D PCA projection: PC1 and PC2 show {two_dimensional_variance:.1%} of total prepared-data variance; the remaining variation lies in later components. This 2D teaching view is separate from the {components_for_target}-component reduced representation selected by the {variance_target:.0%} criterion. Reference labels were added only after PCA was fitted for descriptive interpretation.")
 plot_df.head(12)`,{
         question:"Where do rows lie on the new axes, and what can a 2D view leave out?",
         readingCue:"Read scores as row coordinates, check the actual PC1/PC2 variance percentages, and remember labels were added only after fitting.",
@@ -3346,10 +3377,11 @@ plot_df.head(12)`,{
     });
   }
 
-  function invalidateRouteFrom(taskId, {renderNotebook = false, message = "Workflow changed — rerun from this step."} = {}) {
+  function invalidateRouteFrom(taskId, {renderNotebook = false, message = "Workflow changed — rerun from this step.", preservePracticeTaskIds = []} = {}) {
     const result = invalidateCellsFrom(routeTasks, cells, taskId);
     if (!result.changed) return false;
-    clearPracticeStatesFrom(taskId);
+    clearPracticeStatesFrom(taskId, preservePracticeTaskIds);
+    clearLinkedPracticeExperimentStates(taskId, preservePracticeTaskIds);
     workspaceToken += 1;
     if (renderNotebook) renderNotebookView();
     else {
@@ -3602,6 +3634,158 @@ explore_df.head(10)`;
     return normalizeTeachingNumber(table.rows[rowIndex]?.[column]);
   }
 
+  function practiceTableColumn(table, columnName) {
+    if (!Array.isArray(table?.columns) || !Array.isArray(table?.rows)) return [];
+    const column = table.columns.indexOf(columnName);
+    if (column < 0) return [];
+    return table.rows.map(row => row?.[column]);
+  }
+
+  function practiceClusterSizes() {
+    const diagnostic = cells.find(cell => cell.taskId === "diagnose" && cell.output?.status === "ok" && cell.output.table);
+    const fit = cells.find(cell => cell.taskId === "fit" && cell.output?.status === "ok" && cell.output.table);
+    const candidates = [diagnostic?.output?.table, fit?.output?.table];
+    for (const table of candidates) {
+      const clusters = practiceTableColumn(table, "cluster");
+      const rows = practiceTableColumn(table, "rows");
+      if (!clusters.length || clusters.length !== rows.length) continue;
+      const sizes = clusters.map((cluster, index) => {
+        const count = normalizeTeachingNumber(rows[index]);
+        return count === null ? null : {cluster:String(cluster), rows:count};
+      }).filter(Boolean);
+      if (sizes.length) return sizes;
+    }
+    return [];
+  }
+
+  function practiceEvidenceSnapshot(taskId) {
+    const cell = cells.find(item => item.taskId === taskId && item.output?.status === "ok");
+    if (!cell) return null;
+    const config = selectedConfig();
+    if (taskId === "baseline" && cell.output.table) {
+      const summary = cvSummaryFromTable(cell.output.table, config.task, config.split, config.target);
+      if (!summary) return null;
+      return {
+        kind:"cv",
+        metricLabel:summaryMetricLabel(summary),
+        validationMean:summary.validationMean,
+        validationMin:summary.validationMin,
+        validationMax:summary.validationMax,
+        trainingMean:summary.trainingMean,
+        gap:summary.gap,
+        timeSeries:summary.timeSeries
+      };
+    }
+    if (taskId === "tune") {
+      const stdout = String(cell.output.stdout || "");
+      const value = String(cell.output.value || "");
+      const settings = stdout.split("\n").find(line => line.includes("Best settings:")) || value || "Model defaults";
+      const score = stdout.split("\n").find(line => line.includes("Best CV ")) || "";
+      return {kind:"tuning", settings:settings.trim().slice(0, 220), score:score.trim().slice(0, 120)};
+    }
+    if (taskId === "select" && selectedModelId() === "pca" && cell.output.table) {
+      const target = practiceTableNumber(cell.output.table, "variance_target");
+      const components = practiceTableNumber(cell.output.table, "components_for_target");
+      const retained = practiceTableNumber(cell.output.table, "cumulative_variance_retained");
+      if ([target, components, retained].some(value => value === null)) return null;
+      return {kind:"pca", target, components, retained};
+    }
+    if (taskId === "profile" && ["kmeans", "hierarchical"].includes(selectedModelId())) {
+      const fit = cells.find(item => item.taskId === "fit" && item.output?.status === "ok");
+      const selectedK = practiceTableNumber(fit?.output?.table, "selected_k") || practiceClusterSizes().length;
+      const sizes = practiceClusterSizes();
+      const profileClusters = practiceTableColumn(cell.output.table, "cluster").map(value => String(value));
+      return {
+        kind:"clusters",
+        selectedK,
+        sizes,
+        profileClusters:[...new Set(profileClusters)]
+      };
+    }
+    return null;
+  }
+
+  function practiceSnapshotRows(snapshot) {
+    if (!snapshot) return [];
+    if (snapshot.kind === "cv") return [
+      [snapshot.metricLabel, formatTeachingNumber(snapshot.validationMean)],
+      ["Validation range", `${formatTeachingNumber(snapshot.validationMin)}–${formatTeachingNumber(snapshot.validationMax)}`],
+      [`Training ${snapshot.metricLabel.replace(/\s+[↑↓]$/, "")}`, formatTeachingNumber(snapshot.trainingMean)],
+      ["Train–validation gap", formatTeachingNumber(snapshot.gap)]
+    ];
+    if (snapshot.kind === "pca") return [
+      ["Variance target", `${formatTeachingNumber(snapshot.target * 100)}%`],
+      ["Components retained", formatTeachingNumber(snapshot.components)],
+      ["Cumulative variance retained", `${formatTeachingNumber(snapshot.retained * 100)}%`]
+    ];
+    if (snapshot.kind === "clusters") return [
+      ["Selected k", formatTeachingNumber(snapshot.selectedK)],
+      ["Cluster sizes", snapshot.sizes.length ? snapshot.sizes.map(item => `${item.cluster}: ${formatTeachingNumber(item.rows)}`).join(" · ") : "See profile output"]
+    ];
+    if (snapshot.kind === "tuning") return [
+      ["Selected setting", snapshot.settings || "See tuning output"],
+      ...(snapshot.score ? [["Best CV evidence", snapshot.score]] : [])
+    ];
+    return [];
+  }
+
+  function practiceSnapshotCard(label, snapshot) {
+    const card = document.createElement("div");
+    card.className = "practice-evidence-snapshot";
+    card.dataset.practiceEvidence = label.toLowerCase();
+    const heading = document.createElement("h5");
+    heading.textContent = label;
+    card.append(heading);
+    const rows = practiceSnapshotRows(snapshot);
+    if (!rows.length) {
+      const note = document.createElement("p");
+      note.className = "practice-experiment-note";
+      note.textContent = "No compact baseline snapshot was available; compare the current evidence with the original run after Reset.";
+      card.append(note);
+      return card;
+    }
+    const list = document.createElement("dl");
+    rows.forEach(([key, value]) => {
+      const term = document.createElement("dt"); term.textContent = key;
+      const description = document.createElement("dd"); description.textContent = value;
+      list.append(term, description);
+    });
+    card.append(list);
+    return card;
+  }
+
+  function renderPracticeExperimentComparison(state) {
+    const comparison = document.createElement("section");
+    comparison.className = "practice-experiment-comparison";
+    comparison.dataset.practiceRole = "experiment-comparison";
+    comparison.setAttribute("aria-live", "polite");
+    comparison.append(practicePanelHeading("COMPARE BEFORE AND AFTER"));
+    const cards = document.createElement("div");
+    cards.className = "practice-evidence-cards";
+    cards.append(
+      practiceSnapshotCard("BEFORE", state.experimentBaseline),
+      practiceSnapshotCard("AFTER", state.experimentAfter)
+    );
+    comparison.append(cards);
+    const note = document.createElement("p");
+    note.className = "practice-experiment-note";
+    note.textContent = "Use this one comparison to describe what moved, what stayed similar, and what it does not establish. It is not an automatic tuning decision.";
+    comparison.append(note);
+    return comparison;
+  }
+
+  function markPracticeExperimentEvidenceReady(cell) {
+    if (cell?.output?.status !== "ok" || !cell.taskId) return;
+    routeTasks.forEach(sourceTask => {
+      const experiment = sourceTask.practice?.experiment;
+      if (!experiment || experiment.evidenceTaskId !== cell.taskId) return;
+      const state = practiceStateFor(sourceTask.id);
+      if (!state.experimentApplied || state.experimentEvidenceReady) return;
+      state.experimentAfter = practiceEvidenceSnapshot(experiment.evidenceTaskId);
+      state.experimentEvidenceReady = true;
+    });
+  }
+
   function practiceEvidenceText(task, cell) {
     const config = selectedConfig();
     const practice = task?.practice?.beforeRun;
@@ -3715,6 +3899,7 @@ explore_df.head(10)`;
     if (!task || !targetCell) return;
     const currentState = practiceStateFor(task.id);
     currentState.experimentAttempted = true;
+    const baseline = practiceEvidenceSnapshot(experiment.evidenceTaskId || targetTaskId);
     const mutation = applyPracticeMutation(targetCell.code, experiment);
     if (!mutation.changed) {
       renderNotebookView();
@@ -3723,10 +3908,18 @@ explore_df.head(10)`;
       return;
     }
     targetCell.code = mutation.code;
-    invalidateRouteFrom(targetTaskId, {renderNotebook:true, message:"Safe experiment applied; rerun this step and the downstream evidence."});
+    invalidateRouteFrom(targetTaskId, {
+      renderNotebook:true,
+      message:"Safe experiment applied; rerun this step and the downstream evidence.",
+      preservePracticeTaskIds:[task.id]
+    });
     const resetState = practiceStateFor(task.id);
     resetState.experimentAttempted = true;
     resetState.experimentApplied = true;
+    resetState.experimentBaseline = baseline;
+    resetState.experimentAfter = null;
+    resetState.experimentEvidenceReady = false;
+    resetState.reflection = false;
     renderNotebookView();
     renderPracticeModeControls();
   }
@@ -3763,6 +3956,13 @@ explore_df.head(10)`;
       apply.addEventListener("click", () => applyPracticeExperiment(cell, experiment));
       actions.append(apply);
       details.append(actions);
+    } else if (!state.experimentEvidenceReady) {
+      const evidenceTaskId = experiment.evidenceTaskId || experiment.targetTaskId || task.id;
+      const evidenceTask = routeTasks.find(item => item.id === evidenceTaskId);
+      const prompt = document.createElement("p");
+      prompt.className = "practice-prompt";
+      prompt.textContent = `Experiment applied. Rerun ${evidenceTask?.title || "the evidence step"} before comparing what changed.`;
+      details.append(prompt);
     } else if (state.reflection) {
       const complete = document.createElement("p");
       complete.className = "practice-feedback";
@@ -3770,6 +3970,7 @@ explore_df.head(10)`;
       complete.textContent = "Experiment comparison recorded. Use the changed output to explain what moved, what stayed similar, and what the evidence does not establish.";
       details.append(complete);
     } else {
+      details.append(renderPracticeExperimentComparison(state));
       const prompt = document.createElement("p");
       prompt.className = "practice-prompt";
       prompt.textContent = "What changed in the evidence after this one-variable edit?";
@@ -3981,7 +4182,7 @@ explore_df.head(10)`;
       input.addEventListener("input", () => {
         const changedAfterRun = Boolean(cell.taskId && cell.lastRunCode !== null && cell.lastRunCode !== input.value);
         cell.code = input.value;
-        if (changedAfterRun && cell.status !== "stale") invalidateRouteFrom(cell.taskId);
+        if (changedAfterRun) invalidateRouteFrom(cell.taskId);
         updateLines();
       });
       input.addEventListener("scroll", syncHighlight);
@@ -4015,6 +4216,7 @@ explore_df.head(10)`;
       const response = await sendWorker("run", {code:cell.code});
       if (token !== workspaceToken) return;
       cell.output = response.output; cell.status = response.output.status === "ok" ? "done" : "error"; cell.lastRunCode = cell.code;
+      if (cell.status === "done") markPracticeExperimentEvidenceReady(cell);
       if (cell.stage === "final" && cell.status === "done") testSetOpened = true;
       if (response.output.charts?.length) latestChart = response.output.charts.at(-1);
       $("#outputStatus").textContent = `${cell.label} · ${cell.status === "done" ? "ready" : "Python error"}`;

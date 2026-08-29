@@ -436,6 +436,20 @@ const pcaVarianceCode = pca30Route.find(step => step.id === "variance").code;
 if (!pcaVarianceCode.includes("Scree plot: variance explained by each component") || !pcaVarianceCode.includes("Cumulative variance retained") || !pcaVarianceCode.includes("PercentFormatter")) {
   throw new Error("PCA variance plots are missing precise variance labels or percentage formatting.");
 }
+if (pcaVarianceCode.includes("90% criterion") || pcaVarianceCode.includes("axhline(.90")) {
+  throw new Error("PCA variance evidence still hard-codes the old 90% criterion.");
+}
+const pcaSelectCode = pca30Route.find(step => step.id === "select").code;
+if (!pcaSelectCode.includes("variance_target = 0.90") || !pcaSelectCode.includes("components_for_target") || !pcaSelectCode.includes("variance_retained")) {
+  throw new Error("PCA selection does not expose one active variance-target variable.");
+}
+if (pcaSelectCode.includes("components_for_90pct") || pcaSelectCode.includes("variance_retained_at_90pct")) {
+  throw new Error("PCA selection still exposes fixed 90%-specific variable names.");
+}
+const pcaProjectCode = pca30Route.find(step => step.id === "project").code;
+if (!pcaProjectCode.includes("{variance_target:.0%}") || pcaProjectCode.includes("selected by the 90% criterion")) {
+  throw new Error("PCA projection does not use the active variance target in its narration.");
+}
 const pcaLoadingText = pca30Route
   .filter(step => ["frame", "loadings"].includes(step.id))
   .flatMap(step => step.concepts.map(item => item.text))
@@ -504,7 +518,7 @@ for (const modelId of ["kmeans", "hierarchical"]) {
   }
 }
 const pcaPractice = pca30Route.find(step => step.id === "select").practice;
-if (!pcaPractice.experiment || !pcaPractice.experiment.change.includes(".90") || !pcaPractice.experiment.change.includes(".80")) {
+if (!pcaPractice.experiment || pcaPractice.experiment.find !== "variance_target = 0.90" || pcaPractice.experiment.replace !== "variance_target = 0.80" || pcaPractice.experiment.evidenceTaskId !== "select") {
   throw new Error("PCA Practice mode is missing its safe variance-criterion experiment.");
 }
 const pcaVariancePractice = pca30Route.find(step => step.id === "variance").practice;
