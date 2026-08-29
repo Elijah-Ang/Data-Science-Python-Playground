@@ -106,6 +106,9 @@ if (api.practiceStateKey(identity, "model") !== "breast::continuous5::knn_cls::5
 }
 const practiceModel = api.routeForSelection(config, scenario, "knn_cls", 5).find(item => item.id === "model").practice;
 if (!practiceModel?.beforeRun || !practiceModel?.experiment) throw new Error("KNN practice metadata is incomplete.");
+if (practiceModel.experiment.targetTaskId !== "model" || practiceModel.experiment.evidenceTaskId !== "baseline") {
+  throw new Error("KNN experiment does not point from the model mutation to later CV evidence.");
+}
 if (api.normalizePracticeAnswer("less", practiceModel.beforeRun) !== "less" || api.normalizePracticeAnswer("not-a-choice", practiceModel.beforeRun) !== null) {
   throw new Error("Practice answer normalization accepted an invalid choice.");
 }
@@ -131,6 +134,22 @@ for (const [fixtureConfig, fixtureScenario, modelId, taskId] of experimentFixtur
   const experiment = api.safeExperimentForTask(fixtureConfig, fixtureScenario, modelId, taskId);
   const result = api.applyPracticeMutation(task.code, experiment);
   if (!result.changed) throw new Error(`Safe ${modelId}/${taskId} experiment does not match its route cell.`);
+  if (!experiment.evidenceTaskId) throw new Error(`Safe ${modelId}/${taskId} experiment is missing its evidence target.`);
+  const targetIndex = route.findIndex(item => item.id === (experiment.targetTaskId || taskId));
+  const evidenceIndex = route.findIndex(item => item.id === experiment.evidenceTaskId);
+  if (targetIndex < 0 || evidenceIndex < targetIndex) {
+    throw new Error(`Safe ${modelId}/${taskId} experiment points to an invalid evidence step.`);
+  }
+}
+const pcaRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "pca", 5);
+const pcaSelect = pcaRoute.find(item => item.id === "select");
+const pcaExperiment = pcaSelect.practice.experiment;
+const pcaMutation = api.applyPracticeMutation(pcaSelect.code, pcaExperiment);
+if (!pcaMutation.changed || !pcaMutation.code.includes("variance_target = 0.80") || pcaMutation.code.includes(">= .80")) {
+  throw new Error("PCA experiment did not mutate the single active variance_target variable.");
+}
+if (pcaExperiment.targetTaskId !== "select" || pcaExperiment.evidenceTaskId !== "select") {
+  throw new Error("PCA experiment does not target its edited select evidence step.");
 }
 if (api.practicePrediction("prediction", "Question", [{value:"yes", label:"Yes"}]).options.filter(option => option.value === "not_sure").length !== 1) {
   throw new Error("Practice predictions did not provide exactly one Not sure option.");

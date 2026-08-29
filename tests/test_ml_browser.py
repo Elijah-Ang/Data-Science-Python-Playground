@@ -91,7 +91,7 @@ def run_practice_step(
     article = page.locator("#notebookPanel article").nth(index)
     article.wait_for(state="visible", timeout=15_000)
     panel = article.locator("[data-practice-role='before-run']")
-    if panel.count() == 1:
+    if panel.count() == 1 and panel.locator("input[type='radio']").count():
         choice = prediction if prediction is not None else "not_sure"
         panel.locator(f"input[value='{choice}']").check()
         panel.get_by_role("button", name="Commit prediction").click()
@@ -684,7 +684,7 @@ def main() -> int:
         run_steps(page, 7)
         assert_unsupervised_guidance(page, 0, "new axes", "reference label")
         assert_unsupervised_guidance(page, 2, "scale", "common scale")
-        assert_unsupervised_guidance(page, 3, "how much variation", "90% criterion")
+        assert_unsupervised_guidance(page, 3, "how much variation", "variance-retention target")
         assert_unsupervised_guidance(page, 5, "which original features", "absolute loading")
         assert_unsupervised_guidance(page, 6, "where do rows", "row coordinates")
         pca_variance = page.locator("#outputList .output-item").nth(3)
@@ -692,8 +692,8 @@ def main() -> int:
         if not all(value in pca_variance_text for value in ("explained_variance_ratio", "cumulative_explained_variance", "variance explained by each component", "Cumulative variance retained")):
             raise AssertionError("PCA variance output did not use precise, learner-readable labels.")
         pca_select = page.locator("#outputList .output-item").nth(4)
-        if "components_for_90pct" not in pca_select.inner_text() or "90% is a chosen rule of thumb" not in pca_select.inner_text():
-            raise AssertionError("PCA did not explain the selected 90% criterion as a chosen rule of thumb.")
+        if "components_for_target" not in pca_select.inner_text() or "90% target is a chosen rule of thumb" not in pca_select.inner_text():
+            raise AssertionError("PCA did not expose the active 90% criterion as a chosen rule of thumb.")
         loadings_item = page.locator("#outputList .output-item").nth(5)
         loadings_text = loadings_item.inner_text()
         if not all(value in loadings_text for value in ("feature", "radius_mean", "strongest_component", "absolute_contribution")):
@@ -752,6 +752,7 @@ def main() -> int:
         run_practice_step(page, 2)
         run_practice_step(page, 3, "larger_scale")
         run_practice_step(page, 4, "less")
+        run_practice_step(page, 5, "similar")
         knn_practice_output = page.locator("#outputList .output-item").nth(4)
         if knn_practice_output.locator("[data-practice-role='prediction-feedback']").count() != 1:
             raise AssertionError("KNN Practice did not compare the committed prediction with evidence.")
@@ -767,11 +768,36 @@ def main() -> int:
             raise AssertionError("The KNN safe experiment did not edit the existing learner cell.")
         run_practice_step(page, 4, "less")
         knn_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
-        if "What changed in the evidence" not in knn_rerun_experiment.inner_text():
-            raise AssertionError("KNN Practice did not ask the learner to reflect after the experiment reran.")
+        if "Rerun" not in knn_rerun_experiment.inner_text() or "What changed in the evidence" in knn_rerun_experiment.inner_text():
+            raise AssertionError("KNN Practice exposed reflection before its CV evidence target reran.")
+        run_practice_step(page, 5, "similar")
+        knn_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if knn_rerun_experiment.locator("[data-practice-role='experiment-comparison']").count() != 1 or not all(
+            label in knn_rerun_experiment.inner_text() for label in ("BEFORE", "AFTER", "What changed in the evidence")
+        ):
+            raise AssertionError("KNN Practice did not show a before/after comparison after its CV evidence reran.")
         knn_rerun_experiment.get_by_role("button", name="Mark comparison complete").click()
         if "Experiment comparison recorded" not in page.locator("#outputList .output-item").nth(4).inner_text():
             raise AssertionError("KNN Practice did not record the experiment comparison.")
+
+        select_route(page, "breast", "continuous5", "classification_tree", 9)
+        set_practice_mode(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1, "yes")
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "no")
+        run_practice_step(page, 4, "more")
+        run_practice_step(page, 5, "similar")
+        tree_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        tree_experiment.get_by_role("button", name="Apply experiment").click()
+        run_practice_step(page, 4, "more")
+        tree_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if "Rerun" not in tree_rerun_experiment.inner_text() or tree_rerun_experiment.get_by_role("button", name="Mark comparison complete").count():
+            raise AssertionError("Classification-tree Practice exposed reflection before validation evidence reran.")
+        run_practice_step(page, 5, "similar")
+        tree_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if tree_rerun_experiment.locator("[data-practice-role='experiment-comparison']").count() != 1:
+            raise AssertionError("Classification-tree Practice did not unlock comparison at its validation evidence target.")
 
         select_route(page, "breast", "continuous5", "kmeans", 8)
         set_practice_mode(page)
@@ -787,6 +813,26 @@ def main() -> int:
         if "wrong" in kmeans_practice_compare.inner_text().lower() or page.locator("#holdoutState").text_content().strip() == "opened once":
             raise AssertionError("K-Means Practice used punitive feedback or opened the supervised holdout.")
         assert_unsupervised_preview_hidden(page, "diagnosis")
+        run_practice_step(page, 5)
+        run_practice_step(page, 6)
+        commit_practice_choice(page, "profile", "compare_profiles", "decision")
+        kmeans_fit_output = page.locator("#outputList .output-item").nth(4)
+        kmeans_experiment = kmeans_fit_output.locator("[data-practice-role='experiment']")
+        if kmeans_experiment.count() != 1:
+            raise AssertionError("K-Means Practice did not offer its selected-k experiment.")
+        kmeans_experiment.get_by_role("button", name="Apply experiment").click()
+        run_practice_step(page, 4)
+        kmeans_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if "Rerun" not in kmeans_rerun_experiment.inner_text() or kmeans_rerun_experiment.get_by_role("button", name="Mark comparison complete").count():
+            raise AssertionError("K-Means Practice exposed profile reflection before the profile reran.")
+        run_practice_step(page, 5)
+        run_practice_step(page, 6)
+        commit_practice_choice(page, "profile", "compare_profiles", "decision")
+        kmeans_rerun_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if kmeans_rerun_experiment.locator("[data-practice-role='experiment-comparison']").count() != 1 or not all(
+            label in kmeans_rerun_experiment.inner_text() for label in ("BEFORE", "AFTER", "Cluster sizes")
+        ):
+            raise AssertionError("K-Means Practice did not show profile evidence before/after the selected-k experiment.")
 
         select_route(page, "breast", "continuous5", "pca", 7)
         set_practice_mode(page)
@@ -799,13 +845,42 @@ def main() -> int:
             raise AssertionError("PCA Practice did not compare the variance prediction with fitted evidence.")
         commit_practice_choice(page, "variance", "variance", "decision")
         run_practice_step(page, 4)
+        pca_select_experiment = page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']")
+        if pca_select_experiment.count() != 1:
+            raise AssertionError("PCA Practice did not offer its variance-target experiment.")
+        pca_select_experiment.get_by_role("button", name="Apply experiment").click()
+        pca_select_article = page.locator("#notebookPanel article").nth(4)
+        edited_pca_code = pca_select_article.locator("textarea").input_value()
+        if "variance_target = 0.80" not in edited_pca_code or "components_for_90pct" in edited_pca_code:
+            raise AssertionError("PCA Practice did not edit the single active variance-target variable.")
+        run_practice_step(page, 4)
+        pca_edited_select = page.locator("#outputList .output-item").nth(4)
+        if "80% target is a chosen rule of thumb" not in pca_edited_select.inner_text() or "90% criterion" in pca_edited_select.inner_text():
+            raise AssertionError("PCA Practice left contradictory 90% criterion narration after the 80% experiment.")
+        if pca_edited_select.locator("[data-practice-role='experiment-comparison']").count() != 1:
+            raise AssertionError("PCA Practice did not compare the select-step evidence after the 80% rerun.")
         run_practice_step(page, 5, "absolute")
         run_practice_step(page, 6, "no")
+        pca_edited_project_text = page.locator("#outputList .output-item").nth(6).inner_text()
+        if "80% criterion" not in pca_edited_project_text or "90% criterion" in pca_edited_project_text:
+            raise AssertionError("PCA Practice projection did not describe the active 80% criterion.")
+        page.locator("#outputList .output-item").nth(4).locator("[data-practice-role='experiment']").get_by_role("button", name="Mark comparison complete").click()
         pca_practice_feedback = page.locator("#outputList [data-practice-role]").all_inner_texts()
         if any("diagnosis" in text.lower() for text in pca_practice_feedback):
             raise AssertionError("PCA Practice used the hidden reference label in its feedback.")
         if page.locator("#holdoutState").text_content().strip() == "opened once":
             raise AssertionError("PCA Practice opened the supervised holdout.")
+
+        page.locator("#resetButton").click()
+        wait_for_ready(page)
+        run_practice_step(page, 0)
+        run_practice_step(page, 1)
+        run_practice_step(page, 2)
+        run_practice_step(page, 3, "some")
+        commit_practice_choice(page, "variance", "variance", "decision")
+        run_practice_step(page, 4)
+        if "variance_target = 0.90" not in page.locator("#notebookPanel article").nth(4).locator("textarea").input_value():
+            raise AssertionError("Reset did not restore the default 90% PCA criterion.")
 
         select_route(page, "breast", "continuous5", "logistic", 9)
         set_practice_mode(page)
