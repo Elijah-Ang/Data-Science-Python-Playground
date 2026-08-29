@@ -448,6 +448,70 @@ for (const token of ["linear", "variance", "prediction usefulness", "later compo
   if (!pcaProjectText.toLowerCase().includes(token.toLowerCase())) throw new Error(`PCA limitation teaching is missing ${token}.`);
 }
 
+const practiceFixtures = {
+  logistic:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "logistic"],
+  knn:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "knn_cls"],
+  tree:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "classification_tree"],
+  mlpClassification:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "mlp_cls"],
+  mlpRegression:[api.DATASETS.wine, api.DATASETS.wine.scenarios[1], "mlp_reg"],
+  seoulMlpRegression:[api.DATASETS.seoul, api.DATASETS.seoul.scenarios[1], "mlp_reg"],
+  kmeans:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "kmeans"],
+  hierarchical:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "hierarchical"],
+  pca:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "pca"]
+};
+const requiredPracticeSteps = {
+  logistic:["split", "model", "baseline", "tune", "diagnose", "final"],
+  knn_cls:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
+  classification_tree:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
+  mlp_cls:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
+  mlp_reg:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
+  kmeans:["compare", "fit", "profile"],
+  hierarchical:["compare", "fit", "profile"],
+  pca:["variance", "select", "loadings", "project"]
+};
+for (const [fixtureName, [fixtureConfig, fixtureScenario, fixtureModel]] of Object.entries(practiceFixtures)) {
+  const practiceRoute = api.routeForSelection(fixtureConfig, fixtureScenario, fixtureModel, 5);
+  const practiceRouteAgain = api.routeForSelection(fixtureConfig, fixtureScenario, fixtureModel, 5);
+  if (JSON.stringify(practiceRoute) !== JSON.stringify(practiceRouteAgain)) throw new Error(`Practice metadata is not deterministic for ${fixtureName}.`);
+  for (const stepId of requiredPracticeSteps[fixtureModel]) {
+    const step = practiceRoute.find(item => item.id === stepId);
+    if (!step?.practice) throw new Error(`Missing Practice metadata for ${fixtureName}/${stepId}.`);
+    for (const interaction of [step.practice.beforeRun, step.practice.decision]) {
+      if (!interaction) continue;
+      if (!interaction.prompt || !Array.isArray(interaction.options) || !interaction.options.some(option => option.value === "not_sure")) {
+        throw new Error(`Practice interaction is not safely answerable for ${fixtureName}/${stepId}.`);
+      }
+    }
+    const practiceText = JSON.stringify(step.practice);
+    for (const forbidden of ["X_test", "y_test", "test_prediction", "test_result"]) {
+      if (practiceText.includes(forbidden)) throw new Error(`Practice metadata exposes holdout plumbing for ${fixtureName}/${stepId}.`);
+    }
+    if (fixtureConfig.task === "classification" && fixtureModel === "pca" && practiceText.includes(fixtureConfig.target)) {
+      throw new Error("PCA Practice metadata uses the hidden reference label.");
+    }
+    if (fixtureConfig.task === "regression" && fixtureModel === "pca" && practiceText.includes(fixtureConfig.target)) {
+      throw new Error("Regression PCA Practice metadata uses the hidden reference target.");
+    }
+  }
+  const codes = practiceRoute.map(step => step.code);
+  const secondCodes = practiceRouteAgain.map(step => step.code);
+  if (JSON.stringify(codes) !== JSON.stringify(secondCodes)) throw new Error(`Practice mode would change route Python for ${fixtureName}.`);
+}
+for (const modelId of ["kmeans", "hierarchical"]) {
+  const comparePractice = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], modelId, 5).find(step => step.id === "compare").practice;
+  if (comparePractice.decision.answer !== undefined || comparePractice.decision.options.length < 3) {
+    throw new Error(`${modelId} candidate decision is incorrectly graded as one answer.`);
+  }
+}
+const pcaPractice = pca30Route.find(step => step.id === "select").practice;
+if (!pcaPractice.experiment || !pcaPractice.experiment.change.includes(".90") || !pcaPractice.experiment.change.includes(".80")) {
+  throw new Error("PCA Practice mode is missing its safe variance-criterion experiment.");
+}
+const pcaVariancePractice = pca30Route.find(step => step.id === "variance").practice;
+if (!pcaVariancePractice.decision || !pcaVariancePractice.decision.prompt.includes("retained variance")) {
+  throw new Error("PCA retention decision is not attached to the explained-variance evidence.");
+}
+
 console.log(JSON.stringify({
   supervised_steps_checked:9,
   classification_summary:true,
@@ -473,5 +537,8 @@ console.log(JSON.stringify({
   pca_target_isolation:true,
   pca_large_feature_summary:true,
   pca_variance_and_loading_vocabulary:true,
-  preferred_vocabulary:true
+  preferred_vocabulary:true,
+  practice_metadata:true,
+  practice_state_helpers:true,
+  practice_holdout_safeguards:true
 }, null, 2));

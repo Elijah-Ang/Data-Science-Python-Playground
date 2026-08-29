@@ -482,6 +482,14 @@ def assert_route_structure(payload: dict) -> dict:
         "baseline": {"cross-validation", "fold", "cv-purpose", "final-test-exclusion"},
         "tune": {"hyperparameter", "learned-parameter"},
     }
+    supervised_practice_steps = {"split", "prepare", "baseline", "tune", "diagnose", "final"}
+    unsupervised_practice_steps = {
+        "kmeans": {"compare", "fit", "profile"},
+        "hierarchical": {"compare", "fit", "profile"},
+        "pca": {"variance", "select", "loadings", "project"},
+    }
+    practice_routes_checked = 0
+    practice_interactions_checked = 0
 
     for folds, routes in route_sets.items():
         for route in routes:
@@ -519,6 +527,32 @@ def assert_route_structure(payload: dict) -> dict:
                         f"Missing reading cue for guided step: "
                         f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}"
                     )
+
+            required_practice = supervised_practice_steps if task_type != "unsupervised" else unsupervised_practice_steps[model_id]
+            for step_id in required_practice:
+                metadata = next(cell for cell in route["cells"] if cell["id"] == step_id)
+                practice = metadata.get("practice")
+                if not isinstance(practice, dict):
+                    raise AssertionError(
+                        f"Missing Practice metadata for {route['datasetId']}/{route['scenarioId']}/{model_id}/{step_id}"
+                    )
+                practice_routes_checked += 1
+                practice_text = json.dumps(practice, sort_keys=True)
+                for forbidden in ("X_test", "y_test", "test_prediction", "test_result"):
+                    if forbidden in practice_text:
+                        raise AssertionError(f"Practice metadata exposes holdout plumbing: {route}/{step_id}")
+                if task_type == "unsupervised" and route["dataset"]["target"] in practice_text:
+                    raise AssertionError(f"Unsupervised Practice metadata exposes the hidden reference label: {route}/{step_id}")
+                for interaction_key in ("beforeRun", "decision"):
+                    interaction = practice.get(interaction_key)
+                    if not interaction:
+                        continue
+                    practice_interactions_checked += 1
+                    if not str(interaction.get("prompt", "")).strip() or not isinstance(interaction.get("options"), list):
+                        raise AssertionError(f"Practice {interaction_key} is incomplete: {route}/{step_id}")
+                    values = [option.get("value") for option in interaction["options"]]
+                    if "not_sure" not in values or len(values) != len(set(values)):
+                        raise AssertionError(f"Practice {interaction_key} lacks a unique Not sure option: {route}/{step_id}")
 
             if task_type != "unsupervised":
                 teaching_checks["supervised_routes_with_step_guidance"] += 1
@@ -1130,6 +1164,11 @@ def assert_route_structure(payload: dict) -> dict:
         "model_df_sources": model_df_sources,
         "reset_state": reset_result,
         "teaching_metadata": teaching_checks,
+        "practice_metadata": {
+            "route_step_requirements_checked": practice_routes_checked,
+            "interactions_checked": practice_interactions_checked,
+            "holdout_and_target_safeguards": True,
+        },
         "step8_code_surface": code_surface,
         "gaussian_density_fixture": True,
     }

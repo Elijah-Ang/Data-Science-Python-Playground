@@ -489,6 +489,9 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   let runtimeReady = false;
   let testSetOpened = false;
   let latestChart = null;
+  let playgroundMode = "guided";
+  let practiceSetupIdentity = "";
+  const practiceStates = new Map();
   let guideDragState = null;
   let guideResizeState = null;
   let guideViewportSized = false;
@@ -504,6 +507,422 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     value.binary.length ? `${value.binary.length} binary` : "",
     value.categorical.length ? `${value.categorical.length} categorical` : ""
   ].filter(Boolean).join(" · ");
+
+  function practiceRouteIdentity(datasetId, scenarioId, modelId, folds) {
+    return [datasetId, scenarioId, modelId, folds].map(value => String(value)).join("::");
+  }
+
+  function practiceStateKey(identity, taskId) {
+    return `${String(identity)}::${String(taskId)}`;
+  }
+
+  function normalizePracticeAnswer(value, practice = null) {
+    const answer = value == null ? "" : String(value).trim();
+    if (!answer) return null;
+    if (!practice?.options?.length) return answer;
+    return practice.options.some(option => String(option.value) === answer) ? answer : null;
+  }
+
+  function practiceOption(value, label) {
+    return {value, label};
+  }
+
+  function practicePrediction(id, prompt, options, answer = null, evidence = "generic") {
+    return {
+      id,
+      prompt,
+      options:[...options, practiceOption("not_sure", "Not sure yet")],
+      answer,
+      evidence
+    };
+  }
+
+  function practiceDecision(id, prompt, options, evidence = "decision") {
+    return {
+      id,
+      prompt,
+      options:[...options, practiceOption("not_sure", "Not sure yet")],
+      evidence
+    };
+  }
+
+  function safeExperimentForTask(config, value, modelId, taskId) {
+    const modelChanges = {
+      knn_cls: {
+        id:"knn-nearby-k",
+        title:"Try one nearby KNN setting",
+        instruction:"In the model cell, try another supported neighbour count before rerunning this step.",
+        find:"model = KNeighborsClassifier()",
+        replace:"model = KNeighborsClassifier(n_neighbors=9)",
+        change:"KNeighborsClassifier() → KNeighborsClassifier(n_neighbors=9)"
+      },
+      svm_cls: {
+        id:"svm-c",
+        title:"Try one supported SVM setting",
+        instruction:"In the model cell, try a different supported C value before rerunning this step.",
+        find:"model = SVC(random_state=42)",
+        replace:"model = SVC(C=2, random_state=42)",
+        change:"SVC(random_state=42) → SVC(C=2, random_state=42)"
+      },
+      regression_tree: {
+        id:"regression-tree-depth",
+        title:"Try a bounded tree depth",
+        instruction:"In the model cell, allow a supported depth of 5 and compare the later evidence.",
+        find:"model = DecisionTreeRegressor(random_state=42)",
+        replace:"model = DecisionTreeRegressor(max_depth=5, random_state=42)",
+        change:"DecisionTreeRegressor(random_state=42) → DecisionTreeRegressor(max_depth=5, random_state=42)"
+      },
+      classification_tree: {
+        id:"classification-tree-depth",
+        title:"Try a bounded tree depth",
+        instruction:"In the model cell, allow a supported depth of 5 and compare the later evidence.",
+        find:"model = DecisionTreeClassifier(random_state=42)",
+        replace:"model = DecisionTreeClassifier(max_depth=5, random_state=42)",
+        change:"DecisionTreeClassifier(random_state=42) → DecisionTreeClassifier(max_depth=5, random_state=42)"
+      },
+      polynomial: {
+        id:"polynomial-degree",
+        title:"Try one polynomial degree",
+        instruction:"In the model cell, use the supported degree-3 expansion and compare the later evidence.",
+        find:"(\"poly\", PolynomialFeatures(include_bias=False)),",
+        replace:"(\"poly\", PolynomialFeatures(degree=3, include_bias=False)),",
+        change:"PolynomialFeatures(include_bias=False) → PolynomialFeatures(degree=3, include_bias=False)"
+      }
+    };
+    if (taskId === "model" && modelChanges[modelId]) return {...modelChanges[modelId], targetTaskId:"model"};
+    if (taskId === "tune" && ["mlp_cls", "mlp_reg"].includes(modelId)) {
+      const parameterName = modelId === "mlp_reg" ? "model__regressor__hidden_layer_sizes" : "model__hidden_layer_sizes";
+      const originalGrid = modelId === "mlp_reg" ? "'model__regressor__hidden_layer_sizes': [(24,), (32, 16)]" : "'model__hidden_layer_sizes': [(24,), (32, 16)]";
+      return {
+        id:"mlp-supported-architecture",
+        title:"Try one smaller supported MLP search",
+        instruction:"In the tuning cell, keep only the existing 24-unit architecture so the search stays small and valid.",
+        find:originalGrid,
+        replace:`'${parameterName}': [(24,)]`,
+        change:"search both architectures → search the existing (24,) architecture",
+        targetTaskId:"tune"
+      };
+    }
+    if (taskId === "fit" && modelId === "kmeans") {
+      return {
+        id:"kmeans-nearby-k",
+        title:"Try another candidate k",
+        instruction:"Change the runnable starting k from 3 to 2, then rerun this step and compare the profiles.",
+        find:"selected_k = min(3, max_k)",
+        replace:"selected_k = min(2, max_k)",
+        change:"selected_k = min(3, max_k) → selected_k = min(2, max_k)",
+        targetTaskId:"fit"
+      };
+    }
+    if (taskId === "fit" && modelId === "hierarchical") {
+      return {
+        id:"hierarchical-nearby-cut",
+        title:"Try another candidate cut",
+        instruction:"Change the runnable starting cut from 3 to 2, then rerun this step and compare the profiles.",
+        find:"selected_k = min(3, max_k)",
+        replace:"selected_k = min(2, max_k)",
+        change:"selected_k = min(3, max_k) → selected_k = min(2, max_k)",
+        targetTaskId:"fit"
+      };
+    }
+    if (taskId === "select" && modelId === "pca") {
+      return {
+        id:"pca-variance-criterion",
+        title:"Try a different variance trade-off",
+        instruction:"Change the chosen 90% criterion to 80%, then rerun this step and compare the retained representation.",
+        find:">= .90",
+        replace:">= .80",
+        change:"cumulative variance >= .90 → cumulative variance >= .80",
+        targetTaskId:"select"
+      };
+    }
+    return null;
+  }
+
+  function applyPracticeMutation(code, experiment) {
+    const source = String(code || "");
+    if (!experiment?.find || !experiment?.replace) return {changed:false, code:source, reason:"This experiment has no safe text change."};
+    const first = source.indexOf(experiment.find);
+    if (first < 0) return {changed:false, code:source, reason:"The original line is no longer present in this editable cell."};
+    if (source.indexOf(experiment.find, first + experiment.find.length) >= 0) {
+      return {changed:false, code:source, reason:"The safe change was not unique in this editable cell."};
+    }
+    return {changed:true, code:source.slice(0, first) + experiment.replace + source.slice(first + experiment.find.length)};
+  }
+
+  function practiceForTask(config, value, modelId, taskId) {
+    const model = MODELS[modelId];
+    if (!model) return null;
+    const practice = {beforeRun:null, decision:null, experiment:safeExperimentForTask(config, value, modelId, taskId)};
+    if (modelId === "pca") {
+      if (taskId === "variance") {
+        practice.beforeRun = practicePrediction(
+          "pca-two-variance",
+          "Do you expect the first two components to retain most of the prepared-data variance?",
+          [practiceOption("most", "Most of it"), practiceOption("some", "Some, but not most")],
+          null,
+          "pca-variance"
+        );
+      } else if (taskId === "loadings") {
+        practice.beforeRun = practicePrediction(
+          "pca-loading-reading",
+          "Which part of a loading should you compare to judge contribution strength?",
+          [practiceOption("absolute", "Its absolute size"), practiceOption("sign", "Its positive or negative sign")],
+          "absolute",
+          "pca-loading"
+        );
+      } else if (taskId === "project") {
+        practice.beforeRun = practicePrediction(
+          "pca-projection-representation",
+          "Does a chart showing PC1 and PC2 necessarily equal the selected reduced representation?",
+          [practiceOption("no", "No; the selected representation may keep more components"), practiceOption("yes", "Yes; two plotted axes are always the representation")],
+          "no",
+          "pca-projection"
+        );
+      }
+      if (taskId === "variance") {
+        practice.decision = practiceDecision(
+          "pca-retention-tradeoff",
+          "For this hypothetical goal, would you prefer a smaller representation or more retained variance?",
+          [practiceOption("smaller", "Smaller representation"), practiceOption("variance", "More retained variance")],
+          "pca-criterion"
+        );
+      }
+      return practice.beforeRun || practice.decision || practice.experiment ? practice : null;
+    }
+    if (model.task === "unsupervised") {
+      if (["kmeans", "hierarchical"].includes(modelId) && taskId === "compare") {
+        const maxK = Math.min(8, Math.min(modelId === "hierarchical" ? 500 : config.rows, config.rows) - 1);
+        const options = Array.from({length:Math.max(0, maxK - 1)}, (_, index) => practiceOption(String(index + 2), `Investigate k=${index + 2}`));
+        practice.beforeRun = practicePrediction(
+          `${modelId}-silhouette-choice`,
+          "Will the silhouette-best candidate automatically become the final answer?",
+          [practiceOption("no", "No; it is supporting evidence"), practiceOption("yes", "Yes; it decides k")],
+          "no",
+          "cluster-suggestion"
+        );
+        practice.decision = practiceDecision(
+          `${modelId}-candidate-choice`,
+          "Which candidate would you investigate next?",
+          options,
+          "cluster-choice"
+        );
+      }
+      if (["kmeans", "hierarchical"].includes(modelId) && taskId === "profile") {
+        practice.decision = practiceDecision(
+          `${modelId}-profile-reading`,
+          "How should a discovered cluster become meaningful?",
+          [practiceOption("compare_profiles", "Compare its original-unit profile"), practiceOption("read_id", "Read meaning from the cluster number")],
+          "cluster-profile"
+        );
+      }
+      return practice.beforeRun || practice.decision || practice.experiment ? practice : null;
+    }
+    if (taskId === "split") {
+      if (config.split === "time") {
+        practice.beforeRun = practicePrediction(
+          "chronological-split",
+          "Will each validation window come after the rows used to fit that fold?",
+          [practiceOption("yes", "Yes; later rows validate later"), practiceOption("no", "No; rows can be mixed")],
+          "yes",
+          "chronology"
+        );
+      } else if (config.task === "classification") {
+        practice.beforeRun = practicePrediction(
+          "stratified-split",
+          "Will stratification try to keep class proportions similar across the two parts?",
+          [practiceOption("yes", "Yes"), practiceOption("no", "No")],
+          "yes",
+          "split"
+        );
+      } else {
+        practice.beforeRun = practicePrediction(
+          "holdout-split",
+          "Will the saved final-test rows be used for fitting before the final step?",
+          [practiceOption("yes", "Yes"), practiceOption("no", "No")],
+          "no",
+          "split"
+        );
+      }
+    } else if (taskId === "prepare") {
+      if (["knn_cls", "svm_cls"].includes(modelId)) {
+        practice.beforeRun = practicePrediction(
+          `${modelId}-scale`,
+          "If scaling were skipped, which kind of feature could dominate distance or boundary calculations?",
+          [practiceOption("larger_scale", "A feature measured with larger numbers"), practiceOption("smaller_scale", "A feature measured with smaller numbers")],
+          "larger_scale",
+          "scaling"
+        );
+      } else if (["mlp_cls", "mlp_reg"].includes(modelId)) {
+        practice.beforeRun = practicePrediction(
+          `${modelId}-scale`,
+          "Why are comparable numeric input scales useful for this neural network?",
+          [practiceOption("smoother", "They can make optimisation smoother"), practiceOption("irrelevant", "They make no difference")],
+          "smoother",
+          "scaling"
+        );
+      } else if (["regression_tree", "classification_tree", "one_r"].includes(modelId)) {
+        practice.beforeRun = practicePrediction(
+          `${modelId}-scale`,
+          "Does this model need feature scaling for its core learning operation?",
+          [practiceOption("no", "No"), practiceOption("yes", "Yes")],
+          "no",
+          "scaling"
+        );
+      } else {
+        practice.beforeRun = practicePrediction(
+          `${modelId}-preparation-workflow`,
+          "Will this route keep its preparation inside the model workflow so each training fold learns it from its own rows?",
+          [practiceOption("yes", "Yes; preparation stays inside the workflow"), practiceOption("no", "No; prepare once using every row")],
+          "yes",
+          "preparation-workflow"
+        );
+      }
+    } else if (taskId === "model") {
+      if (modelId === "knn_cls") {
+        practice.beforeRun = practicePrediction(
+          "knn-k-influence",
+          "If k becomes much larger, will each nearby row have more or less influence?",
+          [practiceOption("less", "Less influence individually"), practiceOption("more", "More influence individually")],
+          "less",
+          "model"
+        );
+      } else if (["regression_tree", "classification_tree"].includes(modelId)) {
+        practice.beforeRun = practicePrediction(
+          `${modelId}-depth`,
+          "If maximum depth increases, is the tree's training fit more or less flexible?",
+          [practiceOption("more", "More flexible"), practiceOption("less", "Less flexible")],
+          "more",
+          "model"
+        );
+      } else if (["mlp_cls", "mlp_reg"].includes(modelId)) {
+        practice.beforeRun = practicePrediction(
+          `${modelId}-capacity`,
+          "Does choosing a larger or deeper network automatically guarantee better new-data performance?",
+          [practiceOption("no", "No; capacity can also overfit"), practiceOption("yes", "Yes")],
+          "no",
+          "model"
+        );
+      } else if (modelId === "logistic") {
+        practice.beforeRun = practicePrediction(
+          "logistic-boundary",
+          "Should a logistic model's core boundary be expected to curve around every class?",
+          [practiceOption("no", "No; its boundary is linear in prepared feature space"), practiceOption("yes", "Yes")],
+          "no",
+          "model"
+        );
+      }
+    } else if (taskId === "baseline") {
+      practice.beforeRun = practicePrediction(
+        "cv-folds",
+        "Will validation scores be identical across folds, or similar but not identical?",
+        [practiceOption("similar", "Similar but not identical"), practiceOption("identical", "Exactly identical"), practiceOption("vary", "They may vary substantially")],
+        null,
+        "cv"
+      );
+    } else if (taskId === "tune") {
+      const hasGrid = modelSpec(modelId, value)?.grid !== "{}";
+      practice.decision = practiceDecision(
+        "tuning-choice",
+        hasGrid
+          ? "After seeing the validation evidence, would you keep the current/default setting or use the selected tuned setting?"
+          : "This route keeps the model defaults. Would you keep them rather than inventing an untested setting?",
+        hasGrid
+          ? [practiceOption("use_tuned", "Use the selected tuned setting"), practiceOption("keep_default", "Keep the current/default setting"), practiceOption("more_evidence", "Gather more evidence")]
+          : [practiceOption("keep_default", "Keep the model defaults"), practiceOption("more_evidence", "Gather more evidence before changing them")],
+        hasGrid ? "tuning" : "defaults"
+      );
+    } else if (taskId === "diagnose") {
+      practice.beforeRun = ["mlp_cls", "mlp_reg"].includes(modelId)
+        ? practicePrediction(
+          `${modelId}-loss`,
+          "If training loss falls, does that by itself prove new-data performance improved?",
+          [practiceOption("no", "No; use CV and the final test"), practiceOption("yes", "Yes")],
+          "no",
+          "loss"
+        )
+        : practicePrediction(
+          "diagnostic-scope",
+          "Will this training-only diagnostic, by itself, tell us final new-data performance?",
+          [practiceOption("no", "No; it shows behaviour, not the final estimate"), practiceOption("yes", "Yes")],
+          "no",
+          "diagnostic"
+        );
+    } else if (taskId === "final") {
+      practice.beforeRun = practicePrediction(
+        "final-vs-cv",
+        "Do you expect final-test performance to fall inside the range seen across CV folds?",
+        [practiceOption("inside", "Inside the CV range"), practiceOption("outside", "Outside the CV range")],
+        null,
+        "final"
+      );
+    }
+    return practice.beforeRun || practice.decision || practice.experiment ? practice : null;
+  }
+
+  function practiceStateFor(taskId) {
+    const key = practiceStateKey(practiceSetupIdentity, taskId);
+    if (!practiceStates.has(key)) practiceStates.set(key, {prediction:null, decision:null, experimentAttempted:false, experimentApplied:false, reflection:false, referenceRevealed:false});
+    return practiceStates.get(key);
+  }
+
+  function clearPracticeSession() {
+    practiceStates.clear();
+  }
+
+  function clearPracticeStatesFrom(taskId) {
+    const start = routeTasks.findIndex(item => item.id === taskId);
+    if (start < 0) return;
+    routeTasks.slice(start).forEach(item => practiceStates.delete(practiceStateKey(practiceSetupIdentity, item.id)));
+  }
+
+  function practiceCounts() {
+    const prefix = `${practiceSetupIdentity}::`;
+    const counts = {predictions:0, decisions:0, experiments:0, references:0};
+    practiceStates.forEach((state, key) => {
+      if (!key.startsWith(prefix)) return;
+      if (state.prediction !== null) counts.predictions += 1;
+      if (state.decision !== null) counts.decisions += 1;
+      if (state.experimentAttempted) counts.experiments += 1;
+      if (state.referenceRevealed) counts.references += 1;
+    });
+    return counts;
+  }
+
+  function renderPracticeModeControls() {
+    const guided = $("#guidedModeButton"), practice = $("#practiceModeButton"), note = $("#practiceModeNote"), runAllButton = $("#runAllButton");
+    if (!guided || !practice || !note || !runAllButton) return;
+    const isPractice = playgroundMode === "practice";
+    document.body.dataset.learningMode = playgroundMode;
+    guided.setAttribute("aria-pressed", String(!isPractice));
+    practice.setAttribute("aria-pressed", String(isPractice));
+    runAllButton.disabled = !runtimeReady || isPractice;
+    runAllButton.setAttribute("aria-describedby", isPractice ? "practiceModeNote" : "");
+    runAllButton.textContent = isPractice
+      ? "Run complete unavailable in Practice"
+      : selectedModel()?.task === "unsupervised"
+        ? "▶ Run complete walkthrough"
+        : `▶ Run complete ${$("#foldSelect").value}-fold walkthrough`;
+    note.hidden = !isPractice;
+    if (isPractice) {
+      const counts = practiceCounts();
+      note.textContent = `Practice mode: predict before selected cells, make evidence-based choices, and try one safe change. “Not sure yet” is always acceptable. Run Complete is unavailable; progress this session: ${counts.predictions} predictions · ${counts.decisions} decisions · ${counts.experiments} experiments · ${counts.references} reference reveals.`;
+    } else {
+      note.textContent = "";
+    }
+  }
+
+  function setPlaygroundMode(mode) {
+    if (!["guided", "practice"].includes(mode) || mode === playgroundMode) {
+      renderPracticeModeControls();
+      return;
+    }
+    playgroundMode = mode;
+    renderPracticeModeControls();
+    renderNotebookView();
+    renderRoute();
+    if (!$("#guideWindow").hidden) renderWorkflow();
+  }
 
   function invalidateCellsFrom(routeItems, cellList, taskId) {
     const start = routeItems.findIndex(item => item.id === taskId);
@@ -671,9 +1090,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       : "Prediction workflow · each step answers one question; the saved test set is used only at the end.";
     $("#foldSelect").disabled = unsupervised;
     $("#foldLabel").textContent = unsupervised ? "Cross-validation · not used" : "Cross-validation";
-    $("#runAllButton").textContent = unsupervised ? "▶ Run complete walkthrough" : `▶ Run complete ${$("#foldSelect").value}-fold walkthrough`;
-    $("#runAllButton").disabled = !runtimeReady;
     renderDatasetPreview();
+    renderPracticeModeControls();
   }
 
   function tablePayload(container, payload, compact = false) {
@@ -1195,7 +1613,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       frame: {
         question:"What are we trying to predict, and which features are we using?",
         readingCue:"Check that X contains the selected features and y contains the target.",
-        concepts:frameConcepts(config, value)
+        concepts:frameConcepts(config, value),
+        practice:practiceForTask(config, value, modelId, "frame")
       },
       split: {
         question:"Which rows are available for learning, and which are being saved for the final check?",
@@ -1204,7 +1623,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           : config.task === "classification"
             ? "Check the training/test sizes and whether class proportions stay similar."
             : "Check the training/test sizes and whether both partitions cover the target range.",
-        concepts:splitConcepts(config)
+        concepts:splitConcepts(config),
+        practice:practiceForTask(config, value, modelId, "split")
       },
       explore: {
         question:"What patterns or differences can I see in the training data?",
@@ -1213,12 +1633,14 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       prepare: {
         question:"What preparation does this particular model need?",
         readingCue:preprocessingReadingCue(config, value, modelId),
-        concepts:preprocessingConcepts(config, value, modelId)
+        concepts:preprocessingConcepts(config, value, modelId),
+        practice:practiceForTask(config, value, modelId, "prepare")
       },
       model: {
         question:"What kind of pattern will this model try to learn?",
         readingCue:"Look for whether the model is linear, rule-based, distance-based, or nonlinear, and connect that idea to the selected data.",
-        concepts:[...pipelineConcepts(config), ...(["mlp_cls", "mlp_reg"].includes(modelId) ? neuralNetworkBuildConcepts(config, modelId) : [])]
+        concepts:[...pipelineConcepts(config), ...(["mlp_cls", "mlp_reg"].includes(modelId) ? neuralNetworkBuildConcepts(config, modelId) : [])],
+        practice:practiceForTask(config, value, modelId, "model")
       },
       baseline: {
         question:"Does this model perform similarly across different validation folds?",
@@ -1227,28 +1649,32 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           : "Look for whether validation scores stay fairly similar and whether training scores are consistently much better.",
         metricMeta,
         metricHelp:metricHelpFor(config, "baseline"),
-        concepts:cvConcepts(config, folds)
+        concepts:cvConcepts(config, folds),
+        practice:practiceForTask(config, value, modelId, "baseline")
       },
       tune: {
         question:"Do alternative settings improve validation performance enough to prefer one?",
         readingCue:"Compare settings using cross-validation only; the final test remains untouched.",
         metricMeta,
         metricHelp:metricHelpFor(config, "reminder"),
-        concepts:tuningConcepts(config, modelId, value)
+        concepts:tuningConcepts(config, modelId, value),
+        practice:practiceForTask(config, value, modelId, "tune")
       },
       diagnose: {
         question:"Where does the selected model make mistakes or show patterns in its errors?",
         readingCue:config.task === "classification"
           ? "Look for which actual classes are most often confused and whether errors cluster by class."
           : "Look for whether residuals form a roughly random cloud around zero or show a pattern.",
-        modelTeaching:modelSpecificTeaching(config, modelId, value)
+        modelTeaching:modelSpecificTeaching(config, modelId, value),
+        practice:practiceForTask(config, value, modelId, "diagnose")
       },
       final: {
         question:"Is the final-test result consistent with what cross-validation suggested?",
         readingCue:"Look for whether the final score is broadly consistent with the range seen during validation.",
         metricMeta,
         metricHelp:metricHelpFor(config, "final"),
-        comparison:true
+        comparison:true,
+        practice:practiceForTask(config, value, modelId, "final")
       }
     };
   }
@@ -1385,6 +1811,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       metricHelp:Array.isArray(details.metricHelp) ? details.metricHelp : [],
       metricMeta:details.metricMeta || null,
       comparison:Boolean(details.comparison),
+      practice:details.practice || null,
       code:formatRouteCode(code)
     };
   };
@@ -2588,7 +3015,8 @@ print(f"Mechanical silhouette suggestion (not a final answer): k={silhouette_sug
 candidate_scores.round(3)`,{
         question:"How do the candidate values of k trade off compactness and separation?",
         readingCue:"Look for an elbow in inertia and for silhouette values, but treat both as evidence rather than an automatic answer.",
-        concepts:unsupervisedConcepts(["k", "inertia", "silhouette", "choice_not_truth"])
+        concepts:unsupervisedConcepts(["k", "inertia", "silhouette", "choice_not_truth"]),
+        practice:practiceForTask(config, value, "kmeans", "compare")
       }),
       task("fit","Fit K-means","neutral runnable starting k",`# 5 · Fit a runnable starting K-means solution
 selected_k = min(3, max_k)  # Edit this after comparing the evidence if another k is more useful.
@@ -2598,7 +3026,8 @@ print(f"This walkthrough starts at k={selected_k} so it can run. Compare the elb
 pd.DataFrame({"selected_k":[selected_k], "silhouette":[silhouette_score(Z, clusters, sample_size=sample_size, random_state=42)], "inertia":[kmeans.inertia_]}).round(3)`,{
         question:"What does this chosen grouping look like when I use a runnable starting k?",
         readingCue:"Compare the starting k with the elbow, silhouette, cluster sizes, and profiles; edit selected_k when another solution answers your question better.",
-        concepts:unsupervisedConcepts(["centroid", "k", "choice_not_truth", "cluster_label"])
+        concepts:unsupervisedConcepts(["centroid", "k", "choice_not_truth", "cluster_label"]),
+        practice:practiceForTask(config, value, "kmeans", "fit")
       }),
       task("diagnose","Check the clusters","size + separation",`# 6 · Check whether the solution is balanced and separated
 from sklearn.metrics import silhouette_samples
@@ -2631,7 +3060,8 @@ print("Cluster IDs are arbitrary. Compare the original-unit row means and centro
 cluster_profile_view`,{
         question:"How can I describe the groups in original feature units?",
         readingCue:"Compare cluster means and centroids in original units; labels such as cluster 0 have no meaning by themselves.",
-        concepts:unsupervisedConcepts(["profile", "centroid", "cluster_label"])
+        concepts:unsupervisedConcepts(["profile", "centroid", "cluster_label"]),
+        practice:practiceForTask(config, value, "kmeans", "profile")
       }),
       task("visualise","Map the clusters","PCA view only",`# 8 · Project to two dimensions for a visual map (the model used all dimensions)
 from sklearn.decomposition import PCA
@@ -2707,7 +3137,8 @@ print(f"Mechanical silhouette suggestion (not a final answer): {silhouette_sugge
 candidate_scores.round(3)`,{
         question:"How do possible cuts compare using silhouette and cluster size?",
         readingCue:"Use dendrogram gaps, silhouette, resulting cluster sizes, and profiles together; silhouette supports the choice but does not decide it.",
-        concepts:unsupervisedConcepts(["silhouette", "horizontal_cut", "choice_not_truth"])
+        concepts:unsupervisedConcepts(["silhouette", "horizontal_cut", "choice_not_truth"]),
+        practice:practiceForTask(config, value, "hierarchical", "compare")
       }),
       task("fit","Fit the hierarchy","neutral runnable starting cut",`# 6 · Fit a runnable starting hierarchy
 selected_k = min(3, max_k)  # Edit this after comparing the dendrogram and evidence if another cut is more useful.
@@ -2717,7 +3148,8 @@ print(f"This walkthrough starts at {selected_k} clusters so it can run. A horizo
 pd.Series(clusters).value_counts().sort_index().rename_axis("cluster").reset_index(name="rows")`,{
         question:"What does this chosen hierarchy produce at a runnable starting cut?",
         readingCue:"Compare the starting cut with the dendrogram, merge heights, silhouette, cluster sizes, and profiles; edit selected_k if another cut is more useful.",
-        concepts:unsupervisedConcepts(["agglomerative", "horizontal_cut", "choice_not_truth", "cluster_label"])
+        concepts:unsupervisedConcepts(["agglomerative", "horizontal_cut", "choice_not_truth", "cluster_label"]),
+        practice:practiceForTask(config, value, "hierarchical", "fit")
       }),
       task("profile","Explain the groups","original feature units",`# 7 · Describe the discovered groups in original units
 profile_df = analysis_rows[feature_names].copy()
@@ -2728,7 +3160,8 @@ cluster_profile.reset_index()`,{
         question:"How can I describe the groups in original feature units?",
         readingCue:"Compare the sampled cluster means in original units; cluster IDs are labels, not meanings.",
         concepts:unsupervisedConcepts(["profile", "cluster_label", "sampling"]),
-        modelTeaching:modelSpecificTeaching(config, "hierarchical", value)
+        modelTeaching:modelSpecificTeaching(config, "hierarchical", value),
+        practice:practiceForTask(config, value, "hierarchical", "profile")
       }),
       task("visualise","Map the hierarchy","PCA teaching view",`# 8 · Visualise the sampled hierarchy in two dimensions
 from sklearn.decomposition import PCA
@@ -2790,7 +3223,8 @@ print("Scree plot: variance explained by each component. Cumulative variance ret
 variance_table.round(4)`,{
         question:"How much variation does each component represent, and how does cumulative variance grow?",
         readingCue:"Look for components whose added variance becomes relatively small, and how many are needed for the chosen 90% criterion.",
-        concepts:unsupervisedConcepts(["explained_variance", "cumulative_variance", "scree", "ninety_rule"])
+        concepts:unsupervisedConcepts(["explained_variance", "cumulative_variance", "scree", "ninety_rule"]),
+        practice:practiceForTask(config, value, "pca", "variance")
       }),
       task("select","Select components","chosen 90% criterion",`# 5 · Select the smallest representation reaching the chosen 90% variance criterion
 components_for_90pct = int(np.flatnonzero(cumulative_explained_variance >= .90)[0] + 1)
@@ -2800,7 +3234,8 @@ print(f"For this walkthrough we keep the first {components_for_90pct} components
 pd.DataFrame({"original_dimensions":[Z.shape[1]], "components_for_90pct":[components_for_90pct], "cumulative_variance_retained":[variance_retained_at_90pct]}).round(4)`,{
         question:"How many components should this walkthrough keep for its chosen variance-retention rule?",
         readingCue:"Check the first component count where cumulative variance reaches at least 90%; this is a chosen trade-off, not a universal answer.",
-        concepts:unsupervisedConcepts(["ninety_rule", "reduced_representation", "cumulative_variance"])
+        concepts:unsupervisedConcepts(["ninety_rule", "reduced_representation", "cumulative_variance"]),
+        practice:practiceForTask(config, value, "pca", "select")
       }),
       task("loadings","Understand the component loadings","which features shape each axis",`# 6 · Connect the component axes back to the original inputs
 loadings = pd.DataFrame(full_pca.components_.T, index=feature_names, columns=[f"PC{i}" for i in range(1, len(full_pca.components_) + 1)])
@@ -2813,7 +3248,8 @@ print("A loading is the weight of an original feature in a component. Larger abs
 loading_view.round(3)`,{
         question:"Which original features shape each principal-component axis, and how should I read their signs?",
         readingCue:"Compare absolute loading sizes for contribution and compare signs as opposite directions; do not treat a sign as good or bad.",
-        concepts:unsupervisedConcepts(["loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"])
+        concepts:unsupervisedConcepts(["loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"]),
+        practice:practiceForTask(config, value, "pca", "loadings")
       }),
       task("project","Project the rows","PC1 + PC2 · labels after fitting",`# 7 · Give each row coordinates on the learned axes, then add labels for interpretation
 component_scores = full_pca.transform(Z)
@@ -2835,7 +3271,8 @@ plot_df.head(12)`,{
         question:"Where do rows lie on the new axes, and what can a 2D view leave out?",
         readingCue:"Read scores as row coordinates, check the actual PC1/PC2 variance percentages, and remember labels were added only after fitting.",
         concepts:unsupervisedConcepts(["score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"]),
-        modelTeaching:modelSpecificTeaching(config, "pca", value)
+        modelTeaching:modelSpecificTeaching(config, "pca", value),
+        practice:practiceForTask(config, value, "pca", "project")
       })
     ];
   }
@@ -2849,15 +3286,17 @@ plot_df.head(12)`,{
 
   function buildRoute() {
     const config = selectedConfig(), value = selectedScenario(), modelId = selectedModelId(), folds = Number($("#foldSelect").value);
+    practiceSetupIdentity = practiceRouteIdentity(currentDatasetId, value.id, modelId, folds);
     routeTasks = Object.freeze(routeForSelection(config, value, modelId, folds).map(Object.freeze));
     renderRoute();
+    renderPracticeModeControls();
     if (!$("#guideWindow").hidden) renderWorkflow();
   }
 
   function setRuntimeReady(value, status = null) {
     runtimeReady = value;
-    $("#runAllButton").disabled = !value;
     if (status) $("#runtimeStatus").textContent = status;
+    renderPracticeModeControls();
     renderRoute();
   }
 
@@ -2875,7 +3314,11 @@ plot_df.head(12)`,{
       $(".route-caption", button).textContent = item.caption;
       button.addEventListener("click", async () => {
         let cell = cells.find(value => value.taskId === item.id);
-        if (!cell) cell = addRouteCell(item, false);
+        if (!cell) {
+          cell = addRouteCell(item, false);
+          renderNotebookView();
+          renderRoute();
+        }
         await runCell(cell);
       });
       strip.append(button);
@@ -2906,6 +3349,7 @@ plot_df.head(12)`,{
   function invalidateRouteFrom(taskId, {renderNotebook = false, message = "Workflow changed — rerun from this step."} = {}) {
     const result = invalidateCellsFrom(routeTasks, cells, taskId);
     if (!result.changed) return false;
+    clearPracticeStatesFrom(taskId);
     workspaceToken += 1;
     if (renderNotebook) renderNotebookView();
     else {
@@ -3046,6 +3490,346 @@ explore_df.head(10)`;
     const metrics = metricHelpBlock(task.metricHelp);
     if (metrics) block.append(metrics);
     return block;
+  }
+
+  function practiceOptionLabel(practice, value) {
+    const option = practice?.options?.find(item => String(item.value) === String(value));
+    return option?.label || String(value);
+  }
+
+  function practiceChoiceField(cell, practice, state, property, buttonLabel, onCommit) {
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "practice-options";
+    const legend = document.createElement("legend");
+    legend.className = "sr-only";
+    legend.textContent = practice.prompt;
+    fieldset.append(legend);
+    const name = `practice-${cell.id}-${practice.id}-${property}`;
+    practice.options.forEach(option => {
+      const label = document.createElement("label");
+      label.className = "practice-option";
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = name;
+      input.value = String(option.value);
+      input.checked = String(state[property] ?? "") === String(option.value);
+      const copy = document.createElement("span");
+      copy.textContent = option.label;
+      label.append(input, copy);
+      fieldset.append(label);
+    });
+    const actions = document.createElement("div");
+    actions.className = "practice-actions";
+    const submit = document.createElement("button");
+    submit.type = "button";
+    submit.className = "practice-button";
+    submit.textContent = buttonLabel;
+    submit.disabled = !practice.options.some(option => String(option.value) === String(state[property] ?? ""));
+    fieldset.addEventListener("change", event => {
+      if (event.target?.matches("input[type=radio]")) submit.disabled = false;
+    });
+    submit.addEventListener("click", () => {
+      const selected = fieldset.querySelector("input[type=radio]:checked")?.value;
+      const normalized = normalizePracticeAnswer(selected, practice);
+      if (normalized === null) return;
+      onCommit(normalized);
+    });
+    actions.append(submit);
+    return [fieldset, actions];
+  }
+
+  function practiceCommittedAnswer(practice, state, property, noun) {
+    const answer = document.createElement("p");
+    answer.className = "practice-answer";
+    const strong = document.createElement("strong");
+    strong.textContent = noun;
+    answer.append(strong, document.createTextNode(` ${practiceOptionLabel(practice, state[property])}`));
+    return answer;
+  }
+
+  function practicePanelHeading(text) {
+    const heading = document.createElement("h4");
+    heading.textContent = text;
+    return heading;
+  }
+
+  function renderPracticeBeforeRun(cell) {
+    if (playgroundMode !== "practice") return null;
+    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
+    if (!task || !practice) return null;
+    const state = practiceStateFor(task.id);
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "before-run";
+    section.dataset.practiceTask = task.id;
+    section.setAttribute("aria-label", `Practice prompt before ${task.title}`);
+    section.append(practicePanelHeading("PREDICT BEFORE RUN"));
+    const prompt = document.createElement("p");
+    prompt.className = "practice-prompt";
+    prompt.textContent = practice.prompt;
+    section.append(prompt);
+    if (state.prediction === null) {
+      const [choices, actions] = practiceChoiceField(cell, practice, state, "prediction", "Commit prediction", value => {
+        state.prediction = value;
+        renderNotebookView();
+        renderPracticeModeControls();
+      });
+      section.append(choices, actions);
+    } else {
+      section.append(practiceCommittedAnswer(practice, state, "prediction", "Your prediction:"));
+      if (cell.status !== "done") {
+        const actions = document.createElement("div");
+        actions.className = "practice-actions";
+        const change = document.createElement("button");
+        change.type = "button";
+        change.className = "practice-button";
+        change.textContent = "Change prediction";
+        change.addEventListener("click", () => {
+          state.prediction = null;
+          renderNotebookView();
+        });
+        actions.append(change);
+        section.append(actions);
+      }
+    }
+    return section;
+  }
+
+  function practiceTableNumber(table, columnName, rowIndex = 0) {
+    if (!Array.isArray(table?.columns) || !Array.isArray(table?.rows)) return null;
+    const column = table.columns.indexOf(columnName);
+    if (column < 0) return null;
+    return normalizeTeachingNumber(table.rows[rowIndex]?.[column]);
+  }
+
+  function practiceEvidenceText(task, cell) {
+    const config = selectedConfig();
+    const practice = task?.practice?.beforeRun;
+    if (!practice) return "Compare the generated evidence with the idea in the question.";
+    if (practice.evidence === "chronology") return "The route keeps later validation windows after the rows used to fit each fold; the order is part of the evidence for this time-based task.";
+    if (practice.evidence === "split") return "The split uses stratification to keep class proportions roughly similar; it protects the comparison without making the proportions identical.";
+    if (practice.evidence === "scaling") return "The preparation places the selected numeric inputs on comparable scales before this model uses distances, boundaries, or optimization.";
+    if (practice.evidence === "model") return task.id === "model" && selectedModelId() === "knn_cls"
+      ? "With a larger k, each individual neighbour contributes a smaller share of the vote."
+      : task.id === "model" && ["classification_tree", "regression_tree"].includes(selectedModelId())
+        ? "A larger maximum depth gives the tree more opportunity to make detailed training splits."
+        : selectedModelId() === "logistic"
+          ? "The fitted logistic model uses a linear boundary in prepared feature space."
+          : "Read the fitted model output to connect the model's structure with its evidence.";
+    if (practice.evidence === "loss") return "The loss curve is optimization evidence: falling loss means the training objective is being fitted better, not that new-data performance has been proved.";
+    if (practice.evidence === "cv") {
+      const summary = cvSummaryFromTable(cell.output?.table, config.task, config.split, config.target);
+      return summary
+        ? `${summaryMetricLabel(summary)} values across the folds have a ${formatTeachingNumber(summary.validationMin)}–${formatTeachingNumber(summary.validationMax)} validation range. Compare that spread rather than expecting identical folds.`
+        : "The fold table is the evidence to use when judging whether validation results are similar or variable.";
+    }
+    if (practice.evidence === "diagnostic") return "This diagnostic describes mistakes or residual patterns in the training-only evidence; cross-validation and the final test remain the generalization evidence.";
+    if (practice.evidence === "final") {
+      const summary = currentCVSummary(), comparison = summary ? finalComparisonFromTable(summary, cell.output?.table) : null;
+      return comparison?.interpretation || "Compare the final-test value with the earlier CV range; this is an informal comparison, not a formal prediction interval.";
+    }
+    if (practice.evidence === "pca-variance") {
+      const first = practiceTableNumber(cell.output?.table, "cumulative_explained_variance", 1);
+      return first === null
+        ? "Compare the cumulative-variance column to see how much the first components retain together."
+        : `The first two components retain about ${formatTeachingNumber(first * 100)}% cumulatively in this run; compare that with your prediction.`;
+    }
+    if (practice.evidence === "pca-loading") return "Compare absolute loading sizes to judge contribution strength; the sign indicates direction and is not a good/bad score.";
+    if (practice.evidence === "pca-projection") return "The chart shows only PC1 and PC2, while the selected reduced representation may keep more components for the chosen variance criterion.";
+    return "Compare the generated evidence with the idea in the question.";
+  }
+
+  function renderPracticePredictionFeedback(cell) {
+    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
+    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
+    if (!task || !practice) return null;
+    const state = practiceStateFor(task.id);
+    if (state.prediction === null) return null;
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "prediction-feedback";
+    section.dataset.practiceTask = task.id;
+    section.setAttribute("role", "status");
+    section.setAttribute("aria-live", "polite");
+    section.append(practicePanelHeading("COMPARE YOUR PREDICTION"));
+    section.append(practiceCommittedAnswer(practice, state, "prediction", "Committed prediction:"));
+    const feedback = document.createElement("p");
+    feedback.className = "practice-feedback";
+    const explanation = practiceEvidenceText(task, cell);
+    if (practice.answer && state.prediction !== "not_sure") {
+      const expected = practiceOptionLabel(practice, practice.answer);
+      feedback.textContent = state.prediction === practice.answer
+        ? `The route evidence supports this conceptual answer: ${expected}. ${explanation}`
+        : `The route evidence points to: ${expected}. ${explanation}`;
+    } else if (state.prediction === "not_sure") {
+      feedback.dataset.tone = "neutral";
+      feedback.textContent = `You left this uncertain. ${explanation}`;
+    } else {
+      feedback.dataset.tone = "neutral";
+      feedback.textContent = explanation;
+    }
+    section.append(feedback);
+    return section;
+  }
+
+  function renderPracticeDecision(cell) {
+    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
+    const task = routeTaskForCell(cell), practice = task?.practice?.decision;
+    if (!task || !practice) return null;
+    const state = practiceStateFor(task.id);
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "decision";
+    section.dataset.practiceTask = task.id;
+    section.setAttribute("aria-label", `Practice decision after ${task.title}`);
+    section.append(practicePanelHeading("DECIDE FROM THE EVIDENCE"));
+    const prompt = document.createElement("p");
+    prompt.className = "practice-prompt";
+    prompt.textContent = practice.prompt;
+    section.append(prompt);
+    if (state.decision === null) {
+      const [choices, actions] = practiceChoiceField(cell, practice, state, "decision", "Commit decision", value => {
+        state.decision = value;
+        renderNotebookView();
+        renderPracticeModeControls();
+      });
+      section.append(choices, actions);
+    } else {
+      section.append(practiceCommittedAnswer(practice, state, "decision", "Your choice:"));
+      const feedback = document.createElement("p");
+      feedback.className = "practice-feedback";
+      feedback.dataset.tone = "neutral";
+      feedback.textContent = practice.evidence === "cluster-choice"
+        ? "That is a defensible candidate. Compare it with the elbow or dendrogram, silhouette, cluster sizes, and original-unit profiles; no single candidate is graded as truth."
+        : practice.evidence === "cluster-profile"
+          ? "Cluster numbers are arbitrary. Compare the original-unit profile to describe what the group represents."
+          : "Keep this as an evidence-based working decision; compare it with the validation results and the final test when those steps are available.";
+      section.append(feedback);
+    }
+    return section;
+  }
+
+  function applyPracticeExperiment(cell, experiment) {
+    const task = routeTaskForCell(cell), targetTaskId = experiment?.targetTaskId || task?.id;
+    const targetCell = cells.find(item => item.taskId === targetTaskId);
+    if (!task || !targetCell) return;
+    const currentState = practiceStateFor(task.id);
+    currentState.experimentAttempted = true;
+    const mutation = applyPracticeMutation(targetCell.code, experiment);
+    if (!mutation.changed) {
+      renderNotebookView();
+      renderPracticeModeControls();
+      showToast(mutation.reason, true);
+      return;
+    }
+    targetCell.code = mutation.code;
+    invalidateRouteFrom(targetTaskId, {renderNotebook:true, message:"Safe experiment applied; rerun this step and the downstream evidence."});
+    const resetState = practiceStateFor(task.id);
+    resetState.experimentAttempted = true;
+    resetState.experimentApplied = true;
+    renderNotebookView();
+    renderPracticeModeControls();
+  }
+
+  function renderPracticeExperiment(cell) {
+    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
+    const task = routeTaskForCell(cell), experiment = task?.practice?.experiment;
+    if (!task || !experiment) return null;
+    const state = practiceStateFor(task.id);
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "experiment";
+    section.dataset.practiceTask = task.id;
+    section.append(practicePanelHeading("SAFE EXPERIMENT"));
+    const instruction = document.createElement("p");
+    instruction.className = "practice-prompt";
+    instruction.textContent = experiment.instruction;
+    section.append(instruction);
+    const details = document.createElement("div");
+    details.className = "practice-experiment";
+    const change = document.createElement("code");
+    change.textContent = experiment.change;
+    const note = document.createElement("p");
+    note.className = "practice-experiment-note";
+    note.textContent = "Applying this makes this cell and downstream route steps stale. It will not run automatically.";
+    details.append(change, note);
+    if (!state.experimentApplied) {
+      const actions = document.createElement("div");
+      actions.className = "practice-actions";
+      const apply = document.createElement("button");
+      apply.type = "button";
+      apply.className = "practice-button";
+      apply.textContent = "Apply experiment";
+      apply.addEventListener("click", () => applyPracticeExperiment(cell, experiment));
+      actions.append(apply);
+      details.append(actions);
+    } else if (state.reflection) {
+      const complete = document.createElement("p");
+      complete.className = "practice-feedback";
+      complete.dataset.tone = "neutral";
+      complete.textContent = "Experiment comparison recorded. Use the changed output to explain what moved, what stayed similar, and what the evidence does not establish.";
+      details.append(complete);
+    } else {
+      const prompt = document.createElement("p");
+      prompt.className = "practice-prompt";
+      prompt.textContent = "What changed in the evidence after this one-variable edit?";
+      const actions = document.createElement("div");
+      actions.className = "practice-actions";
+      const complete = document.createElement("button");
+      complete.type = "button";
+      complete.className = "practice-button";
+      complete.textContent = "Mark comparison complete";
+      complete.addEventListener("click", () => {
+        state.reflection = true;
+        renderNotebookView();
+        renderPracticeModeControls();
+      });
+      actions.append(complete);
+      details.append(prompt, actions);
+    }
+    section.append(details);
+    return section;
+  }
+
+  function renderPracticeResult(cell) {
+    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return [];
+    return [renderPracticePredictionFeedback(cell), renderPracticeDecision(cell), renderPracticeExperiment(cell)].filter(Boolean);
+  }
+
+  function pendingPracticeDecisionBefore(taskId) {
+    const index = routeTasks.findIndex(item => item.id === taskId);
+    if (index < 0) return null;
+    for (const task of routeTasks.slice(0, index)) {
+      if (!task.practice?.decision) continue;
+      const cell = cells.find(item => item.taskId === task.id);
+      if (cell?.output?.status !== "ok") continue;
+      if (practiceStateFor(task.id).decision === null) return task;
+    }
+    return null;
+  }
+
+  function focusPracticePrompt(taskId, role) {
+    const panel = $$("[data-practice-task]", document).find(item => item.dataset.practiceTask === taskId && (!role || item.dataset.practiceRole === role));
+    if (!panel) return;
+    panel.scrollIntoView({block:"center", behavior:"smooth"});
+    panel.querySelector("input,button")?.focus();
+  }
+
+  function ensurePracticeCanRun(cell) {
+    if (playgroundMode !== "practice" || !cell.taskId) return true;
+    const pending = pendingPracticeDecisionBefore(cell.taskId);
+    if (pending) {
+      showToast(`Choose an interpretation for “${pending.title}” before continuing.`);
+      focusPracticePrompt(pending.id, "decision");
+      return false;
+    }
+    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
+    if (practice && practiceStateFor(task.id).prediction === null) {
+      showToast("Commit a prediction first. “Not sure yet” is okay.");
+      focusPracticePrompt(task.id, "before-run");
+      return false;
+    }
+    return true;
   }
 
   function summaryMetricLabel(summary, includeDirection = true) {
@@ -3208,8 +3992,10 @@ explore_df.head(10)`;
       inlineOutput.className = "cell-inline-output";
       inlineOutput.dataset.outputFor = cell.id;
       const teaching = renderTeachingBlock(cell);
+      const practice = renderPracticeBeforeRun(cell);
       article.append(head);
       if (teaching) article.append(teaching);
+      if (practice) article.append(practice);
       article.append(editor, foot);
       stack.append(article, inlineOutput);
       panel.append(stack);
@@ -3220,6 +4006,7 @@ explore_df.head(10)`;
   async function runCell(cell) {
     if (!runtimeReady) { showToast("The Python workspace is still loading.", true); return; }
     if (cell.stage === "final" && testSetOpened) { showToast("The final test has already been used in this walkthrough. Select Reset to start again.", true); return; }
+    if (!ensurePracticeCanRun(cell)) return;
     if (!cell.code.trim() || cell.status === "running") return;
     const token = workspaceToken;
     cell.status = "running"; renderNotebookView(); renderRoute();
@@ -3242,6 +4029,7 @@ explore_df.head(10)`;
 
   async function runAll() {
     if (!runtimeReady) { showToast("Wait for the Python workspace to finish loading.", true); return; }
+    if (playgroundMode === "practice") { showToast("Run Complete is unavailable in Practice mode. Work through the route one step at a time."); return; }
     const token = workspaceToken;
     const firstIncomplete = firstIncompleteRouteIndex(routeTasks, cells);
     if (firstIncomplete < 0) return;
@@ -3276,6 +4064,8 @@ explore_df.head(10)`;
     });
     const teachingResult = renderTeachingResult(cell);
     if (teachingResult) item.append(teachingResult);
+    const practiceResults = renderPracticeResult(cell);
+    if (practiceResults.length) item.append(...practiceResults);
     if (warnings.length) {
       item.append(outputTitle("Python warning", `${warnings.length} captured · cell succeeded`));
       const pre = document.createElement("pre"); pre.className = "console-output warning"; pre.textContent = warnings.map(warning => `${warning.category || "Warning"}: ${warning.message || warning}`).join("\n"); item.append(pre);
@@ -3336,8 +4126,9 @@ explore_df.head(10)`;
 
   function clearNotebook(message = "Notebook cleared; the test set is sealed again.") {
     cells = []; cellSequence = 0; latestChart = null; testSetOpened = false;
+    clearPracticeSession();
     $("#outputStatus").textContent = "No cell run yet";
-    renderNotebookView(); renderRoute(); updateSeal();
+    renderNotebookView(); renderRoute(); renderPracticeModeControls(); updateSeal();
     if (message) showToast(message);
   }
 
@@ -3451,6 +4242,13 @@ explore_df.head(10)`;
     $("#workflowProgressBar").style.width = `${((activeIndex + 1) / steps.length) * 100}%`;
   }
 
+  function togglePracticeReference(taskId) {
+    const state = practiceStateFor(taskId);
+    state.referenceRevealed = !state.referenceRevealed;
+    renderWorkflow();
+    renderPracticeModeControls();
+  }
+
   function renderWorkflow() {
     const body = $("#guideBody"), config = selectedConfig(), value = selectedScenario(), model = selectedModel();
     body.replaceChildren();
@@ -3458,7 +4256,9 @@ explore_df.head(10)`;
     $("#guideDeckCount").textContent = `${routeTasks.length} steps · same code as the route`;
 
     const intro = document.createElement("p"); intro.className = "workflow-intro";
-    intro.innerHTML = "Each step answers one beginner question. <strong>Every title, explanation, and code block below comes directly from the current Suggested Route.</strong> Type the cell, run it, and inspect the output before continuing.";
+    intro.innerHTML = playgroundMode === "practice"
+      ? "Each step answers one beginner question. <strong>Keep the question and reading cue in view, then reveal the reference solution only when you need it.</strong>"
+      : "Each step answers one beginner question. <strong>Every title, explanation, and code block below comes directly from the current Suggested Route.</strong> Type the cell, run it, and inspect the output before continuing.";
     const progress = document.createElement("div"); progress.className = "workflow-progress";
     progress.innerHTML = `<b>Manual walkthrough</b><span id="workflowProgressLabel">Step 1 of ${routeTasks.length}</span><span class="workflow-meter"><span id="workflowProgressBar"></span></span>`;
     const story = document.createElement("div"); story.className = "workflow-story";
@@ -3477,15 +4277,55 @@ explore_df.head(10)`;
       const modelTeaching = modelTeachingBlock(item.modelTeaching, "workflow-step-model-teaching");
       const cue = item.readingCue ? teachingLine("LOOK FOR", item.readingCue, "workflow-step-cue", "reading-cue") : null;
       const metric = metricHelpBlock(item.metricHelp, "workflow-step-metric");
-      const typeNote = document.createElement("p"); typeNote.className = "workflow-type-note"; typeNote.textContent = "Type, run, and inspect this cell";
-      const code = document.createElement("pre"); code.className = "workflow-code"; code.dataset.taskId = item.id; code.innerHTML = highlightPython(item.code); code.setAttribute("aria-label", `Exact Python for ${item.title}`);
+      const typeNote = document.createElement("p"); typeNote.className = "workflow-type-note"; typeNote.textContent = playgroundMode === "practice" ? "Reference Python available on demand" : "Type, run, and inspect this cell";
       step.append(number, head);
       if (note) step.append(note);
       if (concepts) step.append(concepts);
       if (modelTeaching) step.append(modelTeaching);
       if (cue) step.append(cue);
       if (metric) step.append(metric);
-      step.append(typeNote, code); story.append(step);
+      step.append(typeNote);
+      if (playgroundMode === "practice") {
+        const reveal = document.createElement("div");
+        reveal.className = "workflow-code-reveal";
+        reveal.dataset.practiceRole = "reference-code";
+        reveal.dataset.practiceTask = item.id;
+        const state = practiceStateFor(item.id);
+        if (state.referenceRevealed) {
+          const label = document.createElement("p");
+          label.className = "workflow-reference-label";
+          label.textContent = "Reference solution";
+          const code = document.createElement("pre");
+          code.className = "workflow-code";
+          code.dataset.taskId = item.id;
+          code.innerHTML = highlightPython(item.code);
+          code.setAttribute("aria-label", `Reference solution Python for ${item.title}`);
+          const hide = document.createElement("button");
+          hide.type = "button";
+          hide.className = "workflow-reveal-button";
+          hide.textContent = "Hide reference solution";
+          hide.addEventListener("click", () => togglePracticeReference(item.id));
+          reveal.append(label, code, hide);
+        } else {
+          const message = document.createElement("p");
+          message.textContent = "The question and cue stay visible while the exact Python remains collapsed.";
+          const show = document.createElement("button");
+          show.type = "button";
+          show.className = "workflow-reveal-button";
+          show.textContent = "Reveal code";
+          show.addEventListener("click", () => togglePracticeReference(item.id));
+          reveal.append(message, show);
+        }
+        step.append(reveal);
+      } else {
+        const code = document.createElement("pre");
+        code.className = "workflow-code";
+        code.dataset.taskId = item.id;
+        code.innerHTML = highlightPython(item.code);
+        code.setAttribute("aria-label", `Exact Python for ${item.title}`);
+        step.append(code);
+      }
+      story.append(step);
     });
     const foot = document.createElement("p"); foot.className = "workflow-foot";
     foot.textContent = "Changing the dataset, feature scenario, model, or fold count rebuilds this workflow from the same source as the route above. The final test is used once per walkthrough/setup; changing the model or using editable cells can reuse the deterministic holdout. Custom cells are unrestricted. Reset starts a new teaching run.";
@@ -3584,7 +4424,7 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber, practiceForTask, practiceRouteIdentity, practiceStateKey, normalizePracticeAnswer, safeExperimentForTask, applyPracticeMutation, practicePrediction, practiceDecision});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
@@ -3596,6 +4436,8 @@ explore_df.head(10)`;
   $("#resetButton").addEventListener("click", () => { void resetNotebook(); });
   $("#downloadChartButton").addEventListener("click", downloadChart);
   $("#themeButton").addEventListener("click", toggleTheme);
+  $("#guidedModeButton").addEventListener("click", () => setPlaygroundMode("guided"));
+  $("#practiceModeButton").addEventListener("click", () => setPlaygroundMode("practice"));
   $("#guideButton").addEventListener("click", openWorkflow);
   $("#guideClose").addEventListener("click", closeWorkflow);
   $("#guideDragHandle").addEventListener("pointerdown", startGuideDrag);
