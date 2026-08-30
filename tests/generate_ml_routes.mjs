@@ -112,13 +112,56 @@ const phase2bGaussianDensityFixture = {
   expected_density: 1 / Math.sqrt(2 * Math.PI * 0.001)
 };
 
+const hiddenCodeFields = {
+  setup:["setupCode", "hiddenSetupCode", "evidenceSetupCode", "teachingSetupCode"],
+  evidence:["evidenceCode", "hiddenEvidenceCode", "teachingEvidenceCode", "diagnosticEvidenceCode"],
+  advanced:["advancedCode", "advancedEvidenceCode", "diagnosticAdvancedCode"]
+};
+const fieldText = (cell, group) => {
+  for (const field of hiddenCodeFields[group]) {
+    if (typeof cell?.[field] === "string" && cell[field].trim()) return cell[field];
+  }
+  return "";
+};
+const lineCount = value => value ? String(value).split("\n").length : 0;
+const codeSurface = cell => {
+  const primary = String(cell?.code || "");
+  const setup = fieldText(cell, "setup");
+  const evidence = fieldText(cell, "evidence");
+  const advanced = fieldText(cell, "advanced");
+  const advancedBundle = advanced || [setup, evidence].filter(Boolean).join("\n\n");
+  return {
+    primaryLineCount:lineCount(primary),
+    setupLineCount:lineCount(setup),
+    evidenceLineCount:lineCount(evidence),
+    advancedLineCount:lineCount(advancedBundle),
+    applicationLineCount:lineCount([setup, evidence].filter(Boolean).join("\n\n")),
+    hasSeparateEvidence:Boolean(evidence.trim()),
+    primaryCode:primary,
+    setupCode:setup,
+    evidenceCode:evidence,
+    advancedCode:advancedBundle
+  };
+};
+
 const complexityReport = Object.fromEntries(
-  Object.entries(routes).map(([folds, routeList]) => [folds, routeList.map(route => ({
-    datasetId: route.datasetId,
-    scenarioId: route.scenarioId,
-    modelId: route.modelId,
-    steps: api.routeComplexityReport(route.cells)
-  }))])
+  Object.entries(routes).map(([folds, routeList]) => [folds, routeList.map(route => {
+    const generatedSteps = api.routeComplexityReport(route.cells);
+    return {
+      datasetId: route.datasetId,
+      scenarioId: route.scenarioId,
+      modelId: route.modelId,
+      steps: route.cells.map((cell, index) => {
+        const surface = codeSurface(cell);
+        return {
+          ...(generatedSteps[index] || {}),
+          taskId:cell.id,
+          ...surface,
+          lineCount:surface.primaryLineCount
+        };
+      })
+    };
+  })])
 );
 
 const complexitySummary = {};
@@ -131,6 +174,12 @@ for (const [folds, report] of Object.entries(complexityReport)) {
       totalLines:0,
       maxLines:0,
       minLines:null,
+      totalPrimaryLines:0,
+      maxPrimaryLines:0,
+      minPrimaryLines:null,
+      totalAdvancedLines:0,
+      maxAdvancedLines:0,
+      minAdvancedLines:null,
       steps:{}
     };
     summary.routeCount += 1;
@@ -138,11 +187,35 @@ for (const [folds, report] of Object.entries(complexityReport)) {
       summary.totalLines += step.lineCount;
       summary.maxLines = Math.max(summary.maxLines, step.lineCount);
       summary.minLines = summary.minLines === null ? step.lineCount : Math.min(summary.minLines, step.lineCount);
-      const stepSummary = summary.steps[step.taskId] || {count:0, totalLines:0, maxLines:0, minLines:null};
+      summary.totalPrimaryLines += step.primaryLineCount;
+      summary.maxPrimaryLines = Math.max(summary.maxPrimaryLines, step.primaryLineCount);
+      summary.minPrimaryLines = summary.minPrimaryLines === null ? step.primaryLineCount : Math.min(summary.minPrimaryLines, step.primaryLineCount);
+      const advancedLines = step.advancedLineCount;
+      summary.totalAdvancedLines += advancedLines;
+      summary.maxAdvancedLines = Math.max(summary.maxAdvancedLines, advancedLines);
+      summary.minAdvancedLines = summary.minAdvancedLines === null ? advancedLines : Math.min(summary.minAdvancedLines, advancedLines);
+      const stepSummary = summary.steps[step.taskId] || {
+        count:0,
+        totalLines:0,
+        maxLines:0,
+        minLines:null,
+        totalPrimaryLines:0,
+        maxPrimaryLines:0,
+        minPrimaryLines:null,
+        totalAdvancedLines:0,
+        maxAdvancedLines:0,
+        minAdvancedLines:null
+      };
       stepSummary.count += 1;
       stepSummary.totalLines += step.lineCount;
       stepSummary.maxLines = Math.max(stepSummary.maxLines, step.lineCount);
       stepSummary.minLines = stepSummary.minLines === null ? step.lineCount : Math.min(stepSummary.minLines, step.lineCount);
+      stepSummary.totalPrimaryLines += step.primaryLineCount;
+      stepSummary.maxPrimaryLines = Math.max(stepSummary.maxPrimaryLines, step.primaryLineCount);
+      stepSummary.minPrimaryLines = stepSummary.minPrimaryLines === null ? step.primaryLineCount : Math.min(stepSummary.minPrimaryLines, step.primaryLineCount);
+      stepSummary.totalAdvancedLines += advancedLines;
+      stepSummary.maxAdvancedLines = Math.max(stepSummary.maxAdvancedLines, advancedLines);
+      stepSummary.minAdvancedLines = stepSummary.minAdvancedLines === null ? advancedLines : Math.min(stepSummary.minAdvancedLines, advancedLines);
       summary.steps[step.taskId] = stepSummary;
     }
     complexitySummary[key] = summary;
@@ -150,20 +223,41 @@ for (const [folds, report] of Object.entries(complexityReport)) {
 }
 Object.values(complexitySummary).forEach(summary => {
   summary.averageLines = summary.routeCount ? Number((summary.totalLines / summary.routeCount).toFixed(2)) : 0;
+  summary.averagePrimaryLines = summary.routeCount ? Number((summary.totalPrimaryLines / summary.routeCount).toFixed(2)) : 0;
+  summary.averageAdvancedLines = summary.routeCount ? Number((summary.totalAdvancedLines / summary.routeCount).toFixed(2)) : 0;
   Object.values(summary.steps).forEach(step => {
     step.averageLines = step.count ? Number((step.totalLines / step.count).toFixed(2)) : 0;
+    step.averagePrimaryLines = step.count ? Number((step.totalPrimaryLines / step.count).toFixed(2)) : 0;
+    step.averageAdvancedLines = step.count ? Number((step.totalAdvancedLines / step.count).toFixed(2)) : 0;
   });
 });
+const primaryLineReport = Object.entries(complexityReport).flatMap(([folds, report]) =>
+  report.flatMap(route => route.steps.map(step => ({
+    folds:Number(folds),
+    datasetId:route.datasetId,
+    scenarioId:route.scenarioId,
+    modelId:route.modelId,
+    step:step.taskId,
+    primaryLineCount:step.primaryLineCount,
+    setupLineCount:step.setupLineCount,
+    evidenceLineCount:step.evidenceLineCount,
+    advancedLineCount:step.advancedLineCount,
+    hasSeparateEvidence:step.hasSeparateEvidence
+  })))
+);
 
 process.stdout.write(JSON.stringify({
   datasets: api.DATASETS,
   models: api.MODELS,
   oneRHelperSource: api.ONE_R_HELPER_SOURCE,
   dataFrameSerializerSource: api.DATAFRAME_SERIALIZER_SOURCE,
+  practiceValidatorSource: api.PRACTICE_VALIDATOR_SOURCE,
   resetWorkspaceSource: api.RESET_WORKSPACE_SOURCE,
+  workerSource: api.WORKER_SOURCE,
   phase2bFixtures,
   phase2bGaussianDensityFixture,
   complexityReport,
   complexitySummary,
+  primaryLineReport,
   routes
 }));

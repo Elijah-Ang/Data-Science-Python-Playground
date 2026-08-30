@@ -26,6 +26,9 @@ if (!api) throw new Error("ML route test API was not exposed.");
 const closeEnough = (actual, expected, label) => {
   if (Math.abs(actual - expected) > 1e-10) throw new Error(`${label}: expected ${expected}, received ${actual}`);
 };
+const richDiagnosticCode = step => [step?.code, step?.setupCode, step?.evidenceCode, step?.advancedCode]
+  .filter(value => typeof value === "string" && value.trim())
+  .join("\n");
 
 const classificationRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "logistic", 5);
 if (classificationRoute.length !== 9) throw new Error("Classification teaching route does not contain nine guided steps.");
@@ -151,7 +154,7 @@ for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
     }
   }
   if (modelId === "qda") {
-    const qdaCode = diagnose.code;
+    const qdaCode = richDiagnosticCode(diagnose);
     for (const token of ["per-feature spread", "vary together within each class", "covariance/shape", "boundary can curve"]) {
       if (!qdaCode.toLowerCase().includes(token)) {
         throw new Error(`QDA precision wording is missing ${token}.`);
@@ -160,12 +163,12 @@ for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
   }
   if (modelId === "naive_bayes") {
     for (const token of ["Class-conditional density", "quantity_value", "not the probability of one exact continuous value"]) {
-      if (!diagnose.code.includes(token)) {
+      if (!richDiagnosticCode(diagnose).includes(token)) {
         throw new Error(`Gaussian Naive Bayes precision wording is missing ${token}.`);
       }
     }
     for (const token of ["estimated_probability", "probability_label", "Likelihood P(feature ≈ value | class)"]) {
-      if (diagnose.code.includes(token)) {
+      if (richDiagnosticCode(diagnose).includes(token)) {
         throw new Error(`Gaussian Naive Bayes still exposes ambiguous density terminology: ${token}.`);
       }
     }
@@ -207,9 +210,9 @@ for (const [modelId, [config, scenario]] of Object.entries(neuralFixtures)) {
     throw new Error(`Ordinary ${modelId} route should retain built-in early stopping.`);
   }
   for (const token of neuralCodeTokens[modelId]) {
-    if (!diagnoseStep.code.includes(token)) throw new Error(`Neural-network ${modelId} Step 8 is missing ${token}.`);
+    if (!richDiagnosticCode(diagnoseStep).includes(token)) throw new Error(`Neural-network ${modelId} Step 8 is missing ${token}.`);
   }
-  for (const token of ["X_test", "y_test", "test_prediction", "test_result", "coefs_", "intercept_", "np.matmul", "np.dot"]) {
+  for (const token of ["X_test", "y_test", "test_prediction", "test_result", "coefs_", "intercept_", "np.matmul", "np.dot", "mlp_fit_indices", "mlp_oof_model", "named_steps"]) {
     if (diagnoseStep.code.includes(token)) throw new Error(`Neural-network ${modelId} exposes forbidden Step 8 plumbing: ${token}.`);
   }
   if (modelId === "mlp_reg") {
@@ -526,6 +529,70 @@ if (!pcaVariancePractice.decision || !pcaVariancePractice.decision.prompt.includ
   throw new Error("PCA retention decision is not attached to the explained-variance evidence.");
 }
 
+// The route object has one learner-facing Python surface.  Evidence-builder
+// code may travel alongside it, but it must not become the Guided code block
+// or a Practice scaffold/reference solution.
+const primaryCode = step => String(step.primaryCode ?? step.code ?? "");
+const advancedCode = step => String(step.advancedCode || [step.setupCode, step.evidenceCode].filter(Boolean).join("\n\n") || "");
+const primaryLineCount = code => String(code || "").split("\n").length;
+const diagnosticRequirements = {
+  simple_linear:["predict(", "coef_", "intercept_"],
+  multiple_linear:["coef_"],
+  polynomial:["predict(", "degree"],
+  regression_tree:["plot_tree", "feature_importances_"],
+  logistic:["coef_"],
+  classification_tree:["plot_tree", "feature_importances_"],
+  knn_cls:["kneighbors("],
+  one_r:["OneRClassifier"],
+  svm_cls:["decision_function(", "support_vectors_"],
+  lda:["predict_proba(", "means_"],
+  qda:["predict_proba(", "means_"],
+  naive_bayes:["predict_proba(", ["class_prior_", "class_log_prior_"], ["theta_", "feature_log_prob_"]],
+  mlp_cls:["predict_proba(", "hidden_layer_sizes", "loss_curve_", "n_iter_"],
+  mlp_reg:["predict(", "hidden_layer_sizes", "loss_curve_", "n_iter_"]
+};
+const diagnosticFixtures = {
+  simple_linear:[api.DATASETS.gapminder, api.DATASETS.gapminder.scenarios[0]],
+  multiple_linear:[api.DATASETS.wine, api.DATASETS.wine.scenarios[1]],
+  polynomial:[api.DATASETS.gapminder, api.DATASETS.gapminder.scenarios[0]],
+  regression_tree:[api.DATASETS.wine, api.DATASETS.wine.scenarios[0]],
+  logistic:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  classification_tree:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  knn_cls:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  one_r:[api.DATASETS.car, api.DATASETS.car.scenarios[0]],
+  svm_cls:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  lda:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  qda:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  naive_bayes:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  mlp_cls:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0]],
+  mlp_reg:[api.DATASETS.wine, api.DATASETS.wine.scenarios[1]]
+};
+for (const [modelId, [fixtureConfig, fixtureScenario]] of Object.entries(diagnosticFixtures)) {
+  const route = api.routeForSelection(fixtureConfig, fixtureScenario, modelId, 5);
+  const diagnose = route.find(step => step.id === "diagnose");
+  if (!diagnose) throw new Error(`Missing Guided diagnostic task for ${modelId}.`);
+  const learner = primaryCode(diagnose);
+  if (primaryLineCount(learner) > 35) throw new Error(`${modelId} primary diagnostic exceeds 35 lines.`);
+  for (const requirement of diagnosticRequirements[modelId]) {
+    const found = Array.isArray(requirement) ? requirement.some(token => learner.includes(token)) : learner.includes(requirement);
+    if (!found) throw new Error(`${modelId} primary diagnostic lost learner operation ${Array.isArray(requirement) ? requirement.join(" or ") : requirement}.`);
+  }
+  const evidenceBuilder = advancedCode(diagnose);
+  if (evidenceBuilder) {
+    if (evidenceBuilder === learner) throw new Error(`${modelId} advanced diagnostic code duplicates the learner surface.`);
+    const practice = JSON.stringify({practice:diagnose.practice, solution:diagnose.practice?.exercise?.solution || ""});
+    if (practice.includes(evidenceBuilder)) throw new Error(`${modelId} Practice metadata copied the advanced evidence builder.`);
+    for (const token of ["fit_indices", "validation_indices", "named_steps", "meshgrid", "region_codes", "quantity_rows", "oof_model", "tree_transformed"]) {
+      if (practice.includes(token)) throw new Error(`${modelId} Practice metadata exposes advanced diagnostic plumbing ${token}.`);
+    }
+  }
+}
+if (!source.includes("highlightPython(item.code)")) throw new Error("Guided workflow no longer renders the route's primary learner code.");
+if (!source.includes("applyPracticeScaffold(item.code, exercise)")) throw new Error("Practice scaffolding no longer starts from the primary learner code.");
+if (source.includes("advancedCode") && !/createElement\(["']details["']\)/.test(source)) {
+  throw new Error("Optional advanced evidence code must have a collapsed disclosure when rendered.");
+}
+
 console.log(JSON.stringify({
   supervised_steps_checked:9,
   classification_summary:true,
@@ -554,5 +621,7 @@ console.log(JSON.stringify({
   preferred_vocabulary:true,
   practice_metadata:true,
   practice_state_helpers:true,
-  practice_holdout_safeguards:true
+  practice_holdout_safeguards:true,
+  primary_vs_advanced_surface:true,
+  diagnostic_operations_retained:true
 }, null, 2));
