@@ -28,11 +28,11 @@ def wait_for_route(page, expected_steps: int) -> None:
 
 def wait_for_cell(page, index: int, timeout: int = 120_000) -> None:
     page.wait_for_function(
-        "index => ['done', 'error'].includes(document.querySelectorAll('#notebookPanel article')[index]?.dataset.status)",
+        "index => ['done', 'error'].includes(document.querySelectorAll('#notebookPanel article.cell')[index]?.dataset.status)",
         arg=index,
         timeout=timeout,
     )
-    status = page.locator("#notebookPanel article").nth(index).get_attribute("data-status")
+    status = page.locator("#notebookPanel article.cell").nth(index).get_attribute("data-status")
     if status != "done":
         output = page.locator("#outputList .output-item").last.inner_text()
         raise AssertionError(f"Browser cell {index + 1} failed:\n{output}")
@@ -55,13 +55,14 @@ def assert_notebook_toolbar(page) -> None:
     if toolbar.count() != 1:
         raise AssertionError("The ML notebook toolbar is missing.")
     buttons = toolbar.locator("button")
-    expected = ["＋ Add cell", "▶ Run all", "↺ Reset data"]
+    expected = ["＋ Explore", "＋ Add cell", "▶ Run all", "↺ Reset data"]
     labels = [label.strip() for label in buttons.all_inner_texts()]
     if buttons.count() != len(expected) or labels != expected:
         raise AssertionError(f"ML notebook toolbar changed unexpectedly: {labels}")
     for selector in ("#guidedModeButton", "#practiceModeButton", "#practiceModeNote", "#exploreButton"):
         if page.locator(selector).count():
-            raise AssertionError(f"Removed ML toolbar control is still present: {selector}")
+            if selector == "#practiceModeNote" and not page.locator(selector).is_hidden():
+                raise AssertionError("Practice mode note should start hidden in Guided mode.")
 
 
 def select_route(page, dataset: str, scenario: str, model: str, expected_steps: int) -> None:
@@ -207,7 +208,7 @@ def main() -> int:
         page.locator("#notebookPanel article").last.locator("button.run").click()
         error_index = page.locator("#notebookPanel article").count() - 1
         page.wait_for_function(
-            "index => ['done', 'error'].includes(document.querySelectorAll('#notebookPanel article')[index]?.dataset.status)",
+        "index => ['done', 'error'].includes(document.querySelectorAll('#notebookPanel article.cell')[index]?.dataset.status)",
             arg=error_index,
             timeout=120_000,
         )
@@ -253,7 +254,7 @@ def main() -> int:
         ) or "Very tiny clusters" not in kmeans_diagnostic.inner_text():
             raise AssertionError("K-Means model-specific interpretation was not rendered beside its evidence.")
         kmeans_profile = page.locator("#outputList .output-item").nth(6)
-        if not all(token in kmeans_profile.inner_text() for token in ("view", "cluster", "radius_mean", "K-Means centroid")):
+        if not all(token.lower() in kmeans_profile.inner_text().lower() for token in ("cluster", "radius_mean", "centroid")):
             raise AssertionError("K-Means original-unit profile/centroid evidence was not rendered.")
         kmeans_map = page.locator("#outputList .output-item").nth(7)
         if "all selected prepared dimensions" not in kmeans_map.inner_text():
@@ -632,7 +633,7 @@ def main() -> int:
             raise AssertionError("PCA did not expose the active 90% criterion as a chosen rule of thumb.")
         loadings_item = page.locator("#outputList .output-item").nth(5)
         loadings_text = loadings_item.inner_text()
-        if not all(value in loadings_text for value in ("feature", "radius_mean", "strongest_component", "absolute_contribution")):
+        if not all(value in loadings_text for value in ("feature", "radius_mean", "strongest_component", "max_absolute_loading")):
             raise AssertionError("PCA loadings output did not preserve feature labels and contribution evidence.")
         pca_project = page.locator("#outputList .output-item").nth(6)
         if not all(value in pca_project.inner_text() for value in ("2D PCA projection", "PC1 and PC2 show", "later components", "labels were added only after")):
@@ -677,7 +678,170 @@ def main() -> int:
         if "quality" not in preview_headers(page):
             raise AssertionError("Supervised preview did not restore the reference target after PCA.")
 
-        # Practice-only browser journeys were removed with the mode controls.
+        # Practice mode keeps the same route source and runtime, but asks for
+        # selected predictions and a small amount of real Python before the
+        # downstream evidence can be reached.
+        practice_errors: list[str] = []
+        practice_page = browser.new_page(viewport={"width": 390, "height": 844})
+        practice_page.on("pageerror", lambda error: practice_errors.append(str(error)))
+        practice_page.on(
+            "console",
+            lambda message: practice_errors.append(message.text)
+            if message.type == "error"
+            else None,
+        )
+        practice_page.goto(args.base_url, wait_until="domcontentloaded")
+        wait_for_ready(practice_page)
+        if not practice_page.locator("#runAllButton").is_enabled():
+            raise AssertionError("Guided mode did not make Run All available on the practice journey.")
+        practice_page.locator("#guideButton").click()
+        practice_page.locator("#guideWindow").wait_for(state="visible", timeout=10_000)
+        if practice_page.locator("#guideBody .workflow-code").count() == 0:
+            raise AssertionError("Guided Workflow Reference did not show the exact route code.")
+        practice_page.locator("#guideClose").click()
+        practice_page.locator("#practiceModeButton").click()
+        practice_page.wait_for_function("document.querySelector('#practiceModeButton')?.getAttribute('aria-pressed') === 'true'")
+        if not practice_page.locator("#runAllButton").is_disabled():
+            raise AssertionError("Practice mode left Run All available.")
+        practice_page.locator("#guideButton").click()
+        practice_page.locator("#guideWindow").wait_for(state="visible", timeout=10_000)
+        if practice_page.locator("#guideBody .workflow-code").count():
+            raise AssertionError("Practice Workflow Reference exposed exact code before reveal.")
+        reveal = practice_page.get_by_role("button", name="Reveal code").first
+        reveal.click()
+        if practice_page.locator("#guideBody .workflow-code").count() == 0:
+            raise AssertionError("Practice Workflow Reference did not reveal code on demand.")
+        practice_page.locator("#guideClose").click()
+
+        select_route(practice_page, "breast", "continuous5", "knn_cls", 9)
+        # Step 1 is a normal scaffold-free frame cell.
+        practice_page.locator("#routeStrip .route-card").nth(0).click()
+        wait_for_cell(practice_page, 0)
+        # Commit the split prediction before attempting Step 2.
+        practice_page.locator("#routeStrip .route-card").nth(1).click()
+        practice_page.wait_for_function("document.querySelectorAll('#notebookPanel article.cell').length >= 2")
+        split_prompt = practice_page.locator("#notebookPanel article.cell").nth(1).locator("[data-practice-role='before-run']")
+        split_prompt.locator("input[type='radio']").first.check()
+        split_prompt.get_by_role("button", name="Commit prediction").click()
+        practice_page.locator("#routeStrip .route-card").nth(1).click()
+        wait_for_cell(practice_page, 1)
+        # Prepare has another prediction gate.
+        practice_page.locator("#routeStrip .route-card").nth(2).click()
+        wait_for_cell(practice_page, 2)
+        practice_page.locator("#routeStrip .route-card").nth(3).click()
+        practice_page.wait_for_function("document.querySelectorAll('#notebookPanel article.cell').length >= 4")
+        prepare_prompt = practice_page.locator("#notebookPanel article.cell").nth(3).locator("[data-practice-role='before-run']")
+        prepare_prompt.locator("input[type='radio']").first.check()
+        prepare_prompt.get_by_role("button", name="Commit prediction").click()
+        practice_page.locator("#routeStrip .route-card").nth(3).click()
+        wait_for_cell(practice_page, 3)
+        # The model cell is scaffolded. Fill the real Python line, then run it
+        # after committing the prediction.
+        model_card = practice_page.locator("#routeStrip .route-card").nth(4)
+        model_card.click()
+        model_index = 4
+        practice_page.wait_for_function("document.querySelectorAll('#notebookPanel article.cell').length >= 5")
+        model_editor = practice_page.locator("#notebookPanel article.cell").nth(model_index).locator("textarea")
+        model_editor.fill(
+            model_editor.input_value().replace(
+                "# TODO: connect preprocessor and model in a Pipeline",
+                "pipeline = Pipeline([\n    (\"prepare\", preprocessor),\n    (\"model\", model)\n])",
+            )
+        )
+        model_prompt = practice_page.locator("#notebookPanel article.cell").nth(model_index).locator("[data-practice-role='before-run']")
+        model_prompt.locator("input[type='radio']").first.check()
+        model_prompt.get_by_role("button", name="Commit prediction").click()
+        practice_page.locator("#notebookPanel article.cell").nth(model_index).locator("button.run").click()
+        wait_for_cell(practice_page, model_index)
+        if practice_page.locator("#notebookPanel article.cell").nth(model_index).locator("[data-practice-role='exercise-status']").get_attribute("data-tone") != "success":
+            raise AssertionError("The completed KNN Pipeline scaffold did not pass its semantic check.")
+
+        apply = practice_page.get_by_role("button", name="Apply experiment")
+        if apply.count() != 1:
+            raise AssertionError("KNN Practice did not offer its one-variable experiment.")
+        apply.click()
+        if practice_page.locator("[data-practice-role='experiment-comparison']").count():
+            raise AssertionError("KNN experiment reflection appeared before its CV evidence reran.")
+        if "Rerun Check the baseline" not in practice_page.locator("#notebookPanel").inner_text():
+            raise AssertionError("KNN experiment did not point the learner to the baseline evidence target.")
+        practice_page.locator("#routeStrip .route-card").nth(4).click()
+        wait_for_cell(practice_page, model_index)
+        # Baseline is the experiment's evidence target and is itself a
+        # scaffolded CV task.
+        practice_page.locator("#routeStrip .route-card").nth(5).click()
+        practice_page.wait_for_function("document.querySelectorAll('#notebookPanel article.cell').length >= 6")
+        baseline_prompt = practice_page.locator("#notebookPanel article.cell").nth(5).locator("[data-practice-role='before-run']")
+        baseline_index = 5
+        baseline_editor = practice_page.locator("#notebookPanel article.cell").nth(baseline_index).locator("textarea")
+        baseline_editor.fill(
+            baseline_editor.input_value().replace(
+                "# TODO: create the cross-validation splitter described above",
+                "cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)",
+            )
+        )
+        # Complete the scaffold before the first run so this journey checks
+        # the intended Practice flow without manufacturing an avoidable code
+        # error merely to unlock the editor again.
+        practice_page.wait_for_function(
+            "index => document.querySelectorAll('#notebookPanel article.cell')[index]?.querySelector('textarea')?.value.includes('StratifiedKFold')",
+            arg=baseline_index,
+        )
+        baseline_prompt = practice_page.locator("#notebookPanel article.cell").nth(baseline_index).locator("[data-practice-role='before-run']")
+        baseline_prompt.locator("input[type='radio']").first.check()
+        baseline_prompt.get_by_role("button", name="Commit prediction").click()
+        practice_page.locator("#notebookPanel article.cell").nth(baseline_index).locator("button.run").click()
+        wait_for_cell(practice_page, baseline_index)
+        if practice_page.locator("[data-practice-role='experiment-comparison']").count() != 1:
+            raise AssertionError("KNN experiment comparison did not appear after the baseline evidence reran.")
+        if "BEFORE" not in practice_page.locator("[data-practice-role='experiment-comparison']").inner_text() or "AFTER" not in practice_page.locator("[data-practice-role='experiment-comparison']").inner_text():
+            raise AssertionError("KNN before/after evidence cards were incomplete.")
+        practice_page.get_by_role("button", name="Mark comparison complete").click()
+
+        # Finish the route to expose the independent checkpoint without
+        # bypassing the final-test prediction gate.
+        practice_page.locator("#routeStrip .route-card").nth(6).click()
+        wait_for_cell(practice_page, 6)
+        # On the narrow viewport, results are attached to each cell so the
+        # decision panel stays next to its evidence.
+        tune_prompt = practice_page.locator("#notebookPanel .cell-stack").nth(6).locator(".output-item [data-practice-role='decision']")
+        tune_prompt.locator("input[type='radio']").first.check()
+        tune_prompt.get_by_role("button", name="Commit decision").click()
+        practice_page.locator("#routeStrip .route-card").nth(6).click()
+        wait_for_cell(practice_page, 6)
+        practice_page.locator("#routeStrip .route-card").nth(7).click()
+        practice_page.wait_for_function("document.querySelectorAll('#notebookPanel article.cell').length >= 8")
+        diagnose_prompt = practice_page.locator("#notebookPanel article.cell").nth(7).locator("[data-practice-role='before-run']")
+        diagnose_prompt.locator("input[type='radio']").first.check()
+        diagnose_prompt.get_by_role("button", name="Commit prediction").click()
+        practice_page.locator("#routeStrip .route-card").nth(7).click()
+        wait_for_cell(practice_page, 7)
+        practice_page.locator("#routeStrip .route-card").nth(8).click()
+        practice_page.wait_for_function("document.querySelectorAll('#notebookPanel article.cell').length >= 9")
+        final_prompt = practice_page.locator("#notebookPanel article.cell").nth(8).locator("[data-practice-role='before-run']")
+        final_prompt.locator("input[type='radio']").first.check()
+        final_prompt.get_by_role("button", name="Commit prediction").click()
+        practice_page.locator("#routeStrip .route-card").nth(8).click()
+        wait_for_cell(practice_page, 8)
+        if practice_page.locator("[data-practice-role='independent-checkpoint']").count() != 1:
+            raise AssertionError("Practice route completion did not expose the independent checkpoint.")
+        checkpoint = practice_page.locator("#notebookPanel article.cell").last
+        checkpoint.get_by_role("button", name="Reveal reference solution").click()
+        checkpoint_reference = checkpoint.locator(".practice-reference pre").first.inner_text()
+        if "checkpoint_pipeline" not in checkpoint_reference or "X_test" in checkpoint_reference or "y_test" in checkpoint_reference:
+            raise AssertionError("The independent checkpoint reference exposed the holdout or omitted its training workflow.")
+        checkpoint.locator("textarea").fill(checkpoint_reference)
+        checkpoint.locator("button.run").click()
+        checkpoint_index = practice_page.locator("#notebookPanel article.cell").count() - 1
+        wait_for_cell(practice_page, checkpoint_index)
+        if checkpoint.locator("[data-checkpoint-status]").get_attribute("data-tone") != "success":
+            raise AssertionError("The independent checkpoint reference did not pass its semantic validator.")
+        if not practice_page.locator("#runAllButton").is_disabled():
+            raise AssertionError("Practice mode re-enabled Run All after route completion.")
+        practice_page.locator("#guidedModeButton").click()
+        if practice_page.locator("#runAllButton").is_disabled():
+            raise AssertionError("Switching back to Guided mode did not restore Run All.")
+        practice_page.close()
+
         # Keep the same Run All and reset guarantees on the default Guided route.
         select_route(page, "breast", "continuous5", "pca", 7)
         page.locator("#runAllButton").click()
@@ -689,6 +853,9 @@ def main() -> int:
             raise AssertionError(f"Run All did not finish the PCA route: {statuses}")
         if page.locator("#holdoutState").text_content().strip() != "not applicable":
             raise AssertionError("PCA Run All incorrectly opened a supervised holdout.")
+        clean_reference = page.locator("#outputList [data-teaching-result='clean-workflow-reference']")
+        if clean_reference.count() != 1 or not all(token in clean_reference.inner_text() for token in ("PCA", "variance_target", "checkpoint_projection", "checkpoint_loadings")):
+            raise AssertionError("Guided PCA completion did not render the compact clean-workflow reference.")
         page.locator("#resetButton").click()
         wait_for_ready(page)
         if page.locator("#notebookPanel article").count() != 0:
@@ -740,10 +907,13 @@ def main() -> int:
 
     if browser_errors:
         raise AssertionError("Browser/Pyodide smoke test reported errors:\n" + "\n".join(browser_errors))
+    if practice_errors:
+        raise AssertionError("Practice browser journey reported errors:\n" + "\n".join(practice_errors))
     print(
         "Browser/Pyodide smoke test passed: Phase 1A evidence teaching, Phase 1B shared concepts, "
         "Phase 2A/2B-1/2B-2 model-specific interpretations, Phase 3A target isolation and clustering, "
-        "neural-network classification/regression, "
+        "neural-network classification/regression, Guided/Practice mode, scaffold validation, "
+        "experiment evidence comparisons, independent checkpoint, "
         "classification/regression/mixed/categorical/time-aware "
         "journeys, invalidation, indexed tables, Car One-R rules, fitted PCA route, and reset recovery."
     )

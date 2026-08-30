@@ -27,6 +27,8 @@ jobs:
         run: node --check ml-app.js
       - name: Check route dependency-state behaviour
         run: node tests/test_ml_state.mjs
+      - name: Check Practice metadata, scaffolds, and checkpoints
+        run: node tests/test_ml_practice_final.mjs
       - name: Check supervised teaching metadata and summaries
         run: node tests/test_ml_teaching.mjs
       - name: Check every dataset/scenario/model route
