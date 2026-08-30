@@ -320,8 +320,56 @@ def _practice_forbidden_source(spec):
     if any(token in source for token in holdout_tokens):
         return _practice_result(False, "Keep final-test variables out of this practice task.")
     target = str(spec.get("target", "")).strip()
-    if target and target in source:
-        return _practice_result(False, "Keep the reference target out of this target-free practice task.")
+    if target:
+        try:
+            tree = ast.parse(source, mode="exec")
+        except Exception:
+            tree = None
+        if tree is not None:
+            target_names = {target}
+            selector_methods = {"drop", "filter", "get", "pop", "reindex", "rename", "set_axis"}
+
+            def _string_values(node):
+                return [value.value for value in ast.walk(node)
+                        if isinstance(value, ast.Constant) and isinstance(value.value, str)]
+
+            class _TargetReferenceVisitor(ast.NodeVisitor):
+                def __init__(self):
+                    self.found = False
+
+                def visit_Name(self, node):
+                    if node.id in target_names:
+                        self.found = True
+                    self.generic_visit(node)
+
+                def visit_Attribute(self, node):
+                    if node.attr in target_names:
+                        self.found = True
+                    self.generic_visit(node)
+
+                def visit_Subscript(self, node):
+                    # A target string is meaningful here because it is being
+                    # used as a dataframe/dictionary/list selector.  Nested
+                    # lists and tuples cover df[[...]], df.loc[..., ...], and
+                    # equivalent selections without inspecting comments or
+                    # unrelated prose strings.
+                    if target in _string_values(node.slice):
+                        self.found = True
+                    self.generic_visit(node)
+
+                def visit_Call(self, node):
+                    function = node.func
+                    method = function.attr if isinstance(function, ast.Attribute) else ""
+                    if method in selector_methods and target in _string_values(node):
+                        self.found = True
+                    if any(keyword.arg == target for keyword in node.keywords if keyword.arg):
+                        self.found = True
+                    self.generic_visit(node)
+
+            visitor = _TargetReferenceVisitor()
+            visitor.visit(tree)
+            if visitor.found:
+                return _practice_result(False, "Keep the reference target out of this target-free practice task.")
     return None
 
 def _practice_assigned(name):
@@ -602,6 +650,8 @@ json.dumps({
     }
     if (type === "run") {
       pyodide.globals.set("__cell_code", data.code);
+      pyodide.globals.set("__setup_code", data.setup || "");
+      pyodide.globals.set("__evidence_code", data.evidence || "");
       pyodide.globals.set("__practice_validation_json", null);
       pyodide.globals.set("__practice_validation_spec", null);
       if (data.validation) pyodide.globals.set("__practice_validation_spec", JSON.stringify(data.validation));
@@ -617,6 +667,8 @@ __plt_from_worker = plt
 __warnings_from_worker = warnings
 __stdout, __stderr = __io_from_worker.StringIO(), __io_from_worker.StringIO()
 __result, __error, __last_display = None, None, None
+__primary_result = None
+__evidence_result = None
 __caught_warnings = []
 if __plt_from_worker is not None:
     __plt_from_worker.close("all")
@@ -624,15 +676,22 @@ try:
     with __warnings_from_worker.catch_warnings(record=True) as __warning_records:
         __caught_warnings = __warning_records
         __warnings_from_worker.simplefilter("always")
-        __tree = __ast_from_worker.parse(__cell_code, mode="exec")
         with __contextlib_from_worker.redirect_stdout(__stdout), __contextlib_from_worker.redirect_stderr(__stderr):
-            if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
-                __last = __tree.body.pop()
-                exec(compile(__tree, "<cell>", "exec"), globals())
-                __result = eval(compile(__ast_from_worker.Expression(__last.value), "<cell>", "eval"), globals())
-            else:
-                exec(compile(__tree, "<cell>", "exec"), globals())
-                __result = __last_display
+            def __run_segment(__source, __label):
+                if not __source or not __source.strip():
+                    return None
+                __tree = __ast_from_worker.parse(__source, mode="exec")
+                if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
+                    __last = __tree.body.pop()
+                    exec(compile(__tree, "<" + __label + ">", "exec"), globals())
+                    return eval(compile(__ast_from_worker.Expression(__last.value), "<" + __label + ">", "eval"), globals())
+                exec(compile(__tree, "<" + __label + ">", "exec"), globals())
+                return __last_display
+            __run_segment(__setup_code, "diagnostic-setup")
+            __primary_result = __run_segment(__cell_code, "cell")
+            if __setup_code or __evidence_code:
+                __evidence_result = __run_segment(__evidence_code, "diagnostic-evidence")
+            __result = __evidence_result if __evidence_result is not None else __primary_result
 except Exception:
     __error = __traceback_from_worker.format_exc()
 __warnings = [{"category":__warning.category.__name__, "message":str(__warning.message)} for __warning in __caught_warnings]
@@ -2305,6 +2364,11 @@ checkpoint_loadings.head(12)`;
   const task = (id, title, caption, code, teaching = {}) => {
     const details = typeof teaching === "string" ? {question:teaching} : (teaching || {});
     const concepts = Array.isArray(details.concepts) ? details.concepts : [];
+    const bundle = code && typeof code === "object" && !Array.isArray(code) ? code : {primaryCode:code};
+    const primaryCode = bundle.primaryCode ?? bundle.code ?? bundle.primary ?? "";
+    const setupCode = bundle.setupCode ?? bundle.setup ?? "";
+    const evidenceCode = bundle.evidenceCode ?? bundle.evidence ?? "";
+    const advancedCode = bundle.advancedCode ?? ([setupCode, evidenceCode].filter(Boolean).join("\n\n") || "");
     return {
       id,
       title,
@@ -2318,7 +2382,11 @@ checkpoint_loadings.head(12)`;
       metricMeta:details.metricMeta || null,
       comparison:Boolean(details.comparison),
       practice:details.practice || null,
-      code:formatRouteCode(code)
+      code:formatRouteCode(primaryCode),
+      primaryCode:formatRouteCode(primaryCode),
+      setupCode:formatRouteCode(setupCode),
+      evidenceCode:formatRouteCode(evidenceCode),
+      advancedCode:formatRouteCode(advancedCode)
     };
   };
   const PYTHON_KEYWORDS = new Set(["and","as","assert","async","await","break","class","continue","def","del","elif","else","except","finally","for","from","global","if","import","in","is","lambda","not","or","pass","raise","return","try","while","with","yield"]);
@@ -3158,7 +3226,7 @@ cv_scores.round(3)`;
     }
     return "";
   }
-  function diagnosticsCode(config, modelId, value) {
+  function legacyDiagnosticsCode(config, modelId, value) {
     const interpretation = interpretationCode(config, modelId, value);
     const isMlp = ["mlp_cls", "mlp_reg"].includes(modelId);
     const mlpFoldSetup = isMlp ? [
@@ -3230,6 +3298,306 @@ cv_scores.round(3)`;
       interpretation
     ].filter(Boolean).join("\n");
   }
+  function diagnosticSetupCode(config, modelId) {
+    const isMlp = ["mlp_cls", "mlp_reg"].includes(modelId);
+    const needsOutOfFoldExample = ["knn_cls", "svm_cls", "lda", "qda", "naive_bayes"].includes(modelId);
+    const lines = [
+      "# Optional diagnostic construction: fit the current route objects before the learner view.",
+      "from sklearn.base import clone"
+    ];
+    if (config.task === "classification") {
+      lines.push(
+        "from sklearn.model_selection import cross_val_predict",
+        "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")"
+      );
+      if (isMlp) {
+        lines.push(
+          config.split === "time"
+            ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
+            : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
+          "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+          "diagnostic_model = mlp_oof_model",
+          "mlp_example_position = int(mlp_validation_indices[0])",
+          "mlp_row = X_train.iloc[[mlp_example_position]]"
+        );
+      } else if (needsOutOfFoldExample) {
+        lines.push(
+          "diagnostic_fit_indices, diagnostic_validation_indices = next(cv.split(X_train, y_train))",
+          "diagnostic_example_position = int(diagnostic_validation_indices[0])",
+          "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[diagnostic_fit_indices], y_train.iloc[diagnostic_fit_indices])",
+          "diagnostic_row = X_train.iloc[[diagnostic_example_position]]"
+        );
+        if (modelId === "knn_cls") lines.push(
+          "diagnostic_training_labels = y_train.iloc[diagnostic_fit_indices]",
+          "diagnostic_prepared_row = diagnostic_model[:-1].transform(diagnostic_row)"
+        );
+      } else {
+        lines.push("diagnostic_model = clone(best_pipeline).fit(X_train, y_train)");
+      }
+      lines.push(
+        `diagnostic_class_labels = ${py(classLabelMap(config))}`,
+        "diagnostic_labels = np.unique(y_train)",
+        "diagnostic_friendly_labels = [diagnostic_class_labels.get(str(label), str(label)) for label in diagnostic_labels]"
+      );
+      if (isMlp) lines.push(
+        "mlp_fitted = diagnostic_model.named_steps[\"model\"]",
+        "diagnostic_fitted = mlp_fitted"
+      );
+      else lines.push("diagnostic_fitted = diagnostic_model.named_steps[\"model\"]");
+      return lines.join("\n");
+    }
+    if (isMlp) {
+      lines.push(
+        config.split === "time"
+          ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
+          : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
+        "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+        "diagnostic_model = mlp_oof_model",
+        "mlp_example_position = int(mlp_validation_indices[0])",
+        "mlp_row = X_train.iloc[[mlp_example_position]]"
+      );
+      if (config.split === "time") lines.push(
+        "diagnostic_actual = y_train.iloc[mlp_validation_indices]",
+        "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[mlp_validation_indices])"
+      );
+      else lines.push(
+        "from sklearn.model_selection import cross_val_predict",
+        "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+        "diagnostic_actual = y_train"
+      );
+      lines.push(
+        "mlp_fitted = diagnostic_model.named_steps[\"model\"].regressor_",
+        "diagnostic_fitted = mlp_fitted"
+      );
+      return lines.join("\n");
+    }
+    if (config.split === "time") lines.push(
+      "last_fit, last_validation = list(cv.split(X_train, y_train))[-1]",
+      "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
+      "diagnostic_actual = y_train.iloc[last_validation]",
+      "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[last_validation])"
+    );
+    else lines.push(
+      "from sklearn.model_selection import cross_val_predict",
+      "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+      "diagnostic_actual = y_train",
+      "diagnostic_model = clone(best_pipeline).fit(X_train, y_train)"
+    );
+    lines.push("diagnostic_fitted = diagnostic_model.named_steps[\"model\"]");
+    if (modelId === "polynomial") lines.push(
+      "polynomial_transformer = diagnostic_fitted.named_steps[\"poly\"]",
+      "polynomial_model = diagnostic_fitted.named_steps[\"regression\"]",
+      "polynomial_degree = int(polynomial_transformer.degree)",
+      "polynomial_feature_names = polynomial_transformer.get_feature_names_out()"
+    );
+    return lines.join("\n");
+  }
+
+  function diagnosticPrimaryCode(config, modelId, value) {
+    const selectedFeatures = featureNames(value);
+    const targetLabel = `${friendlyColumnName(config.target)} (${config.target})`;
+    const common = config.task === "classification" ? [
+      "# 8 · Diagnose and understand the chosen model",
+      "# This training-only view shows behaviour; CV and the final test answer performance.",
+      "from sklearn.metrics import confusion_matrix",
+      "fig, ax = plt.subplots(figsize=(5.4, 4.2))",
+      "sns.heatmap(confusion_matrix(y_train, diagnostic_prediction), annot=True, fmt=\"d\", cmap=\"Purples\", ax=ax,",
+      "            xticklabels=diagnostic_friendly_labels, yticklabels=diagnostic_friendly_labels)",
+      `ax.set(title=${py(`Training-only diagnostic confusion matrix for ${friendlyColumnName(config.target)}`)}, xlabel=${py(`Predicted ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Actual ${friendlyColumnName(config.target)}`)})`,
+      "fig.tight_layout()"
+    ] : [
+      "# 8 · Diagnose and understand the chosen model",
+      "# Residuals describe behaviour; the final test remains the only final evaluation.",
+      "residuals = diagnostic_actual.to_numpy() - diagnostic_prediction",
+      "fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))",
+      "sns.scatterplot(x=diagnostic_prediction, y=residuals, ax=axes[0], color=\"#7651a6\")",
+      "axes[0].axhline(0, color=\"#c75b20\", linestyle=\"--\")",
+      `axes[0].set(title=${py(config.split === "time" ? "training-only diagnostic residuals from the last validation window" : "training-only diagnostic residuals")}, xlabel="prediction", ylabel="actual − prediction")`,
+      "sns.histplot(residuals, kde=True, ax=axes[1], color=\"#137c9c\")",
+      "axes[1].set_title(\"Residual distribution\")",
+      "fig.tight_layout()"
+    ];
+    let modelLines;
+    if (modelId === "simple_linear") {
+      const feature = selectedFeatures[0];
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        `simple_feature = ${py(feature)}`,
+        "simple_x = X_train[simple_feature].astype(float).to_numpy()",
+        "simple_grid = np.linspace(simple_x.min(), simple_x.max(), 100)",
+        "simple_curve = diagnostic_model.predict(pd.DataFrame({simple_feature:simple_grid}))",
+        "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
+        "ax.scatter(simple_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
+        "ax.plot(simple_grid, simple_curve, color=\"#c75b20\", linewidth=2.4, label=\"fitted line\")",
+        `ax.set(title=${py(`Fitted line: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
+        "ax.legend()",
+        "fig.tight_layout()",
+        "simple_slope = float(fitted.coef_[0])",
+        "simple_intercept = float(fitted.intercept_)",
+        "pd.DataFrame({\"slope\":[simple_slope], \"intercept\":[simple_intercept]})"
+      ];
+    } else if (modelId === "multiple_linear") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "linear_coefficients = fitted.coef_",
+        "pd.DataFrame({\"coefficient\":np.ravel(linear_coefficients)})"
+      ];
+    } else if (modelId === "polynomial") {
+      if (selectedFeatures.length === 1) {
+        const feature = selectedFeatures[0];
+        modelLines = [
+          "fitted = diagnostic_fitted",
+          `poly_feature = ${py(feature)}`,
+          "poly_x = X_train[poly_feature].astype(float).to_numpy()",
+          "poly_grid = np.linspace(poly_x.min(), poly_x.max(), 100)",
+          "poly_curve = diagnostic_model.predict(pd.DataFrame({poly_feature:poly_grid}))",
+          "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
+          "ax.scatter(poly_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
+          "ax.plot(poly_grid, poly_curve, color=\"#7651a6\", linewidth=2.4, label=\"fitted curve\")",
+          `ax.set(title=${py(`Fitted curve: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
+          "ax.legend()",
+          "fig.tight_layout()",
+          "print(\"PolynomialFeatures degree:\", polynomial_degree)",
+          "pd.DataFrame({\"degree\":[polynomial_degree]})"
+        ];
+      } else {
+        modelLines = [
+          "polynomial_coefficients = polynomial_model.coef_",
+          "print(\"PolynomialFeatures degree:\", polynomial_degree)",
+          "polynomial_terms = pd.DataFrame({\"term\":polynomial_feature_names, \"weight\":np.ravel(polynomial_coefficients)})",
+          "polynomial_terms.head(20)"
+        ];
+      }
+    } else if (["regression_tree", "classification_tree"].includes(modelId)) {
+      modelLines = [
+        "from sklearn.tree import plot_tree",
+        "fitted = diagnostic_fitted",
+        "tree_importance = fitted.feature_importances_",
+        "fig, ax = plt.subplots(figsize=(8, 4.2))",
+        "plot_tree(fitted, max_depth=2, filled=True, rounded=True, fontsize=7, ax=ax)",
+        "ax.set_title(\"Top of the fitted tree (training data only)\")",
+        "fig.tight_layout()",
+        "pd.DataFrame({\"feature_index\":np.arange(len(tree_importance)), \"importance\":tree_importance}).sort_values(\"importance\", ascending=False).head(10)"
+      ];
+    } else if (modelId === "logistic") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "logistic_coefficients = fitted.coef_",
+        "logistic_probability = diagnostic_model.predict_proba(X_train.iloc[[0]])[0]",
+        "print(\"Classes:\", fitted.classes_)",
+        "print(\"Coefficient signs show the direction in prepared feature space.\")",
+        "pd.DataFrame(logistic_coefficients)"
+      ];
+    } else if (modelId === "svm_cls") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "support_vectors = fitted.support_vectors_",
+        "svm_decision_values = diagnostic_model.decision_function(diagnostic_row)",
+        "print(\"Support vectors:\", len(support_vectors))",
+        "print(\"Decision score(s):\", svm_decision_values)",
+        "pd.DataFrame({\"support_vectors\":[len(support_vectors)]})"
+      ];
+    } else if (modelId === "one_r") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "one_r_prediction = diagnostic_model.predict(X_train)",
+        "print(\"OneRClassifier uses one feature at a time; its fitted rules are below.\")",
+        "pd.DataFrame({\"training_rows\":[len(y_train)], \"default_class\":[fitted.default_]})"
+      ];
+    } else if (modelId === "knn_cls") {
+      modelLines = [
+        "knn_fitted = diagnostic_fitted",
+        "knn_distances, knn_positions = knn_fitted.kneighbors(diagnostic_prepared_row)",
+        "knn_neighbor_labels = diagnostic_training_labels.iloc[knn_positions[0]].to_numpy()",
+        "knn_prediction = diagnostic_model.predict(diagnostic_row)[0]",
+        "knn_neighbor_table = pd.DataFrame({\"distance\":knn_distances[0], \"neighbor_class\":knn_neighbor_labels, \"prediction\":knn_prediction})",
+        "print(\"Prediction:\", knn_prediction)",
+        "knn_neighbor_table"
+      ];
+    } else if (modelId === "lda") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "lda_class_centres = pd.DataFrame(fitted.means_)",
+        "lda_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        "pd.DataFrame({\"class\":fitted.classes_, \"predicted_probability\":lda_probability_values})"
+      ];
+    } else if (modelId === "qda") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "qda_class_centres = pd.DataFrame(fitted.means_)",
+        "qda_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        "print(\"Regularisation:\", fitted.reg_param)",
+        "pd.DataFrame({\"class\":fitted.classes_, \"predicted_probability\":qda_probability_values})"
+      ];
+    } else if (modelId === "naive_bayes") {
+      const gaussian = pureNaiveBayesInput(value) === "continuous";
+      modelLines = [
+        "nb_fitted = diagnostic_fitted",
+        gaussian
+          ? "nb_prior_values = nb_fitted.class_prior_"
+          : "nb_prior_values = np.exp(nb_fitted.class_log_prior_)",
+        "nb_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        ...(gaussian ? [
+          "nb_class_means = nb_fitted.theta_",
+          "nb_class_spreads = np.sqrt(nb_fitted.var_)",
+          "print(\"Class means:\", nb_class_means)",
+          "print(\"Class spreads:\", nb_class_spreads)"
+        ] : [
+          "nb_feature_probabilities = np.exp(nb_fitted.feature_log_prob_)",
+          "print(\"Feature probabilities:\", nb_feature_probabilities)"
+        ]),
+        "pd.DataFrame({\"class\":nb_fitted.classes_, \"prior\":nb_prior_values, \"posterior\":nb_probability_values})"
+      ];
+    } else if (modelId === "mlp_cls") {
+      modelLines = [
+        "mlp_fitted = diagnostic_fitted",
+        "print(\"Hidden layers:\", mlp_fitted.hidden_layer_sizes)",
+        "print(\"Training iterations:\", mlp_fitted.n_iter_)",
+        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
+        "ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\")",
+        "fig.tight_layout()",
+        "mlp_probability_values = diagnostic_model.predict_proba(mlp_row)[0]",
+        "pd.DataFrame({\"class\":diagnostic_model.classes_, \"predicted_probability\":mlp_probability_values})"
+      ];
+    } else if (modelId === "mlp_reg") {
+      modelLines = [
+        "mlp_fitted = diagnostic_fitted",
+        "print(\"Hidden layers:\", mlp_fitted.hidden_layer_sizes)",
+        "print(\"Training iterations:\", mlp_fitted.n_iter_)",
+        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
+        "ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\")",
+        "fig.tight_layout()",
+        "mlp_prediction = diagnostic_model.predict(mlp_row)[0]",
+        `print(${py(`Prediction in original ${friendlyColumnName(config.target)} units:`)}, mlp_prediction)`,
+        "pd.DataFrame({\"predicted_target_original_units\":[mlp_prediction]})"
+      ];
+    } else {
+      modelLines = [];
+    }
+    return [...common, ...modelLines].join("\n");
+  }
+
+  function diagnosticEvidenceCode(config, modelId, value) {
+    return interpretationCode(config, modelId, value);
+  }
+
+  function diagnosticsCode(config, modelId, value) {
+    const setupCode = diagnosticSetupCode(config, modelId);
+    const primaryCode = diagnosticPrimaryCode(config, modelId, value);
+    const evidenceCode = diagnosticEvidenceCode(config, modelId, value);
+    const advancedCode = [
+      "# Advanced: how this teaching evidence was constructed",
+      "# Optional diagnostic construction only; the primary cell above is the core learner workflow.",
+      setupCode,
+      evidenceCode
+    ].filter(Boolean).join("\n\n");
+    return {primaryCode, setupCode, evidenceCode, advancedCode};
+  }
+
   function finalCode(config) {
     if (config.task === "classification") return `# 9 · Refit on all training rows, then run the final test once
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
@@ -3889,6 +4257,9 @@ plot_df.head(12)`,{
     const scaffold = exercise ? applyPracticeScaffold(item.code, exercise) : {code:item.code};
     const cell = addCell(scaffold.code, item.title, item.id, false);
     cell.routeReferenceCode = item.code;
+    cell.setupCode = item.setupCode || "";
+    cell.evidenceCode = item.evidenceCode || "";
+    cell.advancedCode = item.advancedCode || "";
     cell.exercise = exercise || null;
     cell.scaffolded = Boolean(exercise);
     if (render) { renderNotebookView(); renderRoute(); }
@@ -4056,6 +4427,25 @@ explore_df.head(10)`;
     const metrics = metricHelpBlock(task.metricHelp);
     if (metrics) block.append(metrics);
     return block;
+  }
+
+  function renderAdvancedDiagnosticCode(item) {
+    const taskId = item?.taskId || item?.id;
+    if (playgroundMode === "practice" || taskId !== "diagnose" || !item.advancedCode) return null;
+    const disclosure = document.createElement("details");
+    disclosure.className = "advanced-diagnostic-code";
+    disclosure.dataset.teachingRole = "advanced-diagnostic-construction";
+    const summary = document.createElement("summary");
+    summary.textContent = "Advanced: how this teaching evidence was constructed";
+    const note = document.createElement("p");
+    note.className = "advanced-diagnostic-note";
+    note.textContent = "Optional diagnostic construction only. The primary cell above is the core learner workflow; this real Python keeps the richer evidence tied to the current fitted route.";
+    const code = document.createElement("pre");
+    code.className = "workflow-code advanced-diagnostic-python";
+    code.innerHTML = highlightPython(item.advancedCode);
+    code.setAttribute("aria-label", "Optional diagnostic construction Python");
+    disclosure.append(summary, note, code);
+    return disclosure;
   }
 
   function practiceOptionLabel(practice, value) {
@@ -4909,6 +5299,7 @@ explore_df.head(10)`;
       inlineOutput.className = "cell-inline-output";
       inlineOutput.dataset.outputFor = cell.id;
       const teaching = cell.checkpoint ? renderIndependentCheckpointCell(cell) : renderTeachingBlock(cell);
+      const advanced = cell.checkpoint ? null : renderAdvancedDiagnosticCode(cell);
       const practicePanels = cell.checkpoint
         ? []
         : [renderPracticeBeforeRun(cell), renderPracticeExercise(cell), renderPracticeExperiment(cell)].filter(Boolean);
@@ -4916,6 +5307,7 @@ explore_df.head(10)`;
       if (teaching) article.append(teaching);
       if (practicePanels.length) article.append(...practicePanels);
       article.append(editor, foot);
+      if (advanced) article.append(advanced);
       stack.append(article, inlineOutput);
       panel.append(stack);
     });
@@ -4934,7 +5326,12 @@ explore_df.head(10)`;
       const validation = rawValidation && ["kmeans", "hierarchical", "pca_selection", "checkpoint_kmeans", "checkpoint_hierarchical", "checkpoint_pca"].includes(rawValidation.kind)
         ? {...rawValidation, target:selectedConfig().target}
         : rawValidation;
-      const response = await sendWorker("run", {code:cell.code, validation});
+      const response = await sendWorker("run", {
+        code:cell.code,
+        setup:cell.setupCode || "",
+        evidence:cell.evidenceCode || "",
+        validation
+      });
       if (token !== workspaceToken) return;
       cell.output = response.output; cell.status = response.output.status === "ok" ? "done" : "error"; cell.lastRunCode = cell.code;
       if (cell.exercise) {
@@ -5354,6 +5751,8 @@ explore_df.head(10)`;
         code.innerHTML = highlightPython(item.code);
         code.setAttribute("aria-label", `Exact Python for ${item.title}`);
         step.append(code);
+        const advanced = renderAdvancedDiagnosticCode(item);
+        if (advanced) step.append(advanced);
       }
       story.append(step);
     });
