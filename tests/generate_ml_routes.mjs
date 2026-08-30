@@ -112,6 +112,49 @@ const phase2bGaussianDensityFixture = {
   expected_density: 1 / Math.sqrt(2 * Math.PI * 0.001)
 };
 
+const complexityReport = Object.fromEntries(
+  Object.entries(routes).map(([folds, routeList]) => [folds, routeList.map(route => ({
+    datasetId: route.datasetId,
+    scenarioId: route.scenarioId,
+    modelId: route.modelId,
+    steps: api.routeComplexityReport(route.cells)
+  }))])
+);
+
+const complexitySummary = {};
+for (const [folds, report] of Object.entries(complexityReport)) {
+  for (const route of report) {
+    const key = route.modelId;
+    const summary = complexitySummary[key] || {
+      modelId:key,
+      routeCount:0,
+      totalLines:0,
+      maxLines:0,
+      minLines:null,
+      steps:{}
+    };
+    summary.routeCount += 1;
+    for (const step of route.steps) {
+      summary.totalLines += step.lineCount;
+      summary.maxLines = Math.max(summary.maxLines, step.lineCount);
+      summary.minLines = summary.minLines === null ? step.lineCount : Math.min(summary.minLines, step.lineCount);
+      const stepSummary = summary.steps[step.taskId] || {count:0, totalLines:0, maxLines:0, minLines:null};
+      stepSummary.count += 1;
+      stepSummary.totalLines += step.lineCount;
+      stepSummary.maxLines = Math.max(stepSummary.maxLines, step.lineCount);
+      stepSummary.minLines = stepSummary.minLines === null ? step.lineCount : Math.min(stepSummary.minLines, step.lineCount);
+      summary.steps[step.taskId] = stepSummary;
+    }
+    complexitySummary[key] = summary;
+  }
+}
+Object.values(complexitySummary).forEach(summary => {
+  summary.averageLines = summary.routeCount ? Number((summary.totalLines / summary.routeCount).toFixed(2)) : 0;
+  Object.values(summary.steps).forEach(step => {
+    step.averageLines = step.count ? Number((step.totalLines / step.count).toFixed(2)) : 0;
+  });
+});
+
 process.stdout.write(JSON.stringify({
   datasets: api.DATASETS,
   models: api.MODELS,
@@ -120,5 +163,7 @@ process.stdout.write(JSON.stringify({
   resetWorkspaceSource: api.RESET_WORKSPACE_SOURCE,
   phase2bFixtures,
   phase2bGaussianDensityFixture,
+  complexityReport,
+  complexitySummary,
   routes
 }));
