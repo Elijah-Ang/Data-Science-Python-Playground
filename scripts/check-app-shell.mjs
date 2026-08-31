@@ -25,6 +25,7 @@ assert.equal(config.webDir, "dist");
 
 for (const file of [
   "app-platform.js",
+  "playground-shared.css",
   "build-info.json",
   "manifest.webmanifest",
   "service-worker.js",

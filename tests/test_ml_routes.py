@@ -25,160 +25,115 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "tests" / "generate_ml_routes.mjs"
 
 
-# This is an explicit audit record for the Phase 2A/2B-1/2B-2/2B-2.1 primary Step 8
-# surface.  The baseline counts were measured from the merged Phase 2B-1
-# route generator before this checkpoint.  They make intentional additions
-# for mathematical precision visible instead of treating line count as the
-# only success criterion.
+# Final closure audit: the primary learner surface is cell.code; hidden setup,
+# evidence, and optional advanced code are measured separately.  Baseline
+# counts are retained only to make the required reduction explicit.
 STEP8_CODE_SURFACE_AUDIT = {
     "simple_linear": {
-        "route": ("gapminder", "simple"),
-        "baseline_lines": 50,
-        "core": ("simple_curve", "simple_slope", "simple_interpretation"),
-        "retained_optional": ("simple_grid", "simple_oof_x"),
-        "retained_plumbing": ("diagnostic_model.named_steps",),
-        "moved_or_deferred": ("np.atleast_1d", "np.ravel(fitted.coef_)",),
-        "reason": "The fitted line and slope are transferable model evidence; array-shape normalization is not.",
+        "route": ("gapminder", "simple"), "model_id": "simple_linear",
+        "baseline_lines": 50, "required": (("predict(",), ("coef_",), ("intercept_",)),
     },
     "multiple_linear": {
-        "route": ("wine", "continuous"),
-        "baseline_lines": 34,
-        "core": ("linear_coefficients", "linear_interpretation", "plain_english"),
-        "retained_optional": ("meaningful_unit", "direction"),
-        "retained_plumbing": ("get_feature_names_out", "named_steps"),
-        "moved_or_deferred": (),
-        "reason": "Encoded feature names are necessary to keep coefficient rows identifiable after preprocessing.",
+        "route": ("wine", "continuous"), "model_id": "multiple_linear",
+        "baseline_lines": 34, "required": (("coef_",),),
     },
     "polynomial_simple": {
-        "model_id": "polynomial",
-        "route": ("gapminder", "simple"),
-        "baseline_lines": 37,
-        "core": ("poly_curve", "polynomial_degree", "fitted curve"),
-        "retained_optional": ("poly_grid",),
-        "retained_plumbing": ("named_steps",),
-        "moved_or_deferred": ("np.asarray(diagnostic_model.predict",),
-        "reason": "The curve and degree teach model flexibility; prediction-array normalization does not.",
+        "route": ("gapminder", "simple"), "model_id": "polynomial",
+        "scenario_kind": "simple", "baseline_lines": 37,
+        "required": (("predict(",), ("degree", "PolynomialFeatures")),
     },
     "polynomial_multiple": {
-        "model_id": "polynomial",
-        "route": ("wine", "continuous"),
-        "baseline_lines": 26,
-        "core": ("polynomial_terms", "regularized_weight"),
-        "retained_optional": (),
-        "retained_plumbing": ("get_feature_names_out", "named_steps"),
-        "moved_or_deferred": (),
-        "reason": "There is no faithful single curve; named transformed terms are the useful evidence for this route.",
+        "route": ("wine", "continuous"), "model_id": "polynomial",
+        "scenario_kind": "multiple", "baseline_lines": 26,
+        "required": (("coef_",), ("PolynomialFeatures", "degree")),
     },
     "regression_tree": {
-        "route": ("wine", "simple"),
-        "baseline_lines": 58,
-        "core": ("tree_path", "tree_importance", "plot_tree"),
-        "retained_optional": ("max_depth=2",),
-        "retained_plumbing": ("tree_transformed", "fitted.tree_"),
-        "moved_or_deferred": (),
-        "reason": "Estimator traversal is retained because it makes the displayed path exactly match the fitted tree.",
+        "route": ("wine", "simple"), "model_id": "regression_tree",
+        "baseline_lines": 58, "required": (("plot_tree",), ("feature_importances_",)),
     },
     "logistic": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 33,
-        "core": ("logistic_coefficients", "logistic_interpretation", "pushes_model_toward"),
-        "retained_optional": ("logistic_positive_class",),
-        "retained_plumbing": ("get_feature_names_out", "named_steps"),
-        "moved_or_deferred": ("np.atleast_2d",),
-        "reason": "Class-labelled weights are the transferable concept; LogisticRegression.coef_ already has the needed 2-D shape.",
+        "route": ("breast", "continuous5"), "model_id": "logistic",
+        "baseline_lines": 36, "required": (("coef_",),),
     },
     "classification_tree": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 55,
-        "core": ("tree_path", "tree_importance", "plot_tree"),
-        "retained_optional": ("max_depth=2",),
-        "retained_plumbing": ("tree_transformed", "fitted.tree_"),
-        "moved_or_deferred": (),
-        "reason": "The row path and fitted tree view explain the model; sparse/encoded traversal keeps them faithful.",
+        "route": ("breast", "continuous5"), "model_id": "classification_tree",
+        "baseline_lines": 58, "required": (("plot_tree",), ("feature_importances_",)),
     },
     "knn_cls": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 56,
-        "core": ("kneighbors", "knn_neighbor_table", "knn_vote_scores"),
-        "retained_optional": ("knn_vote_weights",),
-        "retained_plumbing": ("knn_fit_indices", "knn_self_neighbour_check"),
-        "moved_or_deferred": ("knn_preparer", "knn_row_values"),
-        "reason": "Fold bookkeeping protects the honest out-of-fold example; a single pipeline transform replaces preparer plumbing.",
+        "route": ("breast", "continuous5"), "model_id": "knn_cls",
+        "baseline_lines": 55, "required": (("kneighbors(",),),
     },
     "one_r": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 31,
-        "core": ("one_r_rules", "one_r_comparison", "one_r_majority_prediction"),
-        "retained_optional": (),
-        "retained_plumbing": ("one_r_rule_table", "named_steps"),
-        "moved_or_deferred": (),
-        "reason": "The helper call exposes the fitted one-feature rules and baseline comparison that define One-R.",
+        "route": ("breast", "continuous5"), "model_id": "one_r",
+        "baseline_lines": 34, "required": (("OneRClassifier",),),
     },
     "svm_cls": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 46,
-        "core": ("svm_support_positions", "svm_decision_values", "svm_prediction_story"),
-        "retained_optional": ("svm_grid_predictions", "support vectors"),
-        "retained_plumbing": ("svm_fit_indices", "support_"),
-        "moved_or_deferred": (),
-        "reason": "Support-vector positions and fold mapping are required to show the fitted evidence without leakage.",
+        "route": ("breast", "continuous5"), "model_id": "svm_cls",
+        "baseline_lines": 49, "required": (("decision_function(", "support_vectors_", "n_support_"),),
     },
     "lda": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 53,
-        "core": ("lda_class_centres", "lda_probability_table", "lda_prediction_story"),
-        "retained_optional": ("lda_grid_predictions", "discriminant_score"),
-        "retained_plumbing": ("lda_fit_indices", "lda_fold_fitted"),
-        "moved_or_deferred": ("lda_preparer", "lda_row_values"),
-        "reason": "The public pipeline APIs preserve the fitted prediction story while removing duplicate preprocessing inspection.",
+        "route": ("breast", "continuous5"), "model_id": "lda",
+        "baseline_lines": 52, "required": (("predict_proba(",), ("means_",)),
     },
     "qda": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 51,
-        "core": ("qda_class_centres", "qda_spread_summary", "qda_probability_table"),
-        "retained_optional": ("qda_grid_predictions", "qda_regularization"),
-        "retained_plumbing": ("qda_fit_indices",),
-        "moved_or_deferred": ("qda_preparer", "qda_row_values"),
-        "reason": "QDA’s public pipeline prediction is sufficient; unused transformed-row bookkeeping was removed.",
+        "route": ("breast", "continuous5"), "model_id": "qda",
+        "baseline_lines": 54, "required": (("predict_proba(",), ("means_",), ("reg_param",)),
     },
     "naive_bayes_gaussian": {
-        "model_id": "naive_bayes",
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 65,
-        "core": ("nb_quantity_evidence", "nb_gaussian_means", "nb_gaussian_stds"),
-        "retained_optional": ("nb_prediction_story",),
-        "retained_plumbing": ("nb_fit_indices", "nb_row_values"),
-        "moved_or_deferred": ("estimated_probability", "probability_label"),
-        "reason": "Prior, density, and posterior rows directly teach NB evidence; mixed semantic names were replaced by typed quantities.",
+        "route": ("breast", "continuous5"), "model_id": "naive_bayes",
+        "scenario_kind": "gaussian", "baseline_lines": 70,
+        "required": (("predict_proba(",), ("class_prior_", "class_log_prior_"), ("theta_",)),
     },
     "naive_bayes_categorical": {
-        "model_id": "naive_bayes",
-        "route": ("car", "categorical"),
-        "baseline_lines": 63,
-        "core": ("nb_quantity_evidence", "nb_one_probabilities", "nb_feature_labels"),
-        "retained_optional": ("nb_prediction_story",),
-        "retained_plumbing": ("nb_fit_indices", "nb_encoder"),
-        "moved_or_deferred": ("nb_row_values", "estimated_probability", "probability_label"),
-        "reason": "Original category labels and class-conditional probabilities are useful; categorical row transformation was not.",
+        "route": ("car", "categorical"), "model_id": "naive_bayes",
+        "scenario_kind": "categorical", "baseline_lines": 62,
+        "required": (("predict_proba(",), ("class_log_prior_", "class_prior_"), ("feature_log_prob_",)),
     },
     "mlp_cls": {
-        "route": ("breast", "continuous5"),
-        "baseline_lines": 26,
-        "core": ("mlp_architecture", "mlp_loss_curve", "mlp_prediction_story"),
-        "retained_optional": ("mlp_probability_table",),
-        "retained_plumbing": ("diagnostic_model.named_steps", "mlp_fit_indices", "mlp_oof_model"),
-        "moved_or_deferred": ("coefs_", "intercept_", "np.matmul", "np.dot", "hasattr"),
-        "reason": "The compact structure, real loss curve, and held-out probability story teach the network; raw weights and wrapper inspection do not.",
+        "route": ("breast", "continuous5"), "model_id": "mlp_cls",
+        "baseline_lines": 53,
+        "required": (("predict_proba(",), ("hidden_layer_sizes",), ("loss_curve_",), ("n_iter_",)),
     },
     "mlp_reg": {
-        "route": ("wine", "continuous"),
-        "baseline_lines": 29,
-        "core": ("mlp_architecture", "mlp_loss_curve", "mlp_prediction_story", "original target units"),
-        "retained_optional": ("mlp_wrapper.regressor_",),
-        "retained_plumbing": ("diagnostic_model.named_steps", "mlp_fit_indices", "mlp_oof_model"),
-        "moved_or_deferred": ("coefs_", "intercept_", "np.matmul", "np.dot", "hasattr", "transformer_", "inverse_transform"),
-        "reason": "The wrapper is named in the build teaching and only one fitted-regressor line is retained for the real loss curve; target-transform internals are not the lesson.",
+        "route": ("wine", "continuous"), "model_id": "mlp_reg",
+        "baseline_lines": 51,
+        "required": (("predict(",), ("hidden_layer_sizes",), ("loss_curve_",), ("n_iter_",)),
     },
+}
+
+STEP8_COMPLEXITY_CEILINGS = {
+    "simple_linear": 30, "multiple_linear": 30,
+    "polynomial_simple": 30, "polynomial_multiple": 30,
+    "regression_tree": 35, "logistic": 30,
+    "classification_tree": 35, "knn_cls": 30,
+    "one_r": 30, "svm_cls": 30, "lda": 30, "qda": 30,
+    "naive_bayes_gaussian": 30, "naive_bayes_categorical": 30,
+    "mlp_cls": 30, "mlp_reg": 30,
+}
+
+STEP8_PRIMARY_FORBIDDEN = {
+    "simple_linear": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "np.atleast_", "np.ravel("),
+    "multiple_linear": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices"),
+    "polynomial_simple": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "np.asarray("),
+    "polynomial_multiple": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices"),
+    "regression_tree": ("named_steps", "get_feature_names_out", "tree_.", "children_left", "children_right", "tree_transformed", "fit_indices"),
+    "classification_tree": ("named_steps", "get_feature_names_out", "tree_.", "children_left", "children_right", "tree_transformed", "fit_indices"),
+    "logistic": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "np.atleast_"),
+    "knn_cls": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "self_neighbour", "vote_weights", "vote_scores", "row_values"),
+    "one_r": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices"),
+    "svm_cls": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "meshgrid", "grid_points", "grid_predictions", "region_codes", "np.asarray", "reshape("),
+    "lda": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "meshgrid", "grid_points", "grid_predictions", "region_codes"),
+    "qda": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "meshgrid", "grid_points", "grid_predictions", "region_codes"),
+    "naive_bayes_gaussian": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "nb_quantity_rows", "nb_evidence_indices", "row_values", "feature_labels", "hasattr", "np.asarray"),
+    "naive_bayes_categorical": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "nb_quantity_rows", "nb_evidence_indices", "row_values", "feature_labels", "hasattr", "np.asarray"),
+    "mlp_cls": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "coefs_", "intercept_", "np.matmul", "np.dot", "hasattr", "oof_model"),
+    "mlp_reg": ("named_steps", "get_feature_names_out", "fit_indices", "validation_indices", "coefs_", "intercept_", "np.matmul", "np.dot", "hasattr", "oof_model", "transformer_", "inverse_transform"),
+}
+
+STEP8_HIDDEN_FIELDS = {
+    "setup": ("setupCode", "hiddenSetupCode", "evidenceSetupCode", "teachingSetupCode"),
+    "evidence": ("evidenceCode", "hiddenEvidenceCode", "teachingEvidenceCode", "diagnosticEvidenceCode"),
+    "advanced": ("advancedCode", "advancedEvidenceCode", "diagnosticAdvancedCode"),
 }
 
 
@@ -201,40 +156,319 @@ def route_code(route: dict, cell_id: str) -> str:
     return next(cell["code"] for cell in route["cells"] if cell["id"] == cell_id)
 
 
+def _cell_field_text(cell: dict, field_group: str) -> str:
+    """Return the first non-empty hidden Python field for a route cell."""
+
+    for field in STEP8_HIDDEN_FIELDS[field_group]:
+        value = cell.get(field)
+        if isinstance(value, str) and value.strip():
+            return value
+    return ""
+
+
+def _cell_surface(cell: dict) -> dict:
+    primary = str(cell.get("code", ""))
+    setup = _cell_field_text(cell, "setup")
+    evidence = _cell_field_text(cell, "evidence")
+    advanced = _cell_field_text(cell, "advanced")
+    return {
+        "primary": primary,
+        "setup": setup,
+        "evidence": evidence,
+        "advanced": advanced,
+        "hidden": "\n".join(part for part in (setup, evidence) if part),
+        "application": "\n".join(part for part in (setup, evidence, advanced) if part),
+        "primaryLineCount": len(primary.splitlines()),
+        "setupLineCount": len(setup.splitlines()),
+        "evidenceLineCount": len(evidence.splitlines()),
+        "advancedLineCount": len(advanced.splitlines()),
+    }
+
+
+def route_cell(route: dict, cell_id: str) -> dict:
+    return next(cell for cell in route["cells"] if cell["id"] == cell_id)
+
+
+def route_python(route: dict, include_hidden: bool = True) -> str:
+    """Join primary and application-side Python without changing cell.code."""
+
+    sources = []
+    for cell in route["cells"]:
+        surface = _cell_surface(cell)
+        sources.append(surface["primary"])
+        if include_hidden and surface["application"]:
+            sources.append(surface["application"])
+    return "\n".join(sources)
+
+
+def diagnostic_python(route: dict, include_hidden: bool = True) -> str:
+    cell = route_cell(route, "diagnose")
+    surface = _cell_surface(cell)
+    if not include_hidden:
+        return surface["primary"]
+    return "\n".join(part for part in (surface["primary"], surface["application"]) if part)
+
+
+def _cell_execution_sources(cell: dict) -> list[tuple[str, str]]:
+    """Return hidden setup, primary, then hidden evidence in worker order."""
+
+    sources = []
+    setup = _cell_field_text(cell, "setup")
+    if setup:
+        sources.append(("setup", setup))
+    sources.append(("primary", str(cell.get("code", ""))))
+    evidence = _cell_field_text(cell, "evidence")
+    if evidence:
+        sources.append(("evidence", evidence))
+    return sources
+
+
+def run_target_free_validator_regression(payload: dict) -> dict:
+    """Exercise the exported Practice target guard against false positives."""
+
+    source = payload.get("practiceValidatorSource")
+    if not isinstance(source, str) or not source.strip():
+        raise AssertionError(
+            "Route generator does not expose PRACTICE_VALIDATOR_SOURCE; "
+            "target-free AST regression cannot execute the production validator."
+        )
+    namespace = {"ast": ast, "__builtins__": __builtins__}
+    exec(source, namespace, namespace)
+    check = namespace["_practice_forbidden_source"]
+    should_pass = {
+        "harmless_comment": "# inspect cluster quality\ncluster_quality = silhouette_score(...)",
+        "harmless_name": "cluster_quality = 0.8",
+        "harmless_prose": "print('cluster quality')",
+    }
+    should_fail = {
+        "direct_target": 'df["quality"]',
+        "target_list_selection": 'model_df[["feature", "quality"]]',
+        "target_loc_selection": 'analysis_rows.loc[:, "quality"]',
+    }
+    for label, code in should_pass.items():
+        namespace["__cell_code"] = code
+        result = check({"target": "quality"})
+        if result is not None:
+            raise AssertionError(f"Target-free validator rejected harmless {label}: {result}")
+    for label, code in should_fail.items():
+        namespace["__cell_code"] = code
+        result = check({"target": "quality"})
+        if not isinstance(result, dict) or result.get("ok") is not False:
+            raise AssertionError(f"Target-free validator accepted genuine target access {label}: {result}")
+    return {
+        "ast_validator_exported": True,
+        "harmless_comment_name_prose_pass": True,
+        "direct_target_indexing_rejected": True,
+        "target_list_selection_rejected": True,
+        "target_loc_selection_rejected": True,
+    }
+
+
+MATPLOTLIB_DEPRECATION_PATTERNS = (
+    re.compile(r"\.get_cmap\s*\("),
+    re.compile(r"\bregister_cmap\s*\("),
+    re.compile(r"\bmatplotlib\.cm\.get_cmap\s*\("),
+)
+
+
+def run_warning_regression(payload: dict, warnings_seen: list[str] | None = None) -> dict:
+    """Reject the known Matplotlib deprecation while allowing fold warnings."""
+
+    sources = [
+        (ROOT / "ml-app.js").read_text(encoding="utf-8"),
+        str(payload.get("workerSource", "")),
+    ]
+    for routes in payload["routes"].values():
+        for route in routes:
+            sources.append(route_python(route))
+    deprecated_calls = [
+        pattern.pattern
+        for source in sources
+        for pattern in MATPLOTLIB_DEPRECATION_PATTERNS
+        if pattern.search(source)
+    ]
+    if deprecated_calls:
+        raise AssertionError(f"Known Matplotlib deprecated plotting calls remain: {sorted(set(deprecated_calls))}")
+
+    runtime_warnings = [str(item) for item in (warnings_seen or [])]
+    runtime_deprecations = [
+        warning for warning in runtime_warnings
+        if "matplotlib" in warning.lower()
+        and ("deprecated" in warning.lower() or "get_cmap" in warning.lower() or "register_cmap" in warning.lower())
+    ]
+    if runtime_deprecations:
+        raise AssertionError(f"Matplotlib emitted a known deprecation warning: {runtime_deprecations[:3]}")
+    allowed_unknown_categories = [
+        warning for warning in runtime_warnings
+        if re.search(r"OneHotEncoder|unknown categor", warning, re.IGNORECASE)
+    ]
+    return {
+        "matplotlib_deprecation_calls": 0,
+        "matplotlib_runtime_deprecations": 0,
+        "onehot_unknown_category_warnings_allowed": True,
+        "onehot_unknown_category_warning_count": len(allowed_unknown_categories),
+    }
+
+
+def step8_family_key(route: dict) -> str | None:
+    model_id = route["modelId"]
+    scenario = route.get("scenario", {})
+    if model_id == "polynomial":
+        return "polynomial_simple" if len(scenario.get("continuous", [])) == 1 else "polynomial_multiple"
+    if model_id == "naive_bayes":
+        return "naive_bayes_gaussian" if scenario.get("continuous") else "naive_bayes_categorical"
+    return model_id if model_id in STEP8_CODE_SURFACE_AUDIT else None
+
+
+def _required_step8_tokens(code: str, groups: tuple[tuple[str, ...], ...]) -> list[tuple[str, ...]]:
+    return [group for group in groups if not any(token in code for token in group)]
+
+
 def run_step8_code_surface_audit(payload: dict) -> dict:
-    """Measure the audited primary Step 8 cells and guard intentional cleanup."""
+    """Audit every generated route's primary Step 8 surface.
 
-    counts = {}
-    for audit_id, metadata in STEP8_CODE_SURFACE_AUDIT.items():
-        model_id = metadata.get("model_id", audit_id)
-        dataset_id, scenario_id = metadata["route"]
-        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
-        code = route_code(route, "diagnose")
-        counts[audit_id] = len(code.splitlines())
-        missing_core = [token for token in metadata["core"] if token not in code]
-        if missing_core:
-            raise AssertionError(f"{audit_id} lost core Step 8 evidence: {missing_core}")
-        removed = [token for token in metadata["moved_or_deferred"] if token in code]
-        if removed:
-            raise AssertionError(f"{audit_id} still exposes deferred Step 8 plumbing: {removed}")
+    The previous audit measured one representative string and allowed a
+    written reason to justify oversized code.  This audit hard-fails primary
+    cells over their family ceiling, checks all generated routes, and records
+    hidden evidence/application code separately.
+    """
 
-    if counts["knn_cls"] >= STEP8_CODE_SURFACE_AUDIT["knn_cls"]["baseline_lines"]:
-        raise AssertionError("KNN Step 8 did not reduce duplicate preprocessing plumbing.")
-    if counts["lda"] >= STEP8_CODE_SURFACE_AUDIT["lda"]["baseline_lines"]:
-        raise AssertionError("LDA Step 8 did not reduce duplicate preprocessing plumbing.")
-    if counts["naive_bayes_categorical"] >= STEP8_CODE_SURFACE_AUDIT["naive_bayes_categorical"]["baseline_lines"]:
-        raise AssertionError("Categorical Naive Bayes Step 8 did not defer unused row transformation plumbing.")
+    route_sets = payload["routes"]
+    total_routes = sum(len(routes) for routes in route_sets.values())
+    if total_routes != 254:
+        raise AssertionError(f"Step 8 audit expected 254 generated routes; found {total_routes}.")
+
+    route_reports = []
+    family_reports: dict[str, list[dict]] = {key: [] for key in STEP8_CODE_SURFACE_AUDIT}
+    missing_evidence = []
+    failures = []
+    for folds, routes in route_sets.items():
+        for route in routes:
+            try:
+                diagnose = route_cell(route, "diagnose")
+            except StopIteration:
+                continue
+            surface = _cell_surface(diagnose)
+            family = step8_family_key(route)
+            report = {
+                "folds": int(folds),
+                "dataset": route["datasetId"],
+                "scenario": route["scenarioId"],
+                "model": route["modelId"],
+                "datasetId": route["datasetId"],
+                "scenarioId": route["scenarioId"],
+                "modelId": route["modelId"],
+                "step": "diagnose",
+                "family": family,
+                "primaryLineCount": surface["primaryLineCount"],
+                "primary_line_count": surface["primaryLineCount"],
+                "setupLineCount": surface["setupLineCount"],
+                "evidenceLineCount": surface["evidenceLineCount"],
+                "advancedLineCount": surface["advancedLineCount"],
+                "hasSeparateEvidence": bool(surface["evidence"].strip()),
+            }
+            route_reports.append(report)
+            if family is None:
+                continue
+            family_reports[family].append(report)
+            metadata = STEP8_CODE_SURFACE_AUDIT[family]
+            primary = surface["primary"]
+            missing_required = _required_step8_tokens(primary, metadata["required"])
+            forbidden = [token for token in STEP8_PRIMARY_FORBIDDEN[family] if token in primary]
+            if family == "svm_cls" and re.search(r"\.support_(?!vectors_)", primary):
+                forbidden.append(".support_ (support-index remapping)")
+            if missing_required:
+                failures.append({
+                    **report,
+                    "error": "missing primary analytical operation",
+                    "missing": missing_required,
+                })
+            if forbidden:
+                failures.append({
+                    **report,
+                    "error": "primary contains diagnostic-only plumbing",
+                    "forbidden": forbidden,
+                })
+            if not surface["evidence"].strip():
+                missing_evidence.append(report)
+
+    if missing_evidence:
+        raise AssertionError(
+            "Known supervised Step 8 families must emit hidden evidence separately; "
+            f"missing evidence in {len(missing_evidence)} route(s), first={missing_evidence[:3]}"
+        )
+    if failures:
+        raise AssertionError(f"Step 8 primary surface contract failed: {failures[:8]}")
+
+    family_summary = {}
+    representative_lines = {}
+    for family, metadata in STEP8_CODE_SURFACE_AUDIT.items():
+        reports = family_reports[family]
+        if not reports:
+            raise AssertionError(f"Step 8 family has no generated routes: {family}")
+        ceiling = STEP8_COMPLEXITY_CEILINGS[family]
+        over_ceiling = [item for item in reports if item["primaryLineCount"] > ceiling]
+        if over_ceiling:
+            raise AssertionError(
+                f"{family} primary Step 8 code exceeded the hard {ceiling}-line ceiling: "
+                f"{over_ceiling[:4]}"
+            )
+        # A long baseline must show material reduction, not merely move a few
+        # lines around.  The <=30/35 ceilings are the primary acceptance bar;
+        # this explicit delta prevents a future 50-line regression if a ceiling
+        # is accidentally loosened.
+        if metadata["baseline_lines"] >= 40:
+            minimum_reduction = 10
+            max_allowed = metadata["baseline_lines"] - minimum_reduction
+            if max(item["primaryLineCount"] for item in reports) > max_allowed:
+                raise AssertionError(
+                    f"{family} did not materially reduce its primary surface: "
+                    f"baseline={metadata['baseline_lines']} max={max(item['primaryLineCount'] for item in reports)}"
+                )
+        route_key = (*metadata["route"], metadata["model_id"])
+        representative = next(
+            (
+                item for item in reports
+                if item["dataset"] == route_key[0]
+                and item["scenario"] == route_key[1]
+                and item["model"] == route_key[2]
+            ),
+            None,
+        )
+        if representative is None:
+            raise AssertionError(f"Missing representative route for Step 8 family {family}: {route_key}")
+        representative_lines[family] = representative["primaryLineCount"]
+        primary_values = [item["primaryLineCount"] for item in reports]
+        family_summary[family] = {
+            "modelId": metadata["model_id"],
+            "routeCount": len(reports),
+            "baselineLines": metadata["baseline_lines"],
+            "minPrimaryLines": min(primary_values),
+            "maxPrimaryLines": max(primary_values),
+            "averagePrimaryLines": round(sum(primary_values) / len(primary_values), 2),
+            "primaryCeiling": ceiling,
+            "maxSetupLines": max(item["setupLineCount"] for item in reports),
+            "maxEvidenceLines": max(item["evidenceLineCount"] for item in reports),
+            "maxAdvancedLines": max(item["advancedLineCount"] for item in reports),
+        }
 
     return {
         "baseline_lines": {key: value["baseline_lines"] for key, value in STEP8_CODE_SURFACE_AUDIT.items()},
-        "current_lines": counts,
+        "current_lines": representative_lines,
+        "ceilings": STEP8_COMPLEXITY_CEILINGS,
+        "review_threshold": 30,
+        "hard_maximum": 35,
+        "all_route_count": total_routes,
+        "step8_diagnose_route_count": len(route_reports),
+        "primary_line_report": route_reports,
+        "family_summary": family_summary,
         "audit": {
             key: {
-                "core": list(value["core"]),
-                "retained_optional": list(value["retained_optional"]),
-                "retained_plumbing": list(value["retained_plumbing"]),
-                "moved_or_deferred": list(value["moved_or_deferred"]),
-                "reason": value["reason"],
+                "route": list(value["route"]),
+                "model_id": value["model_id"],
+                "baseline_lines": value["baseline_lines"],
+                "required": [list(group) for group in value["required"]],
+                "forbidden_primary_tokens": list(STEP8_PRIMARY_FORBIDDEN[key]),
             }
             for key, value in STEP8_CODE_SURFACE_AUDIT.items()
         },
@@ -388,6 +622,8 @@ def assert_route_structure(payload: dict) -> dict:
         raise AssertionError("Holdout wording does not describe the actual reset/custom-cell behaviour.")
 
     reset_result = run_reset_regression(payload)
+    target_free_validator_result = run_target_free_validator_regression(payload)
+    warning_regression_result = run_warning_regression(payload)
 
     expected_counts = {"5": 127, "10": 127}
     route_sets = payload["routes"]
@@ -520,6 +756,20 @@ def assert_route_structure(payload: dict) -> dict:
                         f"Python syntax error in {folds}-fold "
                         f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}: {error}"
                     ) from error
+                for field_group in ("setup", "evidence", "advanced"):
+                    hidden_code = _cell_field_text(cell, field_group)
+                    if not hidden_code:
+                        continue
+                    try:
+                        ast.parse(
+                            hidden_code,
+                            filename=f"{route['datasetId']}:{cell['id']}:{field_group}",
+                        )
+                    except SyntaxError as error:
+                        raise AssertionError(
+                            f"Python syntax error in hidden {field_group} for "
+                            f"{folds}-fold {route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}: {error}"
+                        ) from error
                 if not cell["question"].strip() or not cell["caption"].strip():
                     raise AssertionError(f"Missing beginner explanation in {route}")
                 if (task_type != "unsupervised" or model_id in {"kmeans", "hierarchical", "pca"}) and not cell.get("readingCue", "").strip():
@@ -538,9 +788,27 @@ def assert_route_structure(payload: dict) -> dict:
                     )
                 practice_routes_checked += 1
                 practice_text = json.dumps(practice, sort_keys=True)
-                for forbidden in ("X_test", "y_test", "test_prediction", "test_result"):
-                    if forbidden in practice_text:
-                        raise AssertionError(f"Practice metadata exposes holdout plumbing: {route}/{step_id}")
+                # The final reading exercise is intentionally attached to the
+                # legal final-test step.  All pre-final Practice metadata must
+                # remain holdout-free; the final exercise may name the result
+                # that has just been revealed.
+                if step_id != "final":
+                    for forbidden in ("X_test", "y_test", "test_prediction", "test_result"):
+                        if forbidden in practice_text:
+                            raise AssertionError(f"Practice metadata exposes holdout plumbing: {route}/{step_id}")
+                exercise = practice.get("exercise")
+                if exercise is not None:
+                    if not isinstance(exercise, dict):
+                        raise AssertionError(f"Practice exercise metadata is not an object: {route}/{step_id}")
+                    for key in ("id", "type", "title", "prompt", "goal", "hint", "expectedOutput", "solution", "validation", "modelId", "taskId"):
+                        if key not in exercise or not str(exercise[key]).strip():
+                            raise AssertionError(f"Practice exercise is missing {key}: {route}/{step_id}")
+                    if exercise["modelId"] != model_id or exercise["taskId"] != step_id:
+                        raise AssertionError(f"Practice exercise identity does not match its route cell: {route}/{step_id}")
+                    if not isinstance(exercise["validation"], dict) or not exercise["validation"].get("kind"):
+                        raise AssertionError(f"Practice exercise validator metadata is incomplete: {route}/{step_id}")
+                    if not isinstance(exercise.get("required"), list) or not all(str(item).strip() for item in exercise["required"]):
+                        raise AssertionError(f"Practice exercise requirements are not usable: {route}/{step_id}")
                 if task_type == "unsupervised" and route["dataset"]["target"] in practice_text:
                     raise AssertionError(f"Unsupervised Practice metadata exposes the hidden reference label: {route}/{step_id}")
                 for interaction_key in ("beforeRun", "decision"):
@@ -671,7 +939,7 @@ def assert_route_structure(payload: dict) -> dict:
                 raise AssertionError(f"Frame rediscovered or declared empty feature groups: {route}")
             if "pd.DataFrame" in frame:
                 raise AssertionError(f"Frame duplicates UI metadata instead of showing X.head(): {route}")
-            route_source = "\n".join(cell["code"] for cell in route["cells"])
+            route_source = route_python(route)
             if route["dataset"]["prepare"] == "df":
                 if "model_df" in route_source or "X = df[feature_names].copy()" not in frame:
                     raise AssertionError(f"Direct dataset route still creates model_df: {route['datasetId']}/{route['scenarioId']}/{route['modelId']}")
@@ -791,7 +1059,8 @@ def assert_route_structure(payload: dict) -> dict:
                 if any(token in tune for token in ("return_train_score", "refit=", "tuning_results", "rank_test_", "n_jobs=1", 'error_score="raise"')):
                     raise AssertionError(f"Tuning cell still contains multi-metric or low-level clutter: {route}")
 
-                diagnostic = route_code(route, "diagnose")
+                diagnostic_primary = diagnostic_python(route, include_hidden=False)
+                diagnostic = diagnostic_python(route)
                 if any(
                     token in diagnostic
                     for token in ("classification_report", "diagnostic_rmse", "diagnostic_r2", "root_mean_squared_error", "r2_score", "X_test", "y_test", "test_prediction", "test_result")
@@ -855,7 +1124,7 @@ def assert_route_structure(payload: dict) -> dict:
                     raise AssertionError(f"A Phase 2 model-specific diagnostic leaked into an out-of-scope model: {route}")
 
                 if model_id == "one_r":
-                    full_code = "\n".join(cell["code"] for cell in route["cells"])
+                    full_code = route_python(route)
                     if "class OneRClassifier" in full_code or ".rules_" in full_code:
                         raise AssertionError(f"Full One-R implementation leaked into the normal route: {route}")
                     if "OneRClassifier(bins=5)" not in route_code(route, "model"):
@@ -883,7 +1152,7 @@ def assert_route_structure(payload: dict) -> dict:
                         "categorical"
                     )
                     model_code = route_code(route, "model")
-                    diagnostic = route_code(route, "diagnose")
+                    diagnostic = diagnostic_python(route)
                     if '"probability":' in diagnostic or '"score":' in diagnostic or '"value":' in diagnostic:
                         raise AssertionError(f"Naive Bayes quantity output has an ambiguous generic heading: {route}")
                     for label in ("Prior probability", "Posterior probability"):
@@ -914,7 +1183,7 @@ def assert_route_structure(payload: dict) -> dict:
                         raise AssertionError(f"Gaussian Naive Bayes interpretation is incomplete: {route}")
 
             else:
-                unsupervised_code = "\n".join(cell["code"] for cell in route["cells"])
+                unsupervised_code = route_python(route)
                 if any(token in unsupervised_code for token in ("y_train", "y_test", "X_test", "test_prediction")):
                     raise AssertionError(f"Unsupervised route contains supervised target/test fitting: {route}")
                 if model_id in {"kmeans", "hierarchical"}:
@@ -1140,7 +1409,7 @@ def assert_route_structure(payload: dict) -> dict:
     for model_id, fixture in boundary_fixtures.items():
         if cell_ids(fixture) != supervised_ids:
             raise AssertionError(f"Phase 2B-1 boundary fixture has the wrong guided steps: {model_id}")
-        fixture_diagnostic = route_code(fixture, "diagnose")
+        fixture_diagnostic = diagnostic_python(fixture)
         if any(token in fixture_diagnostic for token in ("X_test", "y_test", "test_prediction", "test_result")):
             raise AssertionError(f"Phase 2B-1 boundary fixture accesses final-test data: {model_id}")
         fixture_tokens = {
@@ -1181,6 +1450,8 @@ def assert_route_structure(payload: dict) -> dict:
         },
         "model_df_sources": model_df_sources,
         "reset_state": reset_result,
+        "target_free_validator": target_free_validator_result,
+        "warning_regression": warning_regression_result,
         "teaching_metadata": teaching_checks,
         "practice_metadata": {
             "route_step_requirements_checked": practice_routes_checked,
@@ -1344,7 +1615,8 @@ def run_one_r_regression(payload: dict, pd, np, plt, sns) -> dict:
     actual = base_namespace()
     actual["df"] = pd.read_csv(ROOT / car_route["dataset"]["file"], sep=car_route["dataset"]["sep"])
     for cell_id in ("frame", "split", "prepare", "model", "baseline", "tune", "diagnose"):
-        exec(route_code(car_route, cell_id), actual, actual)
+        for _source_name, source in _cell_execution_sources(route_cell(car_route, cell_id)):
+            exec(source, actual, actual)
     actual_table = actual["one_r_rules"]
     actual_feature = str(actual_table["feature"].iloc[0])
     actual_values = actual["X_train"][actual_feature].astype(str)
@@ -1522,8 +1794,13 @@ def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at
     for cell in route["cells"]:
         if before_cell:
             before_cell(namespace, cell)
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            exec(cell["code"], namespace, namespace)
+        for source_name, source in _cell_execution_sources(cell):
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                exec(
+                    source,
+                    namespace,
+                    namespace,
+                )
         plt.close("all")
         if cell["id"] == stop_at:
             return namespace
@@ -1543,8 +1820,9 @@ def _execute_route_to_cell_with_stdout(payload: dict, route: dict, pd, np, plt, 
     exec(payload["oneRHelperSource"], namespace, namespace)
     captured = io.StringIO()
     for cell in route["cells"]:
-        with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(io.StringIO()):
-            exec(cell["code"], namespace, namespace)
+        for source_name, source in _cell_execution_sources(cell):
+            with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(io.StringIO()):
+                exec(source, namespace, namespace)
         plt.close("all")
         if cell["id"] == stop_at:
             return namespace, captured.getvalue()
@@ -1613,7 +1891,7 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
 
     def run(dataset_id, scenario_id, model_id, before_cell=None):
         route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
-        diagnostic = route_code(route, "diagnose")
+        diagnostic = diagnostic_python(route)
         forbidden = ("X_test", "y_test", "test_prediction", "test_result")
         if any(token in diagnostic for token in forbidden):
             raise AssertionError(f"Phase 2A diagnostic accesses final-test data: {route}")
@@ -1645,7 +1923,7 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
         raise AssertionError("Multiple linear interpretation table is missing its teaching columns.")
     if [str(name) for name in multiple_table["feature"]] != [str(name) for name in multiple["encoded_names"]] or not np.allclose(multiple_table["coefficient"].to_numpy(dtype=float), np.ravel(multiple_model.coef_)):
         raise AssertionError("Multiple linear coefficients or feature order do not match the fitted estimator.")
-    if "sort_values" in route_code(multiple_route, "diagnose") or not all("associated with" in text for text in multiple_table["plain_english"]):
+    if "sort_values" in diagnostic_python(multiple_route) or not all("associated with" in text for text in multiple_table["plain_english"]):
         raise AssertionError("Multiple linear interpretation ranks raw coefficient magnitudes or omits association wording.")
 
     seoul_multiple_route, seoul_multiple = run("seoul", "continuous", "multiple_linear")
@@ -1689,7 +1967,7 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
     ]
     if list(multiclass_table.columns) != ["feature", *expected_class_columns] or not np.allclose(multiclass_table[expected_class_columns].to_numpy(dtype=float), multiclass_fitted.coef_.T):
         raise AssertionError("Multiclass logistic class-labelled weights are incorrect.")
-    if "X_test" in route_code(binary_logistic_route, "diagnose") or "X_test" in route_code(multiclass_route, "diagnose"):
+    if "X_test" in diagnostic_python(binary_logistic_route) or "X_test" in diagnostic_python(multiclass_route):
         raise AssertionError("Logistic interpretation references the sealed test set.")
 
     knn_route, knn = run("breast", "continuous5", "knn_cls")
@@ -1710,7 +1988,7 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
     weighted_route, weighted = run("breast", "continuous5", "knn_cls", force_distance_weights)
     if not weighted["knn_is_distance_weighted"] or not np.allclose(weighted["knn_vote_weights"], 1 / np.maximum(weighted["knn_neighbor_distances"], np.finfo(float).eps)) or np.allclose(weighted["knn_vote_weights"], 1):
         raise AssertionError("Distance-weighted KNN evidence does not reflect the fitted weights setting.")
-    if "X_test" in route_code(knn_route, "diagnose") or "X_test" in route_code(weighted_route, "diagnose"):
+    if "X_test" in diagnostic_python(knn_route) or "X_test" in diagnostic_python(weighted_route):
         raise AssertionError("KNN interpretation references the sealed test set.")
 
     car_route, car = run("car", "categorical", "one_r")
@@ -1756,14 +2034,14 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
 
     def run(dataset_id, scenario_id, model_id):
         route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
-        diagnostic = route_code(route, "diagnose")
+        diagnostic = diagnostic_python(route)
         forbidden = ("X_test", "y_test", "test_prediction", "test_result")
         if any(token in diagnostic for token in forbidden):
             raise AssertionError(f"Neural Network Step 8 accesses final-test data: {route}")
         return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "diagnose")
 
     def assert_common(route, namespace, model_id):
-        diagnostic = route_code(route, "diagnose")
+        diagnostic = diagnostic_python(route)
         forbidden = ("coefs_", "intercept_", "np.matmul", "np.dot")
         if any(token in diagnostic for token in forbidden):
             raise AssertionError(f"Neural Network Step 8 exposes raw-weight or manual-forward plumbing: {route}")
@@ -1878,7 +2156,7 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     seoul_position = int(seoul["mlp_example_position"])
     if not np.all(int(index) < seoul_position for index in np.asarray(seoul["mlp_fit_indices"]).tolist()):
         raise AssertionError("Seoul MLP regression OOF row is not after its chronological fitting rows.")
-    if "last validation window" not in route_code(seoul_route, "diagnose"):
+    if "last validation window" not in diagnostic_python(seoul_route):
         raise AssertionError("Seoul MLP regression did not retain the forward-only diagnostic window.")
 
     return {
@@ -1915,11 +2193,11 @@ def run_unsupervised_runtime_regression(payload: dict, pd, np, plt, sns) -> dict
         raise AssertionError("K-Means selected_k is not the neutral runnable default.")
     if int(kmeans["selected_k"]) != len(np.unique(kmeans["clusters"])) or len(kmeans["clusters"]) != len(kmeans["Z"]):
         raise AssertionError("K-Means labels do not represent exactly one cluster for every row.")
-    profile = kmeans["cluster_profile_view"]
+    profile = kmeans["cluster_means"]
     if not set(profile["cluster"].astype(int)).issuperset(set(np.unique(kmeans["clusters"]).astype(int))):
         raise AssertionError("K-Means cluster profiles are not aligned with fitted cluster IDs.")
     if not np.allclose(
-        kmeans["centroid_profile"].drop(columns=["cluster"]).to_numpy(dtype=float),
+        kmeans["centroid_profile"].to_numpy(dtype=float),
         kmeans["preprocessor"].inverse_transform(kmeans["kmeans"].cluster_centers_),
         atol=0.01,
     ):
@@ -2026,12 +2304,12 @@ def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
         raise AssertionError("PCA loading matrix does not equal full_pca.components_.T.")
     expected_view = loadings[["PC1", "PC2"]].copy()
     expected_view["strongest_component"] = expected_view[["PC1", "PC2"]].abs().idxmax(axis=1)
-    expected_view["absolute_contribution"] = expected_view[["PC1", "PC2"]].abs().max(axis=1)
-    expected_view = expected_view.sort_values("absolute_contribution", ascending=False).head(12)
+    expected_view["max_absolute_loading"] = expected_view[["PC1", "PC2"]].abs().max(axis=1)
+    expected_view = expected_view.sort_values("max_absolute_loading", ascending=False).head(12)
     actual_view = namespace["loading_view"]
     if list(actual_view.index) != list(expected_view.index) or list(actual_view.columns) != list(expected_view.columns):
         raise AssertionError("PCA strongest loading view is not selected by absolute contribution.")
-    if not np.allclose(actual_view[["PC1", "PC2", "absolute_contribution"]].to_numpy(dtype=float), expected_view[["PC1", "PC2", "absolute_contribution"]].to_numpy(dtype=float)):
+    if not np.allclose(actual_view[["PC1", "PC2", "max_absolute_loading"]].to_numpy(dtype=float), expected_view[["PC1", "PC2", "max_absolute_loading"]].to_numpy(dtype=float)):
         raise AssertionError("PCA strongest loading values do not match the fitted components.")
 
     expected_scores = full_pca.transform(Z)
@@ -2131,7 +2409,7 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
 
     def run(dataset_id, scenario_id, model_id, fixture=False):
         route = payload["phase2bFixtures"][model_id] if fixture else _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
-        diagnostic = route_code(route, "diagnose")
+        diagnostic = diagnostic_python(route)
         forbidden = ("X_test", "y_test", "test_prediction", "test_result")
         if any(token in diagnostic for token in forbidden):
             raise AssertionError(f"Phase 2B-1 diagnostic accesses final-test data: {route}")
@@ -2177,7 +2455,7 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     expected_score_class = svm_fitted.classes_[1] if float(svm["svm_decision_score"]) >= 0 else svm_fitted.classes_[0]
     if not _same_value(svm["svm_score_class"], expected_score_class, np):
         raise AssertionError("SVM decision-score sign is mapped to the wrong class.")
-    if "support vectors" not in route_code(svm_route, "diagnose").lower():
+    if "support vectors" not in diagnostic_python(svm_route).lower():
         raise AssertionError("SVM diagnostic does not explain support vectors.")
 
     multiclass_svm_route, multiclass_svm = run("penguins", "continuous", "svm_cls")
@@ -2187,7 +2465,7 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         raise AssertionError("Multiclass SVM was presented as one binary boundary.")
     if len(np.asarray(multiclass_svm["svm_decision_values"])) != len(multiclass_svm_fitted.classes_):
         raise AssertionError("Multiclass SVM decision evidence is not class-aligned.")
-    if "no single universal boundary" not in route_code(multiclass_svm_route, "diagnose").lower():
+    if "no single universal boundary" not in diagnostic_python(multiclass_svm_route).lower():
         raise AssertionError("Multiclass SVM is missing safe multi-boundary wording.")
 
     svm_boundary_route, svm_boundary = run(None, None, "svm_cls", fixture=True)
@@ -2205,11 +2483,12 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         raise AssertionError("LDA class centres do not match fitted prepared-space means.")
     if not np.array_equal(lda["lda_probability_table"]["class"], [friendly(lda, label, "lda_class_labels") for label in lda_fold_fitted.classes_]):
         raise AssertionError("LDA probability rows are not class-aligned.")
-    if not np.allclose(lda["lda_probability_table"]["predicted_probability"].to_numpy(dtype=float), lda["lda_fold_model"].predict_proba(lda["lda_row"])[0]):
+    lda_row = lda["X_train"].iloc[[int(lda["lda_example_position"])]]
+    if not np.allclose(lda["lda_probability_table"]["predicted_probability"].to_numpy(dtype=float), lda["lda_fold_model"].predict_proba(lda_row)[0]):
         raise AssertionError("LDA predicted probabilities do not match the fitted fold model.")
-    if not _same_value(lda["lda_prediction"], lda["lda_fold_model"].predict(lda["lda_row"])[0], np):
+    if not _same_value(lda["lda_prediction"], lda["lda_fold_model"].predict(lda_row)[0], np):
         raise AssertionError("LDA out-of-fold prediction story does not match the fitted fold model.")
-    if "shared spread/shape" not in route_code(lda_route, "diagnose").lower():
+    if "shared spread/shape" not in diagnostic_python(lda_route).lower():
         raise AssertionError("LDA diagnostic does not connect shared spread/shape to a straight boundary.")
 
     multiclass_lda_route, multiclass_lda = run("penguins", "continuous", "lda")
@@ -2238,7 +2517,7 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         raise AssertionError("QDA predicted probabilities do not match the fitted fold model.")
     if not _same_value(qda["qda_prediction"], qda["qda_fold_model"].predict(qda["qda_row"])[0], np):
         raise AssertionError("QDA out-of-fold prediction story does not match the fitted fold model.")
-    qda_diagnostic = route_code(qda_route, "diagnose").lower()
+    qda_diagnostic = diagnostic_python(qda_route).lower()
     if any(token not in qda_diagnostic for token in ("per-feature spread", "vary together", "covariance/shape", "curve")):
         raise AssertionError("QDA diagnostic does not distinguish per-feature spread from covariance/shape or explain curved boundaries.")
 
@@ -2302,7 +2581,7 @@ def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     fixture_density = np.exp(-0.5 * ((density_fixture["observed"] - density_fixture["mean"]) ** 2) / density_fixture["variance"]) / np.sqrt(2 * np.pi * density_fixture["variance"])
     if not np.isclose(fixture_density, density_fixture["expected_density"]) or fixture_density <= 1:
         raise AssertionError("The deterministic Gaussian density fixture does not demonstrate a density above 1.")
-    if "independence assumption" not in route_code(gaussian_route, "diagnose").lower():
+    if "independence assumption" not in diagnostic_python(gaussian_route).lower():
         raise AssertionError("Naive Bayes independence teaching is missing from the diagnostic.")
 
     categorical_route, categorical = run("car", "categorical", "naive_bayes")
@@ -2449,8 +2728,10 @@ def run_python_routes(payload: dict, mode: str) -> dict:
                 for cell in route["cells"]:
                     with warnings.catch_warnings(record=True) as caught:
                         warnings.simplefilter("always")
-                        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-                            exec(cell["code"], namespace, namespace)
+                        for source_name, source in _cell_execution_sources(cell):
+                            warnings.simplefilter("always")
+                            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                                exec(source, namespace, namespace)
                     warnings_seen.extend(str(item.message) for item in caught)
                     plt.close("all")
             except Exception as error:  # noqa: BLE001
@@ -2473,6 +2754,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
     if mode == "full" and attempted != 254:
         raise AssertionError(f"Full runtime mode executed {attempted} routes; expected all 254 routes.")
     unique_warnings = sorted(set(warnings_seen))
+    warning_regression = run_warning_regression(payload, warnings_seen)
     return {
         "runtime_mode": mode,
         "runtime_routes": attempted,
@@ -2498,6 +2780,7 @@ def run_python_routes(payload: dict, mode: str) -> dict:
         "phase4a1_pca_experiment": pca_practice_experiment_test,
         "warnings": unique_warnings[:25],
         "warning_count": len(warnings_seen),
+        "warning_regression": warning_regression,
     }
 
 

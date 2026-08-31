@@ -10,7 +10,7 @@
     "dev": "npm run build:web && python3 -m http.server 8000 -d dist",
     "check": "npm run build:web && npm run check:js && npm run check:routes && npm run check:app-shell",
     "check:js": "node --check home.js && node --check ml-app.js && node --check app/app-platform.js",
-    "check:routes": "node tests/test_ml_state.mjs && node tests/test_ml_teaching.mjs && python3 tests/test_ml_routes.py",
+    "check:routes": "node tests/test_ml_state.mjs && node tests/test_ml_teaching.mjs && node tests/test_ml_practice_final.mjs && python3 tests/test_ml_routes.py",
     "check:app-shell": "node scripts/check-app-shell.mjs",
     "licenses:build": "node scripts/build-license-bundle.mjs",
     "vendor:pyodide": "node scripts/vendor-pyodide.mjs",

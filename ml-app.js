@@ -307,6 +307,251 @@ def serialize_dataframe_result(frame, max_rows=50, max_columns=20):
     }
 `;
 
+  const PRACTICE_VALIDATOR_SOURCE = String.raw`
+def _practice_result(ok, message):
+    return {"ok": bool(ok), "message": str(message)}
+
+def _practice_source():
+    return str(globals().get("__cell_code", ""))
+
+def _practice_forbidden_source(spec):
+    source = _practice_source()
+    holdout_tokens = ("X_" + "test", "y_" + "test", "test_" + "prediction", "test_" + "result")
+    if any(token in source for token in holdout_tokens):
+        return _practice_result(False, "Keep final-test variables out of this practice task.")
+    target = str(spec.get("target", "")).strip()
+    if target:
+        try:
+            tree = ast.parse(source, mode="exec")
+        except Exception:
+            tree = None
+        if tree is not None:
+            target_names = {target}
+            selector_methods = {"drop", "filter", "get", "pop", "reindex", "rename", "set_axis"}
+
+            def _string_values(node):
+                return [value.value for value in ast.walk(node)
+                        if isinstance(value, ast.Constant) and isinstance(value.value, str)]
+
+            class _TargetReferenceVisitor(ast.NodeVisitor):
+                def __init__(self):
+                    self.found = False
+
+                def visit_Name(self, node):
+                    if node.id in target_names:
+                        self.found = True
+                    self.generic_visit(node)
+
+                def visit_Attribute(self, node):
+                    if node.attr in target_names:
+                        self.found = True
+                    self.generic_visit(node)
+
+                def visit_Subscript(self, node):
+                    # A target string is meaningful here because it is being
+                    # used as a dataframe/dictionary/list selector.  Nested
+                    # lists and tuples cover df[[...]], df.loc[..., ...], and
+                    # equivalent selections without inspecting comments or
+                    # unrelated prose strings.
+                    if target in _string_values(node.slice):
+                        self.found = True
+                    self.generic_visit(node)
+
+                def visit_Call(self, node):
+                    function = node.func
+                    method = function.attr if isinstance(function, ast.Attribute) else ""
+                    if method in selector_methods and target in _string_values(node):
+                        self.found = True
+                    if any(keyword.arg == target for keyword in node.keywords if keyword.arg):
+                        self.found = True
+                    self.generic_visit(node)
+
+            visitor = _TargetReferenceVisitor()
+            visitor.visit(tree)
+            if visitor.found:
+                return _practice_result(False, "Keep the reference target out of this target-free practice task.")
+    return None
+
+def _practice_assigned(name):
+    try:
+        tree = ast.parse(_practice_source(), mode="exec")
+        return any(
+            isinstance(node, (ast.Assign, ast.AnnAssign)) and any(
+                isinstance(target, ast.Name) and target.id == name
+                for target in (node.targets if isinstance(node, ast.Assign) else [node.target])
+            )
+            for node in tree.body
+        )
+    except Exception:
+        return False
+
+def _practice_frame(value, name):
+    if not isinstance(value, pd.DataFrame):
+        return _practice_result(False, f"{name} must be a pandas DataFrame.")
+    if len(value.index) < 1:
+        return _practice_result(False, f"{name} is empty.")
+    return None
+
+def validate_practice_exercise(spec):
+    kind = str(spec.get("kind", ""))
+    if kind == "model":
+        if not _practice_assigned("model") or not _practice_assigned("pipeline"):
+            return _practice_result(False, "Assign the estimator to model and connect it with preprocessor in pipeline.")
+        candidate = globals().get("pipeline")
+        if not hasattr(candidate, "steps") or len(candidate.steps) < 2:
+            return _practice_result(False, "pipeline should contain preparation followed by the model.")
+        names = [name for name, _ in candidate.steps]
+        if names[-1] != "model" or names[0] != "prepare":
+            return _practice_result(False, "Use a prepare step followed by a model step.")
+        if globals().get("model") is not candidate.named_steps.get("model"):
+            return _practice_result(False, "The pipeline model step should be the estimator assigned to model.")
+        return _practice_result(True, "The estimator is connected to the preparation in one Pipeline.")
+
+    if kind == "cv":
+        if not _practice_assigned("cv"):
+            return _practice_result(False, "Create the route's cv splitter before building the fold table.")
+        candidate = globals().get("cv")
+        expected = int(spec.get("folds", 0))
+        try:
+            actual = int(candidate.get_n_splits())
+        except Exception:
+            actual = int(getattr(candidate, "n_splits", -1))
+        if actual != expected:
+            return _practice_result(False, f"The route expects {expected} folds, but cv has {actual}.")
+        frame_check = _practice_frame(globals().get("cv_scores"), "cv_scores")
+        if frame_check:
+            return frame_check
+        table = globals().get("cv_scores")
+        required = ("train_macro_f1", "validation_macro_f1") if spec.get("task") == "classification" else ("train_rmse", "validation_rmse")
+        missing = [column for column in required if column not in table.columns]
+        if missing:
+            return _practice_result(False, "cv_scores is missing: " + ", ".join(missing) + ".")
+        if len(table.index) != expected:
+            return _practice_result(False, "cv_scores must contain one row for each validation fold.")
+        numeric = table[list(required)].apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
+        if not np.isfinite(numeric).all() or (spec.get("task") == "regression" and (numeric < 0).any()):
+            return _practice_result(False, "Fold scores must be finite, with RMSE shown as a positive error.")
+        return _practice_result(True, "The splitter and fold table match the route's training-only validation setup.")
+
+    if kind == "kmeans":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        if not _practice_assigned("kmeans"):
+            return _practice_result(False, "Fit a KMeans estimator on the prepared feature matrix Z.")
+        candidate = globals().get("kmeans")
+        labels = np.asarray(globals().get("clusters", []))
+        selected = int(globals().get("selected_k", -1))
+        if not hasattr(candidate, "cluster_centers_") or not hasattr(candidate, "labels_") or len(labels) != len(np.asarray(globals().get("Z", []))):
+            return _practice_result(False, "The fitted KMeans object and one cluster label per row are required.")
+        if not np.array_equal(labels, np.asarray(candidate.labels_)):
+            return _practice_result(False, "Use the fitted K-Means labels for the cluster assignments.")
+        if selected < 2 or selected > int(spec.get("maxK", 8)) or len(np.unique(labels)) != selected:
+            return _practice_result(False, "The cluster labels must match the selected number of groups.")
+        return _practice_result(True, "K-Means is fitted and every prepared row has one of the selected cluster labels.")
+
+    if kind == "hierarchical":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        if not _practice_assigned("hierarchical"):
+            return _practice_result(False, "Create the Ward-linkage estimator using selected_k.")
+        candidate = globals().get("hierarchical")
+        labels = np.asarray(globals().get("clusters", []))
+        sample = np.asarray(globals().get("analysis_Z", []))
+        selected = int(globals().get("selected_k", -1))
+        if not hasattr(candidate, "n_clusters") or not hasattr(candidate, "labels_") or len(labels) != len(sample):
+            return _practice_result(False, "The hierarchy and its sampled cluster labels must stay aligned.")
+        if not np.array_equal(labels, np.asarray(candidate.labels_)):
+            return _practice_result(False, "Use the fitted hierarchy labels for the sampled assignments.")
+        if selected < 2 or selected > int(spec.get("maxK", 8)) or len(np.unique(labels)) != selected:
+            return _practice_result(False, "The sampled cluster labels must match the selected cut.")
+        return _practice_result(True, "The Ward hierarchy and sampled cluster labels match the selected cut.")
+
+    if kind == "pca_selection":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        if not _practice_assigned("components_for_target"):
+            return _practice_result(False, "Find the first cumulative-variance position that reaches variance_target.")
+        target = float(globals().get("variance_target", np.nan))
+        cumulative = np.asarray(globals().get("cumulative_explained_variance", []), dtype=float)
+        try:
+            selected = int(globals().get("components_for_target", -1))
+            expected = int(np.flatnonzero(cumulative >= target)[0] + 1)
+            retained = float(globals().get("variance_retained", np.nan))
+        except Exception:
+            return _practice_result(False, "Use the cumulative explained variance to calculate the component count.")
+        if not (0 < target <= 1) or selected != expected or not np.isfinite(retained) or not np.isclose(retained, cumulative[selected - 1]):
+            return _practice_result(False, "The selected component count and retained variance do not match variance_target.")
+        reduced = np.asarray(globals().get("Z_reduced", []))
+        if reduced.ndim != 2 or reduced.shape[1] != selected:
+            return _practice_result(False, "Z_reduced must contain exactly the selected number of components.")
+        fitted = globals().get("full_pca")
+        if not hasattr(fitted, "transform") or not np.allclose(reduced, np.asarray(fitted.transform(np.asarray(globals().get("Z", []))))[:, :selected]):
+            return _practice_result(False, "Z_reduced must come from the fitted PCA transformation.")
+        return _practice_result(True, "The selected component count is the first one reaching the active variance target.")
+
+    if kind == "checkpoint_supervised":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        candidate = globals().get("checkpoint_pipeline")
+        table = globals().get("checkpoint_scores")
+        if "X_train" not in _practice_source() or "y_train" not in _practice_source():
+            return _practice_result(False, "Use the training rows X_train and y_train for this checkpoint.")
+        if not hasattr(candidate, "steps") or not isinstance(table, pd.DataFrame) or "validation_score" not in table.columns or len(table.index) < 2:
+            return _practice_result(False, "Build a compact training-only pipeline and a validation_score column with multiple folds.")
+        names = [name for name, _ in candidate.steps]
+        expected = int(spec.get("folds", 0))
+        values = pd.to_numeric(table["validation_score"], errors="coerce").to_numpy(dtype=float)
+        if names[0] != "prepare" or names[-1] != "model" or len(table.index) != expected or not np.isfinite(values).all():
+            return _practice_result(False, "Use prepare → model steps and one finite validation score per route fold.")
+        if spec.get("task") == "regression" and (values < 0).any():
+            return _practice_result(False, "Show RMSE as a positive error in original target units.")
+        return _practice_result(True, "The compact workflow produced multiple training-only validation results.")
+
+    if kind == "checkpoint_kmeans":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        fitted = globals().get("checkpoint_model")
+        labels = np.asarray(globals().get("checkpoint_labels", []))
+        profile = globals().get("checkpoint_profile")
+        if not hasattr(fitted, "cluster_centers_") or len(labels) < 1 or len(labels) != len(np.asarray(globals().get("Z", []))) or not isinstance(profile, pd.DataFrame) or "cluster" not in profile.columns or len(profile.index) != len(labels):
+            return _practice_result(False, "Fit the selected K-Means solution and profile every row by cluster.")
+        if not np.array_equal(labels, np.asarray(fitted.labels_)):
+            return _practice_result(False, "Use the fitted K-Means labels for the profile rather than a separate label array.")
+        return _practice_result(True, "The checkpoint produced one cluster label and a matching original-unit profile per row.")
+
+    if kind == "checkpoint_hierarchical":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        fitted = globals().get("checkpoint_model")
+        labels = np.asarray(globals().get("checkpoint_labels", []))
+        profile = globals().get("checkpoint_profile")
+        sample = np.asarray(globals().get("analysis_Z", []))
+        if not hasattr(fitted, "labels_") or len(labels) < 1 or len(labels) != len(sample) or not isinstance(profile, pd.DataFrame) or "cluster" not in profile.columns or len(profile.index) != len(labels):
+            return _practice_result(False, "Fit the hierarchy on analysis_Z and profile the same sampled rows.")
+        if not np.array_equal(labels, np.asarray(fitted.labels_)):
+            return _practice_result(False, "Use the fitted hierarchy labels for the sampled profile.")
+        return _practice_result(True, "The checkpoint hierarchy and sampled profile remain aligned.")
+
+    if kind == "checkpoint_pca":
+        source_check = _practice_forbidden_source(spec)
+        if source_check:
+            return source_check
+        fitted = globals().get("checkpoint_pca")
+        projection = np.asarray(globals().get("checkpoint_projection", []))
+        loadings = globals().get("checkpoint_loadings")
+        if not hasattr(fitted, "components_") or projection.ndim != 2 or projection.shape[0] != len(np.asarray(globals().get("Z", []))) or projection.shape[1] < 1 or not isinstance(loadings, pd.DataFrame) or len(loadings.index) != len(fitted.components_[0]):
+            return _practice_result(False, "Fit PCA on Z and show matching projected rows and loading values.")
+        return _practice_result(True, "The checkpoint includes fitted PCA axes, row coordinates, and feature-labelled loadings.")
+
+    return _practice_result(False, "No semantic validator is registered for this exercise.")
+`;
+
   const RESET_WORKSPACE_SOURCE = String.raw`
 __keep_data_flag = bool(__keep_data)
 __baseline_values = globals().get("__baseline_values_from_worker")
@@ -362,6 +607,7 @@ def display(value):
 \`);
     await pyodide.runPythonAsync(${py(DATAFRAME_SERIALIZER_SOURCE)});
     await pyodide.runPythonAsync(${py(ONE_R_HELPER_SOURCE)});
+    await pyodide.runPythonAsync(${py(PRACTICE_VALIDATOR_SOURCE)});
     await pyodide.runPythonAsync("BASE_GLOBAL_NAMES = frozenset(globals()) | {'BASE_GLOBAL_NAMES'}");
     baselineValues = await pyodide.runPythonAsync("dict(globals())");
     ready = true;
@@ -406,6 +652,11 @@ json.dumps({
     }
     if (type === "run") {
       pyodide.globals.set("__cell_code", data.code);
+      pyodide.globals.set("__setup_code", data.setup || "");
+      pyodide.globals.set("__evidence_code", data.evidence || "");
+      pyodide.globals.set("__practice_validation_json", null);
+      pyodide.globals.set("__practice_validation_spec", null);
+      if (data.validation) pyodide.globals.set("__practice_validation_spec", JSON.stringify(data.validation));
       const raw = await pyodide.runPythonAsync(\`
 __io_from_worker = io
 __json_from_worker = json
@@ -418,6 +669,8 @@ __plt_from_worker = plt
 __warnings_from_worker = warnings
 __stdout, __stderr = __io_from_worker.StringIO(), __io_from_worker.StringIO()
 __result, __error, __last_display = None, None, None
+__primary_result = None
+__evidence_result = None
 __caught_warnings = []
 if __plt_from_worker is not None:
     __plt_from_worker.close("all")
@@ -425,15 +678,22 @@ try:
     with __warnings_from_worker.catch_warnings(record=True) as __warning_records:
         __caught_warnings = __warning_records
         __warnings_from_worker.simplefilter("always")
-        __tree = __ast_from_worker.parse(__cell_code, mode="exec")
         with __contextlib_from_worker.redirect_stdout(__stdout), __contextlib_from_worker.redirect_stderr(__stderr):
-            if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
-                __last = __tree.body.pop()
-                exec(compile(__tree, "<cell>", "exec"), globals())
-                __result = eval(compile(__ast_from_worker.Expression(__last.value), "<cell>", "eval"), globals())
-            else:
-                exec(compile(__tree, "<cell>", "exec"), globals())
-                __result = __last_display
+            def __run_segment(__source, __label):
+                if not __source or not __source.strip():
+                    return None
+                __tree = __ast_from_worker.parse(__source, mode="exec")
+                if __tree.body and isinstance(__tree.body[-1], __ast_from_worker.Expr):
+                    __last = __tree.body.pop()
+                    exec(compile(__tree, "<" + __label + ">", "exec"), globals())
+                    return eval(compile(__ast_from_worker.Expression(__last.value), "<" + __label + ">", "eval"), globals())
+                exec(compile(__tree, "<" + __label + ">", "exec"), globals())
+                return __last_display
+            __run_segment(__setup_code, "diagnostic-setup")
+            __primary_result = __run_segment(__cell_code, "cell")
+            if __setup_code or __evidence_code:
+                __evidence_result = __run_segment(__evidence_code, "diagnostic-evidence")
+            __result = __evidence_result if __evidence_result is not None else __primary_result
 except Exception:
     __error = __traceback_from_worker.format_exc()
 __warnings = [{"category":__warning.category.__name__, "message":str(__warning.message)} for __warning in __caught_warnings]
@@ -454,7 +714,14 @@ __value = None
 if __error is None and __table is None and __result is not None and not hasattr(__result, "figure"):
     try: __value = str(__result)
     except Exception: pass
-__json_from_worker.dumps({"status":"error" if __error else "ok", "error":__error, "warnings":__warnings, "stdout":__stdout.getvalue(), "stderr":__stderr.getvalue(), "table":__table, "charts":__charts, "value":__value}, default=str)
+if __error is None and "__practice_validation_spec" in globals():
+    try:
+        __practice_validation_json = __json_from_worker.dumps(validate_practice_exercise(__json_from_worker.loads(__practice_validation_spec)))
+    except Exception as __validation_error:
+        __practice_validation_json = __json_from_worker.dumps({"ok":False, "message":"Semantic check could not run: " + str(__validation_error)})
+    globals().pop("__practice_validation_spec", None)
+__validation = __json_from_worker.loads(__practice_validation_json) if globals().get("__practice_validation_json") else None
+__json_from_worker.dumps({"status":"error" if __error else "ok", "error":__error, "warnings":__warnings, "stdout":__stdout.getvalue(), "stderr":__stderr.getvalue(), "table":__table, "charts":__charts, "value":__value, "validation":__validation}, default=str)
 \`);
       post(id, {ok:true, output:JSON.parse(raw)});
       return;
@@ -494,6 +761,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   let playgroundMode = "guided";
   let practiceSetupIdentity = "";
   const practiceStates = new Map();
+  let independentCheckpointState = null;
   let guideDragState = null;
   let guideResizeState = null;
   let guideViewportSized = false;
@@ -546,6 +814,251 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       options:[...options, practiceOption("not_sure", "Not sure yet")],
       evidence
     };
+  }
+
+  function practiceExerciseForTask(config, value, modelId, taskId, folds = 5) {
+    const model = MODELS[modelId];
+    if (!model) return null;
+    if (taskId === "baseline" && model.task !== "unsupervised") {
+      const splitterName = config.split === "time" ? "TimeSeriesSplit" : config.task === "classification" ? "StratifiedKFold" : "KFold";
+      const splitter = config.split === "time"
+        ? `${splitterName}(n_splits=${folds})`
+        : `${splitterName}(n_splits=${folds}, shuffle=True, random_state=42)`;
+      return {
+        id:"cv-splitter-line",
+        type:"complete_line",
+        title:"Complete the cross-validation line",
+        prompt:"Complete the validation-splitter line used by this route.",
+        goal:`Create the ${folds}-fold ${config.split === "time" ? "time-aware" : "training-only"} validation splitter used by the evidence table.`,
+        hint:`Use ${splitterName} with the route's ${folds} folds${config.split === "time" ? " and keep the chronological default" : ", shuffle=True, and random_state=42"}.`,
+        expectedOutput:"A cv object and a fold table with validation scores.",
+        required:["cv", `${folds}-fold validation splitter`, "training-only validation"],
+        modelId,
+        taskId,
+        find:`cv = ${splitter}`,
+        replacement:"# TODO: create the cross-validation splitter described above",
+        solution:`cv = ${splitter}`,
+        validation:{kind:"cv", task:config.task, split:config.split, folds}
+      };
+    }
+    if (taskId === "model" && model.task !== "unsupervised") {
+      const pipeline = "pipeline = Pipeline([\n    (\"prepare\", preprocessor),\n    (\"model\", model)\n])";
+      return {
+        id:"model-estimator-lines",
+        type:"partial_code",
+        title:"Connect the model pipeline",
+        prompt:"Complete the real sklearn Pipeline that connects preparation to the estimator.",
+        goal:"Connect the prepared inputs and the selected estimator into one Pipeline so validation can repeat the same workflow on each fold.",
+        hint:"Keep the fitted estimator in a \"model\" step and the existing preprocessor in a \"prepare\" step.",
+        expectedOutput:"A pipeline with preparation and a fitted-model step.",
+        required:["model", "Pipeline", "prepare → model"],
+        modelId,
+        taskId,
+        find:pipeline,
+        replacement:"# TODO: connect preprocessor and model in a Pipeline",
+        solution:pipeline,
+        validation:{kind:"model", modelId}
+      };
+    }
+    if (taskId === "fit" && modelId === "kmeans") {
+      const fitLine = "kmeans = KMeans(n_clusters=selected_k, n_init=30, random_state=42).fit(Z)";
+      return {
+        id:"kmeans-fit-line",
+        type:"partial_code",
+        title:"Complete the K-Means fit",
+        prompt:"Complete the K-Means fit on the prepared feature matrix.",
+        goal:"Fit K-Means on the prepared feature matrix using the selected number of clusters.",
+        hint:"The number of groups is already stored in selected_k. Fit the KMeans estimator on Z, then keep its labels for the profile step.",
+        expectedOutput:"A fitted kmeans object and one cluster label for every row.",
+        required:["KMeans", "selected_k", "clusters"],
+        modelId,
+        taskId,
+        find:fitLine,
+        replacement:"# TODO: fit KMeans on Z using selected_k",
+        solution:fitLine,
+        validation:{kind:"kmeans", maxK:8}
+      };
+    }
+    if (taskId === "fit" && modelId === "hierarchical") {
+      const fitLine = "hierarchical = AgglomerativeClustering(n_clusters=selected_k, linkage=\"ward\")";
+      return {
+        id:"hierarchical-fit-line",
+        type:"partial_code",
+        title:"Complete the hierarchy fit",
+        prompt:"Complete the Ward-linkage estimator for the selected cut.",
+        goal:"Construct the Ward-linkage estimator for the selected cut so the sampled rows can receive cluster labels.",
+        hint:"Use AgglomerativeClustering with n_clusters=selected_k and linkage=\"ward\"; the sample is already prepared as analysis_Z.",
+        expectedOutput:"A hierarchical estimator and one cluster label for every sampled row.",
+        required:["AgglomerativeClustering", "selected_k", "analysis_Z"],
+        modelId,
+        taskId,
+        find:fitLine,
+        replacement:"# TODO: construct the Ward hierarchy using selected_k",
+        solution:fitLine,
+        validation:{kind:"hierarchical", maxK:8}
+      };
+    }
+    if (taskId === "select" && modelId === "pca") {
+      const selectLine = "components_for_target = int(np.flatnonzero(cumulative_explained_variance >= variance_target)[0] + 1)";
+      return {
+        id:"pca-component-selection-line",
+        type:"complete_line",
+        title:"Complete the component-count line",
+        prompt:"Complete the line that selects components from the active variance target.",
+        goal:"Find the first component count whose cumulative explained variance reaches the active variance_target.",
+        hint:"Use np.flatnonzero on cumulative_explained_variance >= variance_target, then convert the zero-based position into a one-based count.",
+        expectedOutput:"components_for_target, variance_retained, and a matching Z_reduced representation.",
+        required:["components_for_target", "variance_target", "cumulative explained variance"],
+        modelId,
+        taskId,
+        find:selectLine,
+        replacement:"# TODO: find the first component count that reaches variance_target",
+        solution:selectLine,
+        validation:{kind:"pca_selection"}
+      };
+    }
+    return null;
+  }
+
+  function applyPracticeScaffold(code, exercise) {
+    const source = String(code || "");
+    if (!exercise?.find || !exercise?.replacement) return {changed:false, code:source, reason:"This exercise has no scaffolded line."};
+    const first = source.indexOf(exercise.find);
+    if (first < 0) return {changed:false, code:source, reason:"The reference line is not present in this route cell."};
+    if (source.indexOf(exercise.find, first + exercise.find.length) >= 0) {
+      return {changed:false, code:source, reason:"The scaffold line was not unique in this route cell."};
+    }
+    return {changed:true, code:source.slice(0, first) + exercise.replacement + source.slice(first + exercise.find.length)};
+  }
+
+  function supervisedCheckpointCode(config, value, modelId, folds, compact = false) {
+    const classification = config.task === "classification";
+    const scoreLine = classification
+      ? 'checkpoint_raw = cross_validate(checkpoint_pipeline, X_train, y_train, cv=cv, scoring="f1_macro")\ncheckpoint_scores = pd.DataFrame({"fold":np.arange(1, len(checkpoint_raw["test_score"]) + 1), "validation_score":checkpoint_raw["test_score"]})'
+      : 'checkpoint_raw = cross_validate(checkpoint_pipeline, X_train, y_train, cv=cv, scoring="neg_root_mean_squared_error")\ncheckpoint_scores = pd.DataFrame({"fold":np.arange(1, len(checkpoint_raw["test_score"]) + 1), "validation_score":-checkpoint_raw["test_score"]})';
+    const lines = [
+      compact ? "from sklearn.model_selection import cross_validate" : "# Use training rows only: build a compact workflow and inspect validation evidence.",
+      compact ? "" : "from sklearn.model_selection import cross_validate",
+      "checkpoint_pipeline = Pipeline([",
+      '    ("prepare", preprocessor),',
+      '    ("model", model)',
+      "])" ,
+      `# ${classification ? "Macro F1 is higher when better" : "RMSE is shown as a positive error in original target units; lower is better"}`,
+      scoreLine,
+      "checkpoint_scores.round(3)"
+    ];
+    return lines.filter((line, index) => line || index !== 1).join("\n");
+  }
+
+  function cleanSupervisedWorkflowReference(config, value, modelId, folds, includeFinal = false) {
+    const classification = config.task === "classification";
+    const splitterName = config.split === "time" ? "TimeSeriesSplit" : classification ? "StratifiedKFold" : "KFold";
+    const splitter = config.split === "time"
+      ? `${splitterName}(n_splits=${folds})`
+      : `${splitterName}(n_splits=${folds}, shuffle=True, random_state=42)`;
+    const scoring = classification ? "f1_macro" : "neg_root_mean_squared_error";
+    const scoreExpression = classification ? 'validation_raw["test_score"]' : '-validation_raw["test_score"]';
+    const lines = [
+      "# Core supervised workflow: the split cell created the training variables; the final holdout stays sealed until the final step.",
+      "from sklearn.model_selection import cross_validate",
+      `cv = ${splitter}`,
+      "pipeline = Pipeline([",
+      '    ("prepare", preprocessor),',
+      '    ("model", model)',
+      "])" ,
+      `validation_raw = cross_validate(pipeline, X_train, y_train, cv=cv, scoring=${py(scoring)})`,
+      `validation_scores = pd.DataFrame({"validation_score":${scoreExpression}})`,
+      "validation_scores.round(3)",
+      "# Step 7 keeps the tuned best_pipeline or the default pipeline.",
+      "chosen_pipeline = best_pipeline"
+    ];
+    if (includeFinal) {
+      lines.push(
+        "# After validation/model selection, fit once on training rows and evaluate the sealed holdout.",
+        "final_model = chosen_pipeline.fit(X_train, y_train)",
+        "final_prediction = final_model.predict(X_test)",
+        classification
+          ? 'from sklearn.metrics import f1_score\nf1_score(y_test, final_prediction, average="macro")'
+          : "from sklearn.metrics import root_mean_squared_error\nroot_mean_squared_error(y_test, final_prediction)"
+      );
+    }
+    return lines.join("\n");
+  }
+
+  function cleanWorkflowReference(config, value, modelId, folds = 5) {
+    const model = MODELS[modelId];
+    if (!model) return "";
+    if (model.task !== "unsupervised") return cleanSupervisedWorkflowReference(config, value, modelId, folds, false);
+    if (modelId === "kmeans") return `from sklearn.cluster import KMeans
+checkpoint_k = min(3, len(Z) - 1)
+checkpoint_model = KMeans(n_clusters=checkpoint_k, n_init=20, random_state=42).fit(Z)
+checkpoint_labels = checkpoint_model.labels_
+checkpoint_profile = ${modelFrameName(config)}[feature_names].copy()
+checkpoint_profile["cluster"] = checkpoint_labels
+checkpoint_profile.groupby("cluster")[feature_names].mean().round(2)`;
+    if (modelId === "hierarchical") return `from sklearn.cluster import AgglomerativeClustering
+checkpoint_k = min(3, len(analysis_Z) - 1)
+checkpoint_model = AgglomerativeClustering(n_clusters=checkpoint_k, linkage="ward").fit(analysis_Z)
+checkpoint_labels = checkpoint_model.labels_
+checkpoint_profile = analysis_rows[feature_names].copy()
+checkpoint_profile["cluster"] = checkpoint_labels
+checkpoint_profile.groupby("cluster")[feature_names].mean().round(2)`;
+    return `from sklearn.decomposition import PCA
+checkpoint_pca = PCA().fit(Z)
+checkpoint_variance_target = 0.90
+checkpoint_components = int(np.flatnonzero(np.cumsum(checkpoint_pca.explained_variance_ratio_) >= checkpoint_variance_target)[0] + 1)
+checkpoint_projection = checkpoint_pca.transform(Z)[:, :checkpoint_components]
+checkpoint_loadings = pd.DataFrame(checkpoint_pca.components_.T, index=feature_names)
+checkpoint_loadings.index.name = "feature"
+checkpoint_loadings.head(12)`;
+  }
+
+  function independentCheckpointForRoute(config, value, modelId, folds = 5) {
+    const model = MODELS[modelId];
+    if (!model) return null;
+    const unsupervised = model.task === "unsupervised";
+    const classification = config.task === "classification";
+    const common = {
+      id:"independent-checkpoint",
+      title:"Independent Checkpoint",
+      availableVariables:unsupervised
+        ? modelId === "hierarchical" ? ["analysis_Z", "analysis_rows", "feature_names", "selected_k"] : ["Z", modelFrameName(config), "feature_names", "selected_k"]
+        : ["X_train", "y_train", "preprocessor", "model", "pipeline", "cv"],
+      hint:unsupervised
+        ? "Use only the prepared feature matrix and the selected cut. Keep the profile in original feature units; the reference target is not part of discovery."
+        : `Use X_train and y_train only. Connect preparation and model in a Pipeline, then use ${folds}-fold CV; keep the final holdout out of this checkpoint.`,
+      starterCode:unsupervised
+        ? "# Independent checkpoint\n# TODO: fit the selected unsupervised method and create a compact profile.\n"
+        : "# Independent checkpoint · training rows only\n# TODO: build a compact preparation + model workflow, run CV, and inspect validation_score.\n",
+      referenceSolution:unsupervised ? "" : supervisedCheckpointCode(config, value, modelId, folds),
+      cleanReference:cleanWorkflowReference(config, value, modelId, folds)
+    };
+    if (!unsupervised) {
+      common.goal = classification
+        ? "Build a compact training-only classification workflow and produce fold validation scores without opening the holdout."
+        : "Build a compact training-only regression workflow and produce positive RMSE validation scores in the target's original units without opening the holdout.";
+      common.checklist = ["Use X_train and y_train only", "Keep preparation and model in one Pipeline", "Produce one validation_score per fold", "Explain what the validation evidence suggests"];
+      common.referenceSolution = supervisedCheckpointCode(config, value, modelId, folds);
+      common.validation = {kind:"checkpoint_supervised", task:config.task, folds};
+      return common;
+    }
+    if (modelId === "kmeans") {
+      common.goal = "Fit a target-free K-Means solution and describe its discovered groups in original feature units.";
+      common.checklist = ["Fit K-Means on Z", "Give each row one cluster label", "Compare original-unit profiles", "Do not use the hidden reference target"];
+      common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
+      common.validation = {kind:"checkpoint_kmeans", target:config.target};
+    } else if (modelId === "hierarchical") {
+      common.goal = "Fit a target-free Ward hierarchy on the prepared sample and describe its cut in original feature units.";
+      common.checklist = ["Use analysis_Z and analysis_rows", "Keep sampled rows and labels aligned", "Compare original-unit profiles", "Do not use the hidden reference target"];
+      common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
+      common.validation = {kind:"checkpoint_hierarchical", target:config.target};
+    } else {
+      common.goal = "Fit PCA on the prepared inputs, choose a variance criterion, and inspect row coordinates and feature loadings without using the reference target.";
+      common.checklist = ["Fit PCA on Z", "Choose a visible variance target", "Create projected row coordinates", "Label feature loadings"];
+      common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
+      common.validation = {kind:"checkpoint_pca", target:config.target};
+    }
+    return common;
   }
 
   function safeExperimentForTask(config, value, modelId, taskId) {
@@ -660,10 +1173,10 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     return {changed:true, code:source.slice(0, first) + experiment.replace + source.slice(first + experiment.find.length)};
   }
 
-  function practiceForTask(config, value, modelId, taskId) {
+  function practiceForTask(config, value, modelId, taskId, folds = 5) {
     const model = MODELS[modelId];
     if (!model) return null;
-    const practice = {beforeRun:null, decision:null, experiment:safeExperimentForTask(config, value, modelId, taskId)};
+    const practice = {beforeRun:null, decision:null, experiment:safeExperimentForTask(config, value, modelId, taskId), exercise:practiceExerciseForTask(config, value, modelId, taskId, folds)};
     if (modelId === "pca") {
       if (taskId === "variance") {
         practice.beforeRun = practicePrediction(
@@ -698,7 +1211,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           "pca-criterion"
         );
       }
-      return practice.beforeRun || practice.decision || practice.experiment ? practice : null;
+      return practice.beforeRun || practice.decision || practice.experiment || practice.exercise ? practice : null;
     }
     if (model.task === "unsupervised") {
       if (["kmeans", "hierarchical"].includes(modelId) && taskId === "compare") {
@@ -726,7 +1239,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
           "cluster-profile"
         );
       }
-      return practice.beforeRun || practice.decision || practice.experiment ? practice : null;
+      return practice.beforeRun || practice.decision || practice.experiment || practice.exercise ? practice : null;
     }
     if (taskId === "split") {
       if (config.split === "time") {
@@ -867,7 +1380,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         "final"
       );
     }
-    return practice.beforeRun || practice.decision || practice.experiment ? practice : null;
+    return practice.beforeRun || practice.decision || practice.experiment || practice.exercise ? practice : null;
   }
 
   function practiceStateFor(taskId) {
@@ -881,13 +1394,34 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       experimentAfter:null,
       experimentEvidenceReady:false,
       reflection:false,
-      referenceRevealed:false
+      referenceRevealed:false,
+      exerciseAttempts:0,
+      exerciseHintRevealed:false,
+      exerciseReferenceRevealed:false,
+      exerciseComplete:false,
+      exerciseFeedback:null
     });
     return practiceStates.get(key);
   }
 
+  function independentCheckpointStateFor() {
+    if (!independentCheckpointState || independentCheckpointState.identity !== practiceSetupIdentity) {
+      independentCheckpointState = {
+        identity:practiceSetupIdentity,
+        hintRevealed:false,
+        referenceRevealed:false,
+        cleanReferenceRevealed:false,
+        attempts:0,
+        complete:false,
+        feedback:null
+      };
+    }
+    return independentCheckpointState;
+  }
+
   function clearPracticeSession() {
     practiceStates.clear();
+    independentCheckpointState = null;
   }
 
   function clearPracticeStatesFrom(taskId, preserveTaskIds = []) {
@@ -925,18 +1459,17 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
 
   function renderPracticeModeControls() {
     const guided = $("#guidedModeButton"), practice = $("#practiceModeButton"), note = $("#practiceModeNote"), runAllButton = $("#runAllButton");
-    if (!guided || !practice || !note || !runAllButton) return;
     const isPractice = playgroundMode === "practice";
     document.body.dataset.learningMode = playgroundMode;
-    guided.setAttribute("aria-pressed", String(!isPractice));
-    practice.setAttribute("aria-pressed", String(isPractice));
-    runAllButton.disabled = !runtimeReady || isPractice;
-    runAllButton.setAttribute("aria-describedby", isPractice ? "practiceModeNote" : "");
-    runAllButton.textContent = isPractice
-      ? "Run complete unavailable in Practice"
-      : selectedModel()?.task === "unsupervised"
-        ? "▶ Run complete walkthrough"
-        : `▶ Run complete ${$("#foldSelect").value}-fold walkthrough`;
+    if (guided) guided.setAttribute("aria-pressed", String(!isPractice));
+    if (practice) practice.setAttribute("aria-pressed", String(isPractice));
+    if (runAllButton) {
+      runAllButton.disabled = !runtimeReady || isPractice;
+      if (isPractice && note) runAllButton.setAttribute("aria-describedby", "practiceModeNote");
+      else runAllButton.removeAttribute("aria-describedby");
+      runAllButton.textContent = isPractice ? "Run all unavailable in Practice" : "▶ Run all";
+    }
+    if (!note) return;
     note.hidden = !isPractice;
     if (isPractice) {
       const counts = practiceCounts();
@@ -1132,7 +1665,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     container.replaceChildren();
     const wrap = document.createElement("div");
     wrap.className = compact ? "" : "result-table-wrap";
-    const table = document.createElement("table"); table.className = compact ? "" : "result-table";
+    const table = document.createElement("table"); table.className = compact ? "mini-table" : "result-table";
     const head = document.createElement("thead"), headRow = document.createElement("tr");
     payload.columns.forEach(column => { const th = document.createElement("th"); th.textContent = column; headRow.append(th); });
     head.append(headRow);
@@ -1684,7 +2217,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         metricMeta,
         metricHelp:metricHelpFor(config, "baseline"),
         concepts:cvConcepts(config, folds),
-        practice:practiceForTask(config, value, modelId, "baseline")
+        practice:practiceForTask(config, value, modelId, "baseline", folds)
       },
       tune: {
         question:"Do alternative settings improve validation performance enough to prefer one?",
@@ -1833,6 +2366,11 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   const task = (id, title, caption, code, teaching = {}) => {
     const details = typeof teaching === "string" ? {question:teaching} : (teaching || {});
     const concepts = Array.isArray(details.concepts) ? details.concepts : [];
+    const bundle = code && typeof code === "object" && !Array.isArray(code) ? code : {primaryCode:code};
+    const primaryCode = bundle.primaryCode ?? bundle.code ?? bundle.primary ?? "";
+    const setupCode = bundle.setupCode ?? bundle.setup ?? "";
+    const evidenceCode = bundle.evidenceCode ?? bundle.evidence ?? "";
+    const advancedCode = bundle.advancedCode ?? ([setupCode, evidenceCode].filter(Boolean).join("\n\n") || "");
     return {
       id,
       title,
@@ -1846,7 +2384,11 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       metricMeta:details.metricMeta || null,
       comparison:Boolean(details.comparison),
       practice:details.practice || null,
-      code:formatRouteCode(code)
+      code:formatRouteCode(primaryCode),
+      primaryCode:formatRouteCode(primaryCode),
+      setupCode:formatRouteCode(setupCode),
+      evidenceCode:formatRouteCode(evidenceCode),
+      advancedCode:formatRouteCode(advancedCode)
     };
   };
   const PYTHON_KEYWORDS = new Set(["and","as","assert","async","await","break","class","continue","def","del","elif","else","except","finally","for","from","global","if","import","in","is","lambda","not","or","pass","raise","return","try","while","with","yield"]);
@@ -2161,7 +2703,7 @@ cv_scores.round(3)`;
       "# 7 · Keep the model defaults",
       "best_pipeline = pipeline",
       "best_params = {}",
-      "print(\"No meaningful hyperparameters to tune; using the model defaults.\")",
+      "print(\"This walkthrough does not use a tuning grid for this model, so we keep its defaults.\")",
       "best_pipeline"
     ].join("\n");
     const displayedScore = config.task === "classification" ? "best_score" : "-best_score";
@@ -2405,13 +2947,10 @@ cv_scores.round(3)`;
       "knn_fold_model = clone(best_pipeline).fit(X_train.iloc[knn_fit_indices], y_train.iloc[knn_fit_indices])",
       "knn_fitted = knn_fold_model.named_steps[\"model\"]",
       "knn_row = X_train.iloc[[knn_example_position]]",
-      "knn_prepared_row = knn_fold_model[:-1].transform(knn_row)",
-      "knn_distances, knn_local_positions = knn_fitted.kneighbors(knn_prepared_row, n_neighbors=int(knn_fitted.n_neighbors), return_distance=True)",
-      "knn_neighbor_positions = np.asarray(knn_fit_indices)[knn_local_positions[0]]",
+      "knn_distances, knn_local_positions = knn_fitted.kneighbors(knn_fold_model[:-1].transform(knn_row), n_neighbors=int(knn_fitted.n_neighbors), return_distance=True)",
+      "knn_neighbor_positions = np.asarray(knn_fit_indices)[knn_local_positions[0]]; knn_neighbor_labels = y_train.iloc[knn_neighbor_positions].to_numpy()",
       "knn_neighbor_distances = knn_distances[0]",
-      "knn_neighbor_labels = y_train.iloc[knn_neighbor_positions].to_numpy()",
       "knn_prediction = knn_fold_model.predict(knn_row)[0]",
-      "knn_actual = y_train.iloc[knn_example_position]",
       `knn_class_labels = ${classLabels}`,
       "knn_self_neighbour_check = int(knn_example_position) not in set(int(index) for index in np.asarray(knn_neighbor_positions).tolist())",
       "if not knn_self_neighbour_check:",
@@ -2424,7 +2963,7 @@ cv_scores.round(3)`;
       "    knn_vote_scores[key] = knn_vote_scores.get(key, 0.0) + float(weight)",
       "knn_neighbor_table = pd.DataFrame({",
       "    \"selected_row\":[knn_example_position] * len(knn_neighbor_labels),",
-      "    \"actual_class\":[knn_class_labels.get(str(knn_actual), str(knn_actual))] * len(knn_neighbor_labels),",
+      "    \"actual_class\":[knn_class_labels.get(str(y_train.iloc[knn_example_position]), str(y_train.iloc[knn_example_position]))] * len(knn_neighbor_labels),",
       "    \"neighbor\":np.arange(1, len(knn_neighbor_labels) + 1),",
       "    \"training_row\":knn_neighbor_positions,",
       "    \"neighbor_class\":[knn_class_labels.get(str(label), str(label)) for label in knn_neighbor_labels],",
@@ -2433,7 +2972,7 @@ cv_scores.round(3)`;
       "    \"prediction\":[knn_class_labels.get(str(knn_prediction), str(knn_prediction))] * len(knn_neighbor_labels),",
       "})",
       "print(\"Selected out-of-fold row:\", knn_example_position)",
-      "print(\"Actual class:\", knn_class_labels.get(str(knn_actual), str(knn_actual)))",
+      "print(\"Actual class:\", knn_class_labels.get(str(y_train.iloc[knn_example_position]), str(y_train.iloc[knn_example_position])))",
       "print(\"Prediction:\", knn_class_labels.get(str(knn_prediction), str(knn_prediction)))",
       "print(\"Selected k:\", knn_fitted.n_neighbors, \"· weights:\", knn_fitted.weights)",
       "print(\"Closer neighbours contribute more strongly.\" if knn_is_distance_weighted else \"Each neighbour contributes one vote.\")",
@@ -2450,18 +2989,15 @@ cv_scores.round(3)`;
       "lda_example_position = int(lda_validation_indices[0])",
       "lda_fold_model = clone(best_pipeline).fit(X_train.iloc[lda_fit_indices], y_train.iloc[lda_fit_indices])",
       "lda_fold_fitted = lda_fold_model.named_steps[\"model\"]",
-      "lda_row = X_train.iloc[[lda_example_position]]",
       "lda_actual = y_train.iloc[lda_example_position]",
-      "lda_prediction = lda_fold_model.predict(lda_row)[0]",
-      "lda_decision_values = np.asarray(lda_fold_model.decision_function(lda_row)).reshape(-1)",
-      "lda_probability_values = np.asarray(lda_fold_model.predict_proba(lda_row)[0])",
+      "lda_prediction = lda_fold_model.predict(X_train.iloc[[lda_example_position]])[0]",
+      "lda_decision_values = np.asarray(lda_fold_model.decision_function(X_train.iloc[[lda_example_position]])).reshape(-1)",
+      "lda_probability_values = np.asarray(lda_fold_model.predict_proba(X_train.iloc[[lda_example_position]])[0])",
       "lda_probability_table = pd.DataFrame({\"class\":[lda_class_labels.get(str(label), str(label)) for label in lda_fold_fitted.classes_], \"predicted_probability\":lda_probability_values})",
       "if len(lda_fold_fitted.classes_) == 2:",
-      "    lda_decision_score = float(lda_decision_values[0])",
-      "    lda_score_class = lda_fold_fitted.classes_[1] if lda_decision_score >= 0 else lda_fold_fitted.classes_[0]",
+      "    lda_decision_score = float(lda_decision_values[0]); lda_score_class = lda_fold_fitted.classes_[1] if lda_decision_score >= 0 else lda_fold_fitted.classes_[0]",
       "    print(\"Decision score toward\", lda_class_labels.get(str(lda_fold_fitted.classes_[1]), str(lda_fold_fitted.classes_[1])) + \":\", round(lda_decision_score, 3))",
       "else:",
-      "    lda_decision_score = None",
       "    lda_score_class = lda_fold_fitted.classes_[int(np.argmax(lda_decision_values))]",
       "    lda_discriminant_scores = pd.DataFrame({\"class\":[lda_class_labels.get(str(label), str(label)) for label in lda_fold_fitted.classes_], \"discriminant_score\":lda_decision_values})",
       "    print(\"Discriminant evidence by class:\")",
@@ -2561,7 +3097,7 @@ cv_scores.round(3)`;
         "nb_example_position = int(nb_validation_indices[0])",
         "nb_fold_model = clone(best_pipeline).fit(X_train.iloc[nb_fit_indices], y_train.iloc[nb_fit_indices])",
         "nb_fitted = nb_fold_model.named_steps[\"model\"]",
-        "nb_preparer = nb_fold_model.named_steps[\"prepare\"]",
+        "nb_encoder = nb_fold_model.named_steps[\"prepare\"]",
         "nb_row = X_train.iloc[[nb_example_position]]",
         "nb_actual = y_train.iloc[nb_example_position]",
         "nb_prediction = nb_fold_model.predict(nb_row)[0]",
@@ -2572,7 +3108,7 @@ cv_scores.round(3)`;
         "    class_label = nb_class_labels.get(str(class_value), str(class_value))",
         "    nb_quantity_rows.append({\"quantity_type\":\"Prior probability\", \"class\":class_label, \"feature\":\"—\", \"quantity_label\":f\"P(class={class_label})\", \"quantity_value\":float(nb_prior_values[class_index])})",
         ...(gaussian ? [
-          "nb_row_values = nb_row.to_numpy() if isinstance(nb_preparer, str) else nb_preparer.transform(nb_row)",
+          "nb_row_values = nb_row.to_numpy() if isinstance(nb_encoder, str) else nb_encoder.transform(nb_row)",
           "if hasattr(nb_row_values, \"toarray\"): nb_row_values = nb_row_values.toarray()",
           "nb_row_values = np.asarray(nb_row_values, dtype=float)",
           "nb_gaussian_means = np.asarray(nb_fitted.theta_, dtype=float)",
@@ -2597,7 +3133,6 @@ cv_scores.round(3)`;
           "print(\"Class means and spreads for the selected features:\")",
           "print(nb_gaussian_feature_summary.head(30).round(3).to_string(index=False))"
         ] : [
-          "nb_encoder = nb_preparer",
           "if hasattr(nb_encoder, \"named_steps\"):",
           "    nb_encoder = next((step for step in nb_encoder.named_steps.values() if hasattr(step, \"categories_\")), nb_encoder)",
           "nb_feature_labels = [f\"{name}=1\" for name in feature_names]",
@@ -2693,7 +3228,7 @@ cv_scores.round(3)`;
     }
     return "";
   }
-  function diagnosticsCode(config, modelId, value) {
+  function legacyDiagnosticsCode(config, modelId, value) {
     const interpretation = interpretationCode(config, modelId, value);
     const isMlp = ["mlp_cls", "mlp_reg"].includes(modelId);
     const mlpFoldSetup = isMlp ? [
@@ -2723,11 +3258,14 @@ cv_scores.round(3)`;
       "from sklearn.metrics import confusion_matrix",
       "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
       ...mlpFoldSetup,
+      `diagnostic_class_labels = ${py(classLabelMap(config))}`,
+      "diagnostic_labels = np.unique(y_train)",
+      "diagnostic_friendly_labels = [diagnostic_class_labels.get(str(label), str(label)) for label in diagnostic_labels]",
       "",
       "fig, ax = plt.subplots(figsize=(5.4, 4.2))",
       "sns.heatmap(confusion_matrix(y_train, diagnostic_prediction), annot=True, fmt=\"d\", cmap=\"Purples\", ax=ax,",
-      "            xticklabels=np.unique(y_train), yticklabels=np.unique(y_train))",
-      "ax.set(title=\"Training-only diagnostic confusion matrix\", xlabel=\"Predicted\", ylabel=\"Actual\")",
+      "            xticklabels=diagnostic_friendly_labels, yticklabels=diagnostic_friendly_labels)",
+      `ax.set(title=${py(`Training-only diagnostic confusion matrix for ${friendlyColumnName(config.target)}`)}, xlabel=${py(`Predicted ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Actual ${friendlyColumnName(config.target)}`)})`,
       "fig.tight_layout()",
       interpretation
     ].join("\n");
@@ -2762,6 +3300,306 @@ cv_scores.round(3)`;
       interpretation
     ].filter(Boolean).join("\n");
   }
+  function diagnosticSetupCode(config, modelId) {
+    const isMlp = ["mlp_cls", "mlp_reg"].includes(modelId);
+    const needsOutOfFoldExample = ["knn_cls", "svm_cls", "lda", "qda", "naive_bayes"].includes(modelId);
+    const lines = [
+      "# Optional diagnostic construction: fit the current route objects before the learner view.",
+      "from sklearn.base import clone"
+    ];
+    if (config.task === "classification") {
+      lines.push(
+        "from sklearn.model_selection import cross_val_predict",
+        "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")"
+      );
+      if (isMlp) {
+        lines.push(
+          config.split === "time"
+            ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
+            : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
+          "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+          "diagnostic_model = mlp_oof_model",
+          "mlp_example_position = int(mlp_validation_indices[0])",
+          "mlp_row = X_train.iloc[[mlp_example_position]]"
+        );
+      } else if (needsOutOfFoldExample) {
+        lines.push(
+          "diagnostic_fit_indices, diagnostic_validation_indices = next(cv.split(X_train, y_train))",
+          "diagnostic_example_position = int(diagnostic_validation_indices[0])",
+          "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[diagnostic_fit_indices], y_train.iloc[diagnostic_fit_indices])",
+          "diagnostic_row = X_train.iloc[[diagnostic_example_position]]"
+        );
+        if (modelId === "knn_cls") lines.push(
+          "diagnostic_training_labels = y_train.iloc[diagnostic_fit_indices]",
+          "diagnostic_prepared_row = diagnostic_model[:-1].transform(diagnostic_row)"
+        );
+      } else {
+        lines.push("diagnostic_model = clone(best_pipeline).fit(X_train, y_train)");
+      }
+      lines.push(
+        `diagnostic_class_labels = ${py(classLabelMap(config))}`,
+        "diagnostic_labels = np.unique(y_train)",
+        "diagnostic_friendly_labels = [diagnostic_class_labels.get(str(label), str(label)) for label in diagnostic_labels]"
+      );
+      if (isMlp) lines.push(
+        "mlp_fitted = diagnostic_model.named_steps[\"model\"]",
+        "diagnostic_fitted = mlp_fitted"
+      );
+      else lines.push("diagnostic_fitted = diagnostic_model.named_steps[\"model\"]");
+      return lines.join("\n");
+    }
+    if (isMlp) {
+      lines.push(
+        config.split === "time"
+          ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
+          : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
+        "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+        "diagnostic_model = mlp_oof_model",
+        "mlp_example_position = int(mlp_validation_indices[0])",
+        "mlp_row = X_train.iloc[[mlp_example_position]]"
+      );
+      if (config.split === "time") lines.push(
+        "diagnostic_actual = y_train.iloc[mlp_validation_indices]",
+        "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[mlp_validation_indices])"
+      );
+      else lines.push(
+        "from sklearn.model_selection import cross_val_predict",
+        "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+        "diagnostic_actual = y_train"
+      );
+      lines.push(
+        "mlp_fitted = diagnostic_model.named_steps[\"model\"].regressor_",
+        "diagnostic_fitted = mlp_fitted"
+      );
+      return lines.join("\n");
+    }
+    if (config.split === "time") lines.push(
+      "last_fit, last_validation = list(cv.split(X_train, y_train))[-1]",
+      "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
+      "diagnostic_actual = y_train.iloc[last_validation]",
+      "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[last_validation])"
+    );
+    else lines.push(
+      "from sklearn.model_selection import cross_val_predict",
+      "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+      "diagnostic_actual = y_train",
+      "diagnostic_model = clone(best_pipeline).fit(X_train, y_train)"
+    );
+    lines.push("diagnostic_fitted = diagnostic_model.named_steps[\"model\"]");
+    if (modelId === "polynomial") lines.push(
+      "polynomial_transformer = diagnostic_fitted.named_steps[\"poly\"]",
+      "polynomial_model = diagnostic_fitted.named_steps[\"regression\"]",
+      "polynomial_degree = int(polynomial_transformer.degree)",
+      "polynomial_feature_names = polynomial_transformer.get_feature_names_out()"
+    );
+    return lines.join("\n");
+  }
+
+  function diagnosticPrimaryCode(config, modelId, value) {
+    const selectedFeatures = featureNames(value);
+    const targetLabel = `${friendlyColumnName(config.target)} (${config.target})`;
+    const common = config.task === "classification" ? [
+      "# 8 · Diagnose and understand the chosen model",
+      "# This training-only view shows behaviour; CV and the final test answer performance.",
+      "from sklearn.metrics import confusion_matrix",
+      "fig, ax = plt.subplots(figsize=(5.4, 4.2))",
+      "sns.heatmap(confusion_matrix(y_train, diagnostic_prediction), annot=True, fmt=\"d\", cmap=\"Purples\", ax=ax,",
+      "            xticklabels=diagnostic_friendly_labels, yticklabels=diagnostic_friendly_labels)",
+      `ax.set(title=${py(`Training-only diagnostic confusion matrix for ${friendlyColumnName(config.target)}`)}, xlabel=${py(`Predicted ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Actual ${friendlyColumnName(config.target)}`)})`,
+      "fig.tight_layout()"
+    ] : [
+      "# 8 · Diagnose and understand the chosen model",
+      "# Residuals describe behaviour; the final test remains the only final evaluation.",
+      "residuals = diagnostic_actual.to_numpy() - diagnostic_prediction",
+      "fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))",
+      "sns.scatterplot(x=diagnostic_prediction, y=residuals, ax=axes[0], color=\"#7651a6\")",
+      "axes[0].axhline(0, color=\"#c75b20\", linestyle=\"--\")",
+      `axes[0].set(title=${py(config.split === "time" ? "training-only diagnostic residuals from the last validation window" : "training-only diagnostic residuals")}, xlabel="prediction", ylabel="actual − prediction")`,
+      "sns.histplot(residuals, kde=True, ax=axes[1], color=\"#137c9c\")",
+      "axes[1].set_title(\"Residual distribution\")",
+      "fig.tight_layout()"
+    ];
+    let modelLines;
+    if (modelId === "simple_linear") {
+      const feature = selectedFeatures[0];
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        `simple_feature = ${py(feature)}`,
+        "simple_x = X_train[simple_feature].astype(float).to_numpy()",
+        "simple_grid = np.linspace(simple_x.min(), simple_x.max(), 100)",
+        "simple_curve = diagnostic_model.predict(pd.DataFrame({simple_feature:simple_grid}))",
+        "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
+        "ax.scatter(simple_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
+        "ax.plot(simple_grid, simple_curve, color=\"#c75b20\", linewidth=2.4, label=\"fitted line\")",
+        `ax.set(title=${py(`Fitted line: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
+        "ax.legend()",
+        "fig.tight_layout()",
+        "simple_slope = float(fitted.coef_[0])",
+        "simple_intercept = float(fitted.intercept_)",
+        "pd.DataFrame({\"slope\":[simple_slope], \"intercept\":[simple_intercept]})"
+      ];
+    } else if (modelId === "multiple_linear") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "linear_coefficients = fitted.coef_",
+        "pd.DataFrame({\"coefficient\":np.ravel(linear_coefficients)})"
+      ];
+    } else if (modelId === "polynomial") {
+      if (selectedFeatures.length === 1) {
+        const feature = selectedFeatures[0];
+        modelLines = [
+          "fitted = diagnostic_fitted",
+          `poly_feature = ${py(feature)}`,
+          "poly_x = X_train[poly_feature].astype(float).to_numpy()",
+          "poly_grid = np.linspace(poly_x.min(), poly_x.max(), 100)",
+          "poly_curve = diagnostic_model.predict(pd.DataFrame({poly_feature:poly_grid}))",
+          "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
+          "ax.scatter(poly_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
+          "ax.plot(poly_grid, poly_curve, color=\"#7651a6\", linewidth=2.4, label=\"fitted curve\")",
+          `ax.set(title=${py(`Fitted curve: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
+          "ax.legend()",
+          "fig.tight_layout()",
+          "print(\"PolynomialFeatures degree:\", polynomial_degree)",
+          "pd.DataFrame({\"degree\":[polynomial_degree]})"
+        ];
+      } else {
+        modelLines = [
+          "polynomial_coefficients = polynomial_model.coef_",
+          "print(\"PolynomialFeatures degree:\", polynomial_degree)",
+          "polynomial_terms = pd.DataFrame({\"term\":polynomial_feature_names, \"weight\":np.ravel(polynomial_coefficients)})",
+          "polynomial_terms.head(20)"
+        ];
+      }
+    } else if (["regression_tree", "classification_tree"].includes(modelId)) {
+      modelLines = [
+        "from sklearn.tree import plot_tree",
+        "fitted = diagnostic_fitted",
+        "tree_importance = fitted.feature_importances_",
+        "fig, ax = plt.subplots(figsize=(8, 4.2))",
+        "plot_tree(fitted, max_depth=2, filled=True, rounded=True, fontsize=7, ax=ax)",
+        "ax.set_title(\"Top of the fitted tree (training data only)\")",
+        "fig.tight_layout()",
+        "pd.DataFrame({\"feature_index\":np.arange(len(tree_importance)), \"importance\":tree_importance}).sort_values(\"importance\", ascending=False).head(10)"
+      ];
+    } else if (modelId === "logistic") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "logistic_coefficients = fitted.coef_",
+        "logistic_probability = diagnostic_model.predict_proba(X_train.iloc[[0]])[0]",
+        "print(\"Classes:\", fitted.classes_)",
+        "print(\"Coefficient signs show the direction in prepared feature space.\")",
+        "pd.DataFrame(logistic_coefficients)"
+      ];
+    } else if (modelId === "svm_cls") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "support_vectors = fitted.support_vectors_",
+        "svm_decision_values = diagnostic_model.decision_function(diagnostic_row)",
+        "print(\"Support vectors:\", len(support_vectors))",
+        "print(\"Decision score(s):\", svm_decision_values)",
+        "pd.DataFrame({\"support_vectors\":[len(support_vectors)]})"
+      ];
+    } else if (modelId === "one_r") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "one_r_prediction = diagnostic_model.predict(X_train)",
+        "print(\"OneRClassifier uses one feature at a time; its fitted rules are below.\")",
+        "pd.DataFrame({\"training_rows\":[len(y_train)], \"default_class\":[fitted.default_]})"
+      ];
+    } else if (modelId === "knn_cls") {
+      modelLines = [
+        "knn_fitted = diagnostic_fitted",
+        "knn_distances, knn_positions = knn_fitted.kneighbors(diagnostic_prepared_row)",
+        "knn_neighbor_labels = diagnostic_training_labels.iloc[knn_positions[0]].to_numpy()",
+        "knn_prediction = diagnostic_model.predict(diagnostic_row)[0]",
+        "knn_neighbor_table = pd.DataFrame({\"distance\":knn_distances[0], \"neighbor_class\":knn_neighbor_labels, \"prediction\":knn_prediction})",
+        "print(\"Prediction:\", knn_prediction)",
+        "knn_neighbor_table"
+      ];
+    } else if (modelId === "lda") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "lda_class_centres = pd.DataFrame(fitted.means_)",
+        "lda_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        "pd.DataFrame({\"class\":fitted.classes_, \"predicted_probability\":lda_probability_values})"
+      ];
+    } else if (modelId === "qda") {
+      modelLines = [
+        "fitted = diagnostic_fitted",
+        "qda_class_centres = pd.DataFrame(fitted.means_)",
+        "qda_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        "print(\"Regularisation:\", fitted.reg_param)",
+        "pd.DataFrame({\"class\":fitted.classes_, \"predicted_probability\":qda_probability_values})"
+      ];
+    } else if (modelId === "naive_bayes") {
+      const gaussian = pureNaiveBayesInput(value) === "continuous";
+      modelLines = [
+        "nb_fitted = diagnostic_fitted",
+        gaussian
+          ? "nb_prior_values = nb_fitted.class_prior_"
+          : "nb_prior_values = np.exp(nb_fitted.class_log_prior_)",
+        "nb_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        ...(gaussian ? [
+          "nb_class_means = nb_fitted.theta_",
+          "nb_class_spreads = np.sqrt(nb_fitted.var_)",
+          "print(\"Class means:\", nb_class_means)",
+          "print(\"Class spreads:\", nb_class_spreads)"
+        ] : [
+          "nb_feature_probabilities = np.exp(nb_fitted.feature_log_prob_)",
+          "print(\"Feature probabilities:\", nb_feature_probabilities)"
+        ]),
+        "pd.DataFrame({\"class\":nb_fitted.classes_, \"prior\":nb_prior_values, \"posterior\":nb_probability_values})"
+      ];
+    } else if (modelId === "mlp_cls") {
+      modelLines = [
+        "mlp_fitted = diagnostic_fitted",
+        "print(\"Hidden layers:\", mlp_fitted.hidden_layer_sizes)",
+        "print(\"Training iterations:\", mlp_fitted.n_iter_)",
+        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
+        "ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\")",
+        "fig.tight_layout()",
+        "mlp_probability_values = diagnostic_model.predict_proba(mlp_row)[0]",
+        "pd.DataFrame({\"class\":diagnostic_model.classes_, \"predicted_probability\":mlp_probability_values})"
+      ];
+    } else if (modelId === "mlp_reg") {
+      modelLines = [
+        "mlp_fitted = diagnostic_fitted",
+        "print(\"Hidden layers:\", mlp_fitted.hidden_layer_sizes)",
+        "print(\"Training iterations:\", mlp_fitted.n_iter_)",
+        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
+        "ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\")",
+        "fig.tight_layout()",
+        "mlp_prediction = diagnostic_model.predict(mlp_row)[0]",
+        `print(${py(`Prediction in original ${friendlyColumnName(config.target)} units:`)}, mlp_prediction)`,
+        "pd.DataFrame({\"predicted_target_original_units\":[mlp_prediction]})"
+      ];
+    } else {
+      modelLines = [];
+    }
+    return [...common, ...modelLines].join("\n");
+  }
+
+  function diagnosticEvidenceCode(config, modelId, value) {
+    return interpretationCode(config, modelId, value);
+  }
+
+  function diagnosticsCode(config, modelId, value) {
+    const setupCode = diagnosticSetupCode(config, modelId);
+    const primaryCode = diagnosticPrimaryCode(config, modelId, value);
+    const evidenceCode = diagnosticEvidenceCode(config, modelId, value);
+    const advancedCode = [
+      "# Advanced: how this teaching evidence was constructed",
+      "# Optional diagnostic construction only; the primary cell above is the core learner workflow.",
+      setupCode,
+      evidenceCode
+    ].filter(Boolean).join("\n\n");
+    return {primaryCode, setupCode, evidenceCode, advancedCode};
+  }
+
   function finalCode(config) {
     if (config.task === "classification") return `# 9 · Refit on all training rows, then run the final test once
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
@@ -2770,8 +3608,10 @@ test_prediction = final_model.predict(X_test)
 
 fig, ax = plt.subplots(figsize=(5.4, 4.2))
 labels = np.unique(y_test)
-sns.heatmap(confusion_matrix(y_test, test_prediction, labels=labels), annot=True, fmt="d", cmap="Blues", ax=ax, xticklabels=labels, yticklabels=labels)
-ax.set(title="Final sealed-test confusion matrix", xlabel="Predicted", ylabel="Actual")
+class_labels = ${py(classLabelMap(config))}
+friendly_labels = [class_labels.get(str(label), str(label)) for label in labels]
+sns.heatmap(confusion_matrix(y_test, test_prediction, labels=labels), annot=True, fmt="d", cmap="Blues", ax=ax, xticklabels=friendly_labels, yticklabels=friendly_labels)
+ax.set(title=${py(`Final sealed-test confusion matrix for ${friendlyColumnName(config.target)}`)}, xlabel=${py(`Predicted ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Actual ${friendlyColumnName(config.target)}`)})
 fig.tight_layout()
 macro_f1 = f1_score(y_test, test_prediction, average="macro")
 accuracy = accuracy_score(y_test, test_prediction)
@@ -2789,7 +3629,7 @@ fig, ax = plt.subplots(figsize=(6.2, 4))
 sns.scatterplot(x=y_test, y=test_prediction, ax=ax, color="#137c9c")
 limits = [min(y_test.min(), test_prediction.min()), max(y_test.max(), test_prediction.max())]
 ax.plot(limits, limits, "--", color="#c75b20")
-ax.set(title="Final sealed test: actual vs predicted", xlabel="actual", ylabel="predicted")
+ax.set(title="Final sealed test: actual vs predicted", xlabel=${py(`Actual ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Predicted ${friendlyColumnName(config.target)}`)})
 fig.tight_layout()
 rmse = root_mean_squared_error(y_test, test_prediction)
 mae = mean_absolute_error(y_test, test_prediction)
@@ -2804,14 +3644,19 @@ test_result.round(3)`;
   function supervisedRoute(config, value, modelId, folds) {
     const hasHyperparameters = modelSpec(modelId, value, config).grid !== "{}";
     const teaching = supervisedTeaching(config, value, modelId, folds);
+    const splitCaption = config.split === "time"
+      ? "chronological 80/20 split"
+      : config.task === "classification"
+        ? "stratified 80/20 split"
+        : "random 80/20 split";
     return [
       task("frame","Choose what to predict","define X and y",frameCode(config, value),teaching.frame),
-      task("split","Split data and save the test set",config.split === "time" ? "latest 20%" : "stratified / random 20%",splitCode(config),teaching.split),
+      task("split","Split data and save the test set",splitCaption,splitCode(config),teaching.split),
       task("explore","Explore training data","training inputs + plots",exploreCode(config, value),teaching.explore),
       task("prepare","Prepare the data","only selected feature types",preprocessingCode(config, value, modelId),teaching.prepare),
       task("model","Build the model pipeline",modelSpec(modelId, value, config).concept,modelCode(modelId, value, config),teaching.model),
       task("baseline","Check the baseline with cross-validation",`${folds}-fold training-only CV`,baselineCode(config, folds),teaching.baseline),
-      task("tune",hasHyperparameters ? "Tune the model" : "Keep the model defaults",hasHyperparameters ? `GridSearchCV · ${folds} folds` : "no meaningful settings to search",tuningCode(config, modelId, value),teaching.tune),
+      task("tune",hasHyperparameters ? "Tune the model" : "Keep the model defaults",hasHyperparameters ? `GridSearchCV · ${folds} folds` : "defaults kept · no tuning grid",tuningCode(config, modelId, value),teaching.tune),
       task("diagnose","Diagnose and understand the chosen model","training-only diagnostics",diagnosticsCode(config, modelId, value),teaching.diagnose),
       task("final","Final test","saved test set · one walkthrough",finalCode(config),teaching.final)
     ];
@@ -3084,14 +3929,8 @@ profile_df = ${frameName}[feature_names].copy()
 profile_df["cluster"] = clusters
 cluster_means = profile_df.groupby("cluster")[feature_names].mean().round(2).reset_index()
 centroid_profile = pd.DataFrame(preprocessor.inverse_transform(kmeans.cluster_centers_), columns=feature_names).round(2)
-centroid_profile.insert(0, "cluster", np.arange(len(centroid_profile)))
-cluster_profile_view = pd.concat([
-    cluster_means.assign(view="rows in cluster"),
-    centroid_profile.assign(view="K-Means centroid")
-], ignore_index=True)
-cluster_profile_view = cluster_profile_view[["view", "cluster", *feature_names]]
-print("Cluster IDs are arbitrary. Compare the original-unit row means and centroids to describe what each group represents.")
-cluster_profile_view`,{
+print("Cluster IDs are arbitrary. These original-unit row means describe each group; with this scaled K-Means fit, the inverse-transformed centroid has the same interpretation, so the evidence is shown once rather than as a duplicate table.")
+cluster_means`,{
         question:"How can I describe the groups in original feature units?",
         readingCue:"Compare cluster means and centroids in original units; labels such as cluster 0 have no meaning by themselves.",
         concepts:unsupervisedConcepts(["profile", "centroid", "cluster_label"]),
@@ -3147,7 +3986,12 @@ dendrogram(linkage_matrix, truncate_mode="level", p=5, no_labels=True, color_thr
 ax.set(title="Ward-linkage dendrogram", xlabel="merged groups", ylabel="Ward merge height")
 fig.tight_layout()
 print("Leaves represent observations or small groups; joins are merges; Ward merge height is the dissimilarity when groups combine. A large vertical gap suggests a larger jump in dissimilarity.")
-pd.DataFrame(linkage_matrix[-10:], columns=["left_group","right_group","merge_height","members"]).round(2)`,{
+merge_view = pd.DataFrame({
+    "merge_number":np.arange(1, len(linkage_matrix) + 1)[-10:],
+    "merge_height":linkage_matrix[-10:, 2],
+    "members_after_merge":linkage_matrix[-10:, 3].astype(int)
+})
+merge_view.round(2)`,{
         question:"What do the leaves, joins, and merge heights tell me before I choose a cut?",
         readingCue:"Look for joins that happen at noticeably different heights and imagine where a horizontal cut might leave separate branches.",
         concepts:unsupervisedConcepts(["agglomerative", "ward", "leaves", "join", "merge_height", "horizontal_cut"])
@@ -3275,8 +4119,8 @@ loadings = pd.DataFrame(full_pca.components_.T, index=feature_names, columns=[f"
 loadings.index.name = "feature"
 loading_view = loadings[["PC1", "PC2"]].copy()
 loading_view["strongest_component"] = loading_view[["PC1", "PC2"]].abs().idxmax(axis=1)
-loading_view["absolute_contribution"] = loading_view[["PC1", "PC2"]].abs().max(axis=1)
-loading_view = loading_view.sort_values("absolute_contribution", ascending=False).head(12)
+loading_view["max_absolute_loading"] = loading_view[["PC1", "PC2"]].abs().max(axis=1)
+loading_view = loading_view.sort_values("max_absolute_loading", ascending=False).head(12)
 print("A loading is the weight of an original feature in a component. Larger absolute values mean a stronger contribution; the sign gives direction, not good or bad. The full loadings matrix remains available in loadings; this view shows the strongest PC1/PC2 contributors.")
 loading_view.round(3)`,{
         question:"Which original features shape each principal-component axis, and how should I read their signs?",
@@ -3315,6 +4159,32 @@ plot_df.head(12)`,{
     if (modelId === "hierarchical") return hierarchicalRoute(config, value);
     if (modelId === "pca") return pcaRoute(config, value);
     return supervisedRoute(config, value, modelId, folds);
+  }
+
+  function codeSurfaceMetrics(code) {
+    const lines = clean(String(code || "")).split("\n");
+    const nonEmpty = lines.filter(line => line.trim());
+    const comments = nonEmpty.filter(line => line.trim().startsWith("#"));
+    return {
+      lineCount:lines.length,
+      nonEmptyLineCount:nonEmpty.length,
+      executableLineCount:nonEmpty.length - comments.length,
+      commentLineCount:comments.length
+    };
+  }
+
+  function routeComplexityReport(tasks) {
+    return (Array.isArray(tasks) ? tasks : []).map(item => ({
+      taskId:item.id,
+      title:item.title,
+      caption:item.caption,
+      purpose:item.question || "",
+      ...codeSurfaceMetrics(item.code),
+      hasQuestion:Boolean(item.question),
+      hasReadingCue:Boolean(item.readingCue),
+      hasConcepts:Boolean(item.concepts?.length),
+      hasPractice:Boolean(item.practice)
+    }));
   }
 
   function buildRoute() {
@@ -3365,8 +4235,37 @@ plot_df.head(12)`,{
     return cell;
   }
 
+  function routePracticeComplete() {
+    return playgroundMode === "practice" && routeTasks.length > 0 && routeTasks.every(task => {
+      const cell = cells.find(value => value.taskId === task.id);
+      return cell?.status === "done" && (!cell.exercise || practiceStateFor(task.id).exerciseComplete);
+    });
+  }
+
+  function ensureIndependentCheckpointCell() {
+    if (!routePracticeComplete() || cells.some(cell => cell.checkpoint)) return;
+    const config = selectedConfig(), value = selectedScenario(), modelId = selectedModelId();
+    const metadata = independentCheckpointForRoute(config, value, modelId, Number($("#foldSelect").value));
+    if (!metadata) return;
+    const cell = addCell(metadata.starterCode, metadata.title, null, false);
+    cell.checkpoint = true;
+    cell.checkpointMeta = metadata;
+    cell.referenceCode = metadata.referenceSolution;
+    cell.cleanReferenceCode = metadata.cleanReference;
+  }
+
   function addRouteCell(item, render = true) {
-    return addCell(item.code, item.title, item.id, render);
+    const exercise = playgroundMode === "practice" ? item.practice?.exercise : null;
+    const scaffold = exercise ? applyPracticeScaffold(item.code, exercise) : {code:item.code};
+    const cell = addCell(scaffold.code, item.title, item.id, false);
+    cell.routeReferenceCode = item.code;
+    cell.setupCode = item.setupCode || "";
+    cell.evidenceCode = item.evidenceCode || "";
+    cell.advancedCode = item.advancedCode || "";
+    cell.exercise = exercise || null;
+    cell.scaffolded = Boolean(exercise);
+    if (render) { renderNotebookView(); renderRoute(); }
+    return cell;
   }
 
   function syncNotebookStatusLabels() {
@@ -3382,6 +4281,8 @@ plot_df.head(12)`,{
   function invalidateRouteFrom(taskId, {renderNotebook = false, message = "Workflow changed — rerun from this step.", preservePracticeTaskIds = []} = {}) {
     const result = invalidateCellsFrom(routeTasks, cells, taskId);
     if (!result.changed) return false;
+    cells = cells.filter(cell => !cell.checkpoint);
+    independentCheckpointState = null;
     clearPracticeStatesFrom(taskId, preservePracticeTaskIds);
     clearLinkedPracticeExperimentStates(taskId, preservePracticeTaskIds);
     workspaceToken += 1;
@@ -3404,9 +4305,13 @@ plot_df.head(12)`,{
   }
 
   function addExplorationCell() {
+    const config = selectedConfig(), value = selectedScenario(), frameName = modelFrameName(config);
+    const explorationFrame = selectedModel()?.task === "unsupervised"
+      ? `${frameName}[${py(featureNames(value))}]`
+      : frameName;
     const code = `# Free exploration · edit anything below
 # Available aliases: pandas=pd, NumPy=np, Seaborn=sns, Matplotlib=plt
-explore_df = globals().get("model_df", df).copy()
+explore_df = ${explorationFrame}.copy()
 numeric_columns = explore_df.select_dtypes(include=np.number).columns.tolist()
 print("Shape:", explore_df.shape)
 if numeric_columns:
@@ -3524,6 +4429,25 @@ explore_df.head(10)`;
     const metrics = metricHelpBlock(task.metricHelp);
     if (metrics) block.append(metrics);
     return block;
+  }
+
+  function renderAdvancedDiagnosticCode(item) {
+    const taskId = item?.taskId || item?.id;
+    if (playgroundMode === "practice" || taskId !== "diagnose" || !item.advancedCode) return null;
+    const disclosure = document.createElement("details");
+    disclosure.className = "advanced-diagnostic-code";
+    disclosure.dataset.teachingRole = "advanced-diagnostic-construction";
+    const summary = document.createElement("summary");
+    summary.textContent = "Advanced: how this teaching evidence was constructed";
+    const note = document.createElement("p");
+    note.className = "advanced-diagnostic-note";
+    note.textContent = "Optional diagnostic construction only. The primary cell above is the core learner workflow; this real Python keeps the richer evidence tied to the current fitted route.";
+    const code = document.createElement("pre");
+    code.className = "workflow-code advanced-diagnostic-python";
+    code.innerHTML = highlightPython(item.advancedCode);
+    code.setAttribute("aria-label", "Optional diagnostic construction Python");
+    disclosure.append(summary, note, code);
+    return disclosure;
   }
 
   function practiceOptionLabel(practice, value) {
@@ -3826,7 +4750,7 @@ explore_df.head(10)`;
   }
 
   function renderPracticePredictionFeedback(cell) {
-    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
+    if (playgroundMode !== "practice") return null;
     const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
     if (!task || !practice) return null;
     const state = practiceStateFor(task.id);
@@ -3927,10 +4851,11 @@ explore_df.head(10)`;
   }
 
   function renderPracticeExperiment(cell) {
-    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
+    if (playgroundMode !== "practice") return null;
     const task = routeTaskForCell(cell), experiment = task?.practice?.experiment;
     if (!task || !experiment) return null;
     const state = practiceStateFor(task.id);
+    if (cell.output?.status !== "ok" && !state.experimentApplied) return null;
     const section = document.createElement("section");
     section.className = "practice-panel";
     section.dataset.practiceRole = "experiment";
@@ -3996,7 +4921,30 @@ explore_df.head(10)`;
 
   function renderPracticeResult(cell) {
     if (playgroundMode !== "practice" || cell.output?.status !== "ok") return [];
-    return [renderPracticePredictionFeedback(cell), renderPracticeDecision(cell), renderPracticeExperiment(cell)].filter(Boolean);
+    return [renderPracticePredictionFeedback(cell), renderPracticeDecision(cell)].filter(Boolean);
+  }
+
+  function renderCleanWorkflowReferenceCard() {
+    if (playgroundMode === "practice" || !routeTasks.length) return null;
+    if (!routeTasks.every(task => cells.find(cell => cell.taskId === task.id)?.status === "done")) return null;
+    const reference = selectedModel()?.task === "unsupervised"
+      ? cleanWorkflowReference(selectedConfig(), selectedScenario(), selectedModelId(), Number($("#foldSelect").value))
+      : cleanSupervisedWorkflowReference(selectedConfig(), selectedScenario(), selectedModelId(), Number($("#foldSelect").value), true);
+    if (!reference) return null;
+    const section = document.createElement("section");
+    section.className = "clean-workflow-reference";
+    section.dataset.teachingResult = "clean-workflow-reference";
+    section.setAttribute("aria-label", "Clean workflow reference");
+    const heading = document.createElement("h3");
+    heading.textContent = "CLEAN WORKFLOW TO REMEMBER";
+    const copy = document.createElement("p");
+    copy.textContent = "This compact reference keeps the core Python worth carrying into your next analysis. The detailed editable route remains above.";
+    const code = document.createElement("pre");
+    code.className = "workflow-code";
+    code.textContent = reference;
+    code.setAttribute("aria-label", "Copyable clean workflow reference Python");
+    section.append(heading, copy, code);
+    return section;
   }
 
   function pendingPracticeDecisionBefore(taskId) {
@@ -4007,6 +4955,19 @@ explore_df.head(10)`;
       const cell = cells.find(item => item.taskId === task.id);
       if (cell?.output?.status !== "ok") continue;
       if (practiceStateFor(task.id).decision === null) return task;
+    }
+    return null;
+  }
+
+  function pendingPracticeExerciseBefore(taskId) {
+    const index = routeTasks.findIndex(item => item.id === taskId);
+    if (index < 0) return null;
+    for (const task of routeTasks.slice(0, index)) {
+      const exercise = task.practice?.exercise;
+      if (!exercise) continue;
+      const cell = cells.find(item => item.taskId === task.id);
+      if (cell?.status !== "done") continue;
+      if (!practiceStateFor(task.id).exerciseComplete) return task;
     }
     return null;
   }
@@ -4024,6 +4985,12 @@ explore_df.head(10)`;
     if (pending) {
       showToast(`Choose an interpretation for “${pending.title}” before continuing.`);
       focusPracticePrompt(pending.id, "decision");
+      return false;
+    }
+    const pendingExercise = pendingPracticeExerciseBefore(cell.taskId);
+    if (pendingExercise) {
+      showToast(`Complete the coding task in “${pendingExercise.title}” before continuing.`);
+      focusPracticePrompt(pendingExercise.id, "exercise");
       return false;
     }
     const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
@@ -4131,13 +5098,183 @@ explore_df.head(10)`;
     return section;
   }
 
+  function renderTimeSeriesTeaching(cell) {
+    const config = selectedConfig();
+    if (config.split !== "time" || routeTaskForCell(cell)?.id !== "baseline") return null;
+    const section = document.createElement("section");
+    section.className = "teaching-result time-series-timeline";
+    section.dataset.teachingResult = "time-series-timeline";
+    const heading = document.createElement("h4");
+    heading.textContent = "Why the order matters";
+    const copy = document.createElement("p");
+    copy.className = "teaching-interpretation";
+    copy.textContent = "For this chronological route, earlier rows provide the training history, later windows provide forward validation, and the latest saved rows remain the final test.";
+    const timeline = document.createElement("div");
+    timeline.className = "time-series-timeline-bar";
+    [
+      ["Earlier rows", "training history", "earlier"],
+      ["Later windows", "forward CV validation", "validation"],
+      ["Latest rows", "final test · used once", "final"]
+    ].forEach(([title, detail, kind]) => {
+      const segment = document.createElement("div");
+      segment.className = `time-series-segment ${kind}`;
+      segment.innerHTML = "<strong></strong><span></span>";
+      $("strong", segment).textContent = title;
+      $("span", segment).textContent = detail;
+      timeline.append(segment);
+    });
+    section.append(heading, copy, timeline);
+    return section;
+  }
+
   function renderTeachingResult(cell) {
     if (cell.stage === "baseline") return renderCVSummaryTeaching(cell);
     if (cell.stage === "final") return renderFinalComparisonTeaching(cell);
     return null;
   }
 
+  function practiceReferenceBlock(label, code, className = "practice-reference") {
+    const block = document.createElement("section");
+    block.className = className;
+    const heading = document.createElement("h5");
+    heading.textContent = label;
+    const pre = document.createElement("pre");
+    pre.className = "workflow-code";
+    pre.textContent = code;
+    block.append(heading, pre);
+    return block;
+  }
+
+  function renderPracticeExercise(cell) {
+    if (playgroundMode !== "practice" || !cell.exercise) return null;
+    const task = routeTaskForCell(cell), exercise = cell.exercise, state = practiceStateFor(task?.id);
+    if (!task || !state) return null;
+    const section = document.createElement("section");
+    section.className = "practice-panel practice-exercise-panel";
+    section.dataset.practiceRole = "exercise";
+    section.dataset.practiceTask = task.id;
+    section.dataset.practiceExerciseId = exercise.id;
+    section.setAttribute("aria-label", `Practice coding task for ${task.title}`);
+    section.append(practicePanelHeading("PRACTICE CODE TASK"));
+    const kind = document.createElement("p"); kind.className = "practice-exercise-kind";
+    kind.textContent = exercise.type === "complete_line" ? "Complete one important line" : "Complete the missing analytical code";
+    const goal = document.createElement("p"); goal.className = "practice-prompt"; goal.textContent = exercise.goal;
+    const expected = document.createElement("p"); expected.className = "practice-experiment-note"; expected.textContent = `Expected evidence: ${exercise.expectedOutput}`;
+    section.append(kind, goal, expected);
+    const actions = document.createElement("div"); actions.className = "practice-actions";
+    if (!state.exerciseHintRevealed) {
+      const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint";
+      hint.addEventListener("click", () => { state.exerciseHintRevealed = true; renderNotebookView(); });
+      actions.append(hint);
+    }
+    if (!state.exerciseReferenceRevealed) {
+      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution";
+      reveal.addEventListener("click", () => { state.exerciseReferenceRevealed = true; renderNotebookView(); renderPracticeModeControls(); });
+      actions.append(reveal);
+    }
+    section.append(actions);
+    if (state.exerciseHintRevealed) {
+      const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = exercise.hint; section.append(hint);
+    }
+    if (state.exerciseReferenceRevealed) section.append(practiceReferenceBlock("Reference solution", exercise.solution));
+    if (cell.output) {
+      const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.practiceRole = "exercise-status"; status.setAttribute("aria-live", "polite");
+      const validation = cell.output.validation;
+      if (cell.output.status !== "ok") {
+        status.dataset.tone = "error"; status.textContent = "Repair the Python error, then run this task again.";
+      } else if (validation?.ok) {
+        status.dataset.tone = "success"; status.textContent = `Semantic check passed: ${validation.message}`;
+      } else {
+        status.dataset.tone = "error"; status.textContent = `The cell ran, but the coding task is not complete yet. ${validation?.message || "Use the hint or reference solution, then rerun."}`;
+      }
+      section.append(status);
+    }
+    return section;
+  }
+
+  function renderIndependentCheckpointCell(cell) {
+    if (playgroundMode !== "practice" || !cell.checkpoint) return null;
+    const metadata = cell.checkpointMeta, state = independentCheckpointStateFor();
+    const hasDistinctCleanReference = Boolean(cell.cleanReferenceCode && cell.cleanReferenceCode !== cell.referenceCode);
+    const section = document.createElement("section");
+    section.className = "practice-panel independent-checkpoint";
+    section.dataset.practiceRole = "independent-checkpoint";
+    section.dataset.checkpointId = cell.id;
+    section.setAttribute("aria-label", "Independent practice checkpoint");
+    section.append(practicePanelHeading("INDEPENDENT CHECKPOINT"));
+    const goal = document.createElement("p"); goal.className = "practice-prompt"; goal.textContent = metadata.goal; section.append(goal);
+    const list = document.createElement("ul"); list.className = "checkpoint-checklist";
+    metadata.checklist.forEach(item => { const li = document.createElement("li"); li.textContent = item; list.append(li); });
+    section.append(list);
+    const variables = document.createElement("p"); variables.className = "checkpoint-variables";
+    variables.append(document.createTextNode("Available route variables: "));
+    metadata.availableVariables.forEach((name, index) => { if (index) variables.append(document.createTextNode(", ")); const code = document.createElement("code"); code.textContent = name; variables.append(code); });
+    section.append(variables);
+    const note = document.createElement("p"); note.className = "practice-experiment-note"; note.textContent = "This is a fresh practice task. Supervised work uses training rows only; clustering and PCA stay target-free."; section.append(note);
+    const actions = document.createElement("div"); actions.className = "practice-actions";
+    if (!state.hintRevealed) {
+      const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint"; hint.addEventListener("click", () => { state.hintRevealed = true; renderNotebookView(); }); actions.append(hint);
+    }
+    if (!state.referenceRevealed) {
+      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution"; reveal.addEventListener("click", () => { state.referenceRevealed = true; renderNotebookView(); }); actions.append(reveal);
+    }
+    if (hasDistinctCleanReference && !state.cleanReferenceRevealed) {
+      const cleanReveal = document.createElement("button"); cleanReveal.type = "button"; cleanReveal.className = "practice-button secondary"; cleanReveal.textContent = "Reveal clean-workflow reference"; cleanReveal.addEventListener("click", () => { state.cleanReferenceRevealed = true; renderNotebookView(); }); actions.append(cleanReveal);
+    }
+    section.append(actions);
+    if (state.hintRevealed) { const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = metadata.hint; section.append(hint); }
+    if (state.referenceRevealed) section.append(practiceReferenceBlock("Reference solution", cell.referenceCode));
+    if (hasDistinctCleanReference && state.cleanReferenceRevealed) section.append(practiceReferenceBlock("Clean-workflow reference", cell.cleanReferenceCode, "practice-reference checkpoint-reference"));
+    if (cell.output) {
+      const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.checkpointStatus = cell.id; status.setAttribute("aria-live", "polite");
+      const validation = cell.output.validation;
+      if (cell.output.status !== "ok") { status.dataset.tone = "error"; status.textContent = "Repair the Python error, then run the checkpoint again."; }
+      else if (validation?.ok) { status.dataset.tone = "success"; status.textContent = `Checkpoint complete: ${validation.message}`; }
+      else { status.dataset.tone = "error"; status.textContent = `The checkpoint ran, but its semantic checklist is incomplete. ${validation?.message || "Use the hint or reference solution, then rerun."}`; }
+      section.append(status);
+    }
+    return section;
+  }
+
+  function renderEditableCodeEditor(cell) {
+    const editor = document.createElement("div"); editor.className = "code-editor";
+    const rail = document.createElement("div"); rail.className = "line-rail";
+    const highlight = document.createElement("pre"); highlight.className = "code-highlight"; highlight.setAttribute("aria-hidden", "true");
+    const input = document.createElement("textarea"); input.className = "code-input"; input.spellcheck = false; input.value = cell.code;
+    input.setAttribute("aria-label", `Editable Python code for ${cell.checkpoint ? "Independent Checkpoint" : cell.label}`);
+    const syncHighlight = () => {
+      try { highlight.innerHTML = highlightPython(cell.code); editor.classList.toggle("has-highlight", Boolean(cell.code && highlight.textContent)); }
+      catch { highlight.replaceChildren(); editor.classList.remove("has-highlight"); }
+      highlight.style.height = input.style.height;
+      highlight.style.transform = `translate(${-input.scrollLeft}px, ${-input.scrollTop}px)`;
+      rail.style.transform = `translateY(${-input.scrollTop}px)`;
+    };
+    const updateLines = () => {
+      rail.textContent = input.value.split("\n").map((_, index) => index + 1).join("\n");
+      input.style.height = "auto"; input.style.height = `${Math.min(430, Math.max(76, input.scrollHeight))}px`; rail.style.height = input.style.height; syncHighlight();
+    };
+    input.addEventListener("input", () => {
+      const changedAfterRun = cell.lastRunCode !== null && cell.lastRunCode !== input.value;
+      cell.code = input.value;
+      if (cell.checkpoint && changedAfterRun) {
+        const state = independentCheckpointStateFor(); state.complete = false; state.feedback = null; cell.output = null; cell.status = "ready"; cell.lastRunCode = null;
+      } else if (changedAfterRun && cell.taskId) {
+        const refreshPractice = playgroundMode === "practice" && cell.status !== "stale";
+        invalidateRouteFrom(cell.taskId);
+        if (refreshPractice) {
+          clearTimeout(cell.practiceRefreshTimer);
+          cell.practiceRefreshTimer = setTimeout(() => renderNotebookView(), 0);
+        }
+      }
+      updateLines();
+    });
+    input.addEventListener("scroll", syncHighlight);
+    input.addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") { event.preventDefault(); runCell(cell); } });
+    editor.append(rail, highlight, input); updateLines(); return editor;
+  }
+
   function renderNotebook() {
+    ensureIndependentCheckpointCell();
     const panel = $("#notebookPanel"); panel.replaceChildren();
     if (!cells.length) {
       const empty = document.createElement("div"); empty.className = "empty-notebook";
@@ -4145,6 +5282,7 @@ explore_df.head(10)`;
       panel.append(empty); return;
     }
     cells.forEach(cell => {
+      if (cell.checkpoint && playgroundMode !== "practice") return;
       const stack = document.createElement("div");
       stack.className = "cell-stack";
       stack.dataset.cellId = cell.id;
@@ -4155,54 +5293,25 @@ explore_df.head(10)`;
       $(".cell-label", head).textContent = cell.label; $(".cell-stage", head).textContent = cell.stage;
       const finalLocked = cell.stage === "final" && testSetOpened;
       const run = document.createElement("button"); run.type = "button"; run.className = "cell-action run"; run.textContent = cell.status === "running" ? "running…" : finalLocked ? "used once" : "▶ run"; run.disabled = cell.status === "running" || finalLocked; run.addEventListener("click", () => runCell(cell));
-      const remove = document.createElement("button"); remove.type = "button"; remove.className = "cell-action delete"; remove.textContent = "delete"; remove.addEventListener("click", () => removeCell(cell));
-      head.append(run, remove);
-      const editor = document.createElement("div"); editor.className = "code-editor";
-      const rail = document.createElement("div"); rail.className = "line-rail";
-      const highlight = document.createElement("pre"); highlight.className = "code-highlight"; highlight.setAttribute("aria-hidden", "true");
-      const input = document.createElement("textarea"); input.className = "code-input"; input.spellcheck = false; input.value = cell.code;
-      input.setAttribute("aria-label", `Editable Python code for ${cell.label}`);
-      const syncHighlight = () => {
-        try {
-          highlight.innerHTML = highlightPython(cell.code);
-          editor.classList.toggle("has-highlight", Boolean(cell.code && highlight.textContent));
-        } catch {
-          highlight.replaceChildren();
-          editor.classList.remove("has-highlight");
-        }
-        highlight.style.height = input.style.height;
-        highlight.style.transform = `translate(${-input.scrollLeft}px, ${-input.scrollTop}px)`;
-        rail.style.transform = `translateY(${-input.scrollTop}px)`;
-      };
-      const updateLines = () => {
-        rail.textContent = input.value.split("\n").map((_, index) => index + 1).join("\n");
-        input.style.height = "auto";
-        input.style.height = `${Math.min(430, Math.max(76, input.scrollHeight))}px`;
-        rail.style.height = input.style.height;
-        syncHighlight();
-      };
-      input.addEventListener("input", () => {
-        const changedAfterRun = Boolean(cell.taskId && cell.lastRunCode !== null && cell.lastRunCode !== input.value);
-        cell.code = input.value;
-        if (changedAfterRun) invalidateRouteFrom(cell.taskId);
-        updateLines();
-      });
-      input.addEventListener("scroll", syncHighlight);
-      input.addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") { event.preventDefault(); runCell(cell); } });
-      editor.append(rail, highlight, input);
+      if (!cell.checkpoint) { const remove = document.createElement("button"); remove.type = "button"; remove.className = "cell-action delete"; remove.textContent = "delete"; remove.addEventListener("click", () => removeCell(cell)); head.append(run, remove); }
+      else head.append(run);
+      const editor = renderEditableCodeEditor(cell);
       const foot = document.createElement("div"); foot.className = "cell-footer"; foot.innerHTML = `<span>editable Python · ⌘/Ctrl + Enter</span><span>${cell.status}</span>`;
       const inlineOutput = document.createElement("div");
       inlineOutput.className = "cell-inline-output";
       inlineOutput.dataset.outputFor = cell.id;
-      const teaching = renderTeachingBlock(cell);
-      const practice = renderPracticeBeforeRun(cell);
+      const teaching = cell.checkpoint ? renderIndependentCheckpointCell(cell) : renderTeachingBlock(cell);
+      const advanced = cell.checkpoint ? null : renderAdvancedDiagnosticCode(cell);
+      const practicePanels = cell.checkpoint
+        ? []
+        : [renderPracticeBeforeRun(cell), renderPracticeExercise(cell), renderPracticeExperiment(cell)].filter(Boolean);
       article.append(head);
       if (teaching) article.append(teaching);
-      if (practice) article.append(practice);
+      if (practicePanels.length) article.append(...practicePanels);
       article.append(editor, foot);
+      if (advanced) article.append(advanced);
       stack.append(article, inlineOutput);
       panel.append(stack);
-      updateLines();
     });
   }
 
@@ -4215,9 +5324,30 @@ explore_df.head(10)`;
     cell.status = "running"; renderNotebookView(); renderRoute();
     $("#outputStatus").textContent = `${cell.label} · running`;
     try {
-      const response = await sendWorker("run", {code:cell.code});
+      const rawValidation = cell.exercise?.validation || cell.checkpointMeta?.validation || null;
+      const validation = rawValidation && ["kmeans", "hierarchical", "pca_selection", "checkpoint_kmeans", "checkpoint_hierarchical", "checkpoint_pca"].includes(rawValidation.kind)
+        ? {...rawValidation, target:selectedConfig().target}
+        : rawValidation;
+      const response = await sendWorker("run", {
+        code:cell.code,
+        setup:cell.setupCode || "",
+        evidence:cell.evidenceCode || "",
+        validation
+      });
       if (token !== workspaceToken) return;
       cell.output = response.output; cell.status = response.output.status === "ok" ? "done" : "error"; cell.lastRunCode = cell.code;
+      if (cell.exercise) {
+        const state = practiceStateFor(cell.taskId);
+        state.exerciseAttempts += 1;
+        state.exerciseComplete = Boolean(cell.output.status === "ok" && cell.output.validation?.ok);
+        state.exerciseFeedback = cell.output.validation?.message || (cell.output.status === "ok" ? "The semantic check did not pass yet." : "Python error.");
+      }
+      if (cell.checkpoint) {
+        const state = independentCheckpointStateFor();
+        state.attempts += 1;
+        state.complete = Boolean(cell.output.status === "ok" && cell.output.validation?.ok);
+        state.feedback = cell.output.validation?.message || (cell.output.status === "ok" ? "The semantic checklist did not pass yet." : "Python error.");
+      }
       if (cell.status === "done") markPracticeExperimentEvidenceReady(cell);
       if (cell.stage === "final" && cell.status === "done") testSetOpened = true;
       if (response.output.charts?.length) latestChart = response.output.charts.at(-1);
@@ -4252,27 +5382,120 @@ explore_df.head(10)`;
     row.children[0].textContent = label; row.children[1].textContent = meta; return row;
   }
 
+  function pythonErrorDetails(errorText) {
+    const source = String(errorText || "Unknown Python error");
+    const match = source.match(/(?:^|\n)([A-Za-z_][\w.]*(?:Error|Exception)):\s*(.*?)(?:\n|$)/);
+    const type = match?.[1] || (source.includes("SyntaxError") ? "SyntaxError" : "Python error");
+    const message = (match?.[2] || source.split("\n").filter(Boolean).at(-1) || "Unknown Python error").trim();
+    const guidance = {
+      SyntaxError: "Check punctuation, indentation, brackets, and whether a statement is complete before running the cell again.",
+      NameError: "Check the spelling of the name and rerun the earlier cell that should create it.",
+      KeyError: "Check that the column or dictionary key exists and matches its spelling exactly.",
+      TypeError: "Check that the operation is receiving the kind of value it expects, such as text, numbers, or a table.",
+      ValueError: "Check the value's shape, category, or allowed range and compare it with the earlier route outputs."
+    };
+    const category = guidance[type] ? type : "Python error";
+    return {category, message, guidance:guidance[type] || "Read the final traceback line, then repair the smallest relevant part of the cell."};
+  }
+
+  function warningDetails(warnings) {
+    const grouped = new Map();
+    warnings.forEach(warning => {
+      const category = String(warning?.category || "Warning");
+      const message = String(warning?.message || warning || "");
+      const key = `${category}\n${message}`;
+      const item = grouped.get(key) || {category, message, count:0};
+      item.count += 1;
+      grouped.set(key, item);
+    });
+    return [...grouped.values()];
+  }
+
+  function warningExplanation(warning) {
+    const category = String(warning?.category || "Warning");
+    const message = String(warning?.message || "");
+    if (/OneHotEncoder|unknown category/i.test(`${category} ${message}`)) {
+      return "The encoder encountered a category that was not present when it was fitted; the route's unknown-category setting keeps prediction from failing.";
+    }
+    if (/ConvergenceWarning/i.test(category)) {
+      return "The optimizer stopped before meeting its convergence target. The cell succeeded, but treat the fitted result with caution and compare the validation evidence.";
+    }
+    return "A warning is a caution from Python; the cell still completed successfully. Read it alongside the output before deciding whether a change is needed.";
+  }
+
+  function chartDescriptionFor(cell, index) {
+    const task = routeTaskForCell(cell), model = selectedModel(), config = selectedConfig();
+    const modelName = model?.name || "the selected model";
+    if (modelIdForChart(cell) === "pca" && cell.taskId === "project") return "Two-dimensional PCA projection showing row scores on PC1 and PC2; the axis labels report the variance represented by each plotted component.";
+    if (cell.taskId === "baseline") return `Cross-validation evidence for ${modelName}; chart ${index + 1} shows training and validation results across the training-only folds.`;
+    if (cell.taskId === "final") return `Final-test evidence for ${modelName}; chart ${index + 1} shows the one held-out result after fitting and model selection.`;
+    if (cell.taskId === "diagnose") return config.task === "classification"
+      ? `Training-only classification diagnostic for ${modelName}; chart ${index + 1} compares actual and predicted ${friendlyColumnName(config.target)} classes.`
+      : `Training-only regression diagnostic for ${modelName}; chart ${index + 1} shows prediction errors and whether residuals form a pattern around zero.`;
+    if (model?.task === "unsupervised") {
+      if (cell.taskId === "compare") return `Candidate cluster-count evidence for ${modelName}; chart ${index + 1} compares silhouette or compactness as the candidate count changes.`;
+      if (cell.taskId === "visualise") return `Two-dimensional PCA projection of the discovered ${modelName.toLowerCase()} structure; point labels identify groups, while the fit used the prepared dimensions.`;
+      if (cell.taskId === "dendrogram") return "Ward-linkage dendrogram for the reproducible sample; branch joins show merges and vertical height shows merge dissimilarity.";
+      if (modelIdForChart(cell) === "pca") return "PCA explained-variance evidence; compare variance represented by each component and the cumulative variance retained.";
+    }
+    if (modelIdForChart(cell) === "pca") return cell.taskId === "project"
+      ? "Two-dimensional PCA projection showing row scores on PC1 and PC2; the axis labels report the variance represented by each plotted component."
+      : "PCA explained-variance evidence; compare the variance represented by each component and the cumulative variance retained.";
+    if (cell.taskId === "explore") return `Training-data exploration for ${modelName}; chart ${index + 1} shows selected feature values and their relationship with the target where applicable.`;
+    return `${modelName} evidence from the ${task?.title || "current"} step; use the chart title and axes to interpret the result.`;
+  }
+
+  function modelIdForChart(cell) {
+    return selectedModelId();
+  }
+
   function renderOutputItem(cell) {
     const result = cell.output, warnings = Array.isArray(result.warnings) ? result.warnings : [], item = document.createElement("article"); item.className = "output-item"; item.dataset.status = result.status; item.dataset.warnings = warnings.length ? "true" : "false";
     const statusLabel = result.status === "ok" ? warnings.length ? "WARNING" : "OK" : "ERROR";
     item.innerHTML = `<span class="output-number">${String(cell.number).padStart(2,"0")}</span><div class="output-item-head"><strong></strong><span>${statusLabel}</span></div>`;
     $("strong", item).textContent = cell.label;
     if (result.status !== "ok") {
-      item.append(outputTitle("Python needs a repair", "traceback"));
-      const pre = document.createElement("pre"); pre.className = "console-output error"; pre.textContent = result.error || result.stderr || "Unknown Python error"; item.append(pre); return item;
+      const details = pythonErrorDetails(result.error || result.stderr);
+      item.dataset.errorCategory = details.category;
+      item.append(outputTitle("PYTHON NEEDS A REPAIR", details.category));
+      const summary = document.createElement("p"); summary.className = "result-note error-summary";
+      summary.innerHTML = "<strong></strong> <span></span>";
+      $("strong", summary).textContent = `${details.category}:`;
+      $("span", summary).textContent = details.message;
+      item.append(summary);
+      const action = document.createElement("p"); action.className = "result-note error-action"; action.textContent = `Next step: ${details.guidance}`; item.append(action);
+      const disclosure = document.createElement("details"); disclosure.className = "technical-details";
+      const summaryNode = document.createElement("summary"); summaryNode.textContent = "Show technical traceback";
+      const pre = document.createElement("pre"); pre.className = "console-output error"; pre.textContent = result.error || result.stderr || "Unknown Python error";
+      disclosure.append(summaryNode, pre); item.append(disclosure); return item;
     }
     if (result.table) { item.append(outputTitle("Table result", `${result.table.rowCount} rows · ${result.table.columnCount} cols`)); const table = document.createElement("div"); tablePayload(table, result.table); item.append(table); }
     result.charts?.forEach((chart, index) => {
       item.append(outputTitle(`Chart ${index + 1}`, "PNG preview"));
-      const wrap = document.createElement("div"); wrap.className = "chart-wrap"; const image = document.createElement("img"); image.src = chart; image.alt = `Chart ${index + 1} generated by ${cell.label}`; wrap.append(image); item.append(wrap);
+      const description = chartDescriptionFor(cell, index);
+      const wrap = document.createElement("figure"); wrap.className = "chart-wrap"; wrap.tabIndex = 0; wrap.setAttribute("aria-label", description);
+      const image = document.createElement("img"); image.src = chart; image.alt = description; wrap.append(image);
+      const caption = document.createElement("figcaption"); caption.className = "chart-description"; caption.textContent = description; wrap.append(caption); item.append(wrap);
     });
     const teachingResult = renderTeachingResult(cell);
     if (teachingResult) item.append(teachingResult);
+    const timeSeriesTeaching = renderTimeSeriesTeaching(cell);
+    if (timeSeriesTeaching) item.append(timeSeriesTeaching);
     const practiceResults = renderPracticeResult(cell);
     if (practiceResults.length) item.append(...practiceResults);
     if (warnings.length) {
-      item.append(outputTitle("Python warning", `${warnings.length} captured · cell succeeded`));
-      const pre = document.createElement("pre"); pre.className = "console-output warning"; pre.textContent = warnings.map(warning => `${warning.category || "Warning"}: ${warning.message || warning}`).join("\n"); item.append(pre);
+      const grouped = warningDetails(warnings);
+      item.append(outputTitle("PYTHON WARNING · CELL SUCCEEDED", `${warnings.length} captured · ${grouped.length} unique`));
+      const summary = document.createElement("p"); summary.className = "result-note warning-summary"; summary.textContent = grouped.map(warning => `${warning.category}: ${warning.message}${warning.count > 1 ? ` (${warning.count}×)` : ""}`).join(" · "); item.append(summary);
+      const explanations = document.createElement("div"); explanations.className = "warning-explanations";
+      grouped.forEach(warning => {
+        const line = document.createElement("p"); line.className = "result-note"; line.textContent = warningExplanation(warning); explanations.append(line);
+      });
+      item.append(explanations);
+      const disclosure = document.createElement("details"); disclosure.className = "technical-details";
+      const summaryNode = document.createElement("summary"); summaryNode.textContent = "Show technical warning details";
+      const pre = document.createElement("pre"); pre.className = "console-output warning"; pre.textContent = warnings.map(warning => `${warning.category || "Warning"}: ${warning.message || warning}`).join("\n");
+      disclosure.append(summaryNode, pre); item.append(disclosure);
     }
     if (result.value) { item.append(outputTitle("Value", "Python expression")); const pre = document.createElement("pre"); pre.className = "console-output"; pre.textContent = result.value; item.append(pre); }
     if (result.stdout || result.stderr) { item.append(outputTitle("Console", result.stdout && result.stderr ? "stdout + stderr" : result.stderr ? "stderr" : "stdout")); const pre = document.createElement("pre"); pre.className = "console-output"; pre.textContent = [result.stdout, result.stderr].filter(Boolean).join("\n"); item.append(pre); }
@@ -4281,7 +5504,7 @@ explore_df.head(10)`;
   }
 
   function renderOutputs() {
-    const list = $("#outputList"), complete = cells.filter(cell => cell.output);
+    const list = $("#outputList"), complete = cells.filter(cell => cell.output && (playgroundMode === "practice" || !cell.checkpoint));
     latestChart = [...complete].reverse().find(cell => cell.output?.status === "ok" && cell.output.charts?.length)?.output.charts.at(-1) || null;
     list.replaceChildren();
     $$(".cell-inline-output", $("#notebookPanel")).forEach(host => {
@@ -4308,6 +5531,8 @@ explore_df.head(10)`;
     } else {
       complete.forEach(cell => list.append(renderOutputItem(cell)));
     }
+    const cleanReference = renderCleanWorkflowReferenceCard();
+    if (cleanReference) list.append(cleanReference);
     $("#downloadChartButton").disabled = !latestChart;
     $("#outputBody").scrollTop = $("#outputBody").scrollHeight;
   }
@@ -4528,6 +5753,8 @@ explore_df.head(10)`;
         code.innerHTML = highlightPython(item.code);
         code.setAttribute("aria-label", `Exact Python for ${item.title}`);
         step.append(code);
+        const advanced = renderAdvancedDiagnosticCode(item);
+        if (advanced) step.append(advanced);
       }
       story.append(step);
     });
@@ -4633,20 +5860,20 @@ explore_df.head(10)`;
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber, practiceForTask, practiceRouteIdentity, practiceStateKey, normalizePracticeAnswer, safeExperimentForTask, applyPracticeMutation, practicePrediction, practiceDecision});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, PRACTICE_VALIDATOR_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber, practiceForTask, practiceRouteIdentity, practiceStateKey, normalizePracticeAnswer, safeExperimentForTask, applyPracticeMutation, practicePrediction, practiceDecision, practiceExerciseForTask, applyPracticeScaffold, cleanWorkflowReference, independentCheckpointForRoute, codeSurfaceMetrics, routeComplexityReport, pythonErrorDetails, warningDetails, warningExplanation, chartDescriptionFor});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
   $("#modelSelect").addEventListener("change", () => { void rebuildSetup(); });
   $("#foldSelect").addEventListener("change", () => { void rebuildSetup(); });
-  $("#exploreButton").addEventListener("click", addExplorationCell);
   $("#addCellButton").addEventListener("click", () => addCell());
+  $("#exploreButton")?.addEventListener("click", addExplorationCell);
   $("#runAllButton").addEventListener("click", runAll);
   $("#resetButton").addEventListener("click", () => { void resetNotebook(); });
   $("#downloadChartButton").addEventListener("click", downloadChart);
   $("#themeButton").addEventListener("click", toggleTheme);
-  $("#guidedModeButton").addEventListener("click", () => setPlaygroundMode("guided"));
-  $("#practiceModeButton").addEventListener("click", () => setPlaygroundMode("practice"));
+  $("#guidedModeButton")?.addEventListener("click", () => setPlaygroundMode("guided"));
+  $("#practiceModeButton")?.addEventListener("click", () => setPlaygroundMode("practice"));
   $("#guideButton").addEventListener("click", openWorkflow);
   $("#guideClose").addEventListener("click", closeWorkflow);
   $("#guideDragHandle").addEventListener("pointerdown", startGuideDrag);

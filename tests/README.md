@@ -12,11 +12,14 @@ Run these from the repository root:
 node --check ml-app.js
 node tests/test_ml_state.mjs
 node tests/test_ml_teaching.mjs
+node tests/test_ml_practice_final.mjs
 python -m py_compile tests/test_ml_routes.py tests/test_ml_browser.py
 python tests/test_ml_routes.py
 ```
 
 `test_ml_state.mjs` protects stale-state invalidation, Reset, complete-walkthrough start points, custom cells, Guided/Practice identity, and Practice state isolation. `test_ml_teaching.mjs` checks deterministic learner copy, route concepts, metric and validation teaching, model-specific explanations, target isolation, and the presence of Practice metadata without requiring fragile DOM text matching.
+
+`test_ml_practice_final.mjs` protects the final Practice metadata, scaffold-fading exercise types, semantic validators, independent checkpoints, clean-workflow references, evidence-linked experiments, and holdout/target-safe reference code. The teaching audit also maintains the current Step 8 learner-code simplicity and line-count contract.
 
 ## Runtime checks
 

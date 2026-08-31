@@ -684,8 +684,10 @@
     .app-connectivity{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:500;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid var(--orange);border-radius:999px;background:var(--panel-2);color:var(--ink);box-shadow:var(--shadow);font:700 .62rem/1.2 var(--mono);opacity:0;transform:translateY(16px);pointer-events:none;transition:.18s}
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
   </style>
+  <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
+  <link rel="stylesheet" href="playground-shared.css?v=pixel-nav3">
 </head>
-  <body data-theme="light" data-dataset="seoul">
+  <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
@@ -696,9 +698,9 @@
     </div>
     <div class="top-actions">
       <nav class="mode-switch" aria-label="Playground mode">
-        <a class="mode-link" href="index.html">HOME</a>
-        <a class="mode-link" href="playground.html" aria-current="page">DATA <span>PLAYGROUND</span></a>
-        <a class="mode-link" href="ml.html">MACHINE <span>LEARNING</span></a>
+        <a class="mode-link mode-link--home" href="index.html"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Home</span></a>
+        <a class="mode-link mode-link--data" href="playground.html" aria-current="page"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Data Playground</span></a>
+        <a class="mode-link mode-link--ml" href="ml.html"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Machine Learning</span></a>
       </nav>
       <button class="icon-button guide-button" id="guideButton" type="button" aria-expanded="false" aria-label="Open challenges" title="Open challenges">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5c2.4-1.5 4.8-1.5 7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3z"></path><path d="M19.5 5.5c-2.4-1.5-4.8-1.5-7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3z"></path><path d="M12 5.8v13"></path></svg>

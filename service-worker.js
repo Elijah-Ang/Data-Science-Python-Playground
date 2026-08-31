@@ -10,6 +10,7 @@ const APP_SHELL = [
   "./acknowledgements.html",
   "./offline.html",
   "./home.css",
+  "./playground-shared.css",
   "./home.js",
   "./ml-app.js",
   "./app-platform.js",

@@ -18,6 +18,7 @@ const files = [
   "acknowledgements.html",
   "offline.html",
   "home.css",
+  "playground-shared.css",
   "home.js",
   "ml-app.js",
   "manifest.webmanifest",

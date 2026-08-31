@@ -36,6 +36,7 @@ jobs:
         run: |
           npm run check:js
           node tests/test_ml_state.mjs
+          node tests/test_ml_practice_final.mjs
           node tests/test_ml_teaching.mjs
 
       - name: Set up Python
