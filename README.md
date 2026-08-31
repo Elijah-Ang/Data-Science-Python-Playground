@@ -1,16 +1,29 @@
 # Data Science Python Playground
 
-A browser-only Python playground for inspecting, wrangling, visualising, and modelling complete real-world datasets.
+A local-first Python playground for inspecting, wrangling, visualising, and modelling complete real-world datasets. One set of web sources feeds both GitHub Pages and a Capacitor iPhone/iPad shell.
 
 ## Start locally
 
-Serve the project from its root so the browser can read the bundled CSV files:
+Install the pinned JavaScript dependencies, build the web release, and serve it locally:
 
 ```bash
-python3 -m http.server 8000
+npm ci
+npm run build:web
+npm run dev
 ```
 
-Then open <http://127.0.0.1:8000/>. The Python runtime runs in a Web Worker through Pyodide. The first load needs internet access to fetch Pyodide and the scientific Python packages used by the two labs.
+Then open <http://127.0.0.1:8000/>. The GitHub Pages build loads Pyodide on demand; uploaded CSVs and analysis stay in the current browser session.
+
+## iPhone and iPad build
+
+The generated Capacitor project lives in `ios/`. It packages the tested site, a pinned local Pyodide runtime, scientific Python wheels, local fonts, native sharing, and Files integration. It never opens the live GitHub Pages site as its application shell.
+
+```bash
+npm run ios:sync
+npm run ios:open
+```
+
+The native build requires Node 22+, full Xcode 26+, an Apple signing team, and an iPhone/iPad simulator or device. This Mac currently has Command Line Tools but not the full Xcode/iOS SDK, so synchronisation is verified while compilation, signing, and physical-device testing remain prerequisites.
 
 ## Machine Learning Playground
 
@@ -78,11 +91,7 @@ Live site: <https://elijah-ang.github.io/Data-Science-Python-Playground/>
 Run the fast checks from the repository root:
 
 ```bash
-node --check ml-app.js
-node tests/test_ml_state.mjs
-node tests/test_ml_teaching.mjs
-python -m py_compile tests/test_ml_routes.py tests/test_ml_browser.py
-python tests/test_ml_routes.py
+npm run check
 ```
 
 For real Python execution and browser coverage:
@@ -90,7 +99,7 @@ For real Python execution and browser coverage:
 ```bash
 python tests/test_ml_routes.py --runtime representative
 python tests/test_ml_routes.py --runtime full
-python3 -m http.server 8000
+python3 -m http.server 8000 -d dist
 python tests/test_ml_browser.py --base-url http://127.0.0.1:8000/ml.html
 ```
 

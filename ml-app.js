@@ -78,7 +78,7 @@
     gapminder: {
       name:"Gapminder · 2007 snapshot", file:"data/gapminder.csv", embedded:"gapminder", sep:",", rows:142, task:"regression", target:"lifeExp", split:"random", missing:false, binaryNumeric:[],
       description:"A 2007 snapshot from the archived five-year Gapminder teaching extract.", question:"Is the wealth–longevity relationship straight or curved?", rowMeaning:"one country in 2007",
-      source:"https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv", sourceLabel:"Plotly Gapminder CSV", sourceNote:"142 countries in 2007 · one leakage-safe snapshot", prepare:"df[df['year'].eq(2007)].copy()",
+      source:"https://www.gapminder.org/free-material/", sourceLabel:"Gapminder free material · CC BY 4.0", sourceNote:"Adapted local copy · 142 countries in 2007 · one leakage-safe snapshot", prepare:"df[df['year'].eq(2007)].copy()",
       scenarios:[
         scenario("simple","1 continuous feature · simple regression",["gdpPercap"]),
         scenario("continuous","Multiple continuous features",["gdpPercap","pop"])
@@ -332,8 +332,10 @@ for __name in __reset_helpers:
 globals().pop("__name", None)
 `;
 
+  const PYODIDE_INDEX_URL = window.AppPlatform?.pyodideIndexUrl || "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+  const SEABORN_REQUIREMENT = window.AppPlatform?.seabornRequirement || "seaborn==0.13.2";
   const WORKER_SOURCE = `
-importScripts("https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js");
+importScripts(${JSON.stringify(PYODIDE_INDEX_URL + "pyodide.js")});
 let pyodide, ready = false, bootPromise = null;
 let baselineValues = null;
 let rawDataSnapshot = null;
@@ -342,9 +344,9 @@ async function boot() {
   if (ready) return;
   if (bootPromise) return bootPromise;
   bootPromise = (async () => {
-    pyodide = await loadPyodide({indexURL:"https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"});
+    pyodide = await loadPyodide({indexURL:${JSON.stringify(PYODIDE_INDEX_URL)}});
     await pyodide.loadPackage(["pandas","numpy","matplotlib","scipy","scikit-learn","micropip"]);
-    await pyodide.runPythonAsync("import micropip; await micropip.install('seaborn==0.13.2')");
+    await pyodide.runPythonAsync(${JSON.stringify(`import micropip; await micropip.install(${JSON.stringify(SEABORN_REQUIREMENT)})`)});
     await pyodide.runPythonAsync(\`
 import io, json, base64, contextlib, ast, traceback, warnings
 import numpy as np
@@ -4620,9 +4622,14 @@ explore_df.head(10)`;
     Object.assign(windowElement.style, styles);
   }
 
-  function downloadChart() {
+  async function downloadChart() {
     if (!latestChart) return;
-    const link = document.createElement("a"); link.href = latestChart; link.download = `${currentDatasetId}-${selectedModelId()}-chart.png`; link.click(); showToast("Latest chart downloaded.");
+    const filename = `${currentDatasetId}-${selectedModelId()}-chart.png`;
+    if (await window.AppPlatform?.shareDataUrl?.(latestChart, filename, "Machine-learning chart")) {
+      showToast("Chart ready to save or share.");
+      return;
+    }
+    const link = document.createElement("a"); link.href = latestChart; link.download = filename; link.click(); showToast("Latest chart downloaded.");
   }
 
   if (TEST_MODE) {

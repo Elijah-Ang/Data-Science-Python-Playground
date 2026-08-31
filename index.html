@@ -2,13 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="A quick, visual guide to the Data Science Python Playground and Machine Learning Playground.">
+  <meta name="theme-color" content="#0c1125">
+  <meta name="application-name" content="Data Science Playground">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Data Science">
   <title>Data Science Python Playground</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/app-icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="home.css?v=mobile-map2">
+  <script src="app-platform.js"></script>
 </head>
 <body data-theme="light">
   <header class="home-topbar">
@@ -22,6 +29,7 @@
       <a href="#tour">Quick tour</a>
       <a href="playground.html">Data Playground</a>
       <a href="ml.html">Machine Learning</a>
+      <a href="help.html">Help</a>
     </nav>
   </header>
 
@@ -242,6 +250,11 @@
       </section>
     </section>
   </main>
+
+  <footer class="home-footer">
+    <span>Data Science Python Playground · local-first learning tools</span>
+    <span class="footer-links"><a href="about.html">About</a><a href="help.html">Help</a><a href="privacy.html">Privacy</a><a href="acknowledgements.html">Credits</a></span>
+  </footer>
 
   <script src="home.js?v=mobile-map4"></script>
 </body>

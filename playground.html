@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="A browser-only Python playground for inspecting, wrangling, visualising, and analysing complete real-world datasets.">
+  <meta name="theme-color" content="#0c1125">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Data Science Python Playground</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/app-icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <script src="app-platform.js"></script>
   <style>
     :root {
       --bg: #0c1125;
@@ -486,6 +491,8 @@
     .toast.error { border-left-color: var(--coral); }
     .footer { display: flex; justify-content: space-between; gap: 20px; padding: 18px 20px 24px; border-top: 1px dashed var(--border); color: var(--faint); font-size: .67rem; }
     .footer strong { color: var(--muted); }
+    .footer a { color: var(--cyan); text-decoration: none; }
+    .footer a:hover { color: var(--orange); }
 
     /* Pixel display language: use it for short interface words and authored labels,
        while leaving prose, data, code, and dense status metadata comfortable to read. */
@@ -672,6 +679,10 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+    .topbar{padding-top:env(safe-area-inset-top);padding-right:max(16px,env(safe-area-inset-right));padding-left:max(16px,env(safe-area-inset-left))}
+    .footer{padding-right:max(20px,env(safe-area-inset-right));padding-bottom:max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left))}
+    .app-connectivity{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:500;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid var(--orange);border-radius:999px;background:var(--panel-2);color:var(--ink);box-shadow:var(--shadow);font:700 .62rem/1.2 var(--mono);opacity:0;transform:translateY(16px);pointer-events:none;transition:.18s}
+    .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
   </style>
 </head>
   <body data-theme="light" data-dataset="seoul">
@@ -817,7 +828,7 @@
     </section>
   </main>
 
-  <footer class="footer"><span><strong>Browser-only Python.</strong> Pyodide runs inside a Web Worker.</span><span>Download deliberately before you leave.</span></footer>
+  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span>Save or share deliberately before you leave.</span><span><a href="help.html">Help</a> · <a href="privacy.html">Privacy</a></span></footer>
 
   <div class="guide-window" id="guideWindow" role="dialog" aria-modal="false" aria-labelledby="guideTitle" hidden>
     <div class="guide-head" id="guideDragHandle">
@@ -881,9 +892,9 @@
         question: "Do wealth and longevity move together?",
         file: "data/gapminder.csv",
         sep: ",",
-        source: "https://plotly.github.io/datasets/",
-        sourceLabel: "Plotly datasets",
-        sourceNote: "Complete local copy · five-year country snapshots",
+        source: "https://www.gapminder.org/free-material/",
+        sourceLabel: "Gapminder free material · CC BY 4.0",
+        sourceNote: "Adapted local copy · five-year country snapshots",
         color: "#c08aff",
         icon: DATASET_ICONS.gapminder
       },
@@ -1048,6 +1059,8 @@
       "        plt.close('all')"
     ].join("\n");
 
+    const PYODIDE_INDEX_URL = window.AppPlatform?.pyodideIndexUrl || "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+    const SEABORN_REQUIREMENT = window.AppPlatform?.seabornRequirement || "seaborn==0.13.2";
     const WORKER_SOURCE = `
       let pyodide = null;
       let ready = false;
@@ -1056,12 +1069,12 @@
       async function boot() {
         if (ready) return;
         self.postMessage({ type: 'status', state: 'loading', message: 'Loading Python runtime…' });
-        importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
-        pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+        importScripts(${JSON.stringify(PYODIDE_INDEX_URL + "pyodide.js")});
+        pyodide = await loadPyodide({ indexURL: ${JSON.stringify(PYODIDE_INDEX_URL)} });
         self.postMessage({ type: 'status', state: 'loading', message: 'Loading pandas + matplotlib + seaborn…' });
         await pyodide.loadPackage(['pandas', 'matplotlib', 'scipy']);
         await pyodide.loadPackage(['micropip']);
-        await pyodide.runPythonAsync("import micropip; await micropip.install('seaborn==0.13.2')");
+        await pyodide.runPythonAsync(${JSON.stringify(`import micropip; await micropip.install(${JSON.stringify(SEABORN_REQUIREMENT)})`)});
         await pyodide.runPythonAsync(PYTHON_SETUP);
         ready = true;
         self.postMessage({ type: 'status', state: 'ready', message: 'Python ready · worker online' });
@@ -2130,22 +2143,32 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       try {
         const response = await sendWorker("export");
         const blob = new Blob([response.csv], { type: "text/csv;charset=utf-8" });
+        const filename = `${(currentDataset?.config?.name || "working-data").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.csv`;
+        if (await window.AppPlatform?.shareBlob?.(blob, filename, "Data Playground CSV")) {
+          showToast("Working dataset ready to save or share.");
+          return;
+        }
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${(currentDataset?.config?.name || "working-data").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.csv`;
+        link.download = filename;
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 500);
         showToast("Working dataset downloaded.");
       } catch (error) { showToast(error.message, true); }
     }
 
-    function downloadChart() {
+    async function downloadChart() {
       const chart = latestChart;
       if (!chart) return;
+      const filename = `${(currentDataset?.config?.name || "python-chart").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+      if (await window.AppPlatform?.shareDataUrl?.(chart, filename, "Data Playground chart")) {
+        showToast("Chart ready to save or share.");
+        return;
+      }
       const link = document.createElement("a");
       link.href = chart;
-      link.download = `${(currentDataset?.config?.name || "python-chart").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+      link.download = filename;
       link.click();
       showToast("Chart downloaded.");
     }

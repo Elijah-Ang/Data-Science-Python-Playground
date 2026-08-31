@@ -1,0 +1,45 @@
+{
+  "name": "Data Science Python Playground",
+  "short_name": "Data Science",
+  "description": "Explore real datasets, run Python, and learn machine learning in a local-first playground.",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c1125",
+  "theme_color": "#0c1125",
+  "categories": ["education", "developer", "productivity"],
+  "icons": [
+    {
+      "src": "assets/icons/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Data Playground",
+      "short_name": "Data",
+      "url": "./playground.html"
+    },
+    {
+      "name": "Machine Learning",
+      "short_name": "ML",
+      "url": "./ml.html"
+    }
+  ]
+}

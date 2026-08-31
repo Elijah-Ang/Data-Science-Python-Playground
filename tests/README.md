@@ -67,7 +67,7 @@ Structural and runtime coverage verifies that:
 Start a local server first:
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8000 -d dist
 python tests/test_ml_browser.py --base-url http://127.0.0.1:8000/ml.html
 ```
 
