@@ -32,6 +32,8 @@ The full runtime audit executes every generated route at both 5 and 10 folds aga
 python tests/test_ml_routes.py --runtime full
 ```
 
+Python audits use the Pyodide-parity dependencies in `requirements-pyodide-parity.txt`; CI also runs `check_pyodide_versions.py` so the scientific-package versions cannot silently drift away from the browser runtime.
+
 The runtime checks preserve the modelling contract: correct splitters and fold order, training-only preprocessing, pipeline/tuning behavior, sealed final-test handling, fitted-model diagnostic fidelity, One-R and Naive Bayes semantics, neural-network loss and out-of-fold evidence, target/reference isolation for unsupervised routes, and finite/aligned tables and plots.
 
 ## Practice-mode coverage
