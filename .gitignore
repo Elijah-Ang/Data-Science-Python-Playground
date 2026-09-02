@@ -1,3 +1,11 @@
 .DS_Store
+node_modules/
+dist/
+outputs/
+*.xlsx.inspect.ndjson
+vendor/pyodide/
+ios/App/Pods/
+ios/App/DerivedData/
+ios/App/App/public/
 __pycache__/
 *.py[cod]

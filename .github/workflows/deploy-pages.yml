@@ -27,11 +27,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v7.0.0
         with:
-          node-version: 20
+          node-version: 22
+
+      - name: Install app-shell dependencies
+        run: npm ci
 
       - name: Check JavaScript and route state behaviour
         run: |
-          node --check ml-app.js
+          npm run check:js
           node tests/test_ml_state.mjs
           node tests/test_ml_practice_final.mjs
           node tests/test_ml_teaching.mjs
@@ -59,6 +62,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7.0.1
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+
+      - name: Build the shared web/app assets
+        run: |
+          npm ci
+          npm run build:web
+          npm run check:app-shell
+
       - name: Set up Python
         uses: actions/setup-python@v7.0.0
         with:
@@ -71,7 +85,7 @@ jobs:
         run: python -m playwright install --with-deps chromium
 
       - name: Start local site
-        run: nohup python -m http.server 8000 > /tmp/ml-playground-http.log 2>&1 &
+        run: nohup python -m http.server 8000 -d dist > /tmp/ml-playground-http.log 2>&1 &
 
       - name: Run complete browser/Pyodide smoke test
         run: python tests/test_ml_browser.py --base-url http://127.0.0.1:8000/ml.html
@@ -87,17 +101,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7.0.1
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+
+      - name: Build deployment artifact
+        run: |
+          npm ci
+          npm run build:web
+          npm run check:app-shell
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6.0.0
 
       - name: Add deployment marker
-        run: printf '%s\n' "$GITHUB_SHA" > pages-deployment-sha.txt
+        run: printf '%s\n' "$GITHUB_SHA" > dist/pages-deployment-sha.txt
 
       - name: Upload site artifact
         id: upload
         uses: actions/upload-pages-artifact@v5.0.0
         with:
-          path: .
+          path: dist
 
       - name: Deploy to GitHub Pages
         id: deployment

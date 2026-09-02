@@ -1,0 +1,2 @@
+# Preserve upstream license/notice text byte-for-byte, including intentional whitespace.
+assets/licenses/** -whitespace

@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="A browser-only Python playground for inspecting, wrangling, visualising, and analysing complete real-world datasets.">
+  <meta name="theme-color" content="#0c1125">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>Data Science Python Playground</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/app-icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <script src="app-platform.js"></script>
   <style>
     :root {
       --bg: #0c1125;
@@ -74,12 +79,10 @@
     body[data-dataset="candy"] { --dataset-accent: #ff8f70; --dataset-wash: rgba(255,143,112,.12); --dataset-deep: #9a4339; }
     body[data-dataset="gapminder"] { --dataset-accent: #c08aff; --dataset-wash: rgba(192,138,255,.12); --dataset-deep: #6844a0; }
     body[data-dataset="wine"] { --dataset-accent: #e59ab6; --dataset-wash: rgba(229,154,182,.13); --dataset-deep: #8a4662; }
-    body[data-dataset="upload"] { --dataset-accent: #48d5ff; --dataset-wash: rgba(72,213,255,.11); --dataset-deep: #126d88; }
     body[data-theme="light"][data-dataset="seoul"] { --dataset-accent: #16809f; --dataset-wash: rgba(22,128,159,.12); --dataset-deep: #17667b; }
     body[data-theme="light"][data-dataset="candy"] { --dataset-accent: #c35d3f; --dataset-wash: rgba(195,93,63,.12); --dataset-deep: #914530; }
     body[data-theme="light"][data-dataset="gapminder"] { --dataset-accent: #7a56a7; --dataset-wash: rgba(122,86,167,.12); --dataset-deep: #62478a; }
     body[data-theme="light"][data-dataset="wine"] { --dataset-accent: #984c69; --dataset-wash: rgba(152,76,105,.12); --dataset-deep: #763e55; }
-    body[data-theme="light"][data-dataset="upload"] { --dataset-accent: #16809f; --dataset-wash: rgba(22,128,159,.12); --dataset-deep: #17667b; }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; background: var(--bg); }
@@ -197,10 +200,6 @@
       cursor: pointer;
     }
     select:hover, select:focus { border-color: var(--dataset-accent); }
-    .upload-button { position: relative; display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 6px 10px; border: 1px dashed var(--border); border-radius: 4px; color: var(--muted); font-size: .74rem; font-weight: 800; cursor: pointer; white-space: nowrap; }
-    .upload-button:hover { border-color: var(--cyan); color: var(--ink); background: rgba(72,213,255,.08); }
-    .upload-button svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .upload-button input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
     .runtime-line { display: flex; align-items: center; gap: 9px; color: var(--muted); font: 600 .66rem var(--mono); white-space: nowrap; }
     .runtime-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 3px rgba(245,197,24,.13); }
     .runtime-dot.ready { background: var(--mint); box-shadow: 0 0 0 3px rgba(88,224,181,.13); }
@@ -441,7 +440,7 @@
     .guide-intro { margin: 0 0 11px; color: var(--muted); font-size: .72rem; line-height: 1.45; }
     .guide-deck-bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 9px; margin: 0 -2px 12px; padding: 7px 2px 9px; background: color-mix(in srgb, var(--panel) 94%, transparent); backdrop-filter: blur(8px); }
     .guide-filters { display: flex; gap: 4px; min-width: 0; overflow-x: auto; padding-bottom: 1px; }
-    .guide-filter { flex: 0 0 auto; padding: 5px 7px; border: 1px solid color-mix(in srgb, var(--border) 82%, var(--ink) 18%); border-bottom: 3px solid color-mix(in srgb, var(--border) 78%, #000 22%); border-radius: 5px; background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, #fff 8%), var(--panel-2)); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 2px 0 color-mix(in srgb, var(--border) 78%, #000 22%); color: var(--muted); font: 700 .57rem var(--mono); letter-spacing: .03em; text-transform: uppercase; transition: background .15s, border-color .15s, box-shadow .15s, transform .1s; }
+    .guide-filter { flex: 0 0 auto; padding: 5px 7px; border: 1px solid color-mix(in srgb, var(--border) 82%, var(--ink) 18%); border-bottom: 3px solid color-mix(in srgb, var(--border) 78%, #000 22%); border-radius: 5px; background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 92%, #fff 8%), var(--panel-2)); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 2px 0 color-mix(in srgb, var(--border) 78%, #000 22%); color: var(--muted); font: 700 .57rem var(--display); letter-spacing: .03em; text-transform: uppercase; transition: background .15s, border-color .15s, box-shadow .15s, transform .1s; }
     .guide-filter:active { border-bottom-width: 1px; box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 1px 0 color-mix(in srgb, var(--border) 78%, #000 22%); transform: translateY(1px); }
     .guide-filter:hover, .guide-filter[aria-pressed="true"] { border-color: var(--dataset-accent); background: var(--dataset-wash); color: var(--ink); }
     .guide-count { flex: 0 0 auto; color: var(--faint); font: 600 .58rem var(--mono); white-space: nowrap; }
@@ -486,10 +485,11 @@
     .toast.error { border-left-color: var(--coral); }
     .footer { display: flex; justify-content: space-between; gap: 20px; padding: 18px 20px 24px; border-top: 1px dashed var(--border); color: var(--faint); font-size: .67rem; }
     .footer strong { color: var(--muted); }
+    .footer a { color: var(--cyan); text-decoration: none; }
+    .footer a:hover { color: var(--orange); }
 
     /* Pixel display language: use it for short interface words and authored labels,
        while leaving prose, data, code, and dense status metadata comfortable to read. */
-    .upload-button,
     .toolbar-button,
     .soft-button,
     .cell-action,
@@ -647,7 +647,6 @@
       .guide-window { min-width: 280px; min-height: 240px; }
       .dataset-picker { gap: 6px; }
       .eyebrow { width: 100%; }
-      .upload-button { flex: 1; justify-content: center; }
       .inspector-body { display: block; }
       .inspector-preview { margin-top: 10px; }
       .column-list { max-height: 150px; }
@@ -672,9 +671,13 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
     }
+    .topbar{padding-top:env(safe-area-inset-top);padding-right:max(16px,env(safe-area-inset-right));padding-left:max(16px,env(safe-area-inset-left))}
+    .footer{padding-right:max(20px,env(safe-area-inset-right));padding-bottom:max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left))}
+    .app-connectivity{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:500;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid var(--orange);border-radius:999px;background:var(--panel-2);color:var(--ink);box-shadow:var(--shadow);font:700 .62rem/1.2 var(--mono);opacity:0;transform:translateY(16px);pointer-events:none;transition:.18s}
+    .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
-  <link rel="stylesheet" href="playground-shared.css?v=pixel-nav3">
+  <link rel="stylesheet" href="playground-shared.css?v=pixel-nav4">
 </head>
   <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
@@ -712,16 +715,9 @@
           <option value="candy">Candy Power Ranking</option>
           <option value="gapminder">Gapminder</option>
           <option value="wine">Wine Quality</option>
-          <option id="uploadOption" value="upload" hidden>My uploaded CSV</option>
         </select>
       </div>
-      <label class="upload-button" for="csvUpload">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M5 14v5h14v-5"></path></svg>
-        Upload CSV
-        <input id="csvUpload" type="file" accept=".csv,text/csv">
-      </label>
     </div>
-    <div class="runtime-line" aria-live="polite"><span class="runtime-dot" id="runtimeDot"></span><span id="runtimeStatus">Starting Python in a worker…</span></div>
   </section>
 
   <main class="workspace">
@@ -730,6 +726,7 @@
         <h2 id="inspectorTitle">Inspector</h2>
         <span class="status-badge">ORIGINAL KEPT</span>
       </div>
+      <div class="runtime-line inspector-runtime" aria-live="polite" aria-label="Python runtime status"><span class="runtime-dot" id="runtimeDot"></span><span class="runtime-copy"><strong>Python runtime</strong><span id="runtimeStatus">Starting Python in a worker…</span></span></div>
       <div class="inspector-body">
         <div>
           <section class="data-card" id="datasetCard">
@@ -755,7 +752,7 @@
           <span>Source: <a id="sourceLink" href="https://archive.ics.uci.edu/dataset/560/seoul%2Bbike%2Bsharing%2Bdemand" target="_blank" rel="noreferrer">UCI Machine Learning Repository</a><br><span id="sourceNote">Complete local copy · original rows stay sealed.</span></span>
         </div>
       </div>
-      <p class="privacy-note">Your CSV and notebook cells stay in this tab. Refreshing or closing clears the session. Nothing is uploaded or saved automatically.</p>
+      <p class="privacy-note">Your notebook cells stay in this tab. Refreshing or closing clears the session. Curated datasets stay local; nothing is saved automatically.</p>
     </aside>
 
     <section class="try-area" id="try" aria-labelledby="tryTitle">
@@ -766,9 +763,7 @@
         <button class="toolbar-button" id="moreTasksToggle" type="button" aria-pressed="false">＋ More tasks</button>
       </div>
 
-      <div class="suggested-route" aria-label="Suggested analysis route">
-        <div class="route-strip" id="suggestedRoute"></div>
-      </div>
+      <div class="route-strip" id="suggestedRoute" aria-label="Suggested analysis route"></div>
 
       <div class="more-tasks-panel" id="moreTasksPanel" aria-label="Optional data questions">
         <div class="more-tasks-panel-head"><span>MORE QUESTIONS</span><span>scroll down + sideways · click to insert</span></div>
@@ -789,7 +784,10 @@
       </div>
 
       <div class="notebook-bar">
-        <div class="notebook-title"><h3>Notebook</h3><span class="sr-only" id="taskProgress">0 / 6 route tasks run</span></div>
+        <div class="notebook-title-tools">
+          <h3>Notebook</h3>
+          <span class="sr-only" id="taskProgress">0 / 6 route tasks run</span>
+        </div>
         <div class="notebook-actions">
           <button class="toolbar-button" id="addCellButton" type="button">＋ Add cell</button>
           <button class="toolbar-button" id="runAllButton" type="button">▶ Run all</button>
@@ -819,7 +817,7 @@
     </section>
   </main>
 
-  <footer class="footer"><span><strong>Browser-only Python.</strong> Pyodide runs inside a Web Worker.</span><span>Download deliberately before you leave.</span></footer>
+  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span>Save or share deliberately before you leave.</span><span><a href="help.html">Help</a> · <a href="privacy.html">Privacy</a></span></footer>
 
   <div class="guide-window" id="guideWindow" role="dialog" aria-modal="false" aria-labelledby="guideTitle" hidden>
     <div class="guide-head" id="guideDragHandle">
@@ -848,8 +846,7 @@
       seoul: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="3.2"></circle><circle cx="18" cy="17" r="3.2"></circle><path d="M6 17l3-8h4l5 8M9 9l3 8M10 6h3"></path></svg>',
       candy: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 9 3 3-3 3-3-3zM19 9l3 3-3 3-3-3z"></path><rect x="6.5" y="8" width="11" height="8" rx="3"></rect><path d="M9 10v4M12 10v4M15 10v4"></path></svg>',
       gapminder: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16M12 4c2.2 2.2 3.2 5 3.2 8s-1 5.8-3.2 8M12 4c-2.2 2.2-3.2 5-3.2 8s1 5.8 3.2 8M5.6 7.2c1.8.8 4 1.2 6.4 1.2s4.6-.4 6.4-1.2M5.6 16.8c1.8-.8 4-1.2 6.4-1.2s4.6.4 6.4 1.2"></path></svg>',
-      wine: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12l-1 5a5 5 0 0 1-10 0z"></path><path d="M12 14v6M8 20h8"></path></svg>',
-      upload: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h4M9 13h6M9 17h6"></path></svg>'
+      wine: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12l-1 5a5 5 0 0 1-10 0z"></path><path d="M12 14v6M8 20h8"></path></svg>'
     };
 
     const DATASETS = {
@@ -883,9 +880,9 @@
         question: "Do wealth and longevity move together?",
         file: "data/gapminder.csv",
         sep: ",",
-        source: "https://plotly.github.io/datasets/",
-        sourceLabel: "Plotly datasets",
-        sourceNote: "Complete local copy · five-year country snapshots",
+        source: "https://www.gapminder.org/free-material/",
+        sourceLabel: "Gapminder free material · CC BY 4.0",
+        sourceNote: "Adapted local copy · five-year country snapshots",
         color: "#c08aff",
         icon: DATASET_ICONS.gapminder
       },
@@ -935,14 +932,6 @@
         { stage: "wrangle", title: "Measure sulphur retention", goal: "How much of the sulphur dioxide is free rather than total?", prompt: "Create free_sulfur_share and compare its average by wine type.", hint: "Use free sulfur dioxide / total sulfur dioxide.", answer: "df[\"free_sulfur_share\"] = (df[\"free sulfur dioxide\"] / df[\"total sulfur dioxide\"]).round(3)\\ndf.groupby(\"wine_type\", as_index=False)[\"free_sulfur_share\"].mean().round(3)" },
         { stage: "visualise", title: "Alcohol and quality", goal: "Do higher alcohol wines tend to receive higher scores?", prompt: "Use a seaborn scatterplot with wine type as hue and quality as the y-axis.", hint: "The type colour helps you see whether the pattern is shared.", answer: "fig, ax = plt.subplots(figsize=(6.4, 3.7))\\nsns.scatterplot(data=df, x=\"alcohol\", y=\"quality\", hue=\"wine_type\", alpha=0.42, ax=ax)\\nax.set_title(\"Alcohol and quality score\")\\nfig.tight_layout()" },
         { stage: "visualise", title: "Chemistry correlation map", goal: "Which measurements have the strongest linear relationships with quality?", prompt: "Plot a labelled correlation heatmap for a compact chemistry subset.", hint: "Keep the matrix readable by selecting the most relevant measures.", answer: "columns = [\"alcohol\", \"volatile acidity\", \"citric acid\", \"sulphates\", \"pH\", \"quality\"]\\nfig, ax = plt.subplots(figsize=(6.5, 5.1))\\nsns.heatmap(df[columns].corr(), annot=True, fmt=\".2f\", cmap=\"vlag\", center=0, ax=ax)\\nax.set_title(\"Wine chemistry correlations\")\\nfig.tight_layout()" }
-      ],
-      upload: [
-        { stage: "inspect", title: "Profile the numeric fields", goal: "What scale and spread do the numeric columns have?", prompt: "Build a transposed describe table for the numeric columns.", hint: "select_dtypes keeps the answer useful for any uploaded CSV.", answer: "df.select_dtypes(include=\"number\").describe().transpose().round(2)" },
-        { stage: "inspect", title: "Count category levels", goal: "Which label columns have the most distinct values?", prompt: "Return categorical column names and their number of unique values.", hint: "Loop through object, category, and boolean columns.", answer: "categorical = df.select_dtypes(include=[\"object\", \"category\", \"bool\"])\\nsummary = pd.DataFrame({\"column\": categorical.columns, \"unique_values\": [categorical[column].nunique() for column in categorical.columns]})\\nsummary.sort_values(\"unique_values\", ascending=False)" },
-        { stage: "wrangle", title: "Add a row number", goal: "Can you create a stable reference for rows you want to discuss?", prompt: "Add row_number starting at 1 and show the first few records.", hint: "Use np.arange so the column remains numeric.", answer: "df[\"row_number\"] = np.arange(1, len(df) + 1)\\ndf.head()" },
-        { stage: "wrangle", title: "Build a numeric signal", goal: "What new measure can be made from the first two numeric columns?", prompt: "Create derived_signal as the difference between the first two numeric columns.", hint: "Select columns programmatically so the idea works on an unfamiliar CSV.", answer: "numeric_columns = df.select_dtypes(include=\"number\").columns.tolist()\\nif len(numeric_columns) >= 2:\\n    df[\"derived_signal\"] = (df[numeric_columns[0]] - df[numeric_columns[1]]).round(2)\\ndf.head()" },
-        { stage: "visualise", title: "Plot a first relationship", goal: "What shape appears between the first two numeric fields?", prompt: "Make a seaborn scatterplot using the first two numeric columns.", hint: "The guard makes the cell safe when an upload has fewer than two numeric fields.", answer: "numeric_columns = df.select_dtypes(include=\"number\").columns.tolist()\\nfig, ax = plt.subplots(figsize=(6.4, 3.7))\\nif len(numeric_columns) >= 2:\\n    sns.scatterplot(data=df, x=numeric_columns[0], y=numeric_columns[1], alpha=0.65, ax=ax)\\n    ax.set_title(\"First numeric relationship\")\\nfig.tight_layout()" },
-        { stage: "visualise", title: "See a distribution", goal: "Where do values in the first numeric field concentrate?", prompt: "Use a seaborn histogram for the first numeric column.", hint: "Select the field programmatically so the challenge travels with the upload.", answer: "numeric_columns = df.select_dtypes(include=\"number\").columns.tolist()\\nfig, ax = plt.subplots(figsize=(6.4, 3.7))\\nif numeric_columns:\\n    sns.histplot(data=df, x=numeric_columns[0], bins=14, color=\"#c08aff\", ax=ax)\\n    ax.set_title(f\"Distribution of {numeric_columns[0]}\")\\nfig.tight_layout()" }
       ]
     };
 
@@ -1050,6 +1039,8 @@
       "        plt.close('all')"
     ].join("\n");
 
+    const PYODIDE_INDEX_URL = window.AppPlatform?.pyodideIndexUrl || "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+    const SEABORN_REQUIREMENT = window.AppPlatform?.seabornRequirement || "seaborn==0.13.2";
     const WORKER_SOURCE = `
       let pyodide = null;
       let ready = false;
@@ -1058,12 +1049,12 @@
       async function boot() {
         if (ready) return;
         self.postMessage({ type: 'status', state: 'loading', message: 'Loading Python runtime…' });
-        importScripts('https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js');
-        pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' });
+        importScripts(${JSON.stringify(PYODIDE_INDEX_URL + "pyodide.js")});
+        pyodide = await loadPyodide({ indexURL: ${JSON.stringify(PYODIDE_INDEX_URL)} });
         self.postMessage({ type: 'status', state: 'loading', message: 'Loading pandas + matplotlib + seaborn…' });
         await pyodide.loadPackage(['pandas', 'matplotlib', 'scipy']);
         await pyodide.loadPackage(['micropip']);
-        await pyodide.runPythonAsync("import micropip; await micropip.install('seaborn==0.13.2')");
+        await pyodide.runPythonAsync(${JSON.stringify(`import micropip; await micropip.install(${JSON.stringify(SEABORN_REQUIREMENT)})`)});
         await pyodide.runPythonAsync(PYTHON_SETUP);
         ready = true;
         self.postMessage({ type: 'status', state: 'ready', message: 'Python ready · worker online' });
@@ -1103,8 +1094,6 @@
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
     const datasetSelect = $("#datasetSelect");
-    const uploadOption = $("#uploadOption");
-    const csvUpload = $("#csvUpload");
     const runtimeStatus = $("#runtimeStatus");
     const runtimeDot = $("#runtimeDot");
     const notebookPanel = $("#notebookPanel");
@@ -1170,11 +1159,6 @@
       toast.className = "toast show" + (isError ? " error" : "");
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => { toast.className = "toast"; }, 2600);
-    }
-
-    function detectSeparator(text) {
-      const firstLine = text.split(/\r?\n/, 1)[0] || "";
-      return firstLine.split(";").length > firstLine.split(",").length ? ";" : ",";
     }
 
     function setRuntimeError(message) {
@@ -1511,15 +1495,15 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     function renderDatasetMeta() {
       const config = currentDataset?.config;
       if (!config) return;
-      document.body.dataset.dataset = currentDataset.id || "upload";
+      document.body.dataset.dataset = currentDataset.id || "seoul";
       $("#datasetName").textContent = config.name;
       $("#datasetDescription").textContent = config.description;
       $("#datasetQuestion").textContent = config.question;
       $("#sourceLink").textContent = config.sourceLabel;
       $("#sourceLink").href = config.source;
       $("#sourceNote").textContent = config.sourceNote;
-      $("#datasetIcon").innerHTML = config.icon || DATASET_ICONS.upload;
-      $("#datasetCardIcon").innerHTML = config.icon || DATASET_ICONS.upload;
+      $("#datasetIcon").innerHTML = config.icon || DATASET_ICONS.seoul;
+      $("#datasetCardIcon").innerHTML = config.icon || DATASET_ICONS.seoul;
       $("#datasetCard").style.setProperty("--dataset-color", config.color);
     }
 
@@ -2021,7 +2005,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
 
     async function loadRawDataset(config, csv, sep, token = datasetLoadToken) {
       if (token !== datasetLoadToken) return;
-      currentDataset = { id: config.id || "upload", config, csv, sep };
+      currentDataset = { id: config.id || "seoul", config, csv, sep };
       prepareWorkspaceForLoad();
       renderDatasetMeta();
       try {
@@ -2067,7 +2051,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     }
 
     async function selectDataset(id) {
-      if (id === "upload") return;
+      if (!DATASETS[id]) return;
       const token = ++datasetLoadToken;
       const config = { ...DATASETS[id], id };
       currentDataset = { id, config, csv: "", sep: config.sep };
@@ -2132,28 +2116,38 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       try {
         const response = await sendWorker("export");
         const blob = new Blob([response.csv], { type: "text/csv;charset=utf-8" });
+        const filename = `${(currentDataset?.config?.name || "working-data").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.csv`;
+        if (await window.AppPlatform?.shareBlob?.(blob, filename, "Data Playground CSV")) {
+          showToast("Working dataset ready to save or share.");
+          return;
+        }
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `${(currentDataset?.config?.name || "working-data").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.csv`;
+        link.download = filename;
         link.click();
         setTimeout(() => URL.revokeObjectURL(url), 500);
         showToast("Working dataset downloaded.");
       } catch (error) { showToast(error.message, true); }
     }
 
-    function downloadChart() {
+    async function downloadChart() {
       const chart = latestChart;
       if (!chart) return;
+      const filename = `${(currentDataset?.config?.name || "python-chart").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+      if (await window.AppPlatform?.shareDataUrl?.(chart, filename, "Data Playground chart")) {
+        showToast("Chart ready to save or share.");
+        return;
+      }
       const link = document.createElement("a");
       link.href = chart;
-      link.download = `${(currentDataset?.config?.name || "python-chart").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.png`;
+      link.download = filename;
       link.click();
       showToast("Chart downloaded.");
     }
 
     function guideDeckForCurrentDataset() {
-      const datasetId = currentDataset?.id || "upload";
+      const datasetId = currentDataset?.id || "seoul";
       const taskCards = (currentTasks || []).map((task) => ({
         id: "task-" + task.id,
         stage: task.stage,
@@ -2164,7 +2158,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         answer: formatTaskCode(task.stage, task.code),
         source: task.optional ? "more task" : "suggested route"
       }));
-      const extras = (GUIDE_EXTRAS[datasetId] || GUIDE_EXTRAS.upload || []).map((challenge, index) => ({
+      const extras = (GUIDE_EXTRAS[datasetId] || []).map((challenge, index) => ({
         ...challenge,
         id: "extra-" + datasetId + "-" + index,
         answer: formatTaskCode(challenge.stage, challenge.answer.replace(/\\n/g, "\n")),
@@ -2441,39 +2435,6 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       guideWindow.style.bottom = "auto";
     }
 
-    function renderLegacyGuide() {
-      const content = GUIDE_CONTENT[currentDataset?.id] || GUIDE_CONTENT.upload;
-      $("#guideSubtitle").textContent = `${currentDataset?.config?.name || "This dataset"} · prompts when you want a question to chase.`;
-      const body = $("#guideBody");
-      body.replaceChildren();
-      const qKicker = document.createElement("div");
-      qKicker.className = "guide-kicker";
-      qKicker.textContent = "Questions to investigate";
-      body.append(qKicker);
-      const questions = document.createElement("ul");
-      questions.className = "guide-list";
-      content.questions.forEach((question) => { const li = document.createElement("li"); li.textContent = question; questions.append(li); });
-      body.append(questions);
-      const cKicker = document.createElement("div");
-      cKicker.className = "guide-kicker";
-      cKicker.textContent = "Optional challenges";
-      body.append(cKicker);
-      const grid = document.createElement("div");
-      grid.className = "challenge-grid";
-      content.challenges.forEach(([title, copy], index) => {
-        const card = document.createElement("article");
-        card.className = "challenge";
-        const b = document.createElement("b"); b.textContent = `0${index + 1} / ${title}`;
-        const p = document.createElement("p"); p.textContent = copy;
-        card.append(b, p); grid.append(card);
-      });
-      body.append(grid);
-      const foot = document.createElement("p");
-      foot.className = "guide-foot";
-      foot.textContent = "There is no required order here. Use the route above when you want a gentle path, or close this booklet and write your own cell.";
-      body.append(foot);
-    }
-
     function toggleTheme() {
       const isLight = document.body.dataset.theme === "light";
       document.body.dataset.theme = isLight ? "dark" : "light";
@@ -2506,19 +2467,6 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     $("#downloadCsvButton").addEventListener("click", downloadCsv);
     $("#downloadChartButton").addEventListener("click", downloadChart);
     datasetSelect.addEventListener("change", () => selectDataset(datasetSelect.value));
-    csvUpload.addEventListener("change", async (event) => {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      const config = { id: "upload", name: file.name.replace(/\.csv$/i, "") || "My uploaded CSV", description: "A local CSV you chose for this session.", question: "What would you like to understand here?", source: "#", sourceLabel: "Local file", sourceNote: "Not uploaded · session-only copy", color: "#48d5ff", icon: DATASET_ICONS.upload };
-      const token = ++datasetLoadToken;
-      uploadOption.hidden = false;
-      uploadOption.textContent = `My upload · ${config.name}`;
-      datasetSelect.value = "upload";
-      const csv = await file.text();
-      await loadRawDataset(config, csv, detectSeparator(csv), token);
-      showToast(`${file.name} is ready in the browser.`);
-      event.target.value = "";
-    });
 
     renderGuide();
     renderNotebookView();

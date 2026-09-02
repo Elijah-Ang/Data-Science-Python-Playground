@@ -1,7 +1,7 @@
 # ML Playground full-scale pedagogy and learner-experience audit
 
-Audit date: 25 August 2026  
-Scope: current local main, 254 generated routes, rendered ML Playground, learner-visible Python, outputs, charts, Inspector, Workflow reference, custom cells, errors, invalidation, and reset  
+Audit date: 25 August 2026
+Scope: current local main, 254 generated routes, rendered ML Playground, learner-visible Python, outputs, charts, Inspector, Workflow reference, custom cells, errors, invalidation, and reset
 Constraint observed: architecture frozen; no fixes implemented
 
 ## Executive verdict
@@ -1104,7 +1104,7 @@ Attached question: “Can GDP per person help predict a country’s life expecta
 # Here 20% is a teaching choice, not a universal rule.
 ~~~
 
-For classification, add: “stratify keeps the class proportions similar in both parts.”  
+For classification, add: “stratify keeps the class proportions similar in both parts.”
 For Seoul, add: “random splitting would let future rows leak into training, so the latest rows stay together.”
 
 ### 3. Cross-validation output

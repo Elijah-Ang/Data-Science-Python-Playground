@@ -1,0 +1,252 @@
+{
+  "generatedFrom": "Pyodide 0.26.4 native runtime",
+  "files": [
+    {
+      "source": "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/OFL.txt",
+      "file": "fonts/JetBrains-Mono-OFL-1.1.txt"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/googlefonts/nunito/main/OFL.txt",
+      "file": "fonts/Nunito-OFL-1.1.txt"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/googlefonts/silkscreen/main/OFL.txt",
+      "file": "fonts/Silkscreen-OFL-1.1.txt"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/pyodide/pyodide/0.26.4/LICENSE",
+      "file": "runtime/Pyodide-0.26.4-MPL-2.0.txt"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/python/cpython/v3.12.1/LICENSE",
+      "file": "runtime/CPython-3.12.1-PSF.txt"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.26/LICENSE",
+      "file": "runtime/OpenBLAS-0.3.26-BSD-3-Clause.txt"
+    },
+    {
+      "source": "@capacitor/core@8.5.0",
+      "file": "javascript/@capacitor-core-8.5.0-MIT.txt"
+    },
+    {
+      "source": "@capacitor/browser@8.0.4",
+      "file": "javascript/@capacitor-browser-8.0.4-MIT.txt"
+    },
+    {
+      "source": "@capacitor/filesystem@8.1.3",
+      "file": "javascript/@capacitor-filesystem-8.1.3-MIT.txt"
+    },
+    {
+      "source": "@capacitor/share@8.0.1",
+      "file": "javascript/@capacitor-share-8.0.1-MIT.txt"
+    },
+    {
+      "source": "@capacitor/splash-screen@8.0.2",
+      "file": "javascript/@capacitor-splash-screen-8.0.2-MIT.txt"
+    },
+    {
+      "source": "@capacitor/status-bar@8.0.3",
+      "file": "javascript/@capacitor-status-bar-8.0.3-MIT.txt"
+    },
+    {
+      "source": "@capacitor/ios@8.5.0",
+      "file": "javascript/@capacitor-ios-8.5.0-MIT.txt"
+    },
+    {
+      "source": "vendor/pyodide/cycler-0.12.1-py3-none-any.whl",
+      "archiveEntry": "cycler-0.12.1.dist-info/LICENSE",
+      "file": "runtime/wheels/cycler-0.12.1-py3-none-any/cycler-0.12.1.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/fonttools-4.51.0-py3-none-any.whl",
+      "archiveEntry": "fonttools-4.51.0.dist-info/LICENSE",
+      "file": "runtime/wheels/fonttools-4.51.0-py3-none-any/fonttools-4.51.0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/joblib-1.4.0-py3-none-any.whl",
+      "archiveEntry": "joblib-1.4.0.dist-info/LICENSE.txt",
+      "file": "runtime/wheels/joblib-1.4.0-py3-none-any/joblib-1.4.0.dist-info__LICENSE.txt"
+    },
+    {
+      "source": "vendor/pyodide/kiwisolver-1.4.5-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "kiwisolver-1.4.5.dist-info/LICENSE",
+      "file": "runtime/wheels/kiwisolver-1.4.5-cp312-cp312-pyodide_2024_0_wasm32/kiwisolver-1.4.5.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib/mpl-data/fonts/ttf/LICENSE_DEJAVU",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib__mpl-data__fonts__ttf__LICENSE_DEJAVU"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib/mpl-data/fonts/ttf/LICENSE_STIX",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib__mpl-data__fonts__ttf__LICENSE_STIX"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_AMSFONTS",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_AMSFONTS"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_BAKOMA",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_BAKOMA"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_CARLOGO",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_CARLOGO"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_COLORBREWER",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_COLORBREWER"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_JSXTOOLS_RESIZE_OBSERVER",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_JSXTOOLS_RESIZE_OBSERVER"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_QT4_EDITOR",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_QT4_EDITOR"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_SOLARIZED",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_SOLARIZED"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_STIX",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_STIX"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "matplotlib-3.5.2.dist-info/LICENSE_YORICK",
+      "file": "runtime/wheels/matplotlib-3.5.2-cp312-cp312-pyodide_2024_0_wasm32/matplotlib-3.5.2.dist-info__LICENSE_YORICK"
+    },
+    {
+      "source": "vendor/pyodide/matplotlib_pyodide-0.2.2-py3-none-any.whl",
+      "archiveEntry": "matplotlib_pyodide-0.2.2.dist-info/LICENSE",
+      "file": "runtime/wheels/matplotlib_pyodide-0.2.2-py3-none-any/matplotlib_pyodide-0.2.2.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/micropip-0.6.0-py3-none-any.whl",
+      "archiveEntry": "micropip-0.6.0.dist-info/LICENSE",
+      "file": "runtime/wheels/micropip-0.6.0-py3-none-any/micropip-0.6.0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "numpy/core/include/numpy/random/LICENSE.txt",
+      "file": "runtime/wheels/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32/numpy__core__include__numpy__random__LICENSE.txt"
+    },
+    {
+      "source": "vendor/pyodide/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "numpy/ma/LICENSE",
+      "file": "runtime/wheels/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32/numpy__ma__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "numpy/random/LICENSE.md",
+      "file": "runtime/wheels/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32/numpy__random__LICENSE.md"
+    },
+    {
+      "source": "vendor/pyodide/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "numpy-1.26.4.dist-info/LICENSE.txt",
+      "file": "runtime/wheels/numpy-1.26.4-cp312-cp312-pyodide_2024_0_wasm32/numpy-1.26.4.dist-info__LICENSE.txt"
+    },
+    {
+      "source": "vendor/pyodide/packaging-23.2-py3-none-any.whl",
+      "archiveEntry": "packaging-23.2.dist-info/LICENSE",
+      "file": "runtime/wheels/packaging-23.2-py3-none-any/packaging-23.2.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/packaging-23.2-py3-none-any.whl",
+      "archiveEntry": "packaging-23.2.dist-info/LICENSE.APACHE",
+      "file": "runtime/wheels/packaging-23.2-py3-none-any/packaging-23.2.dist-info__LICENSE.APACHE"
+    },
+    {
+      "source": "vendor/pyodide/packaging-23.2-py3-none-any.whl",
+      "archiveEntry": "packaging-23.2.dist-info/LICENSE.BSD",
+      "file": "runtime/wheels/packaging-23.2-py3-none-any/packaging-23.2.dist-info__LICENSE.BSD"
+    },
+    {
+      "source": "vendor/pyodide/pandas-2.2.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "pandas-2.2.0.dist-info/LICENSE",
+      "file": "runtime/wheels/pandas-2.2.0-cp312-cp312-pyodide_2024_0_wasm32/pandas-2.2.0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/pillow-10.2.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "pillow-10.2.0.dist-info/LICENSE",
+      "file": "runtime/wheels/pillow-10.2.0-cp312-cp312-pyodide_2024_0_wasm32/pillow-10.2.0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/pyparsing-3.1.2-py3-none-any.whl",
+      "archiveEntry": "pyparsing-3.1.2.dist-info/LICENSE",
+      "file": "runtime/wheels/pyparsing-3.1.2-py3-none-any/pyparsing-3.1.2.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+      "archiveEntry": "python_dateutil-2.9.0.post0.dist-info/LICENSE",
+      "file": "runtime/wheels/python_dateutil-2.9.0.post0-py2.py3-none-any/python_dateutil-2.9.0.post0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/pytz-2024.1-py2.py3-none-any.whl",
+      "archiveEntry": "pytz-2024.1.dist-info/LICENSE.txt",
+      "file": "runtime/wheels/pytz-2024.1-py2.py3-none-any/pytz-2024.1.dist-info__LICENSE.txt"
+    },
+    {
+      "source": "vendor/pyodide/scikit_learn-1.4.2-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "scikit_learn-1.4.2.dist-info/COPYING",
+      "file": "runtime/wheels/scikit_learn-1.4.2-cp312-cp312-pyodide_2024_0_wasm32/scikit_learn-1.4.2.dist-info__COPYING"
+    },
+    {
+      "source": "vendor/pyodide/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "scipy/_lib/_uarray/LICENSE",
+      "file": "runtime/wheels/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32/scipy___lib___uarray__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "scipy/fft/_pocketfft/LICENSE.md",
+      "file": "runtime/wheels/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32/scipy__fft___pocketfft__LICENSE.md"
+    },
+    {
+      "source": "vendor/pyodide/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "scipy/sparse/linalg/_eigen/arpack/COPYING",
+      "file": "runtime/wheels/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32/scipy__sparse__linalg___eigen__arpack__COPYING"
+    },
+    {
+      "source": "vendor/pyodide/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "scipy/spatial/qhull_src/COPYING.txt",
+      "file": "runtime/wheels/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32/scipy__spatial__qhull_src__COPYING.txt"
+    },
+    {
+      "source": "vendor/pyodide/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32.whl",
+      "archiveEntry": "scipy-1.12.0.dist-info/LICENSE.txt",
+      "file": "runtime/wheels/scipy-1.12.0-cp312-cp312-pyodide_2024_0_wasm32/scipy-1.12.0.dist-info__LICENSE.txt"
+    },
+    {
+      "source": "vendor/pyodide/six-1.16.0-py2.py3-none-any.whl",
+      "archiveEntry": "six-1.16.0.dist-info/LICENSE",
+      "file": "runtime/wheels/six-1.16.0-py2.py3-none-any/six-1.16.0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/threadpoolctl-3.4.0-py3-none-any.whl",
+      "archiveEntry": "threadpoolctl-3.4.0.dist-info/LICENSE",
+      "file": "runtime/wheels/threadpoolctl-3.4.0-py3-none-any/threadpoolctl-3.4.0.dist-info__LICENSE"
+    },
+    {
+      "source": "vendor/pyodide/wheels/seaborn-0.13.2-py3-none-any.whl",
+      "archiveEntry": "seaborn-0.13.2.dist-info/LICENSE.md",
+      "file": "runtime/wheels/seaborn-0.13.2-py3-none-any/seaborn-0.13.2.dist-info__LICENSE.md"
+    }
+  ]
+}

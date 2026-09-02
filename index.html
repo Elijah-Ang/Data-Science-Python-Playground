@@ -2,247 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A quick, visual guide to the Data Science Python Playground and Machine Learning Playground.">
-  <title>Data Science Python Playground</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="home.css?v=pixel-nav3">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Welcome to Data Playground — a playful home for exploring, visualising, and modelling data with Python.">
+  <meta name="theme-color" content="#efe8d7">
+  <meta name="application-name" content="Data Playground">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Data Playground">
+  <title>Welcome · Data Playground</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/app-icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="landing.css?v=gate-pulse1">
+  <script src="app-platform.js"></script>
 </head>
-<body data-theme="light">
-  <header class="home-topbar">
-    <a class="brand" href="index.html" aria-label="Data Science Python Playground home">
-      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
-      <span class="brand-copy">
-        <strong>Data Science Python Playground</strong>
-      </span>
-    </a>
-    <nav class="home-nav" aria-label="Primary navigation">
-      <a class="home-nav-link home-nav-link--home" href="index.html" aria-current="page"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Home</span></a>
-      <a class="home-nav-link home-nav-link--data" href="playground.html"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Data Playground</span></a>
-      <a class="home-nav-link home-nav-link--ml" href="ml.html"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Machine Learning</span></a>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow">// quick start</div>
-          <h1 id="hero-title">DATA SCIENCE PYTHON <em>PLAYGROUND</em></h1>
-          <p class="hero-lede">A lab for asking better questions of real data. Pick a dataset, work in a live Python notebook, and read the evidence as it appears.</p>
-          <div class="hero-actions">
-            <a class="cta cta-primary" href="playground.html">Start Playground <span aria-hidden="true">→</span></a>
-          </div>
-        </div>
-
-        <div class="hero-visual" aria-label="A live three-dimensional neural network continuously processing data">
-          <div class="neural-visual">
-            <canvas id="neuralCanvas" class="neural-canvas" aria-hidden="true"></canvas>
-          </div>
-        </div>
-      </div>
+<body class="landing-page" data-theme="light">
+  <main class="welcome-shell">
+    <section class="welcome-intro" aria-labelledby="welcome-title">
+      <p class="welcome-kicker">DATA SCIENCE PYTHON PLAYGROUND</p>
+      <h1 id="welcome-title">Welcome to <em>Data Playground</em></h1>
+      <p class="welcome-subtitle">Explore, clean, visualise, model, and discover.</p>
     </section>
 
-    <section class="tutorial" id="tour" aria-labelledby="tour-title">
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">// before you land</div>
-          <h2 id="tour-title">A five-minutes tour</h2>
-        </div>
+    <section class="scene-section" aria-labelledby="scene-title">
+      <h2 id="scene-title" class="sr-only">Enter Data Playground</h2>
+      <div class="scene-frame" data-scene>
+        <picture class="scene-picture">
+          <source media="(max-width: 720px), (orientation: portrait) and (max-width: 900px)" srcset="assets/landing/data-playground-mobile-source.png">
+          <source media="(min-width: 721px)" srcset="assets/landing/data-playground-desktop-source.png">
+          <img class="scene-art" src="assets/landing/data-playground-desktop-source.png" alt="A static pixel-art garden playground with friendly robots, a treehouse, a pond, and a gate marked Enter Data Playground" fetchpriority="high" decoding="async">
+        </picture>
+
+        <a class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground">
+          <picture class="gate-glow" aria-hidden="true">
+            <source media="(max-width: 720px), (orientation: portrait) and (max-width: 900px)" srcset="assets/landing/gate-glow-mobile.png">
+            <source media="(min-width: 721px)" srcset="assets/landing/gate-glow-desktop.png">
+            <img src="assets/landing/gate-glow-desktop.png" alt="" decoding="async">
+          </picture>
+        </a>
       </div>
-
-      <div class="story-layout">
-        <div class="story-stage">
-          <div class="stage-label"><span>LIVE UI MAP</span><strong data-stage-label aria-live="polite">DATA PLAYGROUND</strong></div>
-
-          <figure class="workspace-shot" data-shot="data" aria-label="Annotated Data Playground interface">
-            <div class="shot-topbar">
-              <div class="shot-brand"><span class="shot-brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>DATA SCIENCE PYTHON PLAYGROUND</div>
-              <div class="shot-tabs" aria-hidden="true"><span>HOME</span><span>DATA PLAYGROUND</span><span>MACHINE LEARNING</span></div>
-              <span class="shot-guide-control">CHALLENGES</span>
-              <span class="shot-icon" aria-hidden="true"></span>
-            </div>
-            <div class="shot-controls">
-              <div class="shot-control shot-control--accent"><small>Dataset</small><b>Seoul Bike Sharing</b></div>
-              <div class="shot-control"><small>Upload</small><b>CSV</b></div>
-              <div class="shot-control"><small>Runtime</small><b>READY</b></div>
-            </div>
-            <div class="shot-body">
-              <aside class="shot-inspector">
-                <div class="shot-heading">Inspector <span class="shot-badge">ORIGINAL KEPT</span></div>
-                <div class="shot-card"><strong>Seoul Bike Sharing</strong><p>Hourly demand, weather, and calendar fields.</p></div>
-                <div class="shot-metrics"><span>8,760 rows</span><span>14 cols</span></div>
-                <div class="shot-columns"><i><b>Date</b><span>date</span></i><i><b>Hour</b><span>int</span></i><i><b>Season</b><span>category</span></i><i><b>Demand</b><span>int</span></i></div>
-              </aside>
-              <section class="shot-lab">
-                <div class="shot-route"><span>Route</span><b>INSPECT → WRANGLE → VISUALISE</b></div>
-                <div class="shot-workbench">
-                  <div class="shot-notebook-stack">
-                    <div class="shot-notebook">
-                      <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span><span class="cyan">df</span>.head(<span class="gold">10</span>)</span>
-                      <span class="line"><span class="num">2</span><span class="cyan">df</span>.describe()</span>
-                    </div>
-                    <div class="shot-notebook">
-                      <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span><span class="cyan">df</span> = <span class="cyan">df</span>[<span class="gold">"Functioning Day"</span>] == <span class="gold">"Yes"</span></span>
-                      <span class="line"><span class="num">2</span><span class="cyan">df</span>[<span class="gold">"temp_c"</span>] = <span class="cyan">df</span>[<span class="gold">"Temperature(°C)"</span>].round(<span class="gold">1</span>)</span>
-                    </div>
-                    <div class="shot-notebook">
-                      <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span><span class="cyan">sns</span>.lineplot(data=<span class="cyan">df</span>, x=<span class="gold">"Hour"</span>, y=<span class="gold">"Rented Bike Count"</span>)</span>
-                      <span class="line"><span class="num">2</span><span class="cyan">plt</span>.show()</span>
-                    </div>
-                  </div>
-                  <div class="shot-output-stack">
-                    <div class="shot-output">
-                      <div class="shot-output-box"><h4>preview output</h4><p>10 rows · 14 columns<br>Inspect before transform.</p></div>
-                    </div>
-                    <div class="shot-output">
-                      <div class="shot-output-box"><h4>working copy</h4><p>8,465 working days<br><span class="output-accent">original kept</span></p></div>
-                    </div>
-                    <div class="shot-output">
-                      <div class="shot-output-box"><h4>chart output</h4><div class="shot-mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-            <span class="shot-callout" data-step="1" data-number="1">choose</span>
-            <span class="shot-callout" data-step="2" data-number="2">inspect</span>
-            <span class="shot-callout" data-step="3" data-number="3">workflow</span>
-            <span class="shot-callout" data-step="4" data-number="4">run</span>
-            <span class="shot-callout" data-step="5" data-number="5">guide</span>
-            <span class="shot-callout" data-step="6" data-number="6">finish</span>
-            <span class="shot-callout" data-step="7" data-number="7">switch</span>
-          </figure>
-
-          <figure class="workspace-shot shot-ml" data-shot="ml" hidden aria-label="Annotated Machine Learning Playground interface">
-            <div class="shot-topbar">
-              <div class="shot-brand"><span class="shot-brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>DATA SCIENCE PYTHON PLAYGROUND</div>
-              <div class="shot-tabs" aria-hidden="true"><span>HOME</span><span>DATA PLAYGROUND</span><span>MACHINE LEARNING</span></div>
-              <span class="shot-guide-control">WORKFLOW</span>
-              <span class="shot-icon" aria-hidden="true"></span>
-            </div>
-            <div class="shot-controls">
-              <div class="shot-control shot-control--accent"><small>Dataset</small><b>Palmer Penguins</b></div>
-              <div class="shot-control shot-control--accent"><small>Feature scenario</small><b>Body measurements</b></div>
-              <div class="shot-control"><small>Model</small><b>Random Forest</b></div>
-              <div class="shot-control"><small>CV</small><b>5 folds</b></div>
-            </div>
-            <div class="shot-body">
-              <aside class="shot-inspector">
-                <div class="shot-heading">Inspector <span class="shot-badge">TEST SET SEALED</span></div>
-                <div class="shot-card"><strong>Palmer Penguins</strong><p>Species classification with a protected holdout.</p></div>
-                <div class="shot-metrics"><span>344 rows</span><span>4 features</span></div>
-                <div class="shot-columns"><i><b>Features</b><span>4 selected</span></i><i><b>Target</b><span>species</span></i><i><b>Holdout</b><span>20%</span></i><i><b>Metric</b><span>macro F1</span></i></div>
-              </aside>
-              <section class="shot-lab">
-                <div class="shot-route"><span>Workflow</span><b>FRAME → SPLIT → EXPLORE → PREPARE → MODEL → TEST</b></div>
-                <div class="shot-workbench">
-                  <div class="shot-notebook-stack">
-                    <div class="shot-notebook">
-                      <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span>X_train, X_test, y_train, y_test = <span class="cyan">split</span>(X, y)</span>
-                      <span class="line"><span class="num">2</span><span class="cyan">holdout</span> = <span class="gold">20%</span></span>
-                    </div>
-                    <div class="shot-notebook">
-                      <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span>model = <span class="cyan">RandomForestClassifier</span>(...)</span>
-                      <span class="line"><span class="num">2</span>model.fit(X_train, y_train)</span>
-                    </div>
-                    <div class="shot-notebook">
-                      <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span>pred = model.predict(X_test)</span>
-                      <span class="line"><span class="num">2</span><span class="cyan">f1_score</span>(y_test, pred, average=<span class="gold">"macro"</span>)</span>
-                    </div>
-                  </div>
-                  <div class="shot-output-stack">
-                    <div class="shot-output">
-                      <div class="shot-output-box"><h4>sealed holdout</h4><p>Train · 275 rows<br>Test · 69 rows</p></div>
-                    </div>
-                    <div class="shot-output">
-                      <div class="shot-output-box"><h4>cross-validation</h4><p>5 folds · planned<br><span class="output-accent">no leakage</span></p></div>
-                    </div>
-                    <div class="shot-output">
-                      <div class="shot-output-box"><h4>model result</h4><p>Macro F1 · 0.94<br>Accuracy · 0.95</p></div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-            <span class="shot-callout" data-step="1" data-number="1">scenario</span>
-            <span class="shot-callout" data-step="2" data-number="2">features</span>
-            <span class="shot-callout" data-step="3" data-number="3">workflow</span>
-            <span class="shot-callout" data-step="4" data-number="4">run</span>
-            <span class="shot-callout" data-step="5" data-number="5">guide</span>
-            <span class="shot-callout" data-step="6" data-number="6">evaluate</span>
-            <span class="shot-callout" data-step="7" data-number="7">switch</span>
-          </figure>
-          <p class="stage-caption" data-stage-caption aria-live="polite">Choose a dataset or upload a CSV. The playground keeps the original data safe while you experiment.</p>
-        </div>
-
-        <div class="story-steps" aria-label="Playground tour steps">
-          <article class="story-step is-active" data-story-step data-step="1" data-shot="data" data-caption="Choose a dataset or upload a CSV. The playground keeps the original data safe while you experiment." tabindex="0">
-            <div class="story-step-number">01 · choose a dataset</div>
-            <h3>Start with a question, not a blank page.</h3>
-            <p>Use the Data Playground selector for a curated dataset, or upload a CSV. In Machine Learning, the first strip also asks for a feature scenario, model, and cross-validation plan.</p>
-            <a class="story-action" href="playground.html">Open the data selector <span aria-hidden="true">→</span></a>
-          </article>
-
-          <article class="story-step" data-story-step data-step="2" data-shot="data" data-caption="The inspector gives you the shape, columns, preview, and a reminder that the original frame is still available." tabindex="0">
-            <div class="story-step-number">02 · read the inspector</div>
-            <h3>Know what you are holding.</h3>
-            <p>Before writing code, read the dataset card, row and column counts, data types, and preview. Data Playground says <strong>ORIGINAL KEPT</strong>; ML shows selected features and a <strong>TEST SET SEALED</strong> holdout.</p>
-          </article>
-
-          <article class="story-step" data-story-step data-step="3" data-shot="data" data-caption="Follow the route cards, then edit or add notebook cells when you are ready to try your own idea." tabindex="0">
-            <div class="story-step-number">03 · follow the route</div>
-            <h3>Let the workflow give you momentum.</h3>
-            <p>Data moves from Inspect to Wrangle to Visualise. Its suggested cards are runnable starting points, and the notebook remains editable. ML’s suggested workflow is longer: choose/frame, split and seal the final test, explore training data, prepare, build the model, baseline cross-validation, tune or keep defaults, diagnose, then run the final test.</p>
-          </article>
-
-          <article class="story-step" data-story-step data-step="4" data-shot="data" data-caption="Run a cell and read the table, chart, scalar, or console output. Evidence is the point of the loop." tabindex="0">
-            <div class="story-step-number">04 · run, then read</div>
-            <h3>Every run should answer something.</h3>
-            <p>Press Run, or run the suggested route. Outputs stay in the lab as tables, charts, scalars, console text, and downloadable results. In ML, metrics and diagnostics are shown without opening the sealed holdout early.</p>
-          </article>
-
-          <article class="story-step" data-story-step data-step="5" data-shot="data" data-caption="Use Challenges for prompts that test your Data Playground skills; the ML page calls its reference panel Workflow." tabindex="0">
-            <div class="story-step-number">05 · use the right guide</div>
-            <h3>Practice after the tour.</h3>
-            <p>Data Playground’s <strong>Challenges</strong> turn the same datasets and techniques into optional prompts. Machine Learning’s <strong>Workflow</strong> reference explains the modeling path. Multiple valid Python solutions are welcome.</p>
-            <a class="story-action" href="playground.html#guideButton">See Data Challenges <span aria-hidden="true">→</span></a>
-          </article>
-
-          <article class="story-step" data-story-step data-step="6" data-shot="ml" data-caption="Choose your finish line: explore and explain a dataset, or train and evaluate a model against a sealed test set." tabindex="0">
-            <div class="story-step-number">06 · choose your finish line</div>
-            <h3>Explore a pattern—or prove a model.</h3>
-            <p>Choose Data Playground when the question is about rows, transformations, comparisons, or visual evidence. Choose Machine Learning when the question is about features, a model, cross-validation, and a defensible metric.</p>
-            <a class="story-action" href="playground.html">Open Data Playground <span aria-hidden="true">→</span></a>
-          </article>
-
-          <article class="story-step" data-story-step data-step="7" data-shot="data" data-caption="Switch between the general Data Playground and the Machine Learning Playground whenever your question changes." tabindex="0">
-            <div class="story-step-number">07 · switch labs when the question changes</div>
-            <h3>Start broad, then choose the sharper tool.</h3>
-            <p>Begin in the general Data Playground for wrangling and visualisation. When you are ready to frame features, models, cross-validation, and metrics, use the same navigation to switch to the Machine Learning Playground.</p>
-            <a class="story-action" href="ml.html">Switch to Machine Learning <span aria-hidden="true">→</span></a>
-          </article>
-        </div>
-      </div>
-      <section class="final-cta" aria-labelledby="final-title">
-        <div>
-          <h2 id="final-title">Ready to Python?</h2>
-        </div>
-        <div class="hero-actions">
-          <a class="cta cta-primary" href="playground.html">Start Playground <span aria-hidden="true">→</span></a>
-        </div>
-      </section>
+      <p class="scene-hint">Tap the gate to enter</p>
     </section>
   </main>
 
-  <script src="home.js?v=mobile-map4"></script>
+  <script src="landing.js?v=static-scene1"></script>
 </body>
 </html>
