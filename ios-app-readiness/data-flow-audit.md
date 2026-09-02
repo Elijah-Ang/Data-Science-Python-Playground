@@ -5,11 +5,10 @@
 | Data | Web build | Native build | Server storage |
 |---|---|---|---|
 | Bundled datasets | Read from the same release origin | Read from packaged app assets | None |
-| User-selected CSV | Browser file picker; held in the active page/worker session | iOS document picker/WebView file input; held in the active app session | None |
 | Python code and results | Processed locally by Pyodide in a Web Worker | Processed locally by bundled Pyodide in a Web Worker | None |
 | CSV/chart exports | Browser download | Temporary app-cache file, then iOS Share Sheet/Files destination chosen by user | None by the app |
 
-The app currently has no accounts, persistent notebook/recent-work storage, backend API, analytics, push notifications, location, camera, microphone, contacts, health, or advertising SDK. Uploaded datasets are not used for targeting and are not intentionally transmitted by the app. Session state may survive foreground/background transitions while iOS keeps the app process alive, but it is not restored after termination.
+The app currently has no accounts, persistent notebook/recent-work storage, backend API, analytics, push notifications, location, camera, microphone, contacts, health, or advertising SDK. Bundled datasets and in-session analysis are not used for targeting and are not intentionally transmitted by the app. Session state may survive foreground/background transitions while iOS keeps the app process alive, but it is not restored after termination.
 
 ## Third-party requests
 
@@ -26,4 +25,4 @@ The app currently has no accounts, persistent notebook/recent-work storage, back
 
 ## Device-validation gaps
 
-Verify temporary export cleanup, document-provider behavior, session reset after termination, WebView network traffic, and the final Xcode privacy report on a signed build.
+Verify temporary export cleanup, Share Sheet behavior, session reset after termination, WebView network traffic, and the final Xcode privacy report on a signed build.

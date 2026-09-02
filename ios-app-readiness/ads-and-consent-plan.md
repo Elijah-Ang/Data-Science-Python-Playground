@@ -12,7 +12,7 @@ AdMob is the lowest-friction fit among the evaluated iOS networks: it has docume
 - The banner must sit inside safe-area-aware layout and never cover navigation, code, outputs, or controls.
 - Hide it while the software keyboard is open, Python is executing, or the user is actively editing in the Playground or machine-learning workspace.
 - Let the SDK manage refresh. Do not create a rapid custom refresh timer.
-- Do not use uploaded dataset contents, code, model inputs, or learning activity for targeting.
+- Do not use dataset contents, code, model inputs, or learning activity for targeting.
 
 ## Interstitial decision
 

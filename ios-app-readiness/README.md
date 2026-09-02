@@ -30,7 +30,7 @@ Drafting a document is deliberately tracked separately from final approval or im
 
 ## Current recommendation
 
-Keep the existing web version and package the active playground as a local-first iOS app using a native shell around the static HTML/CSS/JavaScript. The app should bundle or reliably cache its Python runtime and expose native file import/export and sharing. Do not make the app depend on the live GitHub Pages URL.
+Keep the existing web version and package the active playground as a local-first iOS app using a native shell around the static HTML/CSS/JavaScript. The app should bundle or reliably cache its Python runtime, keep the bundled dataset catalogue available offline, and expose native export and sharing. Importing user-supplied CSV files is deferred beyond version 1. Do not make the app depend on the live GitHub Pages URL.
 
 ## Implemented foundation — 2026-08-31
 
