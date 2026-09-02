@@ -1,6 +1,6 @@
 # App Review Notes — Draft
 
-Data Science Playground is a free, no-account educational data-analysis app. It runs Python locally inside the app using a bundled WebAssembly/Pyodide runtime. It does not require a login or backend service.
+Data Playground is a free, no-account educational data-analysis app. It runs Python locally inside the app using a bundled WebAssembly/Pyodide runtime. It does not require a login or backend service.
 
 ## Suggested review path
 

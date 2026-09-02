@@ -24,7 +24,7 @@ function base64FromBlob(blob) {
   });
 }
 
-async function shareBlob(blob, filename, title = "Data Science Playground export") {
+async function shareBlob(blob, filename, title = "Data Playground export") {
   if (!native) return false;
   const safeName = String(filename || "playground-export").replace(/[^a-zA-Z0-9._-]+/g, "-");
   const data = await base64FromBlob(blob);
