@@ -4304,27 +4304,6 @@ plot_df.head(12)`,{
     renderNotebookView(); renderRoute(); updateSeal();
   }
 
-  function addExplorationCell() {
-    const config = selectedConfig(), value = selectedScenario(), frameName = modelFrameName(config);
-    const explorationFrame = selectedModel()?.task === "unsupervised"
-      ? `${frameName}[${py(featureNames(value))}]`
-      : frameName;
-    const code = `# Free exploration · edit anything below
-# Available aliases: pandas=pd, NumPy=np, Seaborn=sns, Matplotlib=plt
-explore_df = ${explorationFrame}.copy()
-numeric_columns = explore_df.select_dtypes(include=np.number).columns.tolist()
-print("Shape:", explore_df.shape)
-if numeric_columns:
-    fig, ax = plt.subplots(figsize=(7, 3.8))
-    sns.histplot(data=explore_df, x=numeric_columns[0], kde=True, ax=ax, color="#7651a6")
-    ax.set_title(f"Explore {numeric_columns[0]}")
-    fig.tight_layout()
-explore_df.head(10)`;
-    const cell = addCell(code, "Free data exploration", null, true);
-    $("#notebookPanel").scrollTop = $("#notebookPanel").scrollHeight;
-    return cell;
-  }
-
   function routeTaskForCell(cell) {
     return cell?.taskId ? routeTasks.find(item => item.id === cell.taskId) || null : null;
   }
@@ -5867,7 +5846,6 @@ explore_df.head(10)`;
   $("#modelSelect").addEventListener("change", () => { void rebuildSetup(); });
   $("#foldSelect").addEventListener("change", () => { void rebuildSetup(); });
   $("#addCellButton").addEventListener("click", () => addCell());
-  $("#exploreButton")?.addEventListener("click", addExplorationCell);
   $("#runAllButton").addEventListener("click", runAll);
   $("#resetButton").addEventListener("click", () => { void resetNotebook(); });
   $("#downloadChartButton").addEventListener("click", downloadChart);

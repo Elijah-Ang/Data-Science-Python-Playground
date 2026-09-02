@@ -10,6 +10,7 @@ const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json")
 const files = [
   ".nojekyll",
   "index.html",
+  "tutorial.html",
   "playground.html",
   "ml.html",
   "privacy.html",
@@ -17,9 +18,11 @@ const files = [
   "help.html",
   "acknowledgements.html",
   "offline.html",
-  "home.css",
+  "tutorial.css",
+  "landing.css",
   "playground-shared.css",
-  "home.js",
+  "tutorial.js",
+  "landing.js",
   "ml-app.js",
   "manifest.webmanifest",
   "service-worker.js"

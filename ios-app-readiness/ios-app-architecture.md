@@ -4,7 +4,8 @@
 
 The project now uses a Capacitor 8 native shell around the existing static web app for the iPhone and iPad targets. The project is organised around these surfaces:
 
-- `index.html` — product home and walkthrough
+- `index.html` — pixel-art product welcome landing page
+- `tutorial.html` — product walkthrough and quick-start tutorial
 - `playground.html` — data analysis playground
 - `ml.html` — machine-learning playground
 - `about.html`, `help.html`, and `privacy.html` — app information and support

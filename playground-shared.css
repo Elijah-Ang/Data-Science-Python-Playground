@@ -49,7 +49,6 @@ body[data-playground][data-dataset="penguins"] { --pg-accent: #c08aff; --pg-wash
 body[data-playground][data-dataset="wine"] { --pg-accent: #e59ab6; --pg-wash: rgba(229,154,182,.13); }
 body[data-playground][data-dataset="breast"] { --pg-accent: #48d5ff; --pg-wash: rgba(72,213,255,.11); }
 body[data-playground][data-dataset="car"] { --pg-accent: #f97316; --pg-wash: rgba(249,115,22,.11); }
-body[data-playground][data-dataset="upload"] { --pg-accent: #48d5ff; --pg-wash: rgba(72,213,255,.11); }
 body[data-playground][data-theme="light"] {
   --paper-2: #fffaf0;
   --shadow: 0 18px 40px rgba(91,74,36,.15), 0 0 0 1px rgba(40,33,15,.05) inset;
@@ -63,7 +62,6 @@ body[data-playground][data-theme="light"][data-dataset="penguins"] { --pg-accent
 body[data-playground][data-theme="light"][data-dataset="wine"] { --pg-accent: #984c69; --pg-wash: rgba(152,76,105,.12); }
 body[data-playground][data-theme="light"][data-dataset="breast"] { --pg-accent: #137c9c; --pg-wash: rgba(19,124,156,.12); }
 body[data-playground][data-theme="light"][data-dataset="car"] { --pg-accent: #c75b20; --pg-wash: rgba(199,91,32,.12); }
-body[data-playground][data-theme="light"][data-dataset="upload"] { --pg-accent: #16809f; --pg-wash: rgba(22,128,159,.12); }
 
 body[data-playground] button,
 body[data-playground] select,
@@ -222,6 +220,56 @@ body[data-playground] .runtime-dot {
 }
 body[data-playground] .runtime-dot.ready { background: var(--mint); box-shadow: 0 0 0 3px rgba(88,224,181,.13); }
 body[data-playground] .runtime-dot.error { background: var(--coral); box-shadow: 0 0 0 3px rgba(255,124,135,.13); }
+
+/* Runtime state belongs to the Inspector so it reads as workspace health,
+   rather than competing with the dataset/model controls in the top strip. */
+body[data-playground] .inspector-runtime {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 9px;
+  width: 100%;
+  min-width: 0;
+  margin: 14px 0 0;
+  padding: 9px 10px;
+  border: 1px solid color-mix(in srgb, var(--gold) 48%, var(--border));
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--gold) 8%, var(--panel));
+  color: var(--muted);
+  white-space: normal;
+}
+body[data-playground] .inspector-runtime .runtime-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  margin-top: 3px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 16%, transparent);
+}
+body[data-playground] .inspector-runtime .runtime-dot.ready {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mint) 16%, transparent);
+}
+body[data-playground] .inspector-runtime .runtime-dot.error {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--coral) 16%, transparent);
+}
+body[data-playground] .runtime-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+body[data-playground] .runtime-copy strong {
+  color: var(--gold);
+  font: 700 .56rem/1 var(--display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+body[data-playground] .runtime-copy #runtimeStatus {
+  min-width: 0;
+  color: var(--muted);
+  font: 600 .61rem/1.35 var(--mono);
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
 
 /* Shared workspace / inspector */
 body[data-playground] .workspace { grid-template-columns: 258px minmax(0, 1fr); min-height: calc(100vh - 112px); }
@@ -505,6 +553,13 @@ body[data-playground="data"] .route-task[data-stage="inspect"] { border-top-colo
 body[data-playground="data"] .route-task[data-stage="wrangle"] { border-top-color: var(--violet); }
 body[data-playground="data"] .route-task[data-stage="visualise"] { border-top-color: var(--mint); }
 
+/* Guide stage filters are short authored interface labels on both playgrounds;
+   keep them in the product's pixel display language rather than body mono. */
+body[data-playground] .guide-filter {
+  font-family: var(--display);
+  font-weight: 700;
+}
+
 /* Shared notebook / output composition */
 body[data-playground] .notebook-bar {
   display: flex;
@@ -516,8 +571,14 @@ body[data-playground] .notebook-bar {
   padding-bottom: 5px;
   border-bottom: 1px dashed var(--border);
 }
-body[data-playground] .notebook-title h3,
-body[data-playground] .notebook-bar > h3 {
+body[data-playground] .notebook-title-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  min-width: 0;
+}
+body[data-playground] .notebook-bar h3 {
   margin: 0;
   color: var(--ink);
   font: 700 .77rem var(--display);
@@ -756,6 +817,7 @@ body[data-playground] .footer strong { color: var(--muted); }
   body[data-playground] .source-block { grid-column: 1; margin-top: 0; }
   body[data-playground] .privacy-note { display: none; }
   body[data-playground] .notebook-bar { align-items: flex-start; flex-direction: column; }
+  body[data-playground] .notebook-title-tools { width: 100%; }
   body[data-playground] .notebook-actions { justify-content: flex-start; width: 100%; }
   body[data-playground] .notebook-layout { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
   body[data-playground] .notebook-panel { gap: 8px; max-height: none; overflow: visible; padding-right: 0; }

@@ -2,7 +2,7 @@
   "appId": "com.elijahang.datascienceplayground",
   "appName": "Data Science Playground",
   "webDir": "dist",
-  "backgroundColor": "#0c1125",
+  "backgroundColor": "#efe8d7",
   "ios": {
     "contentInset": "automatic",
     "preferredContentMode": "mobile",
@@ -13,7 +13,7 @@
     "SplashScreen": {
       "launchShowDuration": 1200,
       "launchAutoHide": true,
-      "backgroundColor": "#0c1125",
+      "backgroundColor": "#efe8d7",
       "showSpinner": false
     },
     "StatusBar": {

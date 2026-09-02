@@ -4,7 +4,7 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const dist = path.join(root, "dist");
-const htmlFiles = ["index.html", "playground.html", "ml.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
+const htmlFiles = ["index.html", "tutorial.html", "playground.html", "ml.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
 
 const manifest = JSON.parse(await fs.readFile(path.join(root, "manifest.webmanifest"), "utf8"));
 assert.equal(manifest.start_url, "./index.html");
@@ -25,6 +25,10 @@ assert.equal(config.webDir, "dist");
 
 for (const file of [
   "app-platform.js",
+  "landing.css",
+  "landing.js",
+  "tutorial.css",
+  "tutorial.js",
   "playground-shared.css",
   "build-info.json",
   "manifest.webmanifest",

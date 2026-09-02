@@ -4,7 +4,8 @@
 
 The active product is a static learning and analysis tool delivered through GitHub Pages and a local Capacitor shell:
 
-- Home / visual walkthrough: `index.html`, `home.css`, `home.js`
+- Welcome landing page: `index.html`, `landing.css`, `landing.js`
+- Product tutorial: `tutorial.html`, `tutorial.css`, `tutorial.js`
 - Data Playground: `playground.html`
 - Machine Learning Playground: `ml.html`, `ml-app.js`
 - Bundled datasets: `data/`

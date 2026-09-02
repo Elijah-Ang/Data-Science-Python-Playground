@@ -2,6 +2,8 @@
 
 A local-first Python playground for inspecting, wrangling, visualising, and modelling complete real-world datasets. One set of web sources feeds both GitHub Pages and a Capacitor iPhone/iPad shell.
 
+The root route (`index.html`) is the lightweight pixel-art welcome landing page. The former walkthrough now lives explicitly at [`tutorial.html`](tutorial.html), so the tutorial and the working playground remain separate surfaces.
+
 ## Start locally
 
 Install the pinned JavaScript dependencies, build the web release, and serve it locally:
@@ -12,7 +14,7 @@ npm run build:web
 npm run dev
 ```
 
-Then open <http://127.0.0.1:8000/>. The GitHub Pages build loads Pyodide on demand; uploaded CSVs and analysis stay in the current browser session.
+Then open <http://127.0.0.1:8000/>. The GitHub Pages build loads Pyodide on demand; analysis stays in the current browser session.
 
 ## iPhone and iPad build
 
@@ -80,7 +82,7 @@ For descriptive interpretation, a reference label may be added after fitting—f
 - Palmer Penguins (333-row complete-case teaching copy)
 - Car Evaluation
 
-All bundled CSV files remain local to the browser session. Uploaded CSVs are processed in the current tab and are not saved automatically.
+All bundled CSV files remain local to the browser session and are not saved automatically.
 
 ## Testing and release
 
