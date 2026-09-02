@@ -18,7 +18,7 @@ Then open <http://127.0.0.1:8000/>. The GitHub Pages build loads Pyodide on dema
 
 ## iPhone and iPad build
 
-The generated Capacitor project lives in `ios/`. It packages the tested site, a pinned local Pyodide runtime, scientific Python wheels, local fonts, native sharing, and Files integration. It never opens the live GitHub Pages site as its application shell.
+The generated Capacitor project lives in `ios/`. It packages the tested site, a pinned local Pyodide runtime, scientific Python wheels, local fonts, native sharing, and export destinations. It never opens the live GitHub Pages site as its application shell. Version 1 uses bundled datasets only; user-supplied CSV import is deferred beyond version 1.
 
 ```bash
 npm run ios:sync

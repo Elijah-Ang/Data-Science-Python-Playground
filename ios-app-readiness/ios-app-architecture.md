@@ -28,7 +28,7 @@ For Mac users, the browser version remains the immediate computer experience. Af
 
 ## Why this fits the current project
 
-- The current product already has substantial interaction: editable Python cells, browser-side execution, data inspection, visualisation, modelling, CSV upload, chart/CSV export, and guided learning.
+- The current product already has substantial interaction: editable Python cells, browser-side execution, data inspection, visualisation, modelling, bundled datasets, chart/CSV export, and guided learning.
 - The project has no sign-in, subscription, or server account dependency in the active routes.
 - The owner has approved a free/no-account initial scope, with in-app purchases on hold and advertising tracked separately.
 - The existing release checks already cover JavaScript syntax, state behaviour, teaching metadata, route generation, and Pyodide-parity runtime logic.
@@ -39,11 +39,10 @@ For Mac users, the browser version remains the immediate computer experience. Af
 The first native layer provides:
 
 1. App bundle identity, signing, icon, launch screen, status-bar and safe-area configuration.
-2. Native Files import for CSV files.
-3. Native Files/share-sheet export for generated CSVs and charts.
-4. External-link handling for dataset source links.
-5. A controlled connectivity surface and the existing runtime error reporting.
-6. Session-only state: work remains while the WebView process stays alive, but no notebook or recent-work history is persisted after termination.
+2. Native Files/share-sheet export for generated CSVs and charts.
+3. External-link handling for dataset source links.
+4. A controlled connectivity surface and the existing runtime error reporting.
+5. Session-only state: work remains while the WebView process stays alive, but no notebook or recent-work history is persisted after termination.
 
 The owner approved the fresh-canvas model on 2026-08-31. Advertising remains a separate future layer and is not present in the native project.
 
@@ -51,15 +50,15 @@ The owner approved the fresh-canvas model on 2026-08-31. Advertising remains a s
 
 - The native artifact packages Pyodide, NumPy, pandas, matplotlib, SciPy, scikit-learn, Micropip, Seaborn, and their locked dependencies locally.
 - The web build keeps the smaller on-demand CDN path while using the same application source.
-- Browser-level WebAssembly, Web Worker, canvas, import, and export journeys are covered by the existing smoke and route suites.
+- Browser-level WebAssembly, Web Worker, canvas, and export journeys are covered by the existing smoke and route suites.
 - About, Privacy, Help, Support, local fonts, safe-area padding, and native sharing are implemented.
 - Preserve the holdout/test-set safeguards and run the existing route checks against the release commit.
 
-Physical iOS WebKit, hardware keyboard, rotation, memory pressure, Files picker, Share Sheet, and cold-install/offline behavior still require full Xcode and devices.
+Physical iOS WebKit, hardware keyboard, rotation, memory pressure, Share Sheet, and cold-install/offline behavior still require full Xcode and devices.
 
 ## Confirmed product boundary
 
-The initial scope is free and no-account. In-app purchases are on hold. Ads are desired, but they are a separate implementation milestone because an ad SDK introduces additional third-party data flows, consent work, privacy disclosures, and App Review checks. Analytics and cross-app tracking are not part of the initial scope.
+The initial scope is free and no-account. User-supplied CSV import is deferred beyond version 1; the first release uses the bundled dataset catalogue. In-app purchases are on hold. Ads are desired, but they are a separate implementation milestone because an ad SDK introduces additional third-party data flows, consent work, privacy disclosures, and App Review checks. Analytics and cross-app tracking are not part of the initial scope.
 
 ## Acceptance criteria
 
@@ -67,6 +66,6 @@ The initial scope is free and no-account. In-app purchases are on hold. Ads are 
 - The app can run the core data and ML journeys on a physical iPhone and iPad.
 - The GitHub Pages version remains usable on computers, and the chosen Mac delivery path is explicitly tested before being advertised as a native Mac experience.
 - The app remains usable after network loss once the runtime has been installed or bundled.
-- CSV import and chart/CSV export use iOS-native destinations where appropriate.
+- Chart/CSV export uses iOS-native destinations where appropriate.
 - A tested source-to-app synchronisation step makes web changes traceable to the native build commit.
 - No placeholder URLs, placeholder content, or review-only shortcuts remain in the submitted build.

@@ -18,6 +18,6 @@
 1. Run `npm ci`, `npm run check`, the representative Python runtime suite, and the bundled-runtime browser smoke test.
 2. Run `npm run build:web` and verify the GitHub Pages artifact is compact and does not contain the native Pyodide bundle.
 3. Run `npm run ios:sync` and build the Xcode target with the intended signing team.
-4. Test a clean install, offline relaunch, CSV import, CSV/chart sharing, rotation, keyboard, VoiceOver, and the core analysis/ML journeys on iPhone and iPad.
+4. Test a clean install, offline relaunch with bundled datasets, CSV/chart sharing, rotation, keyboard, VoiceOver, and the core analysis/ML journeys on iPhone and iPad.
 5. Archive, validate, and upload; record the App Store Connect build and TestFlight result in the tracker.
 6. Merge/publish the web artifact independently. Publishing web source never silently changes an installed app binary.
