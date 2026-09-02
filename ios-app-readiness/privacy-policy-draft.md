@@ -1,12 +1,12 @@
-# Privacy Policy Draft — Data Science Playground
+# Privacy Policy Draft — Data Playground
 
 **Status:** Source page created at `../privacy.html`; the policy still requires owner review, final native/SDK reconciliation, and a recorded public GitHub Pages URL before it is used as the App Store privacy-policy URL.
 
-**Last updated:** 2026-08-31
+**Last updated:** 2026-09-02
 
 ## 1. Who this policy is for
 
-This policy describes the planned privacy treatment for Data Science Playground, including the existing browser website and the future iPhone/iPad application. The service is intended to be free and usable without an account.
+This policy describes the planned privacy treatment for Data Playground, the iPhone/iPad application built from the existing browser project. The service is intended to be free and usable without an account.
 
 ## 2. Contact
 

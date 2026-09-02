@@ -4,7 +4,7 @@ This is a copy draft only. Support contact is confirmed; seller details, live su
 
 ## Working identity
 
-- **Working name:** Data Science Playground
+- **App name:** Data Playground
 - **Working subtitle:** Learn from real data
 - **Suggested primary category:** Education
 - **Suggested secondary category:** Developer Tools
@@ -19,7 +19,7 @@ Learn data science by working with real datasets in a private, browser-powered P
 
 ## Draft description
 
-Data Science Playground is an interactive learning lab for exploring data, writing Python, building visualisations, and understanding machine-learning evidence.
+Data Playground is an interactive learning lab for exploring data, writing Python, building visualisations, and understanding machine-learning evidence.
 
 Choose a real dataset, inspect its structure, ask a question, and work through a live notebook. Edit Python cells, run them, read tables and charts, and keep the original data safe while you experiment.
 

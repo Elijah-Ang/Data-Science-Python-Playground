@@ -1,6 +1,6 @@
 {
   "appId": "com.elijahang.datascienceplayground",
-  "appName": "Data Science Playground",
+  "appName": "Data Playground",
   "webDir": "dist",
   "backgroundColor": "#efe8d7",
   "ios": {
