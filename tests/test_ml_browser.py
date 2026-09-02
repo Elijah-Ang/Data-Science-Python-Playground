@@ -114,7 +114,7 @@ def assert_notebook_toolbar(page) -> None:
     if toolbar.count() != 1:
         raise AssertionError("The ML notebook toolbar is missing.")
     buttons = toolbar.locator("button")
-    expected = ["＋ Explore", "＋ Add cell", "▶ Run all", "↺ Reset data"]
+    expected = ["＋ Add cell", "▶ Run all", "↺ Reset data"]
     labels = [label.strip() for label in buttons.all_inner_texts()]
     if buttons.count() != len(expected) or labels != expected:
         raise AssertionError(f"ML notebook toolbar changed unexpectedly: {labels}")
