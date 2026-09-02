@@ -1559,12 +1559,20 @@ checkpoint_loadings.head(12)`;
   }
 
   async function getDatasetText(config) {
+    const encoded = window.EMBEDDED_DATASETS?.[config.embedded];
+    // Native builds already carry the compressed teaching data. Prefer it on
+    // WKWebView, where fetch() against the capacitor:// asset handler can fail.
+    if (window.AppPlatform?.native && encoded) {
+      try { return await decodeEmbedded(encoded); }
+      catch {
+        // Keep the direct CSV request as a fallback for older WebKit builds.
+      }
+    }
     try {
       const response = await fetch(config.file, {cache:"no-store"});
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return await response.text();
     } catch (fetchError) {
-      const encoded = window.EMBEDDED_DATASETS?.[config.embedded];
       try { return await decodeEmbedded(encoded); }
       catch (fallbackError) {
         throw new Error(`Dataset unavailable (${fetchError.message}); fallback failed (${fallbackError.message})`);

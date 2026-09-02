@@ -2030,23 +2030,39 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       }
     }
 
+    async function decodeEmbeddedDataset(encoded) {
+      if (!encoded) throw new Error("No embedded dataset copy is available.");
+      if (!("DecompressionStream" in window)) {
+        throw new Error("This browser cannot decode the embedded dataset copy. Open the playground from a web server instead.");
+      }
+      const binary = atob(encoded);
+      const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+      const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+      return new Response(stream).text();
+    }
+
     async function fetchDatasetText(config) {
       const datasetUrl = new URL(config.file, document.baseURI);
       const embedded = window.EMBEDDED_DATASETS?.[config.id];
+      // WKWebView's capacitor:// asset handler is reliable for page resources but
+      // not for every fetch() call. Native builds already carry a compressed copy,
+      // so use that copy first and retain the CSV request as a compatibility fallback.
+      if (window.AppPlatform?.native && embedded) {
+        try {
+          runtimeStatus.textContent = "Using bundled dataset copy…";
+          return await decodeEmbeddedDataset(embedded);
+        } catch {
+          // Older WebKit builds without DecompressionStream can still use the CSV.
+        }
+      }
       try {
         const response = await fetch(datasetUrl.href, { cache: "no-store" });
         if (!response.ok) throw new Error(`Could not fetch ${datasetUrl.pathname} (${response.status})`);
         return response.text();
       } catch (error) {
         if (!embedded) throw error;
-        if (!("DecompressionStream" in window)) {
-          throw new Error("This browser cannot decode the embedded dataset copy. Open the playground from a web server instead.");
-        }
         runtimeStatus.textContent = "Using embedded dataset copy…";
-        const binary = atob(embedded);
-        const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
-        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-        return new Response(stream).text();
+        return decodeEmbeddedDataset(embedded);
       }
     }
 

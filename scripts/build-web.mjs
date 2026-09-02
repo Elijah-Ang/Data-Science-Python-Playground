@@ -28,6 +28,15 @@ const files = [
   "service-worker.js"
 ];
 const directories = ["assets", "data"];
+const nativeRuntimeFiles = [
+  "pyodide.js",
+  "pyodide.asm.js",
+  "pyodide.asm.wasm",
+  "python_stdlib.zip",
+  "pyodide-lock.json",
+  "runtime-manifest.json",
+  "wheels/seaborn-0.13.2-py3-none-any.whl"
+];
 
 await fs.rm(output, { recursive: true, force: true });
 await fs.mkdir(output, { recursive: true });
@@ -42,6 +51,9 @@ for (const directory of directories) {
 if (process.env.DSPP_NATIVE_RUNTIME === "1") {
   const localRuntime = path.join(root, "vendor", "pyodide");
   await fs.access(localRuntime);
+  for (const file of nativeRuntimeFiles) {
+    await fs.access(path.join(localRuntime, file));
+  }
   await fs.cp(localRuntime, path.join(output, "pyodide"), { recursive: true });
 }
 
