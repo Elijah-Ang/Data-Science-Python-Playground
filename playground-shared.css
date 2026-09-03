@@ -768,6 +768,7 @@ body[data-playground] .result-note { margin: 8px 0 0; padding: 7px 8px; border-l
 
 body[data-playground] .footer { display: flex; justify-content: space-between; gap: 20px; padding: 18px 20px 24px; border-top: 1px dashed var(--border); color: var(--faint); font-size: .67rem; }
 body[data-playground] .footer strong { color: var(--muted); }
+body[data-playground] .footer-links { display: inline-flex; align-items: center; gap: 4px; }
 
 /* Shared responsive contract.  The control strip's internal grid remains ML-
    specific; the rail, lab, notebook, and output composition is shared. */
@@ -839,13 +840,24 @@ body[data-playground] .footer strong { color: var(--muted); }
   body[data-playground] .topbar { align-items: center; gap: 8px; }
   body[data-playground] .brand h1 { font-size: .67rem; }
   body[data-playground] .top-actions { gap: 4px; }
-  body[data-playground] .top-actions { display: grid; grid-template-columns: minmax(0, 1fr) 34px 34px; width: 100%; min-width: 0; flex: 1 1 100%; }
+  body[data-playground] .top-actions { display: grid; grid-template-columns: minmax(0, 1fr) 44px 44px; width: 100%; min-width: 0; flex: 1 1 100%; }
   body[data-playground] .mode-switch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; width: 100%; min-width: 0; padding: 0; }
   body[data-playground] .mode-link,
   body[data-playground] .mode-link:nth-child(2),
-  body[data-playground] .mode-link:nth-child(3) { width: 100%; min-width: 0; }
+  body[data-playground] .mode-link:nth-child(3) {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    aspect-ratio: auto;
+  }
   body[data-playground] .guide-button span { display: none; }
-  body[data-playground] .guide-button { width: 34px; min-width: 34px; padding: 5px; }
+  body[data-playground] .guide-button,
+  body[data-playground] .theme-button {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 9px;
+  }
   body[data-playground] .inspector-body { display: block; overflow: visible; }
   body[data-playground] .inspector-preview-section { margin-top: 10px; }
   body[data-playground] .column-list,
@@ -853,15 +865,44 @@ body[data-playground] .footer strong { color: var(--muted); }
   body[data-playground] .try-area,
   body[data-playground] .lab { padding-inline: 10px; }
   body[data-playground] .route-tools { align-items: stretch; flex-direction: column; gap: 8px; }
-  body[data-playground] .route-tools .toolbar-button { width: 100%; }
+  body[data-playground] .route-tools .toolbar-button { width: 100%; min-height: 44px; }
   body[data-playground] .route-card,
-  body[data-playground] .task-block.route-task { flex-basis: 142px; min-width: 142px; }
+  body[data-playground] .task-block.route-task { flex-basis: 142px; min-width: 142px; min-height: 44px; }
+  body[data-playground] .task-more-block { min-height: 44px; }
   body[data-playground] .cell-stage { display: none; }
-  body[data-playground] .cell-action { padding-inline: 5px; font-size: .58rem; }
+  body[data-playground] .cell-action { min-height: 44px; padding-inline: 8px; font-size: .58rem; }
   body[data-playground] .code-input { width: 510px; min-width: 510px; font-size: .67rem; }
   body[data-playground] .output-head { flex-wrap: wrap; }
   body[data-playground] .output-head .output-actions { width: 100%; margin-left: 0; }
+  body[data-playground] .output-head .output-action,
+  body[data-playground] .output-head .toolbar-button,
+  body[data-playground] .notebook-bar .toolbar-button,
+  body[data-playground] .guide-filter,
+  body[data-playground] .workflow-reveal-button,
+  body[data-playground] .practice-button,
+  body[data-playground] .guide-close {
+    min-height: 44px;
+  }
   body[data-playground] .footer { flex-direction: column; padding-inline: 11px; }
+  body[data-playground] .footer-links {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0 2px;
+  }
+  body[data-playground] .footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 6px;
+  }
+  body[data-playground] .source-block a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -8px;
+    padding: 8px 4px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

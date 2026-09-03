@@ -690,9 +690,9 @@
     </div>
     <div class="top-actions">
       <nav class="mode-switch" aria-label="Playground mode">
-        <a class="mode-link mode-link--home" href="index.html"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Home</span></a>
-        <a class="mode-link mode-link--data" href="playground.html" aria-current="page"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Data Playground</span></a>
-        <a class="mode-link mode-link--ml" href="ml.html"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Machine Learning</span></a>
+        <a class="mode-link mode-link--home" href="index.html" aria-label="Home"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Home</span></a>
+        <a class="mode-link mode-link--data" href="playground.html" aria-current="page" aria-label="Data Playground"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Data Playground</span></a>
+        <a class="mode-link mode-link--ml" href="ml.html" aria-label="Machine Learning"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Machine Learning</span></a>
       </nav>
       <button class="icon-button guide-button" id="guideButton" type="button" aria-expanded="false" aria-label="Open challenges" title="Open challenges">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 5.5c2.4-1.5 4.8-1.5 7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3z"></path><path d="M19.5 5.5c-2.4-1.5-4.8-1.5-7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3z"></path><path d="M12 5.8v13"></path></svg>
@@ -760,12 +760,12 @@
 
       <div class="route-tools">
         <div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span>Six small moves from first look to evidence. Reveal more questions when you want to wander.</span></div>
-        <button class="toolbar-button" id="moreTasksToggle" type="button" aria-pressed="false">＋ More tasks</button>
+        <button class="toolbar-button" id="moreTasksToggle" type="button" aria-expanded="false" aria-controls="moreTasksPanel" aria-pressed="false">＋ More tasks</button>
       </div>
 
       <div class="route-strip" id="suggestedRoute" aria-label="Suggested analysis route"></div>
 
-      <div class="more-tasks-panel" id="moreTasksPanel" aria-label="Optional data questions">
+      <div class="more-tasks-panel" id="moreTasksPanel" aria-label="Optional data questions" hidden>
         <div class="more-tasks-panel-head"><span>MORE QUESTIONS</span><span>scroll down + sideways · click to insert</span></div>
         <div class="more-tasks-scroll">
           <section class="task-category" data-stage="inspect">
@@ -800,7 +800,7 @@
         <aside class="output-panel" aria-labelledby="outputTitle">
           <div class="output-head">
             <h3 id="outputTitle">Output</h3>
-            <span id="outputStatus">No cell run yet</span>
+            <span id="outputStatus" role="status" aria-live="polite" aria-atomic="true">No cell run yet</span>
             <div class="output-actions">
               <button class="output-action" id="downloadCsvButton" type="button" disabled>↓ CSV</button>
               <button class="output-action" id="downloadChartButton" type="button" disabled>↓ chart</button>
@@ -817,7 +817,7 @@
     </section>
   </main>
 
-  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span>Save or share deliberately before you leave.</span><span><a href="help.html">Help</a> · <a href="privacy.html">Privacy</a></span></footer>
+  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span>Save or share deliberately before you leave.</span><span class="footer-links"><a href="help.html">Help</a><span aria-hidden="true">·</span><a href="privacy.html">Privacy</a></span></footer>
 
   <div class="guide-window" id="guideWindow" role="dialog" aria-modal="false" aria-labelledby="guideTitle" hidden>
     <div class="guide-head" id="guideDragHandle">
@@ -1159,6 +1159,59 @@
       toast.className = "toast show" + (isError ? " error" : "");
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => { toast.className = "toast"; }, 2600);
+    }
+
+    // Notebook renders replace the editable DOM, so retain the invoking
+    // editor/control and put focus back on its new equivalent afterwards.
+    function captureFocusTarget() {
+      const active = document.activeElement;
+      if (!active || active === document.body) return null;
+      const cellElement = active.closest("article.cell[data-cell-id]");
+      if (cellElement) {
+        const target = {
+          kind: active.matches(".code-input") ? "editor" : "control",
+          cellId: cellElement.dataset.cellId
+        };
+        if (active.matches(".code-input")) {
+          target.selectionStart = active.selectionStart;
+          target.selectionEnd = active.selectionEnd;
+          target.selectionDirection = active.selectionDirection;
+        }
+        if (active.matches("button")) target.controlClass = active.className;
+        return target;
+      }
+      if (active.matches(".task-block[data-task-id], .task-more-block[data-task-id]")) {
+        return { kind: "task", taskId: active.dataset.taskId };
+      }
+      if (active.id) return { kind: "id", id: active.id };
+      return null;
+    }
+
+    function restoreFocusTarget(target) {
+      if (!target) return;
+      let element = null;
+      if (target.kind === "editor" || target.kind === "control") {
+        const article = $$("article.cell[data-cell-id]", notebookPanel).find(item => item.dataset.cellId === target.cellId);
+        if (article) {
+          if (target.kind === "editor") element = $(".code-input", article);
+          else element = $$("button", article).find(button => button.className === target.controlClass) || $(".code-input", article);
+        }
+      } else if (target.kind === "task") {
+        element = $$("[data-task-id]", document).find(item => item.dataset.taskId === target.taskId);
+      } else if (target.kind === "id") {
+        element = document.getElementById(target.id);
+      }
+      if (!element || element.disabled) {
+        if (target.cellId) {
+          const article = $$("article.cell[data-cell-id]", notebookPanel).find(item => item.dataset.cellId === target.cellId);
+          element = $(".code-input", article || notebookPanel);
+        }
+      }
+      if (!element || typeof element.focus !== "function") return;
+      element.focus({ preventScroll: true });
+      if (target.kind === "editor" && typeof target.selectionStart === "number") {
+        try { element.setSelectionRange(target.selectionStart, target.selectionEnd, target.selectionDirection); } catch { /* not a text control */ }
+      }
     }
 
     function setRuntimeError(message) {
@@ -1622,7 +1675,10 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           extraContainer.append(makeTaskButton(task, `＋${index + 1}`, "extra"));
         });
       });
-      $("#moreTasksPanel").classList.toggle("is-visible", moreTasksExpanded);
+      const moreTasksPanel = $("#moreTasksPanel");
+      moreTasksPanel.classList.toggle("is-visible", moreTasksExpanded);
+      moreTasksPanel.hidden = !moreTasksExpanded;
+      $("#moreTasksToggle").setAttribute("aria-expanded", String(moreTasksExpanded));
       updateProgress();
     }
 
@@ -1647,7 +1703,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       return (Math.max(lineHeight + 20, lineCount * lineHeight + 20)) + "px";
     }
 
-    function renderNotebook(focusCellId = null) {
+    function renderNotebook(focusCellId = null, focusTarget = null) {
       notebookPanel.replaceChildren();
       if (!cells.length) {
         const empty = document.createElement("div");
@@ -1750,7 +1806,9 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         renderLineRail(cell, article);
         syncCodeHighlight();
       });
-      if (focusCellId) {
+      if (focusTarget) {
+        restoreFocusTarget(focusTarget);
+      } else if (focusCellId) {
         const target = $(`[data-cell-id="${focusCellId}"] .code-input`, notebookPanel);
         if (target) { target.focus(); target.setSelectionRange(target.value.length, target.value.length); }
       }
@@ -1804,8 +1862,9 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
 
     async function runCell(cell) {
       if (!cell.code.trim() || cell.status === "running") return;
+      const focusTarget = captureFocusTarget();
       cell.status = "running";
-      renderNotebookView();
+      renderNotebookView(null, focusTarget);
       renderTasksOnlyStates();
       $("#outputStatus").textContent = `${cell.label} · running`;
       try {
@@ -1824,7 +1883,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         renderOutput(cell);
         showToast(error.message, true);
       }
-      renderNotebookView();
+      renderNotebookView(null, focusTarget);
       updateProgress();
     }
 
@@ -1982,9 +2041,10 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       $("#outputStatus").textContent = result.status === "ok" ? `${cell.label} · ready` : `${cell.label} · error`;
     }
 
-    function renderNotebookView(focusCellId = null) {
-      renderNotebook(focusCellId);
+    function renderNotebookView(focusCellId = null, focusTarget = null) {
+      renderNotebook(focusCellId, focusTarget);
       renderOutputHistory();
+      restoreFocusTarget(focusTarget);
     }
 
     function prepareWorkspaceForLoad() {
@@ -2296,15 +2356,20 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         const answerButton = document.createElement("button");
         answerButton.type = "button";
         answerButton.className = "guide-challenge-action answer";
+        answerButton.id = `guide-answer-toggle-${index}`;
         answerButton.textContent = "Show model answer";
         const answer = document.createElement("pre");
         answer.className = "guide-answer";
+        answer.id = `guide-answer-${index}`;
         answer.hidden = true;
         answer.innerHTML = highlightPython(challenge.answer);
         answer.setAttribute("aria-label", "Model answer for " + challenge.title);
+        answerButton.setAttribute("aria-expanded", "false");
+        answerButton.setAttribute("aria-controls", answer.id);
         answerButton.addEventListener("click", () => {
           answer.hidden = !answer.hidden;
           answerButton.textContent = answer.hidden ? "Show model answer" : "Hide model answer";
+          answerButton.setAttribute("aria-expanded", String(!answer.hidden));
         });
         actions.append(write, answerButton);
         detail.append(actions, answer);

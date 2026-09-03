@@ -4216,6 +4216,7 @@ plot_df.head(12)`,{
     routeTasks.forEach((item, index) => {
       const state = routeButtonState(routeTasks, cells, index, {runtimeReady, testSetOpened});
       const button = document.createElement("button"); button.type = "button"; button.className = "route-card";
+      button.dataset.taskId = item.id;
       button.style.setProperty("--stage-color", colorFor(index));
       button.dataset.state = state.status;
       button.disabled = state.blocked;
@@ -4310,6 +4311,57 @@ plot_df.head(12)`,{
     cells = cells.filter(value => value.id !== cell.id);
     if (routeTaskId) invalidateRouteFrom(routeTaskId);
     renderNotebookView(); renderRoute(); updateSeal();
+  }
+
+  // Notebook renders replace the editable DOM, so retain the invoking
+  // editor/control and put focus back on its new equivalent afterwards.
+  function captureFocusTarget() {
+    const active = document.activeElement;
+    if (!active || active === document.body) return null;
+    const cellElement = active.closest("article.cell[data-cell-id]");
+    if (cellElement) {
+      const target = {
+        kind: active.matches(".code-input") ? "editor" : "control",
+        cellId: cellElement.dataset.cellId
+      };
+      if (active.matches(".code-input")) {
+        target.selectionStart = active.selectionStart;
+        target.selectionEnd = active.selectionEnd;
+        target.selectionDirection = active.selectionDirection;
+      }
+      if (active.matches("button")) target.controlClass = active.className;
+      return target;
+    }
+    if (active.matches(".route-card[data-task-id]")) return {kind:"route", taskId:active.dataset.taskId};
+    if (active.id) return {kind:"id", id:active.id};
+    return null;
+  }
+
+  function restoreFocusTarget(target) {
+    if (!target) return;
+    let element = null;
+    if (target.kind === "editor" || target.kind === "control") {
+      const article = $$("article.cell[data-cell-id]", $("#notebookPanel")).find(item => item.dataset.cellId === target.cellId);
+      if (article) {
+        if (target.kind === "editor") element = $(".code-input", article);
+        else element = $$("button", article).find(button => button.className === target.controlClass) || $(".code-input", article);
+      }
+    } else if (target.kind === "route") {
+      element = $$(".route-card[data-task-id]").find(item => item.dataset.taskId === target.taskId);
+    } else if (target.kind === "id") {
+      element = document.getElementById(target.id);
+    }
+    if (!element || element.disabled) {
+      if (target.cellId) {
+        const article = $$("article.cell[data-cell-id]", $("#notebookPanel")).find(item => item.dataset.cellId === target.cellId);
+        element = $(".code-input", article || $("#notebookPanel"));
+      }
+    }
+    if (!element || typeof element.focus !== "function") return;
+    element.focus({preventScroll:true});
+    if (target.kind === "editor" && typeof target.selectionStart === "number") {
+      try { element.setSelectionRange(target.selectionStart, target.selectionEnd, target.selectionDirection); } catch { /* not a text control */ }
+    }
   }
 
   function routeTaskForCell(cell) {
@@ -5138,6 +5190,7 @@ plot_df.head(12)`,{
     if (!task || !state) return null;
     const section = document.createElement("section");
     section.className = "practice-panel practice-exercise-panel";
+    section.id = `practice-exercise-${cell.id}`;
     section.dataset.practiceRole = "exercise";
     section.dataset.practiceTask = task.id;
     section.dataset.practiceExerciseId = exercise.id;
@@ -5156,14 +5209,21 @@ plot_df.head(12)`,{
     }
     if (!state.exerciseReferenceRevealed) {
       const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution";
-      reveal.addEventListener("click", () => { state.exerciseReferenceRevealed = true; renderNotebookView(); renderPracticeModeControls(); });
+      reveal.id = `${section.id}-toggle`;
+      reveal.setAttribute("aria-expanded", "false");
+      reveal.setAttribute("aria-controls", section.id);
+      reveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.exerciseReferenceRevealed = true; renderNotebookView(focusTarget); renderPracticeModeControls(); });
       actions.append(reveal);
     }
     section.append(actions);
     if (state.exerciseHintRevealed) {
       const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = exercise.hint; section.append(hint);
     }
-    if (state.exerciseReferenceRevealed) section.append(practiceReferenceBlock("Reference solution", exercise.solution));
+    if (state.exerciseReferenceRevealed) {
+      const reference = practiceReferenceBlock("Reference solution", exercise.solution);
+      reference.id = `${section.id}-reference`;
+      section.append(reference);
+    }
     if (cell.output) {
       const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.practiceRole = "exercise-status"; status.setAttribute("aria-live", "polite");
       const validation = cell.output.validation;
@@ -5185,6 +5245,7 @@ plot_df.head(12)`,{
     const hasDistinctCleanReference = Boolean(cell.cleanReferenceCode && cell.cleanReferenceCode !== cell.referenceCode);
     const section = document.createElement("section");
     section.className = "practice-panel independent-checkpoint";
+    section.id = `independent-checkpoint-${cell.id}`;
     section.dataset.practiceRole = "independent-checkpoint";
     section.dataset.checkpointId = cell.id;
     section.setAttribute("aria-label", "Independent practice checkpoint");
@@ -5203,10 +5264,10 @@ plot_df.head(12)`,{
       const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint"; hint.addEventListener("click", () => { state.hintRevealed = true; renderNotebookView(); }); actions.append(hint);
     }
     if (!state.referenceRevealed) {
-      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution"; reveal.addEventListener("click", () => { state.referenceRevealed = true; renderNotebookView(); }); actions.append(reveal);
+      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution"; reveal.id = `${section.id}-toggle`; reveal.setAttribute("aria-expanded", "false"); reveal.setAttribute("aria-controls", section.id); reveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.referenceRevealed = true; renderNotebookView(focusTarget); }); actions.append(reveal);
     }
     if (hasDistinctCleanReference && !state.cleanReferenceRevealed) {
-      const cleanReveal = document.createElement("button"); cleanReveal.type = "button"; cleanReveal.className = "practice-button secondary"; cleanReveal.textContent = "Reveal clean-workflow reference"; cleanReveal.addEventListener("click", () => { state.cleanReferenceRevealed = true; renderNotebookView(); }); actions.append(cleanReveal);
+      const cleanReveal = document.createElement("button"); cleanReveal.type = "button"; cleanReveal.className = "practice-button secondary"; cleanReveal.textContent = "Reveal clean-workflow reference"; cleanReveal.id = `${section.id}-clean-toggle`; cleanReveal.setAttribute("aria-expanded", "false"); cleanReveal.setAttribute("aria-controls", section.id); cleanReveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.cleanReferenceRevealed = true; renderNotebookView(focusTarget); }); actions.append(cleanReveal);
     }
     section.append(actions);
     if (state.hintRevealed) { const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = metadata.hint; section.append(hint); }
@@ -5307,8 +5368,9 @@ plot_df.head(12)`,{
     if (cell.stage === "final" && testSetOpened) { showToast("The final test has already been used in this walkthrough. Select Reset to start again.", true); return; }
     if (!ensurePracticeCanRun(cell)) return;
     if (!cell.code.trim() || cell.status === "running") return;
+    const focusTarget = captureFocusTarget();
     const token = workspaceToken;
-    cell.status = "running"; renderNotebookView(); renderRoute();
+    cell.status = "running"; renderNotebookView(focusTarget); renderRoute(); restoreFocusTarget(focusTarget);
     $("#outputStatus").textContent = `${cell.label} · running`;
     try {
       const rawValidation = cell.exercise?.validation || cell.checkpointMeta?.validation || null;
@@ -5345,7 +5407,7 @@ plot_df.head(12)`,{
       $("#outputStatus").textContent = `${cell.label} · Python error`;
       showToast(error.message, true);
     }
-    renderNotebookView(); renderRoute(); updateSeal();
+    renderNotebookView(focusTarget); renderRoute(); updateSeal(); restoreFocusTarget(focusTarget);
   }
 
   async function runAll() {
@@ -5524,9 +5586,10 @@ plot_df.head(12)`,{
     $("#outputBody").scrollTop = $("#outputBody").scrollHeight;
   }
 
-  function renderNotebookView() {
+  function renderNotebookView(focusTarget = null) {
     renderNotebook();
     renderOutputs();
+    restoreFocusTarget(focusTarget);
   }
 
   function updateSeal() {
@@ -5642,6 +5705,8 @@ plot_df.head(12)`,{
     const light = document.body.dataset.theme === "light";
     document.body.dataset.theme = light ? "dark" : "light";
     $("#themeButton").setAttribute("aria-label", `Switch to ${light ? "light" : "dark"} theme`);
+    $("#themeButton").setAttribute("aria-pressed", String(!light));
+    $("#themeButton").title = `Switch to ${light ? "light" : "dark"} theme`;
     $("#themeIcon").innerHTML = light
       ? '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>'
       : '<path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path>';
@@ -5659,10 +5724,12 @@ plot_df.head(12)`,{
   }
 
   function togglePracticeReference(taskId) {
+    const focusTarget = captureFocusTarget();
     const state = practiceStateFor(taskId);
     state.referenceRevealed = !state.referenceRevealed;
     renderWorkflow();
     renderPracticeModeControls();
+    restoreFocusTarget(focusTarget);
   }
 
   function renderWorkflow() {
@@ -5681,6 +5748,7 @@ plot_df.head(12)`,{
 
     routeTasks.forEach((item, index) => {
       const step = document.createElement("article"); step.className = "workflow-step"; step.dataset.taskId = item.id; step.style.setProperty("--step-color", colorFor(index));
+      step.id = `workflow-step-${index}`;
       const number = document.createElement("span"); number.className = "workflow-step-number"; number.textContent = String(index + 1).padStart(2,"0");
       const head = document.createElement("div"); head.className = "workflow-step-head";
       const copy = document.createElement("div");
@@ -5704,6 +5772,7 @@ plot_df.head(12)`,{
       if (playgroundMode === "practice") {
         const reveal = document.createElement("div");
         reveal.className = "workflow-code-reveal";
+        reveal.id = `${step.id}-code`;
         reveal.dataset.practiceRole = "reference-code";
         reveal.dataset.practiceTask = item.id;
         const state = practiceStateFor(item.id);
@@ -5719,7 +5788,10 @@ plot_df.head(12)`,{
           const hide = document.createElement("button");
           hide.type = "button";
           hide.className = "workflow-reveal-button";
+          hide.id = `${reveal.id}-toggle`;
           hide.textContent = "Hide reference solution";
+          hide.setAttribute("aria-expanded", "true");
+          hide.setAttribute("aria-controls", reveal.id);
           hide.addEventListener("click", () => togglePracticeReference(item.id));
           reveal.append(label, code, hide);
         } else {
@@ -5728,7 +5800,10 @@ plot_df.head(12)`,{
           const show = document.createElement("button");
           show.type = "button";
           show.className = "workflow-reveal-button";
+          show.id = `${reveal.id}-toggle`;
           show.textContent = "Reveal code";
+          show.setAttribute("aria-expanded", "false");
+          show.setAttribute("aria-controls", reveal.id);
           show.addEventListener("click", () => togglePracticeReference(item.id));
           reveal.append(message, show);
         }
