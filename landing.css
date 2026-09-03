@@ -85,6 +85,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .scene-art { display: block; width: 100%; height: auto; user-select: none; }
 
 .gate-hitbox { position: absolute; z-index: 6; left: 38%; top: 82%; width: 24%; height: 16%; display: block; border: 0; outline: 0; background: transparent; cursor: pointer; }
+.gate-hitbox:focus-visible {
+  outline: 4px solid #087f9d;
+  outline-offset: 5px;
+  border-radius: 18px;
+  box-shadow: 0 0 0 4px rgba(255, 247, 214, .92), 0 0 0 8px rgba(8, 127, 157, .32);
+}
 .gate-hitbox::before {
   content: "";
   position: absolute;
@@ -211,7 +217,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .scene-section { margin-top: 18px; }
   .scene-hint { font-size: .56rem; }
 }
-@media (max-width: 720px), (orientation: portrait) and (max-width: 900px) {
+/* iPads can be 1024 CSS pixels wide in portrait. Orientation, rather than a
+   phone-sized width cap, is the reliable contract for the portrait artwork. */
+@media (max-width: 720px), (orientation: portrait) {
   .gate-hitbox { left: 31%; top: 82.8%; width: 38%; height: 14.5%; }
   .gate-glow { left: 25%; top: 25%; width: 50%; height: 39%; }
   .gate-hitbox::after { left: 19%; top: 13%; width: 62%; height: 63%; }

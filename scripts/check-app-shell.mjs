@@ -48,4 +48,39 @@ for (const match of serviceWorker.matchAll(/"\.\/([^"?]+)"/g)) {
   await fs.access(path.join(dist, relative));
 }
 
+const landingHtml = await fs.readFile(path.join(root, "index.html"), "utf8");
+const landingCss = await fs.readFile(path.join(root, "landing.css"), "utf8");
+const dataHtml = await fs.readFile(path.join(root, "playground.html"), "utf8");
+const mlHtml = await fs.readFile(path.join(root, "ml.html"), "utf8");
+const mlApp = await fs.readFile(path.join(root, "ml-app.js"), "utf8");
+const playgroundCss = await fs.readFile(path.join(root, "playground-shared.css"), "utf8");
+const portraitMedia = "(max-width: 720px), (orientation: portrait)";
+assert.equal(
+  [...landingHtml.matchAll(/<source media="([^"]+)" srcset="assets\/landing\/(?:data-playground-mobile-source|gate-glow-mobile)\.png">/g)]
+    .filter(match => match[1] === portraitMedia).length,
+  2,
+  "The landing scene and gate glow must use portrait artwork at every portrait viewport width, including a 1024px iPad."
+);
+assert.ok(
+  landingCss.includes(`@media ${portraitMedia} {`),
+  "The portrait scene hitbox must follow the same orientation contract as its artwork."
+);
+assert.doesNotMatch(
+  `${landingHtml}\n${landingCss}`,
+  /\(orientation:\s*portrait\)\s+and\s+\(max-width:\s*900px\)/,
+  "Do not restore the 900px portrait cap; 13-inch iPads are 1024 CSS pixels wide in portrait."
+);
+
+for (const [name, html] of [["Data Playground", dataHtml], ["Machine Learning", mlHtml]]) {
+  for (const label of ["Home", "Data Playground", "Machine Learning"]) {
+    assert.match(html, new RegExp(`<a[^>]+class="[^"]*mode-link[^"]*"[^>]+aria-label="${label}"`), `${name} must expose an accessible ${label} mode link.`);
+  }
+  assert.match(html, /id="outputStatus"[^>]+role="status"[^>]+aria-live="polite"/, `${name} must announce notebook run status.`);
+}
+assert.match(dataHtml, /id="moreTasksToggle"[^>]+aria-expanded="false"[^>]+aria-controls="moreTasksPanel"/, "More tasks must expose its disclosure state and controlled panel.");
+assert.match(dataHtml, /function captureFocusTarget\(\)/, "Data Playground must retain focus across notebook rerenders.");
+assert.match(mlApp, /function captureFocusTarget\(\)/, "Machine Learning must retain focus across notebook rerenders.");
+assert.match(landingCss, /\.gate-hitbox:focus-visible\s*\{[^}]*outline:/s, "The landing gate must have a visible keyboard focus indicator.");
+assert.match(playgroundCss, /\.cell-action\s*\{[^}]*min-height:\s*44px/s, "Mobile notebook actions must provide 44px touch targets.");
+
 console.log("App shell, PWA metadata, local assets, and Capacitor configuration verified.");
