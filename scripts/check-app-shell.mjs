@@ -103,8 +103,33 @@ assert.match(
 );
 assert.match(
   playgroundCss,
-  /body\[data-playground\] \.notebook-panel \{ order: 1; \}[\s\S]*?body\[data-playground\] \.output-panel \{ order: 2; \}/s,
-  "The compact layout must keep notebook cells before output."
+  /body\[data-playground\] \.notebook-panel \{ order: 2; width: 100%; \}/,
+  "The compact layout must place the cell stream before the mobile controls."
+);
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.notebook-actions \{[\s\S]*?order: 3;/,
+  "The compact layout must place notebook actions after the cell stream."
+);
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.notebook-actions \.toolbar-button \{\s*min-height: 44px;\s*\}/,
+  "Compact notebook controls must keep comfortable touch targets."
+);
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-actions,[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-head > \.toolbar-button \{[\s\S]*?order: 4;/,
+  "The compact layout must place export actions after cell outputs."
+);
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-action,[\s\S]*?min-width: 44px;[\s\S]*?min-height: 44px;/,
+  "Compact export controls must keep comfortable touch targets."
+);
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.route-tools \{ order: 5; \}[\s\S]*?body\[data-playground\] \.route-strip \{ order: 6; \}[\s\S]*?body\[data-playground\] \.more-tasks-panel \{ order: 7; \}/,
+  "The compact layout must place suggested-route shortcuts after the notebook controls."
 );
 assert.doesNotMatch(
   playgroundCss,
@@ -122,8 +147,8 @@ assert.match(
 );
 assert.match(
   playgroundCss,
-  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.output-panel \{[^}]*display: none;[^}]*\}[\s\S]*?body\[data-playground\] \.output-panel\.has-global-message \{ display: flex; \}/s,
-  "The compact layout must hide the duplicate global output shell while retaining temporary status messages."
+  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\),[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-head \{\s*display: contents;[\s\S]*?body\[data-playground\] \.output-panel\.has-global-message \{[\s\S]*?display: flex;/s,
+  "The compact layout must flatten the duplicate global output shell while retaining temporary status messages."
 );
 assert.match(mlApp, /if \(mobileLayoutQuery\.matches\) \{[\s\S]*?cell-inline-output[\s\S]*?renderOutputItem\(cell\)/s, "Machine Learning must render completed outputs into mobile cell hosts.");
 

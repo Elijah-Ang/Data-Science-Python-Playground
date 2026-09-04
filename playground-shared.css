@@ -883,10 +883,32 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
   body[data-playground] .inspector-section.columns { grid-column: 1; }
   body[data-playground] .source-block { grid-column: 1; margin-top: 0; }
   body[data-playground] .privacy-note { display: none; }
-  body[data-playground] .notebook-bar { align-items: flex-start; flex-direction: column; }
-  body[data-playground] .notebook-title-tools { width: 100%; }
-  body[data-playground] .notebook-actions { justify-content: flex-start; width: 100%; }
-  body[data-playground] .notebook-layout { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+  /* Flatten the compact notebook shell so the long cell stream comes first,
+     followed by its actions, exports, and route shortcuts.  Desktop keeps the
+     two-column notebook/output grid and the original control placement. */
+  body[data-playground] .notebook-bar,
+  body[data-playground] .notebook-layout,
+  body[data-playground] .output-panel:not(.has-global-message),
+  body[data-playground] .output-panel:not(.has-global-message) .output-head {
+    display: contents;
+  }
+  body[data-playground] .notebook-title-tools {
+    order: 1;
+    width: 100%;
+    margin: 9px 0 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed var(--border);
+  }
+  body[data-playground] .notebook-actions {
+    order: 3;
+    justify-content: flex-start;
+    width: 100%;
+    margin: 0 0 8px;
+  }
+  body[data-playground] .notebook-actions .toolbar-button {
+    min-height: 44px;
+  }
+  body[data-playground] .notebook-panel { order: 2; width: 100%; }
   body[data-playground] .notebook-panel,
   body[data-playground] .output-panel {
     min-height: 0;
@@ -899,17 +921,43 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
     overflow: visible;
     padding-right: 0;
   }
-  /* The DOM already places the notebook before output.  Keep that order in
-     the compact column layout as well; output used to be pulled above the
-     cells by an old order:-1 rule. */
-  body[data-playground] .notebook-panel { order: 1; }
-  body[data-playground] .output-panel { order: 2; }
-  /* Mobile follows the notebook's natural document flow.  Hide the duplicate
-     global output shell once cell results are attached directly below their
-     source cells.  Temporary loading/error messages opt back in via the
-     has-global-message state. */
-  body[data-playground] .output-panel { height: auto; display: none; }
-  body[data-playground] .output-panel.has-global-message { display: flex; }
+  /* Export actions remain available after the inline cell stream without
+     restoring the duplicate Output panel. */
+  body[data-playground] .output-panel:not(.has-global-message) .output-actions,
+  body[data-playground] .output-panel:not(.has-global-message) .output-head > .toolbar-button {
+    order: 4;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 6px;
+    margin: 0 0 8px;
+  }
+  body[data-playground] .output-panel:not(.has-global-message) .output-head > h3,
+  body[data-playground] .output-panel:not(.has-global-message) .output-head > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  body[data-playground] .output-panel:not(.has-global-message) .output-meta,
+  body[data-playground] .output-panel:not(.has-global-message) .output-body { display: none; }
+  body[data-playground] .output-panel:not(.has-global-message) .output-action,
+  body[data-playground] .output-panel:not(.has-global-message) .output-head > .toolbar-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  body[data-playground] .output-panel.has-global-message {
+    order: 0;
+    width: 100%;
+    height: auto;
+    display: flex;
+  }
   body[data-playground] .output-body { display: none; flex: 0 0 auto; }
   body[data-playground] .output-panel.has-global-message .output-body {
     display: block;
@@ -936,9 +984,12 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
   body[data-playground] .cell-inline-output .chart-wrap img { max-width: 100%; height: auto; }
   body[data-playground] .cell-stack.has-output .cell { border-radius: 6px 6px 0 0; }
   body[data-playground] .cell-stack.has-output .cell-inline-output { box-shadow: 0 8px 17px rgba(0,0,0,.08); }
+  body[data-playground] .route-tools { order: 5; }
+  body[data-playground] .route-tools .toolbar-button { min-height: 44px; }
+  body[data-playground] .route-strip { order: 6; }
+  body[data-playground] .more-tasks-panel { order: 7; }
   body[data-playground] .try-area,
   body[data-playground] .lab { padding-inline: 14px; }
-  body[data-playground] .route-tools { align-items: flex-start; }
 }
 
 @media (max-width: 560px) {
