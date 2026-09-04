@@ -559,6 +559,41 @@ body[data-playground] .guide-filter {
   font-family: var(--display);
   font-weight: 700;
 }
+/* Guide teaching cards use the page theme, unlike dark notebook code cells. */
+body[data-playground] .guide-body .teaching-concept-line,
+body[data-playground] .guide-body .model-teaching-line,
+body[data-playground] .guide-body .teaching-metric-line { color: var(--muted); }
+body[data-playground] .guide-body .teaching-label,
+body[data-playground] .guide-body .teaching-concept-line strong,
+body[data-playground] .guide-body .model-teaching-line strong,
+body[data-playground] .guide-body .teaching-metric-line strong { color: var(--ink); }
+
+/* The floating guide owns its touch gesture.  Keep the action pair on one
+   row and put the primary resize affordance inside the clipped window so a
+   touch cannot fall through to the notebook/page underneath. */
+body[data-playground] .guide-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+body[data-playground] .guide-head-actions .guide-close { flex: 0 0 auto; }
+body[data-playground] .guide-window.is-minimized { min-height: 0; }
+body[data-playground] .guide-window.is-minimized .guide-head { border-bottom: 0; }
+body[data-playground] .guide-head,
+body[data-playground] .guide-resize-handle { touch-action: none; }
+body[data-playground] .guide-body {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
+}
+body[data-playground] .guide-window { overscroll-behavior: contain; }
+body[data-playground] .guide-resize-handle[data-resize="se"] {
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+}
 
 /* Shared notebook / output composition */
 body[data-playground] .notebook-bar {
@@ -712,6 +747,14 @@ body[data-playground] .code-input {
   tab-size: 4;
 }
 body[data-playground] .code-editor.has-highlight .code-input { color: transparent; -webkit-text-fill-color: transparent; }
+/* Only one text layer is painted while editing; native text owns the caret. */
+body[data-playground] .code-editor:not(.has-highlight) .code-highlight { visibility: hidden; }
+body[data-playground] .code-input,
+body[data-playground] .code-highlight {
+  font-variant-ligatures: none;
+  font-kerning: none;
+  letter-spacing: 0;
+}
 body[data-playground] .code-input::selection { background: rgba(72,213,255,.28); }
 body[data-playground] .cell-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 29px; padding: 5px 8px; background: #202126; color: #7f8998; font: 500 .56rem var(--mono); }
 body[data-playground] .empty-notebook { padding: 33px 18px; border: 1px dashed var(--border); border-radius: 6px; background: rgba(0,0,0,.06); color: var(--muted); text-align: center; }
@@ -853,7 +896,11 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
     flex: 0 0 auto;
   }
   body[data-playground] .notebook-panel { gap: 8px; padding-right: 0; }
-  body[data-playground] .output-panel { order: -1; }
+  /* The DOM already places the notebook before output.  Keep that order in
+     the compact column layout as well; output used to be pulled above the
+     cells by an old order:-1 rule. */
+  body[data-playground] .notebook-panel { order: 1; }
+  body[data-playground] .output-panel { order: 2; }
   body[data-playground] .output-body { display: block; flex: 1; }
   body[data-playground] .cell-inline-output { display: none; }
   body[data-playground] .try-area,
@@ -872,9 +919,14 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
   body[data-playground] .mode-link:nth-child(3) {
     width: 100%;
     min-width: 0;
+    height: 44px;
     min-height: 44px;
     aspect-ratio: auto;
   }
+  /* Percentage heights resolve to zero when the link only has min-height;
+     give the decorative artwork an explicit box so it remains visible on
+     iPhone WebViews where the source span is otherwise collapsed. */
+  body[data-playground] .mode-link .nav-art { height: 44px; min-height: 44px; }
   body[data-playground] .guide-button span { display: none; }
   body[data-playground] .guide-button,
   body[data-playground] .theme-button {
@@ -928,6 +980,42 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
     margin-block: -8px;
     padding: 8px 4px;
   }
+}
+
+/* Keep native editors above iOS's focus-zoom threshold, including iPad.
+   Do not disable user zoom or shrink the editor with a transform. */
+@media (any-pointer: coarse), (max-width: 820px) {
+  body[data-playground] .code-input,
+  body[data-playground] .code-highlight,
+  body[data-playground] .line-rail,
+  body[data-playground] .practice-code-input { font-size: 16px; line-height: 1.62; }
+  body[data-playground] .guide-head { user-select: none; -webkit-user-select: none; }
+  body[data-playground] .guide-close { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+  body[data-playground] .guide-resize-handle[data-resize="se"] { width: 44px; height: 44px; }
+  body[data-playground] .guide-resize-handle[data-resize="se"]::after {
+    content: "";
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    width: 13px;
+    height: 13px;
+    border-right: 3px double var(--muted);
+    border-bottom: 3px double var(--muted);
+  }
+  body[data-playground] .guide-body { padding-bottom: 48px; }
+}
+@media (max-width: 560px) {
+  body[data-playground] .guide-head { gap: 8px; padding: 10px; }
+  body[data-playground] .guide-head h2 { font-size: .72rem; letter-spacing: .025em; }
+  body[data-playground] .guide-head p { font-size: .7rem; line-height: 1.4; }
+  body[data-playground] .guide-head-meta { font-size: .5rem; gap: 4px; margin-bottom: 4px; }
+  body[data-playground] .guide-head-actions { gap: 4px; }
+  body[data-playground] .guide-deck-bar { flex-wrap: wrap; gap: 4px; }
+  body[data-playground] .guide-filters { flex-wrap: wrap; overflow: visible; }
+  body[data-playground] .guide-filter { font-size: .6rem; letter-spacing: 0; padding: 5px 7px; }
+  body[data-playground] .challenge-title { font-size: .68rem; }
+  body[data-playground] .guide-window.is-minimized .guide-head p,
+  body[data-playground] .guide-window.is-minimized .guide-head-meta { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-const CACHE = "dspp-app-shell-v6";
+const CACHE = "dspp-app-shell-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
