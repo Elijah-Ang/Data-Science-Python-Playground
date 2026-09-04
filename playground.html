@@ -677,7 +677,7 @@
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
-  <link rel="stylesheet" href="playground-shared.css?v=pixel-nav4">
+  <link rel="stylesheet" href="playground-shared.css?v=independent-scroll1">
 </head>
   <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
@@ -2017,21 +2017,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         if (!datasetLoading) $("#outputStatus").textContent = "No cell run yet";
         return;
       }
-      if (mobileLayoutQuery.matches) {
-        const hosts = new Map($$(".cell-inline-output", notebookPanel).map((host) => [host.dataset.outputFor, host]));
-        completedCells.forEach((cell) => {
-          const host = hosts.get(cell.id);
-          if (!host) return;
-          host.append(renderOutputItem(cell));
-          host.closest(".cell-stack")?.classList.add("has-output");
-        });
-        const note = document.createElement("div");
-        note.className = "output-mobile-note";
-        note.textContent = "Results are attached below each cell on this screen.";
-        outputList.append(note);
-      } else {
-        completedCells.forEach((cell) => outputList.append(renderOutputItem(cell)));
-      }
+      completedCells.forEach((cell) => outputList.append(renderOutputItem(cell)));
       outputBody.scrollTop = outputBody.scrollHeight;
     }
 

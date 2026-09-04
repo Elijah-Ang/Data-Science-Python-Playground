@@ -5565,21 +5565,7 @@ plot_df.head(12)`,{
       empty.innerHTML = "<div><div class='output-glyph'>↗</div><b>Your walkthrough report appears here.</b><p>Tables, plots, validation scores, tuning evidence and the one-time final result stay attached to their cells.</p></div>";
       list.append(empty); $("#downloadChartButton").disabled = true; $("#outputStatus").textContent = "No cell run yet"; return;
     }
-    if (mobileLayoutQuery.matches) {
-      const hosts = new Map($$(".cell-inline-output", $("#notebookPanel")).map(host => [host.dataset.outputFor, host]));
-      complete.forEach(cell => {
-        const host = hosts.get(cell.id);
-        if (!host) return;
-        host.append(renderOutputItem(cell));
-        host.closest(".cell-stack")?.classList.add("has-output");
-      });
-      const note = document.createElement("div");
-      note.className = "output-mobile-note";
-      note.textContent = "Results are attached below each cell on this screen.";
-      list.append(note);
-    } else {
-      complete.forEach(cell => list.append(renderOutputItem(cell)));
-    }
+    complete.forEach(cell => list.append(renderOutputItem(cell)));
     const cleanReference = renderCleanWorkflowReferenceCard();
     if (cleanReference) list.append(cleanReference);
     $("#downloadChartButton").disabled = !latestChart;

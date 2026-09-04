@@ -82,5 +82,8 @@ assert.match(dataHtml, /function captureFocusTarget\(\)/, "Data Playground must 
 assert.match(mlApp, /function captureFocusTarget\(\)/, "Machine Learning must retain focus across notebook rerenders.");
 assert.match(landingCss, /\.gate-hitbox:focus-visible\s*\{[^}]*outline:/s, "The landing gate must have a visible keyboard focus indicator.");
 assert.match(playgroundCss, /\.cell-action\s*\{[^}]*min-height:\s*44px/s, "Mobile notebook actions must provide 44px touch targets.");
+assert.match(playgroundCss, /\.notebook-panel\s*\{[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The notebook must own vertical scrolling without chaining to the page.");
+assert.match(playgroundCss, /\.output-body\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The output history must own vertical scrolling without chaining to the page.");
+assert.doesNotMatch(playgroundCss, /\.output-body\s*\{\s*display:\s*none;/, "The shared mobile layout must keep the independently scrollable output history visible.");
 
 console.log("App shell, PWA metadata, local assets, and Capacitor configuration verified.");
