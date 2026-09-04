@@ -1662,6 +1662,9 @@ checkpoint_loadings.head(12)`;
       line.children[0].textContent = `+ ${typed.length - 12} more`; list.append(line);
     }
     $(".route-tools-label").textContent = "SUGGESTED ROUTE";
+    $("#routeDescription").textContent = unsupervised
+      ? "Discovery workflow · run in order; reference labels stay out of fitting and appear only for interpretation."
+      : "Prediction workflow · each step answers one question; the saved test set is used only at the end.";
     $("#foldSelect").disabled = unsupervised;
     $("#foldLabel").textContent = unsupervised ? "Cross-validation · not used" : "Cross-validation";
     renderDatasetPreview();
