@@ -75,15 +75,56 @@ for (const [name, html] of [["Data Playground", dataHtml], ["Machine Learning", 
   for (const label of ["Home", "Data Playground", "Machine Learning"]) {
     assert.match(html, new RegExp(`<a[^>]+class="[^"]*mode-link[^"]*"[^>]+aria-label="${label}"`), `${name} must expose an accessible ${label} mode link.`);
   }
+  assert.equal(
+    (html.match(/class="nav-art"/g) || []).length,
+    3,
+    `${name} must include all three rendered mode artwork elements, not only accessible labels.`
+  );
   assert.match(html, /id="outputStatus"[^>]+role="status"[^>]+aria-live="polite"/, `${name} must announce notebook run status.`);
+  assert.ok(
+    html.indexOf('id="notebookPanel"') < html.indexOf('class="output-panel"'),
+    `${name} must place the notebook before output in the compact layout source order.`
+  );
 }
 assert.match(dataHtml, /id="moreTasksToggle"[^>]+aria-expanded="false"[^>]+aria-controls="moreTasksPanel"/, "More tasks must expose its disclosure state and controlled panel.");
 assert.match(dataHtml, /function captureFocusTarget\(\)/, "Data Playground must retain focus across notebook rerenders.");
 assert.match(mlApp, /function captureFocusTarget\(\)/, "Machine Learning must retain focus across notebook rerenders.");
 assert.match(landingCss, /\.gate-hitbox:focus-visible\s*\{[^}]*outline:/s, "The landing gate must have a visible keyboard focus indicator.");
 assert.match(playgroundCss, /\.cell-action\s*\{[^}]*min-height:\s*44px/s, "Mobile notebook actions must provide 44px touch targets.");
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.mode-link \.nav-art\s*\{[^}]*display:\s*block;[^}]*\}/s,
+  "Mode navigation artwork must be rendered as a block rather than relying on hidden link text."
+);
+assert.match(
+  playgroundCss,
+  /@media \(max-width: 560px\) \{[\s\S]*?body\[data-playground\] \.mode-link \.nav-art \{ height: 44px; min-height: 44px; \}/s,
+  "Mobile mode navigation artwork must have an explicit height in the compact grid."
+);
+assert.match(
+  playgroundCss,
+  /body\[data-playground\] \.notebook-panel \{ order: 1; \}[\s\S]*?body\[data-playground\] \.output-panel \{ order: 2; \}/s,
+  "The compact layout must keep notebook cells before output."
+);
+assert.doesNotMatch(
+  playgroundCss,
+  /body\[data-playground\] \.output-panel \{ order:\s*-1; \}/,
+  "The shared compact layout must not move output above notebook cells."
+);
+assert.doesNotMatch(dataHtml, /Six small moves from first look to evidence\./, "Data Suggested Route must not keep the removed helper sentence.");
+assert.doesNotMatch(mlHtml, /Prediction Workflow, each step answers one question\./, "ML Suggested Route must not keep the removed helper sentence.");
 assert.match(playgroundCss, /\.notebook-panel\s*\{[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The notebook must own vertical scrolling without chaining to the page.");
 assert.match(playgroundCss, /\.output-body\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The output history must own vertical scrolling without chaining to the page.");
-assert.doesNotMatch(playgroundCss, /\.output-body\s*\{\s*display:\s*none;/, "The shared mobile layout must keep the independently scrollable output history visible.");
+assert.match(
+  playgroundCss,
+  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.cell-inline-output \{\s*display: grid;/s,
+  "The compact layout must expose cell outputs directly below their cells."
+);
+assert.match(
+  playgroundCss,
+  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.output-panel \{[^}]*display: none;[^}]*\}[\s\S]*?body\[data-playground\] \.output-panel\.has-global-message \{ display: flex; \}/s,
+  "The compact layout must hide the duplicate global output shell while retaining temporary status messages."
+);
+assert.match(mlApp, /if \(mobileLayoutQuery\.matches\) \{[\s\S]*?cell-inline-output[\s\S]*?renderOutputItem\(cell\)/s, "Machine Learning must render completed outputs into mobile cell hosts.");
 
 console.log("App shell, PWA metadata, local assets, and Capacitor configuration verified.");

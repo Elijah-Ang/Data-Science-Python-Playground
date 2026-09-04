@@ -765,6 +765,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   let guideDragState = null;
   let guideResizeState = null;
   let guideViewportSized = false;
+  let guideMinimized = false;
+  let guideRestoreSize = null;
 
   const selectedConfig = () => DATASETS[currentDatasetId];
   const selectedScenario = () => selectedConfig().scenarios.find(item => item.id === $("#scenarioSelect").value) || selectedConfig().scenarios[0];
@@ -4226,12 +4228,17 @@ plot_df.head(12)`,{
       $(".route-caption", button).textContent = item.caption;
       button.addEventListener("click", async () => {
         let cell = cells.find(value => value.taskId === item.id);
+        let inserted = false;
         if (!cell) {
           cell = addRouteCell(item, false);
+          inserted = true;
           renderNotebookView();
           renderRoute();
         }
-        await runCell(cell);
+        // A route tap should insert/run the cell in place.  In particular,
+        // do not restore focus into a newly rendered editor on iOS: focusing
+        // this compact textarea can zoom the viewport before the run begins.
+        await runCell(cell, {preserveFocus: !inserted});
       });
       strip.append(button);
     });
@@ -5291,12 +5298,23 @@ plot_df.head(12)`,{
     const input = document.createElement("textarea"); input.className = "code-input"; input.spellcheck = false; input.value = cell.code;
     input.setAttribute("aria-label", `Editable Python code for ${cell.checkpoint ? "Independent Checkpoint" : cell.label}`);
     const syncHighlight = () => {
-      try { highlight.innerHTML = highlightPython(cell.code); editor.classList.toggle("has-highlight", Boolean(cell.code && highlight.textContent)); }
+      try {
+        highlight.innerHTML = highlightPython(cell.code);
+        // Keep the native textarea text visible while editing. This prevents
+        // two text layers from competing for caret and character positioning;
+        // highlighting returns on blur without changing stored code.
+        const editing = document.activeElement === input;
+        editor.classList.toggle("has-highlight", !editing && Boolean(cell.code && highlight.textContent));
+      }
       catch { highlight.replaceChildren(); editor.classList.remove("has-highlight"); }
       highlight.style.height = input.style.height;
       highlight.style.transform = `translate(${-input.scrollLeft}px, ${-input.scrollTop}px)`;
       rail.style.transform = `translateY(${-input.scrollTop}px)`;
     };
+    input.addEventListener("focus", () => {
+      editor.classList.remove("has-highlight");
+    });
+    input.addEventListener("blur", syncHighlight);
     const updateLines = () => {
       rail.textContent = input.value.split("\n").map((_, index) => index + 1).join("\n");
       input.style.height = "auto"; input.style.height = `${Math.min(430, Math.max(76, input.scrollHeight))}px`; rail.style.height = input.style.height; syncHighlight();
@@ -5318,7 +5336,14 @@ plot_df.head(12)`,{
     });
     input.addEventListener("scroll", syncHighlight);
     input.addEventListener("keydown", event => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") { event.preventDefault(); runCell(cell); } });
-    editor.append(rail, highlight, input); updateLines(); return editor;
+    editor.append(rail, highlight, input);
+    updateLines();
+    // The editor is created before its cell is mounted. Re-measure once it is
+    // connected so scrollHeight reflects the responsive font and line height.
+    requestAnimationFrame(() => {
+      if (editor.isConnected) updateLines();
+    });
+    return editor;
   }
 
   function renderNotebook() {
@@ -5363,12 +5388,12 @@ plot_df.head(12)`,{
     });
   }
 
-  async function runCell(cell) {
+  async function runCell(cell, {preserveFocus = true} = {}) {
     if (!runtimeReady) { showToast("The Python workspace is still loading.", true); return; }
     if (cell.stage === "final" && testSetOpened) { showToast("The final test has already been used in this walkthrough. Select Reset to start again.", true); return; }
     if (!ensurePracticeCanRun(cell)) return;
     if (!cell.code.trim() || cell.status === "running") return;
-    const focusTarget = captureFocusTarget();
+    const focusTarget = preserveFocus ? captureFocusTarget() : null;
     const token = workspaceToken;
     cell.status = "running"; renderNotebookView(focusTarget); renderRoute(); restoreFocusTarget(focusTarget);
     $("#outputStatus").textContent = `${cell.label} · running`;
@@ -5565,7 +5590,17 @@ plot_df.head(12)`,{
       empty.innerHTML = "<div><div class='output-glyph'>↗</div><b>Your walkthrough report appears here.</b><p>Tables, plots, validation scores, tuning evidence and the one-time final result stay attached to their cells.</p></div>";
       list.append(empty); $("#downloadChartButton").disabled = true; $("#outputStatus").textContent = "No cell run yet"; return;
     }
-    complete.forEach(cell => list.append(renderOutputItem(cell)));
+    if (mobileLayoutQuery.matches) {
+      const hosts = new Map($$(".cell-inline-output", $("#notebookPanel")).map(host => [host.dataset.outputFor, host]));
+      complete.forEach(cell => {
+        const host = hosts.get(cell.id);
+        if (!host) return;
+        host.append(renderOutputItem(cell));
+        host.closest(".cell-stack")?.classList.add("has-output");
+      });
+    } else {
+      complete.forEach(cell => list.append(renderOutputItem(cell)));
+    }
     const cleanReference = renderCleanWorkflowReferenceCard();
     if (cleanReference) list.append(cleanReference);
     $("#downloadChartButton").disabled = !latestChart;
@@ -5816,7 +5851,42 @@ plot_df.head(12)`,{
   function closeWorkflow() {
     $("#guideWindow").hidden = true;
     $("#guideButton").setAttribute("aria-expanded", "false");
-    $("#guideButton").focus();
+    $("#guideButton").focus({preventScroll:true});
+  }
+
+  function setGuideMinimized(next) {
+    const guideWindow = $("#guideWindow"), guideBody = $("#guideBody"), button = $("#guideMinimize");
+    const handles = $$(".guide-resize-handle", guideWindow);
+    if (guideMinimized === next && guideBody.hidden === next) return;
+    if (next) {
+      guideRestoreSize = {width:guideWindow.style.width, height:guideWindow.style.height};
+      guideMinimized = true;
+      guideWindow.classList.add("is-minimized");
+      guideWindow.dataset.minimized = "true";
+      guideBody.hidden = true;
+      handles.forEach(handle => { handle.hidden = true; });
+      guideWindow.style.height = "auto";
+      button.textContent = "+";
+      button.setAttribute("aria-label", "Restore workflow");
+      button.setAttribute("title", "Restore workflow");
+      button.setAttribute("aria-expanded", "false");
+    } else {
+      guideMinimized = false;
+      guideWindow.classList.remove("is-minimized");
+      delete guideWindow.dataset.minimized;
+      guideBody.hidden = false;
+      handles.forEach(handle => { handle.hidden = false; });
+      if (guideRestoreSize?.width) guideWindow.style.width = guideRestoreSize.width;
+      else guideWindow.style.removeProperty("width");
+      if (guideRestoreSize?.height) guideWindow.style.height = guideRestoreSize.height;
+      else guideWindow.style.removeProperty("height");
+      guideRestoreSize = null;
+      button.textContent = "−";
+      button.setAttribute("aria-label", "Minimize workflow");
+      button.setAttribute("title", "Minimize workflow");
+      button.setAttribute("aria-expanded", "true");
+      clampGuideToViewport();
+    }
   }
 
   function openWorkflow() {
@@ -5824,65 +5894,112 @@ plot_df.head(12)`,{
     $("#guideWindow").hidden = false;
     clampGuideToViewport();
     $("#guideButton").setAttribute("aria-expanded", "true");
-    $("#guideClose").focus();
+    $("#guideClose").focus({preventScroll:true});
+  }
+
+  function guideViewportSize() {
+    const visualViewport = window.visualViewport;
+    return {
+      width: innerWidth,
+      height: Math.min(innerHeight, visualViewport?.height || innerHeight)
+    };
+  }
+
+  function guidePointerMatches(state, event) {
+    return state && (state.pointerId == null || event.pointerId == null || state.pointerId === event.pointerId);
+  }
+
+  function releaseGuidePointer(state) {
+    if (!state?.captureTarget || state.pointerId == null) return;
+    try { state.captureTarget.releasePointerCapture?.(state.pointerId); } catch (_) { /* pointer already released */ }
   }
 
   function moveGuide(event) {
-    if (!guideDragState) return;
+    if (!guidePointerMatches(guideDragState, event)) return;
+    event.preventDefault();
     const windowElement = $("#guideWindow"), rect = windowElement.getBoundingClientRect();
-    const left = Math.max(8, Math.min(innerWidth - rect.width - 8, event.clientX - guideDragState.offsetX));
-    const top = Math.max(8, Math.min(innerHeight - rect.height - 8, event.clientY - guideDragState.offsetY));
+    const viewport = guideViewportSize();
+    const left = Math.max(8, Math.min(viewport.width - rect.width - 8, event.clientX - guideDragState.offsetX));
+    const top = Math.max(8, Math.min(viewport.height - rect.height - 8, event.clientY - guideDragState.offsetY));
     Object.assign(windowElement.style, {left:`${left}px`, top:`${top}px`, right:"auto", bottom:"auto"});
   }
 
-  function stopGuideDrag() {
+  function stopGuideDrag(event) {
+    if (!guidePointerMatches(guideDragState, event || {})) return;
+    const state = guideDragState;
+    if (event?.cancelable) event.preventDefault();
     guideDragState = null; $("#guideWindow").classList.remove("is-dragging");
     window.removeEventListener("pointermove", moveGuide);
+    window.removeEventListener("pointerup", stopGuideDrag);
+    window.removeEventListener("pointercancel", stopGuideDrag);
+    window.removeEventListener("lostpointercapture", stopGuideDrag);
+    releaseGuidePointer(state);
   }
 
   function startGuideDrag(event) {
     if (event.button !== undefined && event.button !== 0) return;
+    if (event.isPrimary === false) return;
     if (event.target.closest("button")) return;
+    if (guideDragState) stopGuideDrag();
     const windowElement = $("#guideWindow"), rect = windowElement.getBoundingClientRect();
-    guideDragState = {offsetX:event.clientX - rect.left, offsetY:event.clientY - rect.top};
+    guideDragState = {pointerId:event.pointerId, captureTarget:event.currentTarget, offsetX:event.clientX - rect.left, offsetY:event.clientY - rect.top};
     windowElement.classList.add("is-dragging");
-    window.addEventListener("pointermove", moveGuide); window.addEventListener("pointerup", stopGuideDrag, {once:true}); window.addEventListener("pointercancel", stopGuideDrag, {once:true});
+    try { event.currentTarget.setPointerCapture?.(event.pointerId); } catch (_) { /* capture is optional */ }
+    window.addEventListener("pointermove", moveGuide, {passive:false});
+    window.addEventListener("pointerup", stopGuideDrag, {passive:false});
+    window.addEventListener("pointercancel", stopGuideDrag, {passive:false});
+    window.addEventListener("lostpointercapture", stopGuideDrag, {passive:false});
     event.preventDefault();
   }
 
   function startGuideResize(event) {
     const handle = event.target.closest(".guide-resize-handle");
-    if (!handle) return;
+    if (!handle || handle.hidden || event.isPrimary === false) return;
+    if (guideResizeState) stopGuideResize();
     const windowElement = $("#guideWindow"), rect = windowElement.getBoundingClientRect();
     guideViewportSized = false;
-    guideResizeState = {direction:handle.dataset.resize,startX:event.clientX,startY:event.clientY,left:rect.left,top:rect.top,width:rect.width,height:rect.height};
+    guideResizeState = {pointerId:event.pointerId,captureTarget:handle,direction:handle.dataset.resize,startX:event.clientX,startY:event.clientY,left:rect.left,top:rect.top,width:rect.width,height:rect.height};
     windowElement.classList.add("is-resizing");
-    window.addEventListener("pointermove", moveGuideResize); window.addEventListener("pointerup", stopGuideResize, {once:true}); window.addEventListener("pointercancel", stopGuideResize, {once:true});
+    try { handle.setPointerCapture?.(event.pointerId); } catch (_) { /* capture is optional */ }
+    window.addEventListener("pointermove", moveGuideResize, {passive:false});
+    window.addEventListener("pointerup", stopGuideResize, {passive:false});
+    window.addEventListener("pointercancel", stopGuideResize, {passive:false});
+    window.addEventListener("lostpointercapture", stopGuideResize, {passive:false});
     event.preventDefault(); event.stopPropagation();
   }
 
   function moveGuideResize(event) {
-    if (!guideResizeState) return;
+    if (!guidePointerMatches(guideResizeState, event)) return;
+    event.preventDefault();
     const windowElement = $("#guideWindow"), state = guideResizeState, direction = state.direction;
-    const minWidth = Math.min(parseFloat(getComputedStyle(windowElement).minWidth) || 320, innerWidth - 16);
-    const minHeight = Math.min(parseFloat(getComputedStyle(windowElement).minHeight) || 300, innerHeight - 16);
+    const viewport = guideViewportSize();
+    const minWidth = Math.min(parseFloat(getComputedStyle(windowElement).minWidth) || (mobileLayoutQuery.matches ? 280 : 320), Math.max(0, viewport.width - 16));
+    const minHeight = Math.min(parseFloat(getComputedStyle(windowElement).minHeight) || (mobileLayoutQuery.matches ? 240 : 300), Math.max(0, viewport.height - 16));
     const right = state.left + state.width, bottom = state.top + state.height;
     let {left,top,width,height} = state;
-    if (direction.includes("e")) width = Math.max(minWidth, Math.min(innerWidth - 8 - left, state.width + event.clientX - state.startX));
-    if (direction.includes("s")) height = Math.max(minHeight, Math.min(innerHeight - 8 - top, state.height + event.clientY - state.startY));
+    if (direction.includes("e")) width = Math.max(minWidth, Math.min(viewport.width - 8 - left, state.width + event.clientX - state.startX));
+    if (direction.includes("s")) height = Math.max(minHeight, Math.min(viewport.height - 8 - top, state.height + event.clientY - state.startY));
     if (direction.includes("w")) { left = Math.max(8, Math.min(right - minWidth, state.left + event.clientX - state.startX)); width = right - left; }
     if (direction.includes("n")) { top = Math.max(8, Math.min(bottom - minHeight, state.top + event.clientY - state.startY)); height = bottom - top; }
     Object.assign(windowElement.style, {left:`${left}px`,top:`${top}px`,width:`${width}px`,height:`${height}px`,right:"auto",bottom:"auto"});
   }
 
-  function stopGuideResize() {
+  function stopGuideResize(event) {
+    if (!guidePointerMatches(guideResizeState, event || {})) return;
+    const state = guideResizeState;
+    if (event?.cancelable) event.preventDefault();
     guideResizeState = null; $("#guideWindow").classList.remove("is-resizing");
     window.removeEventListener("pointermove", moveGuideResize);
+    window.removeEventListener("pointerup", stopGuideResize);
+    window.removeEventListener("pointercancel", stopGuideResize);
+    window.removeEventListener("lostpointercapture", stopGuideResize);
+    releaseGuidePointer(state);
   }
 
   function clampGuideToViewport() {
     const windowElement = $("#guideWindow"); if (windowElement.hidden) return;
-    const maxWidth = Math.max(0, innerWidth - 16), maxHeight = Math.max(0, innerHeight - 16);
+    const viewport = guideViewportSize();
+    const maxWidth = Math.max(0, viewport.width - 16), maxHeight = Math.max(0, viewport.height - 16);
     if (!mobileLayoutQuery.matches && guideViewportSized) {
       windowElement.style.removeProperty("width");
       windowElement.style.removeProperty("height");
@@ -5890,11 +6007,21 @@ plot_df.head(12)`,{
     }
     const rect = windowElement.getBoundingClientRect(), width = Math.min(rect.width, maxWidth), height = Math.min(rect.height, maxHeight);
     if (rect.width > maxWidth || rect.height > maxHeight) guideViewportSized = true;
-    const left = Math.max(8, Math.min(innerWidth - width - 8, rect.left)), top = Math.max(8, Math.min(innerHeight - height - 8, rect.top));
+    const left = Math.max(8, Math.min(viewport.width - width - 8, rect.left)), top = Math.max(8, Math.min(viewport.height - height - 8, rect.top));
     const styles = {left:`${left}px`,top:`${top}px`,right:"auto",bottom:"auto"};
-    if (rect.width > maxWidth) styles.width = `${width}px`;
-    if (rect.height > maxHeight) styles.height = `${height}px`;
+    if (!guideMinimized && rect.width > maxWidth) styles.width = `${width}px`;
+    if (!guideMinimized && rect.height > maxHeight) styles.height = `${height}px`;
     Object.assign(windowElement.style, styles);
+  }
+
+  function prepareGuideInteractions() {
+    const guideWindow = $("#guideWindow"), dragHandle = $("#guideDragHandle"), guideBody = $("#guideBody");
+    dragHandle.style.touchAction = "none";
+    guideWindow.style.overscrollBehavior = "contain";
+    guideBody.style.touchAction = "pan-x pan-y";
+    guideBody.style.overscrollBehavior = "contain";
+    guideBody.style.webkitOverflowScrolling = "touch";
+    $$(".guide-resize-handle", guideWindow).forEach(handle => { handle.style.touchAction = "none"; handle.style.userSelect = "none"; });
   }
 
   async function downloadChart() {
@@ -5923,14 +6050,18 @@ plot_df.head(12)`,{
   $("#practiceModeButton")?.addEventListener("click", () => setPlaygroundMode("practice"));
   $("#guideButton").addEventListener("click", openWorkflow);
   $("#guideClose").addEventListener("click", closeWorkflow);
+  $("#guideMinimize").addEventListener("click", () => setGuideMinimized(!guideMinimized));
   $("#guideDragHandle").addEventListener("pointerdown", startGuideDrag);
   $("#guideWindow").addEventListener("pointerdown", startGuideResize);
   window.addEventListener("resize", clampGuideToViewport);
+  window.visualViewport?.addEventListener("resize", clampGuideToViewport);
+  window.visualViewport?.addEventListener("scroll", clampGuideToViewport);
   mobileLayoutQuery.addEventListener("change", () => renderOutputs());
   document.addEventListener("keydown", event => {
     if (event.key === "Escape" && !$("#guideWindow").hidden) closeWorkflow();
   });
 
+  prepareGuideInteractions();
   populateDatasets(); populateScenarios(); populateModels(); staticSetup(); buildRoute(); renderNotebookView(); updateSeal(); loadDataset("breast");
 
   }
