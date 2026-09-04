@@ -904,10 +904,12 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
      cells by an old order:-1 rule. */
   body[data-playground] .notebook-panel { order: 1; }
   body[data-playground] .output-panel { order: 2; }
-  /* Mobile follows the notebook's natural document flow.  Keep the global
-     output header/actions as a compact summary, but attach each result to the
-     cell that produced it so code and evidence stay together while reading. */
-  body[data-playground] .output-panel { height: auto; }
+  /* Mobile follows the notebook's natural document flow.  Hide the duplicate
+     global output shell once cell results are attached directly below their
+     source cells.  Temporary loading/error messages opt back in via the
+     has-global-message state. */
+  body[data-playground] .output-panel { height: auto; display: none; }
+  body[data-playground] .output-panel.has-global-message { display: flex; }
   body[data-playground] .output-body { display: none; flex: 0 0 auto; }
   body[data-playground] .output-panel.has-global-message .output-body {
     display: block;
