@@ -889,20 +889,51 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
   body[data-playground] .notebook-layout { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
   body[data-playground] .notebook-panel,
   body[data-playground] .output-panel {
-    height: clamp(320px, 62vh, 560px);
-    height: clamp(320px, 62dvh, 560px);
-    min-height: 320px;
-    max-height: 560px;
+    min-height: 0;
+    max-height: none;
     flex: 0 0 auto;
   }
-  body[data-playground] .notebook-panel { gap: 8px; padding-right: 0; }
+  body[data-playground] .notebook-panel {
+    height: auto;
+    gap: 8px;
+    overflow: visible;
+    padding-right: 0;
+  }
   /* The DOM already places the notebook before output.  Keep that order in
      the compact column layout as well; output used to be pulled above the
      cells by an old order:-1 rule. */
   body[data-playground] .notebook-panel { order: 1; }
   body[data-playground] .output-panel { order: 2; }
-  body[data-playground] .output-body { display: block; flex: 1; }
-  body[data-playground] .cell-inline-output { display: none; }
+  /* Mobile follows the notebook's natural document flow.  Keep the global
+     output header/actions as a compact summary, but attach each result to the
+     cell that produced it so code and evidence stay together while reading. */
+  body[data-playground] .output-panel { height: auto; }
+  body[data-playground] .output-body { display: none; flex: 0 0 auto; }
+  body[data-playground] .output-panel.has-global-message .output-body {
+    display: block;
+    padding: 7px 9px 9px;
+  }
+  body[data-playground] .output-panel.has-global-message .output-list { min-height: 0; }
+  body[data-playground] .output-panel.has-global-message .output-empty { min-height: 0; padding: 8px; border: 0; }
+  body[data-playground] .output-panel.has-global-message .output-glyph { display: none; }
+  body[data-playground] .cell-inline-output {
+    display: grid;
+    gap: 9px;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-radius: 0 0 6px 6px;
+    background: var(--panel);
+  }
+  body[data-playground] .cell-inline-output:empty { display: none; }
+  body[data-playground] .cell-inline-output .output-item { min-width: 0; max-width: 100%; overflow: hidden; }
+  body[data-playground] .cell-inline-output .chart-wrap { max-width: 100%; overflow-x: auto; }
+  body[data-playground] .cell-inline-output .chart-wrap img { max-width: 100%; height: auto; }
+  body[data-playground] .cell-stack.has-output .cell { border-radius: 6px 6px 0 0; }
+  body[data-playground] .cell-stack.has-output .cell-inline-output { box-shadow: 0 8px 17px rgba(0,0,0,.08); }
   body[data-playground] .try-area,
   body[data-playground] .lab { padding-inline: 14px; }
   body[data-playground] .route-tools { align-items: flex-start; }

@@ -115,6 +115,16 @@ assert.doesNotMatch(dataHtml, /Six small moves from first look to evidence\./, "
 assert.doesNotMatch(mlHtml, /Prediction Workflow, each step answers one question\./, "ML Suggested Route must not keep the removed helper sentence.");
 assert.match(playgroundCss, /\.notebook-panel\s*\{[^}]*overflow-y:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The notebook must own vertical scrolling without chaining to the page.");
 assert.match(playgroundCss, /\.output-body\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The output history must own vertical scrolling without chaining to the page.");
-assert.doesNotMatch(playgroundCss, /\.output-body\s*\{\s*display:\s*none;/, "The shared mobile layout must keep the independently scrollable output history visible.");
+assert.match(
+  playgroundCss,
+  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.cell-inline-output \{\s*display: grid;/s,
+  "The compact layout must expose cell outputs directly below their cells."
+);
+assert.match(
+  playgroundCss,
+  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.output-body \{ display: none;/s,
+  "The compact layout must hide the duplicate global output history."
+);
+assert.match(mlApp, /if \(mobileLayoutQuery\.matches\) \{[\s\S]*?cell-inline-output[\s\S]*?renderOutputItem\(cell\)/s, "Machine Learning must render completed outputs into mobile cell hosts.");
 
 console.log("App shell, PWA metadata, local assets, and Capacitor configuration verified.");

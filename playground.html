@@ -2038,7 +2038,17 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         if (!datasetLoading) $("#outputStatus").textContent = "No cell run yet";
         return;
       }
-      completedCells.forEach((cell) => outputList.append(renderOutputItem(cell)));
+      if (mobileLayoutQuery.matches) {
+        const hosts = new Map($$(".cell-inline-output", notebookPanel).map((host) => [host.dataset.outputFor, host]));
+        completedCells.forEach((cell) => {
+          const host = hosts.get(cell.id);
+          if (!host) return;
+          host.append(renderOutputItem(cell));
+          host.closest(".cell-stack")?.classList.add("has-output");
+        });
+      } else {
+        completedCells.forEach((cell) => outputList.append(renderOutputItem(cell)));
+      }
       outputBody.scrollTop = outputBody.scrollHeight;
     }
 
