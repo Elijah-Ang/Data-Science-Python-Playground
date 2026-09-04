@@ -10,6 +10,8 @@ const remoteLicenses = [
   ["fonts/JetBrains-Mono-OFL-1.1.txt", "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/master/OFL.txt"],
   ["fonts/Nunito-OFL-1.1.txt", "https://raw.githubusercontent.com/googlefonts/nunito/main/OFL.txt"],
   ["fonts/Silkscreen-OFL-1.1.txt", "https://raw.githubusercontent.com/googlefonts/silkscreen/main/OFL.txt"],
+  ["native/capacitor-swift-pm-8.5.0-MIT.txt", "https://raw.githubusercontent.com/ionic-team/capacitor-swift-pm/8.5.0/LICENSE.md"],
+  ["native/ion-ios-filesystem-1.1.2-MIT.txt", "https://raw.githubusercontent.com/ionic-team/ion-ios-filesystem/1.1.2/LICENSE"],
   ["runtime/Pyodide-0.26.4-MPL-2.0.txt", "https://raw.githubusercontent.com/pyodide/pyodide/0.26.4/LICENSE"],
   ["runtime/CPython-3.12.1-PSF.txt", "https://raw.githubusercontent.com/python/cpython/v3.12.1/LICENSE"],
   ["runtime/OpenBLAS-0.3.26-BSD-3-Clause.txt", "https://raw.githubusercontent.com/OpenMathLib/OpenBLAS/v0.3.26/LICENSE"],
@@ -23,6 +25,7 @@ const localPackageLicenses = [
   "@capacitor/splash-screen",
   "@capacitor/status-bar",
   "@capacitor/ios",
+  "@capacitor/synapse",
 ];
 
 async function fetchText(url) {
@@ -45,10 +48,22 @@ for (const [relative, url] of remoteLicenses) {
 for (const packageName of localPackageLicenses) {
   const packageRoot = path.join(root, "node_modules", ...packageName.split("/"));
   const metadata = JSON.parse(await fs.readFile(path.join(packageRoot, "package.json"), "utf8"));
-  const relative = `javascript/${packageName.replace("/", "-")}-${metadata.version}-MIT.txt`;
+  const licenseLabel = typeof metadata.license === "string"
+    ? metadata.license.replace(/[^a-z0-9.-]+/gi, "-")
+    : "NOTICE";
+  const relative = `javascript/${packageName.replace("/", "-")}-${metadata.version}-${licenseLabel}.txt`;
   const destination = path.join(output, relative);
   await fs.mkdir(path.dirname(destination), { recursive: true });
-  await fs.copyFile(path.join(packageRoot, "LICENSE"), destination);
+  const licenseFile = (await Promise.all(["LICENSE", "LICENSE.md", "LICENSE.txt"].map(async file => {
+    try {
+      await fs.access(path.join(packageRoot, file));
+      return file;
+    } catch {
+      return null;
+    }
+  }))).find(Boolean);
+  if (!licenseFile) throw new Error(`No package license found for ${packageName}`);
+  await fs.copyFile(path.join(packageRoot, licenseFile), destination);
   manifest.push({ source: `${packageName}@${metadata.version}`, file: relative });
 }
 

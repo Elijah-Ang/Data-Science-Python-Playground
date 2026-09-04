@@ -14,6 +14,14 @@
       "file": "fonts/Silkscreen-OFL-1.1.txt"
     },
     {
+      "source": "https://raw.githubusercontent.com/ionic-team/capacitor-swift-pm/8.5.0/LICENSE.md",
+      "file": "native/capacitor-swift-pm-8.5.0-MIT.txt"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/ionic-team/ion-ios-filesystem/1.1.2/LICENSE",
+      "file": "native/ion-ios-filesystem-1.1.2-MIT.txt"
+    },
+    {
       "source": "https://raw.githubusercontent.com/pyodide/pyodide/0.26.4/LICENSE",
       "file": "runtime/Pyodide-0.26.4-MPL-2.0.txt"
     },
@@ -52,6 +60,10 @@
     {
       "source": "@capacitor/ios@8.5.0",
       "file": "javascript/@capacitor-ios-8.5.0-MIT.txt"
+    },
+    {
+      "source": "@capacitor/synapse@1.0.4",
+      "file": "javascript/@capacitor-synapse-1.0.4-ISC.txt"
     },
     {
       "source": "vendor/pyodide/cycler-0.12.1-py3-none-any.whl",
