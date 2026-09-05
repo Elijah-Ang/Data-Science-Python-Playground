@@ -46,9 +46,53 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 .welcome-shell {
+  position: relative;
   width: min(100%, 1600px);
   margin: 0 auto;
   padding: calc(clamp(38px, 6vw, 78px) + env(safe-area-inset-top)) clamp(16px, 4vw, 56px) calc(clamp(26px, 4vw, 64px) + env(safe-area-inset-bottom));
+}
+.tour-button {
+  position: absolute;
+  z-index: 10;
+  top: calc(14px + env(safe-area-inset-top));
+  right: clamp(12px, 3.5vw, 48px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 6px 8px;
+  border: 2px solid var(--landing-ink);
+  border-radius: 2px;
+  color: var(--landing-ink);
+  background: var(--landing-paper);
+  box-shadow: 3px 3px 0 var(--landing-orange);
+  font: 700 10px/1 var(--landing-mono);
+  letter-spacing: .02em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: transform .12s steps(2, end), box-shadow .12s steps(2, end), background-color .12s linear;
+}
+.tour-button::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  margin-right: 5px;
+  background: var(--landing-gold);
+  box-shadow: 1px 1px 0 var(--landing-orange);
+  image-rendering: pixelated;
+}
+.tour-button:hover {
+  background: #fff2c9;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--landing-orange);
+}
+.tour-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+.tour-button:focus-visible {
+  outline: 3px solid var(--landing-cyan);
+  outline-offset: 4px;
 }
 .welcome-intro { max-width: 920px; margin: 0 auto; text-align: center; }
 .welcome-kicker {
@@ -206,11 +250,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @keyframes scene-enter { to { transform: scale(1.008); filter: brightness(1.04); } }
 
 @media (max-width: 900px) {
-  .welcome-shell { padding-top: 32px; }
+  .welcome-shell { padding-top: calc(66px + env(safe-area-inset-top)); }
   .scene-frame { width: min(100%, 620px); }
 }
 @media (max-width: 560px) {
-  .welcome-shell { padding: calc(27px + env(safe-area-inset-top)) 10px calc(22px + env(safe-area-inset-bottom)); }
+  .welcome-shell { padding: calc(68px + env(safe-area-inset-top)) 10px calc(22px + env(safe-area-inset-bottom)); }
   .welcome-kicker { margin-bottom: 13px; font-size: .56rem; letter-spacing: .1em; }
   .welcome-intro h1 { font-size: clamp(1.58rem, 8.2vw, 2.55rem); }
   .welcome-subtitle { margin-top: 11px; font-size: .88rem; }

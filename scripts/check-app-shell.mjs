@@ -56,7 +56,7 @@ const mlApp = await fs.readFile(path.join(root, "ml-app.js"), "utf8");
 const playgroundCss = await fs.readFile(path.join(root, "playground-shared.css"), "utf8");
 const portraitMedia = "(max-width: 720px), (orientation: portrait)";
 assert.equal(
-  [...landingHtml.matchAll(/<source media="([^"]+)" srcset="assets\/landing\/(?:data-playground-mobile-source|gate-glow-mobile)\.png">/g)]
+  [...landingHtml.matchAll(/<source media="([^"]+)" srcset="assets\/landing\/(?:data-playground-mobile-source|gate-glow-mobile)\.(?:png|webp)">/g)]
     .filter(match => match[1] === portraitMedia).length,
   2,
   "The landing scene and gate glow must use portrait artwork at every portrait viewport width, including a 1024px iPad."
@@ -76,9 +76,9 @@ for (const [name, html] of [["Data Playground", dataHtml], ["Machine Learning", 
     assert.match(html, new RegExp(`<a[^>]+class="[^"]*mode-link[^"]*"[^>]+aria-label="${label}"`), `${name} must expose an accessible ${label} mode link.`);
   }
   assert.equal(
-    (html.match(/class="nav-art"/g) || []).length,
+    (html.match(/class="mode-icon"/g) || []).length,
     3,
-    `${name} must include all three rendered mode artwork elements, not only accessible labels.`
+    `${name} must include all three pixel icons and visible navigation labels.`
   );
   assert.match(html, /id="outputStatus"[^>]+role="status"[^>]+aria-live="polite"/, `${name} must announce notebook run status.`);
   assert.ok(
@@ -91,16 +91,8 @@ assert.match(dataHtml, /function captureFocusTarget\(\)/, "Data Playground must 
 assert.match(mlApp, /function captureFocusTarget\(\)/, "Machine Learning must retain focus across notebook rerenders.");
 assert.match(landingCss, /\.gate-hitbox:focus-visible\s*\{[^}]*outline:/s, "The landing gate must have a visible keyboard focus indicator.");
 assert.match(playgroundCss, /\.cell-action\s*\{[^}]*min-height:\s*44px/s, "Mobile notebook actions must provide 44px touch targets.");
-assert.match(
-  playgroundCss,
-  /body\[data-playground\] \.mode-link \.nav-art\s*\{[^}]*display:\s*block;[^}]*\}/s,
-  "Mode navigation artwork must be rendered as a block rather than relying on hidden link text."
-);
-assert.match(
-  playgroundCss,
-  /@media \(max-width: 560px\) \{[\s\S]*?body\[data-playground\] \.mode-link \.nav-art \{ height: 44px; min-height: 44px; \}/s,
-  "Mobile mode navigation artwork must have an explicit height in the compact grid."
-);
+assert.match(playgroundCss, /\.mode-link \.mode-icon[^}]*shape-rendering:\s*crispEdges/s, "Navigation icons must retain pixel edges.");
+assert.match(playgroundCss, /\.mode-link:focus-visible[^}]*outline-offset:\s*-3px/s, "The switcher must keep keyboard focus inside its clipped frame.");
 assert.match(
   playgroundCss,
   /body\[data-playground\] \.notebook-panel \{ order: 2; width: 100%; \}/,
@@ -142,12 +134,12 @@ assert.match(playgroundCss, /\.notebook-panel\s*\{[^}]*overflow-y:\s*auto;[^}]*o
 assert.match(playgroundCss, /\.output-body\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s, "The output history must own vertical scrolling without chaining to the page.");
 assert.match(
   playgroundCss,
-  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.cell-inline-output \{\s*display: grid;/s,
+  /@media \(max-width: 1120px\) \{[\s\S]*?body\[data-playground\] \.cell-inline-output \{\s*display: grid;/s,
   "The compact layout must expose cell outputs directly below their cells."
 );
 assert.match(
   playgroundCss,
-  /@media \(max-width: 820px\) \{[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\),[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-head \{\s*display: contents;[\s\S]*?body\[data-playground\] \.output-panel\.has-global-message \{[\s\S]*?display: flex;/s,
+  /@media \(max-width: 1120px\) \{[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\),[\s\S]*?body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-head \{\s*display: contents;[\s\S]*?body\[data-playground\] \.output-panel\.has-global-message \{[\s\S]*?display: flex;/s,
   "The compact layout must flatten the duplicate global output shell while retaining temporary status messages."
 );
 assert.match(mlApp, /if \(mobileLayoutQuery\.matches\) \{[\s\S]*?cell-inline-output[\s\S]*?renderOutputItem\(cell\)/s, "Machine Learning must render completed outputs into mobile cell hosts.");

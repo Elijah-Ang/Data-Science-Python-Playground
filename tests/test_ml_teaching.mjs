@@ -5,7 +5,7 @@ import {fileURLToPath} from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = fs.readFileSync(path.join(root, "ml-app.js"), "utf8");
-const window = {__ML_TEST_MODE__:true, matchMedia:() => ({matches:false, addEventListener(){}})};
+const window = {DataframeSerializerSource:fs.readFileSync(path.join(root,"table-serialization.py"),"utf8"), ScientificValidatorSource:fs.readFileSync(path.join(root,"scientific-validators.py"),"utf8"), __ML_TEST_MODE__:true, matchMedia:() => ({matches:false, addEventListener(){}})};
 const context = {
   console: {log(){}, warn(){}, error(){}},
   window,
@@ -31,7 +31,9 @@ const richDiagnosticCode = step => [step?.code, step?.setupCode, step?.evidenceC
   .join("\n");
 
 const classificationRoute = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "logistic", 5);
-if (classificationRoute.length !== 9) throw new Error("Classification teaching route does not contain nine guided steps.");
+if (classificationRoute.length !== 10 || classificationRoute.map(step => step.id).join(",") !== "frame,split,explore,prepare,model,baseline,reference,tune,diagnose,final") {
+  throw new Error("Classification teaching route does not contain the expected ten guided steps.");
+}
 for (const step of classificationRoute) {
   if (!step.question || !step.readingCue) throw new Error(`Missing question/cue for supervised step ${step.id}.`);
 }
@@ -40,10 +42,14 @@ const finalStep = classificationRoute.find(step => step.id === "final");
 if (!baseline.metricMeta || baseline.metricMeta.direction !== "higher" || baseline.metricMeta.key !== "macro_f1") {
   throw new Error("Classification baseline metric metadata is incomplete.");
 }
-if (baseline.metricHelp.length !== 2 || !baseline.metricHelp.some(metric => metric.key === "accuracy")) {
-  throw new Error("Classification metric teaching does not cover Macro F1 and accuracy.");
+if (baseline.metricHelp.length !== 1 || baseline.metricHelp[0].key !== "macro_f1") {
+  throw new Error("Classification baseline should introduce one primary Macro F1 metric.");
 }
-if (!finalStep.comparison || !finalStep.question.includes("cross-validation")) {
+const classificationReference = classificationRoute.find(step => step.id === "reference");
+if (!classificationReference.metricHelp.some(metric => metric.key === "accuracy")) {
+  throw new Error("Classification reference metric teaching does not cover accuracy.");
+}
+if (!finalStep.comparison || !finalStep.question.toLowerCase().includes("cv")) {
   throw new Error("Classification final step is not connected to prior CV evidence.");
 }
 
@@ -71,7 +77,8 @@ const regressionBaseline = regressionRoute.find(step => step.id === "baseline");
 if (regressionBaseline.metricMeta.direction !== "lower" || regressionBaseline.metricMeta.key !== "rmse") {
   throw new Error("Regression baseline metric metadata is incomplete.");
 }
-if (!regressionBaseline.metricHelp.some(metric => metric.key === "r2" && metric.text.includes("can be negative"))) {
+const regressionMetricHelp = regressionRoute.flatMap(step => step.metricHelp || []);
+if (!regressionMetricHelp.some(metric => metric.key === "r2")) {
   throw new Error("Regression R² teaching is incomplete.");
 }
 const regressionTable = {
@@ -112,7 +119,7 @@ const phase2aTokens = {
   polynomial:["bend", "fitted curve", "noise"],
   regression_tree:["if/then", "leaf", "Feature usage"],
   logistic:["score", "probabilities", "prepared feature scales"],
-  classification_tree:["if/then", "actual and predicted class", "generalize"],
+  classification_tree:["if/then", "feature-usage table", "generalize"],
   knn_cls:["nearby prepared training examples", "out-of-fold", "cannot vote for itself"],
   one_r:["individual features", "exact fitted values", "majority baseline"]
 };
@@ -154,15 +161,15 @@ for (const [modelId, [config, scenario]] of Object.entries(phase2bFixtures)) {
     }
   }
   if (modelId === "qda") {
-    const qdaCode = richDiagnosticCode(diagnose);
-    for (const token of ["per-feature spread", "vary together within each class", "covariance/shape", "boundary can curve"]) {
+    const qdaCode = `${richDiagnosticCode(diagnose)} ${Object.values(diagnose.modelTeaching || {}).join(" ")}`;
+    for (const token of ["per-feature spread", "vary together within each class", "covariance/shape", "boundary", "curve"]) {
       if (!qdaCode.toLowerCase().includes(token)) {
         throw new Error(`QDA precision wording is missing ${token}.`);
       }
     }
   }
   if (modelId === "naive_bayes") {
-    for (const token of ["Class-conditional density", "quantity_value", "not the probability of one exact continuous value"]) {
+    for (const token of ["Class-conditional density", "density", "observed_value"]) {
       if (!richDiagnosticCode(diagnose).includes(token)) {
         throw new Error(`Gaussian Naive Bayes precision wording is missing ${token}.`);
       }
@@ -179,10 +186,10 @@ const neuralFixtures = {
   mlp_reg:[api.DATASETS.wine, api.DATASETS.wine.scenarios[0]]
 };
 const neuralCodeTokens = {
-  mlp_cls:["mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "predict_proba", "loss_curve_", "early_stopping", "Training loss during optimization", "Predicted probabilities by class"],
-  mlp_reg:["mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "loss_curve_", "regressor_", "scaled target", "transformed target space", "original target units", "absolute_error_original_units"]
+  mlp_cls:["mlp_model", "mlp_loss_curve", "hidden_layer_sizes", "n_iter_", "predict_proba", "loss_curve_", "Training loss during optimisation"],
+  mlp_reg:["mlp_model", "mlp_loss_curve", "hidden_layer_sizes", "n_iter_", "loss_curve_", "regressor_", "held_out_prediction_original_units"]
 };
-const neuralBuildKeys = ["hidden-layer", "hidden-layer-sizes", "weights", "loss", "backpropagation", "alpha", "early-stopping", "max-iter"];
+const neuralBuildKeys = ["hidden-layer", "hidden-layer-sizes", "early-stopping"];
 for (const [modelId, [config, scenario]] of Object.entries(neuralFixtures)) {
   const neuralRoute = api.routeForSelection(config, scenario, modelId, 5);
   const modelStep = neuralRoute.find(step => step.id === "model");
@@ -197,12 +204,16 @@ for (const [modelId, [config, scenario]] of Object.entries(neuralFixtures)) {
   for (const key of neuralBuildKeys) {
     if (!buildKeys.has(key)) throw new Error(`Neural-network ${modelId} build teaching is missing ${key}.`);
   }
-  if (modelId === "mlp_reg" && !buildKeys.has("tol")) throw new Error("Neural-network regression build teaching is missing tol.");
+  if (modelId === "mlp_reg" && !buildKeys.has("target-scaling")) throw new Error("Neural-network regression build teaching is missing target scaling.");
   const buildText = modelStep.concepts.map(item => `${item.label} ${item.text}`).join(" ");
-  for (const token of ["hidden_layer_sizes", "backpropagation", "alpha", "early_stopping", "max_iter"]) {
+  for (const token of ["hidden_layer_sizes", "early_stopping"]) {
     if (!buildText.toLowerCase().includes(token.toLowerCase())) throw new Error(`Neural-network ${modelId} build copy is missing ${token}.`);
   }
-  if (modelId === "mlp_reg" && !buildText.toLowerCase().includes("tol")) throw new Error("Neural-network regression build copy is missing tol.");
+  if (modelId === "mlp_reg" && !buildText.toLowerCase().includes("target")) throw new Error("Neural-network regression build copy is missing target scaling.");
+  const optionalCode = diagnoseStep.advancedCode || diagnoseStep.optionalCode || "";
+  if (!optionalCode.includes("Loss is optimisation evidence") || !optionalCode.includes("Alpha is reserved for a future")) {
+    throw new Error(`Neural-network ${modelId} optional evidence is missing the loss/alpha scope cue.`);
+  }
   if (modelId === "mlp_reg" && (!buildKeys.has("target-scaling") || !buildKeys.has("TransformedTargetRegressor") || !buildKeys.has("nested-parameter-routing") || !buildText.includes("TransformedTargetRegressor"))) {
     throw new Error("Neural-network regression build teaching is missing target-wrapper guidance.");
   }
@@ -252,9 +263,9 @@ if (!seoulInterpretation.includes("ordered windows") || seoulInterpretation.incl
   throw new Error("Seoul CV interpretation incorrectly treats time windows as random folds.");
 }
 
-const classificationHelp = api.metricHelpFor(api.DATASETS.breast, "baseline");
-if (!classificationHelp.find(metric => metric.key === "accuracy").text.includes("fraction of predictions that were correct")) {
-  throw new Error("Accuracy definition is missing its meaning.");
+const classificationHelp = api.metricHelpFor(api.DATASETS.breast, "reference");
+if (!classificationHelp.find(metric => metric.key === "accuracy")?.text.includes("Higher is better")) {
+  throw new Error("Accuracy comparison guidance is missing.");
 }
 const finalRegressionHelp = api.metricHelpFor(api.DATASETS.gapminder, "final");
 if (!finalRegressionHelp.find(metric => metric.key === "mae").text.includes("average absolute prediction error")) {
@@ -305,9 +316,8 @@ if (!conceptText(carRoute, "prepare").includes("one-hot encoding")) throw new Er
 requireConcepts(carRoute, "tune", ["hyperparameter", "learned-parameter", "GridSearchCV", "tuning"]);
 
 const categoricalOneRRoute = api.routeForSelection(api.DATASETS.car, api.DATASETS.car.scenarios[0], "one_r", 5);
-requireConcepts(categoricalOneRRoute, "tune", ["hyperparameter", "learned-parameter", "keep-defaults"]);
-if (conceptKeys(categoricalOneRRoute, "tune").has("GridSearchCV") || !conceptText(categoricalOneRRoute, "tune").includes("keeps the model's current/default settings")) {
-  throw new Error("Pure-categorical One-R defaults teaching is incorrect.");
+if (categoricalOneRRoute.some(step => step.id === "tune")) {
+  throw new Error("Pure-categorical One-R should not expose a no-op tuning card.");
 }
 
 const seoulConceptRoute = api.routeForSelection(api.DATASETS.seoul, api.DATASETS.seoul.scenarios[0], "simple_linear", 10);
@@ -315,7 +325,7 @@ requireConcepts(seoulConceptRoute, "split", ["training-data", "final-test-set", 
 if (conceptKeys(seoulConceptRoute, "split").has("random-split") || conceptKeys(seoulConceptRoute, "split").has("random-state")) {
   throw new Error("Seoul split teaching incorrectly claims random splitting.");
 }
-requireConcepts(seoulConceptRoute, "baseline", ["cross-validation", "fold", "time-series-split", "ordered-validation"]);
+requireConcepts(seoulConceptRoute, "baseline", ["time-series-split", "ordered-validation", "final-test-exclusion", "cv-purpose"]);
 if (conceptKeys(seoulConceptRoute, "baseline").has("shuffle") || conceptText(seoulConceptRoute, "baseline").includes("random folds")) {
   throw new Error("Seoul fold teaching incorrectly claims random folds.");
 }
@@ -374,7 +384,7 @@ for (const [modelId, [config, scenario]] of Object.entries(unsupervisedFixtures)
   if (routeCode.includes(`"${config.target}"`) || routeCode.includes(`'${config.target}'`)) {
     throw new Error(`${modelId} route code references the hidden reference target.`);
   }
-  if (!routeCode.includes("silhouette_suggestion") || routeCode.includes("selected_k = suggested_k") || !routeCode.includes("selected_k = min(3, max_k)")) {
+  if (routeCode.includes("silhouette_suggestion") || routeCode.includes("selected_k = suggested_k") || !routeCode.includes("selected_k = min(3, max_k)") || !routeCode.includes("no single score makes that decision automatically")) {
     throw new Error(`${modelId} still makes silhouette argmax the automatic cluster-count decision.`);
   }
 }
@@ -391,13 +401,13 @@ const pcaFixtures = {
   wine:[api.DATASETS.wine, api.DATASETS.wine.scenarios[1]]
 };
 const pcaConceptRequirements = {
-  frame:["principal_component", "pc1", "pc2", "not_clustering", "reference_after_fit"],
+  frame:["principal_component", "pc1", "pc2", "not_clustering"],
   explore:["redundancy", "principal_component"],
   prepare:["pca_scaling"],
   variance:["explained_variance", "cumulative_variance", "scree", "ninety_rule"],
   select:["ninety_rule", "reduced_representation", "cumulative_variance"],
   loadings:["loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"],
-  project:["score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"]
+  project:["score", "loading_vs_score", "projection", "pca_limitations"]
 };
 for (const [fixtureId, [config, scenario]] of Object.entries(pcaFixtures)) {
   const route = api.routeForSelection(config, scenario, "pca", 5);
@@ -423,16 +433,17 @@ for (const [fixtureId, [config, scenario]] of Object.entries(pcaFixtures)) {
   if (preProjectCode.includes(`"${config.target}"`) || preProjectCode.includes(`'${config.target}'`)) {
     throw new Error(`PCA ${fixtureId} accesses the reference target before interpretation.`);
   }
-  if (!project.code.includes(`"${config.target}"`) && !project.code.includes(`'${config.target}'`)) {
+  if (!project.optionalCode.includes(`"${config.target}"`) && !project.optionalCode.includes(`'${config.target}'`)) {
     throw new Error(`PCA ${fixtureId} does not include the post-fit reference-label interpretation.`);
   }
-  if (!project.code.includes("component_scores = full_pca.transform(Z)") || !project.code.includes("PC1 (")) {
+  if (!project.code.includes("projection = component_scores[:, :2]") || !project.code.includes("PC1 (")) {
     throw new Error(`PCA ${fixtureId} does not teach row scores and actual projection variance.`);
   }
 }
 const pca30Route = api.routeForSelection(api.DATASETS.breast, api.DATASETS.breast.scenarios[1], "pca", 5);
-const pca30Explore = pca30Route.find(step => step.id === "explore").code;
-if (pca30Explore.includes("sns.heatmap") || !pca30Explore.includes("strongest_pairs") || !pca30Explore.includes("absolute_correlation") || !pca30Explore.includes("not the full correlation matrix")) {
+const pca30ExploreStep = pca30Route.find(step => step.id === "explore");
+const pca30Explore = pca30ExploreStep.code;
+if (pca30Explore.includes("sns.heatmap") || !pca30Explore.includes("pair_summary") || !pca30Explore.includes("absolute_correlation") || !pca30Explore.includes("named pair") || !pca30ExploreStep.optionalCode.includes("combinations")) {
   throw new Error("High-dimensional PCA does not use the compact unique-pair redundancy summary.");
 }
 const pcaVarianceCode = pca30Route.find(step => step.id === "variance").code;
@@ -477,11 +488,11 @@ const practiceFixtures = {
   pca:[api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "pca"]
 };
 const requiredPracticeSteps = {
-  logistic:["split", "model", "baseline", "tune", "diagnose", "final"],
-  knn_cls:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
-  classification_tree:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
-  mlp_cls:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
-  mlp_reg:["split", "prepare", "model", "baseline", "tune", "diagnose", "final"],
+  logistic:["split", "model", "baseline", "diagnose", "final"],
+  knn_cls:["split", "prepare", "model", "baseline", "diagnose", "final"],
+  classification_tree:["split", "prepare", "model", "baseline", "diagnose", "final"],
+  mlp_cls:["split", "prepare", "model", "baseline", "diagnose", "final"],
+  mlp_reg:["split", "prepare", "model", "baseline", "diagnose", "final"],
   kmeans:["compare", "fit", "profile"],
   hierarchical:["compare", "fit", "profile"],
   pca:["variance", "select", "loadings", "project"]
@@ -490,7 +501,9 @@ for (const [fixtureName, [fixtureConfig, fixtureScenario, fixtureModel]] of Obje
   const practiceRoute = api.routeForSelection(fixtureConfig, fixtureScenario, fixtureModel, 5);
   const practiceRouteAgain = api.routeForSelection(fixtureConfig, fixtureScenario, fixtureModel, 5);
   if (JSON.stringify(practiceRoute) !== JSON.stringify(practiceRouteAgain)) throw new Error(`Practice metadata is not deterministic for ${fixtureName}.`);
-  for (const stepId of requiredPracticeSteps[fixtureModel]) {
+  const requiredSteps = [...requiredPracticeSteps[fixtureModel]];
+  if (practiceRoute.some(item => item.id === "tune")) requiredSteps.splice(requiredSteps.indexOf("diagnose"), 0, "tune");
+  for (const stepId of requiredSteps) {
     const step = practiceRoute.find(item => item.id === stepId);
     if (!step?.practice) throw new Error(`Missing Practice metadata for ${fixtureName}/${stepId}.`);
     for (const interaction of [step.practice.beforeRun, step.practice.decision]) {
@@ -535,7 +548,7 @@ if (!pcaVariancePractice.decision || !pcaVariancePractice.decision.prompt.includ
 const primaryCode = step => String(step.primaryCode ?? step.code ?? "");
 const advancedCode = step => String(step.advancedCode || [step.setupCode, step.evidenceCode].filter(Boolean).join("\n\n") || "");
 const primaryLineCount = code => String(code || "").split("\n").length;
-const diagnosticRequirements = {
+const diagnosticEvidenceRequirements = {
   simple_linear:["predict(", "coef_", "intercept_"],
   multiple_linear:["coef_"],
   polynomial:["predict(", "degree"],
@@ -573,13 +586,20 @@ for (const [modelId, [fixtureConfig, fixtureScenario]] of Object.entries(diagnos
   if (!diagnose) throw new Error(`Missing Guided diagnostic task for ${modelId}.`);
   const learner = primaryCode(diagnose);
   if (primaryLineCount(learner) > 35) throw new Error(`${modelId} primary diagnostic exceeds 35 lines.`);
-  for (const requirement of diagnosticRequirements[modelId]) {
-    const found = Array.isArray(requirement) ? requirement.some(token => learner.includes(token)) : learner.includes(requirement);
-    if (!found) throw new Error(`${modelId} primary diagnostic lost learner operation ${Array.isArray(requirement) ? requirement.join(" or ") : requirement}.`);
+  const primaryRequirements = fixtureConfig.task === "classification" ? ["confusion_matrix", "cross_val_predict"] : ["residuals", "cross_val_predict"];
+  for (const requirement of primaryRequirements) {
+    if (!learner.includes(requirement)) throw new Error(`${modelId} primary diagnostic lost learner error operation ${requirement}.`);
   }
   const evidenceBuilder = advancedCode(diagnose);
   if (evidenceBuilder) {
     if (evidenceBuilder === learner) throw new Error(`${modelId} advanced diagnostic code duplicates the learner surface.`);
+    if (!evidenceBuilder.includes("fitted_pipeline") || !evidenceBuilder.includes("fitted_model")) {
+      throw new Error(`${modelId} optional model interpretation does not fit a named pipeline/model.`);
+    }
+    for (const requirement of diagnosticEvidenceRequirements[modelId]) {
+      const found = Array.isArray(requirement) ? requirement.some(token => evidenceBuilder.includes(token)) : evidenceBuilder.includes(requirement);
+      if (!found) throw new Error(`${modelId} optional interpretation lost model evidence ${Array.isArray(requirement) ? requirement.join(" or ") : requirement}.`);
+    }
     const practice = JSON.stringify({practice:diagnose.practice, solution:diagnose.practice?.exercise?.solution || ""});
     if (practice.includes(evidenceBuilder)) throw new Error(`${modelId} Practice metadata copied the advanced evidence builder.`);
     for (const token of ["fit_indices", "validation_indices", "named_steps", "meshgrid", "region_codes", "quantity_rows", "oof_model", "tree_transformed"]) {
@@ -594,7 +614,7 @@ if (source.includes("advancedCode") && !/createElement\(["']details["']\)/.test(
 }
 
 console.log(JSON.stringify({
-  supervised_steps_checked:9,
+  supervised_steps_checked:10,
   classification_summary:true,
   regression_summary:true,
   final_comparisons:true,

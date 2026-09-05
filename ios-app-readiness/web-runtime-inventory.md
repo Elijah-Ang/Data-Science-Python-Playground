@@ -15,7 +15,7 @@ The active product is a static learning and analysis tool delivered through GitH
 
 - Editable Python notebook cells.
 - Browser-side execution through Pyodide in a Web Worker.
-- Data inspection, wrangling, charts, model training, diagnostics, and guided/practice flows.
+- Data inspection, wrangling, charts, model training, diagnostics, and editable step-by-step workflows.
 - Generated CSV and chart downloads.
 - Responsive layouts and touch-oriented pointer interactions are already present in parts of the UI.
 - The current project checks JavaScript syntax, state invalidation, teaching metadata, and generated ML routes. The fast syntax/state/teaching/route checks pass in the inspected release copy.
@@ -26,7 +26,7 @@ The active product is a static learning and analysis tool delivered through GitH
 |---|---|---|
 | Python runtime | Web release fetches pinned Pyodide 0.26.4 on demand; native release packages the required runtime and wheels locally | Validate cold start, memory, and offline recovery on physical devices |
 | Fonts | JetBrains Mono, Nunito, and Silkscreen are self-hosted | Confirm rendering and font licenses in the release archive |
-| Persistence | Active work stays in memory only; notebooks and recent work are not restored after the process terminates | Validate foreground/background continuity and fresh-canvas relaunch behavior |
+| Persistence | Code drafts and bundled dataset text save automatically on-device per setup; Python variables and results are temporary and reset when reopening | Validate draft restoration, foreground/background continuity, and runtime reset behavior |
 | Export | Browser uses downloads; native bridge writes temporary files and opens Share Sheet | Validate Files/Share destinations on iPhone and iPad |
 | External sources | Browser opens new tabs; native bridge uses Capacitor Browser | Validate dismissal and iPad presentation |
 | Native project | Capacitor/Xcode project, privacy manifest, icons, and launch assets exist | Full Xcode, signing, simulator/device builds remain required |

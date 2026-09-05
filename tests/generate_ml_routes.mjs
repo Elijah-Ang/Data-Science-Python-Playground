@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = fs.readFileSync(path.join(root, "ml-app.js"), "utf8");
 
 const window = {
-  __ML_TEST_MODE__: true,
+  DataframeSerializerSource:fs.readFileSync(path.join(root,"table-serialization.py"),"utf8"), ScientificValidatorSource:fs.readFileSync(path.join(root,"scientific-validators.py"),"utf8"), __ML_TEST_MODE__: true,
   matchMedia: () => ({matches:false, addEventListener(){}})
 };
 const context = {

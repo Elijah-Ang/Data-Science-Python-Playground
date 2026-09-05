@@ -17,9 +17,9 @@ Data Playground is a free, no-account educational app. Python execution and the 
 
 Version 1 uses bundled datasets only; importing user-supplied CSV files is deferred beyond version 1. CSV export remains available from the analysis workspace.
 
-The app intentionally keeps active notebook work in temporary memory. Work remains available when the app is backgrounded while iOS keeps its process alive, but swiping the app away and reopening it starts with an empty workspace. There is no account, cloud synchronisation, or automatic notebook history.
+Code drafts and bundled dataset text save automatically on this device for each setup. Python variables and results remain temporary and are reset when reopening. CSV and chart exports are created only when the reviewer chooses them; the browser, Files app or selected share destination controls the resulting file. There is no account, cloud synchronisation, analytics or project-operated storage for analysis work.
 
-The Machine Learning Playground guides feature and target selection, train/test splitting, preprocessing, cross-validation, model fitting, diagnostics, and a final holdout evaluation. The app preserves a one-use final holdout in supervised teaching routes. Clustering and PCA routes are clearly separated from supervised evaluation. Practice mode lets the reviewer make decisions before revealing reference code.
+The Machine Learning Playground guides feature and target selection, train/test splitting, preprocessing, cross-validation, model fitting, diagnostics, and a final holdout evaluation. The app preserves a one-use final holdout in supervised teaching routes. Clustering and PCA routes are clearly separated from supervised evaluation. The reviewer can edit and run each workflow step and open its reference panel.
 
 ## Reviewer contact
 

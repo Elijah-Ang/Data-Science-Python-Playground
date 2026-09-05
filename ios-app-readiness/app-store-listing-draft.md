@@ -32,9 +32,9 @@ Data Playground is a hands-on learning lab for exploring real datasets, writing 
 
 Choose a curated dataset, inspect its structure, ask a question, and work through a live local notebook. Edit Python cells, run them, read tables and charts, and export results when you choose.
 
-The Machine Learning Playground guides you through feature and target selection, train/test splitting, preprocessing, cross-validation, model fitting, diagnostics, and a final holdout evaluation. Practice mode lets you make decisions before revealing reference code.
+The Machine Learning Playground guides you through feature and target selection, train/test splitting, preprocessing, cross-validation, model fitting, diagnostics, and a final holdout evaluation. Edit and run the workflow step by step, with a reference panel available throughout.
 
-Python execution and the bundled dataset catalogue run locally inside the app. No account is required, and this version contains no ads or in-app purchases. Your active work is temporary: it remains available while the app process stays alive, but is cleared after the app is terminated.
+Python execution and the bundled dataset catalogue run locally inside the app. No account is required, and this version contains no ads or in-app purchases. Code drafts and bundled dataset text save automatically on the device for each setup; Python variables and results are temporary and reset when you reopen the workspace.
 
 Data Playground is designed for learners who want a clear, hands-on path from data questions to evidence-based conclusions.
 

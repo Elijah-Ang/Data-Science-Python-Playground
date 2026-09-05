@@ -7,7 +7,7 @@ import {fileURLToPath} from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = fs.readFileSync(path.join(root, "ml-app.js"), "utf8");
 const html = fs.readFileSync(path.join(root, "ml.html"), "utf8");
-const window = {__ML_TEST_MODE__:true, matchMedia:() => ({matches:false, addEventListener(){}})};
+const window = {DataframeSerializerSource:fs.readFileSync(path.join(root,"table-serialization.py"),"utf8"), ScientificValidatorSource:fs.readFileSync(path.join(root,"scientific-validators.py"),"utf8"), __ML_TEST_MODE__:true, matchMedia:() => ({matches:false, addEventListener(){}})};
 const context = {
   console: {log(){}, warn(){}, error(){}}, window, document:{}, setTimeout, clearTimeout,
   URL, Blob, Worker: class {}, globalThis:null
@@ -97,12 +97,9 @@ for (const deprecatedCall of [/\.get_cmap\s*\(/, /register_cmap\s*\(/, /matplotl
   assert(!deprecatedCall.test(source), `Known Matplotlib deprecated call remains: ${deprecatedCall}`);
 }
 
-for (const id of ["guidedModeButton", "practiceModeButton", "runAllButton", "practiceModeNote"]) {
-  assert(html.includes(`id="${id}"`), `Missing Practice control: ${id}`);
-}
-assert(source.includes("runAllButton.disabled = !runtimeReady || isPractice"), "Practice mode must disable Run Complete.");
-assert(source.includes("Reference solution") && source.includes("clean-workflow reference"), "Reference reveal controls are missing.");
-assert(source.includes("practiceStates.clear()") && source.includes("independentCheckpointState = null"), "Reset must clear Practice session state.");
+assert(!html.includes('id="practiceModeButton"'), "Retired mode controls must not ship.");
+assert(source.includes('const playgroundMode = "guided"'), "Only the current editable workflow may execute.");
+assert(!source.includes('function setPlaygroundMode'), "Retired mode switching must not affect execution.");
 for (const kind of ["model", "cv", "kmeans", "hierarchical", "pca_selection", "checkpoint_supervised", "checkpoint_kmeans", "checkpoint_hierarchical", "checkpoint_pca"]) {
   assert(api.PRACTICE_VALIDATOR_SOURCE.includes(`kind == "${kind}"`), `Missing semantic validator: ${kind}`);
 }
@@ -184,7 +181,7 @@ for (const folds of [5, 10]) for (const config of Object.values(api.DATASETS)) f
 assert(primaryAuditRoutes === 254, `Primary Step 8 audit covered ${primaryAuditRoutes} routes instead of 254.`);
 
 const supervisedReference = api.cleanWorkflowReference(api.DATASETS.breast, api.DATASETS.breast.scenarios[0], "logistic", 5);
-for (const token of ["X_train", "y_train", "Pipeline", "cross_validate", "best_pipeline"]) {
+for (const token of ["X_train", "y_train", "Pipeline", "cross_validate", "chosen_pipeline"]) {
   assert(supervisedReference.includes(token), `Clean supervised reference is missing ${token}`);
 }
 assert(!forbiddenHoldout(supervisedReference), "Training-only clean reference must not open the holdout.");

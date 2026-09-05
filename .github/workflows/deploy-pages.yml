@@ -87,8 +87,17 @@ jobs:
       - name: Start local site
         run: nohup python -m http.server 8000 -d dist > /tmp/ml-playground-http.log 2>&1 &
 
-      - name: Run complete browser/Pyodide smoke test
-        run: python tests/test_ml_browser.py --base-url http://127.0.0.1:8000/ml.html
+      - name: Run revised browser/Pyodide smoke test
+        run: python tests/test_ml_workflow_browser.py --base-url http://127.0.0.1:8000/ml.html
+
+      - name: Check revised landing and notebook controls
+        run: python tests/test_ui_preferences_browser.py --engine chromium --base-url http://127.0.0.1:8000
+
+      - name: Check compact navigation and empty Data opening
+        run: python tests/test_empty_workspace_browser.py --engine chromium --base-url http://127.0.0.1:8000
+
+      - name: Check automatic notebook session contract
+        run: python tests/test_notebook_session_browser.py --engine chromium --base-url http://127.0.0.1:8000
 
   deploy:
     needs: [validate, browser-pyodide-smoke]

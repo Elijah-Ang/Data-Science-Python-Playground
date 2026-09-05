@@ -42,9 +42,9 @@ The first native layer provides:
 2. Native Files/share-sheet export for generated CSVs and charts.
 3. External-link handling for dataset source links.
 4. A controlled connectivity surface and the existing runtime error reporting.
-5. Session-only state: work remains while the WebView process stays alive, but no notebook or recent-work history is persisted after termination.
+5. Local draft persistence: code drafts and bundled dataset text are saved per setup; Python variables and results remain session-only and reset when reopening.
 
-The owner approved the fresh-canvas model on 2026-08-31. Advertising remains a separate future layer and is not present in the native project.
+The native app keeps runtime state session-only while preserving code drafts locally per setup. Advertising remains a separate future layer and is not present in the native project.
 
 ## Web-layer work completed before device testing
 

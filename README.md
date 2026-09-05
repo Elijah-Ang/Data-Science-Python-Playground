@@ -25,23 +25,15 @@ npm run ios:sync
 npm run ios:open
 ```
 
-The native build requires Node 22+, full Xcode 26+, an Apple signing team, and an iPhone/iPad simulator or device. This Mac currently has Command Line Tools but not the full Xcode/iOS SDK, so synchronisation is verified while compilation, signing, and physical-device testing remain prerequisites.
+The native build requires Node 22+, full Xcode 26+, an Apple signing team, and an iPhone/iPad simulator or device. Install full Xcode and select its developer directory before building. The 5 September 2026 audit successfully built and launched an iOS simulator artifact; signing and physical-device release checks remain separate gates. See `ios-app-readiness` for dated evidence.
 
 ## Machine Learning Playground
 
-Open [`ml.html`](ml.html) for an editable, browser-only ML notebook. Each route uses the same generated Python workflow and methodology whether it is being followed in Guided mode or worked through in Practice mode.
+Open [`ml.html`](ml.html) for an editable, browser-only ML notebook with a single step-by-step workflow for each compatible dataset, feature scenario, and model.
 
-### Learning modes
+### Working through a route
 
-**Guided** is the default walkthrough. It keeps the complete route code visible and editable, shows the question and reading cue beside the relevant evidence, and keeps **Run Complete** and the exact Workflow Reference available. It is intended for understanding and following a complete analysis.
-
-**Practice** uses the same dataset, scenario, model, Python, and runtime, but asks the learner to think before the evidence appears. Selected steps ask for a qualitative prediction or a decision before running; `Not sure yet` is always a valid way to continue. Feedback compares the committed expectation with the evidence produced by the route.
-
-Practice also supports safe, reversible one-variable experiments. An experiment changes a real value in the editable route, then waits for the downstream evidence that can actually show its effect. The Practice panel preserves a small baseline snapshot and shows a compact **Before / After** comparison after that evidence is rerun. It does not turn experiments into automatic tuning or open the final test.
-
-Where a Practice task uses scaffold fading, support can move from a full example to completing one meaningful line, a partial starter, a focused hint, and a small retrieval task. After a route, an **Independent Checkpoint** asks the learner to rebuild a compact piece of the workflow using the variables already available in that route. These activities are lightweight and evidence-focused: there are no XP scores, badges, or certificates.
-
-The exact Workflow Reference remains available in Practice, but its reference solution is collapsed behind an explicit reveal. Revealing it is a normal support choice, not a failure. Guided mode does not hide code or require Practice interactions.
+Choose a setup, then select a route step to add and run its editable Python cell. Each step includes a question and reading cue beside the relevant evidence. **Run all** continues the suggested route, and **Workflow** opens the reference panel with the exact route code. Add a custom cell to explore your own question, or use **Reset data** to start the modelling workspace again.
 
 ### Route families
 
@@ -55,8 +47,6 @@ frame → split → explore training data → prepare → build
 ```
 
 Classification uses a stratified 80/20 holdout when appropriate; ordinary regression uses a random 80/20 holdout. Seoul Bike uses a chronological holdout and forward-only `TimeSeriesSplit`. Preparation stays inside the pipeline and cross-validation, tuning uses training data only, and the one-use final test remains sealed until the final step.
-
-Practice predictions, decisions, experiments, and the Independent Checkpoint follow those same boundaries. They may use route metadata, training evidence, validation evidence, and diagnostics already generated, but never pre-open `X_test`, `y_test`, or final-test results.
 
 #### Clustering and PCA
 
@@ -82,7 +72,7 @@ For descriptive interpretation, a reference label may be added after fitting—f
 - Palmer Penguins (333-row complete-case teaching copy)
 - Car Evaluation
 
-All bundled CSV files remain local to the browser session and are not saved automatically.
+Bundled CSV data remains on-device. Code drafts retain a bundled CSV copy locally; export creates a portable file only when requested.
 
 ## Testing and release
 
@@ -102,7 +92,7 @@ For real Python execution and browser coverage:
 python tests/test_ml_routes.py --runtime representative
 python tests/test_ml_routes.py --runtime full
 python3 -m http.server 8000 -d dist
-python tests/test_ml_browser.py --base-url http://127.0.0.1:8000/ml.html
+python tests/test_ml_workflow_browser.py --base-url http://127.0.0.1:8000/ml.html
 ```
 
 The normal release path is: work on a feature branch, run the local checks, open a pull request, wait for the structural route audit, representative Python runtime audit, and Browser/Pyodide smoke test, then merge to `main`. After merging, run the hosted `Validate ML routes` workflow with `full_runtime=true` for the exhaustive 254-route check, require all routes to pass, and verify that GitHub Pages published the merged commit and its cache marker.
@@ -112,3 +102,11 @@ The data-analysis workspace remains in [`playground.html`](playground.html). The
 ## Maintainer note
 
 The repository history and pull requests retain the implementation chronology. Source-level regression names may still mention the phase or feature that introduced a safeguard, but this README documents the current learner experience and release contract rather than requiring readers to follow that history.
+
+## Notebook work and build identity
+
+Data Playground opens with an empty notebook; its cells last only while the page remains open. Copy code you want to keep before navigating away. Machine Learning code drafts save per dataset/model/scenario/fold setup and restore code, not Python variables or current results. **Stop / restart Python** cancels execution and retains code; **Reset data** restores the runtime namespace and retains code. Notebook save/open/report-export controls are not part of the current workspace toolbar; CSV and chart exports are created only when you choose them.
+
+Run `npm run check` for build, JavaScript, worker-transport, scientific metadata and shell checks. Run `npm run check:data` for 262 Data task scenarios and trust regressions. Product browser tests require Playwright and a server for `dist`: `python3 tests/test_product_browser.py --engine chromium --base-url http://127.0.0.1:8000` (repeat with `webkit`).
+
+Production copies only referenced artwork. `dist/asset-manifest.json` records exact file hashes; `dist/build-info.json` records the content ID, commit, modified-source indicator, date and byte count. About displays this identity. Web offline support covers the cached app shell; the remote web Python runtime is not promised on a fresh offline visit. Native builds bundle the pinned runtime.

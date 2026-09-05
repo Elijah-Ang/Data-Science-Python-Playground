@@ -32,14 +32,14 @@ Information is used to:
 
 - run data analysis and machine-learning examples;
 - display tables, charts, diagnostics, and learning guidance;
-- save or export a result when the user explicitly requests it through the device or browser; and
+- create a CSV or chart export when the user explicitly requests it through the device or browser; and
 - respond to support requests.
 
 The project does not currently include user accounts, cloud synchronisation, analytics, or cross-app tracking.
 
 ## 5. Storage and retention
 
-The app keeps active analysis work only in temporary memory. Work may remain available while iOS keeps the app process alive, but it is not restored after the app is terminated or swiped away. Files saved or exported by the user are controlled by the operating system or browser destination selected by the user. The project does not provide notebook history, a cloud account, or project-operated storage for analysis work.
+Code drafts and bundled dataset text save automatically on this device for each setup. Python variables and results remain temporary and are reset when reopening. CSV and chart exports are created only when the user chooses them; resulting files are controlled by the browser, Files app or selected share destination. There is no account, cloud synchronisation, analytics or project-operated storage for analysis work.
 
 Users should avoid entering information they are not authorised to process, including confidential, regulated, or personally identifying data.
 

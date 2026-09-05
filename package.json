@@ -9,7 +9,7 @@
     "build:ios-assets": "npm run vendor:pyodide && DSPP_NATIVE_RUNTIME=1 node scripts/build-web.mjs",
     "dev": "npm run build:web && python3 -m http.server 8000 -d dist",
     "check": "npm run build:web && npm run check:js && npm run check:routes && npm run check:app-shell",
-    "check:js": "node --check tutorial.js && node --check landing.js && node --check ml-app.js && node --check app/app-platform.js",
+    "check:js": "node --check tutorial.js && node --check landing.js && node --check ml-app.js && node --check app/app-platform.js && node --check appearance.js && node --check notebook-session.js && node --check worker-bridge.js && node --check dataset-dictionary.js && node tests/test_worker_bridge.mjs && node --check output-ui.js",
     "check:routes": "node tests/test_ml_state.mjs && node tests/test_ml_teaching.mjs && node tests/test_ml_practice_final.mjs && python3 tests/test_ml_routes.py",
     "check:app-shell": "node scripts/check-app-shell.mjs",
     "check:ios-runtime": "node scripts/check-ios-runtime.mjs",
@@ -17,7 +17,9 @@
     "vendor:pyodide": "node scripts/vendor-pyodide.mjs",
     "ios:add": "npm run build:web && npx cap add ios",
     "ios:sync": "npm run build:ios-assets && npx cap sync ios && npm run check:ios-runtime",
-    "ios:open": "npx cap open ios"
+    "ios:open": "npx cap open ios",
+    "check:data": "python3 tests/test_data_runtime.py",
+    "check:product": "python3 tests/test_product_browser.py"
   },
   "dependencies": {
     "@capacitor/browser": "8.0.4",
