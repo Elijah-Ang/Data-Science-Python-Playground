@@ -1,262 +1,284 @@
 (() => {
   "use strict";
 
-  /* A deterministic canvas network keeps the hero visual crisp, light, and alive
-     without shipping a heavy image or a third-party rendering runtime. */
-  const initNeuralCanvas = () => {
-    const canvas = document.querySelector("#neuralCanvas");
-    if (!canvas) return;
-    const ctx = canvas.getContext?.("2d");
-    if (!ctx) return;
-
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    // One compact input column, three hidden columns, and one compact output
-    // column. Keeping the x coordinates stable makes the feed-forward shape
-    // readable even while the nodes breathe in depth.
-    const layerPositions = [0.10, 0.30, 0.47, 0.64, 0.90];
-    // Equal hidden-column counts and fixed slots keep the graph legible as a
-    // feed-forward network instead of a cloud of unrelated points.
-    const layerCounts = [6, 9, 9, 9, 4];
-    const palette = { input: "#c75b20", hidden: "#7651a6", output: "#137c9c" };
-    let width = 1;
-    let height = 1;
-    let dpr = 1;
-    let nodes = [];
-    let edges = [];
-
-    const pseudo = value => {
-      const x = Math.sin(value * 12.9898 + 78.233) * 43758.5453;
-      return x - Math.floor(x);
-    };
-
-    const buildNetwork = () => {
-      nodes = [];
-      edges = [];
-      layerPositions.forEach((position, layer) => {
-        const count = layerCounts[layer];
-        for (let index = 0; index < count; index += 1) {
-          const seed = layer * 101 + index * 17;
-          const isInput = layer === 0;
-          const isOutput = layer === layerPositions.length - 1;
-          nodes.push({
-            layer,
-            index,
-            group: isInput ? "input" : isOutput ? "output" : "hidden",
-            x: position,
-            y: .12 + (index + 1) / (count + 1) * .76,
-            z: (pseudo(seed + 3) - .5) * .9,
-            phase: pseudo(seed + 7) * Math.PI * 2,
-            radius: isInput ? 4.1 : isOutput ? 4.4 : 2.45,
-            color: isInput ? palette.input : isOutput ? palette.output : palette.hidden
-          });
-        }
-      });
-
-      for (let layer = 0; layer < layerPositions.length - 1; layer += 1) {
-        const left = nodes.filter(node => node.layer === layer);
-        const right = nodes.filter(node => node.layer === layer + 1);
-        left.forEach((from, fromIndex) => {
-          // Map each node to its nearest slot in the next column, with one
-          // adjacent branch. This preserves the familiar fan while avoiding
-          // the dense criss-cross that obscures the layer boundaries.
-          const center = Math.round((fromIndex / Math.max(1, left.length - 1)) * (right.length - 1));
-          const targetIndexes = [...new Set([center, Math.min(right.length - 1, center + (fromIndex % 2 ? 1 : -1))])];
-          targetIndexes.forEach((targetIndex, edgeIndex) => {
-            const to = right[targetIndex];
-            if (to) edges.push({ from, to, phase: pseudo(layer * 37 + fromIndex * 11 + edgeIndex * 5) });
-          });
-        });
-      }
-    };
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      width = Math.max(1, rect.width);
-      height = Math.max(1, rect.height);
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(width * dpr);
-      canvas.height = Math.round(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      buildNetwork();
-    };
-
-    const point = (node, time) => {
-      // Keep the columns fixed, but make the depth pulse read clearly as a
-      // quick in/out processing pass instead of a slow, barely perceptible
-      // drift. The modest amplitude keeps neighbouring layers separated.
-      const breathing = Math.sin(time * .0032 + node.phase) * .016;
-      const depth = node.z + Math.sin(time * .0036 + node.phase) * .22;
-      const scale = .78 + depth * .28;
-      return {
-        x: width * (node.x + depth * .032),
-        y: height * (node.y + breathing + depth * .025),
-        scale
-      };
-    };
-
-    const draw = time => {
-      const now = Number.isFinite(time) ? time : 0;
-      ctx.clearRect(0, 0, width, height);
-
-      /* Hairline planes make the five columns legible as input, hidden, and
-         output layers without putting a card or labels over the network. */
-      const regionColors = [
-        "rgba(199, 91, 32, .025)",
-        "rgba(118, 81, 166, .026)",
-        "rgba(19, 124, 156, .025)"
-      ];
-      [[.035, .20], [.235, .755], [.80, .965]].forEach(([start, end], regionIndex) => {
-        const region = ctx.createLinearGradient(width * start, 0, width * end, 0);
-        region.addColorStop(0, "rgba(255, 255, 255, 0)");
-        region.addColorStop(.5, regionColors[regionIndex]);
-        region.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.fillStyle = region;
-        ctx.fillRect(width * start, height * .07, width * (end - start), height * .86);
-      });
-      const guideColors = [
-        "rgba(199, 91, 32, .24)",
-        "rgba(118, 81, 166, .16)",
-        "rgba(118, 81, 166, .16)",
-        "rgba(118, 81, 166, .16)",
-        "rgba(19, 124, 156, .26)"
-      ];
-      ctx.save();
-      ctx.setLineDash([2, 9]);
-      layerPositions.forEach((layerX, layerIndex) => {
-        const px = width * layerX;
-        ctx.beginPath();
-        ctx.moveTo(px, height * .08);
-        ctx.lineTo(px, height * .92);
-        ctx.strokeStyle = guideColors[layerIndex];
-        ctx.lineWidth = layerIndex === 0 || layerIndex === layerPositions.length - 1 ? 1.7 : .85;
-        ctx.stroke();
-      });
-      ctx.restore();
-
-      edges.forEach(edge => {
-        const from = point(edge.from, now);
-        const to = point(edge.to, now);
-        const alpha = .13 + ((from.scale + to.scale) / 2 - .72) * .16;
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.strokeStyle = `rgba(29, 67, 92, ${Math.max(.075, alpha)})`;
-        ctx.lineWidth = .7 + Math.max(0, (from.scale + to.scale - 1.48) * .4);
-        ctx.stroke();
-
-        const progress = (now * .00078 + edge.phase) % 1;
-        const signal = progress < .82 ? progress / .82 : 1 - (progress - .82) / .18;
-        const sx = from.x + (to.x - from.x) * progress;
-        const sy = from.y + (to.y - from.y) * progress;
-        const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, 9);
-        glow.addColorStop(0, "rgba(255, 207, 103, .82)");
-        glow.addColorStop(1, "rgba(255, 207, 103, 0)");
-        ctx.globalAlpha = Math.max(0, signal);
-        ctx.fillStyle = glow;
-        ctx.fillRect(sx - 9, sy - 9, 18, 18);
-        ctx.globalAlpha = 1;
-      });
-
-      nodes.forEach(node => {
-        const position = point(node, now);
-        const pulse = 1 + Math.sin(now * .0038 + node.phase) * .16;
-        const radius = node.radius * position.scale * pulse;
-        const glow = ctx.createRadialGradient(position.x, position.y, 0, position.x, position.y, radius * 4.2);
-        glow.addColorStop(0, `${node.color}99`);
-        glow.addColorStop(1, `${node.color}00`);
-        ctx.fillStyle = glow;
-        ctx.beginPath();
-        ctx.arc(position.x, position.y, radius * 4.2, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = node.color;
-        ctx.beginPath();
-        ctx.arc(position.x, position.y, radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255, 250, 240, .82)";
-        ctx.lineWidth = .7;
-        ctx.stroke();
-      });
-
-      canvas.dataset.neuralFrame = String(Math.round(now));
-      if (!reduced) window.requestAnimationFrame(draw);
-    };
-
-    resize();
-    if ("ResizeObserver" in window) {
-      const observer = new ResizeObserver(resize);
-      observer.observe(canvas);
-    } else {
-      window.addEventListener("resize", resize, { passive: true });
+  const $ = selector => document.querySelector(selector);
+  const chapters = [
+    {
+      label: "Choose",
+      title: "Start with a question.",
+      mobile: "Choose a dataset at the top. Start with bike rentals and explore how demand changes through the day.",
+      wide: "Choose a dataset in the top strip. The inspector, notebook and results all belong to the same working session.",
+      focus: "selector",
+      context: "One dataset. Plenty of questions."
+    },
+    {
+      label: "Inspect",
+      title: "Meet your data.",
+      mobile: "Scroll into the inspector to see the size, columns and preview before you write any Python.",
+      wide: "Look left for the inspector. Keep the dataset facts in view while you work in the notebook.",
+      focus: "inspector",
+      context: "Your original data stays available."
+    },
+    {
+      label: "Follow",
+      title: "A first step, ready for you.",
+      mobile: "Find the suggested route below your cells and outputs. Tap a task such as Preview or Summary to keep going, or open More tasks for another question.",
+      wide: "Find the suggested route above the notebook. Start with Preview or Summary, then use More tasks to explore another question.",
+      focus: "route",
+      context: "A starting point, not a fixed script."
+    },
+    {
+      label: "Run",
+      title: "A little Python. A new insight.",
+      mobile: "Tap Run on a cell. Read its result directly underneath, then change the code and try again.",
+      wide: "Run a cell in the notebook. Its table or chart appears in the output panel beside your code.",
+      focus: "cell",
+      context: "Edit → Run → Read → Repeat."
+    },
+    {
+      label: "Guide",
+      title: "A nudge when you need one.",
+      mobile: "Tap the book button beside the switcher for Challenges. In the ML lab, the same button opens Workflow.",
+      wide: "Use the book button beside the switcher for Challenges. In the ML lab, it opens the Workflow reference.",
+      focus: "guide-sheet",
+      context: "Help is there when you want it."
+    },
+    {
+      label: "Evidence",
+      title: "Make the result mean something.",
+      mobile: "Follow the output below your cell. Read a table, inspect a chart, and explain the pattern you see.",
+      wide: "Read the output beside the notebook. Compare the evidence with your question before you decide what to try next.",
+      focus: "output",
+      context: "For ML: validate first, final test last."
+    },
+    {
+      label: "Explore",
+      title: "Take your next question further.",
+      mobile: "Tap ML in the HOME / DATA / ML switcher at the top. Choose your features and model, then follow the modelling workflow.",
+      wide: "Select ML in the HOME / DATA / ML switcher. Move from exploring patterns to training and evaluating a model.",
+      focus: "ml-sheet",
+      context: "You’re ready to explore."
     }
-    draw(0);
-  };
+  ];
 
-  initNeuralCanvas();
-
-  const steps = [...document.querySelectorAll("[data-story-step]")];
-  const shots = [...document.querySelectorAll(".workspace-shot[data-shot]")];
-  const callouts = [...document.querySelectorAll(".shot-callout[data-step]")];
-  const caption = document.querySelector("[data-stage-caption]");
-  const stageLabel = document.querySelector("[data-stage-label]");
-  if (!steps.length || !shots.length) return;
-
-  const show = step => {
-    steps.forEach(item => item.classList.toggle("is-active", item === step));
-    const stepId = step?.dataset.step || String(Math.max(0, steps.indexOf(step)) + 1);
-    callouts.forEach(callout => callout.classList.toggle("is-focus", callout.dataset.step === stepId));
-    const shotId = step?.dataset.shot || steps[0].dataset.shot;
-    shots.forEach(shot => { shot.hidden = shot.dataset.shot !== shotId; });
-    if (stageLabel) stageLabel.textContent = shotId === "ml" ? "MACHINE LEARNING" : "DATA PLAYGROUND";
-    if (caption && step?.dataset.caption) caption.textContent = step.dataset.caption;
-  };
-
-  show(steps[0]);
-  // Read the breakpoint at sync time rather than only on page load. The
-  // in-app browser can be resized into phone mode without a reload, and the
-  // final card must still be selected using the lower mobile reading anchor.
-  const compactQuery = window.matchMedia("(max-width: 980px)");
-  const storyStage = document.querySelector(".story-stage");
-  let ticking = false;
-  const syncVisibleStep = () => {
-    ticking = false;
-    const compact = compactQuery.matches;
-    const activeShot = shots.find(shot => !shot.hidden);
-    const activeShotRect = activeShot?.getBoundingClientRect();
-    const stageRect = storyStage?.getBoundingClientRect();
-    // On a stacked phone layout, choose the note from the open reading area
-    // below the pinned map. This keeps the active explanation from being
-    // selected while its heading is still hidden behind the enlarged stage.
-    const lowerReadingAnchor = stageRect && stageRect.bottom < window.innerHeight
-      ? stageRect.bottom + (window.innerHeight - stageRect.bottom) * .52
-      : window.innerHeight * .66;
-    const anchor = compact
-      ? Math.min(window.innerHeight - 52, lowerReadingAnchor)
-      : activeShotRect
-        ? activeShotRect.top + activeShotRect.height / 2
-        : window.innerHeight * .46;
-    const visible = steps
-      .map(step => ({ step, rect: step.getBoundingClientRect() }))
-      .filter(item => item.rect.bottom > 84 && item.rect.top < window.innerHeight - 12)
-      .sort((a, b) => {
-        const aPosition = compact ? (a.rect.top + a.rect.bottom) / 2 : a.rect.top;
-        const bPosition = compact ? (b.rect.top + b.rect.bottom) / 2 : b.rect.top;
-        return Math.abs(aPosition - anchor) - Math.abs(bPosition - anchor);
-      })[0];
-    if (visible) show(visible.step);
-  };
-  const scheduleSync = () => {
-    if (!ticking) {
-      ticking = true;
-      window.requestAnimationFrame(syncVisibleStep);
+  const captures = {
+    mobile: {
+      width: 390,
+      height: 2161,
+      compact: true,
+      targets: [
+        { x: 11, y: 97, w: 368, h: 53.484375 },
+        { x: 11, y: 250.25, w: 368, h: 340 },
+        { x: 10, y: 1863.90625, w: 370, h: 116.28125 },
+        { x: 10, y: 1121.25, w: 370, h: 126.65625 },
+        { x: 287, y: 40, w: 34, h: 34 },
+        { x: 10, y: 1247.90625, w: 370, h: 380 },
+        { x: 11, y: 37, w: 213, h: 40 }
+      ],
+      guide: { x: 16, y: 72, w: 358, h: 420 },
+      ml: { x: 11, y: 37, w: 213, h: 40 }
+    },
+    tablet: {
+      width: 1024,
+      height: 1643,
+      compact: true,
+      targets: [
+        { x: 11, y: 69, w: 1002, h: 37.25 },
+        { x: 11, y: 206.015625, w: 1002, h: 340 },
+        { x: 14, y: 1469.828125, w: 996, h: 93 },
+        { x: 14, y: 889.171875, w: 996, h: 106.65625 },
+        { x: 937, y: 12, w: 34, h: 34 },
+        { x: 14, y: 995.828125, w: 996, h: 353 },
+        { x: 716, y: 9, w: 213, h: 40 }
+      ],
+      guide: { x: 16, y: 72, w: 720, h: 420 },
+      ml: { x: 716, y: 9, w: 213, h: 40 }
+    },
+    wide: {
+      width: 1440,
+      height: 1252,
+      compact: false,
+      targets: [
+        { x: 18, y: 67, w: 361.203125, h: 37.25 },
+        { x: 13, y: 209.015625, w: 230, h: 340 },
+        { x: 278, y: 124.25, w: 1142, h: 81 },
+        { x: 278, y: 322.25, w: 672.390625, h: 106.65625 },
+        { x: 1348, y: 11, w: 34, h: 34 },
+        { x: 968.390625, y: 320.25, w: 451.609375, h: 380 },
+        { x: 1127, y: 8, w: 213, h: 40 }
+      ],
+      guide: { x: 16, y: 72, w: 760, h: 420 },
+      ml: { x: 1127, y: 8, w: 213, h: 40 }
+    },
+    portrait: {
+      width: 834,
+      height: 1862,
+      compact: true,
+      targets: [
+        { x: 11, y: 69, w: 812, h: 37.25 },
+        { x: 11, y: 206.015625, w: 812, h: 340 },
+        { x: 14, y: 1490.828125, w: 806, h: 93 },
+        { x: 14, y: 889.171875, w: 806, h: 106.65625 },
+        { x: 747, y: 12, w: 34, h: 34 },
+        { x: 14, y: 995.828125, w: 806, h: 374 },
+        { x: 526, y: 9, w: 213, h: 40 }
+      ],
+      guide: { x: 16, y: 72, w: 720, h: 420 },
+      ml: { x: 526, y: 9, w: 213, h: 40 }
     }
   };
-  window.addEventListener("scroll", scheduleSync, { passive: true });
-  window.addEventListener("resize", scheduleSync);
-  compactQuery.addEventListener?.("change", scheduleSync);
-  syncVisibleStep();
 
-  steps.forEach(step => {
-    step.addEventListener("focusin", () => show(step));
-    step.addEventListener("mouseenter", () => show(step));
+  const captureDirectory = "assets/tour-captures";
+  const mode = new URLSearchParams(location.search).get("view") || "auto";
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let key = "wide";
+  let mobile = false;
+  let index = -1;
+  let pending = false;
+
+  const nodes = chapters.map((chapter, chapterIndex) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = String(chapterIndex + 1).padStart(2, "0");
+    button.ariaLabel = `Feature ${chapterIndex + 1}: ${chapter.label}`;
+    button.addEventListener("click", () => go(chapterIndex));
+    $(".steps").append(button);
+    return button;
   });
+
+  function scrollHeight() {
+    return Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  }
+
+  function go(chapterIndex) {
+    const nextIndex = Math.max(0, Math.min(6, chapterIndex));
+    window.scrollTo({
+      top: nextIndex / 6 * scrollHeight(),
+      behavior: reduced.matches ? "instant" : "smooth"
+    });
+  }
+
+  $("#back").addEventListener("click", () => go(index - 1));
+  $("#next").addEventListener("click", () => go(index === 6 ? 0 : index + 1));
+
+  function chapterAt(chapterIndex) {
+    return captures[key].compact ? [0, 1, 3, 5, 2, 4, 6][chapterIndex] : chapterIndex;
+  }
+
+  function target(chapterIndex) {
+    const profile = captures[key];
+    const mappedIndex = chapterAt(chapterIndex);
+    return mappedIndex === 4 ? profile.guide : mappedIndex === 6 ? profile.ml : profile.targets[mappedIndex];
+  }
+
+  function captureName(chapterIndex) {
+    const mappedIndex = chapterAt(chapterIndex);
+    return mappedIndex === 4 ? "guide" : mappedIndex === 6 ? "ml" : "data";
+  }
+
+  function layout() {
+    mobile = mode === "mobile" || (mode === "auto" && (
+      window.innerWidth < 760 ||
+      (window.matchMedia("(pointer: coarse)").matches && window.innerHeight > window.innerWidth)
+    ));
+    key = mobile ? (window.innerWidth >= 700 ? "portrait" : "mobile") : (window.innerWidth <= 1120 ? "tablet" : "wide");
+    document.body.dataset.layout = mobile ? "mobile" : "wide";
+    $("#siteCapture").style.width = `${captures[key].width}px`;
+    index = -1;
+    render();
+  }
+
+  function pose(focus) {
+    const viewport = $(".viewport");
+    const width = viewport.clientWidth;
+    const height = viewport.clientHeight;
+    const scale = Math.min(mobile ? 1.12 : 1.4, (width - 32) / (focus.w + 12), (height - 40) / (focus.h + 12));
+    return {
+      scale,
+      x: Math.min(12, (width - focus.w * scale) / 2 - focus.x * scale),
+      y: Math.min(12, (height - focus.h * scale) / 2 - focus.y * scale)
+    };
+  }
+
+  function render() {
+    pending = false;
+    const progress = Math.max(0, Math.min(6, window.scrollY / scrollHeight() * 6));
+    const chapterIndex = Math.min(6, Math.round(progress));
+
+    if (index !== chapterIndex) {
+      index = chapterIndex;
+      const mappedIndex = chapterAt(chapterIndex);
+      const chapter = chapters[mappedIndex];
+      const profile = captures[key];
+      const capture = captureName(chapterIndex);
+      $("#count").textContent = `FEATURE ${String(chapterIndex + 1).padStart(2, "0")} / 07 · ${chapter.label.toUpperCase()}`;
+      $("#headline").textContent = chapter.title;
+      let description = chapter[mobile ? "mobile" : "wide"];
+      if (profile.compact) {
+        if (mappedIndex === 1) description = "Read the inspector above your notebook. Check the dataset facts and columns before writing Python.";
+        if (mappedIndex === 2) description = chapter.mobile;
+        if (mappedIndex === 3) description = chapter.mobile;
+        if (mappedIndex === 5) description = chapter.mobile;
+      }
+      $("#description").textContent = description;
+      $("#context").textContent = chapter.context;
+      $("#focusLabel").textContent = chapter.label.toUpperCase();
+      $("#pageCount").textContent = `${chapterIndex + 1} / 7`;
+      $("#pin").textContent = chapterIndex + 1;
+      $("#back").disabled = chapterIndex === 0;
+      $("#next").textContent = chapterIndex === 6 ? "Replay ↺" : "Next →";
+      nodes.forEach((button, nodeIndex) => {
+        const nodeChapter = chapters[chapterAt(nodeIndex)];
+        button.ariaLabel = `Feature ${nodeIndex + 1}: ${nodeChapter.label}`;
+        button.classList.toggle("active", nodeIndex === chapterIndex);
+        if (nodeIndex === chapterIndex) button.setAttribute("aria-current", "step");
+        else button.removeAttribute("aria-current");
+      });
+      const image = $("#siteCapture");
+      image.src = `${captureDirectory}/${key}-${capture}.png?v=tour4`;
+      image.alt = mappedIndex === 6 ? "Current Machine Learning setup" : `Current Data Playground${mappedIndex === 4 ? " with Challenges open" : ""}`;
+    }
+
+    let focus = target(chapterIndex);
+    let position = pose(focus);
+    if (!reduced.matches) {
+      const lower = Math.floor(progress);
+      const upper = Math.min(6, lower + 1);
+      const blendAmount = progress - lower;
+      const blend = blendAmount ** 2 * (3 - 2 * blendAmount);
+      const lowerFocus = target(lower);
+      const upperFocus = target(upper);
+      const lowerPosition = pose(lowerFocus);
+      const upperPosition = pose(upperFocus);
+      position = {
+        scale: lowerPosition.scale + (upperPosition.scale - lowerPosition.scale) * blend,
+        x: lowerPosition.x + (upperPosition.x - lowerPosition.x) * blend,
+        y: lowerPosition.y + (upperPosition.y - lowerPosition.y) * blend
+      };
+      focus = {
+        x: lowerFocus.x + (upperFocus.x - lowerFocus.x) * blend,
+        y: lowerFocus.y + (upperFocus.y - lowerFocus.y) * blend,
+        w: lowerFocus.w + (upperFocus.w - lowerFocus.w) * blend,
+        h: lowerFocus.h + (upperFocus.h - lowerFocus.h) * blend
+      };
+    }
+
+    $("#camera").style.transform = `translate(${position.x}px, ${position.y}px) scale(${position.scale})`;
+    Object.assign($("#spotlight").style, {
+      left: `${position.x + focus.x * position.scale - 6}px`,
+      top: `${position.y + focus.y * position.scale - 6}px`,
+      width: `${focus.w * position.scale + 12}px`,
+      height: `${focus.h * position.scale + 12}px`
+    });
+    $("#progress").style.width = `${(progress + 1) / 7 * 100}%`;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (pending) return;
+    pending = true;
+    window.requestAnimationFrame(render);
+  }, { passive: true });
+  window.addEventListener("resize", layout);
+  reduced.addEventListener("change", render);
+  layout();
 })();

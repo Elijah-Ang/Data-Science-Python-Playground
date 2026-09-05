@@ -96,6 +96,9 @@ jobs:
       - name: Check compact navigation and empty Data opening
         run: python tests/test_empty_workspace_browser.py --engine chromium --base-url http://127.0.0.1:8000
 
+      - name: Check guided tour chapters and replay
+        run: python tests/test_tutorial_browser.py --engine chromium --base-url http://127.0.0.1:8000
+
       - name: Check automatic notebook session contract
         run: python tests/test_notebook_session_browser.py --engine chromium --base-url http://127.0.0.1:8000
 

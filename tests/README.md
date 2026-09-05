@@ -85,6 +85,7 @@ The source and test names may retain historical feature labels to explain why a 
 - `test_product_browser.py --engine chromium|webkit`: rendered public navigation at phone/tablet/desktop widths; Data stale output, namespace reset, real infinite-loop cancellation, drafts, delete/undo, route geometry; ML direct-button and keyboard prerequisite enforcement.
 - `test_notebook_session_browser.py`: retired notebook-management controls stay absent while the supported automatic `NotebookSession` save/restore API remains available. It does not pretend a removed export UI exists.
 - `test_ui_preferences_browser.py --engine chromium|webkit`: landing tour placement, removed landing controls, duplicate mode-caption removal, always-visible inspector, compact routes, and moon/sun persistence.
+- `test_tutorial_browser.py --engine chromium|webkit`: guided-tour chapter order, responsive capture loading, keyboard-safe chapter state, no horizontal overflow, and replay.
 - `test_session_browser.py`: edit during execution; 30-cell notebook; stable editor identity; cross-workspace draft restoration.
 - `test_offline_browser.py`: a landing-only online visit followed by first offline workspace visits; unrelated origin cache preservation.
 - `test_teaching_fixtures.py`: executable tutorial/counts, imbalanced dummy classification and evaluation-mean versus fitted training-mean R².

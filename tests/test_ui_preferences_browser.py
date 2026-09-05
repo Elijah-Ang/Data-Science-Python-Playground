@@ -74,6 +74,10 @@ def check(failures, condition, message):
 def check_landing(page, width, height, failures, evidence_dir):
     page.goto(url(args.base_url, "index"), wait_until="domcontentloaded")
     page.locator("#welcome-title").wait_for()
+    page.wait_for_function(
+        "document.querySelector('.scene-art')?.naturalWidth > 0",
+        timeout=args.runtime_timeout,
+    )
 
     body = visible_text(page)
     for marker in FORBIDDEN_LANDING:
