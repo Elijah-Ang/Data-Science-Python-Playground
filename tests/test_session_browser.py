@@ -1,6 +1,7 @@
 """Editing during execution, draft configuration roundtrip and long-session geometry."""
 import json,time
 from pathlib import Path
+Path("tests/evidence").mkdir(parents=True, exist_ok=True)
 from playwright.sync_api import sync_playwright
 with sync_playwright() as p:
  b=p.chromium.launch();page=b.new_page(viewport={'width':834,'height':1112});page.goto('http://127.0.0.1:8001/playground.html');page.wait_for_function("document.querySelector('#runtimeStatus').textContent==='Python ready'",timeout=120000)

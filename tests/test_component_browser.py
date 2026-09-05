@@ -1,6 +1,7 @@
 """Readable components at three widths and both themes; records visual evidence."""
 import json,re
 from pathlib import Path
+Path("tests/evidence").mkdir(parents=True, exist_ok=True)
 from playwright.sync_api import sync_playwright
 results=[]
 with sync_playwright() as p:

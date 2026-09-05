@@ -1,6 +1,7 @@
 from playwright.sync_api import sync_playwright
 import re,json
 from pathlib import Path
+Path("tests/evidence").mkdir(parents=True, exist_ok=True)
 
 def luminance(rgb):
  channels=[v/255 for v in rgb]

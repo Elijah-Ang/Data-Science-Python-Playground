@@ -1,6 +1,7 @@
 """Data result identity, recovery, schema and declared-scope regression tests."""
 import json, subprocess, warnings
 from pathlib import Path
+Path("tests/evidence").mkdir(parents=True, exist_ok=True)
 subprocess.run(['node','tests/extract_data_tasks.mjs'],check=True)
 payload=json.loads(Path('/tmp/dspp-data-tasks.json').read_text())
 ns={}; exec(payload['setup'],ns)
