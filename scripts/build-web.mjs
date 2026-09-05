@@ -33,7 +33,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data"];
+const directories = ["data", "assets/tour-captures"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",

@@ -49,7 +49,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   position: relative;
   width: min(100%, 1600px);
   margin: 0 auto;
-  padding: calc(clamp(38px, 6vw, 78px) + env(safe-area-inset-top)) clamp(16px, 4vw, 56px) calc(clamp(26px, 4vw, 64px) + env(safe-area-inset-bottom));
+  padding: calc(clamp(32px, 5.5vw, 70px) + env(safe-area-inset-top)) clamp(16px, 4vw, 56px) calc(clamp(18px, 3.4vw, 52px) + env(safe-area-inset-bottom));
 }
 .tour-button {
   position: absolute;
@@ -250,12 +250,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @keyframes scene-enter { to { transform: scale(1.008); filter: brightness(1.04); } }
 
 @media (max-width: 900px) {
-  .welcome-shell { padding-top: calc(66px + env(safe-area-inset-top)); }
+  .welcome-shell { padding-top: calc(60px + env(safe-area-inset-top)); }
   .scene-frame { width: min(100%, 620px); }
 }
 @media (max-width: 560px) {
-  .welcome-shell { padding: calc(68px + env(safe-area-inset-top)) 10px calc(22px + env(safe-area-inset-bottom)); }
-  .welcome-kicker { margin-bottom: 13px; font-size: .56rem; letter-spacing: .1em; }
+  .welcome-shell { padding: calc(62px + env(safe-area-inset-top)) 10px calc(12px + env(safe-area-inset-bottom)); }
   .welcome-intro h1 { font-size: clamp(1.58rem, 8.2vw, 2.55rem); }
   .welcome-subtitle { margin-top: 11px; font-size: .88rem; }
   .scene-section { margin-top: 18px; }

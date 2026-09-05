@@ -107,6 +107,8 @@ jobs:
         run: python tests/test_ml_workflow_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000/ml.html
       - name: Check revised landing and notebook controls
         run: python tests/test_ui_preferences_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
+      - name: Check guided tour chapters and replay
+        run: python tests/test_tutorial_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
       - name: Check automatic notebook session contract
         run: python tests/test_notebook_session_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
       - name: Check product trust and responsive public pages

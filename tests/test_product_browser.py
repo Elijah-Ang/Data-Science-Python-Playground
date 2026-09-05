@@ -10,6 +10,16 @@ with sync_playwright() as p:
   page.set_viewport_size({'width':width,'height':900})
   for name in ['help','about','privacy','acknowledgements','tutorial']:
    page.goto(f'{args.base_url}/{name}.html');page.wait_for_timeout(100)
+   if name == 'tutorial':
+    home = page.locator('a.home-link')
+    assert home.count() == 1 and home.is_visible()
+    assert home.get_attribute('href') == 'index.html'
+    assert page.locator('.steps button').count() == 7
+    page.wait_for_function("document.querySelector('#siteCapture')?.naturalWidth > 0", timeout=10000)
+    assert page.locator('#next').is_visible()
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), (width, name)
+    results.append([width, name, 'guided tour navigation and seven chapters passed'])
+    continue
    links=page.locator('.home-nav a'); assert links.count()>=3
    for link in links.all():
     assert link.is_visible(); assert float(link.evaluate('(e)=>getComputedStyle(e).fontSize').replace('px',''))>=12
