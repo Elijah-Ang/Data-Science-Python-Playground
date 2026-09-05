@@ -13,7 +13,7 @@
   const CHEMISTRY = ["fixed acidity","volatile acidity","citric acid","residual sugar","chlorides","free sulfur dioxide","total sulfur dioxide","density","pH","sulphates","alcohol"];
   const WEATHER = ["Temperature(°C)","Humidity(%)","Wind speed (m/s)","Visibility (10m)","Solar Radiation (MJ/m2)","Rainfall(mm)","Snowfall (cm)"];
   const CANDY_BINARY = ["chocolate","fruity","caramel","peanutyalmondy","nougat","crispedricewafer","hard","bar","pluribus"];
-  const mobileLayoutQuery = window.matchMedia("(max-width:820px)");
+  const mobileLayoutQuery = window.matchMedia("(max-width:1120px)");
   const TEST_MODE = Boolean(window.__ML_TEST_MODE__);
 
   const scenario = (id, name, continuous = [], binary = [], categorical = []) => ({id, name, continuous, binary, categorical});
@@ -182,31 +182,80 @@ class _OneRFeatureMatrix(np.ndarray):
             self.categorical_mask = getattr(source, "categorical_mask", None)
 
 
-class _OneRFeaturePreprocessor(BaseEstimator, TransformerMixin):
-    """Wrap the generated preprocessor without exposing metadata in the model cell."""
-    def __init__(self, transformer, categorical_mask):
-        self.transformer = transformer
-        self.categorical_mask = categorical_mask
+class OneRPreprocessor(BaseEstimator, TransformerMixin):
+    """Public adapter that carries feature types through One-R preparation.
+
+    When no base transformer is supplied, the adapter creates a fold-local
+    passthrough/ordinal recipe from the named numeric and categorical columns.
+    """
+    def __init__(self, base_preprocessor=None, numeric_features=None, categorical_features=None):
+        # Read notebooks from the first implementation without exposing its
+        # positional mask in new route code.
+        if categorical_features is None and numeric_features is not None:
+            try:
+                legacy_mask = np.asarray(numeric_features, dtype=bool)
+                if legacy_mask.ndim == 1 and all(isinstance(value, (bool, np.bool_)) for value in numeric_features):
+                    self._legacy_categorical_mask = legacy_mask
+                    numeric_features = None
+            except (TypeError, ValueError):
+                pass
+        self.base_preprocessor = base_preprocessor
+        self.numeric_features = numeric_features
+        self.categorical_features = categorical_features
 
     def fit(self, X, y=None):
-        if isinstance(self.transformer, str) and self.transformer == "passthrough":
+        base = self.base_preprocessor
+        if base is None:
+            from sklearn.compose import ColumnTransformer
+            from sklearn.preprocessing import OrdinalEncoder
+            numeric = list(self.numeric_features or [])
+            categorical = list(self.categorical_features or [])
+            if numeric and categorical:
+                base = ColumnTransformer([
+                    ("numeric", "passthrough", numeric),
+                    ("categorical", OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1), categorical)
+                ], verbose_feature_names_out=False)
+            elif categorical:
+                base = OrdinalEncoder(handle_unknown="use_encoded_value", unknown_value=-1)
+            else:
+                base = "passthrough"
+        if isinstance(base, str) and base == "passthrough":
             self.transformer_ = "passthrough"
         else:
-            self.transformer_ = clone(self.transformer)
+            self.transformer_ = clone(base)
             self.transformer_.fit(X, y)
+        input_names = np.asarray(list(X.columns) if hasattr(X, "columns") else np.arange(X.shape[1]), dtype=object)
+        if self.transformer_ == "passthrough":
+            self.feature_names_out_ = input_names
+        elif hasattr(self.transformer_, "get_feature_names_out"):
+            self.feature_names_out_ = np.asarray(self.transformer_.get_feature_names_out(input_names), dtype=object)
+        else:
+            self.feature_names_out_ = input_names
+        categorical = {str(name) for name in (self.categorical_features or [])}
+        self.categorical_mask_ = getattr(self, "_legacy_categorical_mask", np.asarray([
+            str(name) in categorical or any(str(name).startswith(str(source) + "_") for source in categorical)
+            for name in self.feature_names_out_
+        ], dtype=bool))
+        if self.categorical_mask_.shape != (len(self.feature_names_out_),):
+            raise ValueError("One-R feature-type metadata does not match the transformed features.")
+        self.categorical_mask = self.categorical_mask_.copy()
         return self
 
     def transform(self, X):
-        values = X if self.transformer_ == "passthrough" else self.transformer_.transform(X)
-        return _OneRFeatureMatrix(values, self.categorical_mask)
+        values = X if isinstance(self.transformer_, str) and self.transformer_ == "passthrough" else self.transformer_.transform(X)
+        return _OneRFeatureMatrix(values, self.categorical_mask_)
 
     def get_feature_names_out(self, input_features=None):
-        transformer = getattr(self, "transformer_", self.transformer)
-        if hasattr(transformer, "get_feature_names_out"):
-            return transformer.get_feature_names_out(input_features)
+        if hasattr(self, "feature_names_out_"):
+            return self.feature_names_out_
         if input_features is None:
-            return np.arange(len(self.categorical_mask), dtype=object)
+            return np.arange(len(self.categorical_features or self.numeric_features or []), dtype=object)
         return np.asarray(input_features, dtype=object)
+
+
+# Kept as a compatibility alias for saved notebooks created before the public
+# adapter was introduced. New route code uses OneRPreprocessor directly.
+_OneRFeaturePreprocessor = OneRPreprocessor
 
 
 def _one_r_base_preprocessor(preprocessor):
@@ -268,289 +317,9 @@ def one_r_rule_table(fitted, preprocessor, feature_names):
     return table[["feature", "interval", "predicted_class", "training_rows"]]
 `;
 
-  const DATAFRAME_SERIALIZER_SOURCE = String.raw`
-def _serialize_table_cell(value):
-    missing = pd.isna(value)
-    if isinstance(missing, (bool, np.bool_)) and missing:
-        return None
-    return value.item() if hasattr(value, "item") else value
+  const DATAFRAME_SERIALIZER_SOURCE = window.DataframeSerializerSource;
 
-
-def serialize_dataframe_result(frame, max_rows=50, max_columns=20):
-    shown = frame.head(max_rows).iloc[:, :max_columns]
-    index = shown.index
-    is_default_range = (
-        isinstance(index, pd.RangeIndex)
-        and index.name is None
-        and index.start == 0
-        and index.step == 1
-    )
-    if is_default_range:
-        display = shown.reset_index(drop=True)
-    else:
-        index_frame = index.to_frame(index=False)
-        index_names = list(index.names) if isinstance(index, pd.MultiIndex) else [index.name]
-        index_columns = [
-            str(name) if name is not None else ("index" if position == 0 else f"index_{position}")
-            for position, name in enumerate(index_names)
-        ]
-        index_frame.columns = index_columns
-        display = pd.concat(
-            [index_frame.reset_index(drop=True), shown.reset_index(drop=True)],
-            axis=1,
-        )
-    return {
-        "columns": [str(column) for column in display.columns],
-        "rows": [[_serialize_table_cell(value) for value in row] for row in display.to_numpy().tolist()],
-        "rowCount": int(len(frame)),
-        "columnCount": int(len(frame.columns)),
-    }
-`;
-
-  const PRACTICE_VALIDATOR_SOURCE = String.raw`
-def _practice_result(ok, message):
-    return {"ok": bool(ok), "message": str(message)}
-
-def _practice_source():
-    return str(globals().get("__cell_code", ""))
-
-def _practice_forbidden_source(spec):
-    source = _practice_source()
-    holdout_tokens = ("X_" + "test", "y_" + "test", "test_" + "prediction", "test_" + "result")
-    if any(token in source for token in holdout_tokens):
-        return _practice_result(False, "Keep final-test variables out of this practice task.")
-    target = str(spec.get("target", "")).strip()
-    if target:
-        try:
-            tree = ast.parse(source, mode="exec")
-        except Exception:
-            tree = None
-        if tree is not None:
-            target_names = {target}
-            selector_methods = {"drop", "filter", "get", "pop", "reindex", "rename", "set_axis"}
-
-            def _string_values(node):
-                return [value.value for value in ast.walk(node)
-                        if isinstance(value, ast.Constant) and isinstance(value.value, str)]
-
-            class _TargetReferenceVisitor(ast.NodeVisitor):
-                def __init__(self):
-                    self.found = False
-
-                def visit_Name(self, node):
-                    if node.id in target_names:
-                        self.found = True
-                    self.generic_visit(node)
-
-                def visit_Attribute(self, node):
-                    if node.attr in target_names:
-                        self.found = True
-                    self.generic_visit(node)
-
-                def visit_Subscript(self, node):
-                    # A target string is meaningful here because it is being
-                    # used as a dataframe/dictionary/list selector.  Nested
-                    # lists and tuples cover df[[...]], df.loc[..., ...], and
-                    # equivalent selections without inspecting comments or
-                    # unrelated prose strings.
-                    if target in _string_values(node.slice):
-                        self.found = True
-                    self.generic_visit(node)
-
-                def visit_Call(self, node):
-                    function = node.func
-                    method = function.attr if isinstance(function, ast.Attribute) else ""
-                    if method in selector_methods and target in _string_values(node):
-                        self.found = True
-                    if any(keyword.arg == target for keyword in node.keywords if keyword.arg):
-                        self.found = True
-                    self.generic_visit(node)
-
-            visitor = _TargetReferenceVisitor()
-            visitor.visit(tree)
-            if visitor.found:
-                return _practice_result(False, "Keep the reference target out of this target-free practice task.")
-    return None
-
-def _practice_assigned(name):
-    try:
-        tree = ast.parse(_practice_source(), mode="exec")
-        return any(
-            isinstance(node, (ast.Assign, ast.AnnAssign)) and any(
-                isinstance(target, ast.Name) and target.id == name
-                for target in (node.targets if isinstance(node, ast.Assign) else [node.target])
-            )
-            for node in tree.body
-        )
-    except Exception:
-        return False
-
-def _practice_frame(value, name):
-    if not isinstance(value, pd.DataFrame):
-        return _practice_result(False, f"{name} must be a pandas DataFrame.")
-    if len(value.index) < 1:
-        return _practice_result(False, f"{name} is empty.")
-    return None
-
-def validate_practice_exercise(spec):
-    kind = str(spec.get("kind", ""))
-    if kind == "model":
-        if not _practice_assigned("model") or not _practice_assigned("pipeline"):
-            return _practice_result(False, "Assign the estimator to model and connect it with preprocessor in pipeline.")
-        candidate = globals().get("pipeline")
-        if not hasattr(candidate, "steps") or len(candidate.steps) < 2:
-            return _practice_result(False, "pipeline should contain preparation followed by the model.")
-        names = [name for name, _ in candidate.steps]
-        if names[-1] != "model" or names[0] != "prepare":
-            return _practice_result(False, "Use a prepare step followed by a model step.")
-        if globals().get("model") is not candidate.named_steps.get("model"):
-            return _practice_result(False, "The pipeline model step should be the estimator assigned to model.")
-        return _practice_result(True, "The estimator is connected to the preparation in one Pipeline.")
-
-    if kind == "cv":
-        if not _practice_assigned("cv"):
-            return _practice_result(False, "Create the route's cv splitter before building the fold table.")
-        candidate = globals().get("cv")
-        expected = int(spec.get("folds", 0))
-        try:
-            actual = int(candidate.get_n_splits())
-        except Exception:
-            actual = int(getattr(candidate, "n_splits", -1))
-        if actual != expected:
-            return _practice_result(False, f"The route expects {expected} folds, but cv has {actual}.")
-        frame_check = _practice_frame(globals().get("cv_scores"), "cv_scores")
-        if frame_check:
-            return frame_check
-        table = globals().get("cv_scores")
-        required = ("train_macro_f1", "validation_macro_f1") if spec.get("task") == "classification" else ("train_rmse", "validation_rmse")
-        missing = [column for column in required if column not in table.columns]
-        if missing:
-            return _practice_result(False, "cv_scores is missing: " + ", ".join(missing) + ".")
-        if len(table.index) != expected:
-            return _practice_result(False, "cv_scores must contain one row for each validation fold.")
-        numeric = table[list(required)].apply(pd.to_numeric, errors="coerce").to_numpy(dtype=float)
-        if not np.isfinite(numeric).all() or (spec.get("task") == "regression" and (numeric < 0).any()):
-            return _practice_result(False, "Fold scores must be finite, with RMSE shown as a positive error.")
-        return _practice_result(True, "The splitter and fold table match the route's training-only validation setup.")
-
-    if kind == "kmeans":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        if not _practice_assigned("kmeans"):
-            return _practice_result(False, "Fit a KMeans estimator on the prepared feature matrix Z.")
-        candidate = globals().get("kmeans")
-        labels = np.asarray(globals().get("clusters", []))
-        selected = int(globals().get("selected_k", -1))
-        if not hasattr(candidate, "cluster_centers_") or not hasattr(candidate, "labels_") or len(labels) != len(np.asarray(globals().get("Z", []))):
-            return _practice_result(False, "The fitted KMeans object and one cluster label per row are required.")
-        if not np.array_equal(labels, np.asarray(candidate.labels_)):
-            return _practice_result(False, "Use the fitted K-Means labels for the cluster assignments.")
-        if selected < 2 or selected > int(spec.get("maxK", 8)) or len(np.unique(labels)) != selected:
-            return _practice_result(False, "The cluster labels must match the selected number of groups.")
-        return _practice_result(True, "K-Means is fitted and every prepared row has one of the selected cluster labels.")
-
-    if kind == "hierarchical":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        if not _practice_assigned("hierarchical"):
-            return _practice_result(False, "Create the Ward-linkage estimator using selected_k.")
-        candidate = globals().get("hierarchical")
-        labels = np.asarray(globals().get("clusters", []))
-        sample = np.asarray(globals().get("analysis_Z", []))
-        selected = int(globals().get("selected_k", -1))
-        if not hasattr(candidate, "n_clusters") or not hasattr(candidate, "labels_") or len(labels) != len(sample):
-            return _practice_result(False, "The hierarchy and its sampled cluster labels must stay aligned.")
-        if not np.array_equal(labels, np.asarray(candidate.labels_)):
-            return _practice_result(False, "Use the fitted hierarchy labels for the sampled assignments.")
-        if selected < 2 or selected > int(spec.get("maxK", 8)) or len(np.unique(labels)) != selected:
-            return _practice_result(False, "The sampled cluster labels must match the selected cut.")
-        return _practice_result(True, "The Ward hierarchy and sampled cluster labels match the selected cut.")
-
-    if kind == "pca_selection":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        if not _practice_assigned("components_for_target"):
-            return _practice_result(False, "Find the first cumulative-variance position that reaches variance_target.")
-        target = float(globals().get("variance_target", np.nan))
-        cumulative = np.asarray(globals().get("cumulative_explained_variance", []), dtype=float)
-        try:
-            selected = int(globals().get("components_for_target", -1))
-            expected = int(np.flatnonzero(cumulative >= target)[0] + 1)
-            retained = float(globals().get("variance_retained", np.nan))
-        except Exception:
-            return _practice_result(False, "Use the cumulative explained variance to calculate the component count.")
-        if not (0 < target <= 1) or selected != expected or not np.isfinite(retained) or not np.isclose(retained, cumulative[selected - 1]):
-            return _practice_result(False, "The selected component count and retained variance do not match variance_target.")
-        reduced = np.asarray(globals().get("Z_reduced", []))
-        if reduced.ndim != 2 or reduced.shape[1] != selected:
-            return _practice_result(False, "Z_reduced must contain exactly the selected number of components.")
-        fitted = globals().get("full_pca")
-        if not hasattr(fitted, "transform") or not np.allclose(reduced, np.asarray(fitted.transform(np.asarray(globals().get("Z", []))))[:, :selected]):
-            return _practice_result(False, "Z_reduced must come from the fitted PCA transformation.")
-        return _practice_result(True, "The selected component count is the first one reaching the active variance target.")
-
-    if kind == "checkpoint_supervised":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        candidate = globals().get("checkpoint_pipeline")
-        table = globals().get("checkpoint_scores")
-        if "X_train" not in _practice_source() or "y_train" not in _practice_source():
-            return _practice_result(False, "Use the training rows X_train and y_train for this checkpoint.")
-        if not hasattr(candidate, "steps") or not isinstance(table, pd.DataFrame) or "validation_score" not in table.columns or len(table.index) < 2:
-            return _practice_result(False, "Build a compact training-only pipeline and a validation_score column with multiple folds.")
-        names = [name for name, _ in candidate.steps]
-        expected = int(spec.get("folds", 0))
-        values = pd.to_numeric(table["validation_score"], errors="coerce").to_numpy(dtype=float)
-        if names[0] != "prepare" or names[-1] != "model" or len(table.index) != expected or not np.isfinite(values).all():
-            return _practice_result(False, "Use prepare → model steps and one finite validation score per route fold.")
-        if spec.get("task") == "regression" and (values < 0).any():
-            return _practice_result(False, "Show RMSE as a positive error in original target units.")
-        return _practice_result(True, "The compact workflow produced multiple training-only validation results.")
-
-    if kind == "checkpoint_kmeans":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        fitted = globals().get("checkpoint_model")
-        labels = np.asarray(globals().get("checkpoint_labels", []))
-        profile = globals().get("checkpoint_profile")
-        if not hasattr(fitted, "cluster_centers_") or len(labels) < 1 or len(labels) != len(np.asarray(globals().get("Z", []))) or not isinstance(profile, pd.DataFrame) or "cluster" not in profile.columns or len(profile.index) != len(labels):
-            return _practice_result(False, "Fit the selected K-Means solution and profile every row by cluster.")
-        if not np.array_equal(labels, np.asarray(fitted.labels_)):
-            return _practice_result(False, "Use the fitted K-Means labels for the profile rather than a separate label array.")
-        return _practice_result(True, "The checkpoint produced one cluster label and a matching original-unit profile per row.")
-
-    if kind == "checkpoint_hierarchical":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        fitted = globals().get("checkpoint_model")
-        labels = np.asarray(globals().get("checkpoint_labels", []))
-        profile = globals().get("checkpoint_profile")
-        sample = np.asarray(globals().get("analysis_Z", []))
-        if not hasattr(fitted, "labels_") or len(labels) < 1 or len(labels) != len(sample) or not isinstance(profile, pd.DataFrame) or "cluster" not in profile.columns or len(profile.index) != len(labels):
-            return _practice_result(False, "Fit the hierarchy on analysis_Z and profile the same sampled rows.")
-        if not np.array_equal(labels, np.asarray(fitted.labels_)):
-            return _practice_result(False, "Use the fitted hierarchy labels for the sampled profile.")
-        return _practice_result(True, "The checkpoint hierarchy and sampled profile remain aligned.")
-
-    if kind == "checkpoint_pca":
-        source_check = _practice_forbidden_source(spec)
-        if source_check:
-            return source_check
-        fitted = globals().get("checkpoint_pca")
-        projection = np.asarray(globals().get("checkpoint_projection", []))
-        loadings = globals().get("checkpoint_loadings")
-        if not hasattr(fitted, "components_") or projection.ndim != 2 or projection.shape[0] != len(np.asarray(globals().get("Z", []))) or projection.shape[1] < 1 or not isinstance(loadings, pd.DataFrame) or len(loadings.index) != len(fitted.components_[0]):
-            return _practice_result(False, "Fit PCA on Z and show matching projected rows and loading values.")
-        return _practice_result(True, "The checkpoint includes fitted PCA axes, row coordinates, and feature-labelled loadings.")
-
-    return _practice_result(False, "No semantic validator is registered for this exercise.")
-`;
+  const PRACTICE_VALIDATOR_SOURCE = window.ScientificValidatorSource;
 
   const RESET_WORKSPACE_SOURCE = String.raw`
 __keep_data_flag = bool(__keep_data)
@@ -652,8 +421,6 @@ json.dumps({
     }
     if (type === "run") {
       pyodide.globals.set("__cell_code", data.code);
-      pyodide.globals.set("__setup_code", data.setup || "");
-      pyodide.globals.set("__evidence_code", data.evidence || "");
       pyodide.globals.set("__practice_validation_json", null);
       pyodide.globals.set("__practice_validation_spec", null);
       if (data.validation) pyodide.globals.set("__practice_validation_spec", JSON.stringify(data.validation));
@@ -667,10 +434,9 @@ __traceback_from_worker = traceback
 __pd_from_worker = pd
 __plt_from_worker = plt
 __warnings_from_worker = warnings
-__stdout, __stderr = __io_from_worker.StringIO(), __io_from_worker.StringIO()
+__stdout, __stderr = BoundedOutputStream(), BoundedOutputStream()
 __result, __error, __last_display = None, None, None
 __primary_result = None
-__evidence_result = None
 __caught_warnings = []
 if __plt_from_worker is not None:
     __plt_from_worker.close("all")
@@ -689,11 +455,11 @@ try:
                     return eval(compile(__ast_from_worker.Expression(__last.value), "<" + __label + ">", "eval"), globals())
                 exec(compile(__tree, "<" + __label + ">", "exec"), globals())
                 return __last_display
-            __run_segment(__setup_code, "diagnostic-setup")
             __primary_result = __run_segment(__cell_code, "cell")
-            if __setup_code or __evidence_code:
-                __evidence_result = __run_segment(__evidence_code, "diagnostic-evidence")
-            __result = __evidence_result if __evidence_result is not None else __primary_result
+            # A cell's visible source owns its result. Optional diagnostic
+            # evidence is inserted as a separate editable cell, so hidden
+            # setup/evidence cannot replace the learner's last expression.
+            __result = __primary_result
 except Exception:
     __error = __traceback_from_worker.format_exc()
 __warnings = [{"category":__warning.category.__name__, "message":str(__warning.message)} for __warning in __caught_warnings]
@@ -712,7 +478,9 @@ if __plt_from_worker is not None:
     __plt_from_worker.close("all")
 __value = None
 if __error is None and __table is None and __result is not None and not hasattr(__result, "figure"):
-    try: __value = str(__result)
+    try:
+        __value = str(__result)
+        if len(__value) > 20000: __value = __value[:20000] + " [Output truncated at 20,000 characters]"
     except Exception: pass
 if __error is None and "__practice_validation_spec" in globals():
     try:
@@ -732,25 +500,15 @@ __json_from_worker.dumps({"status":"error" if __error else "ok", "error":__error
 self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
 `;
 
-  const worker = TEST_MODE
-    ? {postMessage() {}}
-    : new Worker(URL.createObjectURL(new Blob([WORKER_SOURCE], {type:"text/javascript"})));
-  const pending = new Map();
-  let messageId = 0;
-  if (!TEST_MODE) worker.onmessage = ({data}) => {
-      const request = pending.get(data.id);
-      if (!request) return;
-      pending.delete(data.id);
-      data.ok ? request.resolve(data) : request.reject(new Error(data.error));
-    };
-  const sendWorker = (type, payload = {}) => new Promise((resolve, reject) => {
-    const id = ++messageId;
-    pending.set(id, {resolve, reject});
-    worker.postMessage({id, type, ...payload});
+  const bridge = TEST_MODE ? {busy:false,send:()=>Promise.resolve({})} : window.createPythonBridge(WORKER_SOURCE, {
+    onError:error => {setRuntimeReady(false, 'Python stopped — select Stop / restart Python'); showToast(error.message,true);}
   });
+  let messageId = 0;
+  const sendWorker = (type,payload={}) => {messageId++; return bridge.send(type,payload);};
 
   let currentDatasetId = "breast";
   let cachedPreviewPayload = null;
+  let notebookCsv = "";
   let cells = [];
   let routeTasks = [];
   let cellSequence = 0;
@@ -758,7 +516,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   let runtimeReady = false;
   let testSetOpened = false;
   let latestChart = null;
-  let playgroundMode = "guided";
+  const playgroundMode = "guided"; // One current workflow; no selectable mode state.
   let practiceSetupIdentity = "";
   const practiceStates = new Map();
   let independentCheckpointState = null;
@@ -844,16 +602,21 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       };
     }
     if (taskId === "model" && model.task !== "unsupervised") {
-      const pipeline = "pipeline = Pipeline([\n    (\"prepare\", preprocessor),\n    (\"model\", model)\n])";
+      const pipeline = modelId === "polynomial"
+        ? "pipeline = Pipeline([\n    (\"polynomial\", polynomial),\n    (\"scale\", scale),\n    (\"model\", model)\n])"
+        : "pipeline = Pipeline([\n    (\"prepare\", preprocessor),\n    (\"model\", model)\n])";
+      const pipelineHint = modelId === "polynomial"
+        ? "Keep the expansion, scaling, and estimator as the three named Pipeline steps."
+        : "Keep the fitted estimator in a \"model\" step and the existing preprocessor in a \"prepare\" step.";
       return {
         id:"model-estimator-lines",
         type:"partial_code",
         title:"Connect the model pipeline",
         prompt:"Complete the real sklearn Pipeline that connects preparation to the estimator.",
         goal:"Connect the prepared inputs and the selected estimator into one Pipeline so validation can repeat the same workflow on each fold.",
-        hint:"Keep the fitted estimator in a \"model\" step and the existing preprocessor in a \"prepare\" step.",
+        hint:pipelineHint,
         expectedOutput:"A pipeline with preparation and a fitted-model step.",
-        required:["model", "Pipeline", "prepare → model"],
+        required:modelId === "polynomial" ? ["model", "Pipeline", "polynomial → scale → model"] : ["model", "Pipeline", "prepare → model"],
         modelId,
         taskId,
         find:pipeline,
@@ -863,58 +626,58 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       };
     }
     if (taskId === "fit" && modelId === "kmeans") {
-      const fitLine = "kmeans = KMeans(n_clusters=selected_k, n_init=30, random_state=42).fit(Z)";
+      const fitLine = "kmeans = KMeans(n_clusters=selected_k, n_init=20, random_state=42)\nclusters = kmeans.fit_predict(X_scaled)";
       return {
         id:"kmeans-fit-line",
         type:"partial_code",
         title:"Complete the K-Means fit",
         prompt:"Complete the K-Means fit on the prepared feature matrix.",
         goal:"Fit K-Means on the prepared feature matrix using the selected number of clusters.",
-        hint:"The number of groups is already stored in selected_k. Fit the KMeans estimator on Z, then keep its labels for the profile step.",
+        hint:"The number of groups is already stored in selected_k. Fit the KMeans estimator on X_scaled, then keep its labels for the profile step.",
         expectedOutput:"A fitted kmeans object and one cluster label for every row.",
         required:["KMeans", "selected_k", "clusters"],
         modelId,
         taskId,
         find:fitLine,
-        replacement:"# TODO: fit KMeans on Z using selected_k",
+        replacement:"# TODO: fit KMeans on X_scaled using selected_k",
         solution:fitLine,
         validation:{kind:"kmeans", maxK:8}
       };
     }
     if (taskId === "fit" && modelId === "hierarchical") {
-      const fitLine = "hierarchical = AgglomerativeClustering(n_clusters=selected_k, linkage=\"ward\")";
+      const fitLine = "clusters = cut_tree(hierarchy, n_clusters=selected_k).ravel()";
       return {
         id:"hierarchical-fit-line",
         type:"partial_code",
         title:"Complete the hierarchy fit",
-        prompt:"Complete the Ward-linkage estimator for the selected cut.",
-        goal:"Construct the Ward-linkage estimator for the selected cut so the sampled rows can receive cluster labels.",
-        hint:"Use AgglomerativeClustering with n_clusters=selected_k and linkage=\"ward\"; the sample is already prepared as analysis_Z.",
-        expectedOutput:"A hierarchical estimator and one cluster label for every sampled row.",
-        required:["AgglomerativeClustering", "selected_k", "analysis_Z"],
+        prompt:"Complete the cut line for the selected hierarchy.",
+        goal:"Cut the displayed Ward hierarchy at the selected number of groups so the sampled rows can receive cluster labels.",
+        hint:"Use cut_tree on the existing hierarchy with n_clusters=selected_k, then call .ravel() to make one label per sampled row.",
+        expectedOutput:"One cluster label for every sampled row from the displayed hierarchy.",
+        required:["cut_tree", "hierarchy", "selected_k", "clusters"],
         modelId,
         taskId,
         find:fitLine,
-        replacement:"# TODO: construct the Ward hierarchy using selected_k",
+        replacement:"# TODO: cut hierarchy using selected_k",
         solution:fitLine,
         validation:{kind:"hierarchical", maxK:8}
       };
     }
     if (taskId === "select" && modelId === "pca") {
-      const selectLine = "components_for_target = int(np.flatnonzero(cumulative_explained_variance >= variance_target)[0] + 1)";
+      const selectLine = "components_for_target = int(target_row[\"component\"])";
       return {
         id:"pca-component-selection-line",
         type:"complete_line",
         title:"Complete the component-count line",
         prompt:"Complete the line that selects components from the active variance target.",
         goal:"Find the first component count whose cumulative explained variance reaches the active variance_target.",
-        hint:"Use np.flatnonzero on cumulative_explained_variance >= variance_target, then convert the zero-based position into a one-based count.",
-        expectedOutput:"components_for_target, variance_retained, and a matching Z_reduced representation.",
+        hint:"Use the first row of variance_table whose cumulative explained variance reaches variance_target, then read its component number.",
+        expectedOutput:"components_for_target, variance_retained, and a matching X_reduced representation.",
         required:["components_for_target", "variance_target", "cumulative explained variance"],
         modelId,
         taskId,
         find:selectLine,
-        replacement:"# TODO: find the first component count that reaches variance_target",
+        replacement:"# TODO: read the first variance-table row that reaches variance_target",
         solution:selectLine,
         validation:{kind:"pca_selection"}
       };
@@ -971,8 +734,8 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       `validation_raw = cross_validate(pipeline, X_train, y_train, cv=cv, scoring=${py(scoring)})`,
       `validation_scores = pd.DataFrame({"validation_score":${scoreExpression}})`,
       "validation_scores.round(3)",
-      "# Step 7 keeps the tuned best_pipeline or the default pipeline.",
-      "chosen_pipeline = best_pipeline"
+      "# Step 7 keeps the chosen pipeline or the default pipeline.",
+      "chosen_pipeline = pipeline"
     ];
     if (includeFinal) {
       lines.push(
@@ -992,24 +755,24 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
     if (!model) return "";
     if (model.task !== "unsupervised") return cleanSupervisedWorkflowReference(config, value, modelId, folds, false);
     if (modelId === "kmeans") return `from sklearn.cluster import KMeans
-checkpoint_k = min(3, len(Z) - 1)
-checkpoint_model = KMeans(n_clusters=checkpoint_k, n_init=20, random_state=42).fit(Z)
+checkpoint_k = min(3, len(X_scaled) - 1)
+checkpoint_model = KMeans(n_clusters=checkpoint_k, n_init=20, random_state=42).fit(X_scaled)
 checkpoint_labels = checkpoint_model.labels_
-checkpoint_profile = ${modelFrameName(config)}[feature_names].copy()
+checkpoint_profile = X.copy()
 checkpoint_profile["cluster"] = checkpoint_labels
 checkpoint_profile.groupby("cluster")[feature_names].mean().round(2)`;
-    if (modelId === "hierarchical") return `from sklearn.cluster import AgglomerativeClustering
-checkpoint_k = min(3, len(analysis_Z) - 1)
-checkpoint_model = AgglomerativeClustering(n_clusters=checkpoint_k, linkage="ward").fit(analysis_Z)
-checkpoint_labels = checkpoint_model.labels_
-checkpoint_profile = analysis_rows[feature_names].copy()
+    if (modelId === "hierarchical") return `from scipy.cluster.hierarchy import linkage, cut_tree
+checkpoint_k = min(3, len(X_sample_scaled) - 1)
+checkpoint_hierarchy = linkage(X_sample_scaled, method="ward")
+checkpoint_labels = cut_tree(checkpoint_hierarchy, n_clusters=checkpoint_k).ravel()
+checkpoint_profile = X_sample.copy()
 checkpoint_profile["cluster"] = checkpoint_labels
 checkpoint_profile.groupby("cluster")[feature_names].mean().round(2)`;
     return `from sklearn.decomposition import PCA
-checkpoint_pca = PCA().fit(Z)
+checkpoint_pca = PCA().fit(X_scaled)
 checkpoint_variance_target = 0.90
 checkpoint_components = int(np.flatnonzero(np.cumsum(checkpoint_pca.explained_variance_ratio_) >= checkpoint_variance_target)[0] + 1)
-checkpoint_projection = checkpoint_pca.transform(Z)[:, :checkpoint_components]
+checkpoint_projection = checkpoint_pca.transform(X_scaled)[:, :checkpoint_components]
 checkpoint_loadings = pd.DataFrame(checkpoint_pca.components_.T, index=feature_names)
 checkpoint_loadings.index.name = "feature"
 checkpoint_loadings.head(12)`;
@@ -1024,7 +787,7 @@ checkpoint_loadings.head(12)`;
       id:"independent-checkpoint",
       title:"Independent Checkpoint",
       availableVariables:unsupervised
-        ? modelId === "hierarchical" ? ["analysis_Z", "analysis_rows", "feature_names", "selected_k"] : ["Z", modelFrameName(config), "feature_names", "selected_k"]
+        ? modelId === "hierarchical" ? ["X_sample_scaled", "X_sample", "feature_names", "selected_k"] : ["X_scaled", "X", "feature_names", "selected_k"]
         : ["X_train", "y_train", "preprocessor", "model", "pipeline", "cv"],
       hint:unsupervised
         ? "Use only the prepared feature matrix and the selected cut. Keep the profile in original feature units; the reference target is not part of discovery."
@@ -1046,17 +809,17 @@ checkpoint_loadings.head(12)`;
     }
     if (modelId === "kmeans") {
       common.goal = "Fit a target-free K-Means solution and describe its discovered groups in original feature units.";
-      common.checklist = ["Fit K-Means on Z", "Give each row one cluster label", "Compare original-unit profiles", "Do not use the hidden reference target"];
+      common.checklist = ["Fit K-Means on X_scaled", "Give each row one cluster label", "Compare original-unit profiles", "Do not use the hidden reference target"];
       common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
       common.validation = {kind:"checkpoint_kmeans", target:config.target};
     } else if (modelId === "hierarchical") {
       common.goal = "Fit a target-free Ward hierarchy on the prepared sample and describe its cut in original feature units.";
-      common.checklist = ["Use analysis_Z and analysis_rows", "Keep sampled rows and labels aligned", "Compare original-unit profiles", "Do not use the hidden reference target"];
+      common.checklist = ["Use X_sample_scaled and X_sample", "Keep sampled rows and labels aligned", "Compare original-unit profiles", "Do not use the hidden reference target"];
       common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
       common.validation = {kind:"checkpoint_hierarchical", target:config.target};
     } else {
       common.goal = "Fit PCA on the prepared inputs, choose a variance criterion, and inspect row coordinates and feature loadings without using the reference target.";
-      common.checklist = ["Fit PCA on Z", "Choose a visible variance target", "Create projected row coordinates", "Label feature loadings"];
+      common.checklist = ["Fit PCA on X_scaled", "Choose a visible variance target", "Create projected row coordinates", "Label feature loadings"];
       common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
       common.validation = {kind:"checkpoint_pca", target:config.target};
     }
@@ -1101,9 +864,9 @@ checkpoint_loadings.head(12)`;
         id:"polynomial-degree",
         title:"Try one polynomial degree",
         instruction:"In the model cell, use the supported degree-3 expansion and compare the later evidence.",
-        find:"(\"poly\", PolynomialFeatures(include_bias=False)),",
-        replace:"(\"poly\", PolynomialFeatures(degree=3, include_bias=False)),",
-        change:"PolynomialFeatures(include_bias=False) → PolynomialFeatures(degree=3, include_bias=False)"
+        find:"polynomial = PolynomialFeatures(degree=2, include_bias=False)",
+        replace:"polynomial = PolynomialFeatures(degree=3, include_bias=False)",
+        change:"PolynomialFeatures(degree=2) → PolynomialFeatures(degree=3)"
       }
     };
     if (taskId === "model" && modelChanges[modelId]) return {
@@ -1113,14 +876,14 @@ checkpoint_loadings.head(12)`;
     };
     if (taskId === "tune" && ["mlp_cls", "mlp_reg"].includes(modelId)) {
       const parameterName = modelId === "mlp_reg" ? "model__regressor__hidden_layer_sizes" : "model__hidden_layer_sizes";
-      const originalGrid = modelId === "mlp_reg" ? "'model__regressor__hidden_layer_sizes': [(24,), (32, 16)]" : "'model__hidden_layer_sizes': [(24,), (32, 16)]";
+      const originalGrid = modelId === "mlp_reg" ? "'model__regressor__hidden_layer_sizes': [(16,), (24,)]" : "'model__hidden_layer_sizes': [(16,), (24,)]";
       return {
         id:"mlp-supported-architecture",
         title:"Try one smaller supported MLP search",
-        instruction:"In the tuning cell, keep only the existing 24-unit architecture so the search stays small and valid.",
+        instruction:"In the tuning cell, keep the existing 16/24-unit architecture comparison so the search stays small and valid.",
         find:originalGrid,
         replace:`'${parameterName}': [(24,)]`,
-        change:"search both architectures → search the existing (24,) architecture",
+        change:"search (16,) and (24,) → use the starting (24,) architecture",
         targetTaskId:"tune",
         evidenceTaskId:"tune"
       };
@@ -1345,6 +1108,16 @@ checkpoint_loadings.head(12)`;
         null,
         "cv"
       );
+    } else if (taskId === "reference") {
+      practice.beforeRun = practicePrediction(
+        "reference-comparison",
+        config.task === "classification"
+          ? "Should a feature-based model beat the most-common-class guess on the same folds?"
+          : "Should a feature-based model have lower RMSE than the mean-target guess on the same folds?",
+        [practiceOption("yes", "Yes; features add signal"), practiceOption("no", "No; the guess is as good")],
+        null,
+        "reference"
+      );
     } else if (taskId === "tune") {
       const hasGrid = modelSpec(modelId, value)?.grid !== "{}";
       practice.decision = practiceDecision(
@@ -1459,38 +1232,9 @@ checkpoint_loadings.head(12)`;
     return counts;
   }
 
-  function renderPracticeModeControls() {
-    const guided = $("#guidedModeButton"), practice = $("#practiceModeButton"), note = $("#practiceModeNote"), runAllButton = $("#runAllButton");
-    const isPractice = playgroundMode === "practice";
-    document.body.dataset.learningMode = playgroundMode;
-    if (guided) guided.setAttribute("aria-pressed", String(!isPractice));
-    if (practice) practice.setAttribute("aria-pressed", String(isPractice));
-    if (runAllButton) {
-      runAllButton.disabled = !runtimeReady || isPractice;
-      if (isPractice && note) runAllButton.setAttribute("aria-describedby", "practiceModeNote");
-      else runAllButton.removeAttribute("aria-describedby");
-      runAllButton.textContent = isPractice ? "Run all unavailable in Practice" : "▶ Run all";
-    }
-    if (!note) return;
-    note.hidden = !isPractice;
-    if (isPractice) {
-      const counts = practiceCounts();
-      note.textContent = `Practice mode: predict before selected cells, make evidence-based choices, and try one safe change. “Not sure yet” is always acceptable. Run Complete is unavailable; progress this session: ${counts.predictions} predictions · ${counts.decisions} decisions · ${counts.experiments} experiments · ${counts.references} reference reveals.`;
-    } else {
-      note.textContent = "";
-    }
-  }
-
-  function setPlaygroundMode(mode) {
-    if (!["guided", "practice"].includes(mode) || mode === playgroundMode) {
-      renderPracticeModeControls();
-      return;
-    }
-    playgroundMode = mode;
-    renderPracticeModeControls();
-    renderNotebookView();
-    renderRoute();
-    if (!$("#guideWindow").hidden) renderWorkflow();
+  function renderBatchControls() {
+    const button = $('#runAllButton');
+    if (button) {button.disabled=!runtimeReady; button.textContent='▶ Run suggested route';}
   }
 
   function invalidateCellsFrom(routeItems, cellList, taskId) {
@@ -1503,6 +1247,13 @@ checkpoint_loadings.head(12)`;
       cell.output = null;
     });
     return {changed:true, start};
+  }
+
+  function isTrustedOptionalCell(cell) {
+    // Optional evidence may reuse the current route workspace only while its
+    // visible source is exactly the generated source that was offered. Once a
+    // learner edits it, it has the same workspace-risk as any custom cell.
+    return Boolean(cell?.optionalEvidence && typeof cell.routeReferenceCode === "string" && cell.code === cell.routeReferenceCode);
   }
 
   function firstIncompleteRouteIndex(routeItems, cellList) {
@@ -1634,7 +1385,8 @@ checkpoint_loadings.head(12)`;
     $("#datasetQuestion").textContent = unsupervised
       ? "Which rows look similar when we compare the selected inputs?"
       : config.question;
-    $("#sourceLink").href = config.source;
+    $("#sourceLink").href = window.DatasetDictionary?.[config.file]?.source || config.source;
+    window.renderDatasetDictionary?.(config.file, $(".source-block"));
     $("#sourceLink").textContent = config.sourceLabel;
     $("#sourceNote").textContent = unsupervised
       ? `${config.sourceNote.split(" · ")[0]} · reference label hidden during discovery`
@@ -1668,7 +1420,7 @@ checkpoint_loadings.head(12)`;
     $("#foldSelect").disabled = unsupervised;
     $("#foldLabel").textContent = unsupervised ? "Cross-validation · not used" : "Cross-validation";
     renderDatasetPreview();
-    renderPracticeModeControls();
+    renderBatchControls();
   }
 
   function tablePayload(container, payload, compact = false) {
@@ -1718,6 +1470,11 @@ checkpoint_loadings.head(12)`;
     const defaults = {classification:"logistic", regression:featureCount(value) === 1 ? "simple_linear" : "multiple_linear"};
     select.value = available.some(([id]) => id === preferred) ? preferred : defaults[config.task];
     if (!select.value) select.value = available[0]?.[0] || "kmeans";
+    if (preferred && select.value !== preferred) {
+      let note = document.querySelector('#compatibilityNotice');
+      if (!note) {note=document.createElement('p'); note.id='compatibilityNotice'; note.setAttribute('role','status'); select.closest('.control').after(note);}
+      note.textContent = `${MODELS[preferred]?.name || preferred} is incompatible with these preset features. Selected ${MODELS[select.value]?.name || select.value}.`;
+    }
   }
 
   const colorFor = index => ["#48d5ff","#f5c518","#c08aff","#58e0b5","#f97316","#ff7c87"][index % 6];
@@ -1751,16 +1508,16 @@ checkpoint_loadings.head(12)`;
         {key:"macro_f1", label:"Macro F1", direction:"higher", text:"Macro F1: measures classification quality for each class and then gives every class equal weight. Higher is better, which makes it useful when smaller classes should matter too."},
         {key:"accuracy", label:"Accuracy", direction:"higher", text:"Accuracy: the fraction of predictions that were correct. Higher is better, but it can look good when one class is much more common than the others."}
       ];
-      return stage === "baseline" ? full : full.map(metric => ({
+      return stage === "baseline" ? [full[0]] : full.map(metric => ({
         ...metric,
         text:`${metric.direction === "higher" ? "Higher is better" : "Lower is better"}.`
       }));
     }
     const full = [
       {key:"rmse", label:"RMSE", direction:"lower", text:`RMSE: measures prediction error in the target's units, but larger mistakes count more heavily. Lower is better.`},
-      {key:"r2", label:"R²", direction:"higher", text:"R²: compares the model with simply predicting the training average. Higher is usually better; 1 is perfect, 0 is roughly the average-baseline level, and it can be negative."}
+      {key:"r2", label:"R²", direction:"higher", text:"R² = 1 − squared prediction error / squared deviations from the evaluation-set mean. Higher is better; 1 is perfect and scores can be negative. A separately fitted training-mean predictor need not score zero. For a constant target, scikit-learn uses finite 1/0 defaults for perfect/imperfect predictions."}
     ];
-    if (stage === "baseline") return full;
+    if (stage === "baseline") return [full[0]];
     if (stage === "final") return [
       {key:"mae", label:"MAE", direction:"lower", text:`MAE: the average absolute prediction error, in the original units of ${config.target}. Lower is better.`},
       ...full.map(metric => ({
@@ -1832,8 +1589,8 @@ checkpoint_loadings.head(12)`;
 
   const FEATURE_UNIT_INFO = Object.freeze({
     gdpPercap:Object.freeze({factor:1000, phrase:"per $1,000 of GDP per person", unit:"$1,000 of GDP per person"}),
-    sugarpercent:Object.freeze({factor:10, phrase:"per 10 percentile points", unit:"percentile points"}),
-    pricepercent:Object.freeze({factor:10, phrase:"per 10 percentile points", unit:"percentile points"}),
+    sugarpercent:Object.freeze({factor:0.1, phrase:"per 10 percentile points", unit:"percentile points"}),
+    pricepercent:Object.freeze({factor:0.1, phrase:"per 10 percentile points", unit:"percentile points"}),
     "Temperature(°C)":Object.freeze({factor:1, phrase:"per 1 °C", unit:"°C"}),
     "Humidity(%)":Object.freeze({factor:1, phrase:"per 1 percentage point of humidity", unit:"percentage points"}),
     "Wind speed (m/s)":Object.freeze({factor:1, phrase:"per 1 m/s of wind speed", unit:"m/s"}),
@@ -1861,7 +1618,10 @@ checkpoint_loadings.head(12)`;
 
   function featureGrounding(config, value) {
     const names = [...value.continuous, ...value.binary, ...value.categorical];
-    const labels = names.map(name => `${friendlyColumnName(name)} (${name})`);
+    const labels = names.map(name => {
+      const friendly = friendlyColumnName(name);
+      return friendly === name ? friendly : `${friendly} (${name})`;
+    });
     const featureText = labels.length === 1
       ? `Feature: ${labels[0]}`
       : labels.length <= 3
@@ -1993,17 +1753,169 @@ checkpoint_loadings.head(12)`;
   }
 
   function cvConcepts(config, folds) {
+    if (config.split === "time") return [
+      concept("time-folds", "TIME FOLDS", `We run ${folds} checks in time order. Each check learns from earlier rows and predicts the next block; the training window grows at the next check. The final test remains sealed.`, ["time-series-split", "ordered-validation", "final-test-exclusion"]),
+      concept("cv-purpose", "WHY CV", "Several training-only checks show whether one time window was unusually easy or difficult.", ["cv-purpose"])
+    ];
     const concepts = [
       concept("fold", "FOLD", `A fold is one part of the training data temporarily held out for validation. With ${folds}-fold CV, each round trains on ${folds - 1} parts and validates on 1; each part gets one turn.`, ["cross-validation", "fold"]),
       concept("cv-purpose", "WHY CV", "Cross-validation gives several training-only validation results instead of relying on one lucky or unlucky split. The final test set is not involved in any of these rounds.", ["cv-purpose", "final-test-exclusion"])
     ];
-    if (config.split === "time") {
-      concepts.push(concept("time-folds", "TIME FOLDS", `TimeSeriesSplit keeps earlier rows for training and later rows for validation. Across rounds the training window grows, and every validation period comes after the data used to train that fold.`, ["time-series-split", "ordered-validation"]));
-    } else {
+    if (config.split !== "time") {
       const classification = config.task === "classification" ? " Stratified folds try to keep class proportions similar in each fold." : "";
       concepts.push(concept("fold-order", "FOLD SETUP", `Before standard folds are made, shuffle=True mixes the row order so folds are not based on the dataset's original order.${classification}`, ["shuffle", ...(config.task === "classification" ? ["stratified-folds"] : [])]));
     }
     return concepts;
+  }
+
+  function routeFrameQuestion(config, value) {
+    const names = featureNames(value);
+    const featureText = names.length === 1
+      ? friendlyColumnName(names[0])
+      : `${names.length} selected inputs`;
+    const target = friendlyColumnName(config.target);
+    if (config.target === "species") return `Predict penguin species from ${featureText}; each row is one penguin.`;
+    if (config.target === "popular") return `Classify whether a candy reaches at least 50% wins using ${featureText}; each row is one candy.`;
+    if (config.target === "quality") return `Estimate wine quality from ${featureText}; duplicate chemistry rows are removed before the split.`;
+    if (config.target === "Rented Bike Count") return `Predict later ${target} from ${featureText}; rows stay in chronological order.`;
+    if (config.target === "lifeExp") return `Estimate ${target} for the 2007 country snapshot from ${featureText}.`;
+    if (config.target === "winpercent") return `Estimate candy win rate from ${featureText}; each row is one candy.`;
+    if (config.target === "diagnosis") return `Predict diagnosis class from ${featureText}; each row is one tumour sample.`;
+    return `${config.question} Use ${featureText} to estimate ${target}.`;
+  }
+
+  function routeDatasetLabel(config, value) {
+    const dataset = String(config.name || "this dataset").split(" · ")[0];
+    const scenario = String(value?.name || "selected scenario").split(" · ")[0];
+    return `${dataset} · ${scenario}`;
+  }
+
+  function routeInputSummary(value) {
+    const names = featureNames(value).map(friendlyColumnName);
+    if (!names.length) return "the selected inputs";
+    if (names.length === 1) return names[0];
+    if (names.length === 2) return `${names[0]} and ${names[1]}`;
+    return `${names[0]}, ${names[1]}, and ${names.length - 2} more selected inputs`;
+  }
+
+  function supervisedClosingTeaching(config, value) {
+    const routeLabel = routeDatasetLabel(config, value);
+    const target = friendlyColumnName(config.target);
+    if (config.task === "classification") {
+      return {
+        question:`How does the selected model's saved final ${target} result compare with the initial-model CV and any selected-setting CV for ${routeLabel}? Use the training-only diagnostic or optional final confusion view to identify a class pattern, then name one limitation.`,
+        readingCue:`Read the aggregate final ${target} metric, compare it with the initial-model CV and selected-setting CV when tuning was used, then use the training-only diagnostic or optional final confusion view for class-level patterns. The saved final test is a one-time held-out check, not a tuning result.`
+      };
+    }
+    if (config.split === "time") {
+      return {
+        question:`How does the saved final ${target} error compare with the initial-model CV and any selected-setting CV across later time windows for ${routeLabel}, and which inputs would actually be available for a future prediction?`,
+        readingCue:`Compare the saved final test error with initial-model CV and selected-setting CV when tuning was used, then check that any proposed future input would be known before the prediction time.`
+      };
+    }
+    return {
+      question:`How does the saved final ${target} error compare with the initial-model CV and any selected-setting CV for ${routeLabel}, and what pattern did the model miss?`,
+      readingCue:`Read the saved final test error in ${target} units, compare it with initial-model CV and selected-setting CV when tuning was used, then name one pattern from the training-only residuals that the model did not capture.`
+    };
+  }
+
+  function unsupervisedStory(config, value, modelId) {
+    const routeLabel = routeDatasetLabel(config, value);
+    const inputs = routeInputSummary(value);
+    if (modelId === "kmeans") {
+      return {
+        frameQuestion:`What groups can I describe in ${routeLabel} rows using ${inputs}?`,
+        frameCue:`Confirm that X contains these selected inputs and that the reference target stays out of the grouping decision.`,
+        exploreQuestion:`What ranges and overlaps among ${inputs} might shape groups in ${routeLabel}?`,
+        exploreCue:`Use the input ranges and overlap to form a first description of possible groups before fitting K-Means.`,
+        prepareQuestion:`How should ${inputs} be scaled so distance comparisons treat ${routeLabel} rows fairly?`,
+        prepareCue:`Check that the named scaling recipe puts the selected inputs on comparable scales before distances are calculated.`,
+        compareQuestion:`Which candidate group count gives a useful balance for ${routeLabel}?`,
+        compareCue:`Use inertia, silhouette, cluster sizes, and original-unit profiles together; choose a useful explanation rather than the smallest score alone.`,
+        fitQuestion:`What does the selected starting group count produce for ${routeLabel}?`,
+        fitCue:`Compare the starting group count with the candidate evidence, then edit selected_k if another grouping answers this route's question better.`,
+        diagnoseQuestion:`Are the discovered ${routeLabel} groups separated enough and large enough to describe?`,
+        diagnoseCue:`Read the global silhouette beside the full group counts, then decide whether a small group is meaningful, rare, or fragmented.`,
+        profileQuestion:`What do these groups look like in the original units of ${inputs} for ${routeLabel}?`,
+        profileCue:`Use the original-unit means to describe at least two groups; cluster IDs are labels and do not supply the meaning.`,
+        closingQuestion:`Describe two groups in the original units of ${inputs} for ${routeLabel}; why is this grouping useful for the selected scenario?`,
+        closingCue:`Use the profile and map together, state two concrete group descriptions, and name what the two-dimensional view leaves out.`
+      };
+    }
+    if (modelId === "hierarchical") {
+      return {
+        frameQuestion:`How do ${routeLabel} rows join into a hierarchy when compared on ${inputs}?`,
+        frameCue:`Confirm that X contains these selected inputs and that the reference target stays out of the hierarchy.`,
+        exploreQuestion:`What ranges and overlaps among ${inputs} might shape the ${routeLabel} hierarchy?`,
+        exploreCue:`Use the input ranges and overlap to describe possible similarity before building the hierarchy.`,
+        prepareQuestion:`How should ${inputs} be scaled, and why does ${routeLabel} use a reproducible sample?`,
+        prepareCue:`Check the comparable scales, the named X_sample frame, and the displayed sample size before pairwise linkage is built.`,
+        dendrogramQuestion:`Where do ${routeLabel} rows join at noticeably different heights before a cut is chosen?`,
+        dendrogramCue:`Read leaves as sampled rows or small groups, joins as merges, and large height gaps as candidate cut evidence.`,
+        compareQuestion:`Which dendrogram cut gives a useful description of ${routeLabel}?`,
+        compareCue:`Use merge heights, silhouette, sampled group sizes, and original-unit profiles together; silhouette supports the cut but does not decide it.`,
+        fitQuestion:`What does the selected starting cut produce for ${routeLabel}?`,
+        fitCue:`Compare the starting cut with the dendrogram and candidate evidence, then edit selected_k if another cut answers this route's question better.`,
+        profileQuestion:`What do the sampled groups look like in the original units of ${inputs} for ${routeLabel}?`,
+        profileCue:`Use the sampled original-unit means to describe at least two groups and keep the sample scope in your interpretation.`,
+        closingQuestion:`Describe two sampled groups in the original units of ${inputs} for ${routeLabel}; why is this hierarchy useful for the selected scenario?`,
+        closingCue:`Use the profile and map together, state two concrete group descriptions, and remember that the hierarchy represents the reproducible sample.`
+      };
+    }
+    return {
+      frameQuestion:`How can I summarise variation in ${routeLabel} rows with fewer coordinates from ${inputs}?`,
+      frameCue:`Confirm that the selected inputs define X and that no reference target is used to learn the PCA axes.`,
+      exploreQuestion:`Which selected inputs may overlap in ${routeLabel} before they are replaced by principal-component coordinates?`,
+      exploreCue:`Use the named pair to describe possible redundancy before PCA searches for directions of high variance.`,
+      prepareQuestion:`Why should ${inputs} share a common scale before PCA compares their variation?`,
+      prepareCue:`Check that the named scaling recipe prepares each selected input before PCA learns the axes.`,
+      varianceQuestion:`How much variation does each component represent for ${routeLabel}, and where does adding another component become less useful?`,
+      varianceCue:`Read the per-component and cumulative variance for this selected scenario; the next step makes the retention trade-off explicit.`,
+      selectQuestion:`How many coordinates should represent ${routeLabel} under the chosen variance-retention rule?`,
+      selectCue:`Check the first component count reaching the active target and record both the count and the retained variation.`,
+      loadingsQuestion:`Which original inputs shape the first axes for ${routeLabel}, and how should their signs be read?`,
+      loadingsCue:`Compare absolute loading sizes for contribution and signs for direction; the full table keeps every selected input available for interpretation.`,
+      closingQuestion:`How many coordinates did you keep for ${routeLabel}, how much variation do they preserve, and what do the first two axes describe?`,
+      closingCue:`Use components_for_target and variance_retained, connect the largest absolute loadings to PC1 and PC2, and name what later components may hide.`
+    };
+  }
+
+  function modelPurposeQuestion(modelId, config) {
+    const purposes = {
+      simple_linear:"How much does one selected input move the numeric target along a straight line?",
+      multiple_linear:"What additive contribution does each selected input make while the others are held in the model?",
+      polynomial:"Does adding curved terms improve the numeric prediction relationship?",
+      regression_tree:"Which if/then splits form useful numeric prediction groups?",
+      logistic:"Can a regularised linear score separate the classes?",
+      svm_cls:"How does a margin based boundary separate the classes?",
+      one_r:"Which single feature gives the simplest useful class rules?",
+      classification_tree:"Which if/then splits form useful class decisions?",
+      knn_cls:"Do nearby prepared training rows vote for the same class?",
+      qda:"Do class specific shapes produce a useful curved boundary?",
+      lda:"Can one shared class shape support a useful linear boundary?",
+      naive_bayes:"How do class priors and feature evidence combine under the independence assumption?",
+      mlp_cls:"Can one small hidden layer learn nonlinear class patterns?",
+      mlp_reg:"Can one small hidden layer learn nonlinear numeric patterns?"
+    };
+    return purposes[modelId] || `What pattern can this ${config.task} model learn?`;
+  }
+
+  function tuningQuestion(modelId, config) {
+    const questions = {
+      logistic:"Does regularisation strength help the class boundary?",
+      svm_cls:"How strongly should classification mistakes be penalised?",
+      regression_tree:"How deep should the tree grow?",
+      classification_tree:"How deep should the tree grow?",
+      knn_cls:"How many neighbours should vote?",
+      one_r:"How many numeric intervals are useful for the one-feature rule?",
+      qda:"How much should class-shape estimates be stabilised?",
+      lda:"Does stabilising the shared class shape help?",
+      naive_bayes:"How much smoothing should class evidence use?",
+      polynomial:"Is degree 2 or degree 3 more useful?",
+      mlp_cls:"Does a different small hidden-layer size help?",
+      mlp_reg:"Does a different small hidden-layer size help?"
+    };
+    return questions[modelId] || "Does one supported setting improve the training-fold result?";
   }
 
   function hyperparameterExample(modelId, value) {
@@ -2012,12 +1924,12 @@ checkpoint_loadings.head(12)`;
       regression_tree:"For a tree, max_depth limits how deep the learned if/then structure may grow.",
       classification_tree:"For a tree, max_depth limits how deep the learned if/then structure may grow.",
       logistic:"For logistic regression, C controls the strength of regularisation.",
-      svm_cls:"For an SVM, C controls the margin/error trade-off and gamma controls RBF curvature.",
-      polynomial:"For polynomial regression, degree controls the allowed curvature and alpha controls regularisation.",
+      svm_cls:"For an SVM, C controls the margin/error trade-off; this first search changes C only.",
+      polynomial:"For polynomial regression, degree controls the allowed curvature; this first search changes degree only.",
       qda:"For QDA, reg_param controls how much covariance estimates are regularised.",
       lda:"For LDA, shrinkage controls whether covariance estimates are regularised.",
-      mlp_cls:"For a neural network, hidden_layer_sizes chooses the hidden layers and alpha controls regularisation.",
-      mlp_reg:"For a neural network, hidden_layer_sizes chooses the hidden layers and alpha controls regularisation; model__regressor__ routes settings through the target-scaling wrapper to the inner MLP.",
+      mlp_cls:"For a neural network, hidden_layer_sizes chooses the hidden layers; this first search changes the width from 16 to 24.",
+      mlp_reg:"For a neural network, hidden_layer_sizes chooses the hidden layers; this first search changes the width from 16 to 24 through model__regressor__ inside the target-scaling wrapper.",
       one_r:"For continuous One-R, bins controls candidate numeric intervals; it does not group categorical values."
     };
     return examples[modelId] || "The allowed settings control how the model learns.";
@@ -2070,8 +1982,8 @@ checkpoint_loadings.head(12)`;
       },
       regression_tree:{
         learned:`The tree learned if/then splits that group training rows with similar ${targetName} values.`,
-        see:"Trace the displayed training-row path from the root to its leaf. The top tree and feature-usage table show the fitted structure.",
-        read:"Each condition narrows the group; the leaf prediction is the average target for rows that reach that leaf. Feature usage is not causation.",
+        see:"Read the top of the fitted tree and the feature-usage table to see which if/then splits the model used.",
+        read:"Each condition narrows a group; a leaf reports the fitted prediction for rows that reach it. Feature usage is not causation.",
         watchOut:"Small changes in training data can change the exact tree rules."
       },
       logistic:{
@@ -2082,7 +1994,7 @@ checkpoint_loadings.head(12)`;
       },
       classification_tree:{
         learned:"The tree learned if/then questions that end at a leaf predicting a class.",
-        see:"Follow the displayed real training-row path; its actual and predicted class make the leaf decision concrete.",
+        see:"Read the top of the fitted tree and the feature-usage table to see which if/then questions lead to class leaves.",
         read:"Each condition selects a smaller group; the leaf predicts the class most common there. Feature usage measures split improvement, not causal influence.",
         watchOut:"A tree can learn very specific rules, so deeper trees may fit training details that do not generalize as well."
       },
@@ -2094,22 +2006,20 @@ checkpoint_loadings.head(12)`;
       },
       svm_cls:{
         learned:"The model learned a class-separating boundary and tries to leave a wide margin around it. The closest important training rows are support vectors.",
-        see:names.length === 2 && value.continuous.length === 2 && !value.binary.length && !value.categorical.length
-          ? "See the fitted decision regions, the boundary, the class training points, and the support vectors marked on the two-feature plot."
-          : "See support vectors per class and a deterministic out-of-fold row's decision evidence. With several classes, the classifier combines multiple class-separation decisions; there is no single universal boundary.",
+        see:"See support vectors per class and a deterministic out-of-fold row's decision evidence. With several classes, the classifier combines multiple class-separation decisions; there is no single universal boundary.",
         read:"The margin is the gap around the boundary; support vectors most directly constrain where it sits. For binary SVM, the decision-score sign identifies the class side. C penalises training mistakes more strongly when larger, while RBF gamma makes influence more local when larger.",
         watchOut:"A detailed boundary can fit training details that do not generalize. RBF boundaries depend strongly on scaling, C, and gamma, and support vectors are not causal feature importance."
       },
       lda:{
         learned:"LDA learned a centre for each class plus one shared spread/shape structure, which leads to straight decision boundaries.",
-        see:"See the fitted class-centre table and one out-of-fold prediction story; a two-feature route also shows the fitted straight decision regions.",
+        see:"See the fitted class-centre table, class-aligned posterior probabilities, and one out-of-fold prediction row.",
         read:"Compare the example's discriminant evidence with the available class centres. The shared spread/shape assumption is the link to a straight boundary.",
         watchOut:"If different classes have very different spreads or shapes, LDA's shared-spread assumption may be too simple. LDA is motivated by an approximately Gaussian model, not an absolute normality requirement."
       },
       qda:{
         learned:"QDA learned a centre and a separate spread/shape structure for each class, allowing the decision boundary to curve.",
-        see:"See the fitted class centres, each class's per-feature spread, and one out-of-fold prediction story; internally, QDA also models how the features vary together within each class. A two-feature route also shows the fitted curved decision regions.",
-        read:"Compare the example's class probabilities and predicted region with the class-specific centres and per-feature spreads. The extra class-specific covariance/shape freedom is the contrast with LDA.",
+        see:"See the fitted class centres, class-aligned posterior probabilities, and one out-of-fold prediction row; internally, QDA also models how the features vary together within each class.",
+        read:"Compare the example's class probabilities and predicted class with the class-specific centres and per-feature spreads. The extra class-specific covariance/shape freedom is the contrast with LDA.",
         watchOut:"QDA estimates more class-specific information than LDA, so it can be more flexible but needs more data to estimate those class shapes reliably. Regularisation can stabilise estimates; a curved boundary is not automatically better."
       },
       naive_bayes:{
@@ -2144,19 +2054,23 @@ checkpoint_loadings.head(12)`;
       },
       kmeans:{
         learned:"K-Means starts with k centres, assigns each row to its nearest centroid, moves each centroid to the average of its assigned rows, and repeats until the assignments or centres settle.",
-        see:"See cluster sizes, silhouette values, original-unit profiles and centroids, plus a PCA map. The fit used all selected prepared dimensions; the map is only a two-dimensional view.",
+        see:names.length === 2
+          ? "See cluster sizes, silhouette values, original-unit profiles, and a direct map of the two selected inputs. The fit still uses both prepared dimensions."
+          : "See cluster sizes, silhouette values, original-unit profiles, and an optional PCA map. The fit uses all selected prepared dimensions; each map is only a two-dimensional view.",
         read:"Compare inertia and silhouette with cluster sizes and original-unit profiles. Cluster IDs are arbitrary, and a small cluster may be meaningful, rare, an outlier pattern, or a fragmented solution.",
         watchOut:"Inertia usually decreases as k increases, so the smallest inertia is not a valid choice. K-Means works best for compact, roughly spherical groups and can be pulled by outliers or unlucky initial centres; multiple n_init starts reduce dependence on one starting set."
       },
       hierarchical:{
         learned:"Agglomerative clustering starts with each row as its own group and repeatedly merges groups. Ward linkage chooses merges that add the least within-group variation.",
-        see:"See the reproducible sample's dendrogram, merge heights, silhouette evidence, original-unit profiles and PCA map.",
+        see:names.length === 2
+          ? "See the reproducible sample's dendrogram, merge heights, silhouette evidence, original-unit profiles, and a direct map of the two selected inputs."
+          : "See the reproducible sample's dendrogram, merge heights, silhouette evidence, original-unit profiles, and an optional PCA map.",
         read:"Read leaves as observations or small groups, joins as merges, and height as Ward merge dissimilarity. A horizontal cut represents a cluster count; silhouette supports the choice but does not decide it.",
         watchOut:"The hierarchy is fitted on a sample of at most 500 rows, so a different sample can produce somewhat different branches. Cluster IDs are arbitrary, and the PCA map is only a two-dimensional projection."
       },
       pca:{
         learned:"PCA learned new weighted axes that capture decreasing amounts of variance in the scaled inputs.",
-        see:"See the explained-variance plots, strongest feature loadings, and row coordinates on the first two principal components.",
+        see:"See the explained-variance plots, the full labelled loading table, and row coordinates on the first two principal components.",
         read:"Use explained variance to judge how much variation each component represents, and loadings to understand which original features shape each axis. A loading describes a feature's contribution; a score describes a row's position.",
         watchOut:"PCA is a linear projection that prioritises variance, not prediction usefulness. A two-dimensional map can hide variation in later components, and component directions are not causal effects or supervised feature importance."
       }
@@ -2171,24 +2085,19 @@ checkpoint_loadings.head(12)`;
       : concept("early-stopping", "EARLY STOPPING", "With early_stopping=True, the network can hold aside a small internal part of the current training fold and stop when that internal validation performance stops improving. This is not outer CV or the final test, and it does not replace either.", ["early-stopping", "internal-validation"]);
     const concepts = [
       concept("hidden-layer", "HIDDEN LAYER", "A layer between the inputs and final output. Its units learn weighted combinations of earlier signals.", ["hidden-layer", "hidden-layers"]),
-      concept("hidden-layer-sizes", "hidden_layer_sizes", "(24,) means one hidden layer with 24 units; (32, 16) means two hidden layers: 32 units, then 16. The tuple is compact configuration syntax.", ["hidden-layer-sizes"]),
-      concept("weights", "WEIGHTS", "Weights are numbers the network learns during fit(); they determine how strongly signals are passed between units.", ["weights", "learned-parameter"]),
-      concept("loss", "LOSS", "Loss is a training objective measuring how wrong the network currently is according to its optimization rule. Training tries to reduce it.", ["loss", "training-objective"]),
-      concept("backpropagation", "BACKPROPAGATION", "Backpropagation works backward from error and adjusts weights in directions that reduce loss.", ["backpropagation"]),
-      concept("alpha", "ALPHA", "alpha is regularisation strength: it discourages excessively large weights. It is a hyperparameter, not a learned weight.", ["alpha", "regularisation"]),
-      earlyStopping,
-      concept("optimization-settings", "MAX_ITER", "max_iter controls the maximum number of optimization iterations; it is a runtime/optimization setting, not a core modelling idea.", ["max-iter"])
+      concept("hidden-layer-sizes", "hidden_layer_sizes", "The starting network has one hidden layer with 24 units. The first search compares that with a smaller (16,) layer; the tuple is compact configuration syntax.", ["hidden-layer-sizes"]),
+      earlyStopping
     ];
-    if (modelId === "mlp_reg") concepts.push(concept("tolerance", "TOL", "tol controls how precisely optimization must improve before it can stop; it is a runtime/optimization setting, not a core modelling idea.", ["tol"]));
     if (modelId === "mlp_reg") concepts.push(concept("target-scaling", "TARGET SCALING", "TransformedTargetRegressor scales y while the inner MLP trains and automatically converts predictions back to the target's original units. In the tuning grid, model__regressor__... routes settings to that inner MLP.", ["TransformedTargetRegressor", "target-scaling", "nested-parameter-routing"]));
     return concepts;
   }
 
   function supervisedTeaching(config, value, modelId, folds = 5) {
     const metricMeta = primaryMetricMetadata(config);
+    const closing = supervisedClosingTeaching(config, value);
     return {
       frame: {
-        question:"What are we trying to predict, and which features are we using?",
+        question:routeFrameQuestion(config, value),
         readingCue:"Check that X contains the selected features and y contains the target.",
         concepts:frameConcepts(config, value),
         practice:practiceForTask(config, value, modelId, "frame")
@@ -2196,15 +2105,13 @@ checkpoint_loadings.head(12)`;
       split: {
         question:"Which rows are available for learning, and which are being saved for the final check?",
         readingCue:config.split === "time"
-          ? "Check the training/test sizes and that the saved test rows come after the training rows."
-          : config.task === "classification"
-            ? "Check the training/test sizes and whether class proportions stay similar."
-            : "Check the training/test sizes and whether both partitions cover the target range.",
+          ? "Check the earlier training count and later saved-test count."
+          : "Check the development count and saved-test count; the saved outcomes stay sealed.",
         concepts:splitConcepts(config),
         practice:practiceForTask(config, value, modelId, "split")
       },
       explore: {
-        question:"What patterns or differences can I see in the training data?",
+        question:`Does ${friendlyColumnName(featureNames(value)[0])} show a training pattern related to ${friendlyColumnName(config.target)}?`,
         readingCue:exploreReadingCue(config, value)
       },
       prepare: {
@@ -2214,31 +2121,43 @@ checkpoint_loadings.head(12)`;
         practice:practiceForTask(config, value, modelId, "prepare")
       },
       model: {
-        question:"What kind of pattern will this model try to learn?",
-        readingCue:"Look for whether the model is linear, rule-based, distance-based, or nonlinear, and connect that idea to the selected data.",
+        question:modelPurposeQuestion(modelId, config),
+        readingCue:"Read the model recipe, then connect its named operation to the selected inputs.",
         concepts:[...pipelineConcepts(config), ...(["mlp_cls", "mlp_reg"].includes(modelId) ? neuralNetworkBuildConcepts(config, modelId) : [])],
         practice:practiceForTask(config, value, modelId, "model")
       },
       baseline: {
-        question:"Does this model perform similarly across different validation folds?",
+        question:"Do validation results stay reasonably similar across folds?",
         readingCue:config.split === "time"
           ? "Look for whether validation scores change across later time windows; these folds are ordered rather than random."
-          : "Look for whether validation scores stay fairly similar and whether training scores are consistently much better.",
+          : "Read the one primary validation metric across folds; the next step compares it with a simple guess.",
         metricMeta,
         metricHelp:metricHelpFor(config, "baseline"),
         concepts:cvConcepts(config, folds),
         practice:practiceForTask(config, value, modelId, "baseline", folds)
       },
+      reference: {
+        question:"Do the selected features beat a simple guess on the same training folds?",
+        readingCue:config.task === "classification"
+          ? "Compare the initial model's mean macro F1 with the most-common-class reference; higher is better."
+          : "Compare the initial model's mean RMSE with the mean-target reference; lower is better.",
+        metricMeta,
+        metricHelp:metricHelpFor(config, "reminder"),
+        concepts:[concept("reference-predictor", "REFERENCE PREDICTOR", config.task === "classification"
+          ? "A most-common-class reference predicts the class seen most often in the training rows. It gives the feature-based model a simple same-fold comparison point."
+          : "A mean-target reference predicts the training mean for every row. It gives the feature-based model a simple same-fold comparison point.", ["reference-predictor", "baseline-comparison"])],
+        practice:practiceForTask(config, value, modelId, "reference", folds)
+      },
       tune: {
-        question:"Do alternative settings improve validation performance enough to prefer one?",
-        readingCue:"Compare settings using cross-validation only; the final test remains untouched.",
+        question:modelSpec(modelId, value).grid === "{}" ? "This route keeps its current settings. What should we inspect next?" : tuningQuestion(modelId, config),
+        readingCue:modelSpec(modelId, value).grid === "{}" ? "No settings were searched; continue to the validation errors." : "Compare the supported setting using training folds only; the final test remains untouched.",
         metricMeta,
         metricHelp:metricHelpFor(config, "reminder"),
         concepts:tuningConcepts(config, modelId, value),
         practice:practiceForTask(config, value, modelId, "tune")
       },
       diagnose: {
-        question:"Where does the selected model make mistakes or show patterns in its errors?",
+        question:config.task === "classification" ? "Which classes are most often confused in training-only validation?" : "Do training-only residuals form a roughly random cloud around zero?",
         readingCue:config.task === "classification"
           ? "Look for which actual classes are most often confused and whether errors cluster by class."
           : "Look for whether residuals form a roughly random cloud around zero or show a pattern.",
@@ -2246,8 +2165,8 @@ checkpoint_loadings.head(12)`;
         practice:practiceForTask(config, value, modelId, "diagnose")
       },
       final: {
-        question:"Is the final-test result consistent with what cross-validation suggested?",
-        readingCue:"Look for whether the final score is broadly consistent with the range seen during validation.",
+        question:closing.question,
+        readingCue:closing.readingCue,
         metricMeta,
         metricHelp:metricHelpFor(config, "final"),
         comparison:true,
@@ -2355,12 +2274,12 @@ checkpoint_loadings.head(12)`;
     const insideRange = finalTest >= summary.validationMin && finalTest <= summary.validationMax;
     let interpretation;
     if (insideRange) {
-      interpretation = "The final-test result is broadly consistent with the validation results, so the one-time test does not reveal a large surprise.";
+      interpretation = "The selected-model final score falls inside the initial-model fold range. This is a descriptive comparison between potentially different configurations, not a performance guarantee.";
     } else {
       const worse = summary.metric.direction === "higher" ? finalTest < summary.validationMin : finalTest > summary.validationMax;
       interpretation = worse
-        ? "The final-test result is worse than the validation folds suggested. That does not automatically mean something is wrong, but it is evidence that performance on new data may be less reliable than CV implied."
-        : "The final-test result is stronger than the validation folds suggested. One test split can be easier or harder by chance, so treat this as one estimate rather than proof that the model improved.";
+        ? "The selected-model final score is worse than the initial-model fold scores. These describe different samples and potentially different configurations; the fold range is not a confidence interval."
+        : "The selected-model final score is stronger than the initial-model fold scores. One split can be easier by chance, and tuning may have changed the configuration; this does not prove an improvement.";
     }
     return {
       metric:summary.metric,
@@ -2381,11 +2300,13 @@ checkpoint_loadings.head(12)`;
     const setupCode = bundle.setupCode ?? bundle.setup ?? "";
     const evidenceCode = bundle.evidenceCode ?? bundle.evidence ?? "";
     const advancedCode = bundle.advancedCode ?? ([setupCode, evidenceCode].filter(Boolean).join("\n\n") || "");
+    const optionalCode = bundle.optionalCode ?? bundle.referenceCode ?? "";
     return {
       id,
       title,
       caption,
       question:details.question || "",
+      action:details.action || teachingActionForTask({id, title, caption, question:details.question || ""}),
       readingCue:details.readingCue || "",
       concepts,
       conceptKeys:[...new Set(details.conceptKeys || concepts.flatMap(item => Array.isArray(item.keys) ? item.keys : [item.key]).filter(Boolean))],
@@ -2398,7 +2319,8 @@ checkpoint_loadings.head(12)`;
       primaryCode:formatRouteCode(primaryCode),
       setupCode:formatRouteCode(setupCode),
       evidenceCode:formatRouteCode(evidenceCode),
-      advancedCode:formatRouteCode(advancedCode)
+      advancedCode:formatRouteCode(advancedCode),
+      optionalCode:formatRouteCode(optionalCode)
     };
   };
   const PYTHON_KEYWORDS = new Set(["and","as","assert","async","await","break","class","continue","def","del","elif","else","except","finally","for","from","global","if","import","in","is","lambda","not","or","pass","raise","return","try","while","with","yield"]);
@@ -2450,16 +2372,52 @@ checkpoint_loadings.head(12)`;
   }
 
   function modelFrameSetup(config) {
-    return config.prepare === "df" ? "" : `model_df = ${config.prepare}`;
+    if (config.prepare === "df") return "";
+    if (config.target === "popular") return [
+      "model_df = df.copy()",
+      "model_df[\"popular\"] = np.where(model_df[\"winpercent\"] >= 50, \"50% or above\", \"below 50%\")"
+    ].join("\n");
+    if (config.target === "quality") return "model_df = df.drop_duplicates().reset_index(drop=True)";
+    if (config.target === "Rented Bike Count") return [
+      "model_df = df.copy()",
+      "model_df[\"date\"] = pd.to_datetime(model_df[\"Date\"], dayfirst=True)",
+      "model_df = model_df.sort_values([\"date\", \"Hour\"]).reset_index(drop=True)"
+    ].join("\n");
+    if (config.target === "lifeExp") return "model_df = df[df[\"year\"].eq(2007)].copy()";
+    return `model_df = ${config.prepare}`;
+  }
+
+  function pythonList(values) {
+    if (!values.length) return "[]";
+    return `[\n${values.map(value => `    ${py(value)}`).join(",\n")}\n]`;
   }
 
   function frameCode(config, value, unsupervised = false) {
     const frameName = modelFrameName(config);
     const targetLine = unsupervised ? "" : `y = ${frameName}[${py(config.target)}].copy()`;
+    const featureGroups = [];
+    if (value.continuous.length) featureGroups.push(["numeric_features", value.continuous]);
+    if (value.binary.length) featureGroups.push(["binary_features", value.binary]);
+    if (value.categorical.length) featureGroups.push(["categorical_features", value.categorical]);
+    const typedGroups = [
+      ...featureGroups.map(([name, values]) => `${name} = ${pythonList(values)}`),
+      `feature_names = ${featureGroups.map(([name]) => name).join(" + ") || "[]"}`
+    ];
+    if (!unsupervised && value.binary.length) {
+      // Keep the raw typed groups above as the single source of column names.
+      // Derived groups let later preparation refer to them without copying a
+      // second list of feature literals into a later cell.
+      typedGroups.push(
+        `numeric_binary_features = [name for name in binary_features if name in ${pythonList(config.binaryNumeric || [])}]`,
+        "encoded_binary_features = [name for name in binary_features if name not in numeric_binary_features]"
+      );
+    }
+    const featureBlock = typedGroups.join("\n");
     return `# 1 · Frame the ${unsupervised ? "unsupervised question" : "prediction problem"}
-feature_names = ${py(featureNames(value))}
+${featureBlock}
 
 ${modelFrameSetup(config)}
+# X is the selected input table; y is the answer paired with the same rows.
 X = ${frameName}[feature_names].copy()
 ${targetLine}
 
@@ -2480,35 +2438,28 @@ axes[1].set_title(${py(second)})
 fig.tight_layout()
 summary`;
     }
-    const views = [
-      ...value.continuous.slice(0, 2).map((name, index) => ({name, kind:"continuous", color:index === 0 ? "#137c9c" : "#7651a6"})),
-      ...value.binary.slice(0, 1).map(name => ({name, kind:"category", color:"#f97316"})),
-      ...value.categorical.slice(0, 1).map(name => ({name, kind:"category", color:"#c08aff"}))
-    ];
-    const viewCode = views.map((view, index) => {
-      const plot = config.task === "regression"
-        ? view.kind === "continuous"
-          ? `sns.scatterplot(data=training_view, x=${py(view.name)}, y="target", ax=axes[${index}], color=${py(view.color)})`
-          : `sns.boxplot(data=training_view, x=${py(view.name)}, y="target", ax=axes[${index}], color=${py(view.color)})`
-        : view.kind === "continuous"
-          ? `sns.histplot(data=training_view, x=${py(view.name)}, hue="target", kde=True, element="step", ax=axes[${index}])`
-          : `sns.countplot(data=training_view, x=${py(view.name)}, hue="target", ax=axes[${index}])`;
-      return `${plot}
-axes[${index}].set_title(${py(view.name)})`;
-    }).join("\n");
+    const primary = featureNames(value)[0];
+    const primaryIsContinuous = value.continuous.includes(primary);
+    const plot = config.task === "regression"
+      ? primaryIsContinuous
+        ? `sns.scatterplot(data=training_view, x=${py(primary)}, y="target", ax=ax, color="#137c9c")`
+        : `sns.boxplot(data=training_view, x=${py(primary)}, y="target", ax=ax, color="#7651a6")`
+      : primaryIsContinuous
+        ? `sns.histplot(data=training_view, x=${py(primary)}, hue="target", kde=True, element="step", ax=ax)`
+        : `sns.countplot(data=training_view, x=${py(primary)}, hue="target", ax=ax)`;
     const summary = config.task === "classification"
       ? `summary = y_train.value_counts().rename_axis("target").reset_index(name="rows")`
       : (value.binary.length || value.categorical.length)
         ? `summary = X_train.describe(include="all").T`
         : `summary = X_train.describe().T`;
-    return `# 3 · Explore the training data only
+    return `# 3 · Explore one training-data view
 training_view = X_train.copy()
-training_view["target"] = y_train.to_numpy()
+training_view["target"] = y_train
 ${summary}
 
-fig, axes = plt.subplots(1, ${views.length}, figsize=(${Math.max(6.2, views.length * 4.2)}, 3.8), squeeze=False)
-axes = axes.ravel()
-${viewCode}
+fig, ax = plt.subplots(figsize=(7, 3.8))
+${plot}
+ax.set_title(${py(`Training-only view: ${friendlyColumnName(primary)}`)})
 fig.tight_layout()
 summary`;
   }
@@ -2532,39 +2483,64 @@ pd.DataFrame({"partition":["training + CV", "saved final test"], "rows":[len(X_t
     const splitter = config.split === "time"
       ? `${splitterName}(n_splits=${folds})`
       : `${splitterName}(n_splits=${folds}, shuffle=True, random_state=42)`;
-    return `# 6 · Check whether the baseline model works consistently
+    return `# 6 · Validate the initial model with training-only cross-validation
 from sklearn.model_selection import ${splitterName}, cross_validate
 
-# ${config.split === "time" ? "TimeSeriesSplit expands the training window forward, so validation rows always come later." : "Each fold fits on its training rows and checks different validation rows."}
+# ${config.split === "time" ? "Each validation block comes after the rows used to fit that fold; the windows are ordered." : "Each fold fits on its training rows and checks different validation rows."}
 cv = ${splitter}
-${config.task === "classification" ? `scoring = {"macro_f1":"f1_macro", "accuracy":"accuracy"}
-scores = cross_validate(pipeline, X_train, y_train, cv=cv, scoring=scoring, return_train_score=True)
-cv_scores = pd.DataFrame({
-    "fold":np.arange(1, len(scores["test_macro_f1"]) + 1),
-    "train_macro_f1":scores["train_macro_f1"],
-    "validation_macro_f1":scores["test_macro_f1"],
-    "validation_accuracy":scores["test_accuracy"]
-})` : `scoring = {"rmse":"neg_root_mean_squared_error", "r2":"r2"}
-scores = cross_validate(pipeline, X_train, y_train, cv=cv, scoring=scoring, return_train_score=True)
-cv_scores = pd.DataFrame({
-    "fold":np.arange(1, len(scores["test_rmse"]) + 1),
-    "train_rmse":-scores["train_rmse"],
-    "validation_rmse":-scores["test_rmse"],
-    "validation_r2":scores["test_r2"]
-})`}
-cv_scores.round(3)`;
+${config.task === "classification" ? `cv_results = cross_validate(
+    pipeline, X_train, y_train, cv=cv, scoring="f1_macro", return_train_score=True,
+)
+fold_scores = pd.DataFrame({
+    "fold":np.arange(1, len(cv_results["test_score"]) + 1),
+    "train_macro_f1":cv_results["train_score"],
+    "validation_macro_f1":cv_results["test_score"],
+})
+# scikit-learn names each fold's validation column test_score. These are inner-CV validation rows, not the saved final test.
+print("Here, test_score means the validation score for each training-only fold; it is not the saved final test score.")` : `cv_results = cross_validate(
+    pipeline, X_train, y_train, cv=cv, scoring="neg_root_mean_squared_error", return_train_score=True,
+)
+fold_scores = pd.DataFrame({
+    "fold":np.arange(1, len(cv_results["test_score"]) + 1),
+    "train_rmse":-cv_results["train_score"],
+    "validation_rmse":-cv_results["test_score"],
+})
+# neg_root_mean_squared_error is negative because model-selection tools maximise scores. Negate test_score to show ordinary positive RMSE, where lower is better.
+print("The RMSE scorer is negative for model selection; this table shows positive RMSE after negating test_score, so lower is better.")`}
+fold_scores.round(3)`;
+  }
+
+  function referenceCode(config) {
+    const classification = config.task === "classification";
+    return `# 7 · Compare one simple reference predictor
+from sklearn.model_selection import cross_val_score
+from sklearn.dummy import ${classification ? "DummyClassifier" : "DummyRegressor"}
+reference = ${classification ? 'DummyClassifier(strategy="most_frequent")' : 'DummyRegressor(strategy="mean")'}
+reference_scores = cross_val_score(
+    reference, X_train, y_train, cv=cv, scoring=${py(classification ? "f1_macro" : "neg_root_mean_squared_error")},
+)
+reference_comparison = pd.Series({${classification ? '"Initial model":cv_results["test_score"].mean(), "Most-common-class reference":reference_scores.mean()' : '"Initial model RMSE":-cv_results["test_score"].mean(), "Mean-target reference RMSE":-reference_scores.mean()'}})
+chosen_pipeline = pipeline
+reference_comparison.round(3)`;
   }
 
   function preprocessingCode(config, value, modelId) {
     const model = MODELS[modelId];
     const plan = preprocessingPlan(config, value, modelId);
     const {numericBinary, encodedFeatures, allNumeric, allEncoded, allContinuous, useOrdinal, needsScale, hasMissing} = plan;
-    const oneRCategoricalMask = [
-      ...value.continuous.map(() => false),
-      ...numericBinary.map(() => true),
-      ...encodedFeatures.map(() => true)
-    ];
-    const oneRCategoricalMaskSource = "[" + oneRCategoricalMask.map(flag => flag ? "True" : "False").join(",") + "]";
+    if (modelId === "one_r") {
+      const oneRNumeric = value.continuous.length ? "numeric_features" : "[]";
+      const oneRCategorical = [value.binary.length ? "binary_features" : "", value.categorical.length ? "categorical_features" : ""].filter(Boolean).join(" + ") || "[]";
+      return [
+      "# 4 · Define the One-R preparation recipe",
+      "# The public adapter keeps feature types and fits category codes inside each CV fold.",
+      "preprocessor = OneRPreprocessor(",
+      `    numeric_features=${oneRNumeric},`,
+      `    categorical_features=${oneRCategorical},`,
+      ")",
+      "preprocessor"
+      ].join("\n");
+    }
     const categoricalNB = modelId === "naive_bayes" && allEncoded && !value.binary.length;
     const keepOriginalUnits = ["simple_linear","multiple_linear"].includes(modelId);
     const imports = [];
@@ -2594,12 +2570,14 @@ cv_scores.round(3)`;
     };
 
     const declarations = [];
+    if (encodedFeatures.length) declarations.push("category_encoder = " + encoder);
     const branches = [];
-    const addGroup = (name, columns, kind, encode = null) => {
-      if (!columns.length) return;
-      const variable = name + "_features";
-      declarations.push(variable + " = " + py(columns));
-      branches.push("    (\"" + name + "\", " + transformerFor(kind, encode) + ", " + variable + ")");
+    const encodedColumnsExpression = value.binary.length
+      ? (value.categorical.length ? "encoded_binary_features + categorical_features" : "encoded_binary_features")
+      : "categorical_features";
+    const addGroup = (name, columnsExpression, kind, encode = null) => {
+      if (!columnsExpression) return;
+      branches.push("    (\"" + name + "\", " + transformerFor(kind, encode) + ", " + columnsExpression + ")");
     };
 
     let expression;
@@ -2622,14 +2600,14 @@ cv_scores.round(3)`;
       }
     } else if (allEncoded) {
       if (hasMissing) addImport("from sklearn.impute import SimpleImputer");
-      expression = transformerFor("categorical", encoder);
+      expression = transformerFor("categorical", "category_encoder");
       if (hasMissing && !imports.includes("from sklearn.pipeline import Pipeline")) addImport("from sklearn.pipeline import Pipeline");
     } else {
       addImport("from sklearn.compose import ColumnTransformer");
-      if (value.continuous.length) addGroup("continuous", value.continuous, "continuous");
-      if (numericBinary.length) addGroup("numeric_binary", numericBinary, "binary");
-      if (encodedFeatures.length) addGroup("encoded", encodedFeatures, "categorical", encoder);
-      expression = declarations.join("\n") + "\npreprocessor = ColumnTransformer([\n" + branches.join(",\n") + "\n], verbose_feature_names_out=False)";
+      if (value.continuous.length) addGroup("continuous", "numeric_features", "continuous");
+      if (numericBinary.length) addGroup("numeric_binary", "numeric_binary_features", "binary");
+      if (encodedFeatures.length) addGroup("encoded", encodedColumnsExpression, "categorical", "category_encoder");
+      expression = "preprocessor = ColumnTransformer([\n" + branches.join(",\n") + "\n], verbose_feature_names_out=False)";
     }
 
     const comments = ["# Keep preprocessing inside the pipeline so each CV training fold learns it from its own rows."];
@@ -2647,9 +2625,10 @@ cv_scores.round(3)`;
       else if (model.preprocessNote) comments.push("# " + model.preprocessNote);
     }
 
-    const assignment = expression.includes("preprocessor =") ? expression : "preprocessor = " + expression;
+    const declarationPrefix = declarations.length ? declarations.join("\n") + "\n" : "";
+    const assignment = expression.includes("preprocessor =") ? declarationPrefix + expression : declarationPrefix + "preprocessor = " + expression;
     const wrappedAssignment = modelId === "one_r"
-      ? assignment + "\npreprocessor = _OneRFeaturePreprocessor(preprocessor, " + oneRCategoricalMaskSource + ")"
+      ? "preprocessor = OneRPreprocessor(\n    numeric_features=numeric_features,\n    categorical_features=binary_features + categorical_features,\n)"
       : assignment;
     return "# 4 · Prepare the selected data\n" + comments.join("\n") + "\n" + imports.join("\n") + "\n\n" + wrappedAssignment + "\n\npreprocessor";
   }
@@ -2662,15 +2641,15 @@ cv_scores.round(3)`;
     const specs = {
       simple_linear:{concept:"Fit one straight-line relationship", imports:"from sklearn.linear_model import LinearRegression", estimator:"LinearRegression()", grid:"{}"},
       multiple_linear:{concept:"Estimate one adjusted linear effect per encoded predictor", imports:"from sklearn.linear_model import LinearRegression", estimator:"LinearRegression()", grid:"{}"},
-      polynomial:{concept:"Expand continuous inputs into curved terms, then scale and regularise", imports:"from sklearn.preprocessing import PolynomialFeatures, StandardScaler\nfrom sklearn.linear_model import Ridge", estimator:"Pipeline([\n    (\"poly\", PolynomialFeatures(include_bias=False)),\n    (\"scale\", StandardScaler()),\n    (\"regression\", Ridge())\n])", grid:readable("{\n    'model__poly__degree': [2, 3],\n    'model__regression__alpha': [0.1, 1.0, 10.0]\n}")},
-      regression_tree:{concept:"Learn if/then splits for nonlinear numeric predictions", imports:"from sklearn.tree import DecisionTreeRegressor", estimator:"DecisionTreeRegressor(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None],\n    'model__min_samples_leaf': [1, 5, 15]\n}")},
-      logistic:{concept:"Model class log-odds with a regularised linear boundary", imports:"from sklearn.linear_model import LogisticRegression", estimator:"LogisticRegression(max_iter=2000, random_state=42)", grid:readable("{\n    'model__C': [0.1, 1.0, 10.0],\n    'model__class_weight': [None, 'balanced']\n}")},
-      svm_cls:{concept:"Find a maximum-margin boundary; RBF allows curvature", imports:"from sklearn.svm import SVC", estimator:"SVC(random_state=42)", grid:readable("{\n    'model__C': [0.5, 2, 10],\n    'model__gamma': ['scale', 0.1]\n}")},
+      polynomial:{concept:"Expand continuous inputs into curved terms, then scale and regularise", imports:"from sklearn.preprocessing import PolynomialFeatures, StandardScaler\nfrom sklearn.linear_model import Ridge", estimator:"Ridge()", grid:readable("{\n    'polynomial__degree': [2, 3]\n}")},
+      regression_tree:{concept:"Learn if/then splits for nonlinear numeric predictions", imports:"from sklearn.tree import DecisionTreeRegressor", estimator:"DecisionTreeRegressor(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None]\n}")},
+      logistic:{concept:"Model class log-odds with a regularised linear boundary", imports:"from sklearn.linear_model import LogisticRegression", estimator:"LogisticRegression(max_iter=2000, random_state=42)", grid:readable("{\n    'model__C': [0.1, 1.0, 10.0]\n}")},
+      svm_cls:{concept:"Find a maximum-margin boundary; RBF allows curvature", imports:"from sklearn.svm import SVC", estimator:"SVC(random_state=42)", grid:readable("{\n    'model__C': [0.5, 2, 10]\n}")},
       one_r: !value.continuous.length
-        ? {concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R is preloaded as a small beginner-friendly helper.", estimator:"OneRClassifier(bins=5)", grid:"{}"}
-        : {concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R is preloaded as a small beginner-friendly helper.", estimator:"OneRClassifier(bins=5)", grid:readable("{\n    'model__bins': [3, 5, 8]\n}")},
-      classification_tree:{concept:"Learn interpretable if/then splits for class labels", imports:"from sklearn.tree import DecisionTreeClassifier", estimator:"DecisionTreeClassifier(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None],\n    'model__min_samples_leaf': [1, 5, 15],\n    'model__criterion': ['gini', 'entropy']\n}")},
-      knn_cls:{concept:"Vote using nearby training examples; distance makes scaling essential", imports:"from sklearn.neighbors import KNeighborsClassifier", estimator:"KNeighborsClassifier()", grid:readable("{\n    'model__n_neighbors': [3, 5, 9, 15],\n    'model__weights': ['uniform', 'distance']\n}")},
+        ? {concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R and its public feature-type adapter are preloaded helpers.", estimator:"OneRClassifier(bins=5)", grid:"{}"}
+        : {concept:"Use the single feature whose simple rules make the fewest errors", imports:"# One-R and its public feature-type adapter are preloaded helpers.", estimator:"OneRClassifier(bins=5)", grid:readable("{\n    'model__bins': [3, 5, 8]\n}")},
+      classification_tree:{concept:"Learn interpretable if/then splits for class labels", imports:"from sklearn.tree import DecisionTreeClassifier", estimator:"DecisionTreeClassifier(random_state=42)", grid:readable("{\n    'model__max_depth': [3, 5, None]\n}")},
+      knn_cls:{concept:"Vote using nearby training examples; distance makes scaling essential", imports:"from sklearn.neighbors import KNeighborsClassifier", estimator:"KNeighborsClassifier()", grid:readable("{\n    'model__n_neighbors': [3, 5, 9]\n}")},
       qda:{concept:"Give each class its own covariance shape and curved boundary", note:"A small amount of regularisation keeps class covariance estimates stable.", imports:"from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis", estimator:"QuadraticDiscriminantAnalysis(reg_param=0.1)", grid:readable("{\n    'model__reg_param': [0.1, 0.2, 0.5, 0.9]\n}")},
       lda:{concept:"Share one covariance shape and learn linear class boundaries", imports:"from sklearn.discriminant_analysis import LinearDiscriminantAnalysis", estimator:"LinearDiscriminantAnalysis(solver='lsqr')", grid:readable("{\n    'model__shrinkage': [None, 'auto']\n}")},
       naive_bayes: allBinary
@@ -2680,14 +2659,53 @@ cv_scores.round(3)`;
           : allContinuous
             ? {concept:"Estimate class-conditional feature densities and class probabilities with a Gaussian distribution per feature", imports:"from sklearn.naive_bayes import GaussianNB", estimator:"GaussianNB()", grid:readable("{\n    'model__var_smoothing': [1e-11, 1e-9, 1e-7]\n}")}
             : null,
-      mlp_cls:{concept:"Learn nonlinear layers of weighted features with backpropagation", imports:"from sklearn.neural_network import MLPClassifier", estimator:"MLPClassifier(\n    max_iter=500,\n    early_stopping=True,\n    random_state=42\n)", grid:readable("{\n    'model__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__alpha': [0.0001, 0.01]\n}")},
-      mlp_reg:{concept:"Learn nonlinear layers while scaling the target inside the model", imports:"from sklearn.neural_network import MLPRegressor\nfrom sklearn.compose import TransformedTargetRegressor\nfrom sklearn.preprocessing import StandardScaler", estimator:"TransformedTargetRegressor(\n    regressor=MLPRegressor(\n        max_iter=800,\n        early_stopping=" + (config && config.split === "time" ? "False" : "True") + ",\n        tol=1e-3,\n        random_state=42\n    ),\n    transformer=StandardScaler()\n)", grid:readable("{\n    'model__regressor__hidden_layer_sizes': [(24,), (32, 16)],\n    'model__regressor__alpha': [0.0001, 0.01]\n}")}
+      mlp_cls:{concept:"Learn nonlinear layers of weighted features with backpropagation", imports:"from sklearn.neural_network import MLPClassifier", estimator:"MLPClassifier(\n    hidden_layer_sizes=(24,),\n    max_iter=500,\n    early_stopping=True,\n    random_state=42\n)", grid:readable("{\n    'model__hidden_layer_sizes': [(16,), (24,)]\n}")},
+      mlp_reg:{concept:"Learn nonlinear layers while scaling the target inside the model", imports:"from sklearn.neural_network import MLPRegressor\nfrom sklearn.compose import TransformedTargetRegressor\nfrom sklearn.preprocessing import StandardScaler", estimator:"TransformedTargetRegressor(\n    regressor=MLPRegressor(\n        hidden_layer_sizes=(24,),\n        max_iter=800,\n        early_stopping=" + (config && config.split === "time" ? "False" : "True") + ",\n        tol=1e-3,\n        random_state=42\n    ),\n    transformer=StandardScaler()\n)", grid:readable("{\n    'model__regressor__hidden_layer_sizes': [(16,), (24,)]\n}")}
     };
     return specs[modelId];
   }
 
   function modelCode(modelId, value, config = null) {
     const spec = modelSpec(modelId, value, config);
+    if (modelId === "mlp_reg") return [
+      "# 5 · Build the model pipeline",
+      "# " + spec.concept,
+      "from sklearn.pipeline import Pipeline",
+      spec.imports,
+      "",
+      "network = MLPRegressor(",
+      "    hidden_layer_sizes=(24,),",
+      "    max_iter=800,",
+      `    early_stopping=${config && config.split === "time" ? "False" : "True"},`,
+      "    tol=1e-3,",
+      "    random_state=42,",
+      ")",
+      "model = TransformedTargetRegressor(",
+      "    regressor=network,",
+      "    transformer=StandardScaler(),",
+      ")",
+      "pipeline = Pipeline([",
+      "    (\"prepare\", preprocessor),",
+      "    (\"model\", model)",
+      "])",
+      "pipeline"
+    ].join("\n");
+    if (modelId === "polynomial") return [
+      "# 5 · Build the model pipeline",
+      "# " + spec.concept,
+      "from sklearn.pipeline import Pipeline",
+      spec.imports,
+      "",
+      "polynomial = PolynomialFeatures(degree=2, include_bias=False)",
+      "scale = StandardScaler()",
+      "model = Ridge()",
+      "pipeline = Pipeline([",
+      "    (\"polynomial\", polynomial),",
+      "    (\"scale\", scale),",
+      "    (\"model\", model)",
+      "])",
+      "pipeline"
+    ].join("\n");
     return [
       "# 5 · Build the model pipeline",
       "# " + spec.concept,
@@ -2710,15 +2728,14 @@ cv_scores.round(3)`;
     const scoring = config.task === "classification" ? "f1_macro" : "neg_root_mean_squared_error";
     const displayedMetric = config.task === "classification" ? "macro F1" : "RMSE";
     if (!hasHyperparameters) return [
-      "# 7 · Keep the model defaults",
-      "best_pipeline = pipeline",
-      "best_params = {}",
+      "# 8 · Keep the model defaults",
+      "chosen_pipeline = pipeline",
       "print(\"This walkthrough does not use a tuning grid for this model, so we keep its defaults.\")",
-      "best_pipeline"
+      "chosen_pipeline"
     ].join("\n");
-    const displayedScore = config.task === "classification" ? "best_score" : "-best_score";
+    const displayedScore = config.task === "classification" ? "search.best_score_" : "-search.best_score_";
     return [
-      "# 7 · Tune the model inside the same training folds",
+      "# 8 · Tune the model inside the same training folds",
       "from sklearn.model_selection import GridSearchCV",
       "parameter_grid = " + spec.grid,
       "search = GridSearchCV(",
@@ -2728,12 +2745,11 @@ cv_scores.round(3)`;
       "    scoring=" + py(scoring),
       ")",
       "search.fit(X_train, y_train)",
-      "best_pipeline = search.best_estimator_",
-      "best_params = search.best_params_",
-      "best_score = search.best_score_",
-      "print(\"Best settings:\", best_params)",
-      "print(\"Best CV " + displayedMetric + ":\", round(" + displayedScore + ", 3))",
-      "best_params"
+      "chosen_pipeline = search.best_estimator_",
+      "print(\"Chosen setting:\", search.best_params_)",
+      "print(\"Search CV " + displayedMetric + ":\", round(" + displayedScore + ", 3))",
+      "print(\"The score describes validation folds used for selection; the final test remains untouched.\")",
+      "chosen_pipeline"
     ].join("\n");
   }
   function interpretationCode(config, modelId, value) {
@@ -2887,7 +2903,7 @@ cv_scores.round(3)`;
     if (modelId === "svm_cls") return [
       "svm_fit_indices, svm_validation_indices = next(cv.split(X_train, y_train))",
       "svm_example_position = int(svm_validation_indices[0])",
-      "svm_fold_model = clone(best_pipeline).fit(X_train.iloc[svm_fit_indices], y_train.iloc[svm_fit_indices])",
+      "svm_fold_model = clone(chosen_pipeline).fit(X_train.iloc[svm_fit_indices], y_train.iloc[svm_fit_indices])",
       "svm_fitted = svm_fold_model.named_steps[\"model\"]",
       "svm_row = X_train.iloc[[svm_example_position]]",
       "svm_actual = y_train.iloc[svm_example_position]",
@@ -2954,7 +2970,7 @@ cv_scores.round(3)`;
     if (modelId === "knn_cls") return [
       "knn_fit_indices, knn_validation_indices = next(cv.split(X_train, y_train))",
       "knn_example_position = int(knn_validation_indices[0])",
-      "knn_fold_model = clone(best_pipeline).fit(X_train.iloc[knn_fit_indices], y_train.iloc[knn_fit_indices])",
+      "knn_fold_model = clone(chosen_pipeline).fit(X_train.iloc[knn_fit_indices], y_train.iloc[knn_fit_indices])",
       "knn_fitted = knn_fold_model.named_steps[\"model\"]",
       "knn_row = X_train.iloc[[knn_example_position]]",
       "knn_distances, knn_local_positions = knn_fitted.kneighbors(knn_fold_model[:-1].transform(knn_row), n_neighbors=int(knn_fitted.n_neighbors), return_distance=True)",
@@ -2997,7 +3013,7 @@ cv_scores.round(3)`;
       "lda_class_centres.insert(0, \"class\", [lda_class_labels.get(str(label), str(label)) for label in fitted.classes_])",
       "lda_fit_indices, lda_validation_indices = next(cv.split(X_train, y_train))",
       "lda_example_position = int(lda_validation_indices[0])",
-      "lda_fold_model = clone(best_pipeline).fit(X_train.iloc[lda_fit_indices], y_train.iloc[lda_fit_indices])",
+      "lda_fold_model = clone(chosen_pipeline).fit(X_train.iloc[lda_fit_indices], y_train.iloc[lda_fit_indices])",
       "lda_fold_fitted = lda_fold_model.named_steps[\"model\"]",
       "lda_actual = y_train.iloc[lda_example_position]",
       "lda_prediction = lda_fold_model.predict(X_train.iloc[[lda_example_position]])[0]",
@@ -3055,7 +3071,7 @@ cv_scores.round(3)`;
       "qda_spread_summary[\"class\"] = [qda_class_labels.get(str(label), str(label)) for label in fitted.classes_]",
       "qda_fit_indices, qda_validation_indices = next(cv.split(X_train, y_train))",
       "qda_example_position = int(qda_validation_indices[0])",
-      "qda_fold_model = clone(best_pipeline).fit(X_train.iloc[qda_fit_indices], y_train.iloc[qda_fit_indices])",
+      "qda_fold_model = clone(chosen_pipeline).fit(X_train.iloc[qda_fit_indices], y_train.iloc[qda_fit_indices])",
       "qda_row = X_train.iloc[[qda_example_position]]",
       "qda_actual = y_train.iloc[qda_example_position]",
       "qda_prediction = qda_fold_model.predict(qda_row)[0]",
@@ -3105,7 +3121,7 @@ cv_scores.round(3)`;
         `nb_class_labels = ${classLabels}`,
         "nb_fit_indices, nb_validation_indices = next(cv.split(X_train, y_train))",
         "nb_example_position = int(nb_validation_indices[0])",
-        "nb_fold_model = clone(best_pipeline).fit(X_train.iloc[nb_fit_indices], y_train.iloc[nb_fit_indices])",
+        "nb_fold_model = clone(chosen_pipeline).fit(X_train.iloc[nb_fit_indices], y_train.iloc[nb_fit_indices])",
         "nb_fitted = nb_fold_model.named_steps[\"model\"]",
         "nb_encoder = nb_fold_model.named_steps[\"prepare\"]",
         "nb_row = X_train.iloc[[nb_example_position]]",
@@ -3245,9 +3261,9 @@ cv_scores.round(3)`;
       config.split === "time"
         ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
         : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
-      "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+      "mlp_oof_model = clone(chosen_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
       "diagnostic_model = mlp_oof_model"
-    ] : ["diagnostic_model = clone(best_pipeline).fit(X_train, y_train)"];
+    ] : ["diagnostic_model = clone(chosen_pipeline).fit(X_train, y_train)"];
     const mlpRegressionSetup = isMlp ? [
       ...mlpFoldSetup,
       ...(config.split === "time"
@@ -3256,17 +3272,17 @@ cv_scores.round(3)`;
             "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[mlp_validation_indices])"
           ]
         : [
-            "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+            "diagnostic_prediction = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
             "diagnostic_actual = y_train"
           ])
     ] : null;
     if (config.task === "classification") return [
-      "# 8 · Diagnose and understand the chosen model",
+      "# 9 · Diagnose and understand the chosen model",
       "# These diagnostics explain behaviour; they are not another headline performance score.",
       "from sklearn.base import clone",
       "from sklearn.model_selection import cross_val_predict",
       "from sklearn.metrics import confusion_matrix",
-      "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+      "diagnostic_prediction = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
       ...mlpFoldSetup,
       `diagnostic_class_labels = ${py(classLabelMap(config))}`,
       "diagnostic_labels = np.unique(y_train)",
@@ -3282,19 +3298,19 @@ cv_scores.round(3)`;
     const diagnosticSetup = isMlp ? mlpRegressionSetup.join("\n") : config.split === "time"
       ? [
           "last_fit, last_validation = list(cv.split(X_train, y_train))[-1]",
-          "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
+          "diagnostic_model = clone(chosen_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
           "diagnostic_actual = y_train.iloc[last_validation]",
           "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[last_validation])"
         ].join("\n")
       : [
-          "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+          "diagnostic_prediction = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
           "diagnostic_actual = y_train",
-          "diagnostic_model = clone(best_pipeline).fit(X_train, y_train)"
+          "diagnostic_model = clone(chosen_pipeline).fit(X_train, y_train)"
         ].join("\n");
     const predictionImport = config.split === "time" ? "" : "from sklearn.model_selection import cross_val_predict";
     const diagnosticLabel = config.split === "time" ? "training-only diagnostic residuals from the last validation window" : "training-only diagnostic residuals";
     return [
-      "# 8 · Diagnose and understand the chosen model",
+      "# 9 · Diagnose and understand the chosen model",
       "# Residuals describe model behaviour; the final test remains the only final evaluation.",
       "from sklearn.base import clone",
       predictionImport,
@@ -3320,14 +3336,14 @@ cv_scores.round(3)`;
     if (config.task === "classification") {
       lines.push(
         "from sklearn.model_selection import cross_val_predict",
-        "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")"
+        "diagnostic_prediction = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")"
       );
       if (isMlp) {
         lines.push(
           config.split === "time"
             ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
             : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
-          "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+          "mlp_oof_model = clone(chosen_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
           "diagnostic_model = mlp_oof_model",
           "mlp_example_position = int(mlp_validation_indices[0])",
           "mlp_row = X_train.iloc[[mlp_example_position]]"
@@ -3336,7 +3352,7 @@ cv_scores.round(3)`;
         lines.push(
           "diagnostic_fit_indices, diagnostic_validation_indices = next(cv.split(X_train, y_train))",
           "diagnostic_example_position = int(diagnostic_validation_indices[0])",
-          "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[diagnostic_fit_indices], y_train.iloc[diagnostic_fit_indices])",
+          "diagnostic_model = clone(chosen_pipeline).fit(X_train.iloc[diagnostic_fit_indices], y_train.iloc[diagnostic_fit_indices])",
           "diagnostic_row = X_train.iloc[[diagnostic_example_position]]"
         );
         if (modelId === "knn_cls") lines.push(
@@ -3344,7 +3360,7 @@ cv_scores.round(3)`;
           "diagnostic_prepared_row = diagnostic_model[:-1].transform(diagnostic_row)"
         );
       } else {
-        lines.push("diagnostic_model = clone(best_pipeline).fit(X_train, y_train)");
+        lines.push("diagnostic_model = clone(chosen_pipeline).fit(X_train, y_train)");
       }
       lines.push(
         `diagnostic_class_labels = ${py(classLabelMap(config))}`,
@@ -3363,7 +3379,7 @@ cv_scores.round(3)`;
         config.split === "time"
           ? "mlp_fit_indices, mlp_validation_indices = list(cv.split(X_train, y_train))[-1]"
           : "mlp_fit_indices, mlp_validation_indices = next(cv.split(X_train, y_train))",
-        "mlp_oof_model = clone(best_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
+        "mlp_oof_model = clone(chosen_pipeline).fit(X_train.iloc[mlp_fit_indices], y_train.iloc[mlp_fit_indices])",
         "diagnostic_model = mlp_oof_model",
         "mlp_example_position = int(mlp_validation_indices[0])",
         "mlp_row = X_train.iloc[[mlp_example_position]]"
@@ -3374,7 +3390,7 @@ cv_scores.round(3)`;
       );
       else lines.push(
         "from sklearn.model_selection import cross_val_predict",
-        "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+        "diagnostic_prediction = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
         "diagnostic_actual = y_train"
       );
       lines.push(
@@ -3385,275 +3401,337 @@ cv_scores.round(3)`;
     }
     if (config.split === "time") lines.push(
       "last_fit, last_validation = list(cv.split(X_train, y_train))[-1]",
-      "diagnostic_model = clone(best_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
+      "diagnostic_model = clone(chosen_pipeline).fit(X_train.iloc[last_fit], y_train.iloc[last_fit])",
       "diagnostic_actual = y_train.iloc[last_validation]",
       "diagnostic_prediction = diagnostic_model.predict(X_train.iloc[last_validation])"
     );
     else lines.push(
       "from sklearn.model_selection import cross_val_predict",
-      "diagnostic_prediction = cross_val_predict(best_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
+      "diagnostic_prediction = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")",
       "diagnostic_actual = y_train",
-      "diagnostic_model = clone(best_pipeline).fit(X_train, y_train)"
+      "diagnostic_model = clone(chosen_pipeline).fit(X_train, y_train)"
     );
     lines.push("diagnostic_fitted = diagnostic_model.named_steps[\"model\"]");
     if (modelId === "polynomial") lines.push(
-      "polynomial_transformer = diagnostic_fitted.named_steps[\"poly\"]",
-      "polynomial_model = diagnostic_fitted.named_steps[\"regression\"]",
+      "polynomial_transformer = diagnostic_model.named_steps[\"polynomial\"]",
+      "polynomial_model = diagnostic_model.named_steps[\"model\"]",
       "polynomial_degree = int(polynomial_transformer.degree)",
       "polynomial_feature_names = polynomial_transformer.get_feature_names_out()"
     );
     return lines.join("\n");
   }
 
-  function diagnosticPrimaryCode(config, modelId, value) {
+  function diagnosticPrimaryCode(config, modelId, value, includeModelEvidence = false, includeCommon = true) {
     const selectedFeatures = featureNames(value);
     const targetLabel = `${friendlyColumnName(config.target)} (${config.target})`;
+    const preparedNames = modelId === "polynomial"
+      ? [
+          "prepared_names = np.asarray(feature_names, dtype=object)"
+        ]
+      : [
+          "prepare = fitted_pipeline.named_steps[\"prepare\"]",
+          "prepared_names = np.asarray(prepare.get_feature_names_out(feature_names) if hasattr(prepare, \"get_feature_names_out\") else feature_names, dtype=object)"
+        ];
+    const validationSetup = config.split === "time"
+      ? [
+          "fit_rows, validation_rows = list(cv.split(X_train, y_train))[-1]",
+          "validation_pipeline = clone(chosen_pipeline).fit(X_train.iloc[fit_rows], y_train.iloc[fit_rows])",
+          "validation_actual = y_train.iloc[validation_rows]",
+          "validation_predictions = validation_pipeline.predict(X_train.iloc[validation_rows])"
+        ]
+      : [
+          "from sklearn.model_selection import cross_val_predict",
+          "validation_actual = y_train",
+          "validation_predictions = cross_val_predict(chosen_pipeline, X_train, y_train, cv=cv, method=\"predict\")"
+        ];
     const common = config.task === "classification" ? [
-      "# 8 · Diagnose and understand the chosen model",
-      "# This training-only view shows behaviour; CV and the final test answer performance.",
+      "# 9 · Inspect training-only behaviour of the chosen model",
+      "# CV and the final test answer performance; this cell explains one fitted route.",
+      "from sklearn.base import clone",
+      ...validationSetup,
+      `class_labels = ${py(classLabelMap(config))}`,
+      "labels = np.unique(y_train)",
+      "friendly_labels = [class_labels.get(str(label), str(label)) for label in labels]",
       "from sklearn.metrics import confusion_matrix",
       "fig, ax = plt.subplots(figsize=(5.4, 4.2))",
-      "sns.heatmap(confusion_matrix(y_train, diagnostic_prediction), annot=True, fmt=\"d\", cmap=\"Purples\", ax=ax,",
-      "            xticklabels=diagnostic_friendly_labels, yticklabels=diagnostic_friendly_labels)",
+      "sns.heatmap(confusion_matrix(validation_actual, validation_predictions, labels=labels), annot=True, fmt=\"d\", cmap=\"Purples\", ax=ax, xticklabels=friendly_labels, yticklabels=friendly_labels)",
       `ax.set(title=${py(`Training-only diagnostic confusion matrix for ${friendlyColumnName(config.target)}`)}, xlabel=${py(`Predicted ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Actual ${friendlyColumnName(config.target)}`)})`,
       "fig.tight_layout()"
     ] : [
-      "# 8 · Diagnose and understand the chosen model",
-      "# Residuals describe behaviour; the final test remains the only final evaluation.",
-      "residuals = diagnostic_actual.to_numpy() - diagnostic_prediction",
-      "fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))",
-      "sns.scatterplot(x=diagnostic_prediction, y=residuals, ax=axes[0], color=\"#7651a6\")",
-      "axes[0].axhline(0, color=\"#c75b20\", linestyle=\"--\")",
-      `axes[0].set(title=${py(config.split === "time" ? "training-only diagnostic residuals from the last validation window" : "training-only diagnostic residuals")}, xlabel="prediction", ylabel="actual − prediction")`,
-      "sns.histplot(residuals, kde=True, ax=axes[1], color=\"#137c9c\")",
-      "axes[1].set_title(\"Residual distribution\")",
+      "# 9 · Inspect training-only behaviour of the chosen model",
+      "# Residuals describe model behaviour; the final test remains the only final evaluation.",
+      "from sklearn.base import clone",
+      ...validationSetup,
+      "residuals = validation_actual.to_numpy() - validation_predictions",
+      "fig, ax = plt.subplots(figsize=(6.8, 3.8))",
+      "sns.scatterplot(x=validation_predictions, y=residuals, ax=ax, color=\"#7651a6\")",
+      "ax.axhline(0, color=\"#c75b20\", linestyle=\"--\")",
+      `ax.set(title=${py(config.split === "time" ? "Training-only residuals from the last validation window" : "Training-only residuals")}, xlabel="prediction", ylabel="actual − prediction")`,
       "fig.tight_layout()"
     ];
-    let modelLines;
+    const usesExcludedInterpretationRow = ["svm_cls", "lda", "qda", "naive_bayes", "mlp_cls", "mlp_reg"].includes(modelId);
+    const fitLines = usesExcludedInterpretationRow ? [
+      "interpret_fit_rows, interpret_validation_rows = next(cv.split(X_train, y_train))",
+      "interpret_validation_position = int(interpret_validation_rows[0])",
+      "fitted_pipeline = clone(chosen_pipeline).fit(X_train.iloc[interpret_fit_rows], y_train.iloc[interpret_fit_rows])",
+      "fitted_model = fitted_pipeline.named_steps[\"model\"]",
+      "interpret_row = X_train.iloc[[interpret_validation_position]]",
+      "interpret_actual = y_train.iloc[interpret_validation_position]",
+      "interpret_prediction = fitted_pipeline.predict(interpret_row)[0]"
+    ] : [
+      "fitted_pipeline = clone(chosen_pipeline).fit(X_train, y_train)",
+      "fitted_model = fitted_pipeline.named_steps[\"model\"]"
+    ];
+    let modelLines = [];
     if (modelId === "simple_linear") {
       const feature = selectedFeatures[0];
       modelLines = [
-        "fitted = diagnostic_fitted",
         `simple_feature = ${py(feature)}`,
         "simple_x = X_train[simple_feature].astype(float).to_numpy()",
-        "simple_grid = np.linspace(simple_x.min(), simple_x.max(), 100)",
-        "simple_curve = diagnostic_model.predict(pd.DataFrame({simple_feature:simple_grid}))",
+        "simple_grid = np.linspace(simple_x.min(), simple_x.max(), 120)",
+        "simple_curve = fitted_pipeline.predict(pd.DataFrame({simple_feature:simple_grid}))",
         "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
         "ax.scatter(simple_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
         "ax.plot(simple_grid, simple_curve, color=\"#c75b20\", linewidth=2.4, label=\"fitted line\")",
         `ax.set(title=${py(`Fitted line: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
-        "ax.legend()",
-        "fig.tight_layout()",
-        "simple_slope = float(fitted.coef_[0])",
-        "simple_intercept = float(fitted.intercept_)",
-        "pd.DataFrame({\"slope\":[simple_slope], \"intercept\":[simple_intercept]})"
+        "ax.legend(); fig.tight_layout()",
+        "simple_interpretation = pd.DataFrame({\"feature\":[simple_feature], \"slope\":[float(np.ravel(fitted_model.coef_)[0])], \"intercept\":[float(np.ravel(fitted_model.intercept_)[0] if np.ndim(fitted_model.intercept_) else fitted_model.intercept_)]})",
+        "simple_interpretation"
       ];
     } else if (modelId === "multiple_linear") {
       modelLines = [
-        "fitted = diagnostic_fitted",
-        "linear_coefficients = fitted.coef_",
-        "pd.DataFrame({\"coefficient\":np.ravel(linear_coefficients)})"
+        ...preparedNames,
+        "linear_coefficients = np.ravel(fitted_model.coef_)",
+        "if len(prepared_names) != len(linear_coefficients): prepared_names = np.asarray(feature_names, dtype=object)",
+        "linear_interpretation = pd.DataFrame({\"feature\":prepared_names, \"coefficient\":linear_coefficients})",
+        "linear_interpretation"
       ];
     } else if (modelId === "polynomial") {
-      if (selectedFeatures.length === 1) {
-        const feature = selectedFeatures[0];
-        modelLines = [
-          "fitted = diagnostic_fitted",
+      const feature = selectedFeatures[0];
+      modelLines = [
+        ...preparedNames,
+        "polynomial = fitted_pipeline.named_steps[\"polynomial\"]",
+        "polynomial_degree = int(polynomial.degree)",
+        ...(selectedFeatures.length === 1 ? [
           `poly_feature = ${py(feature)}`,
           "poly_x = X_train[poly_feature].astype(float).to_numpy()",
-          "poly_grid = np.linspace(poly_x.min(), poly_x.max(), 100)",
-          "poly_curve = diagnostic_model.predict(pd.DataFrame({poly_feature:poly_grid}))",
+          "poly_grid = np.linspace(poly_x.min(), poly_x.max(), 120)",
+          "poly_curve = fitted_pipeline.predict(pd.DataFrame({poly_feature:poly_grid}))",
           "fig, ax = plt.subplots(figsize=(7.2, 4.2))",
           "ax.scatter(poly_x, y_train.to_numpy(), alpha=.55, color=\"#137c9c\", label=\"training rows\")",
           "ax.plot(poly_grid, poly_curve, color=\"#7651a6\", linewidth=2.4, label=\"fitted curve\")",
           `ax.set(title=${py(`Fitted curve: ${friendlyColumnName(feature)} → ${friendlyColumnName(config.target)}`)}, xlabel=${py(`${friendlyColumnName(feature)} (${feature})`)}, ylabel=${py(targetLabel)})`,
-          "ax.legend()",
-          "fig.tight_layout()",
-          "print(\"PolynomialFeatures degree:\", polynomial_degree)",
-          "pd.DataFrame({\"degree\":[polynomial_degree]})"
-        ];
-      } else {
-        modelLines = [
-          "polynomial_coefficients = polynomial_model.coef_",
-          "print(\"PolynomialFeatures degree:\", polynomial_degree)",
-          "polynomial_terms = pd.DataFrame({\"term\":polynomial_feature_names, \"weight\":np.ravel(polynomial_coefficients)})",
-          "polynomial_terms.head(20)"
-        ];
-      }
+          "ax.legend(); fig.tight_layout()",
+          "polynomial_summary = pd.DataFrame({\"degree\":[polynomial_degree], \"curve_points\":[len(poly_grid)]})"
+        ] : [
+          "polynomial_names = polynomial.get_feature_names_out(prepared_names)",
+          "polynomial_model = fitted_pipeline.named_steps[\"model\"]",
+          "polynomial_summary = pd.DataFrame({\"term\":polynomial_names, \"weight\":np.ravel(polynomial_model.coef_)})",
+          "print(\"This route uses multiple inputs, so no single 2D fitted curve is shown; read the term table and validation residuals instead.\")"
+        ]),
+        "polynomial_summary"
+      ];
     } else if (["regression_tree", "classification_tree"].includes(modelId)) {
       modelLines = [
         "from sklearn.tree import plot_tree",
-        "fitted = diagnostic_fitted",
-        "tree_importance = fitted.feature_importances_",
+        ...preparedNames,
+        "tree_importance = fitted_model.feature_importances_",
         "fig, ax = plt.subplots(figsize=(8, 4.2))",
-        "plot_tree(fitted, max_depth=2, filled=True, rounded=True, fontsize=7, ax=ax)",
-        "ax.set_title(\"Top of the fitted tree (training data only)\")",
-        "fig.tight_layout()",
-        "pd.DataFrame({\"feature_index\":np.arange(len(tree_importance)), \"importance\":tree_importance}).sort_values(\"importance\", ascending=False).head(10)"
+        "plot_tree(fitted_model, max_depth=2, feature_names=prepared_names, filled=True, rounded=True, fontsize=7, ax=ax)",
+        "ax.set_title(\"Top of the fitted tree (training data only)\"); fig.tight_layout()",
+        "tree_summary = pd.DataFrame({\"feature\":prepared_names, \"importance\":tree_importance}).sort_values(\"importance\", ascending=False).head(15)",
+        "tree_summary"
       ];
     } else if (modelId === "logistic") {
       modelLines = [
-        "fitted = diagnostic_fitted",
-        "logistic_coefficients = fitted.coef_",
-        "logistic_probability = diagnostic_model.predict_proba(X_train.iloc[[0]])[0]",
-        "print(\"Classes:\", fitted.classes_)",
-        "print(\"Coefficient signs show the direction in prepared feature space.\")",
-        "pd.DataFrame(logistic_coefficients)"
+        ...preparedNames,
+        "logistic_coefficients = np.ravel(fitted_model.coef_[0]) if fitted_model.coef_.ndim == 2 else np.ravel(fitted_model.coef_)",
+        "if len(prepared_names) != len(logistic_coefficients): prepared_names = np.asarray(feature_names, dtype=object)",
+        "logistic_interpretation = pd.DataFrame({\"feature\":prepared_names, \"relative_weight\":logistic_coefficients})",
+        "logistic_interpretation"
       ];
     } else if (modelId === "svm_cls") {
       modelLines = [
-        "fitted = diagnostic_fitted",
-        "support_vectors = fitted.support_vectors_",
-        "svm_decision_values = diagnostic_model.decision_function(diagnostic_row)",
-        "print(\"Support vectors:\", len(support_vectors))",
-        "print(\"Decision score(s):\", svm_decision_values)",
-        "pd.DataFrame({\"support_vectors\":[len(support_vectors)]})"
+        "support_vectors = fitted_model.support_vectors_",
+        "svm_decision_values = fitted_pipeline.decision_function(interpret_row)",
+        "svm_summary = pd.DataFrame({\"actual\":[interpret_actual], \"prediction\":[interpret_prediction], \"support_vectors\":[len(support_vectors)], \"support_vectors_by_class\":[fitted_model.n_support_.tolist()], \"held_out_row_decision\":[str(np.asarray(svm_decision_values).ravel().tolist())]})",
+        "svm_summary"
       ];
     } else if (modelId === "one_r") {
       modelLines = [
-        "fitted = diagnostic_fitted",
-        "one_r_prediction = diagnostic_model.predict(X_train)",
-        "print(\"OneRClassifier uses one feature at a time; its fitted rules are below.\")",
-        "pd.DataFrame({\"training_rows\":[len(y_train)], \"default_class\":[fitted.default_]})"
+        "one_r_rules = one_r_rule_table(fitted_model, fitted_pipeline.named_steps[\"prepare\"], feature_names)",
+        "print(\"OneRClassifier uses one feature at a time; these are the fitted rules.\")",
+        "one_r_rules"
       ];
     } else if (modelId === "knn_cls") {
       modelLines = [
-        "knn_fitted = diagnostic_fitted",
-        "knn_distances, knn_positions = knn_fitted.kneighbors(diagnostic_prepared_row)",
-        "knn_neighbor_labels = diagnostic_training_labels.iloc[knn_positions[0]].to_numpy()",
-        "knn_prediction = diagnostic_model.predict(diagnostic_row)[0]",
-        "knn_neighbor_table = pd.DataFrame({\"distance\":knn_distances[0], \"neighbor_class\":knn_neighbor_labels, \"prediction\":knn_prediction})",
-        "print(\"Prediction:\", knn_prediction)",
+        "knn_fit_rows, knn_validation_rows = next(cv.split(X_train, y_train))",
+        "knn_pipeline = clone(chosen_pipeline).fit(X_train.iloc[knn_fit_rows], y_train.iloc[knn_fit_rows])",
+        "knn_row = X_train.iloc[[int(knn_validation_rows[0])]]",
+        "knn_model = knn_pipeline.named_steps[\"model\"]",
+        "knn_transformed_row = knn_pipeline[:-1].transform(knn_row)",
+        "knn_distances, knn_positions = knn_model.kneighbors(knn_transformed_row)",
+        "knn_training_rows = np.asarray(knn_fit_rows)[knn_positions[0]]",
+        "knn_neighbor_table = pd.DataFrame({\"training_row\":knn_training_rows, \"distance_after_preparation\":knn_distances[0], \"neighbor_class\":y_train.iloc[knn_training_rows].to_numpy(), \"prediction\":knn_pipeline.predict(knn_row)[0]})",
         "knn_neighbor_table"
       ];
-    } else if (modelId === "lda") {
+    } else if (["lda", "qda"].includes(modelId)) {
       modelLines = [
-        "fitted = diagnostic_fitted",
-        "lda_class_centres = pd.DataFrame(fitted.means_)",
-        "lda_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
-        "pd.DataFrame({\"class\":fitted.classes_, \"predicted_probability\":lda_probability_values})"
-      ];
-    } else if (modelId === "qda") {
-      modelLines = [
-        "fitted = diagnostic_fitted",
-        "qda_class_centres = pd.DataFrame(fitted.means_)",
-        "qda_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
-        "print(\"Regularisation:\", fitted.reg_param)",
-        "pd.DataFrame({\"class\":fitted.classes_, \"predicted_probability\":qda_probability_values})"
+        ...preparedNames,
+        "class_centres = pd.DataFrame(fitted_model.means_, columns=prepared_names)",
+        "class_centres.insert(0, \"class\", fitted_model.classes_)",
+        "class_probabilities = fitted_pipeline.predict_proba(interpret_row)[0]",
+        "probability_table = pd.DataFrame({\"class\":fitted_model.classes_, \"posterior_probability\":class_probabilities})",
+        "probability_table.insert(0, \"held_out_actual\", interpret_actual)",
+        "probability_table.insert(1, \"held_out_prediction\", interpret_prediction)",
+        ...(modelId === "qda" ? ["print(\"Regularisation:\", fitted_model.reg_param)"] : []),
+        "print(\"Posterior probabilities for the excluded validation row:\")",
+        "print(probability_table.to_string(index=False))",
+        "print(\"Class centres describe the fitted class means in the prepared feature space.\")",
+        "class_centres"
       ];
     } else if (modelId === "naive_bayes") {
       const gaussian = pureNaiveBayesInput(value) === "continuous";
       modelLines = [
-        "nb_fitted = diagnostic_fitted",
-        gaussian
-          ? "nb_prior_values = nb_fitted.class_prior_"
-          : "nb_prior_values = np.exp(nb_fitted.class_log_prior_)",
-        "nb_probability_values = diagnostic_model.predict_proba(diagnostic_row)[0]",
+        ...preparedNames,
+        "prior_values = fitted_model.class_prior_ if hasattr(fitted_model, \"class_prior_\") else np.exp(fitted_model.class_log_prior_)",
+        "first_row = interpret_row",
+        "first_row_prepared = fitted_pipeline.named_steps[\"prepare\"].transform(first_row) if not isinstance(fitted_pipeline.named_steps[\"prepare\"], str) else first_row.to_numpy()",
+        "first_row_prepared = first_row_prepared.toarray() if hasattr(first_row_prepared, \"toarray\") else np.asarray(first_row_prepared)",
+        "first_row_values = first_row_prepared[0].astype(float)",
+        gaussian ? "nb_feature_labels = [str(name) for name in prepared_names]" : pureNaiveBayesInput(value) === "binary" ? "nb_feature_labels = [f\"{name}=1\" for name in prepared_names]" : "nb_feature_labels = [str(name) for name in prepared_names]",
+        "nb_class_labels = [str(label) for label in fitted_model.classes_]",
+        "nb_prediction = fitted_pipeline.predict(first_row)[0]",
+        "nb_posterior_values = fitted_pipeline.predict_proba(first_row)[0]",
+        "nb_posterior = pd.DataFrame({\"class\":fitted_model.classes_, \"posterior_probability\":nb_posterior_values, \"prior_probability\":prior_values})",
+        "nb_posterior.insert(0, \"held_out_actual\", interpret_actual)",
+        "nb_posterior.insert(1, \"held_out_prediction\", nb_prediction)",
+        "print(\"Prior probability: class frequency learned from the training rows.\")",
+        "print(\"Posterior probability: prior combined with the class-conditional feature evidence for the displayed row.\")",
         ...(gaussian ? [
-          "nb_class_means = nb_fitted.theta_",
-          "nb_class_spreads = np.sqrt(nb_fitted.var_)",
-          "print(\"Class means:\", nb_class_means)",
-          "print(\"Class spreads:\", nb_class_spreads)"
+          "nb_gaussian_means = pd.DataFrame(fitted_model.theta_, columns=prepared_names)",
+          "nb_gaussian_means.insert(0, \"class\", fitted_model.classes_)",
+          "nb_gaussian_stds = pd.DataFrame(np.sqrt(fitted_model.var_), columns=prepared_names)",
+          "nb_gaussian_stds.insert(0, \"class\", fitted_model.classes_)",
+          "nb_safe_stds = np.maximum(np.sqrt(fitted_model.var_), np.finfo(float).eps)",
+          "nb_density_values = np.exp(-0.5 * ((first_row_values[None, :] - fitted_model.theta_) / nb_safe_stds) ** 2) / (nb_safe_stds * np.sqrt(2 * np.pi))",
+          `nb_quantity_evidence = pd.DataFrame([{
+    "class":fitted_model.classes_[class_index],
+    "feature":nb_feature_labels[feature_index],
+    "observed_value":first_row_values[feature_index],
+    "quantity":"Class-conditional density",
+    "density":nb_density_values[class_index, feature_index]
+} for class_index in range(len(fitted_model.classes_)) for feature_index in range(len(nb_feature_labels))])`,
+          "class_evidence = nb_gaussian_means",
+          "nb_prediction_story = nb_posterior",
+          "print(\"Class-conditional density: the Gaussian evidence for each observed feature value under each class.\")",
+          "nb_prediction_story"
         ] : [
-          "nb_feature_probabilities = np.exp(nb_fitted.feature_log_prob_)",
-          "print(\"Feature probabilities:\", nb_feature_probabilities)"
-        ]),
-        "pd.DataFrame({\"class\":nb_fitted.classes_, \"prior\":nb_prior_values, \"posterior\":nb_probability_values})"
+          "nb_probability_values = np.exp(fitted_model.feature_log_prob_)",
+          `nb_one_probabilities = pd.DataFrame([{
+    "class":fitted_model.classes_[class_index],
+    "feature":nb_feature_labels[feature_index],
+    "class_conditional_probability":nb_probability_values[class_index, feature_index]
+} for class_index in range(len(fitted_model.classes_)) for feature_index in range(len(nb_feature_labels))])`,
+          "class_evidence = pd.DataFrame(nb_probability_values, columns=prepared_names)",
+          "class_evidence.insert(0, \"class\", fitted_model.classes_)",
+          "nb_quantity_evidence = nb_one_probabilities",
+          "nb_prediction_story = nb_posterior",
+          "print(\"Class-conditional probability: the likelihood of each prepared yes/no feature under each class.\")",
+          "nb_prediction_story"
+        ])
       ];
     } else if (modelId === "mlp_cls") {
       modelLines = [
-        "mlp_fitted = diagnostic_fitted",
-        "print(\"Hidden layers:\", mlp_fitted.hidden_layer_sizes)",
-        "print(\"Training iterations:\", mlp_fitted.n_iter_)",
-        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "mlp_model = fitted_model",
+        "mlp_loss_curve = mlp_model.loss_curve_",
         "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
-        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
-        "ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\")",
-        "fig.tight_layout()",
-        "mlp_probability_values = diagnostic_model.predict_proba(mlp_row)[0]",
-        "pd.DataFrame({\"class\":diagnostic_model.classes_, \"predicted_probability\":mlp_probability_values})"
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\"); ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\"); fig.tight_layout()",
+        "print(\"Loss is optimisation evidence from the fitted fold; it does not measure generalisation. Alpha is reserved for a future regularisation experiment, while this route's search compares hidden-layer width.\")",
+        "mlp_summary = pd.DataFrame({\"held_out_actual\":[interpret_actual], \"held_out_prediction\":[interpret_prediction], \"hidden_layer_sizes\":[str(mlp_model.hidden_layer_sizes)], \"iterations\":[mlp_model.n_iter_], \"held_out_probabilities\":[str(fitted_pipeline.predict_proba(interpret_row)[0].tolist())]})",
+        "mlp_summary"
       ];
     } else if (modelId === "mlp_reg") {
       modelLines = [
-        "mlp_fitted = diagnostic_fitted",
-        "print(\"Hidden layers:\", mlp_fitted.hidden_layer_sizes)",
-        "print(\"Training iterations:\", mlp_fitted.n_iter_)",
-        "mlp_loss_curve = mlp_fitted.loss_curve_",
+        "mlp_model = fitted_model.regressor_",
+        "mlp_loss_curve = mlp_model.loss_curve_",
         "fig, ax = plt.subplots(figsize=(6.2, 3.4))",
-        "ax.plot(mlp_loss_curve, color=\"#7651a6\")",
-        "ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\")",
-        "fig.tight_layout()",
-        "mlp_prediction = diagnostic_model.predict(mlp_row)[0]",
-        `print(${py(`Prediction in original ${friendlyColumnName(config.target)} units:`)}, mlp_prediction)`,
-        "pd.DataFrame({\"predicted_target_original_units\":[mlp_prediction]})"
+        "ax.plot(mlp_loss_curve, color=\"#7651a6\"); ax.set(title=\"Training loss during optimisation\", xlabel=\"iteration\", ylabel=\"loss\"); fig.tight_layout()",
+        "print(\"Loss is optimisation evidence from the fitted fold; it does not measure generalisation. Alpha is reserved for a future regularisation experiment, while this route's search compares hidden-layer width.\")",
+        "mlp_summary = pd.DataFrame({\"held_out_actual\":[interpret_actual], \"held_out_prediction_original_units\":[float(interpret_prediction)], \"hidden_layer_sizes\":[str(mlp_model.hidden_layer_sizes)], \"iterations\":[mlp_model.n_iter_], \"absolute_error_original_units\":[float(abs(interpret_actual - interpret_prediction))]})",
+        "mlp_summary"
       ];
-    } else {
-      modelLines = [];
     }
-    return [...common, ...modelLines].join("\n");
+    return [...(includeCommon ? common : []), ...(includeModelEvidence ? [...fitLines, ...modelLines] : [])].join("\n");
   }
 
   function diagnosticEvidenceCode(config, modelId, value) {
-    return interpretationCode(config, modelId, value);
+    return [
+      "# Optional · Understand the fitted model (training rows only)",
+      "# This cell is separate from the short Diagnose step and can be edited or skipped.",
+      diagnosticPrimaryCode(config, modelId, value, true, false)
+    ].join("\n");
   }
 
   function diagnosticsCode(config, modelId, value) {
-    const setupCode = diagnosticSetupCode(config, modelId);
     const primaryCode = diagnosticPrimaryCode(config, modelId, value);
     const evidenceCode = diagnosticEvidenceCode(config, modelId, value);
-    const advancedCode = [
-      "# Advanced: how this teaching evidence was constructed",
-      "# Optional diagnostic construction only; the primary cell above is the core learner workflow.",
-      setupCode,
-      evidenceCode
-    ].filter(Boolean).join("\n\n");
-    return {primaryCode, setupCode, evidenceCode, advancedCode};
+    const advancedCode = evidenceCode;
+    // The worker runs only primaryCode. Keep the optional interpretation as a
+    // separate source so an injected setup block can never replace its result.
+    return {primaryCode, evidenceCode, advancedCode};
   }
 
   function finalCode(config) {
-    if (config.task === "classification") return `# 9 · Refit on all training rows, then run the final test once
-from sklearn.metrics import accuracy_score, f1_score, confusion_matrix
-final_model = best_pipeline.fit(X_train, y_train)
-test_prediction = final_model.predict(X_test)
-
-fig, ax = plt.subplots(figsize=(5.4, 4.2))
-labels = np.unique(y_test)
-class_labels = ${py(classLabelMap(config))}
-friendly_labels = [class_labels.get(str(label), str(label)) for label in labels]
-sns.heatmap(confusion_matrix(y_test, test_prediction, labels=labels), annot=True, fmt="d", cmap="Blues", ax=ax, xticklabels=friendly_labels, yticklabels=friendly_labels)
-ax.set(title=${py(`Final sealed-test confusion matrix for ${friendlyColumnName(config.target)}`)}, xlabel=${py(`Predicted ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Actual ${friendlyColumnName(config.target)}`)})
-fig.tight_layout()
-macro_f1 = f1_score(y_test, test_prediction, average="macro")
-accuracy = accuracy_score(y_test, test_prediction)
+    if (config.task === "classification") return `# 10 · Refit on all training rows, then run the final test once
+from sklearn.base import clone
+from sklearn.metrics import accuracy_score, f1_score
+final_model = clone(chosen_pipeline).fit(X_train, y_train)
+test_predictions = final_model.predict(X_test)
+macro_f1 = f1_score(y_test, test_predictions, average="macro")
+accuracy = accuracy_score(y_test, test_predictions)
+print("Final test rows:", len(y_test))
 test_result = pd.DataFrame({
-    "metric":["macro F1", "accuracy", "test rows"],
-    "value":[macro_f1, accuracy, len(y_test)]
+    "metric":["macro F1", "accuracy"],
+    "value":[macro_f1, accuracy]
 })
 test_result.round(3)`;
-    return `# 9 · Refit on all training rows, then run the final test once
-from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
-final_model = best_pipeline.fit(X_train, y_train)
-test_prediction = final_model.predict(X_test)
+    return `# 10 · Refit on all training rows, then run the final test once
+from sklearn.base import clone
+from sklearn.metrics import root_mean_squared_error
+final_model = clone(chosen_pipeline).fit(X_train, y_train)
+test_predictions = final_model.predict(X_test)
+rmse = root_mean_squared_error(y_test, test_predictions)
+print("Final test rows:", len(y_test))
+test_result = pd.DataFrame({
+    "metric":["RMSE"],
+    "value":[rmse]
+})
+test_result.round(3)`;
+  }
 
+  function finalOptionalCode(config) {
+    if (config.task === "classification") return `# Optional · Display the final confusion matrix from saved predictions
+from sklearn.metrics import ConfusionMatrixDisplay
+class_labels = ${py(classLabelMap(config))}
+display_classes = np.unique(y_train)
+display_labels = [class_labels.get(str(label), str(label)) for label in display_classes]
+ConfusionMatrixDisplay.from_predictions(y_test, test_predictions, labels=display_classes, display_labels=display_labels, cmap="Blues")
+plt.title(${py(`Final sealed-test confusion matrix for ${friendlyColumnName(config.target)}`)})
+plt.tight_layout()`;
+    return `# Optional · Display actual and predicted final-test values
 fig, ax = plt.subplots(figsize=(6.2, 4))
-sns.scatterplot(x=y_test, y=test_prediction, ax=ax, color="#137c9c")
-limits = [min(y_test.min(), test_prediction.min()), max(y_test.max(), test_prediction.max())]
+sns.scatterplot(x=y_test, y=test_predictions, ax=ax, color="#137c9c")
+limits = [min(y_test.min(), test_predictions.min()), max(y_test.max(), test_predictions.max())]
 ax.plot(limits, limits, "--", color="#c75b20")
 ax.set(title="Final sealed test: actual vs predicted", xlabel=${py(`Actual ${friendlyColumnName(config.target)}`)}, ylabel=${py(`Predicted ${friendlyColumnName(config.target)}`)})
-fig.tight_layout()
-rmse = root_mean_squared_error(y_test, test_prediction)
-mae = mean_absolute_error(y_test, test_prediction)
-r2 = r2_score(y_test, test_prediction)
-test_result = pd.DataFrame({
-    "metric":["RMSE", "MAE", "R²", "test rows"],
-    "value":[rmse, mae, r2, len(y_test)]
-})
-test_result.round(3)`;
+fig.tight_layout()`;
   }
 
   function supervisedRoute(config, value, modelId, folds) {
     const hasHyperparameters = modelSpec(modelId, value, config).grid !== "{}";
     const teaching = supervisedTeaching(config, value, modelId, folds);
+    const reference = referenceCode(config);
     const splitCaption = config.split === "time"
       ? "chronological 80/20 split"
       : config.task === "classification"
@@ -3663,12 +3741,13 @@ test_result.round(3)`;
       task("frame","Choose what to predict","define X and y",frameCode(config, value),teaching.frame),
       task("split","Split data and save the test set",splitCaption,splitCode(config),teaching.split),
       task("explore","Explore training data","training inputs + plots",exploreCode(config, value),teaching.explore),
-      task("prepare","Prepare the data","only selected feature types",preprocessingCode(config, value, modelId),teaching.prepare),
+      task("prepare","Define the preparation recipe","only selected feature types",preprocessingCode(config, value, modelId),teaching.prepare),
       task("model","Build the model pipeline",modelSpec(modelId, value, config).concept,modelCode(modelId, value, config),teaching.model),
-      task("baseline","Check the baseline with cross-validation",`${folds}-fold training-only CV`,baselineCode(config, folds),teaching.baseline),
-      task("tune",hasHyperparameters ? "Tune the model" : "Keep the model defaults",hasHyperparameters ? `GridSearchCV · ${folds} folds` : "defaults kept · no tuning grid",tuningCode(config, modelId, value),teaching.tune),
-      task("diagnose","Diagnose and understand the chosen model","training-only diagnostics",diagnosticsCode(config, modelId, value),teaching.diagnose),
-      task("final","Final test","saved test set · one walkthrough",finalCode(config),teaching.final)
+      task("baseline","Validate the initial model",`${folds}-fold training-only CV`,baselineCode(config, folds),teaching.baseline),
+      task("reference","Compare with a simple reference",`${folds}-fold reference on training rows`,reference,teaching.reference),
+      ...(hasHyperparameters ? [task("tune","Tune the model",`GridSearchCV · ${folds} folds`,tuningCode(config, modelId, value),teaching.tune)] : []),
+      task("diagnose","Inspect validation errors","training-only diagnostics",diagnosticsCode(config, modelId, value),teaching.diagnose),
+      task("final","Final test","saved test set · one walkthrough",{primaryCode:finalCode(config), optionalCode:finalOptionalCode(config)},teaching.final)
     ];
   }
 
@@ -3853,7 +3932,7 @@ test_result.round(3)`;
       : "StandardScaler()";
     return "# 3 · Prepare the numeric inputs\n# Scaling makes feature magnitudes comparable for distance-based methods and PCA.\n"
       + (config.missing ? "# Imputation is included only because the selected data can contain missing values.\n" : "# The bundled selected data is complete, so no imputation is needed.\n")
-      + imports.join("\n") + "\n\npreprocessor = " + expression + "\nZ = preprocessor.fit_transform(X)\n\nZ[:5]";
+      + imports.join("\n") + "\n\npreprocessor = " + expression + "\nX_scaled = preprocessor.fit_transform(X)\n\nX_scaled[:5]";
   }
 
   function pcaExploreCode(config, value) {
@@ -3862,207 +3941,289 @@ test_result.round(3)`;
     if (names.length <= 12) {
       return `# 2 · Inspect redundancy before PCA\ncorrelation = ${frameName}[feature_names].corr()\nfig, ax = plt.subplots(figsize=(7, 5))\nsns.heatmap(correlation, cmap="vlag", center=0, ax=ax)\nax.set_title("Correlation among selected inputs")\nfig.tight_layout()\nprint("Correlated features may contain overlapping variation, but PCA does not require strong correlation.")\ncorrelation.round(2)`;
     }
-    return `# 2 · Summarise redundancy before PCA without a giant heatmap\ncorrelation = ${frameName}[feature_names].corr()\nredundancy_pairs = []\nfor left_index, left_name in enumerate(feature_names):\n    for right_index in range(left_index + 1, len(feature_names)):\n        right_name = feature_names[right_index]\n        pair_correlation = correlation.loc[left_name, right_name]\n        redundancy_pairs.append({\n            "feature_a":left_name,\n            "feature_b":right_name,\n            "correlation":pair_correlation,\n            "absolute_correlation":abs(pair_correlation)\n        })\nstrongest_pairs = pd.DataFrame(redundancy_pairs).sort_values("absolute_correlation", ascending=False).head(12).reset_index(drop=True)\nprint("This compact table shows the strongest unique feature pairs, not the full correlation matrix.")\nstrongest_pairs`;
+    return pcaExploreCodeForRoute(config, value);
+  }
+
+  function pcaExploreCodeForRoute(config, value) {
+    const frameName = modelFrameName(config);
+    const names = featureNames(value);
+    if (names.length <= 12) return pcaExploreCode(config, value);
+    const [leftName, rightName] = names;
+    return {
+      primaryCode:`# 2 · Inspect one named redundancy pair before PCA
+left_feature = ${py(leftName)}
+right_feature = ${py(rightName)}
+correlation = X[[left_feature, right_feature]].corr()
+pair_correlation = correlation.loc[left_feature, right_feature]
+fig, ax = plt.subplots(figsize=(6.5, 4.2))
+sns.scatterplot(data=X, x=left_feature, y=right_feature, alpha=.65, ax=ax)
+ax.set_title(f"One selected pair: {left_feature} and {right_feature}")
+fig.tight_layout()
+pair_summary = pd.DataFrame({"feature_a":[left_feature], "feature_b":[right_feature], "correlation":[pair_correlation], "absolute_correlation":[abs(pair_correlation)]})
+print("This named pair shows how two original inputs may repeat some variation before PCA creates new axes.")
+pair_summary.round(3)`,
+      optionalCode:`# Optional · Explore all unique feature pairs
+from itertools import combinations
+pairs_correlation = X[feature_names].corr()
+pairs = []
+for first, second in combinations(feature_names, 2):
+    value = pairs_correlation.loc[first, second]
+    pairs.append([first, second, value, abs(value)])
+pair_table = pd.DataFrame(pairs, columns=["First feature", "Second feature", "Correlation", "Magnitude"])
+print("combinations(..., 2) visits each pair once.")
+pair_table.nlargest(12, "Magnitude")`
+    };
   }
 
   function kmeansRoute(config, value) {
-    const frameName = modelFrameName(config);
+    const story = unsupervisedStory(config, value, "kmeans");
+    const directMap = featureCount(value) === 2
+      ? `# 8 · Map the fitted labels in the selected inputs
+plot_df = X[feature_names].copy()
+plot_df["cluster"] = clusters.astype(str)
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+sns.scatterplot(data=plot_df, x=feature_names[0], y=feature_names[1], hue="cluster", palette="tab10", alpha=.75, ax=ax)
+ax.set_title(f"K-means clusters (k={selected_k}) in the selected inputs")
+ax.set_xlabel(feature_names[0])
+ax.set_ylabel(feature_names[1])
+print("With two selected inputs, this map keeps the original feature axes so the discovered groups can be read directly.")
+fig.tight_layout()
+plot_df.head(12)`
+      : {
+        primaryCode:`# 8 · Map a named pair of the fitted inputs
+plot_df = X[feature_names[:2]].copy()
+plot_df["cluster"] = clusters.astype(str)
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+sns.scatterplot(data=plot_df, x=feature_names[0], y=feature_names[1], hue="cluster", palette="tab10", alpha=.75, ax=ax)
+ax.set_title(f"K-means clusters (k={selected_k}) in two selected inputs")
+ax.set_xlabel(feature_names[0])
+ax.set_ylabel(feature_names[1])
+print(f"This named pair shows two of the {len(feature_names)} inputs used for clustering; original axes do not reproduce the scaled distance calculation.")
+fig.tight_layout()
+plot_df.head(12)`,
+        optionalCode:`# Optional · Map all prepared inputs into two PCA coordinates
+from sklearn.decomposition import PCA
+projection = PCA(n_components=2).fit_transform(X_scaled)
+pca_map = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "cluster":clusters.astype(str)})
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+sns.scatterplot(data=pca_map, x="PC1", y="PC2", hue="cluster", palette="tab10", alpha=.75, ax=ax)
+ax.set_title(f"K-means clusters (k={selected_k}) in a PCA view")
+print("This optional PCA view compresses all prepared inputs into two axes; overlap here does not settle cluster quality.")
+fig.tight_layout()
+pca_map.head(12)`
+      };
     return [
       task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),{
-        question:"Why is there no target used for fitting, and what structure can I discover from the selected inputs?",
-        readingCue:"Check that X contains the selected features and that the clustering code never uses the reference labels.",
+        question:story.frameQuestion,
+        readingCue:story.frameCue,
         concepts:unsupervisedConcepts(["cluster", "no_target_score", "cluster_label"])
       }),
       task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),{
-        question:"What similarities, ranges, or unusual rows can I see before clustering?",
-        readingCue:"Look for ranges, overlap, and unusual rows in the selected inputs; this is descriptive evidence, not a target score.",
+        question:story.exploreQuestion,
+        readingCue:story.exploreCue,
         concepts:unsupervisedConcepts(["cluster"])
       }),
       task("prepare","Prepare the data","scaled numeric inputs",clusterPreprocessing(config),{
-        question:"Why does this distance-based method need this preparation?",
-        readingCue:"Look for comparable feature scales before rows are compared by distance.",
+        question:story.prepareQuestion,
+        readingCue:story.prepareCue,
         concepts:unsupervisedConcepts(["distance", "scaling"])
       }),
-      task("compare","Compare possible group counts","exploratory inertia + silhouette",`# 4 · Compare possible group counts; this is exploratory, not a test score
+      task("compare","Compare possible group counts","compact inertia + silhouette table",{
+        primaryCode:`# 4 · Compare possible group counts; this is exploratory, not a test score
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 candidate_rows = []
-max_k = min(8, len(Z) - 1)
-sample_size = min(2000, len(Z))
+max_k = min(8, len(X_scaled) - 1)
+sample_size = min(2000, len(X_scaled))
 for k in range(2, max_k + 1):
-    candidate = KMeans(n_clusters=k, n_init=20, random_state=42).fit(Z)
-    candidate_rows.append({"k":k, "inertia":candidate.inertia_, "silhouette":silhouette_score(Z, candidate.labels_, sample_size=sample_size, random_state=42)})
-candidate_scores = pd.DataFrame(candidate_rows)
+    candidate = KMeans(n_clusters=k, n_init=20, random_state=42).fit(X_scaled)
+    candidate_rows.append({"k":k, "inertia":candidate.inertia_, "silhouette":silhouette_score(X_scaled, candidate.labels_, sample_size=sample_size, random_state=42)})
+candidate_scores = pd.DataFrame(candidate_rows, columns=["k", "inertia", "silhouette"])
+print("Use the elbow, silhouette values, cluster sizes, and original-unit profiles to choose k for your question; no single score makes that decision automatically.")
+candidate_scores.round(3)`,
+        optionalCode:`# Optional · Plot the candidate evidence after reading the compact table
 fig, axes = plt.subplots(1, 2, figsize=(9, 3.4))
 sns.lineplot(data=candidate_scores, x="k", y="inertia", marker="o", ax=axes[0])
 sns.lineplot(data=candidate_scores, x="k", y="silhouette", marker="o", ax=axes[1], color="#7651a6")
 axes[0].set_title("Elbow: within-cluster inertia")
 axes[1].set_title("Higher silhouette is better")
 fig.tight_layout()
-silhouette_suggestion = int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "k"])
-print(f"Mechanical silhouette suggestion (not a final answer): k={silhouette_suggestion}")
-candidate_scores.round(3)`,{
-        question:"How do the candidate values of k trade off compactness and separation?",
-        readingCue:"Look for an elbow in inertia and for silhouette values, but treat both as evidence rather than an automatic answer.",
+candidate_scores.round(3)`
+      },{
+        question:story.compareQuestion,
+        readingCue:story.compareCue,
         concepts:unsupervisedConcepts(["k", "inertia", "silhouette", "choice_not_truth"]),
         practice:practiceForTask(config, value, "kmeans", "compare")
       }),
       task("fit","Fit K-means","neutral runnable starting k",`# 5 · Fit a runnable starting K-means solution
 selected_k = min(3, max_k)  # Edit this after comparing the evidence if another k is more useful.
-kmeans = KMeans(n_clusters=selected_k, n_init=30, random_state=42).fit(Z)
-clusters = kmeans.labels_
+kmeans = KMeans(n_clusters=selected_k, n_init=20, random_state=42)
+clusters = kmeans.fit_predict(X_scaled)
 print(f"This walkthrough starts at k={selected_k} so it can run. Compare the elbow, silhouette, cluster sizes, and profiles, then edit selected_k if another solution is more useful.")
-pd.DataFrame({"selected_k":[selected_k], "silhouette":[silhouette_score(Z, clusters, sample_size=sample_size, random_state=42)], "inertia":[kmeans.inertia_]}).round(3)`,{
-        question:"What does this chosen grouping look like when I use a runnable starting k?",
-        readingCue:"Compare the starting k with the elbow, silhouette, cluster sizes, and profiles; edit selected_k when another solution answers your question better.",
+pd.Series(clusters, name="cluster").head(12)`,{
+        question:story.fitQuestion,
+        readingCue:story.fitCue,
         concepts:unsupervisedConcepts(["centroid", "k", "choice_not_truth", "cluster_label"]),
         practice:practiceForTask(config, value, "kmeans", "fit")
       }),
       task("diagnose","Check the clusters","size + separation",`# 6 · Check whether the solution is balanced and separated
-from sklearn.metrics import silhouette_samples
-quality_index = np.random.default_rng(42).choice(len(Z), size=sample_size, replace=False)
-quality_Z = Z[quality_index]
-quality_clusters = clusters[quality_index]
-sample_silhouette = silhouette_samples(quality_Z, quality_clusters)
-sample_quality = pd.DataFrame({"cluster":quality_clusters, "silhouette":sample_silhouette}).groupby("cluster").agg(mean_silhouette=("silhouette","mean"), weakest=("silhouette","min")).reset_index()
-full_cluster_sizes = pd.Series(clusters, name="cluster").value_counts().sort_index().rename("rows").reset_index()
-cluster_quality = full_cluster_sizes.merge(sample_quality, on="cluster", how="left")
+from sklearn.metrics import silhouette_score
+silhouette_size = min(2000, len(X_scaled))
+global_silhouette = silhouette_score(X_scaled, clusters, sample_size=silhouette_size, random_state=42)
+cluster_sizes = pd.Series(clusters, name="cluster").value_counts().sort_index().rename("rows").reset_index()
+cluster_quality = pd.DataFrame({"rows":[len(X_scaled)], "clusters":[len(cluster_sizes)], "global_silhouette":[global_silhouette], "silhouette_sample_size":[silhouette_size]})
 print("Very tiny clusters may represent a genuine rare pattern, outliers, or an overly fragmented solution; do not label them bad from size alone.")
+print("Cluster counts:")
+print(cluster_sizes.to_string(index=False))
 cluster_quality.round(3)`,{
-        question:"Are the groups compact, separated, and large enough to interpret?",
-        readingCue:"Look for mean and weakest silhouette values and the full-row count; a tiny cluster may be meaningful, rare, an outlier pattern, or fragmented.",
+        question:story.diagnoseQuestion,
+        readingCue:story.diagnoseCue,
         concepts:unsupervisedConcepts(["silhouette", "cluster_label"]),
         modelTeaching:modelSpecificTeaching(config, "kmeans", value)
       }),
       task("profile","Explain the clusters","original feature units",`# 7 · Translate cluster IDs back into the original features
-profile_df = ${frameName}[feature_names].copy()
-profile_df["cluster"] = clusters
-cluster_means = profile_df.groupby("cluster")[feature_names].mean().round(2).reset_index()
-centroid_profile = pd.DataFrame(preprocessor.inverse_transform(kmeans.cluster_centers_), columns=feature_names).round(2)
-print("Cluster IDs are arbitrary. These original-unit row means describe each group; with this scaled K-Means fit, the inverse-transformed centroid has the same interpretation, so the evidence is shown once rather than as a duplicate table.")
+clustered_data = X.copy()
+clustered_data["cluster"] = clusters
+cluster_means = clustered_data.groupby("cluster")[feature_names].mean().round(2).reset_index()
+print("Cluster IDs are arbitrary. These original-unit row means describe each group; compare them with the candidate evidence before assigning a meaning.")
 cluster_means`,{
-        question:"How can I describe the groups in original feature units?",
-        readingCue:"Compare cluster means and centroids in original units; labels such as cluster 0 have no meaning by themselves.",
+        question:story.profileQuestion,
+        readingCue:story.profileCue,
         concepts:unsupervisedConcepts(["profile", "centroid", "cluster_label"]),
         practice:practiceForTask(config, value, "kmeans", "profile")
       }),
-      task("visualise","Map the clusters","PCA view only",`# 8 · Project to two dimensions for a visual map (the model used all dimensions)
-from sklearn.decomposition import PCA
-projection = PCA(n_components=2).fit_transform(Z)
-plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "cluster":clusters.astype(str)})
-fig, ax = plt.subplots(figsize=(6.5, 4.5))
-sns.scatterplot(data=plot_df, x="PC1", y="PC2", hue="cluster", palette="tab10", alpha=.75, ax=ax)
-ax.set_title(f"K-means clusters (k={selected_k}) in a PCA view")
-fig.tight_layout()
-print("The clustering used all selected prepared dimensions; this PCA chart is only a two-dimensional view, so apparent overlap here does not settle cluster quality.")
-plot_df.head(12)`,{
-        question:"What can this two-dimensional map show—and what can it hide?",
-        readingCue:"Use the PCA map as a visual summary; remember the fit used all dimensions and two-dimensional overlap does not settle cluster quality.",
+      task("visualise","Map the clusters","two inputs or optional PCA view",directMap,{
+        question:story.closingQuestion,
+        readingCue:story.closingCue,
         concepts:unsupervisedConcepts(["pca_projection"])
       })
     ];
   }
 
   function hierarchicalRoute(config, value) {
-    const frameName = modelFrameName(config);
+    const story = unsupervisedStory(config, value, "hierarchical");
+    const directMap = featureCount(value) === 2
+      ? `# 8 · Map the sampled labels in the selected inputs
+plot_df = X_sample[feature_names].copy()
+plot_df["cluster"] = clusters.astype(str)
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+sns.scatterplot(data=plot_df, x=feature_names[0], y=feature_names[1], hue="cluster", palette="tab10", alpha=.75, ax=ax)
+ax.set_title(f"Hierarchical groups (k={selected_k}) in the selected inputs")
+ax.set_xlabel(feature_names[0])
+ax.set_ylabel(feature_names[1])
+print("With two selected inputs, this map keeps the original feature axes so the discovered groups can be read directly.")
+fig.tight_layout()
+plot_df.head(12)`
+      : {
+        primaryCode:`# 8 · Map a named pair of the sampled inputs
+plot_df = X_sample[feature_names[:2]].copy()
+plot_df["cluster"] = clusters.astype(str)
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+sns.scatterplot(data=plot_df, x=feature_names[0], y=feature_names[1], hue="cluster", palette="tab10", alpha=.75, ax=ax)
+ax.set_title(f"Hierarchical groups (k={selected_k}) in two selected inputs")
+ax.set_xlabel(feature_names[0])
+ax.set_ylabel(feature_names[1])
+print(f"This named pair shows two of the {len(feature_names)} inputs used for the hierarchy; original axes do not reproduce the scaled distance calculation.")
+fig.tight_layout()
+plot_df.head(12)`,
+        optionalCode:`# Optional · Map all sampled inputs into two PCA coordinates
+from sklearn.decomposition import PCA
+projection = PCA(n_components=2).fit_transform(X_sample_scaled)
+pca_map = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "cluster":clusters.astype(str)})
+fig, ax = plt.subplots(figsize=(6.5, 4.5))
+sns.scatterplot(data=pca_map, x="PC1", y="PC2", hue="cluster", palette="tab10", alpha=.75, ax=ax)
+ax.set_title(f"Hierarchical groups (k={selected_k}) in a PCA view")
+print("This optional PCA view compresses all sampled inputs into two axes; overlap here does not settle the hierarchy.")
+fig.tight_layout()
+pca_map.head(12)`
+      };
     return [
       task("frame","Choose what to discover","target stays hidden",unsupervisedFrameCode(config, value),{
-        question:"Why is there no target used for fitting, and what hierarchy can I discover from the selected inputs?",
-        readingCue:"Check that the hierarchy is fitted from selected inputs only; the reference labels stay out of discovery.",
+        question:story.frameQuestion,
+        readingCue:story.frameCue,
         concepts:unsupervisedConcepts(["cluster", "no_target_score", "cluster_label", "choice_not_truth"])
       }),
       task("explore","Explore the data","inputs + plots",exploreCode(config, value, true),{
-        question:"What similarities, ranges, or unusual rows can I see before building the hierarchy?",
-        readingCue:"Look for ranges, overlap, and unusual rows in the selected inputs; this is descriptive evidence, not a target score.",
+        question:story.exploreQuestion,
+        readingCue:story.exploreCue,
         concepts:unsupervisedConcepts(["cluster", "distance"])
       }),
       task("prepare","Prepare the data","scaled numeric sample",clusterPreprocessing(config) + `
 # Hierarchical clustering is quadratic in memory, so every later step uses one reproducible sample.
-sample_size = min(500, len(Z))
-sample_index = np.random.default_rng(42).choice(len(Z), size=sample_size, replace=False)
-analysis_Z = Z[sample_index]
-analysis_rows = ${frameName}.iloc[sample_index].copy()
-print(f"This hierarchy uses a reproducible sample of {sample_size} rows out of {len(Z)} because pairwise comparisons become expensive as the dataset grows.")
-pd.DataFrame({"dataset_rows":[len(Z)], "sampled_rows":[sample_size]})`,{
-        question:"Why are the inputs scaled, and why does this route use a reproducible sample?",
-        readingCue:"Look for comparable feature scales and the displayed sample size; the hierarchy is fitted on that sample, not every row.",
+sample_size = min(500, len(X_scaled))
+X_sample = X.sample(n=sample_size, random_state=42)
+X_sample_scaled = preprocessor.transform(X_sample)
+print(f"This hierarchy uses a reproducible sample of {sample_size} rows out of {len(X_scaled)} because pairwise comparisons become expensive as the dataset grows.")
+pd.DataFrame({"dataset_rows":[len(X_scaled)], "sampled_rows":[sample_size]})`,{
+        question:story.prepareQuestion,
+        readingCue:story.prepareCue,
         concepts:unsupervisedConcepts(["distance", "scaling", "sampling"])
       }),
       task("dendrogram","Build the dendrogram","Ward linkage sample",`# 4 · Inspect the hierarchy before choosing a cut
 from scipy.cluster.hierarchy import linkage, dendrogram
-linkage_matrix = linkage(analysis_Z, method="ward")
+hierarchy = linkage(X_sample_scaled, method="ward")
 fig, ax = plt.subplots(figsize=(10, 4))
-dendrogram(linkage_matrix, truncate_mode="level", p=5, no_labels=True, color_threshold=None, ax=ax)
+dendrogram(hierarchy, truncate_mode="level", p=5, no_labels=True, color_threshold=None, ax=ax)
 ax.set(title="Ward-linkage dendrogram", xlabel="merged groups", ylabel="Ward merge height")
 fig.tight_layout()
 print("Leaves represent observations or small groups; joins are merges; Ward merge height is the dissimilarity when groups combine. A large vertical gap suggests a larger jump in dissimilarity.")
 merge_view = pd.DataFrame({
-    "merge_number":np.arange(1, len(linkage_matrix) + 1)[-10:],
-    "merge_height":linkage_matrix[-10:, 2],
-    "members_after_merge":linkage_matrix[-10:, 3].astype(int)
+    "merge_number":np.arange(1, len(hierarchy) + 1)[-10:],
+    "merge_height":hierarchy[-10:, 2],
+    "members_after_merge":hierarchy[-10:, 3].astype(int)
 })
 merge_view.round(2)`,{
-        question:"What do the leaves, joins, and merge heights tell me before I choose a cut?",
-        readingCue:"Look for joins that happen at noticeably different heights and imagine where a horizontal cut might leave separate branches.",
+        question:story.dendrogramQuestion,
+        readingCue:story.dendrogramCue,
         concepts:unsupervisedConcepts(["agglomerative", "ward", "leaves", "join", "merge_height", "horizontal_cut"])
       }),
       task("compare","Compare possible cuts","exploratory silhouette",`# 5 · Compare cuts on the same sample; this is exploratory, not a test score
-from sklearn.cluster import AgglomerativeClustering
+from scipy.cluster.hierarchy import cut_tree
 from sklearn.metrics import silhouette_score
 candidate_rows = []
-max_k = min(8, len(analysis_Z) - 1)
-silhouette_size = min(2000, len(analysis_Z))
+max_k = min(8, len(X_sample_scaled) - 1)
+silhouette_size = min(2000, len(X_sample_scaled))
 for k in range(2, max_k + 1):
-    labels = AgglomerativeClustering(n_clusters=k, linkage="ward").fit_predict(analysis_Z)
-    candidate_rows.append({"clusters":k, "silhouette":silhouette_score(analysis_Z, labels, sample_size=silhouette_size, random_state=42)})
+    labels = cut_tree(hierarchy, n_clusters=k).ravel()
+    candidate_rows.append({"clusters":k, "silhouette":silhouette_score(X_sample_scaled, labels, sample_size=silhouette_size, random_state=42)})
 candidate_scores = pd.DataFrame(candidate_rows)
 fig, ax = plt.subplots(figsize=(6, 3.4))
 sns.lineplot(data=candidate_scores, x="clusters", y="silhouette", marker="o", color="#7651a6", ax=ax)
 ax.set_title("Choose a defensible dendrogram cut")
 fig.tight_layout()
-silhouette_suggestion = int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "clusters"])
-print(f"Mechanical silhouette suggestion (not a final answer): {silhouette_suggestion} clusters")
+print("Use dendrogram gaps, silhouette, resulting cluster sizes, and original-unit profiles to choose a cut for your question; no single score makes that decision automatically.")
 candidate_scores.round(3)`,{
-        question:"How do possible cuts compare using silhouette and cluster size?",
-        readingCue:"Use dendrogram gaps, silhouette, resulting cluster sizes, and profiles together; silhouette supports the choice but does not decide it.",
+        question:story.compareQuestion,
+        readingCue:story.compareCue,
         concepts:unsupervisedConcepts(["silhouette", "horizontal_cut", "choice_not_truth"]),
         practice:practiceForTask(config, value, "hierarchical", "compare")
       }),
       task("fit","Fit the hierarchy","neutral runnable starting cut",`# 6 · Fit a runnable starting hierarchy
 selected_k = min(3, max_k)  # Edit this after comparing the dendrogram and evidence if another cut is more useful.
-hierarchical = AgglomerativeClustering(n_clusters=selected_k, linkage="ward")
-clusters = hierarchical.fit_predict(analysis_Z)
+from scipy.cluster.hierarchy import cut_tree
+clusters = cut_tree(hierarchy, n_clusters=selected_k).ravel()
 print(f"This walkthrough starts at {selected_k} clusters so it can run. A horizontal cut through the dendrogram represents this choice; edit selected_k if another cut answers your question better.")
 pd.Series(clusters).value_counts().sort_index().rename_axis("cluster").reset_index(name="rows")`,{
-        question:"What does this chosen hierarchy produce at a runnable starting cut?",
-        readingCue:"Compare the starting cut with the dendrogram, merge heights, silhouette, cluster sizes, and profiles; edit selected_k if another cut is more useful.",
+        question:story.fitQuestion,
+        readingCue:story.fitCue,
         concepts:unsupervisedConcepts(["agglomerative", "horizontal_cut", "choice_not_truth", "cluster_label"]),
         practice:practiceForTask(config, value, "hierarchical", "fit")
       }),
       task("profile","Explain the groups","original feature units",`# 7 · Describe the discovered groups in original units
-profile_df = analysis_rows[feature_names].copy()
+profile_df = X_sample.copy()
 profile_df["cluster"] = clusters
 cluster_profile = profile_df.groupby("cluster")[feature_names].mean().round(2)
 print("Cluster IDs are arbitrary. These original-unit means describe the sampled rows assigned to each group; the hierarchy was fitted on the displayed reproducible sample.")
 cluster_profile.reset_index()`,{
-        question:"How can I describe the groups in original feature units?",
-        readingCue:"Compare the sampled cluster means in original units; cluster IDs are labels, not meanings.",
+        question:story.profileQuestion,
+        readingCue:story.profileCue,
         concepts:unsupervisedConcepts(["profile", "cluster_label", "sampling"]),
         modelTeaching:modelSpecificTeaching(config, "hierarchical", value),
         practice:practiceForTask(config, value, "hierarchical", "profile")
       }),
-      task("visualise","Map the hierarchy","PCA teaching view",`# 8 · Visualise the sampled hierarchy in two dimensions
-from sklearn.decomposition import PCA
-projection = PCA(n_components=2).fit_transform(analysis_Z)
-plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "cluster":clusters.astype(str)})
-fig, ax = plt.subplots(figsize=(6.5, 4.5))
-sns.scatterplot(data=plot_df, x="PC1", y="PC2", hue="cluster", palette="tab10", alpha=.75, ax=ax)
-ax.set_title(f"Hierarchical groups (k={selected_k}) in a PCA projection")
-fig.tight_layout()
-print("This PCA map is a two-dimensional projection of the sampled rows. Groups that overlap here may still differ in the higher-dimensional feature space used for the hierarchy.")
-plot_df.head(12)`,{
-        question:"What can this two-dimensional projection show—and what can it hide?",
-        readingCue:"Use the PCA map as a visual summary of the sampled groups, not as the complete hierarchy or a supervised score.",
+      task("visualise","Map the hierarchy","two inputs or optional PCA view",directMap,{
+        question:story.closingQuestion,
+        readingCue:story.closingCue,
         concepts:unsupervisedConcepts(["pca_projection", "sampling"])
       })
     ];
@@ -4070,27 +4231,29 @@ plot_df.head(12)`,{
 
   function pcaRoute(config, value) {
     const frameName = modelFrameName(config);
+    const story = unsupervisedStory(config, value, "pca");
     return [
       task("frame","Choose what to discover","new axes · target stays hidden",unsupervisedFrameCode(config, value),{
-        question:"What new axes can summarise variation in the selected inputs without using a reference target?",
-        readingCue:"Check that PCA is fitted from X and Z only; the reference label is reserved for interpretation after fitting.",
-        concepts:unsupervisedConcepts(["principal_component", "pc1", "pc2", "not_clustering", "reference_after_fit"])
+        question:story.frameQuestion,
+        readingCue:story.frameCue,
+        concepts:unsupervisedConcepts(["principal_component", "pc1", "pc2", "not_clustering"])
       }),
-      task("explore","Explore redundancy","unique correlation pairs",pcaExploreCode(config, value),{
-        question:"Which selected inputs may contain overlapping variation before PCA creates new axes?",
-        readingCue:"Look for correlated input pairs that may repeat some variation; PCA can still be useful without strong correlations.",
+      task("explore","Explore redundancy","one named pair · optional all pairs",pcaExploreCodeForRoute(config, value),{
+        question:story.exploreQuestion,
+        readingCue:story.exploreCue,
         concepts:unsupervisedConcepts(["redundancy", "principal_component"])
       }),
       task("prepare","Scale the inputs","common numeric scale",clusterPreprocessing(config),{
-        question:"Why does this walkthrough scale the inputs before PCA?",
-        readingCue:"Look for the selected features being placed on a common scale before PCA searches for high-variance directions.",
+        question:story.prepareQuestion,
+        readingCue:story.prepareCue,
         concepts:unsupervisedConcepts(["pca_scaling"])
       }),
       task("variance","Fit PCA and inspect explained variance","scree + cumulative variance",`# 4 · Fit PCA and inspect variance explained by each component
 from matplotlib.ticker import PercentFormatter
 from sklearn.decomposition import PCA
-full_pca = PCA().fit(Z)
-explained_variance_ratio = full_pca.explained_variance_ratio_
+pca = PCA()
+component_scores = pca.fit_transform(X_scaled)
+explained_variance_ratio = pca.explained_variance_ratio_
 cumulative_explained_variance = np.cumsum(explained_variance_ratio)
 variance_table = pd.DataFrame({
     "component":np.arange(1, len(explained_variance_ratio) + 1),
@@ -4107,57 +4270,66 @@ axes[1].yaxis.set_major_formatter(PercentFormatter(1.0))
 fig.tight_layout()
 print("Scree plot: variance explained by each component. Cumulative variance retained: see how the ratios add from the beginning. A variance-retention target is chosen explicitly in the next step. Explained variance is variance evidence, not prediction accuracy.")
 variance_table.round(4)`,{
-        question:"How much variation does each component represent, and how does cumulative variance grow?",
-        readingCue:"Look for components whose added variance becomes relatively small; the next step makes the chosen variance-retention target explicit.",
+        question:story.varianceQuestion,
+        readingCue:story.varianceCue,
         concepts:unsupervisedConcepts(["explained_variance", "cumulative_variance", "scree", "ninety_rule"]),
         practice:practiceForTask(config, value, "pca", "variance")
       }),
       task("select","Select components","chosen variance criterion",`# 5 · Select the smallest representation reaching the chosen variance target
 variance_target = 0.90
-components_for_target = int(np.flatnonzero(cumulative_explained_variance >= variance_target)[0] + 1)
-variance_retained = float(cumulative_explained_variance[components_for_target - 1])
-Z_reduced = full_pca.transform(Z)[:, :components_for_target]
+target_row = variance_table.loc[variance_table["cumulative_explained_variance"] >= variance_target].iloc[0]
+components_for_target = int(target_row["component"])
+variance_retained = float(target_row["cumulative_explained_variance"])
+X_reduced = component_scores[:, :components_for_target]
 print(f"For this walkthrough we keep the first {components_for_target} components because they reach {variance_retained:.1%} cumulative variance. The {variance_target:.0%} target is a chosen rule of thumb; another project could choose a different trade-off.")
-pd.DataFrame({"original_dimensions":[Z.shape[1]], "variance_target":[variance_target], "components_for_target":[components_for_target], "cumulative_variance_retained":[variance_retained]}).round(4)`,{
-        question:"How many components should this walkthrough keep for its chosen variance-retention rule?",
-        readingCue:"Check the first component count where cumulative variance reaches the active target; it is a chosen trade-off, not a universal answer.",
+pd.DataFrame({"original_dimensions":[X_scaled.shape[1]], "variance_target":[variance_target], "components_for_target":[components_for_target], "cumulative_variance_retained":[variance_retained]}).round(4)`,{
+        question:story.selectQuestion,
+        readingCue:story.selectCue,
         concepts:unsupervisedConcepts(["ninety_rule", "reduced_representation", "cumulative_variance"]),
         practice:practiceForTask(config, value, "pca", "select")
       }),
       task("loadings","Understand the component loadings","which features shape each axis",`# 6 · Connect the component axes back to the original inputs
-loadings = pd.DataFrame(full_pca.components_.T, index=feature_names, columns=[f"PC{i}" for i in range(1, len(full_pca.components_) + 1)])
+loadings = pd.DataFrame(pca.components_[:2].T, index=feature_names, columns=["PC1", "PC2"])
 loadings.index.name = "feature"
 loading_view = loadings[["PC1", "PC2"]].copy()
-loading_view["strongest_component"] = loading_view[["PC1", "PC2"]].abs().idxmax(axis=1)
-loading_view["max_absolute_loading"] = loading_view[["PC1", "PC2"]].abs().max(axis=1)
-loading_view = loading_view.sort_values("max_absolute_loading", ascending=False).head(12)
-print("A loading is the weight of an original feature in a component. Larger absolute values mean a stronger contribution; the sign gives direction, not good or bad. The full loadings matrix remains available in loadings; this view shows the strongest PC1/PC2 contributors.")
+print("A loading is the weight of an original feature in a component. Larger absolute values mean a stronger contribution; the sign gives direction, not good or bad. This table keeps every selected feature visible for the PC1/PC2 interpretation.")
 loading_view.round(3)`,{
-        question:"Which original features shape each principal-component axis, and how should I read their signs?",
-        readingCue:"Compare absolute loading sizes for contribution and compare signs as opposite directions; do not treat a sign as good or bad.",
+        question:story.loadingsQuestion,
+        readingCue:story.loadingsCue,
         concepts:unsupervisedConcepts(["loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"]),
         practice:practiceForTask(config, value, "pca", "loadings")
       }),
-      task("project","Project the rows","PC1 + PC2 · labels after fitting",`# 7 · Give each row coordinates on the learned axes, then add labels for interpretation
-component_scores = full_pca.transform(Z)
+      task("project","Project the rows","PC1 + PC2 coordinates",{
+        primaryCode:`# 7 · Give each row coordinates on the learned axes
 projection = component_scores[:, :2]
-pc1_variance = float(full_pca.explained_variance_ratio_[0])
-pc2_variance = float(full_pca.explained_variance_ratio_[1])
+pc1_variance = float(pca.explained_variance_ratio_[0])
+pc2_variance = float(pca.explained_variance_ratio_[1])
 two_dimensional_variance = pc1_variance + pc2_variance
-reference_label = ${frameName}[${py(config.target)}].copy()
-plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "reference":reference_label.to_numpy()})
+plot_df = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1]})
 fig, ax = plt.subplots(figsize=(6.6, 4.5), layout="constrained")
-${config.task === "classification" ? `plot_df["reference"] = plot_df["reference"].astype(str)
-sns.scatterplot(data=plot_df, x="PC1", y="PC2", hue="reference", alpha=.7, ax=ax)` : `points = ax.scatter(plot_df["PC1"], plot_df["PC2"], c=plot_df["reference"], cmap="viridis", alpha=.7)
-fig.colorbar(points, ax=ax, label=${py(config.target)})`}
+sns.scatterplot(data=plot_df, x="PC1", y="PC2", alpha=.7, ax=ax)
 ax.set_xlabel(f"PC1 ({pc1_variance:.1%} variance)")
 ax.set_ylabel(f"PC2 ({pc2_variance:.1%} variance)")
 ax.set_title("2D PCA projection (PC1 + PC2)")
-print(f"2D PCA projection: PC1 and PC2 show {two_dimensional_variance:.1%} of total prepared-data variance; the remaining variation lies in later components. This 2D teaching view is separate from the {components_for_target}-component reduced representation selected by the {variance_target:.0%} criterion. Reference labels were added only after PCA was fitted for descriptive interpretation.")
-plot_df.head(12)`,{
-        question:"Where do rows lie on the new axes, and what can a 2D view leave out?",
-        readingCue:"Read scores as row coordinates, check the actual PC1/PC2 variance percentages, and remember labels were added only after fitting.",
-        concepts:unsupervisedConcepts(["score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"]),
+print(f"2D PCA projection: PC1 and PC2 show {two_dimensional_variance:.1%} of total prepared-data variance; the remaining variation lies in later components. This 2D teaching view is separate from the {components_for_target}-component reduced representation selected by the {variance_target:.0%} criterion.")
+plot_df.head(12)`,
+        optionalCode:`# Optional · Colour the learned coordinates with a reference label
+reference_label = ${frameName}[${py(config.target)}].copy()
+plot_df_with_reference = pd.DataFrame({"PC1":projection[:,0], "PC2":projection[:,1], "reference":reference_label.to_numpy()})
+fig, ax = plt.subplots(figsize=(6.6, 4.5))
+${config.task === "classification" ? `plot_df_with_reference["reference"] = plot_df_with_reference["reference"].astype(str)
+sns.scatterplot(data=plot_df_with_reference, x="PC1", y="PC2", hue="reference", alpha=.7, ax=ax)` : `points = ax.scatter(plot_df_with_reference["PC1"], plot_df_with_reference["PC2"], c=plot_df_with_reference["reference"], cmap="viridis", alpha=.7)
+fig.colorbar(points, ax=ax, label=${py(config.target)})`}
+ax.set_xlabel(f"PC1 ({pc1_variance:.1%} variance)")
+ax.set_ylabel(f"PC2 ({pc2_variance:.1%} variance)")
+ax.set_title("Optional reference-coloured PCA view")
+fig.tight_layout()
+print("The reference label is added only after PCA is fitted; it colours the view and does not change the learned axes.")
+plot_df_with_reference.head(12)`
+      },{
+        question:story.closingQuestion,
+        readingCue:story.closingCue,
+        concepts:unsupervisedConcepts(["score", "loading_vs_score", "projection", "pca_limitations"]),
         modelTeaching:modelSpecificTeaching(config, "pca", value),
         practice:practiceForTask(config, value, "pca", "project")
       })
@@ -4202,14 +4374,14 @@ plot_df.head(12)`,{
     practiceSetupIdentity = practiceRouteIdentity(currentDatasetId, value.id, modelId, folds);
     routeTasks = Object.freeze(routeForSelection(config, value, modelId, folds).map(Object.freeze));
     renderRoute();
-    renderPracticeModeControls();
+    renderBatchControls();
     if (!$("#guideWindow").hidden) renderWorkflow();
   }
 
   function setRuntimeReady(value, status = null) {
     runtimeReady = value;
     if (status) $("#runtimeStatus").textContent = status;
-    renderPracticeModeControls();
+    renderBatchControls();
     renderRoute();
   }
 
@@ -4278,6 +4450,7 @@ plot_df.head(12)`,{
     cell.setupCode = item.setupCode || "";
     cell.evidenceCode = item.evidenceCode || "";
     cell.advancedCode = item.advancedCode || "";
+    cell.optionalCode = item.optionalCode || "";
     cell.exercise = exercise || null;
     cell.scaffolded = Boolean(exercise);
     if (render) { renderNotebookView(); renderRoute(); }
@@ -4314,6 +4487,7 @@ plot_df.head(12)`,{
   }
 
   function removeCell(cell) {
+    window.NotebookSession?.remember(cell, cells.indexOf(cell));
     const routeTaskId = cell.taskId;
     cells = cells.filter(value => value.id !== cell.id);
     if (routeTaskId) invalidateRouteFrom(routeTaskId);
@@ -4459,6 +4633,41 @@ plot_df.head(12)`,{
     return block;
   }
 
+  function teachingActionForTask(task) {
+    const routeText = `${task?.title || ""} ${task?.caption || ""} ${task?.question || ""}`;
+    const discovery = /target stays hidden|without using a reference target|no target|cluster|hierarchy|dendrogram|component|coordinates|pca/i.test(routeText);
+    const actions = {
+      frame:discovery
+        ? "Define X from the selected inputs and keep the reference target out of discovery."
+        : "Define the selected inputs and target so every later step shares one modelling frame.",
+      split:"Create the training rows and save the final test rows before fitting anything.",
+      explore:discovery
+        ? "Inspect the selected rows for structure that can guide the next discovery step."
+        : "Inspect the available training data for a pattern that can guide the next step.",
+      prepare:discovery
+        ? "Define the named preparation object that the discovery method will use."
+        : "Define the preparation recipe that later fitting will learn inside each fold.",
+      model:"Connect the preparation recipe and estimator into the model pipeline.",
+      baseline:"Measure the initial workflow across training folds and inspect the primary metric.",
+      reference:"Compare the feature based workflow with a simple reference on the same training folds.",
+      tune:"Search the supported settings while the saved final test remains sealed.",
+      diagnose:discovery
+        ? "Check the discovered structure against its separation, size, or retained-variation evidence."
+        : "Inspect training only errors or model evidence after the selection step.",
+      final:"Refit the selected workflow on training rows and evaluate the saved test once.",
+      compare:"Compare candidate structures before choosing a useful starting value.",
+      fit:"Fit the chosen starting structure using the prepared inputs.",
+      dendrogram:"Build the named hierarchy so its merge evidence can guide a cut.",
+      profile:"Summarise the discovered groups in original feature units.",
+      visualise:"Map the discovered structure in a readable view and state what the projection leaves out.",
+      variance:"Fit PCA once and measure how much variation each component captures.",
+      select:"Choose the first component count that reaches the stated variance target.",
+      loadings:"Connect each learned axis back to the original feature names.",
+      project:"Place rows on the learned axes and read the variance represented by the view."
+    };
+    return task?.action || actions[task?.id] || `Run the editable ${String(task?.title || "step").toLowerCase()} cell and inspect its result.`;
+  }
+
   function renderTeachingBlock(cell) {
     const task = routeTaskForCell(cell);
     if (!task || (!task.question && !task.readingCue && !task.concepts?.length && !task.modelTeaching && !task.metricHelp?.length)) return null;
@@ -4466,14 +4675,20 @@ plot_df.head(12)`,{
     block.className = "teaching-block";
     block.dataset.teachingStep = task.id;
     block.setAttribute("aria-label", `Teaching guidance for ${task.title}`);
-    if (task.question) block.append(teachingLine("QUESTION", task.question, "teaching-line teaching-question", "question"));
+    if (task.question) block.append(teachingLine("WHY", task.question, "teaching-line teaching-question", "question"));
+    block.append(teachingLine("DO", teachingActionForTask(task), "teaching-line teaching-action", "action"));
+    const details = document.createElement("details");
+    details.className = "teaching-details";
+    const summary = document.createElement("summary");
+    summary.textContent = "Terms and model notes";
+    details.append(summary);
     const concepts = conceptBlock(task.concepts);
-    if (concepts) block.append(concepts);
+    if (concepts) details.append(concepts);
     const modelTeaching = modelTeachingBlock(task.modelTeaching);
-    if (modelTeaching) block.append(modelTeaching);
-    if (task.readingCue) block.append(teachingLine("LOOK FOR", task.readingCue, "teaching-line teaching-cue", "reading-cue"));
+    if (modelTeaching) details.append(modelTeaching);
     const metrics = metricHelpBlock(task.metricHelp);
-    if (metrics) block.append(metrics);
+    if (metrics) details.append(metrics);
+    if (concepts || modelTeaching || metrics) block.append(details);
     return block;
   }
 
@@ -4488,11 +4703,49 @@ plot_df.head(12)`,{
     const note = document.createElement("p");
     note.className = "advanced-diagnostic-note";
     note.textContent = "Optional diagnostic construction only. The primary cell above is the core learner workflow; this real Python keeps the richer evidence tied to the current fitted route.";
+    const runEvidence = document.createElement("button");
+    runEvidence.type = "button";
+    runEvidence.className = "toolbar-button advanced-diagnostic-run";
+    runEvidence.textContent = "Add optional evidence cell";
+    runEvidence.addEventListener("click", async () => {
+      const cell = addCell(item.advancedCode, `Optional evidence · ${item.title || "diagnosis"}`, null, true);
+      cell.optionalEvidence = true;
+      cell.routeReferenceCode = item.advancedCode;
+      await runCell(cell, {preserveFocus:false});
+    });
     const code = document.createElement("pre");
     code.className = "workflow-code advanced-diagnostic-python";
     code.innerHTML = highlightPython(item.advancedCode);
     code.setAttribute("aria-label", "Optional diagnostic construction Python");
-    disclosure.append(summary, note, code);
+    disclosure.append(summary, note, runEvidence, code);
+    return disclosure;
+  }
+
+  function renderOptionalCode(item) {
+    if (playgroundMode === "practice" || !item?.optionalCode) return null;
+    const disclosure = document.createElement("details");
+    disclosure.className = "optional-route-code";
+    disclosure.dataset.teachingRole = "optional-route-evidence";
+    const summary = document.createElement("summary");
+    summary.textContent = item.taskId === "baseline" ? "Optional: compare a simple reference" : "Optional route evidence";
+    const note = document.createElement("p");
+    note.className = "advanced-diagnostic-note";
+    note.textContent = "This is a separate, editable evidence cell. The route step above remains the primary result.";
+    const add = document.createElement("button");
+    add.type = "button";
+    add.className = "toolbar-button optional-route-run";
+    add.textContent = "Add optional evidence cell";
+    add.addEventListener("click", async () => {
+      const cell = addCell(item.optionalCode, `Optional evidence · ${item.title || "route"}`, null, true);
+      cell.optionalEvidence = true;
+      cell.routeReferenceCode = item.optionalCode;
+      await runCell(cell, {preserveFocus:false});
+    });
+    const code = document.createElement("pre");
+    code.className = "workflow-code optional-route-python";
+    code.innerHTML = highlightPython(item.optionalCode);
+    code.setAttribute("aria-label", "Optional route evidence Python");
+    disclosure.append(summary, note, add, code);
     return disclosure;
   }
 
@@ -4557,47 +4810,7 @@ plot_df.head(12)`,{
     return heading;
   }
 
-  function renderPracticeBeforeRun(cell) {
-    if (playgroundMode !== "practice") return null;
-    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
-    if (!task || !practice) return null;
-    const state = practiceStateFor(task.id);
-    const section = document.createElement("section");
-    section.className = "practice-panel";
-    section.dataset.practiceRole = "before-run";
-    section.dataset.practiceTask = task.id;
-    section.setAttribute("aria-label", `Practice prompt before ${task.title}`);
-    section.append(practicePanelHeading("PREDICT BEFORE RUN"));
-    const prompt = document.createElement("p");
-    prompt.className = "practice-prompt";
-    prompt.textContent = practice.prompt;
-    section.append(prompt);
-    if (state.prediction === null) {
-      const [choices, actions] = practiceChoiceField(cell, practice, state, "prediction", "Commit prediction", value => {
-        state.prediction = value;
-        renderNotebookView();
-        renderPracticeModeControls();
-      });
-      section.append(choices, actions);
-    } else {
-      section.append(practiceCommittedAnswer(practice, state, "prediction", "Your prediction:"));
-      if (cell.status !== "done") {
-        const actions = document.createElement("div");
-        actions.className = "practice-actions";
-        const change = document.createElement("button");
-        change.type = "button";
-        change.className = "practice-button";
-        change.textContent = "Change prediction";
-        change.addEventListener("click", () => {
-          state.prediction = null;
-          renderNotebookView();
-        });
-        actions.append(change);
-        section.append(actions);
-      }
-    }
-    return section;
-  }
+  function renderPracticeBeforeRun(cell) { return null; }
 
   function practiceTableNumber(table, columnName, rowIndex = 0) {
     if (!Array.isArray(table?.columns) || !Array.isArray(table?.rows)) return null;
@@ -4652,7 +4865,7 @@ plot_df.head(12)`,{
       const stdout = String(cell.output.stdout || "");
       const value = String(cell.output.value || "");
       const settings = stdout.split("\n").find(line => line.includes("Best settings:")) || value || "Model defaults";
-      const score = stdout.split("\n").find(line => line.includes("Best CV ")) || "";
+      const score = stdout.split("\n").find(line => line.includes("Search CV ")) || "";
       return {kind:"tuning", settings:settings.trim().slice(0, 220), score:score.trim().slice(0, 120)};
     }
     if (taskId === "select" && selectedModelId() === "pca" && cell.output.table) {
@@ -4696,7 +4909,7 @@ plot_df.head(12)`,{
     ];
     if (snapshot.kind === "tuning") return [
       ["Selected setting", snapshot.settings || "See tuning output"],
-      ...(snapshot.score ? [["Best CV evidence", snapshot.score]] : [])
+      ...(snapshot.score ? [["Search CV evidence", snapshot.score]] : [])
     ];
     return [];
   }
@@ -4726,25 +4939,7 @@ plot_df.head(12)`,{
     return card;
   }
 
-  function renderPracticeExperimentComparison(state) {
-    const comparison = document.createElement("section");
-    comparison.className = "practice-experiment-comparison";
-    comparison.dataset.practiceRole = "experiment-comparison";
-    comparison.setAttribute("aria-live", "polite");
-    comparison.append(practicePanelHeading("COMPARE BEFORE AND AFTER"));
-    const cards = document.createElement("div");
-    cards.className = "practice-evidence-cards";
-    cards.append(
-      practiceSnapshotCard("BEFORE", state.experimentBaseline),
-      practiceSnapshotCard("AFTER", state.experimentAfter)
-    );
-    comparison.append(cards);
-    const note = document.createElement("p");
-    note.className = "practice-experiment-note";
-    note.textContent = "Use this one comparison to describe what moved, what stayed similar, and what it does not establish. It is not an automatic tuning decision.";
-    comparison.append(note);
-    return comparison;
-  }
+  function renderPracticeExperimentComparison(state) { return null; }
 
   function markPracticeExperimentEvidenceReady(cell) {
     if (cell?.output?.status !== "ok" || !cell.taskId) return;
@@ -4795,75 +4990,9 @@ plot_df.head(12)`,{
     return "Compare the generated evidence with the idea in the question.";
   }
 
-  function renderPracticePredictionFeedback(cell) {
-    if (playgroundMode !== "practice") return null;
-    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
-    if (!task || !practice) return null;
-    const state = practiceStateFor(task.id);
-    if (state.prediction === null) return null;
-    const section = document.createElement("section");
-    section.className = "practice-panel";
-    section.dataset.practiceRole = "prediction-feedback";
-    section.dataset.practiceTask = task.id;
-    section.setAttribute("role", "status");
-    section.setAttribute("aria-live", "polite");
-    section.append(practicePanelHeading("COMPARE YOUR PREDICTION"));
-    section.append(practiceCommittedAnswer(practice, state, "prediction", "Committed prediction:"));
-    const feedback = document.createElement("p");
-    feedback.className = "practice-feedback";
-    const explanation = practiceEvidenceText(task, cell);
-    if (practice.answer && state.prediction !== "not_sure") {
-      const expected = practiceOptionLabel(practice, practice.answer);
-      feedback.textContent = state.prediction === practice.answer
-        ? `The route evidence supports this conceptual answer: ${expected}. ${explanation}`
-        : `The route evidence points to: ${expected}. ${explanation}`;
-    } else if (state.prediction === "not_sure") {
-      feedback.dataset.tone = "neutral";
-      feedback.textContent = `You left this uncertain. ${explanation}`;
-    } else {
-      feedback.dataset.tone = "neutral";
-      feedback.textContent = explanation;
-    }
-    section.append(feedback);
-    return section;
-  }
+  function renderPracticePredictionFeedback(cell) { return null; }
 
-  function renderPracticeDecision(cell) {
-    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
-    const task = routeTaskForCell(cell), practice = task?.practice?.decision;
-    if (!task || !practice) return null;
-    const state = practiceStateFor(task.id);
-    const section = document.createElement("section");
-    section.className = "practice-panel";
-    section.dataset.practiceRole = "decision";
-    section.dataset.practiceTask = task.id;
-    section.setAttribute("aria-label", `Practice decision after ${task.title}`);
-    section.append(practicePanelHeading("DECIDE FROM THE EVIDENCE"));
-    const prompt = document.createElement("p");
-    prompt.className = "practice-prompt";
-    prompt.textContent = practice.prompt;
-    section.append(prompt);
-    if (state.decision === null) {
-      const [choices, actions] = practiceChoiceField(cell, practice, state, "decision", "Commit decision", value => {
-        state.decision = value;
-        renderNotebookView();
-        renderPracticeModeControls();
-      });
-      section.append(choices, actions);
-    } else {
-      section.append(practiceCommittedAnswer(practice, state, "decision", "Your choice:"));
-      const feedback = document.createElement("p");
-      feedback.className = "practice-feedback";
-      feedback.dataset.tone = "neutral";
-      feedback.textContent = practice.evidence === "cluster-choice"
-        ? "That is a defensible candidate. Compare it with the elbow or dendrogram, silhouette, cluster sizes, and original-unit profiles; no single candidate is graded as truth."
-        : practice.evidence === "cluster-profile"
-          ? "Cluster numbers are arbitrary. Compare the original-unit profile to describe what the group represents."
-          : "Keep this as an evidence-based working decision; compare it with the validation results and the final test when those steps are available.";
-      section.append(feedback);
-    }
-    return section;
-  }
+  function renderPracticeDecision(cell) { return null; }
 
   function applyPracticeExperiment(cell, experiment) {
     const task = routeTaskForCell(cell), targetTaskId = experiment?.targetTaskId || task?.id;
@@ -4875,7 +5004,7 @@ plot_df.head(12)`,{
     const mutation = applyPracticeMutation(targetCell.code, experiment);
     if (!mutation.changed) {
       renderNotebookView();
-      renderPracticeModeControls();
+      renderBatchControls();
       showToast(mutation.reason, true);
       return;
     }
@@ -4893,82 +5022,12 @@ plot_df.head(12)`,{
     resetState.experimentEvidenceReady = false;
     resetState.reflection = false;
     renderNotebookView();
-    renderPracticeModeControls();
+    renderBatchControls();
   }
 
-  function renderPracticeExperiment(cell) {
-    if (playgroundMode !== "practice") return null;
-    const task = routeTaskForCell(cell), experiment = task?.practice?.experiment;
-    if (!task || !experiment) return null;
-    const state = practiceStateFor(task.id);
-    if (cell.output?.status !== "ok" && !state.experimentApplied) return null;
-    const section = document.createElement("section");
-    section.className = "practice-panel";
-    section.dataset.practiceRole = "experiment";
-    section.dataset.practiceTask = task.id;
-    section.append(practicePanelHeading("SAFE EXPERIMENT"));
-    const instruction = document.createElement("p");
-    instruction.className = "practice-prompt";
-    instruction.textContent = experiment.instruction;
-    section.append(instruction);
-    const details = document.createElement("div");
-    details.className = "practice-experiment";
-    const change = document.createElement("code");
-    change.textContent = experiment.change;
-    const note = document.createElement("p");
-    note.className = "practice-experiment-note";
-    note.textContent = "Applying this makes this cell and downstream route steps stale. It will not run automatically.";
-    details.append(change, note);
-    if (!state.experimentApplied) {
-      const actions = document.createElement("div");
-      actions.className = "practice-actions";
-      const apply = document.createElement("button");
-      apply.type = "button";
-      apply.className = "practice-button";
-      apply.textContent = "Apply experiment";
-      apply.addEventListener("click", () => applyPracticeExperiment(cell, experiment));
-      actions.append(apply);
-      details.append(actions);
-    } else if (!state.experimentEvidenceReady) {
-      const evidenceTaskId = experiment.evidenceTaskId || experiment.targetTaskId || task.id;
-      const evidenceTask = routeTasks.find(item => item.id === evidenceTaskId);
-      const prompt = document.createElement("p");
-      prompt.className = "practice-prompt";
-      prompt.textContent = `Experiment applied. Rerun ${evidenceTask?.title || "the evidence step"} before comparing what changed.`;
-      details.append(prompt);
-    } else if (state.reflection) {
-      const complete = document.createElement("p");
-      complete.className = "practice-feedback";
-      complete.dataset.tone = "neutral";
-      complete.textContent = "Experiment comparison recorded. Use the changed output to explain what moved, what stayed similar, and what the evidence does not establish.";
-      details.append(complete);
-    } else {
-      details.append(renderPracticeExperimentComparison(state));
-      const prompt = document.createElement("p");
-      prompt.className = "practice-prompt";
-      prompt.textContent = "What changed in the evidence after this one-variable edit?";
-      const actions = document.createElement("div");
-      actions.className = "practice-actions";
-      const complete = document.createElement("button");
-      complete.type = "button";
-      complete.className = "practice-button";
-      complete.textContent = "Mark comparison complete";
-      complete.addEventListener("click", () => {
-        state.reflection = true;
-        renderNotebookView();
-        renderPracticeModeControls();
-      });
-      actions.append(complete);
-      details.append(prompt, actions);
-    }
-    section.append(details);
-    return section;
-  }
+  function renderPracticeExperiment(cell) { return null; }
 
-  function renderPracticeResult(cell) {
-    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return [];
-    return [renderPracticePredictionFeedback(cell), renderPracticeDecision(cell)].filter(Boolean);
-  }
+  function renderPracticeResult(cell) { return []; }
 
   function renderCleanWorkflowReferenceCard() {
     if (playgroundMode === "practice" || !routeTasks.length) return null;
@@ -5025,28 +5084,7 @@ plot_df.head(12)`,{
     panel.querySelector("input,button")?.focus();
   }
 
-  function ensurePracticeCanRun(cell) {
-    if (playgroundMode !== "practice" || !cell.taskId) return true;
-    const pending = pendingPracticeDecisionBefore(cell.taskId);
-    if (pending) {
-      showToast(`Choose an interpretation for “${pending.title}” before continuing.`);
-      focusPracticePrompt(pending.id, "decision");
-      return false;
-    }
-    const pendingExercise = pendingPracticeExerciseBefore(cell.taskId);
-    if (pendingExercise) {
-      showToast(`Complete the coding task in “${pendingExercise.title}” before continuing.`);
-      focusPracticePrompt(pendingExercise.id, "exercise");
-      return false;
-    }
-    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
-    if (practice && practiceStateFor(task.id).prediction === null) {
-      showToast("Commit a prediction first. “Not sure yet” is okay.");
-      focusPracticePrompt(task.id, "before-run");
-      return false;
-    }
-    return true;
-  }
+  function ensurePracticeCanRun(cell) { return true; }
 
   function summaryMetricLabel(summary, includeDirection = true) {
     const target = summary.task === "regression" && summary.target ? ` (${summary.target})` : "";
@@ -5099,6 +5137,39 @@ plot_df.head(12)`,{
     gap.dataset.teachingRole = "train-validation-gap";
     gap.textContent = cvGapText(summary);
     section.append(stability, gap);
+    const referenceKey=config.task==='classification' ? 'reference_macro_f1' : 'reference_rmse';
+    const referenceIndex=cell.output.table.columns.indexOf(referenceKey);
+    if (referenceIndex>=0) {
+      const values=cell.output.table.rows.map(row=>Number(row[referenceIndex])).filter(Number.isFinite);
+      const mean=values.reduce((sum,value)=>sum+value,0)/values.length;
+      const comparison=document.createElement('p'); comparison.className='teaching-interpretation';
+      comparison.textContent=`Reference predictor on the same folds: ${formatTeachingNumber(mean)} ${summaryMetricLabel(summary)}. Initial model: ${formatTeachingNumber(summary.validationMean)}. Difference (initial − reference): ${formatTeachingNumber(summary.validationMean-mean)}; ${summary.metric.direction==='lower' ? 'lower' : 'higher'} is better. This descriptive difference is not a significance test.`;
+      section.append(comparison);
+    }
+    return section;
+  }
+
+  function renderReferenceTeaching(cell) {
+    const task = routeTaskForCell(cell), config = selectedConfig();
+    if (!task || task.id !== "reference" || !cell.output?.table) return null;
+    const table = cell.output.table;
+    const valueIndex = table.columns.indexOf("value");
+    const labelIndex = table.columns.indexOf("index");
+    if (valueIndex < 0 || labelIndex < 0) return null;
+    const values = table.rows
+      .map(row => ({label:String(row[labelIndex]), value:normalizeTeachingNumber(row[valueIndex])}))
+      .filter(row => row.value !== null);
+    if (!values.length) return null;
+    const section = document.createElement("section");
+    section.className = "teaching-result reference-comparison";
+    section.dataset.teachingResult = "reference-comparison";
+    const heading = document.createElement("h4");
+    heading.textContent = "What the reference comparison says";
+    section.append(heading);
+    const copy = document.createElement("p");
+    const direction = config.task === "classification" ? "Higher is better." : "Lower is better.";
+    copy.textContent = `${values.map(row => `${row.label}: ${formatTeachingNumber(row.value)}`).join(" · ")} ${direction} Both values use the same training folds.`;
+    section.append(copy);
     return section;
   }
 
@@ -5126,7 +5197,9 @@ plot_df.head(12)`,{
     ["Evidence", summaryMetricLabel(summary)].forEach(label => { const cell = document.createElement("th"); cell.textContent = label; headRow.append(cell); });
     head.append(headRow);
     const body = document.createElement("tbody");
-    [["Mean CV", formatTeachingNumber(comparison.meanCV)], ["CV range", `${formatTeachingNumber(comparison.cvMin)}–${formatTeachingNumber(comparison.cvMax)}`], ["Final test", formatTeachingNumber(comparison.finalTest)]].forEach(([label, value]) => {
+    const tuningOutput = cells.find(candidate => candidate.taskId === "tune")?.output;
+    const selectedScore = tuningOutput?.stdout?.match(/Search CV [^:]+:\s*([-+\d.eE]+)/)?.[1];
+    [["Initial-model mean CV", formatTeachingNumber(comparison.meanCV)], ["Initial-model fold range", `${formatTeachingNumber(comparison.cvMin)}–${formatTeachingNumber(comparison.cvMax)}`], ["Selected configuration search CV (selection-influenced)", selectedScore || "No search; initial settings retained"], ["Selected-model final test", formatTeachingNumber(comparison.finalTest)]].forEach(([label, value]) => {
       const row = document.createElement("tr");
       const labelCell = document.createElement("th"); labelCell.scope = "row"; labelCell.textContent = label;
       const valueCell = document.createElement("td"); valueCell.textContent = value;
@@ -5136,7 +5209,7 @@ plot_df.head(12)`,{
     const interpretation = document.createElement("p");
     interpretation.className = "teaching-interpretation";
     interpretation.dataset.teachingRole = "final-interpretation";
-    interpretation.textContent = comparison.interpretation;
+    interpretation.textContent = "The initial-model fold range is descriptive, not a confidence interval for the selected model. Search CV is influenced by selecting the best candidate. " + comparison.interpretation;
     const independence = document.createElement("p");
     independence.className = "teaching-independence";
     independence.textContent = "The final test used data that was not used for fitting, tuning, or model selection.";
@@ -5175,6 +5248,7 @@ plot_df.head(12)`,{
 
   function renderTeachingResult(cell) {
     if (cell.stage === "baseline") return renderCVSummaryTeaching(cell);
+    if (cell.stage === "reference") return renderReferenceTeaching(cell);
     if (cell.stage === "final") return renderFinalComparisonTeaching(cell);
     return null;
   }
@@ -5191,105 +5265,9 @@ plot_df.head(12)`,{
     return block;
   }
 
-  function renderPracticeExercise(cell) {
-    if (playgroundMode !== "practice" || !cell.exercise) return null;
-    const task = routeTaskForCell(cell), exercise = cell.exercise, state = practiceStateFor(task?.id);
-    if (!task || !state) return null;
-    const section = document.createElement("section");
-    section.className = "practice-panel practice-exercise-panel";
-    section.id = `practice-exercise-${cell.id}`;
-    section.dataset.practiceRole = "exercise";
-    section.dataset.practiceTask = task.id;
-    section.dataset.practiceExerciseId = exercise.id;
-    section.setAttribute("aria-label", `Practice coding task for ${task.title}`);
-    section.append(practicePanelHeading("PRACTICE CODE TASK"));
-    const kind = document.createElement("p"); kind.className = "practice-exercise-kind";
-    kind.textContent = exercise.type === "complete_line" ? "Complete one important line" : "Complete the missing analytical code";
-    const goal = document.createElement("p"); goal.className = "practice-prompt"; goal.textContent = exercise.goal;
-    const expected = document.createElement("p"); expected.className = "practice-experiment-note"; expected.textContent = `Expected evidence: ${exercise.expectedOutput}`;
-    section.append(kind, goal, expected);
-    const actions = document.createElement("div"); actions.className = "practice-actions";
-    if (!state.exerciseHintRevealed) {
-      const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint";
-      hint.addEventListener("click", () => { state.exerciseHintRevealed = true; renderNotebookView(); });
-      actions.append(hint);
-    }
-    if (!state.exerciseReferenceRevealed) {
-      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution";
-      reveal.id = `${section.id}-toggle`;
-      reveal.setAttribute("aria-expanded", "false");
-      reveal.setAttribute("aria-controls", section.id);
-      reveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.exerciseReferenceRevealed = true; renderNotebookView(focusTarget); renderPracticeModeControls(); });
-      actions.append(reveal);
-    }
-    section.append(actions);
-    if (state.exerciseHintRevealed) {
-      const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = exercise.hint; section.append(hint);
-    }
-    if (state.exerciseReferenceRevealed) {
-      const reference = practiceReferenceBlock("Reference solution", exercise.solution);
-      reference.id = `${section.id}-reference`;
-      section.append(reference);
-    }
-    if (cell.output) {
-      const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.practiceRole = "exercise-status"; status.setAttribute("aria-live", "polite");
-      const validation = cell.output.validation;
-      if (cell.output.status !== "ok") {
-        status.dataset.tone = "error"; status.textContent = "Repair the Python error, then run this task again.";
-      } else if (validation?.ok) {
-        status.dataset.tone = "success"; status.textContent = `Semantic check passed: ${validation.message}`;
-      } else {
-        status.dataset.tone = "error"; status.textContent = `The cell ran, but the coding task is not complete yet. ${validation?.message || "Use the hint or reference solution, then rerun."}`;
-      }
-      section.append(status);
-    }
-    return section;
-  }
+  function renderPracticeExercise(cell) { return null; }
 
-  function renderIndependentCheckpointCell(cell) {
-    if (playgroundMode !== "practice" || !cell.checkpoint) return null;
-    const metadata = cell.checkpointMeta, state = independentCheckpointStateFor();
-    const hasDistinctCleanReference = Boolean(cell.cleanReferenceCode && cell.cleanReferenceCode !== cell.referenceCode);
-    const section = document.createElement("section");
-    section.className = "practice-panel independent-checkpoint";
-    section.id = `independent-checkpoint-${cell.id}`;
-    section.dataset.practiceRole = "independent-checkpoint";
-    section.dataset.checkpointId = cell.id;
-    section.setAttribute("aria-label", "Independent practice checkpoint");
-    section.append(practicePanelHeading("INDEPENDENT CHECKPOINT"));
-    const goal = document.createElement("p"); goal.className = "practice-prompt"; goal.textContent = metadata.goal; section.append(goal);
-    const list = document.createElement("ul"); list.className = "checkpoint-checklist";
-    metadata.checklist.forEach(item => { const li = document.createElement("li"); li.textContent = item; list.append(li); });
-    section.append(list);
-    const variables = document.createElement("p"); variables.className = "checkpoint-variables";
-    variables.append(document.createTextNode("Available route variables: "));
-    metadata.availableVariables.forEach((name, index) => { if (index) variables.append(document.createTextNode(", ")); const code = document.createElement("code"); code.textContent = name; variables.append(code); });
-    section.append(variables);
-    const note = document.createElement("p"); note.className = "practice-experiment-note"; note.textContent = "This is a fresh practice task. Supervised work uses training rows only; clustering and PCA stay target-free."; section.append(note);
-    const actions = document.createElement("div"); actions.className = "practice-actions";
-    if (!state.hintRevealed) {
-      const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint"; hint.addEventListener("click", () => { state.hintRevealed = true; renderNotebookView(); }); actions.append(hint);
-    }
-    if (!state.referenceRevealed) {
-      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution"; reveal.id = `${section.id}-toggle`; reveal.setAttribute("aria-expanded", "false"); reveal.setAttribute("aria-controls", section.id); reveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.referenceRevealed = true; renderNotebookView(focusTarget); }); actions.append(reveal);
-    }
-    if (hasDistinctCleanReference && !state.cleanReferenceRevealed) {
-      const cleanReveal = document.createElement("button"); cleanReveal.type = "button"; cleanReveal.className = "practice-button secondary"; cleanReveal.textContent = "Reveal clean-workflow reference"; cleanReveal.id = `${section.id}-clean-toggle`; cleanReveal.setAttribute("aria-expanded", "false"); cleanReveal.setAttribute("aria-controls", section.id); cleanReveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.cleanReferenceRevealed = true; renderNotebookView(focusTarget); }); actions.append(cleanReveal);
-    }
-    section.append(actions);
-    if (state.hintRevealed) { const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = metadata.hint; section.append(hint); }
-    if (state.referenceRevealed) section.append(practiceReferenceBlock("Reference solution", cell.referenceCode));
-    if (hasDistinctCleanReference && state.cleanReferenceRevealed) section.append(practiceReferenceBlock("Clean-workflow reference", cell.cleanReferenceCode, "practice-reference checkpoint-reference"));
-    if (cell.output) {
-      const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.checkpointStatus = cell.id; status.setAttribute("aria-live", "polite");
-      const validation = cell.output.validation;
-      if (cell.output.status !== "ok") { status.dataset.tone = "error"; status.textContent = "Repair the Python error, then run the checkpoint again."; }
-      else if (validation?.ok) { status.dataset.tone = "success"; status.textContent = `Checkpoint complete: ${validation.message}`; }
-      else { status.dataset.tone = "error"; status.textContent = `The checkpoint ran, but its semantic checklist is incomplete. ${validation?.message || "Use the hint or reference solution, then rerun."}`; }
-      section.append(status);
-    }
-    return section;
-  }
+  function renderIndependentCheckpointCell(cell) { return null; }
 
   function renderEditableCodeEditor(cell) {
     const editor = document.createElement("div"); editor.className = "code-editor";
@@ -5331,7 +5309,12 @@ plot_df.head(12)`,{
           clearTimeout(cell.practiceRefreshTimer);
           cell.practiceRefreshTimer = setTimeout(() => renderNotebookView(), 0);
         }
+      } else if (changedAfterRun && cell.optionalEvidence && routeTasks.length) {
+        // Edited optional evidence can mutate shared Python names just like a
+        // custom cell, so invalidate the suggested route before it is run.
+        invalidateRouteFrom(routeTasks[0].id, {message:"Optional evidence changed — rerun the suggested route before relying on its results."});
       }
+      if (changedAfterRun && !cell.taskId && cell.output) { cell.status = "stale"; renderOutputs(); syncNotebookStatusLabels(); }
       updateLines();
     });
     input.addEventListener("scroll", syncHighlight);
@@ -5351,7 +5334,7 @@ plot_df.head(12)`,{
     const panel = $("#notebookPanel"); panel.replaceChildren();
     if (!cells.length) {
       const empty = document.createElement("div"); empty.className = "empty-notebook";
-      empty.innerHTML = "<div><strong>CLICK STEP 01 TO BEGIN</strong><p>Each route block inserts an editable Python cell and immediately runs it. Follow the single route left to right, then delete cells and take over.</p></div>";
+      empty.innerHTML = "<div><strong>CLICK STEP 01 TO BEGIN</strong><p>Each route block inserts an editable Python cell and immediately runs it. Follow the single route in step order, then delete cells and take over.</p></div>";
       panel.append(empty); return;
     }
     cells.forEach(cell => {
@@ -5359,13 +5342,14 @@ plot_df.head(12)`,{
       const stack = document.createElement("div");
       stack.className = "cell-stack";
       stack.dataset.cellId = cell.id;
+        stack.cellModel = cell;
       const article = document.createElement("article"); article.className = "cell"; article.dataset.status = cell.status;
       article.dataset.cellId = cell.id;
       const head = document.createElement("div"); head.className = "cell-head";
       head.innerHTML = `<span class="cell-number">In [${cell.number}]</span><span class="cell-label"></span><span class="cell-stage"></span><span class="cell-spacer"></span>`;
       $(".cell-label", head).textContent = cell.label; $(".cell-stage", head).textContent = cell.stage;
       const finalLocked = cell.stage === "final" && testSetOpened;
-      const run = document.createElement("button"); run.type = "button"; run.className = "cell-action run"; run.textContent = cell.status === "running" ? "running…" : finalLocked ? "used once" : "▶ run"; run.disabled = cell.status === "running" || finalLocked; run.addEventListener("click", () => runCell(cell));
+      const run = document.createElement("button"); run.type = "button"; run.className = "cell-action run"; run.textContent = cell.status === "running" ? "running…" : finalLocked ? "used once" : "▶ run"; run.disabled = cell.status === "running" || finalLocked || (routeTasks.some(task=>task.id===cell.taskId) && routeButtonState(routeTasks,cells,routeTasks.findIndex(task=>task.id===cell.taskId),{runtimeReady,testSetOpened}).blocked); run.addEventListener("click", () => runCell(cell));
       if (!cell.checkpoint) { const remove = document.createElement("button"); remove.type = "button"; remove.className = "cell-action delete"; remove.textContent = "delete"; remove.addEventListener("click", () => removeCell(cell)); head.append(run, remove); }
       else head.append(run);
       const editor = renderEditableCodeEditor(cell);
@@ -5375,6 +5359,7 @@ plot_df.head(12)`,{
       inlineOutput.dataset.outputFor = cell.id;
       const teaching = cell.checkpoint ? renderIndependentCheckpointCell(cell) : renderTeachingBlock(cell);
       const advanced = cell.checkpoint ? null : renderAdvancedDiagnosticCode(cell);
+      const optional = cell.checkpoint ? null : renderOptionalCode(cell);
       const practicePanels = cell.checkpoint
         ? []
         : [renderPracticeBeforeRun(cell), renderPracticeExercise(cell), renderPracticeExperiment(cell)].filter(Boolean);
@@ -5382,7 +5367,12 @@ plot_df.head(12)`,{
       if (teaching) article.append(teaching);
       if (practicePanels.length) article.append(...practicePanels);
       article.append(editor, foot);
+      if (cell.taskId==='tune' && cell.code.includes('chosen_pipeline = search.best_estimator_')) {
+        const retain=document.createElement('button');retain.type='button';retain.className='toolbar-button';retain.textContent='Retain initial settings instead';
+        retain.addEventListener('click',()=> {cell.code=cell.code.replace('chosen_pipeline = search.best_estimator_','chosen_pipeline = pipeline').replace('Search CV ', 'Search candidate CV ');invalidateRouteFrom(cell.taskId,{renderNotebook:true,message:'Initial settings selected; rerun tuning and later steps. Search evidence still describes the search candidate.'});});article.append(retain);
+      }
       if (advanced) article.append(advanced);
+      if (optional) article.append(optional);
       stack.append(article, inlineOutput);
       panel.append(stack);
     });
@@ -5390,11 +5380,23 @@ plot_df.head(12)`,{
 
   async function runCell(cell, {preserveFocus = true} = {}) {
     if (!runtimeReady) { showToast("The Python workspace is still loading.", true); return; }
+    const routeIndex = routeTasks.findIndex(item => item.id === cell.taskId);
+    if (routeIndex >= 0) {
+      const policy = routeButtonState(routeTasks, cells, routeIndex, {runtimeReady, testSetOpened});
+      if (policy.blocked) { showToast(policy.message, true); return; }
+    }
+    if (bridge.busy) { showToast("Wait for the current cell or select Stop / restart Python."); return; }
+    if (!cell.taskId && !cell.checkpoint && !isTrustedOptionalCell(cell) && routeTasks.length) invalidateRouteFrom(routeTasks[0].id, {message:"Exploratory Python can change shared state. Rerun the route to obtain current evidence."});
     if (cell.stage === "final" && testSetOpened) { showToast("The final test has already been used in this walkthrough. Select Reset to start again.", true); return; }
     if (!ensurePracticeCanRun(cell)) return;
     if (!cell.code.trim() || cell.status === "running") return;
     const focusTarget = preserveFocus ? captureFocusTarget() : null;
+    if (routeIndex >= 0 && routeIndex + 1 < routeTasks.length && cells.some(other => routeTasks.findIndex(item => item.id === other.taskId) > routeIndex && other.output)) invalidateCellsFrom(routeTasks, cells, routeTasks[routeIndex + 1].id);
     const token = workspaceToken;
+    const executedCode = cell.code;
+    const executedAt = new Date().toISOString();
+    cell.startedAt=Date.now();
+    if (cell.stage === "final") testSetOpened = true;
     cell.status = "running"; renderNotebookView(focusTarget); renderRoute(); restoreFocusTarget(focusTarget);
     $("#outputStatus").textContent = `${cell.label} · running`;
     try {
@@ -5403,13 +5405,11 @@ plot_df.head(12)`,{
         ? {...rawValidation, target:selectedConfig().target}
         : rawValidation;
       const response = await sendWorker("run", {
-        code:cell.code,
-        setup:cell.setupCode || "",
-        evidence:cell.evidenceCode || "",
+        code:executedCode,
         validation
       });
       if (token !== workspaceToken) return;
-      cell.output = response.output; cell.status = response.output.status === "ok" ? "done" : "error"; cell.lastRunCode = cell.code;
+      cell.output = {...response.output, executedCode, executedAt, workspaceRevision: token, executionId: messageId}; cell.status = cell.code !== executedCode ? "stale" : response.output.status === "ok" ? "done" : "error"; cell.lastRunCode = executedCode;
       if (cell.exercise) {
         const state = practiceStateFor(cell.taskId);
         state.exerciseAttempts += 1;
@@ -5423,12 +5423,12 @@ plot_df.head(12)`,{
         state.feedback = cell.output.validation?.message || (cell.output.status === "ok" ? "The semantic checklist did not pass yet." : "Python error.");
       }
       if (cell.status === "done") markPracticeExperimentEvidenceReady(cell);
-      if (cell.stage === "final" && cell.status === "done") testSetOpened = true;
+      if (cell.stage === "final" && response.output.status === "ok") testSetOpened = true;
       if (response.output.charts?.length) latestChart = response.output.charts.at(-1);
       $("#outputStatus").textContent = `${cell.label} · ${cell.status === "done" ? "ready" : "Python error"}`;
     } catch (error) {
       if (token !== workspaceToken) return;
-      cell.status = "error"; cell.output = {status:"error", error:error.message, charts:[]}; cell.lastRunCode = cell.code;
+      cell.status = "error"; cell.output = {status:"error", error:error.message, charts:[], executedCode, executedAt, workspaceRevision:token, executionId:messageId}; cell.lastRunCode = executedCode;
       $("#outputStatus").textContent = `${cell.label} · Python error`;
       showToast(error.message, true);
     }
@@ -5525,9 +5525,12 @@ plot_df.head(12)`,{
 
   function renderOutputItem(cell) {
     const result = cell.output, warnings = Array.isArray(result.warnings) ? result.warnings : [], item = document.createElement("article"); item.className = "output-item"; item.dataset.status = result.status; item.dataset.warnings = warnings.length ? "true" : "false";
-    const statusLabel = result.status === "ok" ? warnings.length ? "WARNING" : "OK" : "ERROR";
+    const statusLabel = cell.status === "stale" ? "PREVIOUS RESULT" : result.status === "ok" ? warnings.length ? "WARNING" : "OK" : "ERROR";
     item.innerHTML = `<span class="output-number">${String(cell.number).padStart(2,"0")}</span><div class="output-item-head"><strong></strong><span>${statusLabel}</span></div>`;
     $("strong", item).textContent = cell.label;
+
+    if (cell.status === "stale") { const note = document.createElement("p"); note.className = "result-note"; note.textContent = "Previous result — code or workspace changed; rerun to update."; item.append(note); }
+    if (["diagnose", "interpret"].includes(cell.taskId) || cell.stage === "diagnostics") { const note = document.createElement("p"); note.className = "result-note"; note.textContent = "Exploratory training diagnostics after tuning. Model selection has already used these folds; this is not independent performance evidence."; item.append(note); }
     if (result.status !== "ok") {
       const details = pythonErrorDetails(result.error || result.stderr);
       item.dataset.errorCategory = details.category;
@@ -5548,15 +5551,19 @@ plot_df.head(12)`,{
       item.append(outputTitle(`Chart ${index + 1}`, "PNG preview"));
       const description = chartDescriptionFor(cell, index);
       const wrap = document.createElement("figure"); wrap.className = "chart-wrap"; wrap.tabIndex = 0; wrap.setAttribute("aria-label", description);
-      const image = document.createElement("img"); image.src = chart; image.alt = description; wrap.append(image);
+      const image = document.createElement("img"); image.src = chart; window.sizeChartImage?.(image,chart); image.alt = description; image.loading='lazy'; wrap.append(image);
+      const larger=document.createElement('a'); larger.href=chart; larger.target='_blank'; larger.textContent='Open larger';
+      const download=document.createElement('a'); download.href=chart; download.download=`figure-${cell.number}-${index+1}.png`; download.textContent='Download this figure (last executed code)'; wrap.append(larger,download);
       const caption = document.createElement("figcaption"); caption.className = "chart-description"; caption.textContent = description; wrap.append(caption); item.append(wrap);
     });
+    const routeTask = routeTaskForCell(cell);
+    if (routeTask?.readingCue) item.append(teachingLine("READ", routeTask.readingCue, "teaching-line teaching-cue", "reading-cue"));
     const teachingResult = renderTeachingResult(cell);
     if (teachingResult) item.append(teachingResult);
     const timeSeriesTeaching = renderTimeSeriesTeaching(cell);
     if (timeSeriesTeaching) item.append(timeSeriesTeaching);
     const practiceResults = renderPracticeResult(cell);
-    if (practiceResults.length) item.append(...practiceResults);
+    if (practiceResults?.length) item.append(...practiceResults);
     if (warnings.length) {
       const grouped = warningDetails(warnings);
       item.append(outputTitle("PYTHON WARNING · CELL SUCCEEDED", `${warnings.length} captured · ${grouped.length} unique`));
@@ -5574,6 +5581,11 @@ plot_df.head(12)`,{
     if (result.value) { item.append(outputTitle("Value", "Python expression")); const pre = document.createElement("pre"); pre.className = "console-output"; pre.textContent = result.value; item.append(pre); }
     if (result.stdout || result.stderr) { item.append(outputTitle("Console", result.stdout && result.stderr ? "stdout + stderr" : result.stderr ? "stderr" : "stdout")); const pre = document.createElement("pre"); pre.className = "console-output"; pre.textContent = [result.stdout, result.stderr].filter(Boolean).join("\n"); item.append(pre); }
     if (!result.table && !result.charts?.length && !result.value && !warnings.length && !result.stdout && !result.stderr) { const note = document.createElement("p"); note.className = "result-note"; note.textContent = "Cell ran successfully and updated the shared Python workspace."; item.append(note); }
+    const next=routeTasks[routeTasks.findIndex(task=>task.id===cell.taskId)+1];
+    if (cell.status==='done' && cell.taskId && next) {
+      const button=document.createElement('button');button.className='toolbar-button';button.type='button';button.textContent=`Next step: ${next.title}`;
+      button.addEventListener('click',()=> {const candidate=cells.find(candidate=>candidate.taskId===next.id) || addRouteCell(next,false);runCell(candidate);});item.append(button);
+    }
     return item;
   }
 
@@ -5608,7 +5620,19 @@ plot_df.head(12)`,{
   }
 
   function renderNotebookView(focusTarget = null) {
+    const retained = new Map($$(".cell-stack", $("#notebookPanel")).map(stack => [stack.dataset.cellId, stack]));
     renderNotebook();
+    $$(".cell-stack", $("#notebookPanel")).forEach(stack => {
+        const old = retained.get(stack.dataset.cellId);
+        const cell = cells.find(cell => cell.id === stack.dataset.cellId);
+        if (!old || old.cellModel !== cell || old.querySelector('textarea')?.value !== cell?.code) return;
+        const freshArticle=stack.querySelector('article.cell'), oldArticle=old.querySelector('article.cell');
+        oldArticle.dataset.status=freshArticle.dataset.status;
+        oldArticle.querySelector('.cell-footer')?.replaceWith(freshArticle.querySelector('.cell-footer'));
+        const oldRun=oldArticle.querySelector('.cell-action.run'), newRun=freshArticle.querySelector('.cell-action.run');
+        if (oldRun && newRun) {oldRun.disabled=newRun.disabled; oldRun.textContent=newRun.textContent;}
+        stack.replaceWith(old);
+      });
     renderOutputs();
     restoreFocusTarget(focusTarget);
   }
@@ -5619,16 +5643,15 @@ plot_df.head(12)`,{
     badge.textContent = unsupervised ? "TARGET NOT USED" : used ? "TEST SET USED ONCE" : "TEST SET SEALED";
     badge.classList.toggle("used", used);
     $("#holdoutState").textContent = unsupervised ? "not applicable" : used ? "opened once" : "sealed";
-    $(".privacy-note").textContent = unsupervised
-      ? "Unsupervised models discover structure without fitting to the reference target."
-      : "The saved 20% test set stays untouched until the final step of this walkthrough. Changing the model or using editable cells can reuse the deterministic holdout; the one-use rule protects one setup from repeated checking.";
+
   }
 
   function clearNotebook(message = "Notebook cleared; the test set is sealed again.") {
+    window.NotebookSession?.beginTransition();
     cells = []; cellSequence = 0; latestChart = null; testSetOpened = false;
     clearPracticeSession();
     $("#outputStatus").textContent = "No cell run yet";
-    renderNotebookView(); renderRoute(); renderPracticeModeControls(); updateSeal();
+    renderNotebookView(); renderRoute(); renderBatchControls(); updateSeal();
     if (message) showToast(message);
   }
 
@@ -5636,9 +5659,27 @@ plot_df.head(12)`,{
     await sendWorker("reset", {keepData});
   }
 
+  async function restartPython() {
+    const token=++workspaceToken;
+    const config=selectedConfig();
+    bridge.restart();
+    cells.forEach(cell => {cell.output = null; cell.status = "ready"; cell.lastRunCode = null;});
+    testSetOpened = false; latestChart = null;
+    setRuntimeReady(false, "Restarting Python — code retained…"); renderNotebookView(); renderRoute();
+    try {
+      const csv = await getDatasetText(config);
+      if (token!==workspaceToken) return;
+      await sendWorker("init", {csv, sep:config.sep, prepare:config.prepare});
+      if (token!==workspaceToken) return;
+      setRuntimeReady(true, "Python ready — variables reset; code retained");
+      renderRoute(); updateSeal();
+    } catch (error) { showToast(error.message, true); }
+  }
+
   async function resetNotebook() {
     const token = ++workspaceToken;
-    clearNotebook("Resetting the modelling workspace; the loaded raw data will stay available.");
+    cells.forEach(cell => {cell.output = null; cell.status = "ready"; cell.lastRunCode = null;});
+    latestChart = null; testSetOpened = false; renderNotebookView(); renderRoute(); updateSeal();
     setRuntimeReady(false, "Resetting the modelling workspace…");
     $("#runtimeDot").className = "runtime-dot";
     try {
@@ -5667,6 +5708,7 @@ plot_df.head(12)`,{
       if (token !== workspaceToken) return;
       $("#runtimeDot").className = "runtime-dot ready";
       setRuntimeReady(true, "Pyodide 0.26.4 ready · modelling workspace reset");
+      window.NotebookSession?.restore();
     } catch (error) {
       if (token !== workspaceToken) return;
       $("#runtimeDot").className = "runtime-dot error";
@@ -5675,17 +5717,22 @@ plot_df.head(12)`,{
     }
   }
 
-  async function loadDataset(id) {
+  async function loadDataset(id, restoredSetup = null) {
     const token = ++workspaceToken;
     currentDatasetId = id;
     cachedPreviewPayload = null;
-    populateScenarios(); populateModels(); staticSetup(); buildRoute(); clearNotebook("");
+    populateScenarios();
+    if (restoredSetup) $('#scenarioSelect').value=restoredSetup[1];
+    populateModels(restoredSetup?.[2]);
+    if (restoredSetup && ['5','10'].includes(restoredSetup[3])) $('#foldSelect').value=restoredSetup[3];
+    staticSetup(); buildRoute(); clearNotebook("");
     setRuntimeReady(false, `Reading ${selectedConfig().name}…`);
     $("#preview").innerHTML = "<div style='padding:9px;color:#697084;font-size:.6rem'>Loading clean preview…</div>";
     $("#runtimeDot").className = "runtime-dot";
     let csv;
     try {
       csv = await getDatasetText(selectedConfig());
+      notebookCsv = csv;
       if (token !== workspaceToken) return;
       cachedPreviewPayload = parsePreview(csv, selectedConfig().sep);
       renderDatasetPreview();
@@ -5708,6 +5755,7 @@ plot_df.head(12)`,{
       $("#runtimeDot").className = "runtime-dot ready";
       $("#outputStatus").textContent = "No cell run yet";
       setRuntimeReady(true);
+      window.NotebookSession?.restore();
     } catch (error) {
       if (token !== workspaceToken) return;
       $("#runtimeStatus").textContent = "Python runtime unavailable · reload to retry";
@@ -5725,6 +5773,7 @@ plot_df.head(12)`,{
   function toggleTheme() {
     const light = document.body.dataset.theme === "light";
     document.body.dataset.theme = light ? "dark" : "light";
+    window.AppAppearance?.apply(document.body.dataset.theme);
     $("#themeButton").setAttribute("aria-label", `Switch to ${light ? "light" : "dark"} theme`);
     $("#themeButton").setAttribute("aria-pressed", String(!light));
     $("#themeButton").title = `Switch to ${light ? "light" : "dark"} theme`;
@@ -5749,7 +5798,7 @@ plot_df.head(12)`,{
     const state = practiceStateFor(taskId);
     state.referenceRevealed = !state.referenceRevealed;
     renderWorkflow();
-    renderPracticeModeControls();
+    renderBatchControls();
     restoreFocusTarget(focusTarget);
   }
 
@@ -6035,7 +6084,7 @@ plot_df.head(12)`,{
   }
 
   if (TEST_MODE) {
-    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, PRACTICE_VALIDATOR_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber, practiceForTask, practiceRouteIdentity, practiceStateKey, normalizePracticeAnswer, safeExperimentForTask, applyPracticeMutation, practicePrediction, practiceDecision, practiceExerciseForTask, applyPracticeScaffold, cleanWorkflowReference, independentCheckpointForRoute, codeSurfaceMetrics, routeComplexityReport, pythonErrorDetails, warningDetails, warningExplanation, chartDescriptionFor});
+    window.__ML_ROUTE_TEST_API__ = Object.freeze({DATASETS, MODELS, compatible, routeForSelection, modelSpec, preprocessingPlan, preprocessingConcepts, modelSpecificTeaching, filterPreviewPayload, ONE_R_HELPER_SOURCE, DATAFRAME_SERIALIZER_SOURCE, PRACTICE_VALIDATOR_SOURCE, RESET_WORKSPACE_SOURCE, WORKER_SOURCE, invalidateCellsFrom, isTrustedOptionalCell, firstIncompleteRouteIndex, routeButtonState, primaryMetricMetadata, metricHelpFor, cvSummaryFromTable, cvStabilityText, cvGapText, finalComparisonFromTable, formatTeachingNumber, practiceForTask, practiceRouteIdentity, practiceStateKey, normalizePracticeAnswer, safeExperimentForTask, applyPracticeMutation, practicePrediction, practiceDecision, practiceExerciseForTask, applyPracticeScaffold, cleanWorkflowReference, independentCheckpointForRoute, codeSurfaceMetrics, routeComplexityReport, pythonErrorDetails, warningDetails, warningExplanation, chartDescriptionFor});
   } else {
   $("#datasetSelect").addEventListener("change", event => loadDataset(event.target.value));
   $("#scenarioSelect").addEventListener("change", () => { void rebuildSetup({scenarioChanged:true}); });
@@ -6045,9 +6094,8 @@ plot_df.head(12)`,{
   $("#runAllButton").addEventListener("click", runAll);
   $("#resetButton").addEventListener("click", () => { void resetNotebook(); });
   $("#downloadChartButton").addEventListener("click", downloadChart);
+  $("#restartPythonButton").addEventListener("click", restartPython);
   $("#themeButton").addEventListener("click", toggleTheme);
-  $("#guidedModeButton")?.addEventListener("click", () => setPlaygroundMode("guided"));
-  $("#practiceModeButton")?.addEventListener("click", () => setPlaygroundMode("practice"));
   $("#guideButton").addEventListener("click", openWorkflow);
   $("#guideClose").addEventListener("click", closeWorkflow);
   $("#guideMinimize").addEventListener("click", () => setGuideMinimized(!guideMinimized));
@@ -6062,7 +6110,17 @@ plot_df.head(12)`,{
   });
 
   prepareGuideInteractions();
-  populateDatasets(); populateScenarios(); populateModels(); staticSetup(); buildRoute(); renderNotebookView(); updateSeal(); loadDataset("breast");
+  window.NotebookSession?.install({
+    key:() => ['ml',currentDatasetId,$('#scenarioSelect').value,selectedModelId(), $('#foldSelect').value].join(':'),
+    get:() => ({cells, csv: notebookCsv, sep:selectedConfig().sep, pythonHelpers:selectedModelId()==="one_r" ? ONE_R_HELPER_SOURCE : "", dictionary:window.DatasetDictionary?.[selectedConfig().file]}),
+    set:draft => {cells=draft.cells; cellSequence=Math.max(0,...cells.map(cell => cell.number)); renderNotebookView(); renderRoute();},
+    insert:(cell,index) => {cell.output=null; cell.status='ready'; cells.splice(index,0,cell); renderNotebookView(); renderRoute();}
+  });
+  populateDatasets(); populateScenarios(); populateModels(); staticSetup(); buildRoute(); renderNotebookView(); updateSeal();
+  const restoredSetup=window.NotebookSession?.last('ml');
+  const initialDataset=DATASETS[restoredSetup?.[0]] ? restoredSetup[0] : 'breast';
+  $('#datasetSelect').value=initialDataset;
+  loadDataset(initialDataset,initialDataset===restoredSetup?.[0] ? restoredSetup : null);
 
   }
 })();

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="appearance.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="A browser-only machine-learning playground with a saved final test, cross-validation, preprocessing, tuning, and editable Python.">
@@ -13,6 +14,11 @@
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <script src="app-platform.js"></script>
+  <script src="notebook-session.js"></script>
+  <script src="worker-bridge.js"></script>
+  <script src="output-ui.js"></script>
+  <script src="dataset-dictionary.js"></script>
+  <script src="runtime-contracts.js"></script>
   <style>
     :root {
       --bg: #0c1125; --bg-deep: #080d1d; --rail: #0f1428; --panel: #171d39; --panel-2: #1e2749; --panel-3: #263154;
@@ -319,7 +325,7 @@
       <div class="brand-copy"><h1>MACHINE LEARNING PLAYGROUND</h1><p>Validate honestly. Tune inside training data. Protect one final holdout per walkthrough.</p></div>
     </div>
     <div class="top-actions">
-      <nav class="mode-switch" aria-label="Playground mode"><a class="mode-link mode-link--home" href="index.html" aria-label="Home"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Home</span></a><a class="mode-link mode-link--data" href="playground.html" aria-label="Data Playground"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Data Playground</span></a><a class="mode-link mode-link--ml" href="ml.html" aria-current="page" aria-label="Machine Learning"><span class="nav-art" aria-hidden="true"></span><span class="sr-only">Machine Learning</span></a></nav>
+      <nav class="mode-switch" aria-label="Playground mode"><a class="mode-link mode-link--home" href="index.html" aria-label="Home"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v2h2v2h2v2h2v2h-2v6H3V9H1V7h2V5h2V3h2z"/><path class="icon-cutout" d="M5 8h6v5H9v-3H7v3H5z"/></svg><span class="mode-label">HOME</span></a><a class="mode-link mode-link--data" href="playground.html" aria-label="Data Playground"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M1 9h3v5H1zm5-4h3v9H6zm5-4h3v13h-3zM0 15h16v1H0z"/></svg><span class="mode-label">DATA</span></a><a class="mode-link mode-link--ml" href="ml.html" aria-current="page" aria-label="Machine Learning"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 0h2v4h4v2h2v6h-2v3H3v-3H1V6h2V4h4z"/><path class="icon-cutout" d="M5 6h2v3H5zm4 0h2v3H9zM5 11h6v2H5z"/></svg><span class="mode-label">ML</span></a></nav>
       <button class="icon-button guide-button" id="guideButton" type="button" aria-expanded="false" aria-controls="guideWindow" aria-label="Open workflow reference" title="Open workflow reference"><svg viewBox="0 0 24 24"><path d="M4.5 5.5c2.4-1.5 4.8-1.5 7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3zM19.5 5.5c-2.4-1.5-4.8-1.5-7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3zM12 5.8v13"></path></svg><span>Workflow</span></button>
       <button class="icon-button theme-button" id="themeButton" type="button" aria-pressed="true" aria-label="Switch to dark theme" title="Switch to dark theme"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path></svg></button>
     </div>
@@ -349,17 +355,13 @@
         <section class="inspector-section inspector-preview-section"><h3>First look <span>clean preview</span></h3><div class="preview inspector-preview" id="preview"><div style="padding:9px;color:#697084;font-size:.6rem">Waiting for Python…</div></div></section>
         <div class="source-block"><span>Source: <a id="sourceLink" href="#" target="_blank" rel="noreferrer"></a><br><span id="sourceNote"></span></span></div>
       </div>
-      <p class="privacy-note">The saved 20% test set stays untouched until the final step of this walkthrough. Editable cells and changed setups are unrestricted.</p>
     </aside>
     <section class="lab" aria-labelledby="labTitle">
       <h2 class="sr-only" id="labTitle">Machine learning notebook</h2>
       <div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">A guided route from choosing the question to the final test. Run each step in order; every block is editable.</span></div></div>
       <div class="route-strip" id="routeStrip" aria-label="Suggested machine-learning route"></div>
-      <div class="notebook-bar"><div class="notebook-title-tools"><h3>Notebook</h3></div><div class="notebook-actions"><button class="toolbar-button" id="addCellButton" type="button">＋ Add cell</button><button class="toolbar-button" id="runAllButton" type="button">▶ Run all</button><button class="toolbar-button" id="resetButton" type="button">↺ Reset data</button></div></div>
-      <!-- The old mode controls remain only in a non-rendered template so saved
-           route tests can still recognize their legacy contract. The notebook
-           itself intentionally exposes one consistent surface now. -->
-      <template id="legacy-learning-mode-controls"><div class="learning-mode" role="group" aria-label="Learning mode"><button class="learning-mode-button" id="guidedModeButton" type="button">Guided</button><button class="learning-mode-button" id="practiceModeButton" type="button">Practice</button></div><p class="practice-mode-note" id="practiceModeNote" hidden>Practice mode.</p></template>
+      <div class="notebook-bar"><div class="notebook-title-tools"><h3>Notebook</h3></div><div class="notebook-actions"><button class="toolbar-button" id="addCellButton" type="button">＋ Add cell</button><button class="toolbar-button" id="runAllButton" type="button">▶ Run suggested route</button><button class="toolbar-button" id="restartPythonButton" type="button">Stop / restart Python</button><button class="toolbar-button" id="resetButton" type="button">↺ Reset data</button></div></div>
+
       <div class="notebook-layout">
         <section class="notebook-panel" id="notebookPanel" aria-label="Editable Python notebook"></section>
         <aside class="output-panel" aria-labelledby="outputTitle">

@@ -209,17 +209,27 @@ def diagnostic_python(route: dict, include_hidden: bool = True) -> str:
     return "\n".join(part for part in (surface["primary"], surface["application"]) if part)
 
 
-def _cell_execution_sources(cell: dict) -> list[tuple[str, str]]:
-    """Return hidden setup, primary, then hidden evidence in worker order."""
+def _cell_execution_sources(cell: dict, include_optional: bool = False) -> list[tuple[str, str]]:
+    """Return visible code, with optional evidence only when requested.
 
-    sources = []
-    setup = _cell_field_text(cell, "setup")
-    if setup:
-        sources.append(("setup", setup))
-    sources.append(("primary", str(cell.get("code", ""))))
-    evidence = _cell_field_text(cell, "evidence")
-    if evidence:
-        sources.append(("evidence", evidence))
+    The application worker executes ``cell.code`` as the primary route.  The
+    model-specific evidence bundle remains testable, but it must be opted
+    into explicitly so this suite catches hidden dependencies in the learner
+    path instead of accidentally recreating them.
+    """
+
+    sources = [("primary", str(cell.get("code", "")))]
+    if include_optional:
+        optional_parts = [
+            _cell_field_text(cell, "setup"),
+            _cell_field_text(cell, "evidence"),
+            str(cell.get("optionalCode", "")),
+        ]
+        seen: set[str] = set()
+        for part in optional_parts:
+            if part and part not in seen:
+                sources.append(("optional", part))
+                seen.add(part)
     return sources
 
 
@@ -373,7 +383,11 @@ def run_step8_code_surface_audit(payload: dict) -> dict:
             family_reports[family].append(report)
             metadata = STEP8_CODE_SURFACE_AUDIT[family]
             primary = surface["primary"]
-            missing_required = _required_step8_tokens(primary, metadata["required"])
+            # Model-specific interpretation is intentionally optional.  The
+            # short primary cell owns validation errors; check the analytical
+            # operation in the separately surfaced evidence bundle.
+            evidence_surface = surface["application"]
+            missing_required = _required_step8_tokens(evidence_surface, metadata["required"])
             forbidden = [token for token in STEP8_PRIMARY_FORBIDDEN[family] if token in primary]
             if family == "svm_cls" and re.search(r"\.support_(?!vectors_)", primary):
                 forbidden.append(".support_ (support-index remapping)")
@@ -640,7 +654,7 @@ def assert_route_structure(payload: dict) -> dict:
         "prepare",
         "model",
         "baseline",
-        "tune",
+        "reference",
         "diagnose",
         "final",
     ]
@@ -660,24 +674,28 @@ def assert_route_structure(payload: dict) -> dict:
     phase2b1_model_ids = {"svm_cls", "lda", "qda", "naive_bayes"}
     phase2b2_model_ids = {"mlp_cls", "mlp_reg"}
     phase2_model_ids = phase2a_model_ids | phase2b1_model_ids | phase2b2_model_ids
+    # The short primary Diagnose cell now owns validation errors.  The
+    # model-specific evidence is an explicit optional bundle, so these
+    # requirements describe the public names in that bundle rather than the
+    # retired hidden setup/evidence implementation.
     phase2a_required_tokens = {
-        "simple_linear": ("simple_grid", "simple_curve", "simple_oof_x", "simple_slope", "intercept_at_feature_0", "fitted line"),
-        "multiple_linear": ("linear_interpretation", "meaningful_unit", "direction", "plain_english"),
-        "regression_tree": ("tree_path", "tree_example_position", "tree_prediction", "tree_importance", "max_depth=2", "Training-only example row"),
-        "classification_tree": ("tree_path", "tree_example_position", "tree_prediction", "tree_importance", "max_depth=2", "Training-only example row"),
-        "logistic": ("logistic_coefficients", "logistic_interpretation", "pushes_model_toward", "logistic_positive_class", "weight_toward_"),
-        "knn_cls": ("knn_fit_indices", "knn_neighbor_positions", "knn_self_neighbour_check", "kneighbors", "knn_neighbor_table"),
-        "one_r": ("one_r_rules", "one_r_comparison", "one_r_majority_prediction"),
+        "simple_linear": ("simple_grid", "simple_curve", "simple_interpretation", "fitted line"),
+        "multiple_linear": ("linear_interpretation", "coefficient"),
+        "regression_tree": ("tree_summary", "feature_importances_", "plot_tree", "max_depth=2"),
+        "classification_tree": ("tree_summary", "feature_importances_", "plot_tree", "max_depth=2"),
+        "logistic": ("logistic_coefficients", "logistic_interpretation", "relative_weight"),
+        "knn_cls": ("knn_training_rows", "kneighbors", "knn_neighbor_table"),
+        "one_r": ("one_r_rules", "one_r_rule_table"),
     }
     phase2b1_required_tokens = {
-        "svm_cls": ("svm_fit_indices", "svm_support_positions", "svm_decision_values", "svm_prediction_story", "Support vectors per class"),
-        "lda": ("lda_class_centres", "lda_fit_indices", "lda_probability_table", "lda_prediction_story", "shared"),
-        "qda": ("qda_class_centres", "qda_spread_summary", "qda_fit_indices", "qda_probability_table", "regularisation"),
-        "naive_bayes": ("nb_fit_indices", "nb_quantity_evidence", "nb_prediction_story", "Prior probability", "Posterior probability"),
+        "svm_cls": ("support_vectors", "svm_decision_values", "n_support_"),
+        "lda": ("class_centres", "means_"),
+        "qda": ("class_centres", "means_", "reg_param"),
+        "naive_bayes": ("class_evidence", "class_prior_"),
     }
     phase2b2_required_tokens = {
-        "mlp_cls": ("mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "predict_proba", "loss_curve_", "early_stopping"),
-        "mlp_reg": ("mlp_architecture", "mlp_loss_curve", "mlp_fit_indices", "mlp_prediction_story", "original target units", "loss_curve_", "regressor_"),
+        "mlp_cls": ("mlp_summary", "mlp_loss_curve", "predict_proba", "loss_curve_", "n_iter_", "hidden_layer_sizes"),
+        "mlp_reg": ("mlp_summary", "mlp_loss_curve", "original_units", "loss_curve_", "regressor_", "hidden_layer_sizes"),
     }
 
     preprocessing_counts = {
@@ -716,9 +734,10 @@ def assert_route_structure(payload: dict) -> dict:
         "prepare": {"preprocessing"},
         "model": {"pipeline", "fit", "predict"},
         "baseline": {"cross-validation", "fold", "cv-purpose", "final-test-exclusion"},
+        "reference": {"reference-predictor", "baseline-comparison"},
         "tune": {"hyperparameter", "learned-parameter"},
     }
-    supervised_practice_steps = {"split", "prepare", "baseline", "tune", "diagnose", "final"}
+    supervised_practice_steps = {"split", "prepare", "baseline", "reference", "diagnose", "final"}
     unsupervised_practice_steps = {
         "kmeans": {"compare", "fit", "profile"},
         "hierarchical": {"compare", "fit", "profile"},
@@ -740,7 +759,9 @@ def assert_route_structure(payload: dict) -> dict:
                 else:
                     expected = pca_ids
             else:
-                expected = supervised_ids
+                expected = list(supervised_ids)
+                if any(cell_id == "tune" for cell_id in ids):
+                    expected.insert(expected.index("diagnose"), "tune")
             if ids != expected:
                 raise AssertionError(
                     f"{folds}-fold {route['datasetId']}/{route['scenarioId']}/{model_id}: "
@@ -778,7 +799,12 @@ def assert_route_structure(payload: dict) -> dict:
                         f"{route['datasetId']}/{route['scenarioId']}/{model_id}/{cell['id']}"
                     )
 
-            required_practice = supervised_practice_steps if task_type != "unsupervised" else unsupervised_practice_steps[model_id]
+            if task_type != "unsupervised":
+                required_practice = set(supervised_practice_steps)
+                if "tune" in ids:
+                    required_practice.add("tune")
+            else:
+                required_practice = unsupervised_practice_steps[model_id]
             for step_id in required_practice:
                 metadata = next(cell for cell in route["cells"] if cell["id"] == step_id)
                 practice = metadata.get("practice")
@@ -839,9 +865,17 @@ def assert_route_structure(payload: dict) -> dict:
             if task_type != "unsupervised":
                 teaching_checks["supervised_routes_with_step_guidance"] += 1
                 for step_id, expected_keys in required_concepts.items():
+                    if step_id == "tune" and step_id not in ids:
+                        continue
                     metadata = next(cell for cell in route["cells"] if cell["id"] == step_id)
                     actual_keys = set(metadata.get("conceptKeys", []))
-                    missing_keys = expected_keys - actual_keys
+                    expected_for_route = set(expected_keys)
+                    if step_id == "baseline" and route["dataset"]["split"] == "time":
+                        # TimeSeriesSplit uses ordered windows instead of
+                        # interchangeable folds, while retaining the same CV
+                        # purpose and sealed-test boundary.
+                        expected_for_route -= {"cross-validation", "fold"}
+                    missing_keys = expected_for_route - actual_keys
                     if missing_keys:
                         raise AssertionError(
                             f"Missing Phase 1B concepts {sorted(missing_keys)} for "
@@ -852,15 +886,10 @@ def assert_route_structure(payload: dict) -> dict:
                     expected_mlp_concepts = {
                         "hidden-layer",
                         "hidden-layer-sizes",
-                        "weights",
-                        "loss",
-                        "backpropagation",
-                        "alpha",
                         "early-stopping",
-                        "max-iter",
                     }
                     if model_id == "mlp_reg":
-                        expected_mlp_concepts.update({"target-scaling", "TransformedTargetRegressor", "nested-parameter-routing", "tol"})
+                        expected_mlp_concepts.update({"target-scaling", "TransformedTargetRegressor", "nested-parameter-routing"})
                     missing_mlp_concepts = expected_mlp_concepts - set(model_metadata.get("conceptKeys", []))
                     if missing_mlp_concepts:
                         raise AssertionError(f"Neural Network build teaching is incomplete: {sorted(missing_mlp_concepts)}")
@@ -908,18 +937,19 @@ def assert_route_structure(payload: dict) -> dict:
                 if not any(metric.get("key") == "macro_f1" if route["dataset"]["task"] == "classification" else metric.get("key") == "rmse" for metric in baseline_metadata["metricHelp"]):
                     raise AssertionError(f"Baseline teaching metadata does not define the primary metric: {route}")
                 teaching_checks["supervised_baseline_metric_help"] += 1
-                tune_metadata = next(cell for cell in route["cells"] if cell["id"] == "tune")
-                if not tune_metadata.get("metricHelp") or not tune_metadata.get("metricMeta"):
-                    raise AssertionError(f"Tuning metric reminder metadata is incomplete: {route}")
-                tune_keys = set(tune_metadata.get("conceptKeys", []))
-                tune_code = route_code(route, "tune")
-                if "GridSearchCV" in tune_code:
-                    if not {"model-hyperparameter", "GridSearchCV", "tuning", "final-test-exclusion"}.issubset(tune_keys):
-                        raise AssertionError(f"GridSearchCV teaching metadata is incomplete: {route}")
-                    if "model__" in tune_code and "pipeline-parameter-routing" not in tune_keys:
-                        raise AssertionError(f"Pipeline parameter-routing explanation is missing: {route}")
-                elif "keep-defaults" not in tune_keys:
-                    raise AssertionError(f"Keep-defaults teaching metadata is missing: {route}")
+                if "tune" in ids:
+                    tune_metadata = next(cell for cell in route["cells"] if cell["id"] == "tune")
+                    if not tune_metadata.get("metricHelp") or not tune_metadata.get("metricMeta"):
+                        raise AssertionError(f"Tuning metric reminder metadata is incomplete: {route}")
+                    tune_keys = set(tune_metadata.get("conceptKeys", []))
+                    tune_code = route_code(route, "tune")
+                    if "GridSearchCV" in tune_code:
+                        if not {"model-hyperparameter", "GridSearchCV", "tuning", "final-test-exclusion"}.issubset(tune_keys):
+                            raise AssertionError(f"GridSearchCV teaching metadata is incomplete: {route}")
+                        if "model__" in tune_code and "pipeline-parameter-routing" not in tune_keys:
+                            raise AssertionError(f"Pipeline parameter-routing explanation is missing: {route}")
+                    elif "keep-defaults" not in tune_keys:
+                        raise AssertionError(f"Keep-defaults teaching metadata is missing: {route}")
                 final_metadata = next(cell for cell in route["cells"] if cell["id"] == "final")
                 if not final_metadata.get("comparison") or not final_metadata.get("metricMeta"):
                     raise AssertionError(f"Final-test comparison metadata is incomplete: {route}")
@@ -1042,22 +1072,21 @@ def assert_route_structure(payload: dict) -> dict:
                 elif "preprocessor = Pipeline" in prepare:
                     preprocessing_counts["simple_pipeline"] += 1
 
-                tune = route_code(route, "tune")
                 model_grid = payload["models"][model_id]
-                has_grid = model_grid.get("name") not in {
-                    "Simple Linear Regression",
-                    "Multiple Linear Regression",
-                }
-                if model_id == "one_r" and not scenario["continuous"]:
-                    has_grid = False
-                if has_grid and "GridSearchCV" not in tune:
-                    raise AssertionError(f"Expected a readable grid for {route}")
-                if not has_grid and "GridSearchCV" in tune:
-                    raise AssertionError(f"Default model unexpectedly uses GridSearchCV: {route}")
-                if "best_pipeline" not in tune:
-                    raise AssertionError(f"Tuning/default cell does not define best_pipeline: {route}")
-                if any(token in tune for token in ("return_train_score", "refit=", "tuning_results", "rank_test_", "n_jobs=1", 'error_score="raise"')):
-                    raise AssertionError(f"Tuning cell still contains multi-metric or low-level clutter: {route}")
+                has_grid = "tune" in ids
+                if has_grid:
+                    tune = route_code(route, "tune")
+                    if "GridSearchCV" not in tune:
+                        raise AssertionError(f"Expected a readable grid for {route}")
+                    if any(token in tune for token in ("return_train_score", "refit=", "tuning_results", "n_jobs=1", 'error_score="raise"')):
+                        raise AssertionError(f"Tuning cell still contains multi-metric or low-level clutter: {route}")
+                    if "chosen_pipeline" not in tune:
+                        raise AssertionError(f"Tuning cell does not define chosen_pipeline: {route}")
+                reference = route_code(route, "reference")
+                if "cross_val_score" not in reference or not re.search(r"Dummy(Classifier|Regressor)", reference):
+                    raise AssertionError(f"Reference cell does not expose one simple same-fold predictor: {route}")
+                if "chosen_pipeline = pipeline" not in reference:
+                    raise AssertionError(f"Reference cell does not hand off the initial pipeline: {route}")
 
                 diagnostic_primary = diagnostic_python(route, include_hidden=False)
                 diagnostic = diagnostic_python(route)
@@ -1066,10 +1095,12 @@ def assert_route_structure(payload: dict) -> dict:
                     for token in ("classification_report", "diagnostic_rmse", "diagnostic_r2", "root_mean_squared_error", "r2_score", "X_test", "y_test", "test_prediction", "test_result")
                 ):
                     raise AssertionError(f"Diagnostic cell contains an aggregate score/report: {route}")
-                if ids.index("tune") >= ids.index("diagnose") or "best_pipeline" not in diagnostic:
-                    raise AssertionError(f"Diagnostic does not follow tuning/default selection: {route}")
-                if "best_pipeline" not in route_code(route, "final"):
-                    raise AssertionError(f"Final cell does not use best_pipeline: {route}")
+                if "tune" in ids and ids.index("tune") >= ids.index("diagnose"):
+                    raise AssertionError(f"Diagnostic does not follow tuning selection: {route}")
+                if "chosen_pipeline" not in diagnostic:
+                    raise AssertionError(f"Diagnostic does not use the selected pipeline: {route}")
+                if "chosen_pipeline" not in route_code(route, "final"):
+                    raise AssertionError(f"Final cell does not use chosen_pipeline: {route}")
 
                 diagnose_metadata = next(cell for cell in route["cells"] if cell["id"] == "diagnose")
                 model_teaching = diagnose_metadata.get("modelTeaching")
@@ -1096,7 +1127,7 @@ def assert_route_structure(payload: dict) -> dict:
                     )
                     missing_tokens = [token for token in required_tokens if token not in diagnostic]
                     if model_id == "polynomial":
-                        expected_polynomial_tokens = ("poly_grid", "poly_curve", "polynomial_degree") if len(route["scenario"]["continuous"]) == 1 else ("polynomial_terms", "no single 2D fitted curve")
+                        expected_polynomial_tokens = ("poly_grid", "poly_curve", "polynomial_degree") if len(route["scenario"]["continuous"]) == 1 else ("polynomial_names", "no single 2D fitted curve")
                         missing_tokens.extend(token for token in expected_polynomial_tokens if token not in diagnostic)
                     if missing_tokens:
                         raise AssertionError(f"{model_id} diagnostic is missing {missing_tokens}: {route}")
@@ -1135,9 +1166,9 @@ def assert_route_structure(payload: dict) -> dict:
                 if model_id == "polynomial":
                     model_code = route_code(route, "model")
                     positions = [
-                        model_code.index('("poly"'),
+                        model_code.index('("polynomial"'),
                         model_code.index('("scale"'),
-                        model_code.index('("regression"'),
+                        model_code.index('("model"'),
                     ]
                     if positions != sorted(positions):
                         raise AssertionError(f"Polynomial pipeline order is wrong: {route}")
@@ -1228,10 +1259,10 @@ def assert_route_structure(payload: dict) -> dict:
                     target_literal = re.compile(rf"['\"]{re.escape(target)}['\"]")
                     if target_literal.search(unsupervised_code):
                         raise AssertionError(f"{model_id} discovery code references the hidden reference target: {route}")
-                    if "silhouette_suggestion" not in unsupervised_code or "not a final answer" not in unsupervised_code:
-                        raise AssertionError(f"{model_id} does not retain a clearly non-decisive silhouette suggestion: {route}")
-                    if "suggested_k" in unsupervised_code or "selected_k = suggested_k" in unsupervised_code or "best_k" in unsupervised_code:
-                        raise AssertionError(f"{model_id} still ties the selected grouping to silhouette argmax: {route}")
+                    if any(token in unsupervised_code for token in ("silhouette_suggestion", "suggested_k", "selected_k = suggested_k", "best_k", ".idxmax(", "Mechanical silhouette suggestion")):
+                        raise AssertionError(f"{model_id} still turns a metric argmax into an automatic grouping choice: {route}")
+                    if "no single score makes that decision automatically" not in unsupervised_code:
+                        raise AssertionError(f"{model_id} does not explain that silhouette is supporting evidence: {route}")
                     if "selected_k = min(3, max_k)" not in unsupervised_code:
                         raise AssertionError(f"{model_id} does not use a neutral runnable selected_k default: {route}")
                     if "sample_size = min(2000" not in unsupervised_code and "silhouette_size = min(2000" not in unsupervised_code:
@@ -1239,11 +1270,13 @@ def assert_route_structure(payload: dict) -> dict:
                     if "random_state=42" not in unsupervised_code:
                         raise AssertionError(f"Cluster sampling is not reproducible: {route}")
                     if model_id == "kmeans":
-                        for token in ("inertia", "centroid_profile", "inverse_transform(kmeans.cluster_centers_)", "all selected prepared dimensions"):
+                        for token in ("inertia", "cluster_means"):
                             if token not in unsupervised_code:
                                 raise AssertionError(f"K-Means teaching evidence is incomplete: {token}")
+                        if any(token in unsupervised_code for token in ("centroid_profile", "inverse_transform(kmeans.cluster_centers_)")):
+                            raise AssertionError(f"K-Means keeps a duplicate or misleading centroid profile: {route}")
                     else:
-                        for token in ("sampled_rows", "linkage_matrix", "method=\"ward\"", "merge_height", "Ward merge height", "pairwise comparisons"):
+                        for token in ("sampled_rows", "hierarchy", "method=\"ward\"", "merge_height", "Ward merge height", "pairwise comparisons"):
                             if token not in unsupervised_code:
                                 raise AssertionError(f"Hierarchical teaching evidence is incomplete: {token}")
                 if model_id == "pca":
@@ -1252,13 +1285,13 @@ def assert_route_structure(payload: dict) -> dict:
                     if any(not pca_cells[cell_id]["question"].strip() or not pca_cells[cell_id]["readingCue"].strip() for cell_id in pca_ids):
                         raise AssertionError(f"PCA route is missing question/reading guidance: {route}")
                     pca_required_concepts = {
-                        "frame": {"principal_component", "pc1", "pc2", "not_clustering", "reference_after_fit"},
+                        "frame": {"principal_component", "pc1", "pc2", "not_clustering"},
                         "explore": {"redundancy", "principal_component"},
                         "prepare": {"pca_scaling"},
                         "variance": {"explained_variance", "cumulative_variance", "scree", "ninety_rule"},
                         "select": {"ninety_rule", "reduced_representation", "cumulative_variance"},
                         "loadings": {"loading", "loading_magnitude", "loading_sign", "loading_sign_arbitrary", "score", "loading_vs_score"},
-                        "project": {"score", "loading_vs_score", "projection", "reference_after_fit", "pca_limitations"},
+                        "project": {"score", "loading_vs_score", "projection", "pca_limitations"},
                     }
                     for step_id, expected_keys in pca_required_concepts.items():
                         missing_keys = expected_keys - set(pca_cells[step_id].get("conceptKeys", []))
@@ -1271,8 +1304,8 @@ def assert_route_structure(payload: dict) -> dict:
                         raise AssertionError(f"PCA model-specific teaching is incomplete: {route}")
                     if "information concentrate" in source.lower():
                         raise AssertionError("The vague PCA information-concentrate wording has returned.")
-                    if "full_pca = PCA().fit(Z)" not in unsupervised_code:
-                        raise AssertionError(f"PCA does not fit one full model: {route}")
+                    if "pca = PCA()" not in pca_cells["variance"]["code"] or "component_scores = pca.fit_transform(X_scaled)" not in pca_cells["variance"]["code"]:
+                        raise AssertionError(f"PCA does not fit one named model while creating component scores: {route}")
                     if "explained_variance_ratio_" not in unsupervised_code or "cumulative_explained_variance" not in unsupervised_code:
                         raise AssertionError(f"PCA variance terminology/evidence is incomplete: {route}")
                     if "variance_target = 0.90" not in unsupervised_code or "components_for_target" not in unsupervised_code or "variance_retained" not in unsupervised_code:
@@ -1281,24 +1314,26 @@ def assert_route_structure(payload: dict) -> dict:
                         raise AssertionError(f"PCA still uses fixed 90%-specific variable names: {route}")
                     if "The {variance_target:.0%} target is a chosen rule of thumb" not in unsupervised_code:
                         raise AssertionError(f"PCA active target is not taught as a chosen criterion: {route}")
-                    if "Z_reduced = full_pca.transform(Z)[:, :components_for_target]" not in unsupervised_code:
-                        raise AssertionError(f"PCA does not derive the reduced representation from full_pca: {route}")
-                    if "\npca = PCA(" in unsupervised_code:
-                        raise AssertionError(f"PCA refits a second selected model: {route}")
+                    if "X_reduced = component_scores" not in unsupervised_code:
+                        raise AssertionError(f"PCA does not expose the selected reduced representation: {route}")
                     pre_project_code = "\n".join(pca_cells[cell_id]["code"] for cell_id in pca_ids[:-1])
                     project_code = pca_cells["project"]["code"]
                     target = route["dataset"]["target"]
                     target_literal = re.compile(rf"['\"]{re.escape(target)}['\"]")
                     if target_literal.search(pre_project_code):
                         raise AssertionError(f"PCA accesses its reference target before the interpretation step: {route}")
-                    if target_literal.search(project_code) is None or "added only after PCA was fitted" not in project_code:
+                    project_optional_code = pca_cells["project"].get("optionalCode", "")
+                    if target_literal.search(project_optional_code) is None or "added only after PCA is fitted" not in project_optional_code:
                         raise AssertionError(f"PCA interpretation does not explicitly add the reference label after fitting: {route}")
-                    if "full_pca.components_.T" not in pca_cells["loadings"]["code"] or "index.name = \"feature\"" not in pca_cells["loadings"]["code"]:
+                    if "components_[:2].T" not in pca_cells["loadings"]["code"] or "index.name = \"feature\"" not in pca_cells["loadings"]["code"]:
                         raise AssertionError(f"PCA loadings are not feature-labelled: {route}")
                     if route["scenarioId"] == "continuous30":
                         explore_code = pca_cells["explore"]["code"]
-                        if "sns.heatmap" in explore_code or "strongest_pairs" not in explore_code or "absolute_correlation" not in explore_code:
+                        explore_optional = pca_cells["explore"].get("optionalCode", "")
+                        if "pair_summary" not in explore_code or "left_feature" not in explore_code or "right_feature" not in explore_code:
                             raise AssertionError(f"High-dimensional PCA redundancy evidence is not compact: {route}")
+                        if "combinations" in explore_code or "combinations" not in explore_optional:
+                            raise AssertionError(f"High-dimensional PCA all-pairs evidence is not separated as optional depth: {route}")
 
     expected_pca_routes = sum(
         route["modelId"] == "pca"
@@ -1407,15 +1442,18 @@ def assert_route_structure(payload: dict) -> dict:
     if set(boundary_fixtures) != {"svm_cls", "lda", "qda"}:
         raise AssertionError("Phase 2B-1 boundary fixtures are incomplete.")
     for model_id, fixture in boundary_fixtures.items():
-        if cell_ids(fixture) != supervised_ids:
+        fixture_ids = list(supervised_ids)
+        if "tune" in cell_ids(fixture):
+            fixture_ids.insert(fixture_ids.index("diagnose"), "tune")
+        if cell_ids(fixture) != fixture_ids:
             raise AssertionError(f"Phase 2B-1 boundary fixture has the wrong guided steps: {model_id}")
         fixture_diagnostic = diagnostic_python(fixture)
         if any(token in fixture_diagnostic for token in ("X_test", "y_test", "test_prediction", "test_result")):
             raise AssertionError(f"Phase 2B-1 boundary fixture accesses final-test data: {model_id}")
         fixture_tokens = {
-            "svm_cls": ("svm_grid_points", "svm_grid_predictions", "support vectors"),
-            "lda": ("lda_grid_points", "lda_grid_predictions", "class centres"),
-            "qda": ("qda_grid_points", "qda_grid_predictions", "per-feature spread"),
+            "svm_cls": ("support_vectors", "svm_decision_values", "n_support_"),
+            "lda": ("class_centres", "means_"),
+            "qda": ("class_centres", "means_", "reg_param"),
         }[model_id]
         fixture_diagnostic_lower = fixture_diagnostic.lower()
         if any(token.lower() not in fixture_diagnostic_lower for token in fixture_tokens):
@@ -1582,6 +1620,8 @@ def run_one_r_regression(payload: dict, pd, np, plt, sns) -> dict:
         and route["modelId"] == "one_r"
     )
     fixture = base_namespace()
+    fixture["df"] = pd.read_csv(ROOT / car_route["dataset"]["file"], sep=car_route["dataset"]["sep"])
+    exec(route_code(car_route, "frame"), fixture, fixture)
     exec(route_code(car_route, "prepare"), fixture, fixture)
     exec(route_code(car_route, "model"), fixture, fixture)
     fixture_features = {
@@ -1614,8 +1654,12 @@ def run_one_r_regression(payload: dict, pd, np, plt, sns) -> dict:
 
     actual = base_namespace()
     actual["df"] = pd.read_csv(ROOT / car_route["dataset"]["file"], sep=car_route["dataset"]["sep"])
-    for cell_id in ("frame", "split", "prepare", "model", "baseline", "tune", "diagnose"):
-        for _source_name, source in _cell_execution_sources(route_cell(car_route, cell_id)):
+    car_cell_ids = ["frame", "split", "prepare", "model", "baseline", "reference"]
+    if "tune" in cell_ids(car_route):
+        car_cell_ids.append("tune")
+    car_cell_ids.append("diagnose")
+    for cell_id in car_cell_ids:
+        for _source_name, source in _cell_execution_sources(route_cell(car_route, cell_id), include_optional=cell_id == "diagnose"):
             exec(source, actual, actual)
     actual_table = actual["one_r_rules"]
     actual_feature = str(actual_table["feature"].iloc[0])
@@ -1794,7 +1838,7 @@ def _execute_route_to_cell(payload: dict, route: dict, pd, np, plt, sns, stop_at
     for cell in route["cells"]:
         if before_cell:
             before_cell(namespace, cell)
-        for source_name, source in _cell_execution_sources(cell):
+        for source_name, source in _cell_execution_sources(cell, include_optional=True):
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
                 exec(
                     source,
@@ -1820,7 +1864,7 @@ def _execute_route_to_cell_with_stdout(payload: dict, route: dict, pd, np, plt, 
     exec(payload["oneRHelperSource"], namespace, namespace)
     captured = io.StringIO()
     for cell in route["cells"]:
-        for source_name, source in _cell_execution_sources(cell):
+        for source_name, source in _cell_execution_sources(cell, include_optional=True):
             with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(io.StringIO()):
                 exec(source, namespace, namespace)
         plt.close("all")
@@ -1898,33 +1942,44 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
         return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "diagnose", before_cell)
 
     simple_route, simple = run("gapminder", "simple", "simple_linear")
-    simple_model = simple["diagnostic_model"].named_steps["model"]
-    if not np.isclose(simple["simple_slope"], float(np.ravel(simple_model.coef_)[0])) or not np.isclose(simple["simple_intercept"], float(np.ravel(np.atleast_1d(simple_model.intercept_))[0])):
+    simple_model = simple["fitted_model"]
+    simple_interpretation = simple["simple_interpretation"].iloc[0]
+    if not np.isclose(float(simple_interpretation["slope"]), float(np.ravel(simple_model.coef_)[0])) or not np.isclose(float(simple_interpretation["intercept"]), float(np.ravel(np.atleast_1d(simple_model.intercept_))[0])):
         raise AssertionError("Simple linear interpretation does not match the fitted slope/intercept.")
-    if len(simple["simple_grid"]) != 160 or not np.isclose(simple["simple_grid"][0], simple["X_train"][simple["simple_feature"]].min()) or not np.isclose(simple["simple_grid"][-1], simple["X_train"][simple["simple_feature"]].max()):
+    if len(simple["simple_grid"]) < 2 or not np.isclose(simple["simple_grid"][0], simple["X_train"][simple["simple_feature"]].min()) or not np.isclose(simple["simple_grid"][-1], simple["X_train"][simple["simple_feature"]].max()):
         raise AssertionError("Simple linear fitted line does not span the observed training feature range.")
-    if not np.allclose(simple["simple_curve"], simple["diagnostic_model"].predict(simple["simple_grid_frame"])) or not np.allclose(simple["simple_oof_x"], simple["X_train"].loc[simple["diagnostic_actual"].index, simple["simple_feature"]].astype(float).to_numpy()):
+    simple_grid_frame = pd.DataFrame({simple["simple_feature"]: simple["simple_grid"]})
+    if not np.allclose(simple["simple_curve"], simple["fitted_pipeline"].predict(simple_grid_frame)):
         raise AssertionError("Simple linear chart evidence is not aligned with the fitted line/OOF rows.")
 
     polynomial_route, polynomial = run("gapminder", "simple", "polynomial")
-    polynomial_model = polynomial["diagnostic_model"].named_steps["model"]
+    polynomial_model = polynomial["fitted_model"]
     polynomial_feature = polynomial["poly_feature"]
-    if polynomial["polynomial_degree"] != polynomial_model.named_steps["poly"].degree or len(polynomial["poly_grid"]) != 160:
+    if polynomial["polynomial_degree"] != polynomial["fitted_pipeline"].named_steps["polynomial"].degree or len(polynomial["poly_grid"]) < 2:
         raise AssertionError("Polynomial interpretation does not report the fitted degree/grid.")
     if not np.isclose(polynomial["poly_grid"][0], polynomial["X_train"][polynomial_feature].min()) or not np.isclose(polynomial["poly_grid"][-1], polynomial["X_train"][polynomial_feature].max()):
         raise AssertionError("Polynomial fitted curve does not span the observed training feature range.")
-    if not np.allclose(polynomial["poly_curve"], polynomial["diagnostic_model"].predict(polynomial["poly_grid_frame"])):
+    polynomial_grid_frame = pd.DataFrame({polynomial_feature: polynomial["poly_grid"]})
+    if not np.allclose(polynomial["poly_curve"], polynomial["fitted_pipeline"].predict(polynomial_grid_frame)):
         raise AssertionError("Polynomial fitted curve does not match the fitted pipeline predictions.")
+    polynomial_multiple_route, polynomial_multiple = run("wine", "continuous", "polynomial")
+    polynomial_step = polynomial_multiple["fitted_pipeline"].named_steps["polynomial"]
+    if len(polynomial_multiple["polynomial_names"]) != len(polynomial_multiple["fitted_model"].coef_):
+        raise AssertionError("Multiple-input polynomial terms are not aligned with the fitted model coefficients.")
+    if list(polynomial_multiple["polynomial_summary"].columns) != ["term", "weight"] or "single 2D fitted curve" not in diagnostic_python(polynomial_multiple_route):
+        raise AssertionError("Multiple-input polynomial evidence does not expose a flat term summary or explain its plotting limit.")
+    if int(polynomial_multiple["polynomial_degree"]) != int(polynomial_step.degree):
+        raise AssertionError("Multiple-input polynomial summary does not report the fitted degree.")
 
     multiple_route, multiple = run("wine", "continuous", "multiple_linear")
-    multiple_model = multiple["diagnostic_model"].named_steps["model"]
+    multiple_model = multiple["fitted_model"]
     multiple_table = multiple["linear_interpretation"]
-    if list(multiple_table.columns) != ["feature", "coefficient", "meaningful_unit", "direction", "plain_english"]:
+    if list(multiple_table.columns) != ["feature", "coefficient"]:
         raise AssertionError("Multiple linear interpretation table is missing its teaching columns.")
-    if [str(name) for name in multiple_table["feature"]] != [str(name) for name in multiple["encoded_names"]] or not np.allclose(multiple_table["coefficient"].to_numpy(dtype=float), np.ravel(multiple_model.coef_)):
+    if [str(name) for name in multiple_table["feature"]] != [str(name) for name in multiple["prepared_names"]] or not np.allclose(multiple_table["coefficient"].to_numpy(dtype=float), np.ravel(multiple_model.coef_)):
         raise AssertionError("Multiple linear coefficients or feature order do not match the fitted estimator.")
-    if "sort_values" in diagnostic_python(multiple_route) or not all("associated with" in text for text in multiple_table["plain_english"]):
-        raise AssertionError("Multiple linear interpretation ranks raw coefficient magnitudes or omits association wording.")
+    if "sort_values" in diagnostic_python(multiple_route):
+        raise AssertionError("Multiple linear interpretation ranks raw coefficient magnitudes.")
 
     seoul_multiple_route, seoul_multiple = run("seoul", "continuous", "multiple_linear")
     if seoul_multiple_route["dataset"]["split"] != "time":
@@ -1936,63 +1991,65 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
     regression_tree_results = {}
     for dataset_id, scenario_id in (("wine", "continuous"), ("seoul", "continuous")):
         route, namespace = run(dataset_id, scenario_id, "regression_tree")
-        _assert_tree_path_fidelity(namespace, False, np)
-        regression_tree_results[dataset_id] = int(len(namespace["tree_path"]))
+        fitted = namespace["fitted_model"]
+        summary = namespace["tree_summary"]
+        by_feature = dict(zip(summary["feature"].astype(str), summary["importance"].astype(float)))
+        expected_names = [str(name) for name in namespace["prepared_names"]]
+        if set(by_feature) != set(expected_names) or not np.allclose([by_feature[name] for name in expected_names], fitted.feature_importances_):
+            raise AssertionError("Regression-tree feature-importance table does not match the fitted estimator.")
+        regression_tree_results[dataset_id] = int(len(summary))
 
     classification_tree_results = {}
     for dataset_id, scenario_id in (("breast", "continuous5"), ("penguins", "all_types")):
         route, namespace = run(dataset_id, scenario_id, "classification_tree")
-        _assert_tree_path_fidelity(namespace, True, np)
-        classification_tree_results[dataset_id] = int(len(namespace["tree_path"]))
+        fitted = namespace["fitted_model"]
+        summary = namespace["tree_summary"]
+        by_feature = dict(zip(summary["feature"].astype(str), summary["importance"].astype(float)))
+        expected_names = [str(name) for name in namespace["prepared_names"]]
+        if set(by_feature) != set(expected_names) or not np.allclose([by_feature[name] for name in expected_names], fitted.feature_importances_):
+            raise AssertionError("Classification-tree feature-importance table does not match the fitted estimator.")
+        classification_tree_results[dataset_id] = int(len(summary))
 
     binary_logistic_route, binary_logistic = run("breast", "continuous5", "logistic")
-    binary_fitted = binary_logistic["diagnostic_model"].named_steps["model"]
+    binary_fitted = binary_logistic["fitted_model"]
     binary_table = binary_logistic["logistic_interpretation"]
-    if not np.allclose(binary_logistic["logistic_coefficients"], np.atleast_2d(binary_fitted.coef_)):
+    if not np.allclose(binary_logistic["logistic_coefficients"], np.ravel(binary_fitted.coef_)):
         raise AssertionError("Binary logistic interpretation does not match the fitted coefficients.")
-    expected_directions = [
-        binary_logistic["logistic_class_labels"].get(str(binary_fitted.classes_[1]), str(binary_fitted.classes_[1]))
-        if weight >= 0 else binary_logistic["logistic_class_labels"].get(str(binary_fitted.classes_[0]), str(binary_fitted.classes_[0]))
-        for weight in binary_fitted.coef_[0]
-    ]
-    if list(binary_table["pushes_model_toward"]) != expected_directions or binary_logistic["logistic_positive_class"] != binary_fitted.classes_[1] or binary_logistic["logistic_negative_class"] != binary_fitted.classes_[0]:
-        raise AssertionError("Binary logistic class-direction mapping is incorrect.")
+    if [str(name) for name in binary_table["feature"]] != [str(name) for name in binary_logistic["prepared_names"]] or not np.allclose(binary_table["relative_weight"], binary_fitted.coef_[0]):
+        raise AssertionError("Binary logistic feature labels or relative weights are incorrect.")
 
     multiclass_route, multiclass = run("penguins", "all_types", "logistic")
-    multiclass_fitted = multiclass["diagnostic_model"].named_steps["model"]
+    multiclass_fitted = multiclass["fitted_model"]
     multiclass_table = multiclass["logistic_interpretation"]
-    expected_class_columns = [
-        f"weight_toward_{multiclass['logistic_class_labels'].get(str(label), str(label))}"
-        for label in multiclass_fitted.classes_
-    ]
-    if list(multiclass_table.columns) != ["feature", *expected_class_columns] or not np.allclose(multiclass_table[expected_class_columns].to_numpy(dtype=float), multiclass_fitted.coef_.T):
-        raise AssertionError("Multiclass logistic class-labelled weights are incorrect.")
+    if [str(name) for name in multiclass_table["feature"]] != [str(name) for name in multiclass["prepared_names"]] or not np.allclose(multiclass["logistic_coefficients"], multiclass_fitted.coef_[0]):
+        raise AssertionError("Multiclass logistic feature labels or weights are incorrect.")
     if "X_test" in diagnostic_python(binary_logistic_route) or "X_test" in diagnostic_python(multiclass_route):
         raise AssertionError("Logistic interpretation references the sealed test set.")
 
     knn_route, knn = run("breast", "continuous5", "knn_cls")
-    knn_neighbors = np.asarray(knn["knn_neighbor_positions"])
-    knn_fit = set(int(index) for index in np.asarray(knn["knn_fit_indices"]).tolist())
-    if not knn["knn_self_neighbour_check"] or int(knn["knn_example_position"]) in knn_fit or int(knn["knn_example_position"]) in set(int(index) for index in knn_neighbors.tolist()) or not set(int(index) for index in knn_neighbors.tolist()).issubset(knn_fit):
-        raise AssertionError("KNN diagnostic row leaked into its own or non-fold neighbour set.")
-    if len(knn_neighbors) != knn["knn_fitted"].n_neighbors or not np.all(np.diff(knn["knn_neighbor_distances"]) >= -1e-12):
+    knn_positions = np.asarray(knn["knn_positions"])[0]
+    knn_distances = np.asarray(knn["knn_distances"])[0]
+    knn_fit_rows = np.asarray(knn["knn_fit_rows"])
+    knn_validation_rows = np.asarray(knn["knn_validation_rows"])
+    knn_training_rows = knn_fit_rows[knn_positions]
+    if int(knn_validation_rows[0]) in set(int(index) for index in knn_fit_rows) or len(knn_training_rows) != knn["knn_model"].n_neighbors or not np.all(np.diff(knn_distances) >= -1e-12):
         raise AssertionError("KNN neighbour evidence is not the fitted fold's ordered neighbour set.")
-    expected_labels = knn["y_train"].iloc[knn_neighbors].to_numpy()
-    if not np.array_equal(knn["knn_neighbor_labels"], expected_labels) or not _same_value(knn["knn_prediction"], knn["knn_fold_model"].predict(knn["knn_row"])[0], np):
+    table = knn["knn_neighbor_table"]
+    if not np.array_equal(table["training_row"].to_numpy(), knn_training_rows) or not np.array_equal(table["neighbor_class"].to_numpy(), knn["y_train"].iloc[knn_training_rows].to_numpy()) or not _same_value(table["prediction"].iloc[0], knn["knn_pipeline"].predict(knn["knn_row"])[0], np):
         raise AssertionError("KNN neighbour labels or prediction do not match the fold-fitted model.")
 
     def force_distance_weights(namespace, cell):
         if cell["id"] == "diagnose":
-            namespace["best_pipeline"] = namespace["best_pipeline"].set_params(model__n_neighbors=3, model__weights="distance")
+            namespace["chosen_pipeline"] = namespace["chosen_pipeline"].set_params(model__n_neighbors=3, model__weights="distance")
 
     weighted_route, weighted = run("breast", "continuous5", "knn_cls", force_distance_weights)
-    if not weighted["knn_is_distance_weighted"] or not np.allclose(weighted["knn_vote_weights"], 1 / np.maximum(weighted["knn_neighbor_distances"], np.finfo(float).eps)) or np.allclose(weighted["knn_vote_weights"], 1):
-        raise AssertionError("Distance-weighted KNN evidence does not reflect the fitted weights setting.")
+    if weighted["knn_model"].weights != "distance" or weighted["knn_model"].n_neighbors != 3:
+        raise AssertionError("The KNN distance-weighted experiment did not reach the fitted estimator.")
     if "X_test" in diagnostic_python(knn_route) or "X_test" in diagnostic_python(weighted_route):
         raise AssertionError("KNN interpretation references the sealed test set.")
 
     car_route, car = run("car", "categorical", "one_r")
-    car_fitted = car["diagnostic_model"].named_steps["model"]
+    car_fitted = car["fitted_model"]
     selected_feature = car["feature_names"][car_fitted.best_feature_]
     car_rules = car["one_r_rules"]
     original_values = car["X_train"][selected_feature].astype(str)
@@ -2000,22 +2057,15 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
         raise AssertionError("Car One-R rules do not preserve the selected feature's exact categories.")
     if any(int(row.training_rows) != int((original_values == row.interval).sum()) for row in car_rules.itertuples()):
         raise AssertionError("Car One-R training-row counts do not match original category membership.")
-    from sklearn.metrics import accuracy_score, f1_score
-    comparison = car["one_r_comparison"].set_index("baseline")
-    expected_majority = np.repeat(car_fitted.default_, len(car["y_train"]))
-    if not np.array_equal(car["one_r_majority_prediction"], expected_majority):
-        raise AssertionError("One-R majority baseline is not the fitted default class.")
-    for label, prediction in (("Majority class", expected_majority), ("One-R", car["one_r_prediction"])):
-        if not np.isclose(comparison.loc[label, "accuracy"], accuracy_score(car["y_train"], prediction)) or not np.isclose(comparison.loc[label, "macro_f1"], f1_score(car["y_train"], prediction, average="macro", zero_division=0)):
-            raise AssertionError("One-R comparison does not use the displayed training-only predictions.")
 
     continuous_one_r_route, continuous_one_r = run("breast", "continuous5", "one_r")
-    if continuous_one_r["diagnostic_model"].named_steps["model"].edges_ is None or not all(str(interval).startswith("[") for interval in continuous_one_r["one_r_rules"]["interval"]):
+    if continuous_one_r["fitted_model"].edges_ is None or not all(str(interval).startswith("[") for interval in continuous_one_r["one_r_rules"]["interval"]):
         raise AssertionError("Continuous One-R lost its numeric interval rules.")
 
     return {
         "simple_line_matches_fitted_model": True,
         "polynomial_curve_matches_fitted_model": True,
+        "polynomial_flat_term_summary": True,
         "multiple_coefficients_match_fitted_model": True,
         "seoul_forward_cv_unchanged": True,
         "regression_tree_paths": regression_tree_results,
@@ -2024,7 +2074,7 @@ def run_phase2a_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dic
         "multiclass_logistic_labels": True,
         "knn_oof_self_neighbour_guard": True,
         "knn_weighted_vote_fixture": True,
-        "car_one_r_rules_and_baseline": True,
+        "car_one_r_rules": True,
         "continuous_one_r_intervals": True,
     }
 
@@ -2045,12 +2095,11 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         forbidden = ("coefs_", "intercept_", "np.matmul", "np.dot")
         if any(token in diagnostic for token in forbidden):
             raise AssertionError(f"Neural Network Step 8 exposes raw-weight or manual-forward plumbing: {route}")
-        if namespace["diagnostic_model"] is not namespace["mlp_oof_model"]:
-            raise AssertionError(f"{model_id} architecture/loss model is not the OOF prediction model.")
-        fitted = namespace["mlp_oof_model"].named_steps["model"]
+        fitted_pipeline = namespace["fitted_pipeline"]
+        fitted = namespace["fitted_model"]
         inner = fitted.regressor_ if model_id == "mlp_reg" else fitted
-        if namespace["mlp_fitted"] is not inner:
-            raise AssertionError(f"{model_id} architecture/loss estimator is not the fitted OOF estimator.")
+        if namespace["mlp_model"] is not inner:
+            raise AssertionError(f"{model_id} loss evidence is not from the named fitted estimator.")
         loss_curve = np.asarray(namespace["mlp_loss_curve"], dtype=float)
         if not np.all(np.isfinite(loss_curve)):
             raise AssertionError(f"{model_id} loss curve contains non-finite values.")
@@ -2058,90 +2107,69 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
             raise AssertionError(f"{model_id} loss curve length does not match n_iter_.")
         if not np.allclose(loss_curve, np.asarray(inner.loss_curve_, dtype=float)):
             raise AssertionError(f"{model_id} teaching loss curve does not come from the fitted estimator.")
-        architecture = namespace["mlp_architecture"].iloc[0]
-        expected_hidden = inner.hidden_layer_sizes if isinstance(inner.hidden_layer_sizes, tuple) else (inner.hidden_layer_sizes,)
-        expected_hidden_text = " → ".join(str(width) for width in expected_hidden)
-        if int(architecture["prepared_inputs"]) != int(inner.n_features_in_):
-            raise AssertionError(f"{model_id} architecture input count does not match the fitted estimator.")
-        if str(architecture["hidden_layers"]) != expected_hidden_text:
-            raise AssertionError(f"{model_id} architecture hidden-layer summary does not match hidden_layer_sizes.")
-        if int(architecture["training_iterations"]) != int(inner.n_iter_):
-            raise AssertionError(f"{model_id} architecture iteration count does not match n_iter_.")
-        expected_stopping = "on" if inner.early_stopping else "off"
-        if str(architecture["early_stopping"]) != expected_stopping:
-            raise AssertionError(f"{model_id} architecture early-stopping state is incorrect.")
-        position = int(namespace["mlp_example_position"])
-        validation = set(int(index) for index in np.asarray(namespace["mlp_validation_indices"]).tolist())
-        fit = set(int(index) for index in np.asarray(namespace["mlp_fit_indices"]).tolist())
+        position = int(namespace["interpret_validation_position"])
+        validation = set(int(index) for index in np.asarray(namespace["interpret_validation_rows"]).tolist())
+        fit = set(int(index) for index in np.asarray(namespace["interpret_fit_rows"]).tolist())
         if position not in validation or position in fit:
             raise AssertionError(f"{model_id} example row was not held out from its fitted fold.")
-        if not isinstance(namespace["mlp_oof_model"], type(namespace["diagnostic_model"])):
-            raise AssertionError(f"{model_id} OOF example did not use the same pipeline type.")
-        return fitted, inner, position, fit
+        if namespace["fitted_pipeline"].predict(namespace["interpret_row"])[0] != namespace["interpret_prediction"]:
+            raise AssertionError(f"{model_id} held-out prediction does not match the fitted fold pipeline.")
+        return fitted_pipeline, fitted, inner, position, fit
 
     classification_route, classification = run("breast", "continuous5", "mlp_cls")
-    classification_fitted, classification_inner, _, _ = assert_common(classification_route, classification, "mlp_cls")
+    classification_pipeline, classification_fitted, classification_inner, _, _ = assert_common(classification_route, classification, "mlp_cls")
     if not classification_inner.early_stopping:
         raise AssertionError("Ordinary MLP classification unexpectedly disabled built-in early stopping.")
     classification_build_copy = " ".join(f'{item["label"]} {item["text"]}' for item in next(cell for cell in classification_route["cells"] if cell["id"] == "model")["concepts"])
     if "early stopping" not in classification_build_copy.lower() and "early_stopping" not in classification_build_copy.lower():
         raise AssertionError("MLP classification build teaching does not explain early stopping.")
-    if not np.allclose(
-        np.asarray(classification["mlp_probability_values"], dtype=float),
-        np.asarray(classification["mlp_oof_model"].predict_proba(classification["mlp_row"])[0], dtype=float),
-    ):
-        raise AssertionError("MLP classification probabilities do not match the fitted OOF pipeline.")
-    if not np.isclose(float(np.asarray(classification["mlp_probability_values"], dtype=float).sum()), 1.0):
+    probabilities = np.asarray(classification_pipeline.predict_proba(classification["interpret_row"])[0], dtype=float)
+    if not np.isclose(float(probabilities.sum()), 1.0):
         raise AssertionError("MLP classification probabilities do not sum to one.")
-    expected_prediction = classification["mlp_oof_model"].predict(classification["mlp_row"])[0]
-    if not _same_value(classification["mlp_prediction"], expected_prediction, np):
-        raise AssertionError("MLP classification OOF prediction does not match the fitted pipeline.")
-    expected_classes = [str(label) for label in classification_fitted.classes_]
-    actual_classes = [str(label) for label in classification["mlp_oof_model"].classes_]
-    if expected_classes != actual_classes:
-        raise AssertionError("MLP classification OOF class ordering changed between fitted estimators.")
-    probability_columns = [column for column in classification["mlp_prediction_story"].columns if str(column).startswith("probability_")]
-    if len(probability_columns) != len(expected_classes):
-        raise AssertionError("MLP classification prediction story does not show one probability per class.")
+    if not np.allclose(probabilities, np.asarray(ast.literal_eval(classification["mlp_summary"].iloc[0]["held_out_probabilities"]), dtype=float)):
+        raise AssertionError("MLP classification probabilities do not match the fitted OOF pipeline.")
+    summary_row = classification["mlp_summary"].iloc[0]
+    if not _same_value(summary_row["held_out_actual"], classification["interpret_actual"], np) or not _same_value(summary_row["held_out_prediction"], classification["interpret_prediction"], np):
+        raise AssertionError("MLP classification held-out summary is not aligned with the fitted fold row.")
+    if str(summary_row["hidden_layer_sizes"]) != str(classification_inner.hidden_layer_sizes):
+        raise AssertionError("MLP classification summary does not report the fitted hidden-layer size.")
 
     mixed_route, mixed = run("penguins", "all_types", "mlp_cls")
     assert_common(mixed_route, mixed, "mlp_cls")
-    if int(mixed["mlp_architecture"].iloc[0]["prepared_inputs"]) <= len(mixed["feature_names"]):
+    if int(mixed["mlp_model"].n_features_in_) <= len(mixed["feature_names"]):
         raise AssertionError("Mixed-feature MLP did not expose the expanded prepared input count.")
 
     regression_route, regression = run("wine", "continuous", "mlp_reg")
-    _, regression_inner, regression_position, _ = assert_common(regression_route, regression, "mlp_reg")
+    regression_pipeline, _, regression_inner, regression_position, _ = assert_common(regression_route, regression, "mlp_reg")
     if not regression_inner.early_stopping:
         raise AssertionError("Ordinary MLP regression unexpectedly disabled built-in early stopping.")
     regression_build_copy = " ".join(f'{item["label"]} {item["text"]}' for item in next(cell for cell in regression_route["cells"] if cell["id"] == "model")["concepts"])
     if "target scaling" not in regression_build_copy.lower() and "scales y" not in regression_build_copy.lower():
         raise AssertionError("MLP regression build teaching does not explain target scaling.")
-    expected_prediction = float(regression["mlp_oof_model"].predict(regression["mlp_row"])[0])
-    if not np.isclose(float(regression["mlp_prediction"]), expected_prediction):
+    expected_prediction = float(regression_pipeline.predict(regression["interpret_row"])[0])
+    if not np.isclose(float(regression["interpret_prediction"]), expected_prediction):
         raise AssertionError("MLP regression OOF prediction does not match the fitted pipeline.")
     expected_actual = float(regression["y_train"].iloc[regression_position])
-    if not np.isclose(float(regression["mlp_actual"]), expected_actual):
+    if not np.isclose(float(regression["interpret_actual"]), expected_actual):
         raise AssertionError("MLP regression actual value is not in original target units.")
-    if not np.isclose(float(regression["mlp_absolute_error"]), abs(float(regression["mlp_actual"]) - float(regression["mlp_prediction"]))):
+    summary_row = regression["mlp_summary"].iloc[0]
+    if not np.isclose(float(summary_row["absolute_error_original_units"]), abs(expected_actual - expected_prediction)):
         raise AssertionError("MLP regression absolute error is incorrect.")
-    if list(regression["mlp_prediction_story"].columns) != [
-        "selected_out_of_fold_row",
-        "actual_target_original_units",
-        "predicted_target_original_units",
+    if list(regression["mlp_summary"].columns) != [
+        "held_out_actual",
+        "held_out_prediction_original_units",
+        "hidden_layer_sizes",
+        "iterations",
         "absolute_error_original_units",
     ]:
         raise AssertionError("MLP regression prediction story does not identify original target units.")
-    prepared_row = regression["mlp_oof_model"][:-1].transform(regression["mlp_row"])
-    transformed_prediction = regression["mlp_oof_model"].named_steps["model"].regressor_.predict(prepared_row)
-    oof_wrapper = regression["mlp_oof_model"].named_steps["model"]
-    converted_prediction = oof_wrapper.transformer_.inverse_transform(np.asarray(transformed_prediction).reshape(-1, 1)).ravel()[0]
-    if not np.isclose(float(converted_prediction), expected_prediction):
+    if not np.isclose(float(summary_row["held_out_prediction_original_units"]), expected_prediction):
         raise AssertionError("TransformedTargetRegressor conversion does not match the public pipeline prediction.")
     # The random wine split deliberately does not promise temporal ordering;
     # chronology is asserted separately for the Seoul TimeSeriesSplit route.
 
     seoul_route, seoul = run("seoul", "continuous", "mlp_reg")
-    _, seoul_inner, _, _ = assert_common(seoul_route, seoul, "mlp_reg")
+    _, seoul_pipeline, seoul_inner, seoul_position, seoul_fit = assert_common(seoul_route, seoul, "mlp_reg")
     if seoul_inner.early_stopping:
         raise AssertionError("Seoul MLP regression still enables sklearn's non-time-aware built-in early stopping.")
     if "early_stopping=False" not in route_code(seoul_route, "model"):
@@ -2153,11 +2181,12 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
     for token in ("disabled", "not time-aware", "outer timeseriessplit", "normal convergence criterion"):
         if token not in seoul_build_copy:
             raise AssertionError(f"Seoul MLP teaching does not explain route-specific early stopping: {token}")
-    seoul_position = int(seoul["mlp_example_position"])
-    if not np.all(int(index) < seoul_position for index in np.asarray(seoul["mlp_fit_indices"]).tolist()):
+    if not np.all(int(index) < seoul_position for index in seoul_fit):
         raise AssertionError("Seoul MLP regression OOF row is not after its chronological fitting rows.")
-    if "last validation window" not in diagnostic_python(seoul_route):
-        raise AssertionError("Seoul MLP regression did not retain the forward-only diagnostic window.")
+    if not np.isfinite(float(seoul_pipeline.predict(seoul["interpret_row"])[0])):
+        raise AssertionError("Seoul MLP regression held-out prediction is not finite.")
+    if "last validation window" not in diagnostic_python(seoul_route).lower():
+        raise AssertionError("Seoul MLP regression did not retain its forward-only diagnostic window.")
 
     return {
         "classification_oof_and_probabilities": True,
@@ -2165,14 +2194,14 @@ def run_neural_network_runtime_regression(payload: dict, pd, np, plt, sns) -> di
         "regression_oof_original_units": True,
         "transformed_target_fidelity": True,
         "loss_curve_fidelity": True,
-        "architecture_fidelity": True,
+        "named_estimator_and_summary_fidelity": True,
         "early_stopping_concept": True,
         "seoul_forward_oof": True,
     }
 
 
 def run_unsupervised_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
-    """Check target-free clustering, neutral k choices, and aligned evidence."""
+    """Check target-free clustering, neutral choices, and aligned evidence."""
 
     def run(dataset_id: str, scenario_id: str, model_id: str) -> tuple[dict, dict]:
         route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
@@ -2180,65 +2209,68 @@ def run_unsupervised_runtime_regression(payload: dict, pd, np, plt, sns) -> dict
         target = route["dataset"]["target"]
         if re.search(rf"['\"]{re.escape(target)}['\"]", code):
             raise AssertionError(f"{model_id} runtime route references its target column: {route}")
-        return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "visualise")
+        stop_at = "visualise"
+        return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, stop_at)
 
     kmeans_route, kmeans = run("breast", "continuous5", "kmeans")
     candidate_scores = kmeans["candidate_scores"]
-    if not np.isfinite(candidate_scores[["inertia", "silhouette"]].to_numpy(dtype=float)).all():
-        raise AssertionError("K-Means candidate evidence contains non-finite values.")
+    if list(candidate_scores.columns) != ["k", "inertia", "silhouette"] or not np.isfinite(candidate_scores[["inertia", "silhouette"]].to_numpy(dtype=float)).all():
+        raise AssertionError("K-Means candidate evidence is missing or non-finite.")
     if not ((candidate_scores["silhouette"] >= -1).all() and (candidate_scores["silhouette"] <= 1).all()):
         raise AssertionError("K-Means silhouette evidence is outside its valid range.")
     expected_k = min(3, int(kmeans["max_k"]))
     if int(kmeans["selected_k"]) != expected_k:
         raise AssertionError("K-Means selected_k is not the neutral runnable default.")
-    if int(kmeans["selected_k"]) != len(np.unique(kmeans["clusters"])) or len(kmeans["clusters"]) != len(kmeans["Z"]):
+    if len(kmeans["clusters"]) != len(kmeans["X_scaled"]) or int(kmeans["selected_k"]) != len(np.unique(kmeans["clusters"])):
         raise AssertionError("K-Means labels do not represent exactly one cluster for every row.")
     profile = kmeans["cluster_means"]
-    if not set(profile["cluster"].astype(int)).issuperset(set(np.unique(kmeans["clusters"]).astype(int))):
-        raise AssertionError("K-Means cluster profiles are not aligned with fitted cluster IDs.")
-    if not np.allclose(
-        kmeans["centroid_profile"].to_numpy(dtype=float),
-        kmeans["preprocessor"].inverse_transform(kmeans["kmeans"].cluster_centers_),
-        atol=0.01,
-    ):
-        raise AssertionError("K-Means centroid evidence is not in the fitted scaler's original units.")
-    if int(kmeans["silhouette_suggestion"]) != int(candidate_scores.loc[candidate_scores["silhouette"].idxmax(), "k"]):
-        raise AssertionError("K-Means silhouette suggestion does not match its mechanical evidence.")
+    if list(profile.columns)[0] != "cluster" or not set(profile["cluster"].astype(int)).issuperset(set(np.unique(kmeans["clusters"]).astype(int))):
+        raise AssertionError("K-Means original-unit profiles are not aligned with fitted cluster IDs.")
+    expected_profile = kmeans["clustered_data"].groupby("cluster")[kmeans["feature_names"]].mean().reset_index()
+    expected_profile = expected_profile.sort_values("cluster").reset_index(drop=True)
+    actual_profile = profile.sort_values("cluster").reset_index(drop=True)
+    if not np.allclose(actual_profile[kmeans["feature_names"]].to_numpy(dtype=float), expected_profile[kmeans["feature_names"]].to_numpy(dtype=float), atol=0.01):
+        raise AssertionError("K-Means profile values do not match the clustered rows in original units.")
+    if "silhouette_suggestion" in kmeans or "silhouette_suggestion" in route_code(kmeans_route, "compare"):
+        raise AssertionError("K-Means still makes an automatic best-k suggestion.")
+    if "no single score makes that decision automatically" not in "\n".join(cell["code"] for cell in kmeans_route["cells"]).lower():
+        raise AssertionError("K-Means route does not explain that the learner chooses k.")
 
     hierarchical_route, hierarchical = run("breast", "continuous5", "hierarchical")
-    first_sample = np.asarray(hierarchical["sample_index"])
-    if len(first_sample) != len(np.unique(first_sample)):
-        raise AssertionError("Hierarchical sample contains duplicate indices.")
-    if not np.array_equal(np.asarray(hierarchical["analysis_rows"].index), first_sample):
-        raise AssertionError("Hierarchical analysis rows are not aligned with sampled indices.")
-    if hierarchical["analysis_Z"].shape[0] != len(first_sample) or hierarchical["linkage_matrix"].shape != (len(first_sample) - 1, 4):
-        raise AssertionError("Hierarchical sample and linkage matrix shapes are inconsistent.")
-    if not np.isfinite(hierarchical["candidate_scores"]["silhouette"].to_numpy(dtype=float)).all():
-        raise AssertionError("Hierarchical silhouette evidence contains non-finite values.")
+    sample = hierarchical["X_sample"]
+    sample_index = np.asarray(sample.index)
+    if len(sample_index) != len(np.unique(sample_index)) or len(sample_index) != int(hierarchical["sample_size"]):
+        raise AssertionError("Hierarchical sample is not unique or does not respect its declared size.")
+    if hierarchical["hierarchy"].shape != (len(sample_index) - 1, 4):
+        raise AssertionError("Hierarchical linkage matrix shape is inconsistent with the sampled rows.")
+    if list(hierarchical["candidate_scores"].columns) != ["clusters", "silhouette"] or not np.isfinite(hierarchical["candidate_scores"]["silhouette"].to_numpy(dtype=float)).all():
+        raise AssertionError("Hierarchical candidate evidence is missing or non-finite.")
     expected_hierarchical_k = min(3, int(hierarchical["max_k"]))
     if int(hierarchical["selected_k"]) != expected_hierarchical_k:
         raise AssertionError("Hierarchical selected_k is not the neutral runnable default.")
-    if int(hierarchical["selected_k"]) != len(np.unique(hierarchical["clusters"])) or len(hierarchical["clusters"]) != len(hierarchical["analysis_Z"]):
+    if len(hierarchical["clusters"]) != len(sample_index) or int(hierarchical["selected_k"]) != len(np.unique(hierarchical["clusters"])):
         raise AssertionError("Hierarchical labels do not represent exactly one cluster for every sampled row.")
-    if not set(hierarchical["cluster_profile"].index.astype(int)).issuperset(set(np.unique(hierarchical["clusters"]).astype(int))):
+    profile = hierarchical["cluster_profile"]
+    if set(profile.index.astype(int)) != set(np.unique(hierarchical["clusters"]).astype(int)):
         raise AssertionError("Hierarchical cluster profiles are not aligned with sampled cluster IDs.")
-    if int(hierarchical["silhouette_suggestion"]) != int(hierarchical["candidate_scores"].loc[hierarchical["candidate_scores"]["silhouette"].idxmax(), "clusters"]):
-        raise AssertionError("Hierarchical silhouette suggestion does not match its mechanical evidence.")
+    if "silhouette_suggestion" in hierarchical or "silhouette_suggestion" in route_code(hierarchical_route, "compare"):
+        raise AssertionError("Hierarchical clustering still makes an automatic best-k suggestion.")
     _, hierarchical_repeat = run("breast", "continuous5", "hierarchical")
-    if not np.array_equal(first_sample, np.asarray(hierarchical_repeat["sample_index"])):
+    if not np.array_equal(sample_index, np.asarray(hierarchical_repeat["X_sample"].index)):
         raise AssertionError("Hierarchical reproducible sampling changed between identical runs.")
 
     wine_route, wine = run("wine", "continuous", "hierarchical")
     if re.search(r"['\"]quality['\"]", "\n".join(cell["code"] for cell in wine_route["cells"])):
         raise AssertionError("Wine hierarchical discovery code consumed the numeric reference target.")
-    if not len(wine["analysis_rows"]):
+    if not len(wine["X_sample"]):
         raise AssertionError("Wine hierarchical route did not retain its sampled analysis rows.")
 
     return {
         "kmeans_candidate_evidence": True,
         "kmeans_neutral_selection": True,
         "kmeans_labels_and_profiles": True,
-        "kmeans_original_unit_centroids": True,
+        "kmeans_original_unit_profiles": True,
+        "kmeans_no_automatic_suggestion": True,
         "hierarchical_sample_alignment": True,
         "hierarchical_neutral_selection": True,
         "hierarchical_profiles": True,
@@ -2246,108 +2278,97 @@ def run_unsupervised_runtime_regression(payload: dict, pd, np, plt, sns) -> dict
         "target_free_discovery": True,
     }
 
-
 def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     """Check PCA variance, loading, score, and post-fit reference-label fidelity."""
-
-    pca_step_ids = ["frame", "explore", "prepare", "variance", "select", "loadings", "project"]
 
     def run(dataset_id: str, scenario_id: str) -> tuple[dict, dict]:
         route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, "pca")
         code_by_id = {cell["id"]: cell["code"] for cell in route["cells"]}
         target = route["dataset"]["target"]
-        pre_project_code = "\n".join(code_by_id[step_id] for step_id in pca_step_ids[:-1])
-        target_literal = re.compile(rf"['\"]{re.escape(target)}['\"]")
-        if target_literal.search(pre_project_code):
+        pre_project_code = "\n".join(code_by_id[step_id] for step_id in ("frame", "explore", "prepare", "variance", "select", "loadings"))
+        if re.search(rf"['\"]{re.escape(target)}['\"]", pre_project_code):
             raise AssertionError(f"PCA runtime accessed the reference target before fitting: {route}")
         project_code = code_by_id["project"]
-        target_position = project_code.find(f'"{target}"')
-        if target_position < 0:
-            target_position = project_code.find(f"'{target}'")
-        fit_position = project_code.find("full_pca.transform(Z)")
-        if target_position < 0 or fit_position < 0 or target_position < fit_position:
-            raise AssertionError(f"PCA project code does not access reference labels after fitting: {route}")
+        optional_reference = route_cell(route, "project").get("optionalCode", "")
+        if target not in optional_reference or "reference_label" not in optional_reference:
+            raise AssertionError("PCA optional reference view does not identify the target label.")
+        if "projection" not in project_code or "component_scores" not in project_code:
+            raise AssertionError("PCA project code does not reuse the saved component scores.")
         forbidden = ("X_test", "y_test", "test_prediction", "test_result", "y_train", "cv_scores")
         if any(token in "\n".join(code_by_id.values()) for token in forbidden):
             raise AssertionError(f"PCA route introduced supervised evaluation plumbing: {route}")
         return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "project")
 
     route, namespace = run("breast", "continuous5")
-    Z = np.asarray(namespace["Z"], dtype=float)
-    full_pca = namespace["full_pca"]
-    ratios = np.asarray(full_pca.explained_variance_ratio_, dtype=float)
+    X_scaled = np.asarray(namespace["X_scaled"], dtype=float)
+    pca = namespace["pca"]
+    ratios = np.asarray(namespace["explained_variance_ratio"], dtype=float)
     cumulative = np.asarray(namespace["cumulative_explained_variance"], dtype=float)
-    if Z.shape[0] != len(namespace["X"]) or not np.isfinite(Z).all():
+    scores = np.asarray(namespace["component_scores"], dtype=float)
+    if X_scaled.shape[0] != len(namespace["X"]) or not np.isfinite(X_scaled).all():
         raise AssertionError("PCA preprocessing changed row alignment or produced non-finite values.")
-    if int(full_pca.n_components_) != Z.shape[1] or not np.isfinite(ratios).all() or (ratios < 0).any():
+    if scores.shape != (len(namespace["X"]), pca.n_components_) or not np.isfinite(ratios).all() or (ratios < 0).any():
         raise AssertionError("PCA fitted-component or explained-variance evidence is invalid.")
     if not np.all(np.diff(cumulative) >= -1e-12) or not np.isclose(cumulative[-1], 1.0, atol=1e-6):
         raise AssertionError("PCA cumulative explained variance is not monotonic or approximately complete.")
     variance_table = namespace["variance_table"]
     if list(variance_table.columns) != ["component", "explained_variance_ratio", "cumulative_explained_variance"]:
         raise AssertionError("PCA variance table does not use precise ratio terminology.")
-    if not np.allclose(variance_table["explained_variance_ratio"].to_numpy(dtype=float), ratios) or not np.allclose(
-        variance_table["cumulative_explained_variance"].to_numpy(dtype=float), cumulative
-    ):
+    if not np.allclose(variance_table["explained_variance_ratio"].to_numpy(dtype=float), ratios) or not np.allclose(variance_table["cumulative_explained_variance"].to_numpy(dtype=float), cumulative):
         raise AssertionError("PCA variance table does not match the fitted estimator.")
     variance_target = float(namespace["variance_target"])
     expected_components = int(np.flatnonzero(cumulative >= variance_target)[0] + 1)
     if not np.isclose(variance_target, 0.90) or int(namespace["components_for_target"]) != expected_components:
         raise AssertionError("PCA component selection did not choose the first count qualifying for the active variance target.")
-    if namespace["Z_reduced"].shape != (Z.shape[0], expected_components) or float(namespace["variance_retained"]) < variance_target:
+    if namespace["X_reduced"].shape != (len(namespace["X"]), expected_components) or float(namespace["variance_retained"]) < variance_target:
         raise AssertionError("PCA reduced representation does not retain the selected variance.")
 
     loadings = namespace["loadings"]
-    if [str(name) for name in loadings.index] != [str(name) for name in namespace["feature_names"]]:
-        raise AssertionError("PCA loading feature labels are not preserved in selected order.")
-    if not np.allclose(loadings.to_numpy(dtype=float), np.asarray(full_pca.components_).T):
-        raise AssertionError("PCA loading matrix does not equal full_pca.components_.T.")
-    expected_view = loadings[["PC1", "PC2"]].copy()
-    expected_view["strongest_component"] = expected_view[["PC1", "PC2"]].abs().idxmax(axis=1)
-    expected_view["max_absolute_loading"] = expected_view[["PC1", "PC2"]].abs().max(axis=1)
-    expected_view = expected_view.sort_values("max_absolute_loading", ascending=False).head(12)
-    actual_view = namespace["loading_view"]
-    if list(actual_view.index) != list(expected_view.index) or list(actual_view.columns) != list(expected_view.columns):
-        raise AssertionError("PCA strongest loading view is not selected by absolute contribution.")
-    if not np.allclose(actual_view[["PC1", "PC2", "max_absolute_loading"]].to_numpy(dtype=float), expected_view[["PC1", "PC2", "max_absolute_loading"]].to_numpy(dtype=float)):
-        raise AssertionError("PCA strongest loading values do not match the fitted components.")
+    expected_loadings = pd.DataFrame(np.asarray(pca.components_)[:2].T, index=namespace["feature_names"], columns=["PC1", "PC2"])
+    expected_loadings.index.name = "feature"
+    if not np.allclose(loadings.to_numpy(dtype=float), expected_loadings.to_numpy(dtype=float)) or list(loadings.index.astype(str)) != list(expected_loadings.index.astype(str)):
+        raise AssertionError("PCA loading matrix does not equal the fitted component directions.")
+    if list(namespace["loading_view"].columns) != ["PC1", "PC2"] or not np.allclose(namespace["loading_view"].to_numpy(dtype=float), expected_loadings.to_numpy(dtype=float)):
+        raise AssertionError("PCA loading view does not preserve the named PC1/PC2 table.")
 
-    expected_scores = full_pca.transform(Z)
-    if not np.allclose(namespace["component_scores"], expected_scores) or not np.allclose(namespace["projection"], expected_scores[:, :2]):
-        raise AssertionError("PCA row scores or PC1/PC2 projection do not match full_pca.transform(Z).")
+    expected_scores = pca.transform(X_scaled)
+    if not np.allclose(scores, expected_scores) or not np.allclose(namespace["projection"], expected_scores[:, :2]):
+        raise AssertionError("PCA row scores or PC1/PC2 projection do not match the fitted PCA.")
     if not np.isclose(float(namespace["pc1_variance"]), ratios[0]) or not np.isclose(float(namespace["pc2_variance"]), ratios[1]):
         raise AssertionError("PCA projection axis labels do not use fitted explained-variance ratios.")
     plot_df = namespace["plot_df"]
-    frame_name = "df" if route["dataset"]["prepare"] == "df" else "model_df"
-    reference_frame = namespace[frame_name]
     if not np.allclose(plot_df[["PC1", "PC2"]].to_numpy(dtype=float), expected_scores[:, :2]):
         raise AssertionError("PCA plotted coordinates do not match the fitted scores.")
-    if not np.array_equal(plot_df["reference"].to_numpy().astype(str), reference_frame[route["dataset"]["target"]].to_numpy().astype(str)):
-        raise AssertionError("PCA interpretation reference labels are not aligned with projected rows.")
+    frame_name = "df" if route["dataset"]["prepare"] == "df" else "model_df"
+    reference_frame = namespace[frame_name]
+    reference_plot = namespace["plot_df_with_reference"]
+    # PCA coordinates are floating-point values; supported NumPy builds may
+    # round the same transform in the final bit differently.  Preserve the
+    # alignment check while allowing normal numerical round-off.
+    if not np.allclose(reference_plot[["PC1", "PC2"]].to_numpy(dtype=float), expected_scores[:, :2], rtol=1e-9, atol=1e-11):
+        raise AssertionError("PCA reference view changed the fitted coordinates.")
+    if not np.array_equal(reference_plot["reference"].to_numpy().astype(str), reference_frame[route["dataset"]["target"]].to_numpy().astype(str)):
+        raise AssertionError("PCA interpretation reference labels are not aligned after fitting.")
 
     high_route, high_namespace = run("breast", "continuous30")
     high_explore = _execute_route_to_cell(payload, high_route, pd, np, plt, sns, "explore")
-    high_pairs = high_explore["strongest_pairs"]
-    if len(high_pairs) > 12 or list(high_pairs.columns) != ["feature_a", "feature_b", "correlation", "absolute_correlation"]:
-        raise AssertionError("Breast Cancer continuous30 PCA did not produce a compact redundancy table.")
-    if any(str(left) == str(right) for left, right in zip(high_pairs["feature_a"], high_pairs["feature_b"])):
-        raise AssertionError("PCA redundancy summary contains a self-correlation.")
-    if len({frozenset((str(left), str(right))) for left, right in zip(high_pairs["feature_a"], high_pairs["feature_b"])}) != len(high_pairs):
-        raise AssertionError("PCA redundancy summary contains duplicate feature pairs.")
-    if not np.isfinite(high_pairs[["correlation", "absolute_correlation"]].to_numpy(dtype=float)).all():
-        raise AssertionError("PCA redundancy summary contains non-finite correlations.")
-    if int(high_namespace["full_pca"].n_components_) != 30 or len(high_namespace["loadings"]) != 30:
+    high_summary = high_explore["pair_summary"]
+    if list(high_summary.columns) != ["feature_a", "feature_b", "correlation", "absolute_correlation"] or len(high_summary) != 1:
+        raise AssertionError("Breast Cancer continuous30 PCA did not produce one compact named pair summary.")
+    if high_summary.iloc[0]["feature_a"] == high_summary.iloc[0]["feature_b"] or not np.isfinite(high_summary[["correlation", "absolute_correlation"]].to_numpy(dtype=float)).all():
+        raise AssertionError("PCA named redundancy pair is invalid.")
+    high_optional = route_cell(high_route, "explore").get("optionalCode", "")
+    if "combinations" not in high_optional or "pair_table" not in high_optional or "sns.heatmap" in route_code(high_route, "explore"):
+        raise AssertionError("Breast Cancer continuous30 PCA does not keep compact primary and optional pair evidence.")
+    if int(high_namespace["pca"].n_components_) != 30 or len(high_namespace["loadings"]) != 30:
         raise AssertionError("Breast Cancer continuous30 PCA did not use and label all 30 selected inputs.")
-    if "sns.heatmap" in route_code(high_route, "explore"):
-        raise AssertionError("Breast Cancer continuous30 PCA still renders the giant primary correlation heatmap.")
 
     penguins_route, penguins = run("penguins", "continuous")
     penguins_frame = penguins["df"] if penguins_route["dataset"]["prepare"] == "df" else penguins["model_df"]
-    if not np.array_equal(penguins["plot_df"]["reference"].to_numpy().astype(str), penguins_frame["species"].to_numpy().astype(str)):
+    if not np.array_equal(penguins["plot_df_with_reference"]["reference"].to_numpy().astype(str), penguins_frame["species"].to_numpy().astype(str)):
         raise AssertionError("Penguins PCA reference colouring is not aligned after fitting.")
     wine_route, wine = run("wine", "continuous")
-    wine_frame = wine["df"] if wine_route["dataset"]["prepare"] == "df" else wine["model_df"]
-    if not np.array_equal(wine["plot_df"]["reference"].to_numpy().astype(str), wine_frame["quality"].to_numpy().astype(str)):
+    if not np.array_equal(wine["plot_df_with_reference"]["reference"].to_numpy().astype(str), wine["model_df"]["quality"].to_numpy().astype(str)):
         raise AssertionError("Wine PCA numeric reference colouring is not aligned after fitting.")
 
     return {
@@ -2360,7 +2381,6 @@ def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
         "large_feature_redundancy_summary": True,
         "no_target_based_pca_selection": True,
     }
-
 
 def run_pca_practice_experiment_regression(payload: dict, pd, np, plt, sns) -> dict:
     """Ensure the PCA practice mutation changes one active criterion everywhere it is used."""
@@ -2385,7 +2405,7 @@ def run_pca_practice_experiment_regression(payload: dict, pd, np, plt, sns) -> d
         raise AssertionError("PCA Practice mutation did not set variance_target to 0.80 at runtime.")
     if int(namespace["components_for_target"]) != expected_components:
         raise AssertionError("PCA Practice mutation did not select the first component count reaching 80%.")
-    if float(namespace["variance_retained"]) < 0.80 or namespace["Z_reduced"].shape[1] != expected_components:
+    if float(namespace["variance_retained"]) < 0.80 or namespace["X_reduced"].shape[1] != expected_components:
         raise AssertionError("PCA Practice mutation produced an incoherent reduced representation.")
     if "80% target is a chosen rule of thumb" not in output or "80% criterion" not in output:
         raise AssertionError("PCA Practice mutation did not update learner-facing criterion copy to 80%.")
@@ -2405,229 +2425,175 @@ def run_pca_practice_experiment_regression(payload: dict, pd, np, plt, sns) -> d
 
 
 def run_phase2b1_model_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
-    """Check that Phase 2B-1 explanations match fitted classifiers and labels."""
+    """Check current named SVM, discriminant, and Naive Bayes evidence."""
 
-    def run(dataset_id, scenario_id, model_id, fixture=False):
-        route = payload["phase2bFixtures"][model_id] if fixture else _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
-        diagnostic = diagnostic_python(route)
-        forbidden = ("X_test", "y_test", "test_prediction", "test_result")
-        if any(token in diagnostic for token in forbidden):
-            raise AssertionError(f"Phase 2B-1 diagnostic accesses final-test data: {route}")
+    def run(dataset_id, scenario_id, model_id):
+        route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
+        primary = diagnostic_python(route, include_hidden=False)
+        if any(token in primary for token in ("X_test", "y_test", "test_prediction", "test_result")):
+            raise AssertionError(f"Phase 2B-1 primary diagnostic accesses final-test data: {route}")
         return route, _execute_route_to_cell(payload, route, pd, np, plt, sns, "diagnose")
 
-    def friendly(namespace, label, key="svm_class_labels"):
-        return namespace[key].get(str(label), str(label))
+    def assert_excluded(namespace, model_id):
+        fit_rows = set(int(index) for index in np.asarray(namespace["interpret_fit_rows"]).tolist())
+        validation_rows = set(int(index) for index in np.asarray(namespace["interpret_validation_rows"]).tolist())
+        position = int(namespace["interpret_validation_position"])
+        if position not in validation_rows or position in fit_rows:
+            raise AssertionError(f"{model_id} explanation row was not held out from its fitted fold.")
+        if not _same_value(namespace["fitted_pipeline"].predict(namespace["interpret_row"])[0], namespace["interpret_prediction"], np):
+            raise AssertionError(f"{model_id} held-out prediction does not match the fitted pipeline.")
+        return namespace["fitted_pipeline"], namespace["fitted_model"], position, fit_rows
 
-    def assert_oof_is_external(namespace, prefix):
-        position = int(namespace[f"{prefix}_example_position"])
-        validation = set(int(index) for index in np.asarray(namespace[f"{prefix}_validation_indices"]).tolist())
-        fit = set(int(index) for index in np.asarray(namespace[f"{prefix}_fit_indices"]).tolist())
-        if position not in validation or position in fit:
-            raise AssertionError(f"{prefix.upper()} explanation row was not held out from its fitted fold.")
-
-    def assert_region_fidelity(namespace, prefix):
-        grid_points = namespace[f"{prefix}_grid_points"]
-        model_predictions = namespace["diagnostic_model"].predict(grid_points)
-        displayed_predictions = namespace[f"{prefix}_grid_predictions"]
-        if not np.array_equal(np.asarray(displayed_predictions), np.asarray(model_predictions)):
-            raise AssertionError(f"{prefix.upper()} decision-region predictions drifted from the fitted model.")
-        fitted = namespace["diagnostic_model"].named_steps["model"]
-        codes = {str(label): index for index, label in enumerate(fitted.classes_)}
-        expected_codes = np.asarray([codes[str(label)] for label in model_predictions]).reshape(namespace[f"{prefix}_grid_x"].shape)
-        if not np.array_equal(namespace[f"{prefix}_region_codes"], expected_codes):
-            raise AssertionError(f"{prefix.upper()} displayed region classes do not match fitted predictions.")
+    def teaching(route):
+        return route_cell(route, "diagnose").get("modelTeaching") or {}
 
     svm_route, svm = run("breast", "continuous5", "svm_cls")
-    svm_fitted = svm["svm_fold_model"].named_steps["model"]
-    assert_oof_is_external(svm, "svm")
-    expected_support_positions = np.asarray(svm["svm_fit_indices"])[svm_fitted.support_]
-    if not np.array_equal(np.asarray(svm["svm_support_positions"]), expected_support_positions):
-        raise AssertionError("SVM support-vector positions do not match the fitted fold estimator.")
-    if not np.array_equal(np.asarray(svm["svm_support_counts"]["support_vectors"]), np.asarray(svm_fitted.n_support_)):
+    svm_pipeline, svm_fitted, _, _ = assert_excluded(svm, "SVM")
+    if not np.allclose(np.asarray(svm["support_vectors"]), np.asarray(svm_fitted.support_vectors_)):
+        raise AssertionError("SVM support-vector coordinates do not match the fitted estimator.")
+    svm_summary = svm["svm_summary"].iloc[0]
+    support_counts = svm_summary["support_vectors_by_class"]
+    if isinstance(support_counts, str):
+        support_counts = ast.literal_eval(support_counts)
+    if not np.array_equal(np.asarray(support_counts, dtype=int), np.asarray(svm_fitted.n_support_, dtype=int)):
         raise AssertionError("SVM support-vector counts do not match the fitted estimator.")
-    expected_svm_classes = [friendly(svm, label) for label in svm_fitted.classes_]
-    if list(svm["svm_support_counts"]["class"]) != expected_svm_classes:
-        raise AssertionError("SVM support-vector class labels are not aligned with fitted classes.")
-    if not _same_value(svm["svm_prediction"], svm["svm_fold_model"].predict(svm["svm_row"])[0], np):
-        raise AssertionError("SVM out-of-fold prediction story does not match the fitted fold model.")
-    if len(svm_fitted.classes_) != 2:
-        raise AssertionError("Breast SVM fixture is not binary.")
-    expected_score_class = svm_fitted.classes_[1] if float(svm["svm_decision_score"]) >= 0 else svm_fitted.classes_[0]
-    if not _same_value(svm["svm_score_class"], expected_score_class, np):
-        raise AssertionError("SVM decision-score sign is mapped to the wrong class.")
-    if "support vectors" not in diagnostic_python(svm_route).lower():
-        raise AssertionError("SVM diagnostic does not explain support vectors.")
+    if int(svm_summary["support_vectors"]) != len(svm_fitted.support_vectors_):
+        raise AssertionError("SVM support-vector total is not derived from the fitted estimator.")
+    if not np.allclose(np.asarray(svm["svm_decision_values"], dtype=float), np.asarray(svm_pipeline.decision_function(svm["interpret_row"]), dtype=float)):
+        raise AssertionError("SVM held-out decision evidence does not match the fitted pipeline.")
+    if len(svm_fitted.classes_) != 2 and len(np.asarray(svm["svm_decision_values"]).ravel()) != len(svm_fitted.classes_) * (len(svm_fitted.classes_) - 1) // 2:
+        raise AssertionError("Multiclass SVM decision evidence is not class-pair aligned.")
+    if "support vectors" not in str(teaching(svm_route).get("see", "")).lower():
+        raise AssertionError("SVM model teaching does not identify support vectors.")
+    if "decision region" in str(teaching(svm_route).get("see", "")).lower():
+        raise AssertionError("SVM teaching promises a decision-region view that the optional cell does not emit.")
 
     multiclass_svm_route, multiclass_svm = run("penguins", "continuous", "svm_cls")
-    multiclass_svm_fitted = multiclass_svm["svm_fold_model"].named_steps["model"]
-    assert_oof_is_external(multiclass_svm, "svm")
-    if len(multiclass_svm_fitted.classes_) < 3 or multiclass_svm["svm_score_class"] is not None:
-        raise AssertionError("Multiclass SVM was presented as one binary boundary.")
-    if len(np.asarray(multiclass_svm["svm_decision_values"])) != len(multiclass_svm_fitted.classes_):
-        raise AssertionError("Multiclass SVM decision evidence is not class-aligned.")
-    if "no single universal boundary" not in diagnostic_python(multiclass_svm_route).lower():
-        raise AssertionError("Multiclass SVM is missing safe multi-boundary wording.")
-
-    svm_boundary_route, svm_boundary = run(None, None, "svm_cls", fixture=True)
-    assert_region_fidelity(svm_boundary, "svm")
+    _, multiclass_svm_fitted, _, _ = assert_excluded(multiclass_svm, "multiclass SVM")
+    if len(multiclass_svm_fitted.classes_) < 3:
+        raise AssertionError("Penguins SVM fixture is not multiclass.")
+    multiclass_decisions = np.asarray(multiclass_svm["svm_decision_values"]).ravel()
+    if len(multiclass_decisions) != len(multiclass_svm_fitted.classes_) * (len(multiclass_svm_fitted.classes_) - 1) // 2:
+        raise AssertionError("Multiclass SVM decisions are not one value per class pair.")
+    if "no single universal boundary" not in str(teaching(multiclass_svm_route).get("see", "")).lower():
+        raise AssertionError("Multiclass SVM teaching is missing the multiple-boundary explanation.")
 
     lda_route, lda = run("breast", "continuous5", "lda")
-    lda_fitted = lda["diagnostic_model"].named_steps["model"]
-    lda_fold_fitted = lda["lda_fold_model"].named_steps["model"]
-    assert_oof_is_external(lda, "lda")
-    if not np.array_equal(lda_fitted.classes_, lda_fold_fitted.classes_):
-        raise AssertionError("LDA fitted class ordering changed between full and out-of-fold models.")
-    if list(lda["lda_class_centres"]["class"]) != [friendly(lda, label, "lda_class_labels") for label in lda_fitted.classes_]:
+    lda_pipeline, lda_fitted, _, _ = assert_excluded(lda, "LDA")
+    lda_centres = lda["class_centres"]
+    if not np.array_equal(np.asarray(lda_centres["class"]), np.asarray(lda_fitted.classes_)):
         raise AssertionError("LDA class-centre labels are not aligned with fitted classes.")
-    if not np.allclose(lda["lda_class_centres"].drop(columns=["class"]).to_numpy(dtype=float), lda_fitted.means_):
-        raise AssertionError("LDA class centres do not match fitted prepared-space means.")
-    if not np.array_equal(lda["lda_probability_table"]["class"], [friendly(lda, label, "lda_class_labels") for label in lda_fold_fitted.classes_]):
+    if not np.allclose(lda_centres.drop(columns=["class"]).to_numpy(dtype=float), lda_fitted.means_):
+        raise AssertionError("LDA class centres do not match the fitted estimator.")
+    lda_table = lda["probability_table"]
+    if not np.array_equal(np.asarray(lda_table["class"]), np.asarray(lda_fitted.classes_)):
         raise AssertionError("LDA probability rows are not class-aligned.")
-    lda_row = lda["X_train"].iloc[[int(lda["lda_example_position"])]]
-    if not np.allclose(lda["lda_probability_table"]["predicted_probability"].to_numpy(dtype=float), lda["lda_fold_model"].predict_proba(lda_row)[0]):
-        raise AssertionError("LDA predicted probabilities do not match the fitted fold model.")
-    if not _same_value(lda["lda_prediction"], lda["lda_fold_model"].predict(lda_row)[0], np):
-        raise AssertionError("LDA out-of-fold prediction story does not match the fitted fold model.")
-    if "shared spread/shape" not in diagnostic_python(lda_route).lower():
-        raise AssertionError("LDA diagnostic does not connect shared spread/shape to a straight boundary.")
+    if not np.allclose(lda_table["posterior_probability"].to_numpy(dtype=float), lda_pipeline.predict_proba(lda["interpret_row"])[0]):
+        raise AssertionError("LDA posterior probabilities do not match the fitted pipeline.")
+    if not all(_same_value(value, lda["interpret_actual"], np) for value in lda_table["held_out_actual"]) or not all(_same_value(value, lda["interpret_prediction"], np) for value in lda_table["held_out_prediction"]):
+        raise AssertionError("LDA probability table does not identify its excluded validation row.")
+    if "shared spread/shape" not in str(teaching(lda_route).get("read", "")).lower():
+        raise AssertionError("LDA teaching does not explain its shared class shape.")
 
     multiclass_lda_route, multiclass_lda = run("penguins", "continuous", "lda")
-    multiclass_lda_fitted = multiclass_lda["lda_fold_model"].named_steps["model"]
-    assert_oof_is_external(multiclass_lda, "lda")
-    if len(multiclass_lda_fitted.classes_) < 3 or list(multiclass_lda["lda_probability_table"]["class"]) != [friendly(multiclass_lda, label, "lda_class_labels") for label in multiclass_lda_fitted.classes_]:
-        raise AssertionError("Multiclass LDA class ordering or labels are incorrect.")
-    lda_boundary_route, lda_boundary = run(None, None, "lda", fixture=True)
-    assert_region_fidelity(lda_boundary, "lda")
+    _, multiclass_lda_fitted, _, _ = assert_excluded(multiclass_lda, "multiclass LDA")
+    if len(multiclass_lda_fitted.classes_) < 3 or len(multiclass_lda["probability_table"]) != len(multiclass_lda_fitted.classes_):
+        raise AssertionError("Multiclass LDA probability evidence is not class-aligned.")
 
     qda_route, qda = run("breast", "continuous5", "qda")
-    qda_fitted = qda["diagnostic_model"].named_steps["model"]
-    qda_fold_fitted = qda["qda_fold_model"].named_steps["model"]
-    assert_oof_is_external(qda, "qda")
-    if not np.array_equal(qda_fitted.classes_, qda_fold_fitted.classes_) or not np.isclose(float(qda["qda_regularization"]), float(qda_fitted.reg_param)):
-        raise AssertionError("QDA class ordering or regularisation changed unexpectedly.")
-    if not np.array_equal(qda["qda_class_centres"]["class"], [friendly(qda, label, "qda_class_labels") for label in qda_fitted.classes_]):
-        raise AssertionError("QDA class-centre labels are not aligned with fitted classes.")
-    if not np.allclose(qda["qda_class_centres"].drop(columns=["class"]).to_numpy(dtype=float), qda_fitted.means_):
-        raise AssertionError("QDA class centres do not match fitted means.")
-    raw_spread = qda["X_train"].assign(__class=qda["y_train"].to_numpy()).groupby("__class")[qda["feature_names"]].std().reindex(qda_fitted.classes_)
-    displayed_spread = qda["qda_spread_summary"].drop(columns=["class"]).to_numpy(dtype=float)
-    if not np.allclose(displayed_spread, raw_spread.to_numpy(dtype=float), equal_nan=True):
-        raise AssertionError("QDA class-specific spread summary does not match the training data.")
-    if not np.allclose(qda["qda_probability_table"]["predicted_probability"].to_numpy(dtype=float), qda["qda_fold_model"].predict_proba(qda["qda_row"])[0]):
-        raise AssertionError("QDA predicted probabilities do not match the fitted fold model.")
-    if not _same_value(qda["qda_prediction"], qda["qda_fold_model"].predict(qda["qda_row"])[0], np):
-        raise AssertionError("QDA out-of-fold prediction story does not match the fitted fold model.")
-    qda_diagnostic = diagnostic_python(qda_route).lower()
-    if any(token not in qda_diagnostic for token in ("per-feature spread", "vary together", "covariance/shape", "curve")):
-        raise AssertionError("QDA diagnostic does not distinguish per-feature spread from covariance/shape or explain curved boundaries.")
+    qda_pipeline, qda_fitted, _, _ = assert_excluded(qda, "QDA")
+    if not np.isclose(float(qda_fitted.reg_param), 0.1):
+        raise AssertionError("QDA regularisation evidence does not match the configured estimator.")
+    if not np.array_equal(np.asarray(qda["class_centres"]["class"]), np.asarray(qda_fitted.classes_)) or not np.allclose(qda["class_centres"].drop(columns=["class"]).to_numpy(dtype=float), qda_fitted.means_):
+        raise AssertionError("QDA class centres do not match the fitted estimator.")
+    if not np.allclose(qda["probability_table"]["posterior_probability"].to_numpy(dtype=float), qda_pipeline.predict_proba(qda["interpret_row"])[0]):
+        raise AssertionError("QDA posterior probabilities do not match the fitted pipeline.")
+    qda_teaching = teaching(qda_route)
+    if any(token not in f"{qda_teaching.get('read', '')} {qda_teaching.get('see', '')}".lower() for token in ("per-feature spread", "covariance/shape", "class-specific")):
+        raise AssertionError("QDA teaching does not explain separate class shapes.")
+    if "decision region" in str(qda_teaching.get("see", "")).lower():
+        raise AssertionError("QDA teaching promises a decision-region view that the optional cell does not emit.")
 
     multiclass_qda_route, multiclass_qda = run("penguins", "continuous", "qda")
-    multiclass_qda_fitted = multiclass_qda["qda_fold_model"].named_steps["model"]
-    assert_oof_is_external(multiclass_qda, "qda")
-    if len(multiclass_qda_fitted.classes_) < 3 or list(multiclass_qda["qda_probability_table"]["class"]) != [friendly(multiclass_qda, label, "qda_class_labels") for label in multiclass_qda_fitted.classes_]:
-        raise AssertionError("Multiclass QDA class ordering or labels are incorrect.")
-    qda_boundary_route, qda_boundary = run(None, None, "qda", fixture=True)
-    assert_region_fidelity(qda_boundary, "qda")
+    _, multiclass_qda_fitted, _, _ = assert_excluded(multiclass_qda, "multiclass QDA")
+    if len(multiclass_qda_fitted.classes_) < 3 or len(multiclass_qda["probability_table"]) != len(multiclass_qda_fitted.classes_):
+        raise AssertionError("Multiclass QDA probability evidence is not class-aligned.")
 
-    def quantity_row(table, quantity_type, class_label, feature):
-        rows = table.loc[
-            table["quantity_type"].eq(quantity_type)
-            & table["class"].eq(class_label)
-            & table["feature"].eq(feature)
-        ]
-        if len(rows) != 1:
-            raise AssertionError(f"Expected one labelled Naive Bayes quantity row, got {len(rows)} for {class_label}/{feature}.")
-        return rows.iloc[0]
-
-    def assert_quantity_columns(namespace):
-        expected = ["quantity_type", "class", "feature", "quantity_label", "quantity_value"]
-        if list(namespace["nb_quantity_evidence"].columns) != expected:
-            raise AssertionError("Naive Bayes typed evidence has unexpected columns.")
-        if any(value in {"probability", "score"} for value in namespace["nb_quantity_evidence"].columns):
-            raise AssertionError("Naive Bayes typed evidence contains an ambiguous heading.")
+    def assert_nb_common(namespace, name):
+        pipeline, fitted, _, _ = assert_excluded(namespace, name)
+        posterior = namespace["nb_posterior"]
+        if not np.array_equal(np.asarray(posterior["class"]), np.asarray(fitted.classes_)):
+            raise AssertionError(f"{name} posterior rows are not class-aligned.")
+        if not np.allclose(posterior["posterior_probability"].to_numpy(dtype=float), pipeline.predict_proba(namespace["first_row"])[0]):
+            raise AssertionError(f"{name} posterior probabilities do not match the fitted pipeline.")
+        if not np.allclose(posterior["prior_probability"].to_numpy(dtype=float), np.asarray(namespace["prior_values"], dtype=float)):
+            raise AssertionError(f"{name} prior probabilities do not match the fitted estimator.")
+        if not all(_same_value(value, namespace["interpret_actual"], np) for value in posterior["held_out_actual"]) or not all(_same_value(value, namespace["nb_prediction"], np) for value in posterior["held_out_prediction"]):
+            raise AssertionError(f"{name} posterior table does not identify the displayed row.")
+        return pipeline, fitted
 
     gaussian_route, gaussian = run("breast", "continuous5", "naive_bayes")
-    gaussian_fitted = gaussian["nb_fold_model"].named_steps["model"]
-    assert_oof_is_external(gaussian, "nb")
-    assert_quantity_columns(gaussian)
+    gaussian_pipeline, gaussian_fitted = assert_nb_common(gaussian, "Gaussian Naive Bayes")
     gaussian_table = gaussian["nb_quantity_evidence"]
-    gaussian_classes = [friendly(gaussian, label, "nb_class_labels") for label in gaussian_fitted.classes_]
-    prior_rows = gaussian_table.loc[gaussian_table["quantity_type"].eq("Prior probability")]
-    density_rows = gaussian_table.loc[gaussian_table["quantity_type"].eq("Class-conditional density")]
-    posterior_rows = gaussian_table.loc[gaussian_table["quantity_type"].eq("Posterior probability")]
-    if list(prior_rows["class"]) != gaussian_classes or list(posterior_rows["class"]) != gaussian_classes:
-        raise AssertionError("Gaussian Naive Bayes prior/posterior rows are not class-aligned.")
-    if not np.allclose(prior_rows["quantity_value"].to_numpy(dtype=float), np.asarray(gaussian_fitted.class_prior_)):
-        raise AssertionError("Gaussian Naive Bayes priors do not match the fitted estimator.")
-    if not np.allclose(posterior_rows["quantity_value"].to_numpy(dtype=float), gaussian["nb_fold_model"].predict_proba(gaussian["nb_row"])[0]):
-        raise AssertionError("Gaussian Naive Bayes posterior rows do not match fitted probabilities.")
-    if density_rows.empty or density_rows["quantity_type"].str.contains("probability", case=False).any() or density_rows["quantity_label"].str.contains("P\\(").any():
-        raise AssertionError("Gaussian Naive Bayes density rows are labelled as probabilities.")
-    if float(density_rows["quantity_value"].max()) <= 1:
-        raise AssertionError("The deterministic Gaussian route did not retain a density value above 1.")
-    gaussian_features = [str(name) for name in gaussian["encoded_names"][:3]]
-    for class_index, class_value in enumerate(gaussian_fitted.classes_):
-        class_label = friendly(gaussian, class_value, "nb_class_labels")
-        for feature_index, feature_name in enumerate(gaussian_features):
-            observed = float(gaussian["nb_row_values"][0, feature_index])
-            variance = max(float(gaussian_fitted.var_[class_index, feature_index]), np.finfo(float).eps)
-            expected_density = np.exp(-0.5 * ((observed - gaussian_fitted.theta_[class_index, feature_index]) ** 2) / variance) / np.sqrt(2 * np.pi * variance)
-            row = quantity_row(gaussian_table, "Class-conditional density", class_label, feature_name)
-            if not np.isclose(float(row["quantity_value"]), expected_density):
-                raise AssertionError("Gaussian Naive Bayes density does not match the fitted mean/spread.")
-            if "| class=" not in row["quantity_label"] or "P(" in row["quantity_label"] or "probability" in row["quantity_label"].lower():
-                raise AssertionError("Gaussian Naive Bayes density label is ambiguous.")
+    if list(gaussian_table.columns) != ["class", "feature", "observed_value", "quantity", "density"] or not gaussian_table["quantity"].eq("Class-conditional density").all():
+        raise AssertionError("Gaussian Naive Bayes evidence does not label densities precisely.")
+    if not np.allclose(gaussian["nb_gaussian_means"].drop(columns=["class"]).to_numpy(dtype=float), gaussian_fitted.theta_) or not np.allclose(gaussian["nb_gaussian_stds"].drop(columns=["class"]).to_numpy(dtype=float), np.sqrt(gaussian_fitted.var_)):
+        raise AssertionError("Gaussian Naive Bayes means or spreads do not match the fitted estimator.")
+    labels = [str(name) for name in gaussian["nb_feature_labels"]]
+    classes = list(gaussian_fitted.classes_)
+    for _, row in gaussian_table.head(min(6, len(gaussian_table))).iterrows():
+        ci = classes.index(row["class"])
+        fi = labels.index(str(row["feature"]))
+        observed = float(row["observed_value"])
+        variance = max(float(gaussian_fitted.var_[ci, fi]), np.finfo(float).eps)
+        expected_density = np.exp(-0.5 * ((observed - gaussian_fitted.theta_[ci, fi]) ** 2) / variance) / np.sqrt(2 * np.pi * variance)
+        if not np.isclose(float(row["density"]), expected_density):
+            raise AssertionError("Gaussian Naive Bayes density does not match fitted means and variance.")
     density_fixture = payload["phase2bGaussianDensityFixture"]
     fixture_density = np.exp(-0.5 * ((density_fixture["observed"] - density_fixture["mean"]) ** 2) / density_fixture["variance"]) / np.sqrt(2 * np.pi * density_fixture["variance"])
     if not np.isclose(fixture_density, density_fixture["expected_density"]) or fixture_density <= 1:
         raise AssertionError("The deterministic Gaussian density fixture does not demonstrate a density above 1.")
-    if "independence assumption" not in diagnostic_python(gaussian_route).lower():
+    gaussian_teaching = teaching(gaussian_route)
+    gaussian_watch_out = str(gaussian_teaching.get("watchOut", "")).lower()
+    if "feature independence" not in gaussian_watch_out or "simplifying assumption" not in gaussian_watch_out:
         raise AssertionError("Naive Bayes independence teaching is missing from the diagnostic.")
 
     categorical_route, categorical = run("car", "categorical", "naive_bayes")
-    categorical_fitted = categorical["nb_fold_model"].named_steps["model"]
-    assert_oof_is_external(categorical, "nb")
-    assert_quantity_columns(categorical)
-    if not {"buying=low", "buying=med", "buying=high", "buying=vhigh"}.issubset(set(categorical["nb_feature_labels"])):
-        raise AssertionError("Categorical Naive Bayes did not retain original category labels.")
+    categorical_pipeline, categorical_fitted = assert_nb_common(categorical, "Categorical Naive Bayes")
+    categorical_labels = [str(label) for label in categorical["nb_feature_labels"]]
+    if not any(label.startswith("buying_") for label in categorical_labels) or not any(label.startswith("safety_") for label in categorical_labels):
+        raise AssertionError("Categorical Naive Bayes did not retain readable one-hot category names.")
     categorical_table = categorical["nb_quantity_evidence"]
     for class_index, class_value in enumerate(categorical_fitted.classes_):
-        class_label = friendly(categorical, class_value, "nb_class_labels")
-        for feature_index, feature_label in enumerate(categorical["nb_feature_labels"][:6]):
-            row = quantity_row(categorical_table, "Class-conditional probability", class_label, feature_label)
-            if not np.isclose(float(row["quantity_value"]), np.exp(categorical_fitted.feature_log_prob_[class_index, feature_index])):
-                raise AssertionError("Categorical Naive Bayes category likelihood does not match the fitted encoder/model.")
-            if f"P({feature_label} | class={class_label})" not in row["quantity_label"]:
-                raise AssertionError("Categorical Naive Bayes likelihood label does not identify the original category.")
+        for feature_index, feature_label in enumerate(categorical_labels):
+            rows = categorical_table.loc[(categorical_table["class"] == class_value) & (categorical_table["feature"] == feature_label)]
+            if len(rows) != 1 or not np.isclose(float(rows.iloc[0]["class_conditional_probability"]), np.exp(categorical_fitted.feature_log_prob_[class_index, feature_index])):
+                raise AssertionError("Categorical Naive Bayes likelihood evidence does not match the fitted estimator.")
 
     binary_route, binary = run("candy_class", "binary", "naive_bayes")
-    binary_fitted = binary["nb_fold_model"].named_steps["model"]
-    assert_oof_is_external(binary, "nb")
-    assert_quantity_columns(binary)
-    if binary["nb_feature_labels"] != [f"{name}=1" for name in binary["feature_names"]]:
-        raise AssertionError("Binary Naive Bayes feature labels do not identify 1-valued indicators.")
-    binary_likelihoods = binary["nb_quantity_evidence"].loc[binary["nb_quantity_evidence"]["quantity_type"].eq("Class-conditional probability")]
-    if len(binary_likelihoods) != len(binary_fitted.classes_) * min(6, len(binary["nb_feature_labels"])):
-        raise AssertionError("Binary Naive Bayes likelihood evidence has the wrong shape.")
+    binary_pipeline, binary_fitted = assert_nb_common(binary, "Binary Naive Bayes")
+    binary_labels = [str(label) for label in binary["nb_feature_labels"]]
+    if binary_labels != [f"{name}=1" for name in binary["feature_names"]]:
+        raise AssertionError("Binary Naive Bayes labels do not state the 1-valued indicator event.")
+    binary_table = binary["nb_quantity_evidence"]
+    if list(binary_table.columns) != ["class", "feature", "class_conditional_probability"]:
+        raise AssertionError("Binary Naive Bayes evidence has ambiguous columns.")
+    for class_index, class_value in enumerate(binary_fitted.classes_):
+        for feature_index, feature_label in enumerate(binary_labels):
+            rows = binary_table.loc[(binary_table["class"] == class_value) & (binary_table["feature"] == feature_label)]
+            if len(rows) != 1 or not np.isclose(float(rows.iloc[0]["class_conditional_probability"]), np.exp(binary_fitted.feature_log_prob_[class_index, feature_index])):
+                raise AssertionError("Binary Naive Bayes likelihood evidence does not match the fitted estimator.")
 
     return {
-        "svm_binary_class_mapping": True,
-        "svm_multiclass_wording": True,
-        "svm_support_vectors_match_fitted": True,
-        "svm_boundary_fidelity": True,
-        "lda_class_centres_and_labels": True,
-        "lda_shared_spread_wording": True,
-        "lda_boundary_fidelity": True,
-        "qda_spread_and_regularization": True,
-        "qda_lda_contrast": True,
-        "qda_boundary_fidelity": True,
+        "svm_support_vector_counts_and_decisions": True,
+        "svm_multiclass_interpretation": True,
+        "lda_named_centres_and_probabilities": True,
+        "qda_named_centres_and_regularisation": True,
         "naive_bayes_gaussian_densities": True,
         "naive_bayes_categorical_probabilities": True,
         "naive_bayes_binary_probabilities": True,
-        "naive_bayes_typed_quantity_labels": True,
-        "naive_bayes_oof_prediction_stories": True,
+        "naive_bayes_excluded_row": True,
     }
-
 
 def run_teaching_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     fixtures = [
@@ -2639,7 +2605,7 @@ def run_teaching_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     for kind, dataset_id, scenario_id, model_id in fixtures:
         route = _route_for_teaching_runtime(payload, dataset_id, scenario_id, model_id)
         baseline_namespace = _execute_route_to_cell(payload, route, pd, np, plt, sns, "baseline")
-        cv_scores = baseline_namespace["cv_scores"].copy()
+        cv_scores = baseline_namespace["fold_scores"].copy()
         if kind == "classification":
             validation = cv_scores["validation_macro_f1"].to_numpy(dtype=float)
             training = cv_scores["train_macro_f1"].to_numpy(dtype=float)
@@ -2660,7 +2626,7 @@ def run_teaching_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
             raise AssertionError(f"{dataset_id} training mean is not calculated from the fold values.")
 
         final_namespace = _execute_route_to_cell(payload, route, pd, np, plt, sns, "final")
-        if not np.allclose(cv_scores.to_numpy(dtype=float), final_namespace["cv_scores"].to_numpy(dtype=float)):
+        if not np.allclose(cv_scores.to_numpy(dtype=float), final_namespace["fold_scores"].to_numpy(dtype=float)):
             raise AssertionError(f"{dataset_id} final evaluation changed the prior CV evidence.")
         final_result = final_namespace["test_result"]
         final_metric_row = final_result.loc[final_result["metric"].astype(str).str.lower().eq(metric.replace("_", " "))]

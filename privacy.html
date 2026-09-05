@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="appearance.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Privacy policy for the Data Science Python Playground website and the Data Playground app.">
@@ -76,17 +77,17 @@
       <p>When you use the playground, it may process or create:</p>
       <ul>
         <li>Bundled CSV files, dataset values, Python code, notebook inputs, model settings, charts, and generated results.</li>
-        <li>Temporary in-memory working state needed to keep the current screen functioning.</li>
+        <li>Code drafts and bundled dataset text saved locally for the selected setup, plus temporary in-memory working state needed to keep the current screen functioning.</li>
         <li>Messages and contact details that you voluntarily send to support.</li>
       </ul>
       <p>The current design processes bundled datasets and in-session analysis locally in the browser or app web view. They are not sent to a project-operated server by default. This will be re-checked whenever the native app or a third-party SDK changes.</p>
 
       <h2>3. How information is used</h2>
-      <p>Information is used to run data-analysis and machine-learning examples, display tables and charts, provide learning guidance, save or export a result when you request it, and respond to support messages.</p>
+      <p>Information is used to run data-analysis and machine-learning examples, display tables and charts, provide learning guidance, create CSV or chart exports when you request them, and respond to support messages.</p>
       <p>The current product does not require user accounts and does not include analytics or cross-app tracking.</p>
 
       <h2>4. Storage and retention</h2>
-      <p>Active analysis work remains only in temporary device or browser memory. It may remain available while the app process stays alive in the foreground or background, but terminating or swiping away the app starts a fresh canvas. Files you save or export are controlled by the browser, Files app, or system destination you choose. The project does not provide notebook history, cloud accounts, or project-operated storage for analysis work.</p>
+      <p>Data Playground starts with an empty notebook each time it opens; copy code you want to keep before leaving. Machine Learning code drafts and bundled dataset text save automatically on this device for each setup. Python variables and results are temporary and reset when you reopen the workspace. CSV and chart exports are created only when you choose them through the browser or native share sheet. There is no account, cloud synchronisation, analytics or project-operated storage for analysis work.</p>
       <p>Please do not enter confidential, regulated, or personally identifying information unless you are authorised to process it.</p>
 
       <h2>5. Network requests and third parties</h2>
@@ -113,7 +114,7 @@
       <p>We will update this page when the service’s data flows, native dependencies, advertising setup, persistence model, or support process changes. The effective date above will be updated when a revised policy is published.</p>
       <p class="privacy-small">This page is the initial public policy copy for the GitHub Pages site. It will be reviewed again before the native app is submitted to the App Store and whenever advertising is enabled.</p>
     </article>
-  </main>
+  <section class="content-card"><h2>On-device code drafts</h2><p>Machine Learning code and bundled dataset text are saved in local storage per setup. Data Playground opens empty and keeps new code only while its page remains open. Previously stored Data drafts are left untouched but are not loaded automatically. Python variables and outputs are not restored. These drafts are not sent to a server. CSV and chart exports are created only when you choose them. Your theme choice is saved separately.</p></section></main>
 
   <footer class="home-footer">
     <span>Data Science Python Playground · local-first learning tools</span>

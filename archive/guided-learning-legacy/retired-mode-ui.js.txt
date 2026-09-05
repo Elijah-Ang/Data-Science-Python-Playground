@@ -1,0 +1,328 @@
+  function renderPracticeBeforeRun(cell) {
+    if (playgroundMode !== "practice") return null;
+    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
+    if (!task || !practice) return null;
+    const state = practiceStateFor(task.id);
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "before-run";
+    section.dataset.practiceTask = task.id;
+    section.setAttribute("aria-label", `Practice prompt before ${task.title}`);
+    section.append(practicePanelHeading("PREDICT BEFORE RUN"));
+    const prompt = document.createElement("p");
+    prompt.className = "practice-prompt";
+    prompt.textContent = practice.prompt;
+    section.append(prompt);
+    if (state.prediction === null) {
+      const [choices, actions] = practiceChoiceField(cell, practice, state, "prediction", "Commit prediction", value => {
+        state.prediction = value;
+        renderNotebookView();
+        renderBatchControls();
+      });
+      section.append(choices, actions);
+    } else {
+      section.append(practiceCommittedAnswer(practice, state, "prediction", "Your prediction:"));
+      if (cell.status !== "done") {
+        const actions = document.createElement("div");
+        actions.className = "practice-actions";
+        const change = document.createElement("button");
+        change.type = "button";
+        change.className = "practice-button";
+        change.textContent = "Change prediction";
+        change.addEventListener("click", () => {
+          state.prediction = null;
+          renderNotebookView();
+        });
+        actions.append(change);
+        section.append(actions);
+      }
+    }
+    return section;
+  }
+
+  function renderPracticeExperimentComparison(state) {
+    const comparison = document.createElement("section");
+    comparison.className = "practice-experiment-comparison";
+    comparison.dataset.practiceRole = "experiment-comparison";
+    comparison.setAttribute("aria-live", "polite");
+    comparison.append(practicePanelHeading("COMPARE BEFORE AND AFTER"));
+    const cards = document.createElement("div");
+    cards.className = "practice-evidence-cards";
+    cards.append(
+      practiceSnapshotCard("BEFORE", state.experimentBaseline),
+      practiceSnapshotCard("AFTER", state.experimentAfter)
+    );
+    comparison.append(cards);
+    const note = document.createElement("p");
+    note.className = "practice-experiment-note";
+    note.textContent = "Use this one comparison to describe what moved, what stayed similar, and what it does not establish. It is not an automatic tuning decision.";
+    comparison.append(note);
+    return comparison;
+  }
+
+  function renderPracticePredictionFeedback(cell) {
+    if (playgroundMode !== "practice") return null;
+    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
+    if (!task || !practice) return null;
+    const state = practiceStateFor(task.id);
+    if (state.prediction === null) return null;
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "prediction-feedback";
+    section.dataset.practiceTask = task.id;
+    section.setAttribute("role", "status");
+    section.setAttribute("aria-live", "polite");
+    section.append(practicePanelHeading("COMPARE YOUR PREDICTION"));
+    section.append(practiceCommittedAnswer(practice, state, "prediction", "Committed prediction:"));
+    const feedback = document.createElement("p");
+    feedback.className = "practice-feedback";
+    const explanation = practiceEvidenceText(task, cell);
+    if (practice.answer && state.prediction !== "not_sure") {
+      const expected = practiceOptionLabel(practice, practice.answer);
+      feedback.textContent = state.prediction === practice.answer
+        ? `The route evidence supports this conceptual answer: ${expected}. ${explanation}`
+        : `The route evidence points to: ${expected}. ${explanation}`;
+    } else if (state.prediction === "not_sure") {
+      feedback.dataset.tone = "neutral";
+      feedback.textContent = `You left this uncertain. ${explanation}`;
+    } else {
+      feedback.dataset.tone = "neutral";
+      feedback.textContent = explanation;
+    }
+    section.append(feedback);
+    return section;
+  }
+
+  function renderPracticeDecision(cell) {
+    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return null;
+    const task = routeTaskForCell(cell), practice = task?.practice?.decision;
+    if (!task || !practice) return null;
+    const state = practiceStateFor(task.id);
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "decision";
+    section.dataset.practiceTask = task.id;
+    section.setAttribute("aria-label", `Practice decision after ${task.title}`);
+    section.append(practicePanelHeading("DECIDE FROM THE EVIDENCE"));
+    const prompt = document.createElement("p");
+    prompt.className = "practice-prompt";
+    prompt.textContent = practice.prompt;
+    section.append(prompt);
+    if (state.decision === null) {
+      const [choices, actions] = practiceChoiceField(cell, practice, state, "decision", "Commit decision", value => {
+        state.decision = value;
+        renderNotebookView();
+        renderBatchControls();
+      });
+      section.append(choices, actions);
+    } else {
+      section.append(practiceCommittedAnswer(practice, state, "decision", "Your choice:"));
+      const feedback = document.createElement("p");
+      feedback.className = "practice-feedback";
+      feedback.dataset.tone = "neutral";
+      feedback.textContent = practice.evidence === "cluster-choice"
+        ? "That is a defensible candidate. Compare it with the elbow or dendrogram, silhouette, cluster sizes, and original-unit profiles; no single candidate is graded as truth."
+        : practice.evidence === "cluster-profile"
+          ? "Cluster numbers are arbitrary. Compare the original-unit profile to describe what the group represents."
+          : "Keep this as an evidence-based working decision; compare it with the validation results and the final test when those steps are available.";
+      section.append(feedback);
+    }
+    return section;
+  }
+
+  function renderPracticeExperiment(cell) {
+    if (playgroundMode !== "practice") return null;
+    const task = routeTaskForCell(cell), experiment = task?.practice?.experiment;
+    if (!task || !experiment) return null;
+    const state = practiceStateFor(task.id);
+    if (cell.output?.status !== "ok" && !state.experimentApplied) return null;
+    const section = document.createElement("section");
+    section.className = "practice-panel";
+    section.dataset.practiceRole = "experiment";
+    section.dataset.practiceTask = task.id;
+    section.append(practicePanelHeading("SAFE EXPERIMENT"));
+    const instruction = document.createElement("p");
+    instruction.className = "practice-prompt";
+    instruction.textContent = experiment.instruction;
+    section.append(instruction);
+    const details = document.createElement("div");
+    details.className = "practice-experiment";
+    const change = document.createElement("code");
+    change.textContent = experiment.change;
+    const note = document.createElement("p");
+    note.className = "practice-experiment-note";
+    note.textContent = "Applying this makes this cell and downstream route steps stale. It will not run automatically.";
+    details.append(change, note);
+    if (!state.experimentApplied) {
+      const actions = document.createElement("div");
+      actions.className = "practice-actions";
+      const apply = document.createElement("button");
+      apply.type = "button";
+      apply.className = "practice-button";
+      apply.textContent = "Apply experiment";
+      apply.addEventListener("click", () => applyPracticeExperiment(cell, experiment));
+      actions.append(apply);
+      details.append(actions);
+    } else if (!state.experimentEvidenceReady) {
+      const evidenceTaskId = experiment.evidenceTaskId || experiment.targetTaskId || task.id;
+      const evidenceTask = routeTasks.find(item => item.id === evidenceTaskId);
+      const prompt = document.createElement("p");
+      prompt.className = "practice-prompt";
+      prompt.textContent = `Experiment applied. Rerun ${evidenceTask?.title || "the evidence step"} before comparing what changed.`;
+      details.append(prompt);
+    } else if (state.reflection) {
+      const complete = document.createElement("p");
+      complete.className = "practice-feedback";
+      complete.dataset.tone = "neutral";
+      complete.textContent = "Experiment comparison recorded. Use the changed output to explain what moved, what stayed similar, and what the evidence does not establish.";
+      details.append(complete);
+    } else {
+      details.append(renderPracticeExperimentComparison(state));
+      const prompt = document.createElement("p");
+      prompt.className = "practice-prompt";
+      prompt.textContent = "What changed in the evidence after this one-variable edit?";
+      const actions = document.createElement("div");
+      actions.className = "practice-actions";
+      const complete = document.createElement("button");
+      complete.type = "button";
+      complete.className = "practice-button";
+      complete.textContent = "Mark comparison complete";
+      complete.addEventListener("click", () => {
+        state.reflection = true;
+        renderNotebookView();
+        renderBatchControls();
+      });
+      actions.append(complete);
+      details.append(prompt, actions);
+    }
+    section.append(details);
+    return section;
+  }
+
+  function renderPracticeResult(cell) {
+    if (playgroundMode !== "practice" || cell.output?.status !== "ok") return [];
+    return [renderPracticePredictionFeedback(cell), renderPracticeDecision(cell)].filter(Boolean);
+  }
+
+  function ensurePracticeCanRun(cell) {
+    if (playgroundMode !== "practice" || !cell.taskId) return true;
+    const pending = pendingPracticeDecisionBefore(cell.taskId);
+    if (pending) {
+      showToast(`Choose an interpretation for “${pending.title}” before continuing.`);
+      focusPracticePrompt(pending.id, "decision");
+      return false;
+    }
+    const pendingExercise = pendingPracticeExerciseBefore(cell.taskId);
+    if (pendingExercise) {
+      showToast(`Complete the coding task in “${pendingExercise.title}” before continuing.`);
+      focusPracticePrompt(pendingExercise.id, "exercise");
+      return false;
+    }
+    const task = routeTaskForCell(cell), practice = task?.practice?.beforeRun;
+    if (practice && practiceStateFor(task.id).prediction === null) {
+      showToast("Commit a prediction first. “Not sure yet” is okay.");
+      focusPracticePrompt(task.id, "before-run");
+      return false;
+    }
+    return true;
+  }
+
+  function renderPracticeExercise(cell) {
+    if (playgroundMode !== "practice" || !cell.exercise) return null;
+    const task = routeTaskForCell(cell), exercise = cell.exercise, state = practiceStateFor(task?.id);
+    if (!task || !state) return null;
+    const section = document.createElement("section");
+    section.className = "practice-panel practice-exercise-panel";
+    section.id = `practice-exercise-${cell.id}`;
+    section.dataset.practiceRole = "exercise";
+    section.dataset.practiceTask = task.id;
+    section.dataset.practiceExerciseId = exercise.id;
+    section.setAttribute("aria-label", `Practice coding task for ${task.title}`);
+    section.append(practicePanelHeading("PRACTICE CODE TASK"));
+    const kind = document.createElement("p"); kind.className = "practice-exercise-kind";
+    kind.textContent = exercise.type === "complete_line" ? "Complete one important line" : "Complete the missing analytical code";
+    const goal = document.createElement("p"); goal.className = "practice-prompt"; goal.textContent = exercise.goal;
+    const expected = document.createElement("p"); expected.className = "practice-experiment-note"; expected.textContent = `Expected evidence: ${exercise.expectedOutput}`;
+    section.append(kind, goal, expected);
+    const actions = document.createElement("div"); actions.className = "practice-actions";
+    if (!state.exerciseHintRevealed) {
+      const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint";
+      hint.addEventListener("click", () => { state.exerciseHintRevealed = true; renderNotebookView(); });
+      actions.append(hint);
+    }
+    if (!state.exerciseReferenceRevealed) {
+      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution";
+      reveal.id = `${section.id}-toggle`;
+      reveal.setAttribute("aria-expanded", "false");
+      reveal.setAttribute("aria-controls", section.id);
+      reveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.exerciseReferenceRevealed = true; renderNotebookView(focusTarget); renderBatchControls(); });
+      actions.append(reveal);
+    }
+    section.append(actions);
+    if (state.exerciseHintRevealed) {
+      const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = exercise.hint; section.append(hint);
+    }
+    if (state.exerciseReferenceRevealed) {
+      const reference = practiceReferenceBlock("Reference solution", exercise.solution);
+      reference.id = `${section.id}-reference`;
+      section.append(reference);
+    }
+    if (cell.output) {
+      const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.practiceRole = "exercise-status"; status.setAttribute("aria-live", "polite");
+      const validation = cell.output.validation;
+      if (cell.output.status !== "ok") {
+        status.dataset.tone = "error"; status.textContent = "Repair the Python error, then run this task again.";
+      } else if (validation?.ok) {
+        status.dataset.tone = "success"; status.textContent = `Semantic check passed: ${validation.message}`;
+      } else {
+        status.dataset.tone = "error"; status.textContent = `The cell ran, but the coding task is not complete yet. ${validation?.message || "Use the hint or reference solution, then rerun."}`;
+      }
+      section.append(status);
+    }
+    return section;
+  }
+
+  function renderIndependentCheckpointCell(cell) {
+    if (playgroundMode !== "practice" || !cell.checkpoint) return null;
+    const metadata = cell.checkpointMeta, state = independentCheckpointStateFor();
+    const hasDistinctCleanReference = Boolean(cell.cleanReferenceCode && cell.cleanReferenceCode !== cell.referenceCode);
+    const section = document.createElement("section");
+    section.className = "practice-panel independent-checkpoint";
+    section.id = `independent-checkpoint-${cell.id}`;
+    section.dataset.practiceRole = "independent-checkpoint";
+    section.dataset.checkpointId = cell.id;
+    section.setAttribute("aria-label", "Independent practice checkpoint");
+    section.append(practicePanelHeading("INDEPENDENT CHECKPOINT"));
+    const goal = document.createElement("p"); goal.className = "practice-prompt"; goal.textContent = metadata.goal; section.append(goal);
+    const list = document.createElement("ul"); list.className = "checkpoint-checklist";
+    metadata.checklist.forEach(item => { const li = document.createElement("li"); li.textContent = item; list.append(li); });
+    section.append(list);
+    const variables = document.createElement("p"); variables.className = "checkpoint-variables";
+    variables.append(document.createTextNode("Available route variables: "));
+    metadata.availableVariables.forEach((name, index) => { if (index) variables.append(document.createTextNode(", ")); const code = document.createElement("code"); code.textContent = name; variables.append(code); });
+    section.append(variables);
+    const note = document.createElement("p"); note.className = "practice-experiment-note"; note.textContent = "This is a fresh practice task. Supervised work uses training rows only; clustering and PCA stay target-free."; section.append(note);
+    const actions = document.createElement("div"); actions.className = "practice-actions";
+    if (!state.hintRevealed) {
+      const hint = document.createElement("button"); hint.type = "button"; hint.className = "practice-button"; hint.textContent = "Show hint"; hint.addEventListener("click", () => { state.hintRevealed = true; renderNotebookView(); }); actions.append(hint);
+    }
+    if (!state.referenceRevealed) {
+      const reveal = document.createElement("button"); reveal.type = "button"; reveal.className = "practice-button secondary"; reveal.textContent = "Reveal reference solution"; reveal.id = `${section.id}-toggle`; reveal.setAttribute("aria-expanded", "false"); reveal.setAttribute("aria-controls", section.id); reveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.referenceRevealed = true; renderNotebookView(focusTarget); }); actions.append(reveal);
+    }
+    if (hasDistinctCleanReference && !state.cleanReferenceRevealed) {
+      const cleanReveal = document.createElement("button"); cleanReveal.type = "button"; cleanReveal.className = "practice-button secondary"; cleanReveal.textContent = "Reveal clean-workflow reference"; cleanReveal.id = `${section.id}-clean-toggle`; cleanReveal.setAttribute("aria-expanded", "false"); cleanReveal.setAttribute("aria-controls", section.id); cleanReveal.addEventListener("click", () => { const focusTarget = captureFocusTarget(); state.cleanReferenceRevealed = true; renderNotebookView(focusTarget); }); actions.append(cleanReveal);
+    }
+    section.append(actions);
+    if (state.hintRevealed) { const hint = document.createElement("p"); hint.className = "practice-feedback"; hint.dataset.tone = "neutral"; hint.textContent = metadata.hint; section.append(hint); }
+    if (state.referenceRevealed) section.append(practiceReferenceBlock("Reference solution", cell.referenceCode));
+    if (hasDistinctCleanReference && state.cleanReferenceRevealed) section.append(practiceReferenceBlock("Clean-workflow reference", cell.cleanReferenceCode, "practice-reference checkpoint-reference"));
+    if (cell.output) {
+      const status = document.createElement("p"); status.className = "practice-exercise-status"; status.dataset.checkpointStatus = cell.id; status.setAttribute("aria-live", "polite");
+      const validation = cell.output.validation;
+      if (cell.output.status !== "ok") { status.dataset.tone = "error"; status.textContent = "Repair the Python error, then run the checkpoint again."; }
+      else if (validation?.ok) { status.dataset.tone = "success"; status.textContent = `Checkpoint complete: ${validation.message}`; }
+      else { status.dataset.tone = "error"; status.textContent = `The checkpoint ran, but its semantic checklist is incomplete. ${validation?.message || "Use the hint or reference solution, then rerun."}`; }
+      section.append(status);
+    }
+    return section;
+  }

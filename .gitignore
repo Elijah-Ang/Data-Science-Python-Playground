@@ -9,3 +9,7 @@ ios/App/DerivedData/
 ios/App/App/public/
 __pycache__/
 *.py[cod]
+
+# Local test output and duplicate generated Capacitor configuration copies.
+tests/evidence/
+ios/App/App/config [0-9]*.xml

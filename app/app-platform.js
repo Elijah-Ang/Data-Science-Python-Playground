@@ -58,6 +58,7 @@ async function openExternal(url) {
   else window.open(resolved.href, "_blank", "noopener,noreferrer");
 }
 
+let wasOffline = false;
 function showConnectivityState() {
   let notice = document.querySelector("[data-app-connectivity]");
   if (!notice) {
@@ -69,12 +70,13 @@ function showConnectivityState() {
     document.body.append(notice);
   }
   const offline = !navigator.onLine;
-  notice.textContent = offline ? "Offline · local features remain available" : "Back online";
+  notice.textContent = offline ? (native ? "Offline · bundled Python and datasets are available" : "Offline · saved pages may be available; web Python needs a previously loaded runtime") : "Back online";
   notice.classList.toggle("is-visible", offline);
-  if (!offline) {
+  if (!offline && wasOffline) {
     notice.classList.add("is-restored");
     window.setTimeout(() => notice.classList.remove("is-restored"), 1800);
   }
+  wasOffline = offline;
 }
 
 function installExternalLinkRouting() {
@@ -90,20 +92,47 @@ function installExternalLinkRouting() {
 
 async function configureNativeChrome() {
   if (!native) return;
+  const theme = document.body?.dataset.theme === "dark" ? "dark" : "light";
+  const backgroundColor = getComputedStyle(document.body || document.documentElement)
+    .getPropertyValue("--bg")
+    .trim() || (theme === "dark" ? "#0c1125" : "#efe8d7");
   try {
     await StatusBar.setOverlaysWebView({ overlay: false });
-    await StatusBar.setStyle({ style: Style.Dark });
   } catch {
-    // Status-bar support varies by native target and OS version.
+    // Status-bar overlay support varies by native target and OS version.
+  }
+  try {
+    await StatusBar.setStyle({ style: theme === "dark" ? Style.Dark : Style.Light });
+  } catch {
+    // Status-bar text style support varies by native target and OS version.
+  }
+  try {
+    // With overlays disabled on iOS, the plugin owns the safe-area background
+    // view above the web view. Keep that view on the same surface as the page.
+    await StatusBar.setBackgroundColor({ color: backgroundColor });
+  } catch {
+    // Background-color support varies by native target and OS version.
   }
   try { await SplashScreen.hide(); } catch { /* The splash may already be hidden. */ }
   document.documentElement.dataset.nativePlatform = platform;
 }
 
 if (!native && "serviceWorker" in navigator && location.protocol.startsWith("http")) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(() => {}));
+  window.addEventListener("load", async () => {
+    try {
+      const registration=await navigator.serviceWorker.register("./service-worker.js");
+      const offer=() => {
+        if (!registration.waiting || !navigator.serviceWorker.controller) return;
+        const button=document.createElement('button'); button.className='app-update'; button.textContent='Update available — save draft and reload';
+        button.addEventListener('click',() => {if (window.NotebookSession && !window.NotebookSession.save() && !confirm('Local saving failed. Copy any code you want to keep before updating. Reload anyway?')) return; registration.waiting.postMessage({type:'ACTIVATE_SAVED_UPDATE'}); navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload(),{once:true});});
+        document.body.append(button);
+      };
+      offer(); registration.addEventListener('updatefound',()=>registration.installing?.addEventListener('statechange',offer));
+    } catch {}
+  });
 }
 
+window.addEventListener("appearancechange", configureNativeChrome);
 window.addEventListener("online", showConnectivityState);
 window.addEventListener("offline", showConnectivityState);
 document.addEventListener("DOMContentLoaded", () => {

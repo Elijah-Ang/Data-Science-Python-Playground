@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <script src="appearance.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="Tutorial for the Data Science Python Playground and Machine Learning Playground.">
@@ -44,7 +45,7 @@
           </div>
         </div>
 
-        <div class="hero-visual" aria-label="A live three-dimensional neural network continuously processing data">
+        <div class="hero-visual" aria-label="Decorative neural-network illustration; no data is processed">
           <div class="neural-visual">
             <canvas id="neuralCanvas" class="neural-canvas" aria-hidden="true"></canvas>
           </div>
@@ -93,7 +94,7 @@
                     </div>
                     <div class="shot-notebook">
                       <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span><span class="cyan">df</span> = <span class="cyan">df</span>[<span class="gold">"Functioning Day"</span>] == <span class="gold">"Yes"</span></span>
+                      <span class="line"><span class="num">1</span><span class="cyan">df</span> = <span class="cyan">df</span>.loc[df[<span class="gold">"Functioning Day"</span>].eq(<span class="gold">"Yes"</span>)].copy()</span>
                       <span class="line"><span class="num">2</span><span class="cyan">df</span>[<span class="gold">"temp_c"</span>] = <span class="cyan">df</span>[<span class="gold">"Temperature(°C)"</span>].round(<span class="gold">1</span>)</span>
                     </div>
                     <div class="shot-notebook">
@@ -107,7 +108,7 @@
                       <div class="shot-output-box"><h4>preview output</h4><p>10 rows · 14 columns<br>Inspect before transform.</p></div>
                     </div>
                     <div class="shot-output">
-                      <div class="shot-output-box"><h4>working copy</h4><p>8,465 working days<br><span class="output-accent">original kept</span></p></div>
+                      <div class="shot-output-box"><h4>working copy</h4><p>8,465 hourly records on functioning days<br><span class="output-accent">original kept</span></p></div>
                     </div>
                     <div class="shot-output">
                       <div class="shot-output-box"><h4>chart output</h4><div class="shot-mini-chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>
@@ -135,15 +136,15 @@
             <div class="shot-controls">
               <div class="shot-control shot-control--accent"><small>Dataset</small><b>Palmer Penguins</b></div>
               <div class="shot-control shot-control--accent"><small>Feature scenario</small><b>Body measurements</b></div>
-              <div class="shot-control"><small>Model</small><b>Random Forest</b></div>
+              <div class="shot-control"><small>Model</small><b>Decision Tree</b></div>
               <div class="shot-control"><small>CV</small><b>5 folds</b></div>
             </div>
             <div class="shot-body">
               <aside class="shot-inspector">
                 <div class="shot-heading">Inspector <span class="shot-badge">TEST SET SEALED</span></div>
                 <div class="shot-card"><strong>Palmer Penguins</strong><p>Species classification with a protected holdout.</p></div>
-                <div class="shot-metrics"><span>344 rows</span><span>4 features</span></div>
-                <div class="shot-columns"><i><b>Features</b><span>4 selected</span></i><i><b>Target</b><span>species</span></i><i><b>Holdout</b><span>20%</span></i><i><b>Metric</b><span>macro F1</span></i></div>
+                <div class="shot-metrics"><span>333 complete-case rows</span><span>4 features</span></div>
+                <div class="shot-columns"><i><b>Features</b><span>4 selected</span></i><i><b>Target</b><span>species</span></i><i><b>Holdout</b><span>0.20</span></i><i><b>Metric</b><span>macro F1</span></i></div>
               </aside>
               <section class="shot-lab">
                 <div class="shot-route"><span>Workflow</span><b>FRAME → SPLIT → EXPLORE → PREPARE → MODEL → TEST</b></div>
@@ -151,12 +152,12 @@
                   <div class="shot-notebook-stack">
                     <div class="shot-notebook">
                       <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span>X_train, X_test, y_train, y_test = <span class="cyan">split</span>(X, y)</span>
-                      <span class="line"><span class="num">2</span><span class="cyan">holdout</span> = <span class="gold">20%</span></span>
+                      <span class="line"><span class="num">1</span>X_train, X_test, y_train, y_test = <span class="cyan">train_test_split</span>(X, y, test_size=0.2, stratify=y, random_state=42)</span>
+                      <span class="line"><span class="num">2</span><span class="cyan">holdout</span> = <span class="gold">0.20</span></span>
                     </div>
                     <div class="shot-notebook">
                       <span class="shot-run">● RUN</span>
-                      <span class="line"><span class="num">1</span>model = <span class="cyan">RandomForestClassifier</span>(...)</span>
+                      <span class="line"><span class="num">1</span>model = <span class="cyan">DecisionTreeClassifier</span>(random_state=42)</span>
                       <span class="line"><span class="num">2</span>model.fit(X_train, y_train)</span>
                     </div>
                     <div class="shot-notebook">
@@ -167,7 +168,7 @@
                   </div>
                   <div class="shot-output-stack">
                     <div class="shot-output">
-                      <div class="shot-output-box"><h4>sealed holdout</h4><p>Train · 275 rows<br>Test · 69 rows</p></div>
+                      <div class="shot-output-box"><h4>sealed holdout</h4><p>Train · 266 rows<br>Test · 67 rows</p></div>
                     </div>
                     <div class="shot-output">
                       <div class="shot-output-box"><h4>cross-validation</h4><p>5 folds · planned<br><span class="output-accent">no leakage</span></p></div>
@@ -225,7 +226,7 @@
 
           <article class="story-step" data-story-step data-step="6" data-shot="ml" data-caption="Choose your finish line: explore and explain a dataset, or train and evaluate a model against a sealed test set." tabindex="0">
             <div class="story-step-number">06 · choose your finish line</div>
-            <h3>Explore a pattern—or prove a model.</h3>
+            <h3>Explore a pattern—or evaluate a model.</h3>
             <p>Choose Data Playground when the question is about rows, transformations, comparisons, or visual evidence. Choose Machine Learning when the question is about features, a model, cross-validation, and a defensible metric.</p>
             <a class="story-action" href="playground.html">Open Data Playground <span aria-hidden="true">→</span></a>
           </article>
@@ -238,6 +239,22 @@
           </article>
         </div>
       </div>
+      <details class="tutorial-code"><summary>Runnable tutorial examples</summary><p>The annotated mockups show excerpts. These complete examples run from the project folder with the documented Python packages.</p><pre>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import f1_score
+
+df = pd.read_csv("data/seoul-bike.csv")
+df = df.loc[df["Functioning Day"].eq("Yes")].copy()
+assert len(df) == 8465  # Hourly observations, not a count of days.
+
+penguins = pd.read_csv("data/palmer-penguins.csv").dropna()
+X = penguins[["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"]]
+y = penguins["species"]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+assert (len(penguins), len(X_train), len(X_test)) == (333, 266, 67)
+model = DecisionTreeClassifier(random_state=42).fit(X_train, y_train)
+print(f1_score(y_test, model.predict(X_test), average="macro"))</pre><p>This short illustration evaluates a fixed model once. The workspace adds training-only cross-validation and tuning before the final test.</p></details>
       <section class="final-cta" aria-labelledby="final-title">
         <div>
           <h2 id="final-title">Ready to Python?</h2>
