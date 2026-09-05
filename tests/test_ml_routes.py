@@ -2342,7 +2342,10 @@ def run_pca_runtime_regression(payload: dict, pd, np, plt, sns) -> dict:
     frame_name = "df" if route["dataset"]["prepare"] == "df" else "model_df"
     reference_frame = namespace[frame_name]
     reference_plot = namespace["plot_df_with_reference"]
-    if not np.array_equal(reference_plot[["PC1", "PC2"]].to_numpy(dtype=float), expected_scores[:, :2]):
+    # PCA coordinates are floating-point values; supported NumPy builds may
+    # round the same transform in the final bit differently.  Preserve the
+    # alignment check while allowing normal numerical round-off.
+    if not np.allclose(reference_plot[["PC1", "PC2"]].to_numpy(dtype=float), expected_scores[:, :2], rtol=1e-9, atol=1e-11):
         raise AssertionError("PCA reference view changed the fitted coordinates.")
     if not np.array_equal(reference_plot["reference"].to_numpy().astype(str), reference_frame[route["dataset"]["target"]].to_numpy().astype(str)):
         raise AssertionError("PCA interpretation reference labels are not aligned after fitting.")
