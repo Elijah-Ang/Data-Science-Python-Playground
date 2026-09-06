@@ -37,8 +37,5 @@
   query.addEventListener('change', () => {if (preference==='system') apply();});
   document.addEventListener('DOMContentLoaded', () => {
     apply();
-    if (location.pathname.endsWith('/about.html')) {
-      fetch('build-info.json').then(response=>response.json()).then(build=> {const p=document.createElement('p');p.className='build-identity';p.textContent=`Build ${build.contentId.slice(0,12)} · ${build.builtAt} · commit ${build.commit}${build.dirty ? ' · modified source' : ''}`;document.querySelector('main')?.append(p);}).catch(()=>{});
-    }
   });
 })();

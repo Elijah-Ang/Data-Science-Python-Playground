@@ -502,10 +502,12 @@ body[data-playground] .route-tools-copy > span:not(.route-tools-label) { font-fa
 body[data-playground] .suggested-route { min-width: 0; margin: 0 0 8px; padding: 3px 0 7px; border-bottom: 1px dashed var(--border); }
 body[data-playground] .route-strip {
   display: flex;
+  flex: 0 0 auto;
   gap: 4px;
   min-width: 0;
   margin: 0 0 8px;
   overflow-x: auto;
+  overflow-y: hidden;
   padding: 1px 1px 5px;
   scrollbar-color: var(--pg-accent) var(--bg-deep);
 }
@@ -1171,11 +1173,30 @@ body[data-playground] .output-panel .teaching-metric-line {font-size:.75rem;line
 
 @media (min-width:1121px) {
   /* Keep the desktop workspace viewport-bound so populated output scrolls
-     inside its panel instead of pushing the footer down the document. */
+     inside its panel instead of pushing the footer down the document. The
+     top chrome is about 115px and the shared footer is about 60px tall. */
   body[data-playground] .workspace {
-    height: calc(100vh - 112px);
-    height: calc(100dvh - 112px);
+    height: calc(100vh - 175px);
+    height: calc(100dvh - 175px);
+    min-height: 0;
   }
   body[data-playground] .try-area,
   body[data-playground] .lab { min-height: 0; }
+  body[data-playground] .inspector {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100%;
+    min-height: 0;
+  }
+  body[data-playground] .inspector-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  body[data-playground] .source-block {
+    flex: 0 0 auto;
+  }
 }
