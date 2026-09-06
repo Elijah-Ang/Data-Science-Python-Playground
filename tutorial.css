@@ -351,7 +351,7 @@ html[data-theme="dark"] #next { background: var(--ink); color: #191d29; }
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px 16px;
-  font: 700 .68rem/1 var(--mono);
+  font: 700 .75rem/1 var(--mono);
 }
 .info-page .home-nav a {
   padding: 6px 0;
@@ -435,7 +435,7 @@ html[data-theme="dark"] #next { background: var(--ink); color: #191d29; }
   border-radius: 4px;
   background: transparent;
   color: var(--ink);
-  font: 700 .68rem/1 var(--mono);
+  font: 700 .75rem/1 var(--mono);
   letter-spacing: .03em;
   text-decoration: none;
   text-transform: uppercase;

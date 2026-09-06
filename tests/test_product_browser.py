@@ -20,7 +20,11 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), (width, name)
     results.append([width, name, 'guided tour navigation and seven chapters passed'])
     continue
-   links=page.locator('.home-nav a'); assert links.count()>=3
+   if name == 'privacy':
+    assert page.locator('.home-nav').count()==0
+    links=page.locator('header [data-return]'); assert links.count()==1
+   else:
+    links=page.locator('.home-nav a'); assert links.count()>=3
    for link in links.all():
     assert link.is_visible(); assert float(link.evaluate('(e)=>getComputedStyle(e).fontSize').replace('px',''))>=12
    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'),(width,name)
