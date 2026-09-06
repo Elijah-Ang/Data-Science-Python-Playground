@@ -37,6 +37,7 @@ with sync_playwright() as p:
   return page.locator('article.cell').last
  run_data('df.describe().T')
  assert 'Rented Bike Count' in page.locator('.cell-inline-output').last.inner_text()
+ assert 'Scope:' not in page.locator('.output-panel').inner_text()
  cell=page.locator('article.cell').last;cell.locator('textarea').fill('df.head(2)'); page.locator('.cell-inline-output').last.scroll_into_view_if_needed(); assert 'Previous result' in page.locator('.cell-inline-output').last.inner_text()
  run_data('saved_marker=42\npd=None\nnp=None\nplt=None\ndf=None\noriginal_df=None')
  page.locator('#resetButton').click();page.wait_for_function("document.querySelector('#outputStatus').textContent==='Reset complete'")
@@ -58,6 +59,7 @@ with sync_playwright() as p:
  results.append(['data','trust, restart, empty reopening, undo and route layout passed'])
  page.set_viewport_size({'width':1440,'height':1000});page.goto(args.base_url+'/ml.html');page.wait_for_function("document.querySelector('#runtimeStatus').textContent.includes('Pyodide 0.26.4 ready')",timeout=120000)
  page.locator('#runAllButton').click();page.wait_for_function("document.querySelectorAll('article.cell').length>=9 && [...document.querySelectorAll('article.cell')].every(e=>e.dataset.status==='done')",timeout=180000)
+ assert 'Scope:' not in page.locator('.output-panel').inner_text()
  first=page.locator('article.cell').first; first.locator('textarea').fill(first.locator('textarea').input_value()+'\n# upstream edit')
  downstream=page.locator('article.cell').nth(5);downstream.locator('.run').dispatch_event('click');page.wait_for_timeout(200);assert downstream.get_attribute('data-status')!='done'
  downstream.locator('textarea').press('Control+Enter');page.wait_for_timeout(200);assert downstream.get_attribute('data-status')!='done'

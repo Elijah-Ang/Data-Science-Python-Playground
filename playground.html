@@ -1904,7 +1904,6 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       state.textContent = cell.status === "stale" || cell.status === "edited" ? "Previous result — code or workspace changed; rerun to update" : result.status === "ok" ? "Result from last run" : "ERROR";
       head.append(label, state);
       item.append(number, head);
-      const scope=document.createElement('p');scope.className='result-note';scope.textContent=`Scope: ${result.dataScope || 'last executed workspace'}. Original dataset: ${result.state?.originalRows ?? 'unknown'} rows; working copy at execution: ${result.state?.rows ?? 'unknown'} rows.`;item.append(scope);
 
       if (result.status !== "ok") {
         item.append(outputTitle("Python needs a small repair", "stderr"));
