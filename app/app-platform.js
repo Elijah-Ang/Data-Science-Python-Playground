@@ -58,25 +58,23 @@ async function openExternal(url) {
   else window.open(resolved.href, "_blank", "noopener,noreferrer");
 }
 
-let wasOffline = false;
 function showConnectivityState() {
-  let notice = document.querySelector("[data-app-connectivity]");
-  if (!notice) {
-    notice = document.createElement("div");
+  const offline = !navigator.onLine;
+  const existing = document.querySelector("[data-app-connectivity]");
+  if (!offline) {
+    existing?.remove();
+    return;
+  }
+  const notice = existing || document.createElement("div");
+  if (!existing) {
     notice.dataset.appConnectivity = "";
     notice.className = "app-connectivity";
     notice.setAttribute("role", "status");
     notice.setAttribute("aria-live", "polite");
     document.body.append(notice);
   }
-  const offline = !navigator.onLine;
-  notice.textContent = offline ? (native ? "Offline · bundled Python and datasets are available" : "Offline · saved pages may be available; web Python needs a previously loaded runtime") : "Back online";
-  notice.classList.toggle("is-visible", offline);
-  if (!offline && wasOffline) {
-    notice.classList.add("is-restored");
-    window.setTimeout(() => notice.classList.remove("is-restored"), 1800);
-  }
-  wasOffline = offline;
+  notice.textContent = native ? "Offline · bundled Python and datasets are available" : "Offline · saved pages may be available; web Python needs a previously loaded runtime";
+  notice.classList.add("is-visible");
 }
 
 function installExternalLinkRouting() {

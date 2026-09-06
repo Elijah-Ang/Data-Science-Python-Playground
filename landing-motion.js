@@ -10,6 +10,8 @@
     let time=0,last=performance.now(),token=0,raf=0,current=null,regions=[],loaded=false,actors=[];
     const gl=canvas.getContext("webgl",{alpha:true,antialias:false,premultipliedAlpha:true,preserveDrawingBuffer:true});
     if(!gl){console.info("[Landing motion] WebGL unavailable; keeping the original artwork.");return;}
+    canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();loaded=false;actors=[];frame.classList.remove('motion-ready');frame.dataset.motion='fallback';});
+    canvas.addEventListener('webglcontextrestored',()=>window.location.reload());
     const MAX=32;
     const vertex=`
       precision highp float;

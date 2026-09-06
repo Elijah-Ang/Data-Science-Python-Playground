@@ -13,8 +13,8 @@
   <link rel="icon" href="assets/icons/app-icon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <script src="app-platform.js"></script>
-  <script src="notebook-session.js"></script>
+  <script src="app-platform.js?v=platform2"></script>
+  <script src="notebook-session.js?v=session2"></script>
   <script src="worker-bridge.js"></script>
   <script src="output-ui.js"></script>
   <script src="dataset-dictionary.js"></script>
@@ -253,7 +253,6 @@
     .source-block svg { flex: 0 0 auto; width: 15px; height: 15px; stroke: var(--dataset-accent); fill: none; stroke-width: 1.7; }
     .source-block a { color: var(--dataset-accent); text-decoration: none; }
     .source-block a:hover { text-decoration: underline; }
-    .privacy-note { margin-top: 12px; color: var(--faint); font-size: .62rem; line-height: 1.45; }
 
     .try-area { display: flex; flex-direction: column; min-width: 0; min-height: calc(100vh - 112px); padding: 0 20px; }
     .route-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 9px 0 5px; color: var(--muted); font: 600 .62rem/1.35 var(--mono); }
@@ -306,7 +305,7 @@
     .notebook-title h3 { margin: 0; color: var(--ink); font: 700 .77rem var(--display); letter-spacing: .1em; text-transform: uppercase; }
     .notebook-title span { color: var(--muted); font-size: .68rem; }
     .notebook-title strong { color: var(--dataset-accent); font: 700 .68rem var(--mono); }
-    .notebook-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+    .notebook-actions { display: flex; flex: 1 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
     .toolbar-button { min-height: 29px; padding: 5px 8px; font-size: .67rem; }
     .notebook-bar .toolbar-button { min-height: 25px; padding: 3px 7px; font-size: .62rem; }
     .toolbar-button.primary { border-color: var(--orange); background: var(--orange); color: #25110a; }
@@ -618,7 +617,6 @@
       .inspector-preview { grid-column: 2; grid-row: 1 / span 2; }
       .inspector-section.columns { grid-column: 1; }
       .source-block { grid-column: 1; margin-top: 0; }
-      .privacy-note { display: none; }
       .task-category { grid-template-columns: 86px minmax(0,1fr); gap: 7px; }
       .task-category-heading small { display: none; }
       .task-caption { display: none; }
@@ -683,7 +681,7 @@
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
-  <link rel="stylesheet" href="playground-shared.css?v=mobile-layout2">
+  <link rel="stylesheet" href="playground-shared.css?v=mobile-layout3">
 </head>
   <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
@@ -757,7 +755,6 @@
           <span>Source: <a id="sourceLink" href="https://archive.ics.uci.edu/dataset/560/seoul%2Bbike%2Bsharing%2Bdemand" target="_blank" rel="noreferrer">UCI Machine Learning Repository</a><br><span id="sourceNote">Complete local copy · original rows stay sealed.</span></span>
         </div>
       </div>
-      <p class="privacy-note">The notebook starts empty each time you open Data Playground. Copy any code you want to keep before leaving this page.</p>
     </aside>
 
     <section class="try-area" id="try" aria-labelledby="tryTitle">
@@ -822,7 +819,7 @@
     </section>
   </main>
 
-  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span>Save or share deliberately before you leave.</span><span class="footer-links"><a href="help.html">Help</a><span aria-hidden="true">·</span><a href="privacy.html">Privacy</a></span></footer>
+  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span class="footer-links"><a href="help.html">Help</a><span aria-hidden="true">·</span><a href="privacy.html">Privacy</a><span aria-hidden="true">·</span><a href="acknowledgements.html">Credits</a></span></footer>
 
   <div class="guide-window" id="guideWindow" role="dialog" aria-modal="false" aria-labelledby="guideTitle" hidden>
     <div class="guide-head" id="guideDragHandle">

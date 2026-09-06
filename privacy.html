@@ -13,23 +13,23 @@
   <link rel="icon" href="assets/icons/app-icon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="tutorial.css?v=tutorial1">
-  <script src="app-platform.js"></script>
+  <link rel="stylesheet" href="tutorial.css?v=tutorial2">
+  <script src="app-platform.js?v=platform2"></script>
   <style>
     .privacy-page main { width: min(960px, calc(100% - 32px)); margin: 0 auto; padding: clamp(48px, 7vw, 92px) 0 72px; }
-    .privacy-card { padding: clamp(24px, 5vw, 54px); border: 1px solid var(--border); border-radius: 14px; background: color-mix(in srgb, var(--paper) 94%, transparent); box-shadow: var(--shadow); }
-    .privacy-eyebrow { color: var(--gold); font: 800 .64rem/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
+    .privacy-card { padding: clamp(24px, 5vw, 54px); border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--card) 94%, transparent); box-shadow: var(--shadow); }
+    .privacy-eyebrow { color: var(--orange); font: 800 .64rem/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
     .privacy-page h1 { margin: 16px 0 15px; color: var(--ink); font: 400 clamp(2rem, 6vw, 4.35rem)/1.12 var(--display); letter-spacing: .025em; text-transform: uppercase; }
-    .privacy-lede { max-width: 740px; margin: 0; color: var(--ink-soft); font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.65; }
+    .privacy-lede { max-width: 740px; margin: 0; color: color-mix(in srgb, var(--ink) 76%, var(--paper)); font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.65; }
     .privacy-meta { margin: 17px 0 0; color: var(--muted); font: 700 .68rem/1.5 var(--mono); letter-spacing: .03em; }
-    .privacy-callout { margin: 30px 0 34px; padding: 15px 17px; border-left: 4px solid var(--cyan); background: var(--cyan-soft); color: var(--ink-soft); line-height: 1.6; }
+    .privacy-callout { margin: 30px 0 34px; padding: 15px 17px; border-left: 4px solid var(--teal); background: color-mix(in srgb, var(--teal) 10%, var(--card)); color: color-mix(in srgb, var(--ink) 76%, var(--paper)); line-height: 1.6; }
     .privacy-page h2 { margin: 31px 0 9px; color: var(--ink); font: 800 1.02rem/1.25 var(--body); letter-spacing: .02em; }
-    .privacy-page p, .privacy-page li { color: var(--ink-soft); line-height: 1.72; }
+    .privacy-page p, .privacy-page li { color: color-mix(in srgb, var(--ink) 76%, var(--paper)); line-height: 1.72; }
     .privacy-page p { margin: 0 0 13px; }
     .privacy-page ul { display: grid; gap: 7px; margin: 0 0 14px; padding-left: 22px; }
-    .privacy-page a { color: var(--cyan); }
+    .privacy-page a { color: var(--teal); }
     .privacy-page a:hover { color: var(--orange); }
-    .privacy-contact { padding: 16px 18px; border: 1px solid var(--border-soft); border-radius: 8px; background: var(--paper-2); }
+    .privacy-contact { padding: 16px 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
     .privacy-contact p { margin: 0; }
     .privacy-small { color: var(--muted) !important; font-size: .87rem; }
     .privacy-page .home-footer { width: min(960px, calc(100% - 32px)); }
@@ -40,23 +40,13 @@
     }
   </style>
 </head>
-<body class="privacy-page" data-theme="light">
-  <header class="home-topbar">
-    <a class="brand" href="index.html" aria-label="Data Science Python Playground home">
-      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
-      <span class="brand-copy"><strong>Data Science Python Playground</strong></span>
-    </a>
-    <nav class="home-nav" aria-label="Primary navigation">
-      <a href="index.html">Home</a>
-      <a href="playground.html">Data Playground</a>
-      <a href="ml.html">Machine Learning</a>
-      <a href="help.html">Help</a>
-      <a href="privacy.html" aria-current="page">Privacy</a>
-    </nav>
+<body class="info-page privacy-page" data-theme="light">
+  <header class="home-topbar privacy-topbar">
+    <a class="cta cta-primary return-button" href="index.html" data-return>Return</a>
   </header>
 
-  <main>
-    <article class="privacy-card" aria-labelledby="privacy-title">
+  <main class="info-shell">
+    <article class="privacy-card info-card" aria-labelledby="privacy-title">
       <div class="privacy-eyebrow">// privacy</div>
       <h1 id="privacy-title">Privacy policy</h1>
       <p class="privacy-lede">This policy explains how the Data Science Python Playground website and the Data Playground iPhone/iPad app handle information.</p>
@@ -114,11 +104,24 @@
       <p>We will update this page when the service’s data flows, native dependencies, advertising setup, persistence model, or support process changes. The effective date above will be updated when a revised policy is published.</p>
       <p class="privacy-small">This page is the initial public policy copy for the GitHub Pages site. It will be reviewed again before the native app is submitted to the App Store and whenever advertising is enabled.</p>
     </article>
-  <section class="content-card"><h2>On-device code drafts</h2><p>Machine Learning code and bundled dataset text are saved in local storage per setup. Data Playground opens empty and keeps new code only while its page remains open. Previously stored Data drafts are left untouched but are not loaded automatically. Python variables and outputs are not restored. These drafts are not sent to a server. CSV and chart exports are created only when you choose them. Your theme choice is saved separately.</p></section></main>
+  </main>
 
   <footer class="home-footer">
     <span>Data Science Python Playground · local-first learning tools</span>
     <span class="footer-links"><a href="about.html">About</a><a href="help.html">Help</a><a href="privacy.html" aria-current="page">Privacy</a><a href="acknowledgements.html">Credits</a></span>
   </footer>
+  <script>
+    document.querySelector("[data-return]")?.addEventListener("click", event => {
+      let sameOrigin = false;
+      try {
+        const previous = document.referrer && new URL(document.referrer, location.href);
+        sameOrigin = Boolean(previous && previous.origin === location.origin && previous.pathname !== location.pathname);
+      } catch {}
+      if (sameOrigin && history.length > 1) {
+        event.preventDefault();
+        history.back();
+      }
+    });
+  </script>
 </body>
 </html>

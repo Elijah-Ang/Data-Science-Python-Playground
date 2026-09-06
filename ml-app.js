@@ -1432,7 +1432,6 @@ checkpoint_loadings.head(12)`;
       ? "Which rows look similar when we compare the selected inputs?"
       : config.question;
     $("#sourceLink").href = window.DatasetDictionary?.[config.file]?.source || config.source;
-    window.renderDatasetDictionary?.(config.file, $(".source-block"));
     $("#sourceLink").textContent = config.sourceLabel;
     $("#sourceNote").textContent = unsupervised
       ? `${config.sourceNote.split(" · ")[0]} · reference label hidden during discovery`

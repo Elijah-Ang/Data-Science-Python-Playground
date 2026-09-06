@@ -13,8 +13,6 @@ window.NotebookSession = (() => {
       return true;
     } catch {
       savingFailed = true;
-      const note=document.querySelector('.draft-policy');
-      if(note) {note.textContent='This device could not save the draft. Changes may be lost if you leave this page.'; note.setAttribute('role','alert');}
       return false;
     }
   }
@@ -73,7 +71,6 @@ import pandas as pd, numpy as np\nimport matplotlib.pyplot as plt\nimport seabor
     const actions = document.querySelector('.notebook-actions');
     if (actions) {
       const undo=document.createElement('button'); undo.type='button'; undo.className='toolbar-button'; undo.textContent='Undo delete'; undo.addEventListener('click',()=>{if (deleted) {adapter.insert(deleted.cell, deleted.index); deleted=null; save();}}); actions.append(undo);
-      const note=document.createElement('p'); note.className='draft-policy'; note.textContent=adapter.persist === false ? 'Start with an empty notebook. Copy any code you want to keep before leaving this page.' : 'Code drafts save automatically on this device per setup. Python variables and results reset when reopening.'; actions.after(note);
     }
     setInterval(() => {
       const running=adapter.get().cells.find(cell=>cell.status==='running');

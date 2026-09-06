@@ -14,4 +14,11 @@
     gate.setAttribute("aria-busy", "true");
     window.setTimeout(() => { window.location.assign(gate.href); }, 220);
   });
+
+  window.addEventListener("pageshow", event => {
+    if (!event.persisted) return;
+    frame.classList.remove("is-entering");
+    gate.removeAttribute("aria-busy");
+    window.location.reload();
+  });
 })();

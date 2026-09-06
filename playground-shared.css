@@ -478,7 +478,6 @@ body[data-playground] .source-block {
 }
 body[data-playground] .source-block a { color: var(--pg-accent); text-decoration: none; }
 body[data-playground] .source-block a:hover { text-decoration: underline; }
-body[data-playground] .privacy-note { margin-top: 12px; color: var(--faint); font-size: .62rem; line-height: 1.45; }
 
 /* Shared lab / Suggested Route geometry.  ML's route-card treatment is the
    canonical narrow/thin key surface; Data's optional task cards stay local. */
@@ -666,7 +665,7 @@ body[data-playground] .notebook-bar h3 {
   letter-spacing: .1em;
   text-transform: uppercase;
 }
-body[data-playground] .notebook-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+body[data-playground] .notebook-actions { display: flex; flex: 1 1 auto; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 body[data-playground] .notebook-bar .toolbar-button { min-height: 25px; padding: 3px 7px; font-family: var(--display); font-size: .62rem; font-weight: 700; letter-spacing: .01em; }
 body[data-playground] .notebook-layout {
   display: grid;
@@ -928,7 +927,6 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
   body[data-playground] .preview { max-width: 100%; overflow: auto; }
   body[data-playground] .inspector-section.columns { grid-column: 1; }
   body[data-playground] .source-block { grid-column: 1; margin-top: 0; }
-  body[data-playground] .privacy-note { display: none; }
   /* Flatten the compact notebook shell so the long cell stream comes first,
      followed by its actions, exports, and route shortcuts.  Desktop keeps the
      two-column notebook/output grid and the original control placement. */
@@ -1150,19 +1148,11 @@ body[data-playground] .footer-links { display: inline-flex; align-items: center;
 body[data-playground] .dataset-question,
 body[data-playground] .result-note,
 body[data-playground] .teaching-copy,
-body[data-playground] .task-question,
-body[data-playground] .privacy-note { font-size: 14px; line-height: 1.5; }
-body[data-playground][data-theme="light"] .privacy-note { color: #454651; }
-body[data-playground][data-theme="dark"] .privacy-note { color: #d7d9e4; }
+body[data-playground] .task-question { font-size: 14px; line-height: 1.5; }
 button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid #137c9c; outline-offset: 3px; }
 .chart-wrap a { display: inline-block; padding: 10px; font: 700 14px/1.4 sans-serif; }
 .result-note { overflow-wrap: anywhere; }
 /* Output keeps stable geometry; chart pixels load lazily. */
-@media (max-width: 1120px) {
- body[data-playground] .privacy-note { display: block; }
-}
-
-.draft-policy {font:14px/1.5 sans-serif; width:100%; order:1;}
 body[data-playground][data-theme="light"] {--muted:#50515b; --faint:#565660;} body[data-playground][data-theme="dark"] {--muted:#d0d2df; --faint:#bcc0d0;}
 
 .dataset-dictionary {font:14px/1.5 sans-serif; margin-block:12px;}.dataset-dictionary summary{cursor:pointer;}.dataset-dictionary p{margin:8px 0;}
