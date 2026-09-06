@@ -17,7 +17,7 @@
   <script src="notebook-session.js?v=session2"></script>
   <script src="worker-bridge.js"></script>
   <script src="output-ui.js"></script>
-  <script src="dataset-dictionary.js"></script>
+  <script src="dataset-dictionary.js?v=20260907-02"></script>
   <script src="data-runtime.js"></script>
   <style>
     :root {
@@ -681,7 +681,7 @@
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
-  <link rel="stylesheet" href="playground-shared.css?v=mobile-layout3">
+  <link rel="stylesheet" href="playground-shared.css?v=mobile-layout4">
 </head>
   <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
@@ -819,7 +819,7 @@
     </section>
   </main>
 
-  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span class="footer-links"><a href="help.html">Help</a><span aria-hidden="true">·</span><a href="privacy.html">Privacy</a><span aria-hidden="true">·</span><a href="acknowledgements.html">Credits</a></span></footer>
+  <footer class="footer"><span><strong>Local-first Python.</strong> Pyodide runs inside a Web Worker.</span><span class="footer-links"><a href="about.html">About</a><span aria-hidden="true">·</span><a href="help.html">Help</a><span aria-hidden="true">·</span><a href="privacy.html">Privacy</a><span aria-hidden="true">·</span><a href="acknowledgements.html">Credits</a></span></footer>
 
   <div class="guide-window" id="guideWindow" role="dialog" aria-modal="false" aria-labelledby="guideTitle" hidden>
     <div class="guide-head" id="guideDragHandle">
@@ -1473,7 +1473,6 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       $("#datasetQuestion").textContent = config.question;
       $("#sourceLink").textContent = config.sourceLabel;
       $("#sourceLink").href = window.DatasetDictionary?.[config.file]?.source || config.source;
-      window.renderDatasetDictionary?.(config.file, $(".source-block"));
       $("#sourceNote").textContent = config.sourceNote;
       $("#datasetIcon").innerHTML = config.icon || DATASET_ICONS.seoul;
       $("#datasetCardIcon").innerHTML = config.icon || DATASET_ICONS.seoul;

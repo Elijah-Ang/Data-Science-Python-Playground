@@ -43,10 +43,3 @@ window.DatasetDictionary = {
   assumptions:'Acceptability is derived from the source decision model. Performance reproduces that rating system and does not establish real-world safety or consumer preference.'
  }
 };
-window.renderDatasetDictionary = function(file, parent) {
- const metadata=window.DatasetDictionary[file]; if (!metadata || !parent) return;
- let details=parent.querySelector('.dataset-dictionary');
- if (!details) {details=document.createElement('details');details.className='dataset-dictionary';parent.append(details);}
- details.replaceChildren(); const summary=document.createElement('summary');summary.textContent='Row meaning, units and prediction assumptions';details.append(summary);
- for (const [label,value] of Object.entries(metadata)) {if (label==='source') continue;const p=document.createElement('p');p.textContent=`${label[0].toUpperCase()+label.slice(1)}: ${value}`;details.append(p);}
-};

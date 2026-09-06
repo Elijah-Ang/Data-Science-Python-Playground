@@ -20,7 +20,7 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), (width, name)
     results.append([width, name, 'guided tour navigation and seven chapters passed'])
     continue
-   if name == 'privacy':
+   if name in ('privacy','help','acknowledgements'):
     assert page.locator('.home-nav').count()==0
     links=page.locator('header [data-return]'); assert links.count()==1
    else:

@@ -16,9 +16,8 @@
   <script src="app-platform.js?v=platform2"></script>
 </head>
 <body class="info-page" data-theme="light">
-  <header class="home-topbar">
-    <a class="brand" href="index.html" aria-label="Data Science Python Playground home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-copy"><strong>Data Science Python Playground</strong></span></a>
-    <nav class="home-nav" aria-label="Primary navigation"><a href="index.html">Home</a><a href="playground.html">Data Playground</a><a href="ml.html">Machine Learning</a><a href="help.html">Help</a><a href="about.html">About</a></nav>
+  <header class="home-topbar privacy-topbar">
+    <a class="cta cta-primary return-button" href="index.html" data-return>Return</a>
   </header>
   <main class="info-shell">
     <article class="info-card">
@@ -34,9 +33,15 @@
         <section class="info-panel"><h2>App and Python runtimes</h2><p>Capacitor and its native plugins retain their MIT notices; the bundled <code>@capacitor/synapse</code> helper is used under the ISC License. Pyodide, CPython, NumPy, pandas, matplotlib, SciPy, scikit-learn, Pillow, OpenBLAS, seaborn, and their runtime dependencies retain their respective open-source notices. The <a href="assets/licenses/manifest.json">complete bundled notice manifest</a> links every shipped notice file.</p></section>
       </div>
       <p class="info-lede">These acknowledgements identify the source and license; they do not imply endorsement by any contributor or institution.</p>
-      <div class="info-actions"><a class="cta cta-primary" href="playground.html">Open Data Playground</a><a class="cta" href="about.html">About</a><a class="cta" href="privacy.html">Privacy policy</a></div>
     </article>
   </main>
-  <footer class="home-footer"><span>Data Science Python Playground · local-first learning tools</span><span class="footer-links"><a href="about.html">About</a><a href="privacy.html">Privacy</a><a href="acknowledgements.html" aria-current="page">Credits</a></span></footer>
+  <footer class="home-footer"><span>Data Science Python Playground · local-first learning tools</span><span class="footer-links"><a href="about.html">About</a><a href="help.html">Help</a><a href="privacy.html">Privacy</a><a href="acknowledgements.html" aria-current="page">Credits</a></span></footer>
+  <script>
+    document.querySelector("[data-return]")?.addEventListener("click", event => {
+      const referrer = document.referrer;
+      const sameOrigin = referrer && new URL(referrer).origin === location.origin;
+      if (sameOrigin && history.length > 1) { event.preventDefault(); history.back(); }
+    });
+  </script>
 </body>
 </html>

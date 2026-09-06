@@ -670,13 +670,13 @@ body[data-playground] .notebook-bar .toolbar-button { min-height: 25px; padding:
 body[data-playground] .notebook-layout {
   display: grid;
   grid-template-columns: minmax(0,1.2fr) minmax(310px,.8fr);
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   gap: 13px;
   align-items: stretch;
-  /* A real block-size is required for the two overflow regions below to own
-     wheel and touch scrolling instead of growing the document. */
-  height: min(720px, calc(100vh - 190px));
-  height: min(720px, calc(100dvh - 190px));
+  /* Let the notebook/output pair fill the workspace while their own overflow
+     regions retain scrolling. This keeps the footer close to the work area
+     instead of leaving a large unused block below it. */
+  height: auto;
   min-height: 390px;
 }
 body[data-playground] .notebook-panel {
@@ -1155,10 +1155,27 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px soli
 /* Output keeps stable geometry; chart pixels load lazily. */
 body[data-playground][data-theme="light"] {--muted:#50515b; --faint:#565660;} body[data-playground][data-theme="dark"] {--muted:#d0d2df; --faint:#bcc0d0;}
 
-.dataset-dictionary {font:14px/1.5 sans-serif; margin-block:12px;}.dataset-dictionary summary{cursor:pointer;}.dataset-dictionary p{margin:8px 0;}
-
 body[data-playground] .teaching-line, body[data-playground] .teaching-reading-cue, body[data-playground] .model-teaching-line, body[data-playground] .teaching-interpretation, body[data-playground] .teaching-metric-line {font-size:14px;line-height:1.5;}
 
 .figure-dialog {width:min(95vw,1400px);max-width:95vw;max-height:90dvh;padding:16px;border:2px solid var(--border);background:var(--panel);color:var(--ink);font:16px/1.5 sans-serif;}.figure-dialog::backdrop{background:rgba(0,0,0,.7);}.figure-dialog button{min-height:44px;margin-right:16px;}.figure-pan{overflow:auto;max-height:70dvh;margin-top:12px;}.figure-pan img{max-width:none;height:auto;display:block;}
-body[data-playground] .result-table th, body[data-playground] .result-table td {font-size:14px;line-height:1.45;padding:8px;}
-body[data-playground] .console-output {font-size:14px;line-height:1.5;}
+body[data-playground] .output-panel .result-note {font-size:.75rem;line-height:1.4;}
+body[data-playground] .output-panel .result-table th,
+body[data-playground] .output-panel .result-table td {font-size:.75rem;line-height:1.35;padding:5px 6px;}
+body[data-playground] .output-panel .console-output {font-size:.75rem;line-height:1.45;}
+body[data-playground] .output-panel .chart-description,
+body[data-playground] .output-panel .teaching-line,
+body[data-playground] .output-panel .teaching-reading-cue,
+body[data-playground] .output-panel .model-teaching-line,
+body[data-playground] .output-panel .teaching-interpretation,
+body[data-playground] .output-panel .teaching-metric-line {font-size:.75rem;line-height:1.4;}
+
+@media (min-width:1121px) {
+  /* Keep the desktop workspace viewport-bound so populated output scrolls
+     inside its panel instead of pushing the footer down the document. */
+  body[data-playground] .workspace {
+    height: calc(100vh - 112px);
+    height: calc(100dvh - 112px);
+  }
+  body[data-playground] .try-area,
+  body[data-playground] .lab { min-height: 0; }
+}
