@@ -5,7 +5,7 @@ import {fileURLToPath} from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = fs.readFileSync(path.join(root, "ml-app.js"), "utf8");
-const window = {__ML_TEST_MODE__:true, matchMedia:() => ({matches:false, addEventListener(){}})};
+const window = {DataframeSerializerSource:fs.readFileSync(path.join(root,"table-serialization.py"),"utf8"), ScientificValidatorSource:fs.readFileSync(path.join(root,"scientific-validators.py"),"utf8"), __ML_TEST_MODE__:true, matchMedia:() => ({matches:false, addEventListener(){}})};
 const context = {
   console: {log(){}, warn(){}, error(){}},
   window,
@@ -97,6 +97,25 @@ const customCells = [{taskId:null, status:"done", output:{value:"custom"}}];
 if (api.invalidateCellsFrom(route, customCells, null).changed || customCells[0].status !== "done") {
   throw new Error("A custom cell unexpectedly invalidated the Suggested Route.");
 }
+const pristineOptional = {optionalEvidence:true, routeReferenceCode:"generated evidence", code:"generated evidence"};
+if (!api.isTrustedOptionalCell(pristineOptional)) {
+  throw new Error("Generated optional evidence was not recognised as trusted.");
+}
+if (api.isTrustedOptionalCell({...pristineOptional, code:"generated evidence\n# learner edit"})) {
+  throw new Error("Edited optional evidence was still treated as trusted.");
+}
+if (api.isTrustedOptionalCell({optionalEvidence:false, routeReferenceCode:"generated evidence", code:"generated evidence"})) {
+  throw new Error("A non-optional cell was treated as trusted evidence.");
+}
+if (!source.includes("!isTrustedOptionalCell(cell)")) {
+  throw new Error("The direct cell runner does not invalidate edited optional evidence.");
+}
+if (!source.includes("cell.optionalEvidence && routeTasks.length")) {
+  throw new Error("The editor shortcut does not invalidate edited optional evidence.");
+}
+if (!source.includes("testSetOpened = true")) {
+  throw new Error("The final-test latch is missing from the shared run path.");
+}
 
 const identity = api.practiceRouteIdentity("breast", "continuous5", "knn_cls", 5);
 if (identity !== "breast::continuous5::knn_cls::5") throw new Error("Practice route identity is not deterministic.");
@@ -161,6 +180,7 @@ console.log(JSON.stringify({
   rerun_starts_at:route[api.firstIncompleteRouteIndex(route, editedCells)].id,
   deletion_checked:true,
   custom_cell_unrestricted:true,
+  optional_evidence_pristine_guard:true,
   practice_identity:true,
   safe_experiment:true
 }, null, 2));
