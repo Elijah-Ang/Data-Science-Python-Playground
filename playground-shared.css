@@ -875,6 +875,14 @@ body[data-playground] .result-note { margin: 8px 0 0; padding: 7px 8px; border-l
 
 body[data-playground] .footer { display: flex; justify-content: space-between; gap: 20px; padding: 18px 20px 24px; border-top: 1px dashed var(--border); color: var(--faint); font-size: .67rem; }
 body[data-playground] .footer strong { color: var(--muted); }
+body[data-playground] .footer-ad { display:none; }
+@media (min-width:1280px) {
+  body[data-playground] .footer[data-ad-preview] { display:grid; grid-template-columns:minmax(0,1fr) 468px minmax(0,1fr); align-items:center; gap:32px; padding-block:12px; }
+  body[data-playground] .footer[data-ad-preview] .footer-links { justify-self:end; }
+  body[data-playground] .footer-ad:not([hidden]) { display:grid; gap:6px; text-align:center; color:var(--muted); font:11px/1.4 var(--mono); }
+  body[data-playground] .footer-ad-placeholder { width:468px; height:60px; display:grid; place-items:center; border:1px dashed var(--border); background:var(--panel); }
+  body[data-playground]:has(.footer[data-ad-preview]) .workspace { height:calc(100dvh - 115px - var(--footer-preview-height,106px)); }
+}
 body[data-playground] .footer-links { display: inline-flex; align-items: center; gap: 4px; }
 
 /* Shared responsive contract.  The control strip's internal grid remains ML-

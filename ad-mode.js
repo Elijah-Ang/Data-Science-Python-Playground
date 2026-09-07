@@ -35,6 +35,18 @@
   function start() {
     preservePreference();
     new MutationObserver(preservePreference).observe(document.body, {childList: true, subtree: true});
+    // Opt-in visual draft only: no SDK, impressions, or third-party requests.
+    if (params.get('adpreview') === 'footer' && !adFree && !native) {
+      const footer = document.querySelector('.footer');
+      const slot = footer?.querySelector('.footer-ad');
+      if (slot) {
+        footer.dataset.adPreview = 'footer';
+        slot.hidden = false;
+        new ResizeObserver(() => {
+          document.body.style.setProperty('--footer-preview-height', `${footer.getBoundingClientRect().height}px`);
+        }).observe(footer);
+      }
+    }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, {once:true});
   else start();

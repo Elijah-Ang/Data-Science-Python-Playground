@@ -87,8 +87,8 @@ def check_landing(page, width, height, failures, evidence_dir):
     hrefs = [link.get_attribute("href") for link in links.all()]
     check(
         failures,
-        len(hrefs) == 2 and "tutorial.html" in hrefs and "playground.html" in hrefs,
-        f"landing {width}: visible links are not only the tour and gate ({hrefs!r})",
+        len(hrefs) == 6 and set(hrefs) == {"tutorial.html", "playground.html", "about.html", "help.html", "privacy.html", "acknowledgements.html"},
+        f"landing {width}: expected tour, gate, and four review/support links ({hrefs!r})",
     )
 
     tour = page.locator("a.tour-button")
