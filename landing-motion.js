@@ -10,8 +10,9 @@
     let time=0,last=performance.now(),token=0,raf=0,current=null,regions=[],loaded=false,actors=[];
     const gl=canvas.getContext("webgl",{alpha:true,antialias:false,premultipliedAlpha:true,preserveDrawingBuffer:true});
     if(!gl){console.info("[Landing motion] WebGL unavailable; keeping the original artwork.");return;}
-    canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();loaded=false;actors=[];frame.classList.remove('motion-ready');frame.dataset.motion='fallback';});
-    canvas.addEventListener('webglcontextrestored',()=>window.location.reload());
+    function fallback(){++token;loaded=false;actors=[];frame.classList.remove('motion-ready');frame.dataset.motion='fallback';}
+    canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback();});
+    // Keep the static scene after context loss; do not force a page reload.
     const MAX=32;
     const vertex=`
       precision highp float;
@@ -208,6 +209,8 @@
       const repair=surface(w,h),repairContext=repair.getContext('2d'),specs=actorSpecs(layout);
       const original=surface(w,h),originalContext=original.getContext('2d');originalContext.drawImage(img,0,0);
       const pixels=originalContext.getImageData(0,0,w,h);
+      // A successful load event does not guarantee a usable canvas image.
+      assertArtwork(pixels.data);
       for(let i=0;i<pixels.data.length;i+=4)if(pixels.data[i+3]<24){pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=pixels.data[i+3]=0;}
       originalContext.putImageData(pixels,0,0);
       for(const actor of specs){
@@ -291,7 +294,23 @@
         c.save();c.translate(actor.pivot[0]+dx,actor.pivot[1]+dy);c.rotate(angle);c.scale(scale,1);c.translate(-actor.pivot[0],-actor.pivot[1]);c.drawImage(actor.image,actor.x,actor.y);c.restore();
       }
     }
-    function loadImage(url){return cache[url]||(cache[url]=new Promise((resolve,reject)=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=()=>reject(Error('Artwork could not load.'));img.src=url;}));}
+    function assertArtwork(pixels){
+      let visible=0,total=0;
+      for(let i=3;i<pixels.length;i+=64){total++;if(pixels[i]>24)visible++;}
+      if(!total||visible/total<.1)throw Error('Artwork rendered empty or incomplete.');
+    }
+    function loadImage(url){return cache[url]||(cache[url]=new Promise((resolve,reject)=>{
+      const img=new Image();img.crossOrigin='anonymous';
+      img.onload=async()=>{try{await img.decode();if(!img.naturalWidth||!img.naturalHeight)throw Error('Artwork is empty.');resolve(img);}catch(error){reject(error);}};
+      img.onerror=()=>reject(Error('Artwork could not load.'));img.src=url;
+    }));}
+    function verifyFrame(){
+      if(gl.isContextLost()||gl.getError()!==gl.NO_ERROR)throw Error('Artwork renderer unavailable.');
+      const pixels=new Uint8Array(canvas.width*canvas.height*4);
+      gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+      if(gl.getError()!==gl.NO_ERROR)throw Error('Artwork frame could not be verified.');
+      assertArtwork(pixels);
+    }
     function resize(){if(!current)return;const ratio=Math.min(devicePixelRatio||1,2),width=Math.min(current.width,Math.round(art.clientWidth*ratio)),height=Math.round(width*current.height/current.width);if(canvas.width!==width||canvas.height!==height){canvas.width=actorCanvas.width=width;canvas.height=actorCanvas.height=height;gl.viewport(0,0,canvas.width,canvas.height);}}
     async function setLayout(layout){
       state.layout=layout;frame.dataset.layout=layout;frame.dataset.motion='loading';loaded=false;actors=[];frame.classList.remove('motion-ready');
@@ -301,8 +320,8 @@
         if(own!==token)return;
         const plate=await loadImage(slidePlates[layout].url);if(own!==token)return;
         const prepared=prepareActors(img,layout,balloonSource,plate);actors=prepared.actors;
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();frame.classList.add('motion-ready');frame.dataset.motion='ready';
-      }catch(e){frame.dataset.motion='fallback';console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
+      }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }
     function draw(){if(!loaded)return;regions.forEach((r,i)=>{const wave=Math.sin(time*Math.PI*2/r.period+r.phase);moves.set([r.dx*wave,r.dy*Math.sin(time*Math.PI*2/r.period+r.phase+.4),r.angle*wave,0],i*4);});gl.uniform4fv(locations['moves[0]'],moves);gl.uniform1f(locations.time,time+1.8);gl.uniform1f(locations.amount,state.motion);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,vertexCount);drawActors();}
     function tick(now){if(!root.isConnected){cancelAnimationFrame(raf);return;}const delta=Math.min((now-last)/1000,.05);last=now;if(state.playing&&!document.hidden)time+=delta*state.speed;if(loaded){resize();draw();}raf=requestAnimationFrame(tick);}
