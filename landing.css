@@ -31,6 +31,8 @@ body {
 .landing-page [data-app-connectivity] { display: none !important; }
 
 a { color: inherit; }
+.landing-footer { padding: 16px; text-align: center; font: 14px/1.6 var(--landing-body); }
+.landing-footer a { display: inline-block; padding: 10px 4px; }
 button, a { -webkit-tap-highlight-color: transparent; }
 .sr-only {
   position: absolute;
