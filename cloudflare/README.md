@@ -17,9 +17,13 @@ One-time PIN. Keep the public apex and www DNS-only and login-free.
 Status (2026-09-07): Worker deployed and custom domain attached. Owner-only
 email-code login succeeded. Unauthenticated requests redirect to Access. The
 private Python workspace loaded the full Seoul dataset (8,760 rows / 14 columns).
+All six Data Playground route steps and all ten default Logistic Regression
+machine-learning route steps completed successfully on the private hostname.
 Production workers.dev and preview URLs are disabled. Public GitHub HTTPS remains
 available, with the new slide favicon verified byte-for-byte. DNS resolver caches
-may still show old Porkbun nameservers during propagation.
+may still show old Porkbun nameservers during propagation. Cloudflare's dashboard
+confirms domain activation. Final HTTP checks: public 200, private signed-out 302,
+disabled alternate workers.dev endpoint 404.
 
 Run `node tests/test_private_worker.mjs` for fail-closed authentication, owner,
 method, header-leakage, ad-module, service-worker, and redirect checks. Dashboard
