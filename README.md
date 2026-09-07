@@ -101,6 +101,14 @@ The data-analysis workspace remains in [`playground.html`](playground.html). The
 
 ## Maintainer note
 
+### Web advertising preparation
+
+Bookmark `?ads=off` on any page for ad-free browsing. It persists for the tab's session and follows internal HTML links, including when session storage is blocked. `?ads=on` clears the preference; it is not consent. This preference does not change notebook storage. The switch is public convenience, not password protection.
+
+`ad-mode.js` loads before app code on every maintained page. Advertising is deliberately disabled; no advertising or consent SDK is currently requested. Any future ad/CMP loader must use this early policy, remain off in the native shell, and respect regional consent independently. Do not add an unconditional AdSense script or a publisher-controlled refresh timer. Site verification should use the AdSense meta-tag option so the ad-free route does not need to request an advertising script.
+
+Before activation: finish custom-domain DNS and HTTPS, verify the publisher ID in AdSense, publish its exact `ads.txt` entry and verification tag, configure Google's certified consent message, update actual data disclosures, request review, and wait for Ready. Account signup is not site approval.
+
 The repository history and pull requests retain the implementation chronology. Source-level regression names may still mention the phase or feature that introduced a safeguard, but this README documents the current learner experience and release contract rather than requiring readers to follow that history.
 
 ## Notebook work and build identity

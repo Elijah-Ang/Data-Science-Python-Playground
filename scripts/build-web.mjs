@@ -10,6 +10,9 @@ const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json")
 
 const files = [
   ".nojekyll",
+  "ad-mode.js",
+  "robots.txt",
+  "ads.txt",
   "index.html",
   "tutorial.html",
   "playground.html",
