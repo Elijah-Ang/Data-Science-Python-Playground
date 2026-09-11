@@ -10,7 +10,6 @@ from pathlib import Path
 import tempfile
 import numpy as np
 from numpy.testing import assert_allclose
-from playwright.sync_api import sync_playwright
 from test_engine import source
 from test_notebook import Session, complete
 
@@ -157,6 +156,7 @@ def verify_layout(page,width):
 
 
 def main():
+    from playwright.sync_api import sync_playwright
     parser=argparse.ArgumentParser();parser.add_argument('--engine',choices=['chromium','webkit'],default='chromium');parser.add_argument('--url',default='http://127.0.0.1:8012/statistics.html?runtime=local');args=parser.parse_args()
     ARTIFACTS.mkdir(exist_ok=True)
     with sync_playwright() as pw:
