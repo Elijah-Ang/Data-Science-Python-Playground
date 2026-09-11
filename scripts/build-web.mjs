@@ -17,6 +17,14 @@ const files = [
   "tutorial.html",
   "playground.html",
   "ml.html",
+  "statistics.html",
+  "statistics/app.js",
+  "statistics/worker.js",
+  "statistics/engine.py",
+  "statistics/proportions.py",
+  "statistics/notebook.py",
+  "statistics/statistics.css",
+  "statistics/playground-base.css",
   "privacy.html",
   "about.html",
   "help.html",
@@ -52,11 +60,15 @@ await fs.rm(output, { recursive: true, force: true });
 await fs.mkdir(output, { recursive: true });
 
 for (const file of files) {
+  await fs.mkdir(path.dirname(path.join(output,file)),{recursive:true});
   await fs.copyFile(path.join(root, file), path.join(output, file));
 }
 for (const directory of directories) {
   await fs.cp(path.join(root, directory), path.join(output, directory), { recursive: true });
 }
+
+const mlSource = await fs.readFile(path.join(root,'ml.html'),'utf8');
+await fs.writeFile(path.join(output,'statistics/playground-base.css'),mlSource.match(/<style>([\s\S]*?)<\/style>/)[1]);
 
 // Copy only assets referenced by maintained entry points, styles and metadata.
 const productionAssets = new Set();

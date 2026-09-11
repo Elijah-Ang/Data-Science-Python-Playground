@@ -33,10 +33,10 @@ with sync_playwright() as p:
    page.evaluate('document.fonts.ready.then(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))')
    data=page.locator('.mode-link--data').bounding_box();ml=page.locator('.mode-link--ml').bounding_box()
    nav=page.locator('.mode-switch').bounding_box()
-   assert nav['width']<=214 and nav['height']<=41,nav
-   assert page.locator('.mode-icon').count()==3
+   assert nav['width']<=279 and nav['height']<=41,nav
+   assert page.locator('.mode-icon').count()==4
    assert page.locator('.mode-link--ml').get_attribute('aria-current')=='page'
-   assert page.locator('.mode-label').all_text_contents()==['HOME','DATA','ML']
+   assert page.locator('.mode-label').all_text_contents()==['HOME','DATA','STATS','ML']
    assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+2'), (engine,width,page.evaluate('document.documentElement.scrollWidth'))
    for link in page.locator('.mode-link').all():
     link.focus();assert link.evaluate('(e)=>e===document.activeElement')

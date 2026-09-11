@@ -6,7 +6,7 @@ const VERSION = "0.26.4";
 const CDN = `https://cdn.jsdelivr.net/pyodide/v${VERSION}/full/`;
 const root = path.resolve(import.meta.dirname, "..");
 const output = path.join(root, "vendor", "pyodide");
-const roots = ["pandas", "numpy", "matplotlib", "scipy", "scikit-learn", "micropip"];
+const roots = ["pandas", "numpy", "matplotlib", "scipy", "scikit-learn", "micropip", "statsmodels"];
 const coreFiles = ["pyodide.js", "pyodide.asm.js", "pyodide.asm.wasm", "python_stdlib.zip", "pyodide-lock.json"];
 
 async function fetchBytes(url) {

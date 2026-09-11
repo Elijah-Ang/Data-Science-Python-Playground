@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Ask statistical questions, explore assumptions, confidence intervals and effect sizes, and run editable Python directly in your browser.">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" type="image/png" href="assets/icons/data-playground-slide.png" sizes="1254x1254"><link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
+<script src="ad-mode.js"></script>
+<meta name="theme-color" content="#efe8d7">
+<title>Statistics · Data Science Python Playground</title>
+<script src="app-platform.js" defer></script><link rel="manifest" href="manifest.webmanifest"><script src="appearance.js"></script>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="statistics/playground-base.css">
+<link rel="stylesheet" href="playground-shared.css">
+<link rel="stylesheet" href="statistics/statistics.css">
+<script src="worker-bridge.js"></script><script src="dataset-dictionary.js"></script>
+<script src="statistics/app.js" defer></script></head>
+<body data-playground="statistics" data-theme="light" data-dataset="penguins">
+<a class="skip-link" href="#notebookPanel">Skip to notebook</a>
+<header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <div class="brand-copy"><h1>STATISTICS PLAYGROUND</h1><p>Ask a question. Check the assumptions. Understand uncertainty.</p></div>
+    </div>
+    <div class="top-actions">
+      <nav class="mode-switch" aria-label="Playground mode"><a class="mode-link mode-link--home" href="index.html" aria-label="Home"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v2h2v2h2v2h2v2h-2v6H3V9H1V7h2V5h2V3h2z"/><path class="icon-cutout" d="M5 8h6v5H9v-3H7v3H5z"/></svg><span class="mode-label">HOME</span></a><a class="mode-link mode-link--data" href="playground.html" aria-label="Data Playground"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M1 9h3v5H1zm5-4h3v9H6zm5-4h3v13h-3zM0 15h16v1H0z"/></svg><span class="mode-label">DATA</span></a><a class="mode-link mode-link--statistics" href="statistics.html" aria-label="Statistics Playground" aria-current="page"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M1 13h14v2H1zM2 10h2v3H2zm2-4h2v7H4zm2-4h4v11H6zm4 4h2v7h-2zm2 4h2v3h-2z"/></svg><span class="mode-label">STATS</span></a><a class="mode-link mode-link--ml" href="ml.html" aria-label="Machine Learning"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 0h2v4h4v2h2v6h-2v3H3v-3H1V6h2V4h4z"/><path class="icon-cutout" d="M5 6h2v3H5zm4 0h2v3H9zM5 11h6v2H5z"/></svg><span class="mode-label">ML</span></a></nav>
+      <button class="icon-button guide-button" id="guideButton" type="button" aria-expanded="false" aria-controls="guideWindow" aria-label="Open workflow reference" title="Open workflow reference"><svg viewBox="0 0 24 24"><path d="M4.5 5.5c2.4-1.5 4.8-1.5 7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3zM19.5 5.5c-2.4-1.5-4.8-1.5-7.5.3v13c-2.7-1.8-5.1-1.8-7.5-.3zM12 5.8v13"></path></svg><span>Workflow</span></button>
+      <button class="icon-button theme-button" id="themeButton" type="button" aria-pressed="true" aria-label="Switch to dark theme" title="Switch to dark theme"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path></svg></button>
+    </div>
+  </header>
+<section class="control-strip" aria-label="Statistics setup"><div class="controls">
+<div class="control question"><label for="familySelect">Question</label><select id="familySelect"></select></div>
+<div class="control dataset"><label for="datasetSelect">Dataset</label><select id="datasetSelect"></select></div>
+<div class="control confidence"><label for="confidence">Confidence</label><select id="confidence"><option value="0.9">90%</option><option value="0.95" selected>95%</option><option value="0.99">99%</option></select></div>
+<button class="toolbar-button" id="studyButton" aria-expanded="false" aria-controls="studyPanel">⚙ Study setup</button>
+</div></section>
+<section class="study-panel" id="studyPanel" aria-label="Configure study" hidden><div class="study-panel-head"><strong>Configure the question</strong><button class="toolbar-button" id="applyStudy">Done</button></div><div class="study-fields" id="variables"></div><label class="study-note-label" for="questionNote">My research question / meaningful difference</label><input id="questionNote" placeholder="Describe the population and what would matter in practice…"><p class="result-note">Routing uses your structured choices. This note stays with your notebook.</p></section>
+<main class="workspace">
+<aside class="inspector" aria-labelledby="inspectorTitle">
+<div class="panel-head"><h2 id="inspectorTitle">Inspector</h2></div>
+<div class="runtime-line inspector-runtime" aria-live="polite"><span class="runtime-dot" id="runtimeDot"></span><span class="runtime-copy"><strong>Python runtime</strong><span id="runtimeStatus">Loading Python + statistics…</span></span></div>
+<div class="inspector-body"><div><section class="data-card"><h3 id="datasetName">Study context</h3><p id="datasetDescription"></p><p class="data-question" id="datasetQuestion"></p><div class="problem-tags" id="problemTags"></div></section>
+<div class="metrics"><div class="metric"><b id="rowMetric">—</b><span>usable observations</span></div><div class="metric"><b id="confidenceMetric">95%</b><span>confidence level</span></div></div>
+<section class="inspector-section"><h3>Selected study</h3><div class="feature-list" id="featureList"></div></section>
+<section class="inspector-section"><h3>Recommended method</h3><p class="method-name" id="methodName">Choose a question</p><p class="inspector-note" id="methodNote"></p></section></div>
+<section class="inspector-section inspector-preview-section"><h3>First look <span>selected columns</span></h3><div class="preview inspector-preview" id="preview"></div></section></div>
+<div class="source-block"><span>Source: <a id="sourceLink" target="_blank" rel="noreferrer"></a><br><span id="sourceNote"></span></span></div></aside>
+<section class="lab" aria-label="Statistics notebook"><div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">Click a step to add and run its Python. Each completed step unlocks the next.</span></div></div>
+<div class="route-strip" id="routeStrip" aria-label="Suggested statistical route"></div>
+<div id="error" class="console-output error global-error" role="alert" hidden></div>
+<div class="notebook-bar"><div class="notebook-title-tools"><h3>Notebook</h3><span id="taskProgress" class="notebook-progress" aria-live="polite">0 steps run</span></div><div class="notebook-actions"><button class="toolbar-button" id="runAllButton" disabled>▶ Run suggested route</button><button class="toolbar-button" id="restartPythonButton">Stop / restart Python</button><button class="toolbar-button" id="resetButton">↺ Reset data</button><button class="toolbar-button" id="downloadNotebook" disabled>↓ Notebook</button><button class="toolbar-button" id="downloadData" disabled>↓ Data</button></div></div>
+<div class="notebook-layout">
+<section class="notebook-panel" id="notebookPanel" aria-label="Editable Python notebook"></section>
+<aside class="output-panel" aria-labelledby="outputTitle">
+<div class="output-head"><h3 id="outputTitle">Output</h3><span id="outputStatus" role="status" aria-live="polite">No cell run yet</span><button class="toolbar-button" id="downloadChartButton" disabled>↓ chart</button></div>
+<div class="output-meta"><span>confidence <b id="outputConfidence">95%</b></span><span>α <b id="outputAlpha">0.05</b></span><span>runtime <b>Pyodide</b></span></div>
+<div class="output-body" id="outputBody"><div class="output-list" id="outputList"></div></div>
+</aside></div>
+</section></main>
+<footer class="footer"><span><strong>Local-first statistics.</strong> Python runs on this device.</span><span class="footer-links"><a href="about.html">About</a> · <a href="help.html">Help</a> · <a href="privacy.html">Privacy</a> · <a href="acknowledgements.html">Credits</a></span></footer>
+<dialog id="guideWindow" class="statistics-guide" aria-labelledby="guideTitle"><div class="study-panel-head"><h2 id="guideTitle">Statistics workflow</h2><button id="guideClose" class="toolbar-button">Close</button></div><div id="guideBody"></div></dialog>
+</body></html>

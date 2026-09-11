@@ -120,3 +120,7 @@ Data Playground opens with an empty notebook; its cells last only while the page
 Run `npm run check` for build, JavaScript, worker-transport, scientific metadata and shell checks. Run `npm run check:data` for 262 Data task scenarios and trust regressions. Product browser tests require Playwright and a server for `dist`: `python3 tests/test_product_browser.py --engine chromium --base-url http://127.0.0.1:8000` (repeat with `webkit`).
 
 Production copies only referenced artwork. `dist/asset-manifest.json` records exact file hashes; `dist/build-info.json` records the content ID, commit, modified-source indicator, date and byte count. About displays this identity. Web offline support covers the cached app shell; the remote web Python runtime is not promised on a fresh offline visit. Native builds bundle the pinned runtime.
+
+## Statistics Playground
+
+Open `statistics.html` from the shared Home / Data / Stats / ML navigation. Eight question families guide learners to appropriate inference, assumptions, uncertainty, effect sizes and corrected follow-ups. See [Statistics methods and verification](statistics/README.md). Run `npm run check:statistics` for numerical/session tests and `python3 tests/test_statistics_integration_browser.py --base-url http://127.0.0.1:8000` against a production build for browser verification.

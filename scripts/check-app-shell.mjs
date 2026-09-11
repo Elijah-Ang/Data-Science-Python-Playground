@@ -4,7 +4,7 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const dist = path.join(root, "dist");
-const htmlFiles = ["index.html", "tutorial.html", "playground.html", "ml.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
+const htmlFiles = ["index.html", "tutorial.html", "playground.html", "ml.html", "statistics.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
 
 const manifest = JSON.parse(await fs.readFile(path.join(root, "manifest.webmanifest"), "utf8"));
 assert.equal(manifest.start_url, "./index.html");
@@ -85,14 +85,14 @@ assert.doesNotMatch(
   "Do not restore the 900px portrait cap; 13-inch iPads are 1024 CSS pixels wide in portrait."
 );
 
-for (const [name, html] of [["Data Playground", dataHtml], ["Machine Learning", mlHtml]]) {
-  for (const label of ["Home", "Data Playground", "Machine Learning"]) {
+for (const [name, html] of [["Data Playground", dataHtml], ["Machine Learning", mlHtml], ["Statistics Playground", await fs.readFile(path.join(root,"statistics.html"),"utf8")]]) {
+  for (const label of ["Home", "Data Playground", "Statistics Playground", "Machine Learning"]) {
     assert.match(html, new RegExp(`<a[^>]+class="[^"]*mode-link[^"]*"[^>]+aria-label="${label}"`), `${name} must expose an accessible ${label} mode link.`);
   }
   assert.equal(
     (html.match(/class="mode-icon"/g) || []).length,
-    3,
-    `${name} must include all three pixel icons and visible navigation labels.`
+    4,
+    `${name} must include all four pixel icons and visible navigation labels.`
   );
   assert.match(html, /id="outputStatus"[^>]+role="status"[^>]+aria-live="polite"/, `${name} must announce notebook run status.`);
   assert.ok(
@@ -119,8 +119,8 @@ assert.match(
 );
 assert.match(
   playgroundCss,
-  /body\[data-playground\] \.notebook-actions \.toolbar-button \{\s*min-height: 44px;\s*\}/,
-  "Compact notebook controls must keep comfortable touch targets."
+  /body\[data-playground\] \.notebook-actions \.toolbar-button \{\s*min-height: 25px;\s*\}/,
+  "Compact notebook controls must match desktop size."
 );
 assert.match(
   playgroundCss,
@@ -129,8 +129,8 @@ assert.match(
 );
 assert.match(
   playgroundCss,
-  /body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-action,[\s\S]*?min-width: 44px;[\s\S]*?min-height: 44px;/,
-  "Compact export controls must keep comfortable touch targets."
+  /body\[data-playground\] \.output-panel:not\(\.has-global-message\) \.output-action,[\s\S]*?min-width: 0;[\s\S]*?min-height: 25px;/,
+  "Compact export controls must match desktop size."
 );
 assert.match(
   playgroundCss,
