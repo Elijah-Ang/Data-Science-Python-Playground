@@ -79,7 +79,7 @@ class SessionTests(unittest.TestCase):
         self.assertTrue(np.isfinite(s.env['p_value']))
 
     def test_invalid_edited_samples_are_rejected(self):
-        s=Session(PENGUINS,CASES['welch']);s.run(0,s.plan['route'][0]['code']);s.run(1,s.plan['route'][1]['code']+'\na = a[:2]');s.run(2,s.plan['route'][2]['code'])
+        s=Session(PENGUINS,CASES['welch']);s.run(0,s.plan['route'][0]['code']);s.run(1,s.plan['route'][1]['code']+'\na = a[:3]');s.run(2,s.plan['route'][2]['code'])
         with self.assertRaisesRegex(ValueError,'four finite'):s.run(3,s.plan['route'][3]['code'])
 
     def test_cannot_drop_uncertainty_or_generate_nan_p(self):

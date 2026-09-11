@@ -1,11 +1,11 @@
 """Focused real-browser regression for the shared Data/ML interaction contract."""
 import argparse
 from pathlib import Path
-from playwright.sync_api import sync_playwright
 from test_browser import ready, run_all, verify_layout, workflow_regressions, ARTIFACTS
 
 
 def main():
+    from playwright.sync_api import sync_playwright
     parser=argparse.ArgumentParser();parser.add_argument('--engine',default='chromium',choices=['chromium','webkit']);args=parser.parse_args()
     with sync_playwright() as pw:
         browser=getattr(pw,args.engine).launch();page=browser.new_page(viewport={'width':1512,'height':1050},accept_downloads=True)
