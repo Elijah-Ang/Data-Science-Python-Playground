@@ -99,6 +99,11 @@ def validate_current_inputs(env,plan):
     m=plan['method'];c=plan['config']
     if c['family']=='goodness':
         validate_goodness(env['observed'], env['expected_proportions'], m)
+        expected = np.asarray(env['observed']).sum() * np.asarray(env['expected_proportions'])
+        require(env['n'] == np.asarray(env['observed']).sum() and np.shape(env['expected']) == expected.shape and np.allclose(env['expected'], expected),
+                'Recalculate n and expected = n * expected_proportions after editing the counts or shares.')
+        require(np.allclose(env['distribution']['observed'], env['observed']) and np.allclose(env['distribution']['expected count'], expected),
+                'Rebuild the distribution table after editing observed or expected counts so the displayed evidence stays consistent.')
         return
     if c['family']=='proportions':
         if c['structure']=='one':

@@ -10,8 +10,9 @@ body[data-playground="statistics"] .control-strip .toolbar-button{height:34px;wh
 .study-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
 .study-panel-head strong{font:700 .65rem var(--display);color:var(--accent)}
 .study-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 14px}
-.study-field{min-width:0}.study-field label,.study-note-label{display:block;font:700 .61rem var(--mono);color:var(--muted);margin-bottom:5px}
-.study-field select,.study-field input,#questionNote{width:100%;min-width:0;min-height:34px;border:1px solid var(--border);border-radius:4px;padding:6px 8px;background:var(--panel);color:var(--ink);font-size:.75rem}
+.study-field{min-width:0}.study-field label,.study-note-label{display:block;margin-bottom:5px}.study-note-label{font:700 .61rem var(--mono);color:var(--muted)}
+.study-field select,.study-field input,#questionNote{width:100%;min-width:0;min-height:34px;border:1px solid var(--border);border-radius:4px;padding:6px 8px;background:var(--panel);color:var(--ink);font:inherit}
+.study-field select{height:34px}
 .study-field .check-label{display:flex;align-items:center;gap:7px;min-height:34px;margin-top:15px}
 .study-field input[type=checkbox]{width:16px;min-height:16px;flex:0 0 16px}.study-field p{font-size:.7rem;color:var(--muted);margin:5px 0}.study-note-label{margin-top:12px}
 #questionNote{max-width:820px}.study-panel>.result-note{margin:5px 0;font-size:.7rem}

@@ -95,8 +95,8 @@ def validate_goodness(observed, probabilities, method=None):
     sparse = (expected < 5).any()
     require(not sparse or len(observed) == 2,
             'Expected counts below 5 make this multinomial chi-square approximation unreliable. An exact multinomial or simulation method is outside this Playground’s scope. Collect more data or prespecify defensible categories; do not combine categories after seeing the result.')
-    require(method != 'gof_chi2' or not sparse,
-            'Edited expected counts are below 5. Reconfigure the question for an exact binary route or a supported design.')
+    require(method != 'gof_chi2' or (not sparse and (len(observed) > 2 or (expected >= 10).all())),
+            'Edited expected counts need a different route. Reconfigure for exact binary inference or a supported design.')
     require(method != 'gof_exact' or len(observed) == 2, 'The exact binomial route requires exactly two categories.')
     return 'gof_exact' if len(observed) == 2 and (expected < 10).any() else 'gof_chi2'
 

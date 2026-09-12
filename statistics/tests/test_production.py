@@ -63,6 +63,12 @@ class GoodnessTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'integer'):s.run(3,s.plan['route'][3]['code'])
         self.assertNotIn('p_value',s.env)
 
+    def test_edited_shares_require_recalculation_and_route_conditions(self):
+        s,_=self.run_gof();s.run(1,s.plan['route'][1]['code']+'\nexpected_proportions = np.array([.2,.3,.5])')
+        s.run(2,s.plan['route'][2]['code'])
+        with self.assertRaisesRegex(ValueError,'Recalculate'):s.run(3,s.plan['route'][3]['code'])
+        with self.assertRaisesRegex(ValueError,'different route'):ns['validate_goodness']([8,8],[.5,.5],'gof_chi2')
+
     def test_confidence_widths_and_category_order(self):
         runs=[self.run_gof(confidence=c)[0] for c in (.9,.95,.99)]
         assert_allclose([s.env['p_value'] for s in runs],runs[0].env['p_value'])

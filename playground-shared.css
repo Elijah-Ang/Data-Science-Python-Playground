@@ -223,7 +223,8 @@ body[data-playground] .theme-button { width: 34px; color: var(--gold); border-co
 
 /* The top control strips keep their capability-specific structure, but
    controls and runtime status inherit the same Data Playground typography. */
-body[data-playground] .control label {
+body[data-playground] .control label,
+body[data-playground] .study-field > label:not(.check-label) {
   color: var(--gold);
   font: 700 .64rem/1 var(--display);
   letter-spacing: .13em;
@@ -240,7 +241,8 @@ body[data-playground] select {
 }
 body[data-playground] select:hover,
 body[data-playground] select:focus { border-color: var(--pg-accent); }
-body[data-playground] .control select {
+body[data-playground] .control select,
+body[data-playground] .study-field select {
   background: linear-gradient(45deg, transparent 50%, var(--pg-accent) 50%) calc(100% - 13px) 14px/5px 5px no-repeat,
               linear-gradient(135deg, var(--pg-accent) 50%, transparent 50%) calc(100% - 8px) 14px/5px 5px no-repeat,
               var(--panel);

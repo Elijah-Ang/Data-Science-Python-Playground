@@ -37,5 +37,10 @@ def compare(pages,width,theme):
             # State colors of route cards intentionally reflect different route progress.
             if component=='route' and prop in ('color','backgroundColor'):continue
             if (component,prop) not in LEGACY or values['statistics']!=values['ml']:failures.append((component,prop,values))
+    # Expanded study controls use the same label/select primitives as the top rail.
+    page=pages['statistics']
+    for selector,canonical in [('.study-field > label:not(.check-label)','control label'),('.study-field select','select')]:
+        actual=page.locator(selector).first.evaluate('(e,props)=>{const s=getComputedStyle(e);return Object.fromEntries(props.map(k=>[k,s[k]]))}',PROPS)
+        assert actual==samples['statistics'][canonical],(width,theme,selector,actual,samples['statistics'][canonical])
     assert not failures,(width,theme,failures)
     return samples
