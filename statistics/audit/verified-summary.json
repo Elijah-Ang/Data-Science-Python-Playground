@@ -1,0 +1,79 @@
+{
+  "configurations": 6945,
+  "counts": {
+    "valid": 3462,
+    "rejected": 3483
+  },
+  "families": {
+    "reference": {
+      "valid": 63
+    },
+    "independent": {
+      "rejected": 720,
+      "valid": 1044
+    },
+    "paired": {
+      "rejected": 936,
+      "valid": 792
+    },
+    "groups": {
+      "valid": 108
+    },
+    "factorial": {
+      "rejected": 696,
+      "valid": 264
+    },
+    "categorical": {
+      "rejected": 30,
+      "valid": 126
+    },
+    "association": {
+      "rejected": 42,
+      "valid": 108
+    },
+    "proportions": {
+      "valid": 897,
+      "rejected": 1059
+    },
+    "goodness": {
+      "valid": 60
+    }
+  },
+  "methods": {
+    "one_t": 21,
+    "one_z": 21,
+    "bootstrap": 21,
+    "welch": 348,
+    "student": 348,
+    "mannwhitney": 348,
+    "paired_t": 396,
+    "wilcoxon": 396,
+    "welch_anova": 36,
+    "anova": 36,
+    "kruskal": 36,
+    "factorial": 264,
+    "chi2": 90,
+    "fisher": 36,
+    "pearson": 54,
+    "spearman": 54,
+    "prop_one_z": 69,
+    "prop_two_z": 384,
+    "prop_two_exact": 444,
+    "gof_chi2": 60
+  },
+  "continuous_cases": 32,
+  "continuous_counts": {
+    "valid": 15,
+    "rejected": 17
+  },
+  "primary_max": 14,
+  "advanced_max": 18,
+  "cells_over_25": 0,
+  "invariants": {
+    "confidence_triplets": 1154,
+    "group_swaps": 1872,
+    "factor_orders": 264,
+    "correlation_swaps": 108,
+    "monte_carlo_max_swap_deviation": 0
+  }
+}

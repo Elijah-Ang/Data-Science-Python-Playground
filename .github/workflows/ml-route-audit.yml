@@ -113,3 +113,14 @@ jobs:
         run: python tests/test_notebook_session_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
       - name: Check product trust and responsive public pages
         run: python tests/test_product_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
+
+  required-browser-status:
+    name: Browser/Pyodide route smoke test
+    if: ${{ always() }}
+    needs: browser-smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require both protected browser engines
+        env:
+          BROWSER_MATRIX_RESULT: ${{ needs.browser-smoke.result }}
+        run: test "$BROWSER_MATRIX_RESULT" = success

@@ -13,7 +13,7 @@ The canonical `playground.html`, canonical `ml.html` and Statistics page were op
 
 ## Refinements from the comparison
 
-1. Removed the prototype-only header/runtime strip, oversized question grid and static Python/results columns.
+1. Removed the retired standalone header/runtime strip, oversized question grid and static Python/results columns.
 2. Corrected the initial tablet setup strip, which had wrapped into an unnecessarily tall second row.
 3. Corrected console text contrast in light mode while keeping the established dark console surface.
 4. Reduced the Inspector to compact study context. Detailed methodology lives with the relevant route cell and in Workflow reference.
@@ -35,7 +35,7 @@ Each composite has Data, ML and Statistics in that order:
 - [Mobile · dark](tests/artifacts/side-by-side-390-dark.png)
 - [Computed layout and typography measurements](tests/artifacts/visual-metrics.json)
 
-These files are local QA outputs, excluded from production and Git by the prototype's artifact ignore rule. Recreate them with `python3 prototypes/statistics/tests/visual_review.py` while the review server runs.
+These files are local QA outputs, excluded from production and Git by the Statistics artifact ignore rule. Recreate them with `python3 statistics/tests/visual_review.py` while the review server runs.
 
 ## Production integration · 11 September 2026
 

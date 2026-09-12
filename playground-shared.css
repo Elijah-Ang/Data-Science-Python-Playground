@@ -2,9 +2,9 @@
 html:has(body[data-playground]) { overflow-x: hidden; }
 
 /*
- * Shared visual contract for the two live playgrounds.
+ * Shared visual contract for all three live playgrounds.
  *
- * Keep capability-only rules in playground.html / ml.html.  Any change to the
+ * Keep capability-only rules in each Playground’s own styles.  Any change to the
  * shared shell, typography, controls, inspector, notebook, output panel, or
  * responsive composition belongs here so both playgrounds move together.
  */
@@ -221,9 +221,10 @@ body[data-playground] .guide-button {
 }
 body[data-playground] .theme-button { width: 34px; color: var(--gold); border-color: rgba(245,197,24,.65); }
 
-/* The two top control strips keep their capability-specific structure, but
+/* The top control strips keep their capability-specific structure, but
    controls and runtime status inherit the same Data Playground typography. */
-body[data-playground] .control label {
+body[data-playground] .control label,
+body[data-playground] .study-field > label:not(.check-label) {
   color: var(--gold);
   font: 700 .64rem/1 var(--display);
   letter-spacing: .13em;
@@ -240,7 +241,8 @@ body[data-playground] select {
 }
 body[data-playground] select:hover,
 body[data-playground] select:focus { border-color: var(--pg-accent); }
-body[data-playground="ml"] .control select {
+body[data-playground] .control select,
+body[data-playground] .study-field select {
   background: linear-gradient(45deg, transparent 50%, var(--pg-accent) 50%) calc(100% - 13px) 14px/5px 5px no-repeat,
               linear-gradient(135deg, var(--pg-accent) 50%, transparent 50%) calc(100% - 8px) 14px/5px 5px no-repeat,
               var(--panel);
@@ -477,6 +479,7 @@ body[data-playground] .source-block {
   border-top: 1px dashed var(--border);
   color: var(--muted);
   font-size: .68rem;
+  line-height: 1.55;
 }
 body[data-playground] .source-block a { color: var(--pg-accent); text-decoration: none; }
 body[data-playground] .source-block a:hover { text-decoration: underline; }
@@ -865,13 +868,13 @@ body[data-playground] .result-table-wrap { max-height: 245px; overflow: auto; bo
 body[data-playground] .result-table { width: 100%; min-width: 420px; border-collapse: collapse; font: 500 .61rem var(--mono); }
 body[data-playground] .result-table th,
 body[data-playground] .result-table td { padding: 6px 7px; border-bottom: 1px solid var(--border-soft); text-align: left; vertical-align: top; }
-body[data-playground] .result-table th { position: sticky; top: 0; z-index: 1; background: var(--panel-3); color: var(--gold); font-weight: 700; }
+body[data-playground] .result-table th { font-size: inherit; position: sticky; top: 0; z-index: 1; background: var(--panel-3); color: var(--gold); font-weight: 700; }
 body[data-playground] .result-table td { color: var(--muted); }
 body[data-playground] .chart-wrap { overflow: auto; border: 1px solid var(--border-soft); background: #fffaf0; }
 body[data-playground] .chart-wrap img { display: block; width: 100%; min-width: 320px; height: auto; }
 body[data-playground] .console-wrap { margin-top: 9px; border: 1px solid var(--border-soft); background: var(--bg-deep); }
 body[data-playground] .console-label { padding: 5px 7px; border-bottom: 1px dashed var(--border-soft); color: var(--faint); font: 700 .57rem var(--mono); letter-spacing: .08em; text-transform: uppercase; }
-body[data-playground] .console-output { max-height: 130px; margin: 0; padding: 8px; overflow: auto; color: var(--muted); font: 500 .62rem/1.55 var(--mono); white-space: pre-wrap; }
+body[data-playground] .console-output { background: var(--bg-deep); border: 1px solid var(--border-soft); border-radius: 4px; max-height: 130px; margin: 0; padding: 8px; overflow: auto; color: var(--muted); font: 500 .62rem/1.55 var(--mono); white-space: pre-wrap; }
 body[data-playground] .console-output.error { color: var(--coral); }
 body[data-playground] .result-note { margin: 8px 0 0; padding: 7px 8px; border-left: 2px solid var(--pg-accent); background: var(--pg-wash); color: var(--muted); font-size: .66rem; }
 
@@ -1216,3 +1219,25 @@ body[data-playground] .output-panel .teaching-metric-line {font-size:.75rem;line
   body[data-playground] .top-actions { flex-wrap: wrap; }
   body[data-playground] .output-head > .toolbar-button { width: auto; }
 }
+
+/* Shared dataset icon used by the structured ML and Statistics setup rails. */
+    body[data-playground] .ml-dataset-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border: 1px solid color-mix(in srgb, var(--pg-accent) 60%, var(--border));
+      border-radius: 7px 5px 7px 5px;
+      background: var(--pg-wash);
+      color: var(--pg-accent);
+    }
+    body[data-playground] .ml-dataset-icon svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }

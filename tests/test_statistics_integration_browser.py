@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from urllib.request import urlopen
 from playwright.sync_api import sync_playwright
+from statistics_visual_contract import install_probes, compare
 
 
 def main():
@@ -20,12 +21,12 @@ def main():
             page=context.new_page();page.goto(args.base_url+'/'+path+('?runtime=local' if args.local else ''));pages[name]=page
             page.wait_for_function('document.querySelector("#runtimeStatus").textContent.toLowerCase().includes("ready")',timeout=180000)
             if name=='statistics':
-                page.wait_for_function('StatisticsPrototype.ready',timeout=180000)
+                page.wait_for_function('StatisticsPlayground.ready',timeout=180000)
                 assert page.locator('.cell').count()==0
-                page.locator('.route-card').first.click();page.wait_for_function('StatisticsPrototype.cells[0]?.status==="done"',timeout=60000)
+                page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0]?.status==="done"',timeout=60000)
                 assert page.locator('#outputList .output-item').count()==1
-                page.locator('#runAllButton').click();page.wait_for_function('StatisticsPrototype.cells.every(c=>c.status==="done") && StatisticsPrototype.cells.length===StatisticsPrototype.activeRouteLength',timeout=120000)
-                assert 0<page.evaluate('StatisticsPrototype.cells.at(-1).output.scalars.p_value')<1
+                page.locator('#runAllButton').click();page.wait_for_function('StatisticsPlayground.cells.every(c=>c.status==="done") && StatisticsPlayground.cells.length===StatisticsPlayground.activeRouteLength',timeout=120000)
+                assert 0<page.evaluate('StatisticsPlayground.cells.at(-1).output.scalars.p_value')<1
                 with page.expect_download() as ev:page.locator('#downloadNotebook').click()
                 assert json.loads(Path(ev.value.path()).read_text())['nbformat']==4
             else:
@@ -33,6 +34,7 @@ def main():
                 page.wait_for_selector('.code-input',timeout=60000)
             print('Ready:',name,flush=True)
             desktop[name]=page.locator('#runAllButton').evaluate('(e)=>{const s=getComputedStyle(e);return [e.getBoundingClientRect().height,s.fontSize,s.paddingTop,s.paddingBottom]}')
+        install_probes(pages);visual=[]
         for theme in ['light','dark']:
             for width in [1512,1121,1120,834,390,320]:
                 shared=[]
@@ -53,12 +55,14 @@ def main():
                     shared.append(page.evaluate('''()=>['.mode-link','.code-input','.brand h1'].map(q=>{const s=getComputedStyle(document.querySelector(q));return [s.fontFamily,s.fontSize,s.lineHeight]})'''))
                     page.screenshot(path=str(out/f'{args.engine}-{name}-{width}-{theme}.png'))
                 assert shared[0]==shared[1]==shared[2],(width,theme,shared)
+                visual.append({'width':width,'theme':theme,'styles':compare(pages,width,theme)})
+        (out/f'{args.engine}-visual-contract.json').write_text(json.dumps(visual,indent=2))
         # Independent exact-binomial oracle using Python's standard library.
         page=pages['statistics'];page.set_viewport_size({'width':1512,'height':1050})
-        page.select_option('#familySelect','proportions');page.wait_for_function('StatisticsPrototype.ready')
-        page.locator('#reference').fill('0.01');page.locator('#reference').dispatch_event('change');page.wait_for_function('StatisticsPrototype.ready')
-        page.locator('#applyStudy').click();page.locator('#runAllButton').click();page.wait_for_function('StatisticsPrototype.cells.length===StatisticsPrototype.activeRouteLength && StatisticsPrototype.cells.every(c=>c.status==="done")',timeout=120000)
-        state=page.evaluate('({plan:StatisticsPrototype.plan,result:StatisticsPrototype.cells.at(-1).output})');assert state['plan']['method']=='prop_one_exact'
+        page.select_option('#familySelect','proportions');page.wait_for_function('StatisticsPlayground.ready')
+        page.locator('#reference').fill('0.01');page.locator('#reference').dispatch_event('change');page.wait_for_function('StatisticsPlayground.ready')
+        page.locator('#applyStudy').click();page.locator('#runAllButton').click();page.wait_for_function('StatisticsPlayground.cells.length===StatisticsPlayground.activeRouteLength && StatisticsPlayground.cells.every(c=>c.status==="done")',timeout=120000)
+        state=page.evaluate('({plan:StatisticsPlayground.plan,result:StatisticsPlayground.cells.at(-1).output})');assert state['plan']['method']=='prop_one_exact'
         cfg=state['plan']['config'];rows=list(csv.DictReader(io.StringIO(urlopen(args.base_url+'/data/palmer-penguins.csv').read().decode())))
         values=[r[cfg['outcome']] for r in rows if r[cfg['outcome']]];n=len(values);k=values.count(cfg['success']);p=.01
         probabilities=[math.exp(math.lgamma(n+1)-math.lgamma(i+1)-math.lgamma(n-i+1)+i*math.log(p)+(n-i)*math.log1p(-p)) for i in range(n+1)];expected=sum(x for x in probabilities if x<=probabilities[k]*(1+1e-7))

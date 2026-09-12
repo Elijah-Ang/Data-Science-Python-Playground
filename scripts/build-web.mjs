@@ -18,6 +18,7 @@ const files = [
   "playground.html",
   "ml.html",
   "statistics.html",
+  "statistics/controls.json",
   "statistics/app.js",
   "statistics/worker.js",
   "statistics/engine.py",

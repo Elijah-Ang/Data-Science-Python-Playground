@@ -2,61 +2,71 @@
 (() => {
   'use strict';
   const $=id=>document.getElementById(id),root=new URL('./',location.href),assets=new URL('./statistics/',root);
-  const labels={reference:'Average vs target? (t / z / bootstrap)',independent:'Do two groups differ? (t-test / ranks)',paired:'Before vs after? (Paired t / Wilcoxon)',groups:'Do several groups differ? (ANOVA / ranks)',factorial:'Do factors work together? (Factorial ANOVA)',categorical:'Are categories linked? (χ² / Fisher)',association:'Do two measures move together? (Correlation)',proportions:'Do percentages differ? (Proportion tests)'};
+  const labels={reference:'Average vs target? (t / z / bootstrap)',independent:'Do two groups differ? (t-test / ranks)',paired:'Before vs after? (Paired t / Wilcoxon)',groups:'Do several groups differ? (ANOVA / ranks)',factorial:'Do factors work together? (Factorial ANOVA)',categorical:'Are categories linked? (χ² / Fisher)',association:'Do two measures move together? (Correlation)',proportions:'Do percentages differ? (Proportion tests)',goodness:'Do category shares match? (χ² fit / exact)'};
   const mobileLayoutQuery=matchMedia('(max-width:1120px)');
   const short={frame:'State the question',select:'Choose observations',assumptions:'Read the diagnostics',analysis:'Test the question',uncertainty:'Measure size & precision',followup:'Compare carefully',conclude:'Explain what it means'};
   const escape=value=>String(value).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
   const fmt=value=>value==null?'Undefined':typeof value==='number'?(value===0?'0':Math.abs(value)<.001?value.toExponential(4):Number(value.toPrecision(6)).toLocaleString('en-US',{maximumFractionDigits:6})):Array.isArray(value)?value.map(fmt).join(' to '):String(value);
   const highlight=code=>code.split('\n').map(line=>(line.match(/#[^\n]*|"[^"\n]*"|'[^'\n]*'|\b(?:import|from|as|if|else|for|in|def|return|True|False|None|and|or)\b|[^#"'\w]+|\w+|./g)||[]).map(t=>`<span class="${t[0]==='#'?'py-comment':/^['"]/.test(t)?'py-string':/^(import|from|as|if|else|for|in|def|return|True|False|None|and|or)$/.test(t)?'py-keyword':''}">${escape(t)}</span>`).join('')).join('\n');
-  let meta,bridge,plan=null,csv='',cells=[],config={family:'independent',dataset:'penguins'},revision=0,busy=false,configuring=true,timer;
+  let domain,meta,bridge,plan=null,csv='',cells=[],config={family:'independent',dataset:'penguins'},revision=0,busy=false,configuring=true,timer;
   const cache=new Map();
   const table=rows=>{
     if(!rows?.length)return '';
     const keys=[...new Set(rows.flatMap(Object.keys))];
     return `<div class="result-table-wrap" tabindex="0" aria-label="Scrollable evidence"><table class="result-table"><thead><tr>${keys.map(k=>`<th scope="col">${escape(k)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${keys.map(k=>`<td>${escape(fmt(r[k]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   };
-  function field(id,label,options,selected){return `<div class="study-field"><label for="${id}">${escape(label)}</label><select id="${id}">${options.map(o=>{const [v,t]=Array.isArray(o)?o:[o,o];return `<option value="${escape(v)}" ${String(v)===String(selected)?'selected':''}>${escape(t)}</option>`;}).join('')}</select></div>`;}
+  function field(id,label,options,selected){return `<div class="study-field"><label for="${id}">${escape(label)}</label><select id="${id}">${options.map(o=>{const [v,t,disabled]=Array.isArray(o)?o:[o,o];return `<option ${disabled?'disabled':''} value="${escape(v)}" ${String(v)===String(selected)?'selected':''}>${escape(t)}</option>`;}).join('')}</select></div>`;}
   function input(id,label,value){return `<div class="study-field"><label for="${id}">${escape(label)}</label><input id="${id}" type="number" step="any" value="${escape(value)}"></div>`;}
   function check(id,label,checked,note){return `<div class="study-field"><label class="check-label"><input id="${id}" type="checkbox" ${checked?'checked':''}>${escape(label)}</label><p>${escape(note)}</p></div>`;}
-  const categoryValues=(column)=>config.dataset==='candy'?['0','1']:({species:['Adelie','Chinstrap','Gentoo'],sex:['female','male'],island:['Biscoe','Dream','Torgersen'],year:['2007','2008','2009']}[column]||[]);
+  const categoryValues=column=>domain.categories[config.dataset][column]||[];
   function studyOpen(open){$('studyPanel').hidden=!open;$('studyButton').setAttribute('aria-expanded',String(open));}
   function renderChoices(){
     const f=config.family;
-    const available=f==='paired'?['gapminder']:['factorial','groups'].includes(f)?['penguins']:['penguins','candy'];
+    const available=domain.families[f];
     if(!available.includes(config.dataset))config.dataset=available[0];
     $('familySelect').innerHTML=Object.entries(labels).map(([k,v])=>`<option value="${k}" ${k===f?'selected':''}>${v}</option>`).join('');
     $('datasetSelect').innerHTML=available.map(k=>`<option value="${k}" ${k===config.dataset?'selected':''}>${meta.sources[k].name}</option>`).join('');
     document.body.dataset.dataset=config.dataset;
-    const nums=meta.numeric[config.dataset],cats=meta.categorical[config.dataset];let html='';
-    if(f==='proportions'){
+    const nums=domain.numeric[config.dataset],cats=domain.categorical[config.dataset];let html='';
+    if(f==='goodness'){
+      config.outcome??=cats[0];config.expected_mode??='equal';
+      html+=field('outcome','Which categories are being counted?',cats,config.outcome);
+      html+=field('expected_mode','Expected shares chosen beforehand',domain.expectedModes.map(v=>[v,v==='equal'?'Equal shares (illustrative null)':'Enter prespecified shares']),config.expected_mode);
+      const categories=categoryValues(config.outcome);config.expected??=categories.map(()=>1/categories.length);
+      if(config.expected_mode==='specified')categories.forEach((v,i)=>html+=input('expected'+i,`Expected share · ${v}`,config.expected[i]));
+      html+='<p class="inspector-note">Shares must add to 1. Use a hypothesis chosen before viewing the counts; equal shares are a teaching example.</p>';
+    }else if(f==='proportions'){
       config.structure??='one';config.outcome??=config.dataset==='candy'?'chocolate':'sex';config.success??=categoryValues(config.outcome)[0];
-      html+=field('structure','Question structure',[['one','One proportion vs reference'],['two','Two independent proportions']],config.structure);
+      html+=field('structure','Question structure',domain.structures.map(v=>[v,v==='one'?'One proportion vs reference':'Two independent proportions']),config.structure);
       html+=field('outcome','Which categorical outcome?',cats,config.outcome)+field('success','Which category counts as success?',categoryValues(config.outcome),config.success);
       if(config.structure==='one'){config.reference??=.5;html+=input('reference','Reference proportion (0–1)',config.reference);}
       else{
-        config.group??=config.dataset==='candy'?'fruity':'species';config.levels??=categoryValues(config.group).slice(0,2);
-        html+=field('group','Independent grouping variable',cats.filter(x=>x!==config.outcome),config.group)+field('levelA','Group A',categoryValues(config.group),config.levels[0])+field('levelB','Group B',categoryValues(config.group),config.levels[1]);
+        config.group??=config.dataset==='candy'?'fruity':'species';if(config.group===config.outcome)config.group=cats.find(v=>v!==config.outcome);config.levels??=categoryValues(config.group).slice(0,2);
+        html+=field('group','Independent grouping variable',cats.filter(x=>x!==config.outcome),config.group)+field('levelA','Group A',categoryValues(config.group),config.levels[0])+field('levelB','Group B',categoryValues(config.group).map(v=>[v,v,v===config.levels[0]]),config.levels[1]);
       }
     }else if(f==='categorical'){
-      config.x??=cats[0];config.y??=cats[1];html+=field('x','First categorical variable',cats,config.x)+field('y','Second categorical variable',cats,config.y);
+      config.x??=cats[0];config.y??=cats[1];if(config.x===config.y)config.y=cats.find(v=>v!==config.x);html+=field('x','First categorical variable',cats,config.x)+field('y','Second categorical variable',cats.map(v=>[v,v,v===config.x]),config.y);
     }else{
       config.y??=nums[0];html+=field('y','Numeric outcome',nums,config.y);
-      if(f==='association'){config.x??=nums.at(-1);html+=field('x','Other numeric variable',nums,config.x);}
+      if(f==='association'){config.x??=nums.at(-1);if(config.x===config.y)config.x=nums.find(v=>v!==config.y);html+=field('x','Other numeric variable',nums.map(v=>[v,v,v===config.y]),config.x);}
     }
     if(['independent','groups'].includes(f)){
-      const opts=f==='groups'?['species','island','year']:cats;config.group??=opts[0];html+=field('group','Grouping variable',opts,config.group);
-      if(f==='independent'){config.levels??=categoryValues(config.group).slice(0,2);html+=field('levelA','Group A',categoryValues(config.group),config.levels[0])+field('levelB','Group B',categoryValues(config.group),config.levels[1]);}
+      const opts=f==='groups'?domain.groupChoices:cats;config.group??=opts[0];html+=field('group','Grouping variable',opts,config.group);
+      if(f==='independent'){config.levels??=categoryValues(config.group).slice(0,2);html+=field('levelA','Group A',categoryValues(config.group),config.levels[0])+field('levelB','Group B',categoryValues(config.group).map(v=>[v,v,v===config.levels[0]]),config.levels[1]);}
     }
     if(f==='paired'){
-      config.before??=1952;config.after??=2007;const years=Array.from({length:12},(_,i)=>1952+i*5);
-      html+=field('before','First country measurement',years,config.before)+field('after','Second country measurement',years,config.after);
+      config.before??=1952;config.after??=2007;const years=domain.years;if(config.after<=config.before)config.after=years.find(v=>v>config.before);
+      html+=field('before','First year · earlier',years.slice(0,-1),config.before)+field('after','Second year · later',years.map(v=>[v,v,v<=config.before]),config.after);
     }
     if(f==='factorial'){
-      config.factors??=['species','sex'];html+=field('factorCount','Number of factors',[[2,'Two factors · standard'],[3,'Three factors · Advanced']],config.factors.length);
-      config.factors.forEach((v,i)=>html+=field('factor'+i,`Factor ${i+1}${i===0?' · compare within context':''}`,cats,v));
+      config.factors??=['species','sex'];html+=field('factorCount','Number of factors',domain.factorCounts.map(v=>[v,v===2?'Two factors · standard':'Three factors · Advanced']),config.factors.length);
+      config.factors.forEach((v,i)=>html+=field('factor'+i,`Factor ${i+1}${i===0?' · compare within context':''}`,cats.map(candidate=>{const fs=config.factors.map((old,j)=>j===i?candidate:old);const ok=domain.validFactors[config.y].some(valid=>valid.join('|')===fs.join('|'));return [candidate,candidate+(ok?'':' · unavailable'),!ok];}),v));
+      const orders=domain.validFactors[config.y].filter(fs=>fs.length===config.factors.length&&[...fs].sort().join('|')===[...config.factors].sort().join('|'));
+      html+=field('factorOrder','Comparison order',orders.map(fs=>[fs.join('|'),fs.join(' → ')]),config.factors.join('|'));
+      html+='<p class="inspector-note">Unavailable factors repeat a factor or create empty, confounded or under-replicated cells in these data. The first factor sets the simple-comparison question.</p>';
     }
-    if(!['factorial','categorical','proportions'].includes(f)){
-      config.goal??='mean';const goals=f==='association'?[['mean','Linear association'],['rank','Monotonic association (ranks)']]:[['mean','Compare averages (means)'],...(f==='reference'?[['estimate','Estimate the mean (bootstrap)']]:[['rank','Compare distributions (ranks)']])];html+=field('goal','What aspect matters?',goals,config.goal);
+    if(!['factorial','categorical','proportions','goodness'].includes(f)){
+      config.goal??='mean';const goals=f==='association'?[['mean','Linear association'],['rank','Monotonic association (ranks)']]:[['mean','Compare averages (means)'],...(f==='reference'?[['estimate','Estimate the mean (bootstrap)']]:[['rank','Compare distributions (ranks)']])];html+=field('goal','What aspect matters?',goals.filter(([v])=>domain.goals[f].includes(v)),config.goal);
     }
     if(['independent','groups'].includes(f)&&config.goal!=='rank')html+=check('equalVariance','A common population variance is justified',config.equal_variance,'Leave unchecked for Welch. A nonsignificant diagnostic alone does not justify pooling variances.');
     if(f==='reference'){
@@ -69,14 +79,17 @@
     $('variables').innerHTML=html;
     $('variables').querySelectorAll('select,input').forEach(control=>control.addEventListener('change',()=>{
       const id=control.id,v=control.value;
-      if(id==='equalVariance')config.equal_variance=control.checked;
+      if(id.startsWith('expected')&&id!=='expected_mode')config.expected[Number(id.slice(8))]=Number(v);
+      else if(id==='equalVariance')config.equal_variance=control.checked;
       else if(id==='knownSigma'){config.known_sigma=control.checked;if(control.checked)config.sigma=800;else delete config.sigma;}
       else if(id==='levelA'||id==='levelB')config.levels[id==='levelA'?0:1]=v;
+      else if(id==='factorOrder')config.factors=v.split('|');
       else if(id==='factorCount')config.factors=v==='3'?['species','sex','year']:['species','sex'];
       else if(id.startsWith('factor'))config.factors[Number(id.slice(-1))]=v;
       else config[id]=['reference','sigma','before','after'].includes(id)?Number(v):v;
       if(id==='group')delete config.levels;
-      if(id==='outcome'){delete config.success;if(config.group===v)delete config.group;delete config.levels;}
+      if(id==='levelA'&&config.levels[0]===config.levels[1])config.levels[1]=categoryValues(config.group).find(x=>x!==v);
+      if(id==='outcome'){delete config.expected;delete config.success;if(config.group===v)delete config.group;delete config.levels;}
       renderChoices();schedule();
     }));
   }
@@ -189,10 +202,10 @@
   }
   function renderOutput(o,s){
     const m=plan.method;
-    const effects={one_t:'Cohen d',welch:'Cohen d · pooled SD',student:'Cohen d · pooled SD',paired_t:'Cohen d · SD of differences',one_z:'Difference / population SD',bootstrap:'Mean − reference',mannwhitney:'Rank-biserial effect',wilcoxon:'Matched rank-biserial effect',anova:'Descriptive eta-squared',welch_anova:'Descriptive eta-squared',kruskal:'Rank epsilon-squared',chi2:'Cramér V',fisher:'Cramér V',pearson:'Pearson r',spearman:'Spearman rho'};
+    const effects={one_t:'Cohen d',welch:'Cohen d · pooled SD',student:'Cohen d · pooled SD',paired_t:'Cohen d · SD of differences',one_z:'Difference / population SD',bootstrap:'Mean − reference',mannwhitney:'Rank-biserial effect',wilcoxon:'Matched rank-biserial effect',anova:'Descriptive eta-squared',welch_anova:'Descriptive eta-squared',kruskal:'Rank epsilon-squared',chi2:'Cramér V',fisher:'Cramér V',pearson:'Pearson r',spearman:'Spearman rho',gof_chi2:'Cohen w · descriptive departure',gof_exact:'Cohen w · descriptive departure'};
     const target=m.startsWith('prop_one')?'population proportion':m.startsWith('prop_two')?'proportion difference A − B':m==='bootstrap'?'population mean':['pearson','spearman'].includes(m)?'correlation':['mannwhitney','wilcoxon'].includes(m)?'rank effect':['chi2','fisher'].includes(m)?'conditional odds ratio':'mean difference';
     const name={p_value:'p-value',statistic:'Test statistic',estimate:target,effect_size:effects[m]||(m.startsWith('prop_')?'Proportion difference':'Effect size'),interval:`${plan.config.confidence*100}% CI · ${target}`,exact_odds_interval:'Exact odds-ratio interval'};
-    let content=`<div class="output-item"><div class="output-item-head"><strong>Output · ${escape(s.title)}</strong><span>${o.seconds}s · ${o.edited?'edited Python':'complete'}</span></div>`;
+    let content=`<div class="output-item"><div class="output-number">${stepNumber(plan.route.findIndex(step=>step.id===s.id))}</div><div class="output-item-head"><strong>Output · ${escape(s.title)}</strong><span>${o.seconds}s · ${o.edited?'edited Python':'complete'}</span></div>`;
     const scalarEntries=Object.entries(o.scalars||{});if(scalarEntries.length)content+=`<div class="statistics-evidence">${scalarEntries.map(([k,v])=>`<div class="metric"><b>${escape(fmt(v))}</b><span>${name[k]||escape(k)}</span></div>`).join('')}</div>`;
     if(o.stdout){const pre=`<pre class="console-output">${escape(o.stdout)}</pre>`;content+=scalarEntries.length||Object.keys(o.tables||{}).length?`<details><summary>Printed Python output</summary>${pre}</details>`:pre;}
     if(o.sizes&&Object.keys(o.sizes).length)content+=`<p class="result-note">Actual selected sample sizes: ${Object.entries(o.sizes).map(([k,v])=>`${escape(k)} = ${v}`).join(' · ')}</p>`;
@@ -230,7 +243,7 @@
     const out=[],md=s=>out.push({cell_type:'markdown',metadata:{},source:[s]}),code=s=>out.push({cell_type:'code',execution_count:null,metadata:{},outputs:[],source:[s+'\n']});
     md(`# Statistics Playground\n\n${plan.hypotheses.question}\n\n${$('questionNote').value}\n\n${plan.source.note}\n\nPlace the downloaded ${plan.source.file} beside this notebook. Python dependencies: numpy, pandas, scipy, statsmodels, matplotlib.`);
     code(`import pandas as pd\ndf = pd.read_csv(${JSON.stringify(plan.source.file)})`);
-    for(let i=0;i<plan.route.length;i++){if(isSkipped(i))continue;const s=plan.route[i],c=cells.find(c=>c.index===i);md(`## ${s.title}\n\n${s.explanation}`);if(c?.advanced||s.advanced)code(c?.advanced??s.advanced);code(c?.code??s.code);}
+    for(let i=0;i<plan.route.length;i++){if(isSkipped(i))continue;const s=plan.route[i],c=cells.find(c=>c.index===i);md(`## ${s.title}\n\n${s.explanation}`);if(c?.advanced||s.advanced){md('### Advanced prerequisite\n\n'+s.advanced_label+' — this creates the variables used by the next cell.');code(c?.advanced??s.advanced);}code(c?.code??s.code);}
     md('Interpret p-values alongside uncertainty and practical importance. Changing a question or method after seeing results is exploratory.');
     return JSON.stringify({nbformat:4,nbformat_minor:5,metadata:{kernelspec:{name:'python3',display_name:'Python 3',language:'python'},statistics_config:plan.config},cells:out.map((c,i)=>({...c,id:'statistics-'+i}))},null,2);
   }
@@ -243,6 +256,7 @@
   }
   async function start(){
     try{
+      domain=await (await fetch(new URL('controls.json',assets))).json();
       const names=['engine.py','proportions.py','notebook.py','worker.js'];const responses=await Promise.all(names.map(n=>fetch(new URL(n,assets))));if(responses.some(r=>!r.ok))throw Error('Statistics assets could not load. Refresh the page or check your connection.');
       const [engine,proportions,notebook,worker]=await Promise.all(responses.map(r=>r.text()));
       const source=`const RUNTIME=${JSON.stringify(window.AppPlatform?.pyodideIndexUrl || 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/')};const ENGINE=${JSON.stringify(engine)};const PROPORTIONS=${JSON.stringify(proportions)};const NOTEBOOK=${JSON.stringify(notebook)};\n${worker}`;
@@ -258,6 +272,6 @@
   mobileLayoutQuery.addEventListener('change',renderOutputs);
   $('downloadChartButton').onclick=()=>{const figure=cells.flatMap(c=>c.output?.figures||[]).at(-1);if(figure){const a=document.createElement('a');a.href=figure.src;a.download='statistics-chart.png';a.click();}};
   $('themeButton').onclick=()=>window.AppAppearance.apply(document.body.dataset.theme==='dark'?'light':'dark');$('guideButton').onclick=showGuide;$('guideClose').onclick=()=>$('guideWindow').close();$('guideWindow').onclose=()=>$('guideButton').setAttribute('aria-expanded','false');
-  window.StatisticsPrototype={get plan(){return structuredClone(plan);},get activeRouteLength(){return plan?plan.route.filter((_,i)=>!isSkipped(i)).length:0;},get cells(){return structuredClone(cells);},get config(){return structuredClone(config);},get ready(){return !!plan&&!busy&&!configuring;}};
+  window.StatisticsPlayground={get plan(){return structuredClone(plan);},get activeRouteLength(){return plan?plan.route.filter((_,i)=>!isSkipped(i)).length:0;},get cells(){return structuredClone(cells);},get config(){return structuredClone(config);},get ready(){return !!plan&&!busy&&!configuring;}};
   renderNotebook();start();
 })();
