@@ -24,10 +24,11 @@ def install_probes(pages):
     for page in pages.values():
         page.add_style_tag(content='*, *::before, *::after {transition:none!important;animation:none!important}')
         page.mouse.move(0,0)
-        page.evaluate('''()=>{const p=document.createElement('div');p.dataset.visualProbe='';p.style.cssText='position:absolute;visibility:hidden;width:200px;pointer-events:none;';p.innerHTML='<div class="output-item"><div class="output-item-head"><strong>Output</strong></div><pre class="console-output">Python output</pre><div class="result-table-wrap"><table class="result-table"><thead><tr><th>category</th></tr></thead><tbody><tr><td>Observed</td></tr></tbody></table></div></div>';document.querySelector('.output-panel').append(p);}''')
+        page.evaluate('''()=>{const p=document.createElement('div');document.querySelectorAll('[data-visual-probe]').forEach(e=>e.remove());p.dataset.visualProbe='';p.style.cssText='position:absolute;visibility:hidden;width:200px;pointer-events:none;';p.innerHTML='<div class="output-item"><div class="output-item-head"><strong>Output</strong></div><pre class="console-output">Python output</pre><div class="result-table-wrap"><table class="result-table"><thead><tr><th>category</th></tr></thead><tbody><tr><td>Observed</td></tr></tbody></table></div></div>';document.querySelector(innerWidth<=1120?'.cell-inline-output':'.output-panel').append(p);}''')
 
 
 def compare(pages,width,theme):
+    install_probes(pages)
     samples={name:page.evaluate('''({selectors,props})=>Object.fromEntries(Object.entries(selectors).map(([name,q])=>{const e=document.querySelector(q);if(!e)throw Error('Missing representative '+name);const s=getComputedStyle(e);return [name,Object.fromEntries(props.map(k=>[k,s[k]]))]}))''',{'selectors':SELECTORS,'props':PROPS}) for name,page in pages.items()}
     failures=[]
     for component in SELECTORS:
@@ -42,5 +43,7 @@ def compare(pages,width,theme):
     for selector,canonical in [('.study-field > label:not(.check-label)','control label'),('.study-field select','select')]:
         actual=page.locator(selector).first.evaluate('(e,props)=>{const s=getComputedStyle(e);return Object.fromEntries(props.map(k=>[k,s[k]]))}',PROPS)
         assert actual==samples['statistics'][canonical],(width,theme,selector,actual,samples['statistics'][canonical])
+    for page in pages.values():
+        page.locator('[data-visual-probe]').evaluate_all('(nodes)=>nodes.forEach(node=>node.remove())')
     assert not failures,(width,theme,failures)
     return samples

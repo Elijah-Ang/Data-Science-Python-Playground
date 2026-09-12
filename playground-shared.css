@@ -868,7 +868,7 @@ body[data-playground] .result-table-wrap { max-height: 245px; overflow: auto; bo
 body[data-playground] .result-table { width: 100%; min-width: 420px; border-collapse: collapse; font: 500 .61rem var(--mono); }
 body[data-playground] .result-table th,
 body[data-playground] .result-table td { padding: 6px 7px; border-bottom: 1px solid var(--border-soft); text-align: left; vertical-align: top; }
-body[data-playground] .result-table th { position: sticky; top: 0; z-index: 1; background: var(--panel-3); color: var(--gold); font-weight: 700; }
+body[data-playground] .result-table th { font-size: inherit; position: sticky; top: 0; z-index: 1; background: var(--panel-3); color: var(--gold); font-weight: 700; }
 body[data-playground] .result-table td { color: var(--muted); }
 body[data-playground] .chart-wrap { overflow: auto; border: 1px solid var(--border-soft); background: #fffaf0; }
 body[data-playground] .chart-wrap img { display: block; width: 100%; min-width: 320px; height: auto; }
