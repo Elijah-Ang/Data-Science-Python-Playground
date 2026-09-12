@@ -8,6 +8,8 @@ async function boot() {
   self.postMessage({type:'status', message:'Loading statistics packages…'});
   await runtime.loadPackage(['numpy', 'pandas', 'scipy', 'matplotlib']);
   await runtime.loadPackage(['patsy','statsmodels']);
+  // Every chart runs in a worker without a DOM, including the first selected route.
+  await runtime.runPythonAsync("import matplotlib\nmatplotlib.use('Agg')");
   await runtime.runPythonAsync(ENGINE);
   await runtime.runPythonAsync(PROPORTIONS);
   await runtime.runPythonAsync(NOTEBOOK);
