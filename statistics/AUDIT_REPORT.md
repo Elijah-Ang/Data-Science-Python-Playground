@@ -39,4 +39,4 @@ The machine-readable count summary is [audit/verified-summary.json](audit/verifi
 
 The source and built Statistics base must exactly equal the canonical ML first style block. Shared dataset icon styling lives in `playground-shared.css`. Unjustified Statistics typography/table/console overrides are removed; the shared console surface keeps its text readable in both themes.
 
-The reusable Statistics workflow runs native numerical, exhaustive, Chromium and WebKit production checks on PRs and again as a required deployment dependency. GitHub branch-protection settings are unchanged. The protected PR and its CI results are the release record; this document records local verification before merge.
+The reusable Statistics workflow runs native numerical, exhaustive, Chromium and WebKit production checks on PRs and again as a required deployment dependency. GitHub branch-protection settings are unchanged. An aggregate browser status now satisfies the existing unsuffixed protected check name and requires both Chromium and WebKit matrix jobs to pass. The protected PR and its CI results are the release record; this document records local verification before merge.
