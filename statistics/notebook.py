@@ -12,7 +12,8 @@ import sys
 
 
 def notebook_plan(raw, config):
-    plan=build_proportions(raw,config) if config.get('family')=='proportions' else build(raw,config)
+    plan = (build_goodness(raw, config) if config.get('family') == 'goodness' else
+            build_proportions(raw, config) if config.get('family') == 'proportions' else build(raw, config))
     q=plan['hypotheses']
     frame_step=step('Frame the question','State the population, comparison and null before seeing a p-value.',f'question = {q["question"]!r}\nnull_hypothesis = {q["null"]!r}\nprint(question)\nprint("H0:", null_hypothesis)')
     frame_step.update(id='frame',label='Frame',cue='Identify the observational unit. A statistical test cannot establish random sampling or causation.')
@@ -27,8 +28,19 @@ def notebook_plan(raw, config):
         # but design-matrix construction does not dominate the primary Python.
         if plan['method']=='factorial' and i==4:
             s['advanced']=s['code']+'\nsimple_effects = pd.DataFrame(comparisons)'
-            s['code']='# Compare the first factor within each combination of the others.\nprint(simple_effects)'
+            s['code']='# First run the Advanced calculation above: it creates simple_effects.\n# Compare the first factor within each combination of the others.\nprint(simple_effects)'
+            s['explanation'] += ' Prerequisite: the editable Advanced calculation above creates the simple_effects table from this model; it is included before this cell in notebook exports.'
             s['advanced_label']='Model-based contrast calculation · runs before this cell'
+        # Keep seed-42 Monte Carlo draws identical when users reverse labels/axes.
+        # This changes only resampling order, not the test or interval procedure.
+        c = plan['config']
+        if plan['method'] == 'spearman' and i == 2 and c['x'] > c['y']:
+            s['code'] = s['code'].replace('rank_a = stats.rankdata(a)', 'rank_a = stats.rankdata(b)').replace('rank_b = stats.rankdata(b)', 'rank_b = stats.rankdata(a)')
+            s['code'] = '# Use a stable column order for reproducible permutation draws.\n' + s['code']
+        if plan['method'] == 'mannwhitney' and i == 3 and c['labels'][0] > c['labels'][1]:
+            s['code'] = s['code'].replace('(a, b), rank_effect', '(b, a), rank_effect')
+            s['code'] = s['code'].replace('interval = bootstrap.confidence_interval',
+                '# Draw in stable group order, then express the interval as A minus B.\ninterval = (-bootstrap.confidence_interval.high, -bootstrap.confidence_interval.low)')
         stages.append(s)
     conclude=step('Conclude in context','Read the effect, interval and assumptions together. Explain practical relevance in your own words.',
                   'conclusion = "Write what the evidence supports and what remains uncertain."\nprint(conclusion)')
@@ -60,10 +72,11 @@ def namespace_summary(env,plan):
             require(np.isscalar(value) or isinstance(value,(tuple,list)),f'{name} must be a scalar or interval, not a full result object.')
             scalars[name]=clean(value)
     tables={}
-    for name in ('anova_table','effects','means','cell_means','cell_intervals','table','residuals','simple_effects'):
+    for name in ('anova_table','effects','means','cell_means','cell_intervals','table','residuals','simple_effects','distribution','category_intervals','departures'):
         if name in env:
             val=env[name]
-            if isinstance(val,np.ndarray) and val.ndim==2:val=pd.DataFrame(val)
+            if isinstance(val,np.ndarray) and val.ndim==2:
+                val=pd.DataFrame(val, index=plan['config'].get('levels'), columns=['success','other']) if name=='table' and plan['config']['family']=='proportions' else pd.DataFrame(val)
             if isinstance(val,pd.DataFrame):tables[name]=frame(val)
     if env.get('comparisons'):
         tables['comparisons']=clean(env['comparisons'])
@@ -84,6 +97,9 @@ def namespace_summary(env,plan):
 def validate_current_inputs(env,plan):
     """Protect inferential preconditions even after upstream learner edits."""
     m=plan['method'];c=plan['config']
+    if c['family']=='goodness':
+        validate_goodness(env['observed'], env['expected_proportions'], m)
+        return
     if c['family']=='proportions':
         if c['structure']=='one':
             k,n=env['count'],env['n'];p=env['reference']
@@ -121,6 +137,8 @@ def validate_current_inputs(env,plan):
 
 def stage_figures(env,plan,stage):
     m=plan['method'];c=dict(plan['config'])
+    if c['family']=='goodness':
+        return goodness_figures(env, stage)
     if c['family']=='proportions':
         if stage!='uncertainty':return []
         import matplotlib.pyplot as plt
@@ -172,7 +190,7 @@ class NotebookSession:
                 elif self.plan['method']=='factorial':
                     require('anova_table' in self.env,'The fitted analysis must produce anova_table.')
             if stage=='uncertainty':
-                needed=['effects','cell_intervals'] if self.plan['method']=='factorial' else ['effect_size','means'] if self.plan['method'] in ('anova','welch_anova','kruskal') else ['effect_size','interval'] if self.plan['method'] not in ('chi2','fisher') or self.plan['config'].get('table_2x2') else ['effect_size','proportion_low','proportion_high']
+                needed=['effect_size','category_intervals'] if self.plan['config']['family']=='goodness' else ['effects','cell_intervals'] if self.plan['method']=='factorial' else ['effect_size','means'] if self.plan['method'] in ('anova','welch_anova','kruskal') else ['effect_size','interval'] if self.plan['method'] not in ('chi2','fisher') or self.plan['config'].get('table_2x2') else ['effect_size','proportion_low','proportion_high']
                 require(all(k in self.env for k in needed),'Keep the effect-size and interval variables so uncertainty is not silently omitted.')
             current=namespace_summary(self.env,self.plan)
             # Only evidence generated by this stage belongs under this cell.
@@ -180,13 +198,13 @@ class NotebookSession:
                 current={'scalars':{},'tables':{}}
             elif stage=='analysis':
                 current['scalars']={k:v for k,v in current['scalars'].items() if k in ('statistic','p_value')}
-                current['tables']={k:v for k,v in current['tables'].items() if k=='anova_table'}
+                current['tables']={k:v for k,v in current['tables'].items() if k in ('anova_table','distribution')}
             elif stage=='uncertainty':
                 current['scalars'].pop('p_value',None);current['scalars'].pop('statistic',None)
                 current['tables'].pop('anova_table',None)
             elif stage=='followup':
                 current['scalars']={}
-                current['tables']={k:v for k,v in current['tables'].items() if k in ('comparisons','residuals')}
+                current['tables']={k:v for k,v in current['tables'].items() if k in ('comparisons','residuals','departures')}
             if stage=='conclude':current['tables']={}
             if stage=='select':
                 data=self.env.get('paired',self.env.get('data'))
@@ -203,6 +221,8 @@ class NotebookSession:
                 elif p is not None:
                     interpretation=(f'At α = {alpha:g}, there is evidence against the stated null. ' if p<alpha else f'At α = {alpha:g}, evidence is insufficient to reject the stated null. This does not establish equality. ') + self.plan['hypotheses']['null']
                 else:interpretation='Read the model terms and interactions separately; no single omnibus p-value answers this entire question.' if self.plan['method']=='factorial' else 'This is an estimation route; no hypothesis-test p-value was calculated.'
+            if interpretation:
+                interpretation = self.plan['name'] + ': ' + interpretation
             current.update(stdout=out.getvalue(),warnings=sorted(set(str(w.message) for w in caught)),figures=stage_figures(self.env,self.plan,stage),
                            edited=edited,interpretation=interpretation,seconds=round(time.perf_counter()-started,3),cue=spec['cue'],stage=stage)
             if stage=='conclude':

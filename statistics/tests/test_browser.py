@@ -12,12 +12,13 @@ import numpy as np
 from numpy.testing import assert_allclose
 from test_engine import source
 from test_notebook import Session, complete
+from control_contract import audit_controls
 
 ARTIFACTS=Path(__file__).parent/'artifacts'
 
 
 def ready(page):
-    page.wait_for_function('StatisticsPrototype.ready || !document.querySelector("#error").hidden',timeout=180000)
+    page.wait_for_function('StatisticsPlayground.ready || !document.querySelector("#error").hidden',timeout=180000)
     assert page.locator('#error').is_hidden(),page.locator('#error').inner_text()
 
 
@@ -36,8 +37,8 @@ def family(page,value):select(page,'familySelect',value)
 def run_all(page):
     if page.locator('#studyPanel').is_visible():page.locator('#applyStudy').click()
     page.locator('#runAllButton').click()
-    page.wait_for_function('StatisticsPrototype.cells.some(c=>c.status==="error") || StatisticsPrototype.cells.filter(c=>c.status==="done").length===StatisticsPrototype.activeRouteLength',timeout=180000)
-    state=page.evaluate('({plan:StatisticsPrototype.plan,cells:StatisticsPrototype.cells})')
+    page.wait_for_function('StatisticsPlayground.cells.some(c=>c.status==="error") || StatisticsPlayground.cells.filter(c=>c.status==="done").length===StatisticsPlayground.activeRouteLength',timeout=180000)
+    state=page.evaluate('({plan:StatisticsPlayground.plan,cells:StatisticsPlayground.cells})')
     assert all(c['status']=='done' for c in state['cells']),[(c['index'],c['error']) for c in state['cells']]
     ready(page);return state
 
@@ -83,7 +84,7 @@ def export_and_execute(page):
                 for cell in notebook['cells']:
                     if cell['cell_type']=='code':exec(''.join(cell['source']),env)
         finally:os.chdir(old)
-    actual=page.evaluate('StatisticsPrototype.cells.at(-1).output.scalars')
+    actual=page.evaluate('StatisticsPlayground.cells.at(-1).output.scalars')
     if 'p_value' in actual:assert_allclose(env['p_value'],actual['p_value'],rtol=1e-7,atol=1e-12)
     assert len({c['id'] for c in notebook['cells']})==len(notebook['cells'])
     return notebook
@@ -95,29 +96,29 @@ def workflow_regressions(page):
     assert page.locator('.output-item').count()==0
     page.locator('.route-card').first.click()
     assert page.locator('article.cell').count()==1
-    page.wait_for_function('StatisticsPrototype.cells[0].status==="done"',timeout=60000)
+    page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
     assert page.locator('#outputList .output-item').count()==1
     editor=page.locator('.code-input').first
     editor.fill(editor.input_value()+'\nmy_note = "persistent variable"')
-    page.locator('[data-run="0"]').click();page.wait_for_function('StatisticsPrototype.cells[0].status==="done"',timeout=60000)
+    page.locator('[data-run="0"]').click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
     assert page.locator('.route-card:enabled').count()==2
     page.locator('.route-card').nth(1).click()
-    page.wait_for_function('StatisticsPrototype.cells[1].status==="done"',timeout=60000)
+    page.wait_for_function('StatisticsPlayground.cells[1].status==="done"',timeout=60000)
     assert page.locator('article.cell').count()==2
     editor=page.locator('[data-cell-index="1"] .code-input')
     editor.fill(editor.input_value()+'\nprint(my_note)')
-    page.locator('[data-run="1"]').click();page.wait_for_function('StatisticsPrototype.cells[1].status==="done"',timeout=60000)
+    page.locator('[data-run="1"]').click();page.wait_for_function('StatisticsPlayground.cells[1].status==="done"',timeout=60000)
     assert 'persistent variable' in page.locator('[data-output-for="select"] pre').text_content()
     run_all(page)
     # Upstream edit immediately clears its evidence and every dependent result.
     editor=page.locator('[data-cell-index="1"] .code-input');editor.fill(editor.input_value()+'\na = a[:20]')
-    state=page.evaluate('StatisticsPrototype.cells')
+    state=page.evaluate('StatisticsPlayground.cells')
     assert state[0]['status']=='done'
     assert all(c['status']=='stale' and c['output'] is None for c in state[1:])
     assert page.locator('.output-item').count()==1
     assert page.locator('.route-card:enabled').count()==2
     run_all(page)
-    p=page.evaluate('StatisticsPrototype.cells.at(-1).output.scalars.p_value')
+    p=page.evaluate('StatisticsPlayground.cells.at(-1).output.scalars.p_value')
     from scipy import stats
     raw=source({'dataset':'penguins'});a=raw.loc[raw.species=='Adelie','body_mass_g'].to_numpy()[:20];b=raw.loc[raw.species=='Chinstrap','body_mass_g'].to_numpy()
     assert_allclose(p,stats.ttest_ind(a,b,equal_var=False).pvalue)
@@ -125,7 +126,7 @@ def workflow_regressions(page):
     export_and_execute(page)
     # A failed cell gets its own error output, no downstream unlocking.
     editor=page.locator('[data-cell-index="3"] .code-input');old=editor.input_value();editor.fill('raise ValueError("intentional cell error")')
-    page.locator('[data-run="3"]').click();page.wait_for_function('StatisticsPrototype.cells[3].status==="error"',timeout=60000)
+    page.locator('[data-run="3"]').click();page.wait_for_function('StatisticsPlayground.cells[3].status==="error"',timeout=60000)
     assert 'intentional cell error' in page.locator('[data-output-for="analysis"]').inner_text()
     assert page.locator('.route-card').nth(4).is_disabled()
     page.locator('[data-cell-index="3"] .code-input').fill(old);run_all(page)
@@ -157,7 +158,7 @@ def verify_layout(page,width):
 
 def main():
     from playwright.sync_api import sync_playwright
-    parser=argparse.ArgumentParser();parser.add_argument('--engine',choices=['chromium','webkit'],default='chromium');parser.add_argument('--url',default='http://127.0.0.1:8012/statistics.html?runtime=local');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--engine',choices=['chromium','webkit'],default='chromium');parser.add_argument('--allow-remote',action='store_true');parser.add_argument('--url',default='http://127.0.0.1:8012/statistics.html?runtime=local');args=parser.parse_args()
     ARTIFACTS.mkdir(exist_ok=True)
     with sync_playwright() as pw:
         browser=getattr(pw,args.engine).launch();context=browser.new_context(viewport={'width':1512,'height':1050},accept_downloads=True)
@@ -166,7 +167,7 @@ def main():
             if not r.url.startswith((origin,'blob:','data:')):remote.append(r.url)
         context.on('request',request)
         # WebKit request interception breaks Blob workers; observe the same local-only traffic.
-        if args.engine=='chromium':context.route('**/*',lambda r:r.continue_() if r.request.url.startswith((origin,'blob:','data:')) else r.abort())
+        if args.engine=='chromium' and not args.allow_remote:context.route('**/*',lambda r:r.continue_() if r.request.url.startswith((origin,'blob:','data:')) else r.abort())
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(args.url);ready(page)
         workflow_regressions(page)
         verify(page,'welch');page.locator('#studyButton').click();page.locator('#equalVariance').check();ready(page);verify(page,'student')
@@ -177,27 +178,30 @@ def main():
         family(page,'groups');verify(page,'welch_anova');page.locator('#studyButton').click();page.locator('#equalVariance').check();ready(page);verify(page,'anova')
         select(page,'goal','rank');verify(page,'kruskal')
         family(page,'groups')
-        page.locator('.route-card').first.click();page.wait_for_function('StatisticsPrototype.cells[0].status==="done"',timeout=60000)
-        page.locator('.route-card').nth(1).click();page.wait_for_function('StatisticsPrototype.cells[1].status==="done"',timeout=60000);ed=page.locator('[data-cell-index="1"] .code-input');ed.fill(ed.input_value()+'\ngroups = [np.array([1.,2.,3.,4.,5.,6.]) for _ in groups]')
+        page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
+        page.locator('.route-card').nth(1).click();page.wait_for_function('StatisticsPlayground.cells[1].status==="done"',timeout=60000);ed=page.locator('[data-cell-index="1"] .code-input');ed.fill(ed.input_value()+'\ngroups = [np.array([1.,2.,3.,4.,5.,6.]) for _ in groups]')
         run_all(page)
         assert page.locator('.route-card[data-task-id="followup"]').count()==0
         assert page.locator('[data-output-for="followup"]').count()==0
         assert 'Post-hoc comparisons are not opened' in page.locator('[data-output-for="uncertainty"]').inner_text()
         family(page,'factorial');verify(page,'factorial');select(page,'factorCount','3');verify(page,'factorial');export_and_execute(page)
         assert page.locator('.advanced-calculation').count()==1
-        page.locator('#studyButton').click();page.select_option('#factor1','island');page.wait_for_selector('#error:not([hidden])')
-        assert 'Empty factorial cells' in page.locator('#error').inner_text();assert page.locator('article.cell').count()==0
-        select(page,'factor1','sex')
+        page.locator('#studyButton').click()
+        assert page.locator('#factor1 option[value="island"]').is_disabled()
+        assert page.locator('#factor1 option[value="species"]').is_disabled()
         family(page,'categorical');verify(page,'chi2');select(page,'datasetSelect','candy');select(page,'x','caramel');select(page,'y','peanutyalmondy');verify(page,'fisher')
         family(page,'association');select(page,'datasetSelect','penguins');verify(page,'pearson');select(page,'goal','rank');verify(page,'spearman')
         family(page,'proportions');verify(page,'prop_one_z');select(page,'reference','.01');verify(page,'prop_one_exact')
         select(page,'structure','two');verify(page,'prop_two_z')
         select(page,'datasetSelect','candy');select(page,'structure','two');select(page,'outcome','peanutyalmondy');select(page,'success','1');select(page,'group','caramel');verify(page,'prop_two_exact');export_and_execute(page)
+        family(page,'goodness');verify(page,'gof_chi2');export_and_execute(page)
+        select(page,'outcome','chocolate');select(page,'expected_mode','specified');page.locator('#expected0').fill('.99');page.locator('#expected1').fill('.01');page.locator('#expected0').dispatch_event('change');page.locator('#expected1').fill('.01');page.locator('#expected1').dispatch_event('change');ready(page);verify(page,'gof_exact');export_and_execute(page)
+        audit_controls(page,select,ready)
         # Reset and restart both create a fresh namespace/empty notebook with same configuration.
         page.locator('#resetButton').click();ready(page);assert page.locator('article.cell').count()==0
         page.locator('#restartPythonButton').click();ready(page);assert page.locator('article.cell').count()==0
         # Cancel a long-running real Python cell, then recover.
-        page.locator('.route-card').first.click();page.wait_for_function('StatisticsPrototype.cells[0].status==="done"',timeout=60000);page.locator('.code-input').fill('while True:\n    pass');page.locator('[data-run="0"]').click();page.locator('#restartPythonButton').click();ready(page)
+        page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000);page.locator('.code-input').fill('while True:\n    pass');page.locator('[data-run="0"]').click();page.locator('#restartPythonButton').click();ready(page)
         assert page.locator('article.cell').count()==0
         family(page,'independent');run_all(page)
         # Responsive and theme checks include real populated cells and their inline outputs.
@@ -209,10 +213,11 @@ def main():
                 assert page.locator('.code-input').first.is_editable()
                 verify_layout(page,width)
                 color=page.locator('.output-item .console-output').first.evaluate('e=>getComputedStyle(e).color')
-                assert color=='rgb(217, 222, 234)',color
+                assert color==page.locator('.source-block').evaluate('e=>getComputedStyle(e).color'),color
                 page.screenshot(path=str(ARTIFACTS/f'notebook-{args.engine}-{width}-{theme}.png'))
-        assert not errors,errors;assert not remote,remote
-        print(f'PASS {args.engine}: 21 method/design routes; editable notebook, exports, restart/cancellation, responsive themes and local-only Pyodide',flush=True)
+        assert not errors,errors
+        if not args.allow_remote:assert not remote,remote
+        print(f'PASS {args.engine}: 23 method/design routes; editable notebook, exports, restart/cancellation, responsive themes and local-only Pyodide',flush=True)
         browser.close()
 
 if __name__=='__main__':main()

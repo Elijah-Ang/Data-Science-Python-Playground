@@ -16,6 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  statistics-production:
+    uses: ./.github/workflows/statistics-audit.yml
+
   validate:
     name: ML audit gate before deployment
     runs-on: ubuntu-latest
@@ -112,7 +115,7 @@ jobs:
         run: python tests/test_notebook_session_browser.py --engine chromium --base-url http://127.0.0.1:8000
 
   deploy:
-    needs: [validate, browser-pyodide-smoke]
+    needs: [validate, browser-pyodide-smoke, statistics-production]
     runs-on: ubuntu-latest
     timeout-minutes: 35
     environment:

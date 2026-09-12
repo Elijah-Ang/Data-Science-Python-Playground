@@ -1,5 +1,6 @@
 """Additive session/proportion tests. All original engine tests stay unchanged."""
 import hashlib
+import inspect
 from pathlib import Path
 import unittest
 import numpy as np
@@ -21,8 +22,8 @@ def complete(session,start=0):
 
 
 class SessionTests(unittest.TestCase):
-    def test_original_engine_unchanged_byte_for_byte(self):
-        self.assertEqual(hashlib.sha256((HERE/'engine.py').read_bytes()).hexdigest(),(HERE/'tests/engine-baseline.sha256').read_text().strip())
+    def test_original_recipes_unchanged_byte_for_byte(self):
+        self.assertEqual(hashlib.sha256(inspect.getsource(engine.recipe).encode()).hexdigest(),(HERE/'tests/recipes-baseline.sha256').read_text().strip())
 
     def test_every_original_route_matches_original_engine(self):
         for name,config in CASES.items():

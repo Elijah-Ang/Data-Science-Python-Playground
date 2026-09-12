@@ -11,11 +11,11 @@ with sync_playwright() as p:
     pages={}
     for name,path in [('data','playground.html?runtime=local'),('ml','ml.html?runtime=local'),('statistics','statistics.html?runtime=local')]:
         page=browser.new_page(viewport={'width':1512,'height':1050});page.goto(URL+path);pages[name]=page
-        if name=='statistics':page.wait_for_function('StatisticsPrototype.ready',timeout=180000)
+        if name=='statistics':page.wait_for_function('StatisticsPlayground.ready',timeout=180000)
         else:
             page.wait_for_function('document.querySelector("#runtimeStatus")?.textContent.toLowerCase().includes("ready")',timeout=180000)
         # Place one real route cell in each notebook to inspect the code surface.
-        if name=='statistics':page.locator('.route-card').first.click();page.wait_for_function('StatisticsPrototype.cells[0].status==="done"',timeout=120000)
+        if name=='statistics':page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=120000)
         else:
             selector='.route-card' if name=='ml' else '.route-chip'
             if not page.locator(selector).count():selector='.route-card' if page.locator('.route-card').count() else '#suggestedRoute button'

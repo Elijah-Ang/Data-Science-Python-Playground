@@ -15,18 +15,18 @@ def main():
         # Clicking an already inserted route card reruns the actual edited code.
         editor=page.locator('[data-cell-index="0"] .code-input');editor.fill(editor.input_value()+'\nprint("route-click rerun")')
         count=page.locator('article.cell').count();page.locator('.route-card').first.click()
-        page.wait_for_function('StatisticsPrototype.cells[0].status==="done"',timeout=60000)
+        page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
         assert page.locator('article.cell').count()==count
         assert 'route-click rerun' in page.locator('[data-output-for="frame"]').inner_text()
         run_all(page)
-        original=page.evaluate('StatisticsPrototype.cells.map(c=>c.output.scalars)')
+        original=page.evaluate('StatisticsPlayground.cells.map(c=>c.output.scalars)')
         for theme in ['light','dark']:
             page.evaluate('t=>AppAppearance.apply(t)',theme)
             for width in [1512,1121,1120,980,820,560,390]:
                 page.set_viewport_size({'width':width,'height':1050 if width>1120 else 844})
                 verify_layout(page,width)
                 assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
-                assert page.evaluate('StatisticsPrototype.cells.map(c=>c.output.scalars)')==original
+                assert page.evaluate('StatisticsPlayground.cells.map(c=>c.output.scalars)')==original
                 page.screenshot(path=str(ARTIFACTS/f'layout-{args.engine}-{width}-{theme}.png'))
         with page.expect_download() as event:page.locator('#downloadChartButton').click()
         assert Path(event.value.path()).read_bytes().startswith(b'\x89PNG\r\n\x1a\n')

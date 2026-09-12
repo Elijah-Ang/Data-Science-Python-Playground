@@ -1,4 +1,4 @@
-"""Statistics prototype: question router, readable notebook recipes, verified execution.
+"""Statistics Playground: question router, readable notebook recipes, verified execution.
 
 The notebook recipe is the computation, not a decorative alternative implementation.
 Application validation, graphics serialization and interpretation live outside it.
@@ -77,7 +77,7 @@ def prepare(raw, config):
     prep = 'import numpy as np\nimport pandas as pd\nfrom scipy import stats\n'
     if family == 'paired':
         before, after = int(c.get('before', 1952)), int(c.get('after', 2007))
-        require(before != after, 'Select two different years.')
+        require(before < after, 'Choose a second year later than the first year.')
         require(before in raw.year.values and after in raw.year.values, 'Both years must exist in the data.')
         require(not raw.duplicated(['country', 'year']).any(), 'Duplicate country-year records would make pairing ambiguous.')
         c.update(before=before, after=after)
@@ -184,7 +184,7 @@ def route(c, data):
     expected = stats.contingency.expected_freq(table)
     sparse = (expected < 1).any() or (expected < 5).mean() > .2
     if sparse:
-        require(table.shape == (2, 2), 'Expected counts are too sparse for chi-square. This larger table needs an exact/Monte Carlo method beyond this prototype; collect more data or predefine meaningful categories.')
+        require(table.shape == (2, 2), 'Expected counts are too sparse for chi-square. This larger table needs an exact/Monte Carlo method outside this Playground’s scope; collect more data or predefine meaningful categories.')
         return 'fisher'
     return 'chi2'
 

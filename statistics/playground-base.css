@@ -1,4 +1,3 @@
-/* Exact base style block copied from ml.html. Shared overrides load after this file. */
 
     :root {
       --bg: #0c1125; --chrome-bg: #0c1125; --bg-deep: #080d1d; --rail: #0f1428; --panel: #171d39; --panel-2: #1e2749; --panel-3: #263154;
