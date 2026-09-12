@@ -156,6 +156,21 @@ def verify_layout(page,width):
     assert confidence['space']>=confidence['text'],confidence
 
 
+def cold_start_charts(context, url):
+    # Separate pages create fresh workers: no earlier route may initialize Agg.
+    for question in ('goodness', 'proportions'):
+        page = context.new_page()
+        try:
+            page.goto(url); ready(page)
+            family(page, question)
+            state = run_all(page)
+            assert any(c['output']['figures'] for c in state['cells']), question
+            assert state['cells'][-1]['output']['scalars']['p_value'] >= 0
+            print('PASS fresh-worker charts:', question, flush=True)
+        finally:
+            page.close()
+
+
 def main():
     from playwright.sync_api import sync_playwright
     parser=argparse.ArgumentParser();parser.add_argument('--engine',choices=['chromium','webkit'],default='chromium');parser.add_argument('--allow-remote',action='store_true');parser.add_argument('--url',default='http://127.0.0.1:8012/statistics.html?runtime=local');args=parser.parse_args()
@@ -168,6 +183,7 @@ def main():
         context.on('request',request)
         # WebKit request interception breaks Blob workers; observe the same local-only traffic.
         if args.engine=='chromium' and not args.allow_remote:context.route('**/*',lambda r:r.continue_() if r.request.url.startswith((origin,'blob:','data:')) else r.abort())
+        cold_start_charts(context, args.url)
         page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)));page.goto(args.url);ready(page)
         workflow_regressions(page)
         verify(page,'welch');page.locator('#studyButton').click();page.locator('#equalVariance').check();ready(page);verify(page,'student')
