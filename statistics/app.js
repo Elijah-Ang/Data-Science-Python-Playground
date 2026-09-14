@@ -272,6 +272,12 @@
   mobileLayoutQuery.addEventListener('change',renderOutputs);
   $('downloadChartButton').onclick=()=>{const figure=cells.flatMap(c=>c.output?.figures||[]).at(-1);if(figure){const a=document.createElement('a');a.href=figure.src;a.download='statistics-chart.png';a.click();}};
   $('themeButton').onclick=()=>window.AppAppearance.apply(document.body.dataset.theme==='dark'?'light':'dark');$('guideButton').onclick=showGuide;$('guideClose').onclick=()=>$('guideWindow').close();$('guideWindow').onclose=()=>$('guideButton').setAttribute('aria-expanded','false');
+  // Results and runtime variables cannot be recovered by reopening the page.
+  window.addEventListener('beforeunload', event => {
+    if (!cells.length) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
   window.StatisticsPlayground={get plan(){return structuredClone(plan);},get activeRouteLength(){return plan?plan.route.filter((_,i)=>!isSkipped(i)).length:0;},get cells(){return structuredClone(cells);},get config(){return structuredClone(config);},get ready(){return !!plan&&!busy&&!configuring;}};
   renderNotebook();start();
 })();

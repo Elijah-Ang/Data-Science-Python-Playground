@@ -6171,6 +6171,7 @@ plot_df_with_reference.head(12)`
 
   prepareGuideInteractions();
   window.NotebookSession?.install({
+    confirmLeave:true,
     key:() => ['ml',currentDatasetId,$('#scenarioSelect').value,selectedModelId(), $('#foldSelect').value].join(':'),
     get:() => ({cells, csv: notebookCsv, sep:selectedConfig().sep, pythonHelpers:selectedModelId()==="one_r" ? ONE_R_HELPER_SOURCE : "", dictionary:window.DatasetDictionary?.[selectedConfig().file]}),
     set:draft => {cells=draft.cells; cellSequence=Math.max(0,...cells.map(cell => cell.number)); renderNotebookView(); renderRoute();},

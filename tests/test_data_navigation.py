@@ -10,6 +10,17 @@ with sync_playwright() as p:
  page.goto(base_url + '/index.html')
  page.goto(base_url + '/playground.html')
  page.wait_for_function("document.querySelector('#runtimeStatus').textContent.includes('Python ready')", timeout=120000)
+ dialogs=[]
+ def stay(dialog):
+  dialogs.append(dialog.type)
+  dialog.dismiss()
+ page.on('dialog',stay)
+ try: page.go_back(timeout=3000)
+ except Exception: pass
+ assert dialogs==['beforeunload'],dialogs
+ assert 'playground.html' in page.url
+ assert page.locator('article.cell').count()==0
+ dialogs.clear()
  page.locator('#addCellButton').click()
  assert page.locator('.dataframe-note').is_visible()
  page.evaluate("insertTask(currentTasks.find(task => task.id === 'types'))")
@@ -18,11 +29,6 @@ with sync_playwright() as p:
  assert page.evaluate("cells.find(cell => cell.taskId === 'types').code") == 'df.dtypes'
  assert 'Rented Bike Count' in str(page.evaluate("cells.find(cell => cell.taskId === 'types').output.table"))
  page.screenshot(path='/tmp/data-inspector-desktop.png')
- dialogs=[]
- def stay(dialog):
-  dialogs.append(dialog.type)
-  dialog.dismiss()
- page.on('dialog',stay)
  try: page.go_back(timeout=3000)
  except Exception: pass
  assert dialogs==['beforeunload'],dialogs
