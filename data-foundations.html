@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="ad-mode.js"></script>
+  <script src="appearance.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#efe8d7">
+  <meta name="description" content="Rebuild your pandas and plotting skills with tiny datasets, guided practice and Python running locally in your browser.">
+  <title>Data Foundations · Data Playground</title>
+  <link rel="icon" href="assets/icons/data-playground-slide.png">
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="foundations/playground-base.css">
+  <link rel="stylesheet" href="playground-shared.css">
+  <link rel="stylesheet" href="foundations/foundations.css">
+  <script src="app-platform.js"></script>
+  <script src="worker-bridge.js"></script>
+  <script src="output-ui.js"></script>
+  <script src="foundations/curriculum.js"></script>
+  <script src="foundations/runtime-source.js"></script>
+  <script defer src="foundations/app.js"></script>
+</head>
+<body data-playground="data" data-foundations data-theme="light" data-dataset="seoul">
+  <a class="foundation-skip" href="#foundationsMain">Skip to learning content</a>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <div class="brand-copy">
+        <h1>DATA SCIENCE PYTHON PLAYGROUND</h1>
+        <p>Data Foundations · A little practice goes a long way.</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <nav class="mode-switch" aria-label="Playground mode">
+        <a class="mode-link mode-link--home" href="index.html" aria-label="Home"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 1h2v2h2v2h2v2h2v2h-2v6H3V9H1V7h2V5h2V3h2z"/><path class="icon-cutout" d="M5 8h6v5H9v-3H7v3H5z"/></svg><span class="mode-label">HOME</span></a>
+        <a class="mode-link mode-link--data" href="playground.html" aria-current="location" aria-label="Data Playground"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M1 9h3v5H1zm5-4h3v9H6zm5-4h3v13h-3zM0 15h16v1H0z"/></svg><span class="mode-label">DATA</span></a>
+        <a class="mode-link mode-link--statistics" href="statistics.html" aria-label="Statistics Playground"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M1 13h14v2H1zM2 10h2v3H2zm2-4h2v7H4zm2-4h4v11H6zm4 4h2v7h-2zm2 4h2v3h-2z"/></svg><span class="mode-label">STATS</span></a><a class="mode-link mode-link--ml" href="ml.html" aria-label="Machine Learning"><svg class="mode-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7 0h2v4h4v2h2v6h-2v3H3v-3H1V6h2V4h4z"/><path class="icon-cutout" d="M5 6h2v3H5zm4 0h2v3H9zM5 11h6v2H5z"/></svg><span class="mode-label">ML</span></a>
+      </nav>
+      <button class="icon-button theme-button" id="themeButton" type="button" aria-pressed="true" aria-label="Switch to dark theme" title="Switch to dark theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path></svg>
+      </button>
+    </div>
+  </header>
+  <div class="foundation-strip"><a href="playground.html" class="back-playground">← Data Playground</a><span>TINY TABLES · REAL PYTHON · YOUR PACE</span></div>
+  <main id="foundationsMain" class="foundations-main" tabindex="-1"></main>
+  <footer class="foundation-footer"><span>Practice and drafts stay in this browser. No account needed.</span><button id="forgetProgress" class="toolbar-button" type="button">Reset saved learning</button></footer>
+  <dialog id="resetLearningDialog" aria-labelledby="resetLearningTitle"><h2 id="resetLearningTitle">Reset saved learning?</h2><p>This clears Data Foundations drafts and practice history in this browser.</p><div class="foundation-actions"><button id="cancelForget" type="button">Keep my learning</button><button id="confirmForget" type="button">Reset saved learning</button></div></dialog>
+  <p class="foundation-storage" id="storageStatus" role="status"></p>
+  <noscript><p>Enable JavaScript to open the decks and run Python exercises.</p></noscript>
+</body>
+</html>

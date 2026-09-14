@@ -684,6 +684,10 @@
     .footer{padding-right:max(20px,env(safe-area-inset-right));padding-bottom:max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left))}
     .app-connectivity{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:500;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid var(--orange);border-radius:999px;background:var(--panel-2);color:var(--ink);box-shadow:var(--shadow);font:700 .62rem/1.2 var(--mono);opacity:0;transform:translateY(16px);pointer-events:none;transition:.18s}
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
+    .data-route-actions { display:flex; gap:8px; align-items:center; }
+    .route-tools .learn-refresh { background:var(--dataset-wash); border-color:var(--cyan); color:var(--cyan); text-decoration:none; }
+    .route-tools .learn-refresh:hover { transform:translateY(-1px); background:color-mix(in srgb, var(--cyan) 18%, var(--panel)); }
+    @media(max-width:480px) { .data-route-actions { flex-wrap:wrap; } .data-route-actions .learn-refresh { flex:1 0 100%; } }
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
   <link rel="stylesheet" href="playground-shared.css?v=mobile-layout5">
@@ -768,7 +772,8 @@
 
       <div class="route-tools">
         <div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span></div>
-        <button class="toolbar-button" id="moreTasksToggle" type="button" aria-expanded="false" aria-controls="moreTasksPanel" aria-pressed="false">＋ More tasks</button>
+        <div class="data-route-actions"><a class="toolbar-button learn-refresh" href="data-foundations.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 2h12v3H3zM5 5h12v3H5zM3 8h12v10H3zM6 11h6M6 14h4"/></svg>Learn / Refresh</a>
+        <button class="toolbar-button" id="moreTasksToggle" type="button" aria-expanded="false" aria-controls="moreTasksPanel" aria-pressed="false">＋ More tasks</button></div>
       </div>
 
       <div class="route-strip" id="suggestedRoute" aria-label="Suggested analysis route"></div>
