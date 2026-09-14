@@ -2,7 +2,7 @@
 
 Review URL: **http://127.0.0.1:8010/data-foundations.html?runtime=local**
 
-Branch: `codex/data-foundations`. This is a local feature branch; it has not been merged or deployed. The existing uncommitted edits in `ml-app.js`, `statistics/app.js`, and `tests/test_navigation_guards.mjs` are excluded from this feature.
+Branch: `codex/data-foundations`. Updated for the user-authorised full release. The pending ML/Statistics navigation guards are included in a separate commit with their own test.
 
 ## Delivered scope
 
@@ -10,7 +10,9 @@ A single **Learn / Refresh** link sits beside More tasks in Data Playground’s 
 
 The landing page contains three physical card stacks. Deck libraries group the complete published sequence into chapters and interleave cumulative retrieval reviews. Lessons use a desktop split layout, with content and visible tiny tables on the left and editable Python, Run / Check / Reset, and actual output on the right. At 800px and below, content precedes the editor and output. Syntax and example disclosures close as practice advances from Follow to Change to Transfer. Hints and solutions always require an explicit reveal.
 
-Progress and drafts use only the `dspp-foundations-v1` localStorage key. Resume practice restores the last location; each exercise remembers its draft. Completion is recorded only after a successful Check of the current code. There are no progress bars, completion badges or percentage indicators, following the final note in the objective. Reset saved learning affects only this learning space, preserving other Playground state and the shared theme preference.
+Draft code uses only the `dspp-foundations-v1` localStorage key. There is no resume button, completion tracking, progress bar or percentage. Reset saved learning clears saved code without affecting other Playground state or the shared theme.
+
+The exercise-type strip is non-interactive and explains Follow (guided practice), Change (a different context), and Transfer (independent practice), marking the current type. Previous/Next remain the navigation controls. Desktop lessons scroll independently on the left while the Python pane remains stationary on the right; the output has its own scroll area. Python input and worked examples use live syntax colouring. The lesson's prominent back link returns to deck selection. Learn / Refresh keeps its dimensions and now uses a filled cyan-to-blue treatment.
 
 ## Inventory
 
@@ -40,7 +42,7 @@ Axes-level Seaborn uses `fig, ax = plt.subplots(...)`, `ax=ax`, Axes labelling, 
 - `npm run check`: build, JavaScript syntax, shared bridge tests, ML state/teaching/routes, app shell and ad-mode checks passed.
 - `npm run check:foundations`: 104-card coverage and ordering, three practices per lesson, dataset sizes, review spacing and Data-only navigation passed; **320/320** solution executions plus **18** semantic negative/equivalence/recovery checks passed.
 - Chromium production worker audit: **320/320** real Pyodide solutions passed, with no substituted interpreter or mock results.
-- Chromium and WebKit browser journeys: navigation, deck/round progression, hints/solutions, saved drafts, completion persistence, exercise reset, full learning reset, wrong-answer rejection, malformed-code recovery, changed-data isolation, actual infinite-loop termination, plot geometry, PNG export and a three-figure checkpoint passed.
+- Chromium and WebKit browser journeys: navigation, deck/round progression, hints/solutions, saved drafts, draft persistence, exercise reset, full learning reset, wrong-answer rejection, malformed-code recovery, changed-data isolation, actual infinite-loop termination, plot geometry, PNG export and a three-figure checkpoint passed.
 - Default CDN runtime smoke: load Python on the normal URL, execute and Check `df.head(2)` passed. The local review URL uses the existing pinned vendor runtime for repeatable review.
 - Existing Data runtime: **262** task scenarios plus index, alias reset, schema, display and stream regressions passed.
 - Existing Statistics engine: **31** tests passed. Existing production integration browser suite passed its real Pyodide numerical oracle, export and Data/Stats/ML navigation/layout checks.

@@ -685,8 +685,8 @@
     .app-connectivity{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:500;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid var(--orange);border-radius:999px;background:var(--panel-2);color:var(--ink);box-shadow:var(--shadow);font:700 .62rem/1.2 var(--mono);opacity:0;transform:translateY(16px);pointer-events:none;transition:.18s}
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
     .data-route-actions { display:flex; gap:8px; align-items:center; }
-    .route-tools .learn-refresh { background:var(--dataset-wash); border-color:var(--cyan); color:var(--cyan); text-decoration:none; }
-    .route-tools .learn-refresh:hover { transform:translateY(-1px); background:color-mix(in srgb, var(--cyan) 18%, var(--panel)); }
+    .route-tools .learn-refresh { background:linear-gradient(135deg,#087d9d,#3459b6); border-color:#65dbf5; color:#fff; text-decoration:none; box-shadow:0 2px 0 #163b65, inset 0 1px 0 #ffffff40; }
+    .route-tools .learn-refresh:hover { transform:translateY(-1px); background:linear-gradient(135deg,#09647d,#294a9d); color:#fff; }
     @media(max-width:480px) { .data-route-actions { flex-wrap:wrap; } .data-route-actions .learn-refresh { flex:1 0 100%; } }
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->

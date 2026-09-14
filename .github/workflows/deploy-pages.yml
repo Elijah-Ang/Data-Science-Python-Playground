@@ -56,6 +56,9 @@ jobs:
       - name: Install statistics audit dependencies
         run: python -m pip install statsmodels==0.14.2 patsy==0.5.6
 
+      - name: Audit complete Foundations curriculum
+        run: python tests/test_foundations_runtime.py
+
       - name: Audit statistical methods and editable sessions
         run: python -m unittest discover -s statistics/tests -p "test_*.py" -q
 
@@ -98,6 +101,9 @@ jobs:
 
       - name: Run revised browser/Pyodide smoke test
         run: python tests/test_ml_workflow_browser.py --base-url http://127.0.0.1:8000/ml.html
+
+      - name: Check Foundations learning interactions
+        run: python tests/test_foundations_browser.py --base-url http://127.0.0.1:8000 --runtime remote
 
       - name: Check Statistics and shared playground UI
         run: python tests/test_statistics_integration_browser.py --base-url http://127.0.0.1:8000

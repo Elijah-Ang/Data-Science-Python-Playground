@@ -2,13 +2,14 @@
 import argparse,json,time
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-parser=argparse.ArgumentParser();parser.add_argument('--base-url',default='http://127.0.0.1:8010');parser.add_argument('--engine',default='chromium');parser.add_argument('--all-solutions',action='store_true');args=parser.parse_args()
+parser=argparse.ArgumentParser();parser.add_argument('--base-url',default='http://127.0.0.1:8010');parser.add_argument('--engine',default='chromium');parser.add_argument('--runtime',choices=['local','remote'],default='local');parser.add_argument('--all-solutions',action='store_true');args=parser.parse_args()
 ROOT=Path(__file__).resolve().parents[1];evidence=ROOT/'tests/evidence/foundations';evidence.mkdir(parents=True,exist_ok=True)
 report={'engine':args.engine,'checks':[],'screenshots':[]};start=time.time()
 with sync_playwright() as p:
  browser=getattr(p,args.engine).launch();context=browser.new_context();page=context.new_page();errors=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
- page.goto(args.base_url+'/playground.html?runtime=local')
+ runtime_query='?runtime=local' if args.runtime=='local' else ''
+ page.goto(args.base_url+'/playground.html'+runtime_query)
  assert page.locator('.route-tools .learn-refresh').count()==1
  assert page.locator('.data-route-actions #moreTasksToggle').count()==1
  page.locator('.learn-refresh').click();page.wait_for_url('**/data-foundations.html')
@@ -17,7 +18,7 @@ with sync_playwright() as p:
  assert page.locator('.mode-switch a[href="data-foundations.html"]').count()==0
  page.locator('.back-playground').click();page.wait_for_url('**/playground.html')
  report['checks'].append('Data-only CTA and round-trip navigation')
- base=args.base_url+'/data-foundations.html?runtime=local'
+ base=args.base_url+'/data-foundations.html'+runtime_query
  page.goto(base)
  page.locator('.foundation-deck[data-deck="inspect"]').click()
  assert page.locator('.lesson-card').count()==25
@@ -34,18 +35,24 @@ with sync_playwright() as p:
   page.locator('#checkExercise' if check else '#runExercise').click()
   page.wait_for_function('!document.querySelector("#runExercise").disabled',timeout=120000)
   return page.locator('#foundationFeedback').inner_text()
+ assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
+ assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
+ assert page.locator('.back-playground').get_attribute('href')=='#'
  assert not page.locator('#foundationSolution').get_attribute('open')
  page.locator('#foundationHint summary').click();assert page.locator('#foundationHint').get_attribute('open') is not None
  page.locator('#foundationSolution summary').click();assert 'pd.DataFrame' in page.locator('#foundationSolution pre').inner_text()
  assert 'matches' in run(solution('I01'))
+ assert page.locator('#foundationHighlight .py-keyword').count()>0
+ assert page.locator('#foundationHighlight .py-string').count()>0
+ assert page.locator('#foundationHighlight .py-number').count()>0
  assert page.locator('#foundationOutput table tbody tr').count()==4
  page.locator('.foundation-navigation a').last.click();assert page.url.endswith('/1')
  page.locator('#foundationEditor').fill('# saved draft\ndf')
  page.reload();assert page.locator('#foundationEditor').input_value()=='# saved draft\ndf'
- assert page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1")).passed["I01-1"]')
+ assert page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1")).drafts["I01-1"]')
  page.locator('#resetExercise').click();assert '# saved draft' not in page.locator('#foundationEditor').input_value()
  assert 'fresh given data' in page.locator('#foundationFeedback').inner_text()
- report['checks'].append('Deck, round progression, hints/solutions, drafts, completion persistence and exercise reset')
+ report['checks'].append('Deck, round progression, hints/solutions, drafts, saved-code persistence and exercise reset')
  open_lesson('I02')
  assert 'matches' in run('df.iloc[:2]')
  assert 'Not yet' in run('df.tail(2)')
@@ -103,6 +110,12 @@ with sync_playwright() as p:
     if view=='lesson':
      geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1}}''')
      assert geometry['stacked' if width<=800 else 'split'],geometry
+     if width>800:
+      before=page.locator('.foundation-code-pane').bounding_box()
+      moved=page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')
+      assert moved>0
+      assert page.locator('.foundation-code-pane').bounding_box()==before
+      page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=0;}')
     path=evidence/f'{args.engine}-{label}-{theme}-{view}.png';page.screenshot(path=str(path),full_page=True)
     report['screenshots'].append(str(path.relative_to(ROOT)))
    # Real plot output is also reviewed in every viewport/theme.
@@ -118,10 +131,10 @@ with sync_playwright() as p:
  page.locator('.foundation-skip').focus();page.locator('.foundation-skip').click()
  assert page.url.endswith('/2')
  report['checks'].append('Desktop/tablet/mobile layouts, 320px boundary, fading scaffold, skip link and light/dark themes; 24 screenshots')
- page.goto(base);assert page.locator('.foundation-continue').count()==1
+ page.goto(base);assert page.locator('.foundation-continue').count()==0
  page.locator('#forgetProgress').click();page.locator('#confirmForget').click()
  assert page.locator('.foundation-continue').count()==0
- saved=page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1"))');assert not saved['passed'] and not saved['drafts'] and saved['last'] is None
+ saved=page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1"))');assert not saved.get('passed') and not saved['drafts'] and saved.get('last') is None
  # Persist the shared appearance independently from reset learning.
  page.reload();assert page.locator('body').get_attribute('data-theme')=='dark'
  assert not errors,errors

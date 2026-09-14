@@ -3,9 +3,16 @@
 const C=window.FoundationsCurriculum, KEY='dspp-foundations-v1';
 const main=document.getElementById('foundationsMain');
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state={version:1,drafts:{},passed:{},last:null}, view=null, generation=0, bridge=null, bridgePromise=null, busy=false;
+// One token pass keeps strings/comments intact and escapes all learner text.
+function highlightPython(code){
+ const tokens=/(#[^\n]*|(?:"""[\s\S]*?(?:"""|$)|\x27\x27\x27[\s\S]*?(?:\x27\x27\x27|$)|"(?:\\.|[^"\\\n])*"?|\x27(?:\\.|[^\x27\\\n])*\x27?)|\b(?:False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b|\b(?:print|len|range|list|dict|str|int|float|sum|min|max|set|tuple|sorted)\b|\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b|[+*/%=<>!&|~^-]+)/g;
+ let result='',start=0;
+ for(const match of code.matchAll(tokens)){const token=match[0];let kind=token[0]==='#'?'comment':/^["\x27]/.test(token)?'string':/^\d/.test(token)?'number':/^[+*/%=<>!&|~^-]/.test(token)?'operator':/^(print|len|range|list|dict|str|int|float|sum|min|max|set|tuple|sorted)$/.test(token)?'builtin':'keyword';result+=esc(code.slice(start,match.index))+`<span class="py-${kind}">${esc(token)}</span>`;start=match.index+token.length;}
+ return result+esc(code.slice(start));
+}
+let state={version:1,drafts:{}}, view=null, generation=0, bridge=null, bridgePromise=null, busy=false;
 let runtimeStatus='Python starts when you open a lesson.';
-try {const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved?.version===1){state.drafts=saved.drafts&&typeof saved.drafts==='object'?saved.drafts:{};state.passed=saved.passed&&typeof saved.passed==='object'?saved.passed:{};state.last=typeof saved.last==='string'?saved.last:null;}} catch {}
+try {const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved?.version===1){state.drafts=saved.drafts&&typeof saved.drafts==='object'?saved.drafts:{};}} catch {}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{document.getElementById('storageStatus').textContent='Browser storage is unavailable or full. You can keep practising; changes may not survive closing this page.';}}
 function url(lesson,round=0){return `#${lesson.deck}/${lesson.id}/${round}`;}
 function table(columns,rows,caption){return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}"><table><caption>${esc(caption)}</caption><thead><tr>${columns.map(x=>`<th scope="col">${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(value=>`<td>${value===null?'<span title="Missing value">None</span>':typeof value==='string'&&value.trim()!==value?`&quot;${esc(value)}&quot;`:esc(value)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;}
@@ -14,7 +21,7 @@ const icon=`<svg class="deck-icon" viewBox="0 0 40 40" aria-hidden="true" fill="
 function landing(){
  document.body.dataset.deck='';
  return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div><div class="hero-note">Read a little.<br>Write some Python.<br>See what happens.</div></section>
- ${state.last&&validHash(state.last)?`<a class="foundation-continue" href="${esc(state.last)}">Resume practice →</a>`:''}
+
  <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
  <section class="foundation-note" aria-label="How to practise"><div><h3>01 · Follow</h3><p>Meet the syntax one piece at a time. Fill the gap with a worked example nearby.</p></div><div><h3>02 · Change</h3><p>Use the same idea in another setting. Different data, one familiar tool.</p></div><div><h3>03 · Transfer</h3><p>Try a fresh question with less help. Return to earlier skills in review challenges.</p></div></section>`;
 }
@@ -24,11 +31,11 @@ function deckPage(deck){
 }
 function lessonPage(lesson,roundIndex){
  const round=lesson.rounds[roundIndex],deck=C.decks.find(x=>x.id===lesson.deck),dataset=C.datasets[round.dataset];
- view={lesson,round,roundIndex};state.last=url(lesson,roundIndex);save();document.body.dataset.deck=lesson.deck;
+ view={lesson,round,roundIndex};save();document.body.dataset.deck=lesson.deck;
  const previous=roundIndex?url(lesson,roundIndex-1):previousLesson(lesson),next=roundIndex<lesson.rounds.length-1?url(lesson,roundIndex+1):nextLesson(lesson);
  return `<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><a href="#${deck.id}">${esc(deck.title)}</a><span aria-hidden="true">/</span><span>${lesson.id}</span></nav>
  <header class="foundation-lesson-heading"><div><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${lesson.id}</span><h2>${esc(lesson.title)}</h2><p>${esc(lesson.goal)}</p></div><span class="foundation-eyebrow">${lesson.minutes} MIN</span></header>
- <nav class="foundation-practices" aria-label="Practice rounds">${lesson.rounds.map((r,i)=>`<a href="${url(lesson,i)}" ${i===roundIndex?'aria-current="step"':''}>${esc(r.label)}</a>`).join('')}</nav>
+ <section class="foundation-practices" aria-label="Exercise type"><p>Exercises within this concept</p><ol>${lesson.rounds.map((r,i)=>`<li ${i===roundIndex?'aria-current="step"':''}><strong>${esc(r.label)}</strong><span>${lesson.review?'Retrieval practice':i===0?'Guided practice':i===1?'A different context':'Try it independently'}</span>${i===roundIndex?'<em>Current exercise</em>':''}</li>`).join('')}</ol></section>
  <div class="foundation-split"><article class="foundation-content" aria-label="Lesson content">
  <section><h3>${lesson.review?'Bring it together':'The idea'}</h3><p>${esc(lesson.explanation)}</p></section>
  <section><h3>Given data</h3>${datasetTable(dataset)}<details><summary>View setup code</summary><pre><code>${esc(C.setupCode(round.dataset)+(round.setup?'\n\n'+round.setup:''))}</code></pre></details>${round.setup?auxiliaryTables(round,dataset):''}</section>
@@ -37,7 +44,7 @@ function lessonPage(lesson,roundIndex){
  <details id="foundationHint"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
  <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Try explaining each step before moving on.</p><pre><code>${esc(round.solution)}</code></pre></details>
  ${lesson.stretch?`<details><summary>Optional stretch</summary><p>${esc(lesson.stretch)}</p></details>`:''}
- </article><section class="foundation-code-pane" aria-label="Python practice"><div class="foundation-editor-head"><label for="foundationEditor">YOUR PYTHON</label><span>practice.py</span></div><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><textarea id="foundationEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="editorHelp"></textarea></div>
+ </article><section class="foundation-code-pane" aria-label="Python practice"><div class="foundation-editor-head"><label for="foundationEditor">YOUR PYTHON</label><span>practice.py</span></div><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="foundationHighlight" aria-hidden="true"></pre><textarea id="foundationEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="editorHelp"></textarea></div>
  <span id="editorHelp" class="sr-only">Edit Python. Control or Command plus Enter runs it. Tab moves to the next control; use spaces to indent.</span>
  <div class="foundation-actions"><button id="runExercise" class="primary" type="button">▶ Run</button><button id="checkExercise" type="button">Check</button><button id="resetExercise" type="button">Reset</button><button id="stopPython" type="button" hidden>Stop / restart</button></div>
  <div class="foundation-runtime" id="foundationRuntime" role="status">${esc(runtimeStatus)}</div><p class="foundation-feedback" id="foundationFeedback" role="status"></p>
@@ -53,7 +60,6 @@ function auxiliaryTables(round,dataset){
 }
 function previousLesson(lesson){const list=C.lessons.filter(l=>l.deck===lesson.deck),i=list.indexOf(lesson);return i?url(list[i-1],list[i-1].rounds.length-1):'#'+lesson.deck;}
 function nextLesson(lesson){const list=C.lessons.filter(l=>l.deck===lesson.deck),i=list.indexOf(lesson);return i<list.length-1?url(list[i+1]):'#'+lesson.deck;}
-function validHash(hash){const [deck,id,r]=hash.slice(1).split('/');const l=C.lessons.find(x=>x.id===id&&x.deck===deck);return !!l&&/^\d+$/.test(r||'0')&&Number(r||0)<l.rounds.length;}
 function render(){
  generation++; if(busy&&bridge){bridge.restart();busy=false;runtimeStatus='Python will restart for this exercise.';}
  view=null;
@@ -61,19 +67,22 @@ function render(){
  const deck=C.decks.find(d=>d.id===deckId),lesson=C.lessons.find(l=>l.id===id&&l.deck===deckId);
  if(lesson){const index=/^\d+$/.test(roundValue||'0')?Number(roundValue||0):0;main.innerHTML=lessonPage(lesson,Math.min(index,lesson.rounds.length-1));bindEditor();ensureRuntime();}
  else main.innerHTML=deck?deckPage(deck):landing();
+ const exit=document.querySelector('.back-playground');exit.href=view||deck?'#':'playground.html';exit.textContent=view||deck?'← Choose a deck':'← Data Playground';
+ main.querySelectorAll('.foundation-content pre code').forEach(code=>{code.innerHTML=highlightPython(code.textContent);});
  document.title=view?`${view.lesson.id} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
 }
 function bindEditor(){
  const editor=document.getElementById('foundationEditor'),{round}=view;
  editor.value=typeof state.drafts[round.id]==='string'?state.drafts[round.id]:round.starter;
- function numbers(){document.querySelector('.foundation-line-numbers').textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');}
+ function numbers(){document.querySelector('.foundation-line-numbers').textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');document.getElementById('foundationHighlight').innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
+ function syncScroll(){document.querySelector('.foundation-line-numbers').scrollTop=editor.scrollTop;const layer=document.getElementById('foundationHighlight');layer.scrollTop=editor.scrollTop;layer.scrollLeft=editor.scrollLeft;}
  editor.addEventListener('input',()=>{state.drafts[round.id]=editor.value.slice(0,50000);save();numbers();const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
- editor.addEventListener('scroll',()=>{document.querySelector('.foundation-line-numbers').scrollTop=editor.scrollTop;});
+ editor.addEventListener('scroll',syncScroll);
  editor.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();execute(false);}});
  document.getElementById('runExercise').onclick=()=>execute(false);
  document.getElementById('checkExercise').onclick=()=>execute(true);
- document.getElementById('resetExercise').onclick=()=>{cancelRun();delete state.drafts[round.id];delete state.passed[round.id];save();render();document.getElementById('foundationFeedback').textContent='Starter restored. Your next run begins with fresh given data.';};
+ document.getElementById('resetExercise').onclick=()=>{cancelRun();delete state.drafts[round.id];save();render();document.getElementById('foundationFeedback').textContent='Starter restored. Your next run begins with fresh given data.';};
  document.getElementById('stopPython').onclick=()=>{cancelRun();document.getElementById('foundationFeedback').textContent='Python stopped. Your code is preserved; Run to try again.';};
  numbers();
 }
@@ -101,7 +110,7 @@ async function execute(check){
   renderOutput(result);
   feedback.textContent=edited?'Code changed while Python ran. This output belongs to the earlier code. Check again to validate your edit.':result.feedback||(result.error?'Fix the error and try again.':'Run finished. Inspect the output, then Check your answer.');
   feedback.dataset.state=edited?'':result.error?'error':result.passed?'pass':'';
-  if(check&&!edited){if(result.passed)state.passed[round.id]=true;else delete state.passed[round.id];save();}
+
  }catch(error){if(token===generation){feedback.dataset.state='error';feedback.textContent='Python could not run. Your code is preserved. Run to retry.';updateRuntime(error.message.slice(0,240));}}
  finally{clearTimeout(timer);if(token===generation)setBusy(false);}
 }
@@ -121,7 +130,7 @@ document.getElementById('themeButton').onclick=()=>AppAppearance.apply(document.
 const dialog=document.getElementById('resetLearningDialog');
 document.getElementById('forgetProgress').onclick=()=>dialog.showModal();
 document.getElementById('cancelForget').onclick=()=>dialog.close();
-document.getElementById('confirmForget').onclick=()=>{cancelRun();state={version:1,drafts:{},passed:{},last:null};save();dialog.close();location.hash='';render();document.getElementById('storageStatus').textContent='Saved learning has been reset.';};
+document.getElementById('confirmForget').onclick=()=>{cancelRun();state={version:1,drafts:{}};save();dialog.close();location.hash='';render();document.getElementById('storageStatus').textContent='Saved learning has been reset.';};
 document.querySelector('.foundation-skip').addEventListener('click',event=>{event.preventDefault();main.focus();main.scrollIntoView();});
 window.addEventListener('hashchange',render);
 render();
