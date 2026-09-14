@@ -91,7 +91,7 @@ import pandas as pd, numpy as np\nimport matplotlib.pyplot as plt\nimport seabor
     },true);
     window.addEventListener('pagehide',save);
     document.addEventListener('visibilitychange', () => {if (document.hidden) save();});
-    window.addEventListener('beforeunload',event => {save(); if ((savingFailed || adapter.confirmLeave) && adapter.get().cells.length) {event.preventDefault(); event.returnValue='';}});
+    window.addEventListener('beforeunload',event => {save(); if (adapter.confirmLeave || (savingFailed && adapter.get().cells.length)) {event.preventDefault(); event.returnValue='';}});
   }
   return {install,save,restore,remember,beginTransition,
     last:workspace => {try {return localStorage.getItem('dspp-last-setup:'+workspace)?.split(':').slice(1) || [];} catch {return [];}}
