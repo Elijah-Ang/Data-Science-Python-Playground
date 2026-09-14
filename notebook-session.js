@@ -57,7 +57,10 @@ import pandas as pd, numpy as np\nimport matplotlib.pyplot as plt\nimport seabor
       const source=(executed && cell.output ? '# Result from last execution; inspect metadata for stale state.\n' + (cell.output.executedCode || cell.code) : cell.code) + '\n';
       // Keep every exported code cell runnable in the order shown. Optional
       // evidence is a separate cell instead of hidden setup around the main result.
+      // Keep the question itself as a normal cell so its last expression displays.
+      if (cell.independent) exportedCells.push(codeCell('# Prepare fresh data for this extra question.\n_route_df = df\ndf = original_df.copy()\n'));
       exportedCells.push(codeCell(source, cell));
+      if (cell.independent) exportedCells.push(codeCell('# Return to the suggested route data.\ndf = _route_df\n'));
       const optionalSource=cell.optionalEvidence ? '' : (cell.optionalCode || cell.advancedCode || '');
       if (optionalSource.trim()) exportedCells.push(codeCell('# Optional evidence; run after the primary cell above.\n' + optionalSource + '\n'));
     }
@@ -88,7 +91,7 @@ import pandas as pd, numpy as np\nimport matplotlib.pyplot as plt\nimport seabor
     },true);
     window.addEventListener('pagehide',save);
     document.addEventListener('visibilitychange', () => {if (document.hidden) save();});
-    window.addEventListener('beforeunload',event => {save(); if (savingFailed && adapter.get().cells.length) {event.preventDefault(); event.returnValue='';}});
+    window.addEventListener('beforeunload',event => {save(); if ((savingFailed || adapter.confirmLeave) && adapter.get().cells.length) {event.preventDefault(); event.returnValue='';}});
   }
   return {install,save,restore,remember,beginTransition,
     last:workspace => {try {return localStorage.getItem('dspp-last-setup:'+workspace)?.split(':').slice(1) || [];} catch {return [];}}

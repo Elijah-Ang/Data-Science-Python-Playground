@@ -1,4 +1,6 @@
 def _serialize_table_cell(value):
+    if isinstance(value, (np.dtype, pd.api.extensions.ExtensionDtype)):
+        return str(value)
     if isinstance(value, (pd.Timestamp,)):
         return value.isoformat()
     missing = pd.isna(value)

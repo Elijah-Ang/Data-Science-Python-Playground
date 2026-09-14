@@ -9,6 +9,7 @@ csv='name,group,value\na,x,1\nb,x,2\nc,y,3\n'
 ns['initialize'](csv,',')
 for code, labels in [('df.describe().T',['value']),('df.dtypes',['name','group','value']),('df.isna().sum()',['name','group','value']),('df["group"].value_counts()',['x','y']),('df.groupby(["group","name"]).size()',['x','a'])]:
  out=ns['execute_cell'](code); assert out['status']=='ok',out
+ json.dumps(out)  # Results must cross the browser worker JSON boundary.
  flat=str(out['table']['rows']); assert all(label in flat for label in labels),(code,out)
 for alias in ['pd','np','plt','df','original_df']:
  ns['execute_cell'](f'{alias} = None\nsaved_marker = 123')
@@ -28,11 +29,13 @@ for dataset, data in payload['datasets'].items():
    # Sequential tasks require their declared upstream route; optional tasks are independent.
    required=data['tasks'][:6] if mode=='after_route' else [item for item in data['tasks'] if item['id'] in task['prerequisites']]
    for route in required: assert ns['execute_cell'](route['code'])['status']=='ok',route['id']
+   working_before = ns['user_namespace']['df'].copy(deep=True)
    with warnings.catch_warnings():
-    warnings.simplefilter('ignore'); out=ns['execute_cell'](task['code'])
+    warnings.simplefilter('ignore'); out=ns['execute_cell'](task['code'], task['optional'])
    assert out['status']=='ok',(dataset,mode,task['id'],out.get('error'))
    if task['optional']:
-    view=ns['user_namespace']['view']; assert len(ns['user_namespace']['original_df'])==len(ns['original_df'])
+    assert ns['user_namespace']['df'].equals(working_before), (dataset, task['id'], 'changed route data')
+    assert len(ns['user_namespace']['original_df'])==len(ns['original_df'])
    results.append([dataset,mode,task['id'],'passed'])
 Path('tests/evidence/data-runtime.json').write_text(json.dumps(results,indent=2))
 print(f'Data: {len(results)} task scenarios plus index, alias reset, schema, display and stream regressions passed.')

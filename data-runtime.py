@@ -89,12 +89,13 @@ class BoundedStream(io.StringIO):
                 super().write('\n[Output truncated at 20,000 characters]')
         return len(text)
 
-def execute_cell(code):
+def execute_cell(code, independent=False):
     events = []
     stdout = BoundedStream(events)
     stderr = BoundedStream(events, 'stderr')
     charts = []
-    namespace = user_namespace
+    # Extra questions receive their own prepared df, without changing route state.
+    namespace = {'__builtins__': __builtins__, 'pd': pd, 'np': np, 'plt': plt, 'sns': sns, 'df': original_df.copy()} if independent else user_namespace
     namespace['original_df'] = original_df.copy(deep=True)
     def display(value, *args, **kwargs):
         payload = _frame_payload(value)
