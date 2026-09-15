@@ -9,15 +9,16 @@ Read the landing HTML/CSS, gate controller and scene motion integration, Data Fo
 ## Routes and files
 
 - `index.html`: one optional robot/speech-bubble link beside the existing title; original tour, artwork and gate are retained.
-- `learn.html`, `learn.css`, `learn.js`: new hub. Data links to `data-foundations.html`; Statistics and ML buttons have a dark silhouette overlay with a centered pixel lock and Coming soon, and announce their status without navigating. Top status labels and the duplicate In the works labels are removed. Shared header theme control and normal product links remain available. Primary Back goes to `index.html`.
+- `learn.html`, `learn.css`, `learn.js`: new hub. Data links to the existing `data-foundations.html?from=learn` route; Statistics and ML buttons have a dark silhouette overlay with a centered pixel lock and Coming soon, and announce their status without navigating. Top status labels and the duplicate In the works labels are removed. Shared header theme control and normal product links remain available. Primary Back is labelled Home and goes to `index.html`.
 - `mascot.js`, `mascot.css`: reusable two-layer controller, metadata, speech-bubble styles and responsive landing composition.
 - `assets/mascot/robot-*.png`: exact supplied PNGs under role names; no recoloring, stretching, raster edits or unrelated asset renames.
 - `scripts/build-web.mjs`, `scripts/check-app-shell.mjs`, `package.json`: build/precache assets and hub, shell checks, JS syntax checks.
 - `tests/test_learn_discovery_browser.py`, `.github/workflows/learn-discovery.yml`: Chromium/WebKit discovery, animation, lifecycle, responsive and existing landing regression checks.
 - `tests/test_ui_preferences_browser.py`: retain the exact landing link audit with the new optional hub route included.
+- `foundations/app.js`: entry-aware outer Back navigation and removal of the requested explanatory copy.
 - This report documents the design and verification.
 
-The existing Data Learn / Refresh shortcut still leads directly to Data Foundations. Foundations deck/lesson navigation, notebook guards and Data/Statistics/ML implementations were not modified. No saved learning, completion, resume or progress tracking was added.
+The existing Data Learn / Refresh shortcut still leads directly to Data Foundations. Foundations keeps its deck/lesson hash hierarchy and notebook guards. Its outer Back link reads the URL-only `from=learn` hint to return hub visitors to Learn / Refresh; direct/Data Playground visits return to Data Playground. No referrer or browser-history guesswork and no storage are used. The redundant Follow/Change/Transfer overview, guidance paragraphs and Read a little hero note are removed from Foundations. Data/Statistics/ML implementations were not modified. No saved learning, completion, resume or progress tracking was added.
 
 ## Supplied asset mapping and alignment
 

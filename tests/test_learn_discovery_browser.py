@@ -80,7 +80,7 @@ with sync_playwright() as pw:
  report['checks'].append('Six assets and choreographed poses; hidden/pagehide pause; reduced-motion static book including focus')
  # Navigation stays native for the new CTA; the original gate remains intact.
  cta.click();page.wait_for_url('**/learn.html')
- assert page.locator('.learn-path.is-available').get_attribute('href')=='data-foundations.html'
+ assert page.locator('.learn-path.is-available').get_attribute('href')=='data-foundations.html?from=learn'
  assert page.locator('.path-status').count()==0
  assert page.locator('.path-lock').count()==2
  for card in page.locator('.is-planned').all():
@@ -92,7 +92,17 @@ with sync_playwright() as pw:
  for subject in ['Statistics','Machine Learning']:
   url=page.url;button=page.locator(f'[data-coming-soon="{subject}"]');assert 'coming soon' in button.inner_text().lower()
   button.click();assert page.url==url;assert page.locator('#pathAnnouncement').inner_text()==subject+' lessons are coming soon.'
- page.locator('.is-available').click();page.wait_for_url('**/data-foundations.html')
+ page.locator('.is-available').click();page.wait_for_url('**/data-foundations.html?from=learn')
+ assert page.locator('.back-playground').get_attribute('href')=='learn.html'
+ assert page.locator('.hero-note,.foundation-note,.foundation-guidance').count()==0
+ page.reload();assert page.locator('.back-playground').get_attribute('href')=='learn.html'
+ page.locator('.foundation-deck').first.click()
+ assert page.locator('.back-playground').inner_text()=='← Choose a deck'
+ page.locator('.back-playground').click()
+ assert page.locator('.back-playground').get_attribute('href')=='learn.html'
+ page.locator('.back-playground').click();page.wait_for_url('**/learn.html')
+ assert page.locator('.back-playground').inner_text()=='← Home'
+ page.locator('.is-available').click();page.wait_for_url('**/data-foundations.html?from=learn')
  assert page.locator('.foundation-deck').count()==3
  page.goto(base+'/learn.html');page.locator('.back-playground').click();page.wait_for_url('**/index.html')
  # Use a fresh page, with real time for the existing gate's transition.
@@ -100,6 +110,8 @@ with sync_playwright() as pw:
  page.goto(base+'/index.html');page.locator('.gate-hitbox').click();page.wait_for_url('**/playground.html')
  shortcut=page.locator('.learn-refresh');assert shortcut.get_attribute('href')=='data-foundations.html'
  shortcut.click();page.wait_for_url('**/data-foundations.html')
+ assert page.locator('.back-playground').get_attribute('href')=='playground.html'
+ assert page.locator('.back-playground').inner_text()=='← Data Playground'
  report['checks'].append('Robot → hub → existing Foundations; planned cards stay put; hub Back; unchanged gate and direct Data shortcut')
  # Freeze motion for reproducible responsive captures. Real motion was tested above
  # and remains covered by the dedicated landing regression.

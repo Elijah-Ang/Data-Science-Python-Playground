@@ -23,15 +23,15 @@ function datasetTable(dataset){const columns=Object.keys(dataset.columns);return
 const icon=`<svg class="deck-icon" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h25v5H7zM10 9h25v5H10zM5 14h26v22H5zM10 21h16M10 27h10"/></svg>`;
 function landing(){
  document.body.dataset.deck='';
- return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div><div class="hero-note">Read a little.<br>Write some Python.<br>See what happens.</div></section>
+ return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div></section>
 
  <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
- <p class="foundation-guidance"><strong>New or very rusty?</strong> Follow Core in order. <strong>Refreshing one skill?</strong> Jump directly to a chapter or card. Go Further adds optional depth; every lesson is open.</p>
- <section class="foundation-note" aria-label="How to practise"><div><h3>01 · Follow</h3><p>Meet the syntax one piece at a time. Fill the gap with a worked example nearby.</p></div><div><h3>02 · Change</h3><p>Use the same idea in another setting. Different data, one familiar tool.</p></div><div><h3>03 · Transfer</h3><p>Try a fresh question with less help. Return to earlier skills in review challenges.</p></div></section>`;
+ 
+ `;
 }
 function deckPage(deck){
  document.body.dataset.deck=deck.id;
- return `<header class="foundation-deck-heading"><span class="foundation-eyebrow">Deck ${deck.number}</span><h2>${esc(deck.title)}</h2><p>${esc(deck.description)}</p><p class="foundation-guidance">New or very rusty? Follow <strong>Core</strong> in order. Refreshing one skill? Jump to a chapter or card. <strong>Go Further</strong> adds optional depth.</p><nav class="chapter-jumps" aria-label="Jump to chapter">${deck.chapters.map((chapter,i)=>`<a href="#${deck.id}/chapter/${i}">${esc(chapter)}</a>`).join('')}</nav></header>`+deck.chapters.map((chapter,i)=>{const items=C.lessons.filter(l=>l.deck===deck.id&&l.chapter===i);return items.length?`<section class="foundation-chapter" id="chapter-${i}" tabindex="-1"><h3>${String(i+1).padStart(2,'0')} / ${esc(chapter)}</h3><div class="lesson-library">${items.map(l=>`<a class="lesson-card ${l.review?'is-review':''}" href="${url(l)}"><div class="card-meta"><span class="card-id">${l.id}</span><span class="card-level">${esc(l.level)}</span></div>${FoundationVisuals.diagram(l.visual)}<h4>${esc(l.title)}</h4><p>${esc(l.goal)}</p><small>${l.minutes} min · ${l.rounds.length} ${l.review?'retrieval tasks':'practices'}</small></a>`).join('')}</div></section>`:'';}).join('');
+ return `<header class="foundation-deck-heading"><span class="foundation-eyebrow">Deck ${deck.number}</span><h2>${esc(deck.title)}</h2><p>${esc(deck.description)}</p><nav class="chapter-jumps" aria-label="Jump to chapter">${deck.chapters.map((chapter,i)=>`<a href="#${deck.id}/chapter/${i}">${esc(chapter)}</a>`).join('')}</nav></header>`+deck.chapters.map((chapter,i)=>{const items=C.lessons.filter(l=>l.deck===deck.id&&l.chapter===i);return items.length?`<section class="foundation-chapter" id="chapter-${i}" tabindex="-1"><h3>${String(i+1).padStart(2,'0')} / ${esc(chapter)}</h3><div class="lesson-library">${items.map(l=>`<a class="lesson-card ${l.review?'is-review':''}" href="${url(l)}"><div class="card-meta"><span class="card-id">${l.id}</span><span class="card-level">${esc(l.level)}</span></div>${FoundationVisuals.diagram(l.visual)}<h4>${esc(l.title)}</h4><p>${esc(l.goal)}</p><small>${l.minutes} min · ${l.rounds.length} ${l.review?'retrieval tasks':'practices'}</small></a>`).join('')}</div></section>`:'';}).join('');
 }
 function lessonPage(lesson,roundIndex){
  const round=lesson.rounds[roundIndex],deck=C.decks.find(x=>x.id===lesson.deck),dataset=C.datasets[round.dataset];
@@ -80,7 +80,9 @@ function render(){
  const deck=C.decks.find(d=>d.id===deckId),lesson=C.lessons.find(l=>l.id===id&&l.deck===deckId);
  if(lesson){const index=/^\d+$/.test(roundValue||'0')?Number(roundValue||0):0;main.innerHTML=lessonPage(lesson,Math.min(index,lesson.rounds.length-1));bindEditor();ensureRuntime();}
  else main.innerHTML=deck?deckPage(deck):landing();
- const exit=document.querySelector('.back-playground');exit.href=view?'#'+view.lesson.deck:deck?'#':'playground.html';exit.textContent=view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':'← Data Playground';
+ // A URL-only entry hint survives deck/lesson hashes and reloads, without stored learning state.
+ const fromHub=new URLSearchParams(location.search).get('from')==='learn';
+ const exit=document.querySelector('.back-playground');exit.href=view?'#'+view.lesson.deck:deck?'#':fromHub?'learn.html':'playground.html';exit.textContent=view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':fromHub?'← Learn / Refresh':'← Data Playground';
  main.querySelectorAll('.foundation-content pre code').forEach(code=>{code.innerHTML=highlightPython(code.textContent);});
  document.title=view?`${view.lesson.id} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
