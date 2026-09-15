@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const C=window.FoundationsCurriculum, KEY='dspp-foundations-v1';
+const C=window.FoundationsCurriculum;
 const main=document.getElementById('foundationsMain');
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // One token pass keeps strings/comments intact and escapes all learner text.
@@ -11,10 +11,12 @@ function highlightPython(code){
  return result+esc(code.slice(start));
 }
 let shownControlHelp=false;
-let state={version:1,drafts:{}}, view=null, generation=0, bridge=null, bridgePromise=null, busy=false;
+let view=null, generation=0, bridge=null, bridgePromise=null, busy=false;
 let runtimeStatus='Python starts when you open a lesson.';
-try {const saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved?.version===1){state.drafts=saved.drafts&&typeof saved.drafts==='object'?saved.drafts:{};}} catch {}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch{document.getElementById('storageStatus').textContent='Browser storage is unavailable or full. You can keep practising; changes may not survive closing this page.';}}
+// Product policy: no saved learning, drafts, resume, completion records, progress
+// bars or tracking unless the user explicitly requests them in a future change.
+// Remove legacy drafts; current code exists only in the active editor.
+try { localStorage.removeItem('dspp-foundations-v1'); } catch {}
 function url(lesson,round=0){return `#${lesson.deck}/${lesson.id}/${round}`;}
 function table(columns,rows,caption){return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}"><table><caption>${esc(caption)}</caption><thead><tr>${columns.map(x=>`<th scope="col">${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(value=>`<td>${value===null?'<span title="Missing value">None</span>':typeof value==='string'&&value.trim()!==value?`&quot;${esc(value)}&quot;`:esc(value)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;}
 function datasetTable(dataset){const columns=Object.keys(dataset.columns);return table(dataset.index?['row',...columns]:columns,dataset.columns[columns[0]].map((_,i)=>[...(dataset.index?[dataset.index[i]]:[]),...columns.map(c=>dataset.columns[c][i])]),`${dataset.name} · ${dataset.columns[columns[0]].length} synthetic rows`);}
@@ -34,7 +36,7 @@ function deckPage(deck){
 function lessonPage(lesson,roundIndex){
  const round=lesson.rounds[roundIndex],deck=C.decks.find(x=>x.id===lesson.deck),dataset=C.datasets[round.dataset];
  const controlHelp=!lesson.review&&roundIndex===0&&!shownControlHelp; if(controlHelp)shownControlHelp=true;
- view={lesson,round,roundIndex};save();document.body.dataset.deck=lesson.deck;
+ view={lesson,round,roundIndex};document.body.dataset.deck=lesson.deck;
  const previous=roundIndex?url(lesson,roundIndex-1):previousLesson(lesson),next=roundIndex<lesson.rounds.length-1?url(lesson,roundIndex+1):nextLesson(lesson);
  return `<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><span>${esc(deck.title)}</span><span aria-hidden="true">/</span><span>${lesson.id}</span></nav>
  <header class="foundation-lesson-heading"><div><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${lesson.id}</span><h2>${esc(lesson.title)}</h2><p>${esc(lesson.goal)}</p></div><span class="foundation-eyebrow">${lesson.minutes} MIN</span></header>
@@ -87,15 +89,15 @@ function render(){
 }
 function bindEditor(){
  const editor=document.getElementById('foundationEditor'),{round}=view;
- editor.value=typeof state.drafts[round.id]==='string'?state.drafts[round.id]:round.starter;
+ editor.value=round.starter;
  function numbers(){document.querySelector('.foundation-line-numbers').textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');document.getElementById('foundationHighlight').innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
  function syncScroll(){document.querySelector('.foundation-line-numbers').scrollTop=editor.scrollTop;const layer=document.getElementById('foundationHighlight');layer.scrollTop=editor.scrollTop;layer.scrollLeft=editor.scrollLeft;}
- editor.addEventListener('input',()=>{state.drafts[round.id]=editor.value.slice(0,50000);save();numbers();const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
+ editor.addEventListener('input',()=>{numbers();const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
  editor.addEventListener('scroll',syncScroll);
  editor.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();execute(false);}});
  document.getElementById('runExercise').onclick=()=>execute(false);
  document.getElementById('checkExercise').onclick=()=>execute(true);
- document.getElementById('resetExercise').onclick=()=>{cancelRun();delete state.drafts[round.id];save();render();document.getElementById('foundationFeedback').textContent='Starter restored. Your next run begins with fresh given data.';};
+ document.getElementById('resetExercise').onclick=()=>{cancelRun();render();document.getElementById('foundationFeedback').textContent='Starter restored. Your next run begins with fresh given data.';};
  document.getElementById('stopPython').onclick=()=>{cancelRun();document.getElementById('foundationFeedback').textContent='Python stopped. Your code is preserved; Run to try again.';};
  numbers();
 }
@@ -111,7 +113,7 @@ function cancelRun(){generation++;bridge?.restart();setBusy(false);updateRuntime
 async function execute(check){
  if(busy||!view)return;
  const token=generation,{round}=view,editor=document.getElementById('foundationEditor'),code=editor.value;
- state.drafts[round.id]=code;save();setBusy(true);
+ setBusy(true);
  const feedback=document.getElementById('foundationFeedback');feedback.dataset.state='';feedback.textContent=check?'Running and checking…':'Running Python…';
  const timer=setTimeout(()=>{if(token===generation&&busy){cancelRun();feedback.textContent='Python took too long and was stopped. Your code is preserved. Try a smaller operation or Run again.';}},90000);
  try{
@@ -140,10 +142,6 @@ function renderOutput(result){
  if(!result.stdout&&!result.error&&!result.outputs?.length)output.innerHTML+='<p class="empty-output">Python finished with no displayed value. Put the value on the last line, use print(...), or use plt.show() for a figure.</p>';
 }
 document.getElementById('themeButton').onclick=()=>AppAppearance.apply(document.body.dataset.theme==='light'?'dark':'light');
-const dialog=document.getElementById('resetLearningDialog');
-document.getElementById('forgetProgress').onclick=()=>dialog.showModal();
-document.getElementById('cancelForget').onclick=()=>dialog.close();
-document.getElementById('confirmForget').onclick=()=>{cancelRun();state={version:1,drafts:{}};save();dialog.close();location.hash='';render();document.getElementById('storageStatus').textContent='Saved learning has been reset.';};
 document.querySelector('.foundation-skip').addEventListener('click',event=>{event.preventDefault();main.focus();main.scrollIntoView();});
 window.addEventListener('hashchange',render);
 render();

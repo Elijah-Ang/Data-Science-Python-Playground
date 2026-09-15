@@ -54,15 +54,21 @@ with sync_playwright() as p:
  assert page.locator('#foundationHighlight .py-number').count()>0
  assert page.locator('#foundationOutput table tbody tr').count()==4
  page.locator('.foundation-navigation a').last.click();assert page.url.endswith('/1')
- page.locator('#foundationEditor').fill('# saved draft\ndf')
- page.reload();assert page.locator('#foundationEditor').input_value()=='# saved draft\ndf'
- assert page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1")).drafts["I01-1"]')
- page.locator('#resetExercise').click();assert '# saved draft' not in page.locator('#foundationEditor').input_value()
+ starter=page.locator('#foundationEditor').input_value()
+ page.locator('#foundationEditor').fill('# unsaved edit\ndf')
+ page.locator('.foundation-navigation a').last.click()
+ page.go_back();assert page.locator('#foundationEditor').input_value()==starter
+ page.locator('#foundationEditor').fill('# unsaved edit\ndf')
+ page.evaluate('localStorage.setItem("dspp-foundations-v1", JSON.stringify({version:1,drafts:{"I01-1":"legacy draft"},passed:{"I01":true},last:"I01"}))')
+ page.reload();assert page.locator('#foundationEditor').input_value()==starter
+ assert page.evaluate('localStorage.getItem("dspp-foundations-v1")') is None
+ page.locator('#foundationEditor').fill('# unsaved edit\ndf')
+ page.locator('#resetExercise').click();assert page.locator('#foundationEditor').input_value()==starter
  assert 'fresh given data' in page.locator('#foundationFeedback').inner_text()
  assert page.locator('#runExercise').inner_text()=='▶ Run code'
  assert page.locator('#checkExercise').inner_text()=='✓ Check answer'
  assert page.locator('#resetExercise').inner_text()=='Reset code'
- report['checks'].append('Deck, round progression, hints/solutions, drafts, saved-code persistence and exercise reset')
+ report['checks'].append('Deck, round progression, hints/solutions, no draft persistence, legacy storage removal and exercise reset')
  open_lesson('I02')
  assert 'Not yet' in run('df.iloc[:2]')
  open_lesson('I02',2);assert 'matches' in run('df.iloc[:4]');open_lesson('I02')
@@ -181,13 +187,15 @@ with sync_playwright() as p:
  assert page.url.endswith('/2')
  report['checks'].append('Desktop/tablet/mobile layouts, 320px boundary, fading scaffold, skip link and light/dark themes; 24 screenshots')
  page.goto(base);assert page.locator('.foundation-continue').count()==0
- page.locator('#forgetProgress').click();page.locator('#confirmForget').click()
- assert page.locator('.foundation-continue').count()==0
- saved=page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1"))');assert not saved.get('passed') and not saved['drafts'] and saved.get('last') is None
- # Persist the shared appearance independently from reset learning.
+ assert page.locator('#forgetProgress, #resetLearningDialog, #storageStatus, progress, [role="progressbar"]').count()==0
+ assert not page.get_by_text('Resume practice',exact=False).count()
+ assert not page.get_by_text('saved learning',exact=False).count()
+ assert 'drafts stay' not in page.locator('.foundation-footer').inner_text()
+ assert page.evaluate('localStorage.getItem("dspp-foundations-v1")') is None
+ # Shared appearance preference is independent of learning state.
  page.reload();assert page.locator('body').get_attribute('data-theme')=='dark'
  assert not errors,errors
- report['checks'].append('Reset all learning, reload, independent appearance persistence; no JS page errors')
+ report['checks'].append('No saved-learning/resume/progress UI, reload, independent appearance persistence; no JS page errors')
  browser.close()
 report['seconds']=round(time.time()-start,1)
 (evidence/f'{args.engine}-report.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))

@@ -15,7 +15,7 @@ Preview: http://127.0.0.1:8010/data-foundations.html
 
 There are 89 teaching cards with Follow, Change and Transfer rounds, plus 17 retrieval reviews/final checkpoints. All published IDs remain reachable. I01CSV follows I01; I18S follows I18 through explicit array sequencing, without renumbering old cards. Reviews retain their published IDs and retrieve the revised Transfer rounds.
 
-The three physical deck stacks, cyan/violet/mint accents, Data-only CTA, shared product shell, desktop split and stationary editor, stacked mobile flow, hidden hints/solutions, local drafts and account-free workflow remain. There are no completion records, progress bars or resume controls. No Data/Statistics/ML analytical implementation was changed.
+The three physical deck stacks, cyan/violet/mint accents, Data-only CTA, shared product shell, desktop split and stationary editor, stacked mobile flow, hidden hints/solutions, account-free workflow remain. At the user’s explicit follow-up request, local drafts and all saved-learning UI/storage have been removed. Code exists only in the active editor and resets on navigation or reload. Legacy saved drafts are deleted on page load. There are no completion records, progress bars or resume controls. No Data/Statistics/ML analytical implementation was changed.
 
 Core means the common day-to-day route. Go Further covers specialised summaries, reshaping, preprocessing and less common charts. All cards remain accessible. Chapter jumps use existing chapter names and hash navigation; they do not introduce search, filters or locking.
 
@@ -50,7 +50,7 @@ Editorial corrections included empty transfer filters, unspecified population-st
 | Deck library | ← Choose a deck | Three-deck landing |
 | Lesson | ← Inspect / Wrangle / Visualise lessons | Current deck library |
 
-The deck library has no duplicate Foundations breadcrumb. Lessons have a small hierarchy breadcrumb, with the current deck rendered as text so it does not duplicate the primary return link. Footer links include About, Help, Privacy and Credits, alongside local-draft information and reset saved learning.
+The deck library has no duplicate Foundations breadcrumb. Lessons have a small hierarchy breadcrumb, with the current deck rendered as text so it does not duplicate the primary return link. Footer links include About, Help, Privacy and Credits, with no saved-learning copy or reset-saved-learning control.
 
 ## Visual system and review
 
@@ -130,3 +130,7 @@ All primary teaching datasets contain 4–8 rows. Auxiliary lookup tables can be
 | components_2 | 4 | item, Online, Shop |
 | weather_overlap | 8 | day, sky, temperature, humidity, station |
 | games_overlap | 6 | game, genre, minutes, rating, players |
+
+## Explicit product policy
+
+Do not add saved learning, persistent drafts, resume systems, completion records, progress indicators/bars, or progress tracking of any kind unless the user explicitly requests them in a future task. Reset code only restores the active exercise starter. Theme preferences remain independent. Browser regression checks cover navigation/reload discarding edits, legacy storage removal, and absence of saved-learning/progress controls. This follow-up overrides the earlier brief’s local-draft requirement.
