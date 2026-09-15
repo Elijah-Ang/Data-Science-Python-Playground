@@ -24,3 +24,10 @@
 @media(max-width:680px){.learn-main{padding:25px 18px}.learn-hero{gap:10px;margin-bottom:25px}.learn-hero h2{font-size:28px}.learn-hero p{font-size:16px}.learn-pathways{grid-template-columns:1fr;gap:25px}.learn-path{padding:22px}.path-visual{height:80px;margin-top:15px}.learn-path h3{font-size:22px;margin:15px 0 10px}.learn-path p{margin-bottom:20px}}
 
 @media(max-width:680px){body.learn-page .top-actions{grid-template-columns:minmax(0,1fr) 44px}body.learn-page .mode-link{padding:0 5px;gap:4px}body.learn-page .mode-link .mode-icon{width:12px;height:12px;flex-basis:12px}.learn-hero{display:block;position:relative;padding-right:0}}
+
+/* Planned paths remain visible beneath a dark veil, with one centered status. */
+.is-planned{isolation:isolate;overflow:hidden;min-height:310px}
+.is-planned::before{content:"";position:absolute;inset:0;z-index:1;background:rgba(9,16,30,.76);pointer-events:none}
+.path-lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:15px;width:calc(100% - 32px);color:#fff6df;text-align:center;font:700 18px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.06em;pointer-events:none}
+.path-lock svg{width:42px;height:42px;fill:currentColor;shape-rendering:crispEdges}
+.is-planned:hover::before,.is-planned:focus-visible::before{background:rgba(9,16,30,.7)}

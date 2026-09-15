@@ -9,7 +9,7 @@ Read the landing HTML/CSS, gate controller and scene motion integration, Data Fo
 ## Routes and files
 
 - `index.html`: one optional robot/speech-bubble link beside the existing title; original tour, artwork and gate are retained.
-- `learn.html`, `learn.css`, `learn.js`: new hub. Data links to `data-foundations.html`; Statistics and ML buttons announce Coming soon without navigating. Shared header theme control and normal product links remain available. Primary Back goes to `index.html`.
+- `learn.html`, `learn.css`, `learn.js`: new hub. Data links to `data-foundations.html`; Statistics and ML buttons have a dark silhouette overlay with a centered pixel lock and Coming soon, and announce their status without navigating. Top status labels and the duplicate In the works labels are removed. Shared header theme control and normal product links remain available. Primary Back goes to `index.html`.
 - `mascot.js`, `mascot.css`: reusable two-layer controller, metadata, speech-bubble styles and responsive landing composition.
 - `assets/mascot/robot-*.png`: exact supplied PNGs under role names; no recoloring, stretching, raster edits or unrelated asset renames.
 - `scripts/build-web.mjs`, `scripts/check-app-shell.mjs`, `package.json`: build/precache assets and hub, shell checks, JS syntax checks.

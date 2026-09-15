@@ -81,6 +81,14 @@ with sync_playwright() as pw:
  # Navigation stays native for the new CTA; the original gate remains intact.
  cta.click();page.wait_for_url('**/learn.html')
  assert page.locator('.learn-path.is-available').get_attribute('href')=='data-foundations.html'
+ assert page.locator('.path-status').count()==0
+ assert page.locator('.path-lock').count()==2
+ for card in page.locator('.is-planned').all():
+  outer=card.bounding_box();lock=card.locator('.path-lock').bounding_box()
+  assert abs(outer['x']+outer['width']/2-lock['x']-lock['width']/2)<2
+  assert abs(outer['y']+outer['height']/2-lock['y']-lock['height']/2)<4
+  assert card.evaluate('(e)=>getComputedStyle(e,"::before").backgroundColor')!='rgba(0, 0, 0, 0)'
+
  for subject in ['Statistics','Machine Learning']:
   url=page.url;button=page.locator(f'[data-coming-soon="{subject}"]');assert 'coming soon' in button.inner_text().lower()
   button.click();assert page.url==url;assert page.locator('#pathAnnouncement').inner_text()==subject+' lessons are coming soon.'
