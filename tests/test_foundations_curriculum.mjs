@@ -47,3 +47,5 @@ for(const key of ['messy_games','messy_pets']){
 for(const id of ['V18','V19'])for(const r of c.lessons.find(l=>l.id===id).rounds){const d=c.datasets[r.dataset];assert(['day','hour'].includes(d.a));if(id==='V19')assert.equal(new Set(d.columns[d.a]).size,d.columns[d.a].length/2);}
 for(const r of c.lessons.find(l=>l.id==='V30').rounds)assert(!r.solution.includes('* 0.6'));
 console.log('Visual definitions, tiering, task review, stable inserted IDs, distinct schemas and meaningful chart data passed.');
+
+for(const [id,focus] of Object.entries({W15:'.dt.',W16:'.dropna',V02:'ax.set',V24:'plt.subplots',V26:'set_xscale',V27:'ax.axvline',V28:'ax.annotate',V29:'ax.bar',V30:'bottom=first',V34:'fig.savefig'}))assert(c.lessons.find(l=>l.id===id).syntaxCode.includes(focus),id+' must isolate its new syntax');

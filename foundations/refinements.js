@@ -189,6 +189,20 @@ function refine(c){
   if(l.id==='I02')l.example='df.head(3)';
   const lines=l.example.split('\n').filter(s=>s.trim()&&!s.startsWith('import ')&&!s.startsWith('#'));
   l.syntaxCode=l.id==='I02'?'df.head(2)':l.id==='I01'?'df = pd.DataFrame(data)':l.id==='I01CSV'?'df = pd.read_csv("candy.csv")':l.id==='I18S'?'df["price"].mean()':l.id==='W29'?'iqr = q3 - q1\nlower = q1 - 1.5 * iqr\nupper = q3 + 1.5 * iqr':lines.find(s=>s.includes('sns.'))||lines.find(s=>s.includes('df.')||s.includes('df['))||lines[0];
+  const focusCode={
+   W15:'df["date"].dt.year\ndf["date"].dt.month\ndf["date"].dt.day_name()',
+   W16:'df.dropna(subset=["price"])',
+   V02:'ax.set(title="Study club", xlabel="hours", ylabel="score")',
+   V24:'fig, axes = plt.subplots(1, 2, figsize=(10, 4))',
+   V25:'sns.scatterplot(data=df, x="hours", y="score", hue="club", style="club", palette="colorblind", ax=ax)\nax.legend(title="Category")',
+   V26:'ax.set_xscale("log")\nax.set_ylim(bottom=0)\nax.tick_params(axis="x", labelrotation=30)',
+   V27:'ax.axvline(df["hours"].median(), linestyle="--")\nax.axhline(df["score"].median(), linestyle="--")',
+   V28:'ax.annotate("Peak", xy=(peak["hours"], peak["score"]), xytext=(8, 8), textcoords="offset points", arrowprops={"arrowstyle": "->"})',
+   V29:'ax.bar(totals.index, totals.values)',
+   V30:'ax.bar(df["genre"], first, label="Solo")\nax.bar(df["genre"], second, bottom=first, label="Two players")',
+   V34:'fig.savefig("chart.png", dpi=150, bbox_inches="tight")'
+  };
+  if(focusCode[l.id])l.syntaxCode=focusCode[l.id];
  }
  // Refresh retrieval rounds from revised Transfer exercises, preserving review IDs.
  for(const l of L.filter(l=>l.review)){
