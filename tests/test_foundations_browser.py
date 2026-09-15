@@ -114,6 +114,8 @@ with sync_playwright() as p:
   }''')
   report['pyodide_solutions']=result;assert not result['failures'],result
  # Content, output and controls stay within their columns in both themes.
+ for id,deck in [('I22','inspect'),('W31','wrangle'),('V37','visualise')]:
+  open_lesson(id,2);assert page.locator(f'a[href="#{deck}"]').count()==1
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:
@@ -147,6 +149,7 @@ with sync_playwright() as p:
    page.wait_for_function('(id)=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id)',arg=href.split('/')[1])
    assert page.locator('.foundation-task-reminder').inner_text().startswith('Your task')
    assert page.locator('.back-playground').get_attribute('href')=='#'+deck
+   assert page.locator(f'a[href="#{deck}"]').count()==1
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:

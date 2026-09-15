@@ -53,7 +53,7 @@ function lessonPage(lesson,roundIndex){
  ${controlHelp?'<p class="control-help"><strong>Run code</strong> shows what Python produces. <strong>Check answer</strong> also checks whether your result satisfies the task.</p>':''}
  <div class="foundation-runtime" id="foundationRuntime" role="status">${esc(runtimeStatus)}</div><p class="foundation-feedback" id="foundationFeedback" role="status"></p>
  <div class="foundation-output" id="foundationOutput" role="region" aria-label="Python output"><h3>Output</h3><p class="empty-output">Run your code to see what Python returns.</p></div></section></div>
- <nav class="foundation-navigation" aria-label="Lesson progression"><a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a><a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':next.startsWith('#'+lesson.deck+'/')?'Next lesson':'Back to deck'} →</a></nav>`;
+ <nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+lesson.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a>`}${next==='#'+lesson.deck?'<span class="deck-boundary">End of deck</span>':`<a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
 }
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{

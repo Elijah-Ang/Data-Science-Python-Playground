@@ -183,3 +183,5 @@ body[data-foundations] [hidden] { display:none !important; }
 @media(min-width:801px) {
  .foundation-code-pane { overflow:auto; }
 }
+
+.deck-boundary { color:var(--muted); font:12px var(--mono); }
