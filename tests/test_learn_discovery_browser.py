@@ -15,12 +15,22 @@ with sync_playwright() as pw:
  assert page.locator('.scene-motion').is_visible()
  bounds=page.locator('.mascot-viewport').bounding_box()
  # Sample the browser's real animation timeline: both images must be visible together.
- cta.focus();page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="blending"')
- page.wait_for_function('''()=>{const a=[...document.querySelectorAll('.mascot-layer')].map(e=>+getComputedStyle(e).opacity);return a.every(x=>x>.15&&x<.85)}''')
+ page.evaluate("""()=>{
+  window.blendEvidence=new Promise(resolve=>{
+   const sample=()=>{
+    const layers=[...document.querySelectorAll('.mascot-layer')];
+    const opacity=layers.map(e=>+getComputedStyle(e).opacity);
+    if(opacity.every(x=>x>.15&&x<.85)){
+     resolve({opacity,keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))});
+    }else requestAnimationFrame(sample);
+   };requestAnimationFrame(sample);
+  });
+ }""")
+ cta.focus()
+ evidence=page.evaluate('()=>Promise.race([blendEvidence,new Promise((_,reject)=>setTimeout(()=>reject(new Error("No overlapping pose transition observed")),10000))])')
+ assert all(.15<x<.85 for x in evidence['opacity']),evidence
  assert page.locator('.mascot-viewport').bounding_box()==bounds
- animated=page.locator('.mascot-layer').evaluate_all('els=>els.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))')
- assert all(not any(k in ['top','left','width','height'] for k in keys) for keys in animated)
- page.locator('.mascot-cta').screenshot(path=str(out/f'{args.engine}-blend.png'))
+ assert evidence['keys'] and all(not any(k in ['top','left','width','height'] for k in keys) for keys in evidence['keys'])
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="idle"')
  assert page.locator('[data-mascot]').get_attribute('data-pose')=='teach'
  assert 'none' != cta.evaluate('(e)=>getComputedStyle(e).outlineStyle')
