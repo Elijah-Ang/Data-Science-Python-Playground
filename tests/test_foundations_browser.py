@@ -131,17 +131,23 @@ with sync_playwright() as p:
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),(label,theme,view)
     assert page.evaluate('Array.from(document.querySelectorAll(".foundation-deck,.lesson-card,.foundation-code-pane,.foundation-content,.foundation-actions")).every(e=>{const b=e.getBoundingClientRect();return b.left>=-1&&b.right<=innerWidth+1})'),(label,theme,view)
     if view=='lesson':
-     geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1}}''')
+     assert page.locator('.foundation-lesson-heading > .foundation-practices').count()==1
+     assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
+     geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect(),copy=document.querySelector('.foundation-lesson-copy').getBoundingClientRect(),types=document.querySelector('.foundation-practices').getBoundingClientRect(),split=document.querySelector('.foundation-split').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1,typesRight:types.left>=copy.right-1,typesBelow:types.top>=copy.bottom-1,workspace:split.height}}''')
      assert geometry['stacked' if width<=800 else 'split'],geometry
      editor_height=page.locator('.foundation-editor-wrap').bounding_box()['height']
-     expected_editor_height=300 if width>800 else 380
+     expected_editor_height=320 if width>800 else 380
      assert editor_height>=expected_editor_height,(label,editor_height)
      if width>800:
+      assert geometry['typesRight'],geometry
+      assert geometry['workspace']>=height-400,geometry
       before=page.locator('.foundation-code-pane').bounding_box()
       moved=page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')
       assert moved>0
       assert page.locator('.foundation-code-pane').bounding_box()==before
       page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=0;}')
+     else:
+      assert geometry['typesBelow'],geometry
     path=evidence/f'{args.engine}-{label}-{theme}-{view}.png';page.screenshot(path=str(path),full_page=True)
     report['screenshots'].append(str(path.relative_to(ROOT)))
    # Real plot output is also reviewed in every viewport/theme.
