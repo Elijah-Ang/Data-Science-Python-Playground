@@ -146,3 +146,36 @@ body[data-foundations] [hidden] { display:none !important; }
 }
 @media(max-width:800px) { #foundationHighlight { font-size:16px; } .foundation-practices ol { gap:10px; flex-wrap:wrap; } }
 @media(forced-colors:active) { #foundationHighlight { display:none; } #foundationEditor { color:CanvasText; -webkit-text-fill-color:CanvasText; caret-color:CanvasText; } }
+
+/* Learning cards reuse the deck accent; diagrams are compact instructional previews. */
+.foundation-guidance { font:14px/1.7 var(--body); color:var(--muted); margin:20px 0; }
+.foundation-deck-heading .foundation-guidance { font-size:14px; margin:16px 0; }
+.chapter-jumps { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
+.chapter-jumps a { padding:7px 10px; border:1px solid var(--border); border-radius:4px; font:12px var(--mono); text-underline-offset:3px; }
+.chapter-jumps a:hover { border-color:var(--lesson-accent); }
+.foundation-chapter { scroll-margin-top:85px; }
+.lesson-card { display:flex; flex-direction:column; gap:9px; }
+.card-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.card-level { font:10px var(--mono); color:var(--lesson-accent); text-transform:uppercase; }
+.lesson-card small { margin-top:auto; }
+.concept-visual { display:block; width:100%; height:105px; color:var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 4%,var(--panel)); border:1px solid var(--border-soft); border-radius:4px; }
+.concept-visual g { fill:none; stroke:currentColor; stroke-width:1.2; }
+.concept-visual text { stroke:none; fill:var(--ink); font:9px var(--mono); }
+.concept-visual .visual-cell { fill:var(--panel); stroke:var(--border-soft); }
+.concept-visual .visual-wash { fill:color-mix(in srgb,var(--lesson-accent) 18%,var(--panel)); }
+.concept-visual .visual-selected { fill:color-mix(in srgb,var(--lesson-accent) 22%,var(--panel)); stroke-width:2; }
+.concept-visual .visual-fill { fill:currentColor; fill-opacity:.65; }
+.concept-visual .visual-hatch { fill:var(--panel); stroke-width:2; stroke-dasharray:3 2; }
+.concept-visual .visual-bold { stroke-width:2.5; }
+.concept-visual .visual-dashed { stroke-dasharray:5 3; }
+.concept-visual .visual-muted { stroke:var(--muted); }
+.foundation-content .concept-visual { height:120px; max-width:360px; margin:0 0 14px; }
+.isolated-syntax { margin-bottom:12px !important; }
+.foundation-task-reminder { padding:10px 15px; border-bottom:2px solid var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 8%,var(--panel)); max-height:145px; overflow:auto; flex-shrink:0; }
+.foundation-task-reminder strong { color:var(--lesson-accent); font:11px var(--display); }
+.foundation-task-reminder p { font:13px/1.6 var(--body); margin:6px 0 0; }
+.control-help { font:12px/1.5 var(--body); margin:0; padding:8px 16px; color:var(--muted); flex-shrink:0; }
+.foundation-footer { flex-wrap:wrap; }
+.foundation-footer nav { display:flex; gap:16px; flex-wrap:wrap; }
+.foundation-footer a { text-underline-offset:3px; }
+@media(max-width:800px){.foundation-task-reminder{max-height:none;}.foundation-content .concept-visual{max-width:100%;}}

@@ -1,0 +1,49 @@
+name: Validate Data Foundations
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  curriculum:
+    name: Foundations curriculum and semantic checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.10'
+      - run: python -m pip install -r tests/requirements-pyodide-parity.txt
+      - run: node tests/test_foundations_curriculum.mjs
+      - run: python tests/test_foundations_runtime.py
+  browser:
+    name: Foundations real Pyodide (${{ matrix.engine }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.11'
+      - run: npm ci && npm run build:web
+      - run: python -m pip install playwright==1.52.0
+      - run: python -m playwright install --with-deps ${{ matrix.engine }}
+      - name: Serve built site
+        run: nohup python -m http.server 8000 -d dist > /tmp/foundations-http.log 2>&1 &
+      - run: python tests/test_foundations_cold_start.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+      - run: python tests/test_foundations_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote --all-solutions
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: foundations-${{ matrix.engine }}
+          path: tests/evidence/foundations/

@@ -20,6 +20,8 @@ const files = [
   "foundations/foundations.css",
   "foundations/app.js",
   "foundations/curriculum.js",
+  "foundations/refinements.js",
+  "foundations/visuals.js",
   "foundations/worker.js",
   "foundations/runtime.py",
   "ml.html",

@@ -9,19 +9,73 @@ import traceback
 import warnings
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import seaborn as sns
-from matplotlib.collections import PathCollection, QuadMesh, LineCollection
-from matplotlib.patches import Rectangle
 from pandas.testing import assert_frame_equal, assert_series_equal, assert_index_equal
+plt = sns = None
 
-_ORIGINAL_SHOW = plt.show
-_ORIGINAL_SUBPLOTS = plt.subplots
-_ORIGINAL_CLOSE = plt.close
+
+def _ensure_plotting():
+    global plt, sns, PathCollection, QuadMesh, LineCollection, Rectangle
+    global _ORIGINAL_SHOW, _ORIGINAL_SUBPLOTS, _ORIGINAL_CLOSE
+    if plt is not None:
+        return
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from matplotlib.collections import PathCollection, QuadMesh, LineCollection
+    from matplotlib.patches import Rectangle
+    _ORIGINAL_SHOW, _ORIGINAL_SUBPLOTS, _ORIGINAL_CLOSE = plt.show, plt.subplots, plt.close
+
+
 _ORIGINAL_DATAFRAME = pd.DataFrame
 _ORIGINAL_SERIES = pd.Series
+
+
+def _intent(code, exercise):
+    """Inspect syntax nodes, ignoring comments/strings and resolving simple aliases."""
+    tree = ast.parse(code)
+    calls, attributes, indexes, aliases = set(), set(), set(), {}
+    constants = {target.id: node.value for node in tree.body if isinstance(node, ast.Assign) for target in node.targets if isinstance(target, ast.Name)}
+    def name(node):
+        if isinstance(node, ast.Name):
+            return aliases.get(node.id, node.id)
+        if isinstance(node, ast.Attribute):
+            return name(node.value) + '.' + node.attr
+        if isinstance(node, (ast.Subscript, ast.Call)):
+            return name(node.value if isinstance(node, ast.Subscript) else node.func)
+        return ''
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for item in node.names: aliases[item.asname or item.name] = item.name
+        elif isinstance(node, ast.ImportFrom):
+            for item in node.names: aliases[item.asname or item.name] = (node.module or '') + '.' + item.name
+        elif isinstance(node, ast.Assign) and isinstance(node.value, (ast.Attribute, ast.Name)):
+            for target in node.targets:
+                if isinstance(target, ast.Name): aliases[target.id] = name(node.value)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call): calls.add(name(node.func))
+        elif isinstance(node, ast.Attribute): attributes.add(node.attr)
+        elif isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute): indexes.add(node.value.attr)
+    def present(requirement):
+        if requirement.startswith('attr:'): return requirement[5:] in attributes
+        if requirement.startswith('index:'): return requirement[6:] in indexes
+        return any(call == requirement or call.endswith('.' + requirement) for call in calls)
+    for requirement in exercise.get('requiredCalls', []):
+        assert present(requirement), 'Practise ' + requirement.split(':')[-1] + ' in this round, as requested in Your task.'
+    for rule in exercise.get('requiredKeywords', []):
+        matching = [node for node in ast.walk(tree) if isinstance(node, ast.Call) and (name(node.func) == rule['call'] or name(node.func).endswith('.' + rule['call']))]
+        def keyword_matches(node):
+            for kw in node.keywords:
+                if kw.arg == rule['keyword']:
+                    try:
+                        value = ast.literal_eval(constants.get(kw.value.id, kw.value) if isinstance(kw.value, ast.Name) else kw.value)
+                    except (ValueError, TypeError):
+                        continue
+                    if value == rule['value']: return True
+            return False
+        assert any(keyword_matches(node) for node in matching), 'Use ' + rule['keyword'] + '=' + repr(rule['value']) + ' as requested.'
+    for requirement in exercise.get('forbiddenCalls', []):
+        assert not present(requirement), 'Use the requested column operation instead of ' + requirement + '().'
 
 
 def _equal(actual, expected, strict=False):
@@ -91,6 +145,8 @@ def _plot_state(figures, rules):
                     if rules.get('jitter') and offsets.size:
                         offsets[:, 0] = np.round(offsets[:, 0])
                     part['points'] = _numeric(offsets)
+                    if rules.get('alpha'):
+                        part['alpha'] = collection.get_alpha()
                     if rules.get('sizes'):
                         part['sizes'] = _numeric(collection.get_sizes())
                     if rules.get('colors'):
@@ -130,14 +186,16 @@ def _compare_plots(actual, expected):
         assert actual == expected, 'Check titles, labels, categories and axis scales.'
 
 
-def _execute(code, columns, setup='', construction=False):
-    plt.show = _ORIGINAL_SHOW
-    plt.subplots = _ORIGINAL_SUBPLOTS
-    plt.close = _ORIGINAL_CLOSE
+def _execute(code, columns, setup='', construction=False, files=None):
+    if plt is not None:
+        plt.show = _ORIGINAL_SHOW
+        plt.subplots = _ORIGINAL_SUBPLOTS
+        plt.close = _ORIGINAL_CLOSE
     pd.DataFrame = _ORIGINAL_DATAFRAME
     pd.Series = _ORIGINAL_SERIES
-    plt.close('all')
-    plt.rcdefaults()
+    if plt is not None:
+        plt.close('all')
+        plt.rcdefaults()
     np.random.seed(42)
     # Fresh names and fresh objects on every Run and Check, including after exceptions.
     data = {key: list(values) for key, values in columns.items()}
@@ -146,6 +204,8 @@ def _execute(code, columns, setup='', construction=False):
         del env['data']
     if not construction:
         env['df'] = pd.DataFrame(data)
+    for filename, content in (files or {}).items():
+        pd.DataFrame(content).to_csv(filename, index=False)
     if setup:
         exec(setup, env)
     figures = []
@@ -154,7 +214,8 @@ def _execute(code, columns, setup='', construction=False):
             fig = plt.figure(number)
             if fig not in figures:
                 figures.append(fig)
-    plt.show = capture_show
+    if plt is not None:
+        plt.show = capture_show
     outputs = []
     def display(value):
         outputs.append(value)
@@ -176,7 +237,8 @@ def _execute(code, columns, setup='', construction=False):
                 outputs.append(last)
         except Exception as exc:
             error = ''.join(traceback.format_exception_only(type(exc), exc)).strip()
-    plt.show = _ORIGINAL_SHOW
+    if plt is not None:
+        plt.show = _ORIGINAL_SHOW
     return {'env': env, 'last': last, 'outputs': outputs, 'stdout': stream.getvalue(), 'figures': figures, 'error': error}
 
 
@@ -185,23 +247,26 @@ def run_foundation(request):
     columns = request['columns']
     checking = request.get('check', False)
     target = exercise.get('target', 'value')
-    construction = exercise['id'].startswith('I01-')
+    if target == 'plot' or any(word in request['code'] for word in ['matplotlib', 'seaborn', 'plt.', 'sns.']):
+        _ensure_plotting()
+    construction = exercise['id'].startswith('I01-') or bool(exercise.get('files'))
     setup = exercise.get('setup', '')
     expected = None
     # The answer namespace is never exposed to learner code; no shared df objects.
     if checking:
-        expected = _execute(exercise['solution'], columns, setup, construction)
+        expected = _execute(exercise['solution'], columns, setup, construction, exercise.get('files'))
         if expected['error']:
             raise RuntimeError('Reference exercise failed: ' + expected['error'])
         if target == 'plot':
             expected_plot = _plot_state(expected['figures'], exercise.get('plot') or {})
     if os.path.exists('chart.png'):
         os.remove('chart.png')
-    actual = _execute(request['code'], columns, setup, construction)
+    actual = _execute(request['code'], columns, setup, construction, exercise.get('files'))
     passed = False
     feedback = ''
     if checking and not actual['error']:
         try:
+            _intent(request['code'], exercise)
             if target == 'plot':
                 _compare_plots(_plot_state(actual['figures'], exercise.get('plot') or {}), expected_plot)
                 assert actual['figures'], 'Display your figure with plt.show().'
@@ -221,6 +286,8 @@ def run_foundation(request):
                 if got is None and target == 'value':
                     got = actual['env'].get('result')
                 _equal(got, wanted, exercise.get('strictDtype', False))
+            if exercise.get('preserveData'):
+                _equal(actual['env'].get('df'), pd.DataFrame(columns), True)
             passed = True
             feedback = 'That matches the task. Read the output, then try the next practice.'
         except (AssertionError, TypeError, ValueError, KeyError) as exc:
@@ -242,5 +309,6 @@ def run_foundation(request):
     if os.path.isfile('chart.png'):
         with open('chart.png', 'rb') as file:
             rendered.append({'kind': 'download', 'name': 'chart.png', 'value': 'data:image/png;base64,' + base64.b64encode(file.read()).decode()})
-    plt.close('all')
+    if plt is not None:
+        plt.close('all')
     return {'passed': passed, 'checked': checking, 'feedback': feedback, 'stdout': actual['stdout'], 'error': actual['error'], 'outputs': rendered}

@@ -12,6 +12,7 @@ with sync_playwright() as p:
  page.goto(args.base_url+'/playground.html'+runtime_query)
  assert page.locator('.route-tools .learn-refresh').count()==1
  assert page.locator('.data-route-actions #moreTasksToggle').count()==1
+ assert 'linear-gradient' in page.locator('.learn-refresh').evaluate('(e)=>getComputedStyle(e).backgroundImage')
  page.locator('.learn-refresh').click();page.wait_for_url('**/data-foundations.html')
  assert page.locator('.foundation-deck').count()==3
  assert page.locator('.mode-switch a').count()==4
@@ -21,7 +22,13 @@ with sync_playwright() as p:
  base=args.base_url+'/data-foundations.html'+runtime_query
  page.goto(base)
  page.locator('.foundation-deck[data-deck="inspect"]').click()
- assert page.locator('.lesson-card').count()==25
+ assert page.locator('.lesson-card').count()==27
+ assert page.locator('.foundation-breadcrumb').count()==0
+ page.locator('.chapter-jumps a').last.click()
+ assert page.locator('#chapter-3').evaluate('(e)=>e.getBoundingClientRect().top')>=0
+ assert page.locator('.lesson-card svg').count()==27
+ page.locator('.back-playground').click();assert page.locator('.foundation-deck').count()==3
+ page.locator('.foundation-deck[data-deck="inspect"]').click()
  page.locator('.lesson-card[href="#inspect/I01/0"]').click()
  page.wait_for_function("document.querySelector('#foundationRuntime').textContent.includes('Python ready')",timeout=120000)
  def open_lesson(id,index=0):
@@ -37,7 +44,7 @@ with sync_playwright() as p:
   return page.locator('#foundationFeedback').inner_text()
  assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
  assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
- assert page.locator('.back-playground').get_attribute('href')=='#'
+ assert page.locator('.back-playground').get_attribute('href')=='#inspect'
  assert not page.locator('#foundationSolution').get_attribute('open')
  page.locator('#foundationHint summary').click();assert page.locator('#foundationHint').get_attribute('open') is not None
  page.locator('#foundationSolution summary').click();assert 'pd.DataFrame' in page.locator('#foundationSolution pre').inner_text()
@@ -52,9 +59,13 @@ with sync_playwright() as p:
  assert page.evaluate('JSON.parse(localStorage.getItem("dspp-foundations-v1")).drafts["I01-1"]')
  page.locator('#resetExercise').click();assert '# saved draft' not in page.locator('#foundationEditor').input_value()
  assert 'fresh given data' in page.locator('#foundationFeedback').inner_text()
+ assert page.locator('#runExercise').inner_text()=='▶ Run code'
+ assert page.locator('#checkExercise').inner_text()=='✓ Check answer'
+ assert page.locator('#resetExercise').inner_text()=='Reset code'
  report['checks'].append('Deck, round progression, hints/solutions, drafts, saved-code persistence and exercise reset')
  open_lesson('I02')
- assert 'matches' in run('df.iloc[:2]')
+ assert 'Not yet' in run('df.iloc[:2]')
+ open_lesson('I02',2);assert 'matches' in run('df.iloc[:4]');open_lesson('I02')
  assert 'Not yet' in run('df.tail(2)')
  assert 'could not finish' in run('df[')
  assert 'SyntaxError' in page.locator('#foundationOutput').inner_text()
@@ -67,6 +78,10 @@ with sync_playwright() as p:
  assert page.locator('#foundationEditor').input_value().startswith('while True')
  assert 'matches' in run('df.head(2)')
  report['checks'].append('Semantic equivalence, wrong values, syntax/KeyError recovery, fresh data, real infinite-loop restart')
+ open_lesson('I01CSV');assert 'could not finish' in run('df');assert 'matches' in run(solution('I01CSV'))
+ open_lesson('I09');assert page.locator('.foundation-content table th').first.inner_text()=='row'
+ assert 'B' in page.locator('.foundation-content table').inner_text()
+ open_lesson('W28');assert 'matches' in run(solution('W28'))
  open_lesson('W31');assert 'matches' in run(solution('W31'))
  open_lesson('V16');assert 'matches' in run(solution('V16'))
  assert page.locator('#foundationOutput img').count()==1
@@ -123,6 +138,27 @@ with sync_playwright() as p:
    assert page.locator('.figure-links a').first.evaluate('(e)=>getComputedStyle(e).color')=='rgb(29, 42, 66)'
    path=evidence/f'{args.engine}-{label}-{theme}-plot.png';page.screenshot(path=str(path),full_page=True)
    report['screenshots'].append(str(path.relative_to(ROOT)))
+ # Every card link resolves, and representative concept visuals have evidence at all widths.
+ for deck in ['inspect','wrangle','visualise']:
+  page.evaluate('(deck)=>{location.hash="#"+deck}',deck);page.wait_for_timeout(50)
+  hrefs=page.locator('.lesson-card').evaluate_all('(els)=>els.map(e=>e.getAttribute("href"))')
+  for href in hrefs:
+   page.evaluate('(href)=>{location.hash=href}',href)
+   page.wait_for_function('(id)=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id)',arg=href.split('/')[1])
+   assert page.locator('.foundation-task-reminder').inner_text().startswith('Your task')
+   assert page.locator('.back-playground').get_attribute('href')=='#'+deck
+ for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
+  page.set_viewport_size({'width':width,'height':height})
+  for theme in ['light','dark']:
+   page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
+   for deck,ids in [('inspect',['I03','I10']),('wrangle',['W10','W24','W22']),('visualise',['V04','V11','V18','V22','V30','V31'])]:
+    page.evaluate('(deck)=>{location.hash="#"+deck}',deck);page.wait_for_timeout(50)
+    for id in ids:
+     card=page.locator(f'.lesson-card[href="#{deck}/{id}/0"]')
+     card.scroll_into_view_if_needed()
+     path=evidence/f'{args.engine}-{label}-{theme}-visual-{id}.png';card.screenshot(path=str(path));report['screenshots'].append(str(path.relative_to(ROOT)))
+     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
+ report['checks'].append('All cards reachable; chapter jumps, one-level Back, and 66 concept-visual screenshots')
  # Narrow-phone boundary and fading scaffold stay usable.
  page.set_viewport_size({'width':320,'height':740});open_lesson('I02',2)
  assert page.locator('summary',has_text='Recall the syntax').is_visible()
