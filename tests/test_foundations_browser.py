@@ -191,6 +191,7 @@ with sync_playwright() as p:
  assert not page.get_by_text('Resume practice',exact=False).count()
  assert not page.get_by_text('saved learning',exact=False).count()
  assert 'drafts stay' not in page.locator('.foundation-footer').inner_text()
+ assert 'save draft' not in page.locator('body').inner_text().lower()
  assert page.evaluate('localStorage.getItem("dspp-foundations-v1")') is None
  # Shared appearance preference is independent of learning state.
  page.reload();assert page.locator('body').get_attribute('data-theme')=='dark'

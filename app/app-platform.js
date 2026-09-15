@@ -121,7 +121,7 @@ if (!native && "serviceWorker" in navigator && location.protocol.startsWith("htt
       const registration=await navigator.serviceWorker.register("./service-worker.js");
       const offer=() => {
         if (!registration.waiting || !navigator.serviceWorker.controller) return;
-        const button=document.createElement('button'); button.className='app-update'; button.textContent='Update available — save draft and reload';
+        const button=document.createElement('button'); button.className='app-update'; button.textContent=window.NotebookSession?'Update available — save draft and reload':'Update available — reload';
         button.addEventListener('click',() => {if (window.NotebookSession && !window.NotebookSession.save() && !confirm('Local saving failed. Copy any code you want to keep before updating. Reload anyway?')) return; registration.waiting.postMessage({type:'ACTIVATE_SAVED_UPDATE'}); navigator.serviceWorker.addEventListener('controllerchange',()=>location.reload(),{once:true});});
         document.body.append(button);
       };
