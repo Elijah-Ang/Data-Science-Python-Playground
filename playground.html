@@ -685,8 +685,51 @@
     .app-connectivity{position:fixed;right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));z-index:500;max-width:calc(100vw - 28px);padding:9px 12px;border:1px solid var(--orange);border-radius:999px;background:var(--panel-2);color:var(--ink);box-shadow:var(--shadow);font:700 .62rem/1.2 var(--mono);opacity:0;transform:translateY(16px);pointer-events:none;transition:.18s}
     .app-connectivity.is-visible,.app-connectivity.is-restored{opacity:1;transform:none}.app-connectivity.is-restored{border-color:var(--mint)}
     .data-route-actions { display:flex; gap:8px; align-items:center; }
-    body[data-playground] .route-tools .learn-refresh { background:linear-gradient(135deg,#087d9d,#3459b6); border-color:#65dbf5; color:#fff; text-decoration:none; box-shadow:0 2px 0 #163b65, inset 0 1px 0 #ffffff40; }
-    body[data-playground] .route-tools .learn-refresh:hover { transform:translateY(-1px); background:linear-gradient(135deg,#09647d,#294a9d); color:#fff; }
+    body[data-playground] .route-tools .learn-refresh {
+      position:relative;
+      width:162px;
+      min-width:162px;
+      min-height:36px;
+      margin-right:20px;
+      gap:8px;
+      padding:2px 15px 2px 4px;
+      border:1.5px solid #287c6c;
+      border-radius:999px;
+      background:linear-gradient(180deg,#e5f2df 0%,#d7ead6 70%,#c9dfcb 100%);
+      color:#1d2945;
+      text-decoration:none;
+      box-shadow:0 2px 0 #85ac8d,0 4px 0 #375c51,0 6px 8px rgba(47,75,58,.18),inset 0 1px 0 rgba(255,255,255,.82);
+      transform:translateY(-2px);
+      transition:filter .15s,box-shadow .15s,transform .1s;
+    }
+    body[data-playground] .route-tools .learn-refresh:hover {
+      border-color:#287c6c;
+      background:linear-gradient(180deg,#edf7e8 0%,#deeedc 70%,#cee3d0 100%);
+      color:#1d2945;
+      filter:saturate(1.08);
+      box-shadow:0 2px 0 #85ac8d,0 4px 0 #375c51,0 7px 10px rgba(47,75,58,.22),inset 0 1px 0 rgba(255,255,255,.9);
+      transform:translateY(-3px);
+    }
+    body[data-playground] .route-tools .learn-refresh:active {
+      box-shadow:0 1px 0 #85ac8d,0 2px 0 #375c51,0 4px 6px rgba(47,75,58,.18),inset 0 1px 0 rgba(255,255,255,.82);
+      transform:translateY(0);
+    }
+    .learn-refresh-icon {
+      display:grid;
+      place-items:center;
+      width:27px;
+      height:27px;
+      flex:0 0 27px;
+      border-radius:50%;
+      background:linear-gradient(145deg,#2f8977,#1c695c);
+      box-shadow:inset 0 1px 2px rgba(255,255,255,.22),0 1px 2px rgba(26,72,61,.2);
+      color:#f9f6e7;
+    }
+    body[data-playground] .route-tools .learn-refresh-icon svg { width:18px; height:18px; fill:currentColor; stroke:none; }
+    .learn-refresh-label { font:700 .52rem/1 var(--display); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; }
+    .learn-refresh-rays { position:absolute; left:calc(100% + 6px); top:50%; width:13px; height:29px; color:#287c6c; transform:translateY(-50%); pointer-events:none; }
+    body[data-playground] .route-tools .learn-refresh-rays svg { display:block; width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:square; }
+    @media(max-width:520px) { .data-route-actions { padding-right:17px; } }
     @media(max-width:480px) { .data-route-actions { flex-wrap:wrap; } .data-route-actions .learn-refresh { flex:1 0 100%; } }
   </style>
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
@@ -772,7 +815,7 @@
 
       <div class="route-tools">
         <div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span></div>
-        <div class="data-route-actions"><a class="toolbar-button learn-refresh" href="data-foundations.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 2h12v3H3zM5 5h12v3H5zM3 8h12v10H3zM6 11h6M6 14h4"/></svg>Learn / Refresh</a>
+        <div class="data-route-actions"><a class="toolbar-button learn-refresh" href="data-foundations.html"><span class="learn-refresh-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5Zm3.25 2.9L12 14.35l6.25-2.95v4.25c-1.75 1.55-3.84 2.35-6.25 2.35s-4.5-.8-6.25-2.35V11.4Zm14.5-1.35h1.5v6.25h-1.5v-6.25Z"/></svg></span><span class="learn-refresh-label">Learn / Refresh</span><span class="learn-refresh-rays" aria-hidden="true"><svg viewBox="0 0 16 32"><path d="M2 9 6 3M6 16h8M2 24l6 4"/></svg></span></a>
         <button class="toolbar-button" id="moreTasksToggle" type="button" aria-expanded="false" aria-controls="moreTasksPanel" aria-pressed="false">＋ More tasks</button></div>
       </div>
 

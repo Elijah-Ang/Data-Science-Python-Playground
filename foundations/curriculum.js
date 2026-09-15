@@ -264,6 +264,7 @@ for (const lesson of ordered.filter(l => !l.review)) {
  }
 }
 const curriculum={version:1,datasets,decks,lessons:ordered,setupCode};
+(typeof module!=='undefined'?require('./refinements.js'):root.refineFoundations)(curriculum);
 if(typeof module!=='undefined')module.exports=curriculum;
 else root.FoundationsCurriculum=curriculum;
 })(typeof window!=='undefined'?window:globalThis);
