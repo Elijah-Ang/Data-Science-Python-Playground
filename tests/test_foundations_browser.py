@@ -133,6 +133,9 @@ with sync_playwright() as p:
     if view=='lesson':
      geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1}}''')
      assert geometry['stacked' if width<=800 else 'split'],geometry
+     editor_height=page.locator('.foundation-editor-wrap').bounding_box()['height']
+     expected_editor_height=300 if width>800 else 380
+     assert editor_height>=expected_editor_height,(label,editor_height)
      if width>800:
       before=page.locator('.foundation-code-pane').bounding_box()
       moved=page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')

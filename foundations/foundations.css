@@ -81,7 +81,7 @@ body[data-foundations][data-deck="visualise"] { --lesson-accent:var(--mint); }
 .foundation-editor-head span { color:var(--muted); font:11px var(--mono); }
 .foundation-editor-wrap { display:grid; grid-template-columns:36px minmax(0,1fr); background:var(--code); color:var(--code-ink); }
 .foundation-line-numbers { padding:18px 0 18px 10px; text-align:right; white-space:pre; color:#9298a5; font:13px/1.8 var(--mono); pointer-events:none; overflow:hidden; }
-#foundationEditor { display:block; resize:vertical; width:100%; min-height:275px; max-height:600px; border:0; border-radius:0; padding:18px 16px; background:var(--code); color:var(--code-ink); font:13px/1.8 var(--mono); white-space:pre; overflow:auto; tab-size:4; outline-offset:-3px; }
+#foundationEditor { display:block; resize:vertical; width:100%; min-height:380px; max-height:720px; border:0; border-radius:0; padding:18px 16px; background:var(--code); color:var(--code-ink); font:13px/1.8 var(--mono); white-space:pre; overflow:auto; tab-size:4; outline-offset:-3px; }
 .foundation-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:13px 16px; border-bottom:1px solid var(--border); }
 .foundation-actions button,.foundation-navigation a { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:42px; padding:9px 15px; border:1px solid var(--border); border-radius:4px; background:var(--panel-2); color:var(--ink); font:800 13px var(--body); text-decoration:none; cursor:pointer; }
 .foundation-actions .primary { border-color:var(--lesson-accent); color:var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 12%,var(--panel)); }
@@ -133,7 +133,7 @@ body[data-foundations] [hidden] { display:none !important; }
  .foundation-content { height:100%; overflow:auto; overscroll-behavior:contain; padding-right:12px; }
  .foundation-code-pane { position:static; height:100%; display:flex; flex-direction:column; }
  .foundation-editor-head,.foundation-actions,.foundation-runtime,.foundation-feedback { flex-shrink:0; }
- .foundation-editor-wrap { flex:0 1 230px; min-height:100px; overflow:hidden; }
+ .foundation-editor-wrap { flex:0 0 clamp(300px,34vh,360px); min-height:300px; overflow:hidden; }
  #foundationEditor { height:100%; min-height:100%; max-height:none; resize:none; }
  .foundation-line-numbers { max-height:100%; }
  .foundation-output { flex:1; min-height:80px; max-height:none; overflow:auto; }
