@@ -12,7 +12,7 @@ The landing page contains three physical card stacks. Deck libraries group the c
 
 Draft code uses only the `dspp-foundations-v1` localStorage key. There is no resume button, completion tracking, progress bar or percentage. Reset saved learning clears saved code without affecting other Playground state or the shared theme.
 
-The exercise-type strip is non-interactive and explains Follow (guided practice), Change (a different context), and Transfer (independent practice), marking the current type. Previous/Next remain the navigation controls. Desktop lessons scroll independently on the left while the Python pane remains stationary on the right; the output has its own scroll area. Python input and worked examples use live syntax colouring. The lesson's prominent back link returns to deck selection. Learn / Refresh keeps its dimensions and now uses a filled cyan-to-blue treatment.
+The exercise-type strip is non-interactive and explains Follow (guided practice), Change (a different context), and Transfer (independent practice), marking the current type. Previous/Next remain the navigation controls. Desktop lessons scroll independently on the left while the Python pane remains stationary on the right; the output has its own scroll area. Python input and worked examples use live syntax colouring. The lesson's prominent back link returns to deck selection. Learn / Refresh is a compact mint pill with a circular graduation-cap mark, pixel label, layered green edge and three accent rays, recreated as accessible HTML, CSS and inline SVG.
 
 ## Inventory
 
