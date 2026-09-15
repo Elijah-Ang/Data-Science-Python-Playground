@@ -47,6 +47,11 @@ with sync_playwright() as pw:
  cta.hover();page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="blending"');page.mouse.move(0,0)
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
  report['checks'].append('Real overlapping layers, transform/opacity-only motion, fixed viewport, focus and queued hover reactions')
+ # The original WebGL scene is already verified above and by its own regression.
+ # Use its supported static fallback during the accelerated mascot-only sequence,
+ # avoiding thousands of unrelated software-rendered GPU frames on CI.
+ page.evaluate("document.querySelector('.scene-motion').getContext('webgl').getExtension('WEBGL_lose_context').loseContext()")
+ page.wait_for_function('document.querySelector("[data-scene]").dataset.motion==="fallback"')
  # Accelerate dwell timers, while retaining browser animation assertions above.
  page.clock.install();seen=set();assets=set()
  page.evaluate('''()=>{window.observedPoses=new Set(['book']);window.observedAssets=new Set();new MutationObserver(()=>{observedPoses.add(document.querySelector('[data-mascot]').dataset.pose);document.querySelectorAll('.mascot-layer').forEach(e=>observedAssets.add(e.src));}).observe(document.querySelector('[data-mascot]'),{attributes:true,subtree:true});}''')

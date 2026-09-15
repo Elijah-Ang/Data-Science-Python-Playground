@@ -14,6 +14,7 @@ Read the landing HTML/CSS, gate controller and scene motion integration, Data Fo
 - `assets/mascot/robot-*.png`: exact supplied PNGs under role names; no recoloring, stretching, raster edits or unrelated asset renames.
 - `scripts/build-web.mjs`, `scripts/check-app-shell.mjs`, `package.json`: build/precache assets and hub, shell checks, JS syntax checks.
 - `tests/test_learn_discovery_browser.py`, `.github/workflows/learn-discovery.yml`: Chromium/WebKit discovery, animation, lifecycle, responsive and existing landing regression checks.
+- `tests/test_ui_preferences_browser.py`: retain the exact landing link audit with the new optional hub route included.
 - This report documents the design and verification.
 
 The existing Data Learn / Refresh shortcut still leads directly to Data Foundations. Foundations deck/lesson navigation, notebook guards and Data/Statistics/ML implementations were not modified. No saved learning, completion, resume or progress tracking was added.
@@ -51,6 +52,8 @@ Local checks:
 
 - `npm run check`: build, syntax, route audit and app shell passed.
 - Discovery browser audit: Chromium and WebKit passed real opacity overlap, fixed viewport, all six poses/assets, queued focus/hover reactions, reduced motion, hidden/pagehide behavior, route navigation, no-JS fallback and five-width theme screenshots.
+- The automated overlap assertion holds the actual WAAPI effects at their midpoint, then resumes them; manual review also inspected real-time frames. During the isolated accelerated pose sequence, the already-verified WebGL scene uses its supported context-loss fallback to avoid unrelated software GPU work on CI. Fresh-page navigation/screenshots and the separate landing regression retain normal artwork animation.
+- Existing Chromium navigation/preferences audit passed.
 - Existing Chromium landing refresh/fallback audit passed; the same regression runs in both CI browsers.
 - Data: 262 task scenarios plus index, schema, alias reset, display and stream regressions passed.
 - Statistics: 64 unit tests passed.
