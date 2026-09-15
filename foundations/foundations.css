@@ -179,3 +179,7 @@ body[data-foundations] [hidden] { display:none !important; }
 .foundation-footer nav { display:flex; gap:16px; flex-wrap:wrap; }
 .foundation-footer a { text-underline-offset:3px; }
 @media(max-width:800px){.foundation-task-reminder{max-height:none;}.foundation-content .concept-visual{max-width:100%;}}
+/* Short laptop windows must not clip controls beneath a long checkpoint task. */
+@media(min-width:801px) {
+ .foundation-code-pane { overflow:auto; }
+}

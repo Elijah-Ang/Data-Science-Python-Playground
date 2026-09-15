@@ -159,6 +159,16 @@ with sync_playwright() as p:
      path=evidence/f'{args.engine}-{label}-{theme}-visual-{id}.png';card.screenshot(path=str(path));report['screenshots'].append(str(path.relative_to(ROOT)))
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
  report['checks'].append('All cards reachable; chapter jumps, one-level Back, and 66 concept-visual screenshots')
+ # On short laptops, the stationary panel must allow access to every control.
+ page.set_viewport_size({'width':1280,'height':720});open_lesson('W31')
+ panel=page.locator('.foundation-code-pane')
+ assert panel.evaluate('(e)=>getComputedStyle(e).overflowY')=='auto'
+ page.locator('#checkExercise').scroll_into_view_if_needed()
+ bounds=panel.bounding_box();button=page.locator('#checkExercise').bounding_box()
+ assert button['y']>=bounds['y'] and button['y']+button['height']<=bounds['y']+bounds['height']
+ position=panel.bounding_box();page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=300}')
+ assert panel.bounding_box()==position
+ report['checks'].append('Short laptop: long checkpoint task cannot clip Run/Check/Reset; Python panel stays fixed')
  # Narrow-phone boundary and fading scaffold stay usable.
  page.set_viewport_size({'width':320,'height':740});open_lesson('I02',2)
  assert page.locator('summary',has_text='Recall the syntax').is_visible()
