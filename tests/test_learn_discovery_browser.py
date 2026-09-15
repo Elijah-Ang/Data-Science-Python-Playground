@@ -14,23 +14,30 @@ with sync_playwright() as pw:
  page.wait_for_function('document.querySelector("[data-scene]").dataset.motion==="ready"',timeout=60000)
  assert page.locator('.scene-motion').is_visible()
  bounds=page.locator('.mascot-viewport').bounding_box()
- # Sample the browser's real animation timeline: both images must be visible together.
+ # Hold the real WAAPI effects at their midpoint so software-rendered CI frames
+ # cannot skip the brief overlap. Do not substitute the controller or its effects.
  page.evaluate("""()=>{
-  window.blendEvidence=new Promise(resolve=>{
-   const sample=()=>{
-    const layers=[...document.querySelectorAll('.mascot-layer')];
-    const opacity=layers.map(e=>+getComputedStyle(e).opacity);
-    if(opacity.every(x=>x>.15&&x<.85)){
-     resolve({opacity,keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))});
-    }else requestAnimationFrame(sample);
-   };requestAnimationFrame(sample);
-  });
+  const animate=Element.prototype.animate;
+  window.heldPoseAnimations=[];
+  Element.prototype.animate=function(...args){
+   const animation=animate.apply(this,args);
+   if(this.matches('.mascot-layer')){
+    animation.pause();animation.currentTime=210;heldPoseAnimations.push(animation);
+   }
+   return animation;
+  };
+  window.restorePoseAnimation=()=>{Element.prototype.animate=animate;heldPoseAnimations.forEach(a=>a.play());};
  }""")
  cta.focus()
- evidence=page.evaluate('()=>Promise.race([blendEvidence,new Promise((_,reject)=>setTimeout(()=>reject(new Error("No overlapping pose transition observed")),10000))])')
+ page.wait_for_function('heldPoseAnimations.length===2')
+ evidence=page.locator('.mascot-layer').evaluate_all("""layers=>({
+  opacity:layers.map(e=>+getComputedStyle(e).opacity),
+  keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))
+ })""")
  assert all(.15<x<.85 for x in evidence['opacity']),evidence
  assert page.locator('.mascot-viewport').bounding_box()==bounds
  assert evidence['keys'] and all(not any(k in ['top','left','width','height'] for k in keys) for keys in evidence['keys'])
+ page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="idle"')
  assert page.locator('[data-mascot]').get_attribute('data-pose')=='teach'
  assert 'none' != cta.evaluate('(e)=>getComputedStyle(e).outlineStyle')
