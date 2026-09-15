@@ -130,25 +130,8 @@ function refine(c){
  // Requirements describe API families rather than source-string matching.
  const intent={I01:['DataFrame'],I01CSV:['read_csv'],I02:['head'],I03:['attr:shape'],I04:['attr:columns'],I05:['info','attr:dtypes'],I08:['index:iloc'],I09:['index:loc'],I12:['sort_values'],I13:['nlargest'],I14:['nunique'],I15:['value_counts'],I17:['duplicated'],I18:['describe'],I19:['groupby','agg'],I20:['crosstab'],I21:['corr'],W01:['copy'],W02:['rename'],W04:['drop'],W06:['sort_values','reset_index'],W08:['where'],W09:['replace'],W10:['str.strip','str.lower','str.title'],W11:['str.contains'],W12:['to_numeric'],W13:['astype'],W14:['to_datetime'],W15:['to_datetime'],W16:['to_numeric','dropna'],W17:['fillna'],W18:['drop_duplicates'],W19:['groupby','agg'],W20:['transform'],W21:['pivot_table'],W22:['melt'],W23:['pivot'],W24:['merge'],W25:['concat'],W26:['cut'],W27:['get_dummies'],W28:['fit_transform'],W29:['quantile'],V01:['subplots'],V02:['set'],V03:['scatterplot'],V04:['histplot'],V05:['kdeplot'],V06:['ecdfplot'],V07:['histplot','rugplot'],V08:['countplot'],V09:['barplot'],V10:['pointplot'],V11:['boxplot'],V12:['violinplot'],V13:['stripplot'],V14:['swarmplot'],V15:['boxenplot'],V16:['scatterplot'],V17:['scatterplot'],V18:['lineplot'],V19:['lineplot'],V20:['regplot'],V21:['residplot'],V22:['heatmap'],V23:['heatmap'],V24:['subplots'],V25:['scatterplot'],V26:['set_xscale'],V27:['axhline','axvline'],V28:['annotate'],V29:['bar'],V30:['bar'],V31:['pairplot'],V32:['jointplot'],V33:['relplot'],V34:['savefig'],V36:['bar']};
  const further=new Set('I13 I20 I21 W08 W20 W21 W23 W26 W27 W28 W29 V05 V06 V07 V10 V12 V14 V15 V19 V20 V21 V23 V28 V30 V31 V32 V33'.split(' '));
- const visuals={
-  I01:'mini-table',I01CSV:'csv-table',I02:'selected-row',I03:'table-shape',I04:'table-labels',I05:'column-types',I06:'selected-column',I07:'selected-columns',I08:'selected-row',I09:'labelled-row',I10:'filtered-table',I11:'filtered-table',I12:'sorted-table',I13:'sorted-table',I14:'unique-values',I15:'group-collapse',I16:'missing-cells',I17:'duplicate-rows',I18:'summary-table',I18S:'summary-table',I19:'group-collapse',I20:'heatmap',I21:'heatmap',
-  W01:'before-after-table',W02:'renamed-table',W03:'selected-columns',W04:'dropped-column',W05:'filtered-table',W06:'sorted-table',W07:'new-column',W08:'new-column',W09:'before-after-table',W10:'clean-text',W11:'filtered-table',W12:'column-types',W13:'column-types',W14:'date-values',W15:'date-values',W16:'drop-missing',W17:'fill-missing',W18:'duplicate-rows',W19:'group-collapse',W20:'group-broadcast',W21:'reshape-table',W22:'reshape-table',W23:'reshape-wide',W24:'merge-tables',W25:'stack-tables',W26:'histogram',W27:'encoded-categories',W28:'scaled-values',W29:'boxplot',W30:'vectorised-values',
-  V01:'canvas',V02:'chart-labels',V03:'scatter',V04:'histogram',V05:'density',V06:'ecdf',V07:'rug',V08:'bars',V09:'bars',V10:'point-interval',V11:'boxplot',V12:'violin',V13:'strip',V14:'swarm',V15:'boxen',V16:'scatter',V17:'scatter',V18:'line',V19:'line-band',V20:'regression',V21:'residual',V22:'heatmap',V23:'heatmap',V24:'multi-panel',V25:'scatter',V26:'chart-labels',V27:'reference-lines',V28:'annotation',V29:'bars',V30:'stacked-bars',V31:'pair-grid',V32:'joint-grid',V33:'multi-panel',V34:'figure-export',V35:'mixed-charts',V36:'bars'
- };
- function visualFamily(variant){
-  if(['heatmap'].includes(variant))return 'matrix';
-  if(['multi-panel','pair-grid','joint-grid','mixed-charts','challenge'].includes(variant))return 'panels';
-  if(['scaled-values','vectorised-values'].includes(variant))return 'values';
-  if(['canvas','figure-export'].includes(variant))return 'figure';
-  if(['histogram','bars','stacked-bars'].includes(variant))return 'bars';
-  if(['density','violin','boxen','boxplot','point-interval','strip','swarm','ecdf','rug'].includes(variant))return 'distribution';
-  if(['before-after-table','clean-text','date-values','group-collapse','merge-tables','reshape-table','stack-tables','csv-table','renamed-table','drop-missing','fill-missing','group-broadcast','reshape-wide','encoded-categories'].includes(variant))return 'table-transform';
-  if(['mini-table','table-shape','table-labels','column-types','selected-column','selected-columns','selected-row','labelled-row','filtered-table','sorted-table','missing-cells','duplicate-rows','unique-values','summary-table','new-column','dropped-column'].includes(variant))return 'table';
-  return 'relationship';
- }
  for(const l of L.filter(l=>!l.review)){
   l.level=further.has(l.id)?'Go Further':'Core';
-  l.visual={type:visualFamily(visuals[l.id]),variant:visuals[l.id],label:l.goal,highlight:l.id==='I07'?[1,2]:[2]};
   l.rounds.forEach((r,i)=>{
    r.requiredCalls=i<2?[...(intent[l.id]||[])]:[];r.forbiddenCalls=l.id==='W30'&&i<2?['apply']:[];
    if(l.id==='I01CSV')r.requiredCalls=['read_csv'];
@@ -206,7 +189,7 @@ function refine(c){
  }
  // Refresh retrieval rounds from revised Transfer exercises, preserving review IDs.
  for(const l of L.filter(l=>l.review)){
-  l.level='Review';l.visual={type:'panels',variant:'challenge',label:'Retrieve and combine earlier skills'};
+  l.level='Review';
   l.rounds=l.rounds.map((r,i)=>{
    if(r.retrieves){const updated=clone(lesson(r.retrieves).rounds[2]);return {...updated,id:r.id,retrieves:r.retrieves,label:`Task ${i+1}`,starter:'# Bring together what you remember\n'};}
    r.requiredCalls=[];r.forbiddenCalls=[];return r;
@@ -220,6 +203,7 @@ function refine(c){
   if(l.id==='W31')r.task=r.task.replace('Create clean as a separate copy.', 'Create clean as a separate copy of df.');
   if(l.id==='V37')r.task='Using df, '+r.task[0].toLowerCase()+r.task.slice(1);
  }
+ (typeof module!=='undefined'?require('./visuals.js'):root.FoundationVisuals).configure(c);
  return c;
 }
 if(typeof module!=='undefined')module.exports=refine;else root.refineFoundations=refine;

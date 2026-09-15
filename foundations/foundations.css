@@ -180,3 +180,7 @@ body[data-foundations] [hidden] { display:none !important; }
 }
 
 .deck-boundary { color:var(--muted); font:12px var(--mono); }
+
+.concept-visual .visual-caption { text-anchor:middle; font-size:8px; fill:var(--muted); }
+.concept-visual .visual-secondary { fill:var(--coral); stroke:var(--coral); stroke-width:1.5; }
+.concept-visual .visual-negative { fill:color-mix(in srgb,var(--coral) 18%,var(--panel)); stroke:var(--coral); }

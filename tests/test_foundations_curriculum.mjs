@@ -49,3 +49,28 @@ for(const r of c.lessons.find(l=>l.id==='V30').rounds)assert(!r.solution.include
 console.log('Visual definitions, tiering, task review, stable inserted IDs, distinct schemas and meaningful chart data passed.');
 
 for(const [id,focus] of Object.entries({W15:'.dt.',W16:'.dropna',V02:'ax.set',V24:'plt.subplots',V26:'set_xscale',V27:'ax.axvline',V28:'ax.annotate',V29:'ax.bar',V30:'bottom=first',V34:'fig.savefig'}))assert(c.lessons.find(l=>l.id===id).syntaxCode.includes(focus),id+' must isolate its new syntax');
+
+// Visual regression checks target previously misleading concepts, not just SVG presence.
+for(const l of c.lessons)for(const r of l.rounds){
+ assert(visuals.diagram(r.visual).includes('Concept sketch:'),r.id);
+ if(r.retrieves)assert.deepEqual(r.visual,c.lessons.find(x=>x.id===r.retrieves).rounds[2].visual,r.id);
+}
+for(const [a,b] of [['I02','I08'],['I12','I13'],['I15','I19'],['I17','W18'],['W07','W08'],['W12','W13'],['W14','W15'],['W21','W22'],['V08','V09'],['V09','V29'],['V13','V14'],['V16','V17'],['V24','V33']]){
+ assert.notEqual(visuals.diagram(c.lessons.find(l=>l.id===a).visual),visuals.diagram(c.lessons.find(l=>l.id===b).visual),a+' / '+b);
+}
+const renderedTexts=variant=>[...visuals.diagram(visuals.spec(variant)).matchAll(/<text x="([\d.]+)" y="([\d.]+)"[^>]*>([^<]*)<\/text>/g)].map(m=>({x:+m[1],y:+m[2],value:m[3]}));
+for(const name of ['correlation','correlation-heatmap']){
+ const cells=renderedTexts(name).filter(t=>t.x>=70&&t.y<80).map(t=>Number(t.value)).filter(Number.isFinite);
+ assert.equal(cells.length,9);for(let i=0;i<3;i++)for(let j=0;j<3;j++){assert(Math.abs(cells[i*3+j])<=1);assert.equal(cells[i*3+j],cells[j*3+i]);if(i===j)assert.equal(cells[i*3+j],1);}
+}
+const swarm=[...visuals.diagram(visuals.spec('swarm')).matchAll(/<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)"/g)].map(m=>m.slice(1).map(Number));
+for(let i=0;i<swarm.length;i++)for(let j=i+1;j<swarm.length;j++)assert(Math.hypot(swarm[i][0]-swarm[j][0],swarm[i][1]-swarm[j][1])>=swarm[i][2]+swarm[j][2],'Swarm observations must not overlap');
+const sample=[10,11,12,13,14,40],quantile=p=>{const at=(sample.length-1)*p,lo=Math.floor(at);return sample[lo]+(sample[Math.ceil(at)]-sample[lo])*(at-lo);};
+const q1=quantile(.25),q3=quantile(.75),fences=[q1-1.5*(q3-q1),q3+1.5*(q3-q1)];
+for(const value of fences)assert(renderedTexts('iqr').some(t=>Number(t.value)===value),'IQR fence must agree with shown values');
+const visualReviews=JSON.parse(fs.readFileSync(new URL('../docs/foundations-visual-review.json',import.meta.url),'utf8'));
+for(const l of c.lessons){
+ const fingerprint=createHash('sha256').update(JSON.stringify([visuals.diagram(l.visual),l.rounds.map(r=>visuals.diagram(r.visual))])).digest('hex');
+ assert.equal(visualReviews[l.id],fingerprint,'Renew visual accuracy review for '+l.id);
+}
+console.log('Concept distinctions, signed symmetric correlations, swarm spacing, IQR fences and all visual review fingerprints passed.');
