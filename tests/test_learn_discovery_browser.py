@@ -22,7 +22,7 @@ with sync_playwright() as pw:
   Element.prototype.animate=function(...args){
    const animation=animate.apply(this,args);
    if(this.matches('.mascot-layer')){
-    animation.pause();animation.currentTime=210;heldPoseAnimations.push(animation);
+    animation.pause();animation.currentTime=150;heldPoseAnimations.push(animation);
    }
    return animation;
   };
@@ -108,11 +108,18 @@ with sync_playwright() as pw:
      assert page.locator('.mascot-bubble').is_visible()
      for part in ['.mascot-bubble','.mascot-viewport']:
       box=page.locator(part).bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1,(width,part,box)
-     a=page.locator('.welcome-title-copy').bounding_box();b=page.locator('.mascot-cta').bounding_box();assert b['x']>=a['x']+a['width']-1 or b['y']>=a['y']+a['height']-1,(a,b)
+     a=page.locator('.welcome-title-copy').bounding_box();b=page.locator('.mascot-cta').bounding_box()
+     assert abs(a['x']+a['width']/2-width/2)<1,(width,a)
+     if width>1000:
+      for line in page.locator('.welcome-title-line').all():
+       ink=line.evaluate('(e)=>{const r=document.createRange();r.selectNodeContents(e);const b=r.getBoundingClientRect();return {right:b.right}}')
+       assert ink['right']+12<=b['x'],(width,ink,b)
+     else:assert b['y']>=a['y']+a['height']-1,(a,b)
      assert page.locator('.mascot-viewport').bounding_box()['height'] in [110,150,180]
     else:
      assert page.locator('body').get_attribute('data-theme')==theme
      assert page.locator('.learn-path').count()==3
+     assert page.locator('.learn-robot').count()==0
     f=out/f'{args.engine}-{route}-{width}-{theme}.png';page.screenshot(path=str(f),full_page=True);report['screenshots'].append(str(f))
  # No script dependency for the two available routes and planned status labels.
  nojs=browser.new_context(java_script_enabled=False);p2=nojs.new_page();p2.goto(base+'/index.html');assert p2.locator('.mascot-cta').is_visible();p2.locator('.mascot-cta').click();assert p2.locator('.is-available').is_visible();nojs.close()

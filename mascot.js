@@ -10,7 +10,7 @@
     celebrate: {src:'assets/mascot/robot-celebrate.png',x:-2.2,y:-1.62,scale:1.073,lean:0,lift:-3}
   };
   // Return to the book between gestures. Special poses occur once per long cycle.
-  const sequence = [['book',4200],['wave',2600],['book',4800],['think',3200],['book',4600],['teach',2800],['book',5100],['code',3400],['book',5000],['celebrate',2400]];
+  const sequence = [['book',1800],['wave',1200],['book',2100],['think',1500],['book',1900],['teach',1300],['book',2200],['code',1600],['book',2100],['celebrate',1100]];
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   function mount(host) {
     const layers=[...host.querySelectorAll('.mascot-layer')], target=host.closest('a')||host;
@@ -44,10 +44,10 @@
       if(!image||request!==token||stopped()){schedule();return;}
       const outgoing=layers[active],incoming=layers[1-active],pose=poses[name];apply(incoming,name);
       // The image inside each layer carries its alignment; the layer itself only moves a few pixels.
-      const options={duration:420,easing:'cubic-bezier(.45,0,.2,1)',fill:'forwards'};
+      const options={duration:300,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'};
       host.dataset.transition='blending';host.dataset.pose=name;
-      const fadeOut=outgoing.animate([{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'},{opacity:0,transform:`translate(0,${-pose.lift}px) rotate(${-pose.lean}deg) scale(.988)`}],options);
-      const fadeIn=incoming.animate([{opacity:0,transform:`translate(1px,${pose.lift}px) rotate(${pose.lean}deg) scale(.988)`},{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'}],options);
+      const fadeOut=outgoing.animate([{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'},{opacity:0,transform:`translate(0,${-pose.lift*.5}px) rotate(${-pose.lean*.5}deg) scale(.996)`}],options);
+      const fadeIn=incoming.animate([{opacity:0,transform:`translate(.5px,${pose.lift*.5}px) rotate(${pose.lean*.5}deg) scale(.996)`},{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'}],options);
       transition=[fadeOut,fadeIn];
       await Promise.all(transition.map(a=>a.finished.catch(()=>{})));
       if(request!==token)return;

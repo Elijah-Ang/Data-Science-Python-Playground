@@ -21,7 +21,7 @@ The existing Data Learn / Refresh shortcut still leads directly to Data Foundati
 
 ## Supplied asset mapping and alignment
 
-All sources are 1254 × 1254 RGBA. Very faint alpha pixels extend beyond the visible character, so alpha bounds above 128 were inspected as well as the raw alpha bounds. Display normalization uses independent per-image translation and uniform scale; transition transforms operate separately. The viewport is fixed at 180 × 180 desktop, 150 × 150 tablet, and 100 × 110 phone, with a 5% inner margin for raised symbols and the widest hand. Images use `object-fit: contain`; normal high-resolution downsampling keeps the supplied outlines legible at these small sizes without a color-altering filter.
+All sources are 1254 × 1254 RGBA. Very faint alpha pixels extend beyond the visible character, so alpha bounds above 128 were inspected as well as the raw alpha bounds. Display normalization uses independent per-image translation and uniform scale; transition transforms operate separately. The viewport is fixed at 150 × 150 desktop and 100 × 110 tablet/phone, with a 5% inner margin for raised symbols and the widest hand. Images use `object-fit: contain`; normal high-resolution downsampling keeps the supplied outlines legible at these small sizes without a color-altering filter.
 
 | Source time, September 15 2026 | Asset / pose | Visible alpha bounds (left, top, right, bottom) | x %, y %, scale |
 | --- | --- | --- | --- |
@@ -36,9 +36,9 @@ The source filename prefix is `ChatGPT Image Sep 15, 2026 at `; the table gives 
 
 ## Motion and manual review
 
-Deterministic choreography: book 4.2s → wave 2.6s → book 4.8s → think 3.2s → book 4.6s → teach 2.8s → book 5.1s → code 3.4s → book 5.0s → celebrate 2.4s → repeat. Transitions add 420ms each, giving an approximately 42-second cycle. The book pose occupies most of the dwell time.
+Deterministic choreography: book 1.8s → wave 1.2s → book 2.1s → think 1.5s → book 1.9s → teach 1.3s → book 2.2s → code 1.6s → book 2.1s → celebrate 1.1s → repeat. Transitions add 300ms each, giving an approximately 20-second cycle. The book pose occupies most of the dwell time.
 
-Two image layers overlap inside one stationary viewport. Predecoded incoming images fade in while outgoing images fade out over 420ms with `cubic-bezier(.45,0,.2,1)`. Small context-specific translations, rotations and scale changes accompany the blend. Idle breathing runs over 5.2s with a 2px rise, 1px lateral drift, ±.4° rotation and 1.008 maximum scale. Only opacity and transforms animate; one timer sequences dwell periods. Hover or keyboard focus requests the teaching pose and lifts the bubble 2px. A reaction during an existing transition is queued, preventing abrupt cancellation/snapback.
+Two image layers overlap inside one stationary viewport. Predecoded incoming images fade in while outgoing images fade out over 300ms with `cubic-bezier(.4,0,.2,1)`. Small context-specific translations, rotations and scale changes accompany the blend. Idle breathing runs over 5.2s with a 2px rise, 1px lateral drift, ±.4° rotation and 1.008 maximum scale. Only opacity and transforms animate; one timer sequences dwell periods. Hover or keyboard focus requests the teaching pose and lifts the bubble 2px. A reaction during an existing transition is queued, preventing abrupt cancellation/snapback.
 
 Manually inspected the six normalized poses together, actual intermediate blend frames, desktop/tablet/phone layouts and the hub in both themes. The crown and feet remain aligned, with a brief continuous blend rather than an abrupt PNG swap. The source drawings have deliberately different expressions, accessories and arm shapes, so this is blended pose animation, not synthesized skeletal/in-between artwork. The book-to-teach transition shows continuous overlap; the bubble tail stays attached above the character on desktop and beside it on phones. A recorded browser motion clip and frame strip are included in local evidence.
 
@@ -46,7 +46,7 @@ Reduced motion shows only the static book pose, disables cycling/breathing and r
 
 ## Responsive and test evidence
 
-Audited 1600, 1280, 834, 390 and 320 CSS-pixel viewports with both stored appearance settings. Landing keeps its established beige theme; hub switches using the shared theme system. Desktop title/art height remains nearly unchanged; phones add a compact roughly 110px optional invitation row rather than an overlay over the title or artwork. The hub stacks its three pathways on phones and reserves room for coming-soon announcements.
+Audited 1600, 1280, 834, 390 and 320 CSS-pixel viewports with both stored appearance settings. Landing keeps its established beige theme; hub switches using the shared theme system. Desktop restores the original centered title sizing and scene geometry, with the mascot absolutely positioned beside the title so it cannot displace it. The hub hero has no mascot. Transition translations and rotations are halved, and scale changes reduced to .996, for quicker, calmer blends; phones add a compact roughly 110px optional invitation row rather than an overlay over the title or artwork. The hub stacks its three pathways on phones and reserves room for coming-soon announcements.
 
 Local checks:
 

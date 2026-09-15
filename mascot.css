@@ -18,10 +18,22 @@
 @keyframes mascot-breathe { 0%,100%{transform:translate(0,0) rotate(-.4deg) scale(1)}50%{transform:translate(1px,-2px) rotate(.4deg) scale(1.008)} }
 @media(prefers-reduced-motion:reduce){.mascot-idle{animation:none}.mascot-bubble{transition:none}.mascot-cta:hover .mascot-bubble,.mascot-cta:focus-visible .mascot-bubble,.mascot-cta:active .mascot-bubble{transform:none}}
 /* The main scene remains the dominant illustration. */
-.welcome-intro { max-width:1240px; display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:38px; align-items:center; }
-.welcome-intro h1 { font-size:clamp(2rem,4.6vw,4.8rem); }
+/* Keep the original centered title and scene geometry; the invitation takes no
+   space from the title. On tablets it uses the compact row below the copy. */
+.welcome-intro { position:relative; display:block; max-width:920px; }
 .welcome-title-line { display:block; }
-@media(min-width:641px) and (max-width:1000px){.welcome-intro{grid-template-columns:minmax(0,1fr) 200px;gap:20px}.mascot-viewport{width:150px;height:150px}.mascot-bubble{padding:10px 12px;font-size:14px}.mascot-bubble strong{font-size:12px}}
+@media(min-width:1001px){
+ .welcome-intro > .mascot-cta{position:absolute;left:calc(50% + min(25vw,370px));top:8px;width:180px}
+ .mascot-viewport{width:150px;height:150px}
+ .mascot-bubble{padding:10px 12px;font-size:13px}
+ .mascot-bubble strong{font-size:12px}.mascot-bubble small{font-size:11px}
+}
+@media(min-width:641px) and (max-width:1000px){
+ .mascot-cta{flex-direction:row-reverse;justify-content:center;gap:8px;margin:15px auto 0;max-width:365px}
+ .mascot-viewport{width:100px;height:110px;margin:0}
+ .mascot-bubble{max-width:245px;padding:10px 12px;font-size:14px}
+ .mascot-bubble::after{left:-9px;bottom:28px;transform:rotate(135deg)}
+}
 @media(max-width:640px){
  .welcome-intro{display:block}.welcome-intro h1{font-size:clamp(1.5rem,7.8vw,2.8rem)}
  .mascot-cta{flex-direction:row-reverse;justify-content:center;gap:8px;margin:15px auto 0;max-width:365px}
