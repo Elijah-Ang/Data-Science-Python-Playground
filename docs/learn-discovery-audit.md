@@ -52,7 +52,7 @@ Local checks:
 
 - `npm run check`: build, syntax, route audit and app shell passed.
 - Discovery browser audit: Chromium and WebKit passed real opacity overlap, fixed viewport, all six poses/assets, queued focus/hover reactions, reduced motion, hidden/pagehide behavior, route navigation, no-JS fallback and five-width theme screenshots.
-- The automated overlap assertion holds the actual WAAPI effects at their midpoint, then resumes them; manual review also inspected real-time frames. During the isolated accelerated pose sequence, the already-verified WebGL scene uses its supported context-loss fallback to avoid unrelated software GPU work on CI. Fresh-page navigation/screenshots and the separate landing regression retain normal artwork animation.
+- The automated overlap assertion holds the actual WAAPI effects at their midpoint, then resumes them; manual review also inspected real-time frames. During the isolated accelerated pose sequence, the already-verified WebGL scene uses its supported context-loss fallback to avoid unrelated software GPU work on CI. Fresh-page navigation and the separate landing regression retain normal artwork animation. Responsive screenshot captures use reduced motion to avoid software-GPU capture timeouts; the earlier manual motion evidence remains separate.
 - Existing Chromium navigation/preferences audit passed.
 - Existing Chromium landing refresh/fallback audit passed; the same regression runs in both CI browsers.
 - Data: 262 task scenarios plus index, schema, alias reset, display and stream regressions passed.

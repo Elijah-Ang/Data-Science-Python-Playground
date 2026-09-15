@@ -93,6 +93,9 @@ with sync_playwright() as pw:
  shortcut=page.locator('.learn-refresh');assert shortcut.get_attribute('href')=='data-foundations.html'
  shortcut.click();page.wait_for_url('**/data-foundations.html')
  report['checks'].append('Robot → hub → existing Foundations; planned cards stay put; hub Back; unchanged gate and direct Data shortcut')
+ # Freeze motion for reproducible responsive captures. Real motion was tested above
+ # and remains covered by the dedicated landing regression.
+ page.emulate_media(reduced_motion='reduce')
  # Screenshot both appearance settings. Landing intentionally retains production beige.
  for width,height in [(1600,1000),(1280,800),(834,1112),(390,844),(320,740)]:
   page.set_viewport_size({'width':width,'height':height})
