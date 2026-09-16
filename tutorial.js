@@ -1,128 +1,89 @@
 (() => {
   'use strict';
-  const $ = selector => document.querySelector(selector);
-  const {chapters} = window.TOUR_CONTENT;
-  const last = chapters.length - 1;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  const requestedMode = new URLSearchParams(location.search).get('view');
-  const mode = ['mobile','wide'].includes(requestedMode) ? requestedMode : null;
-  let profile = 'wide', index = -1, pending = false, sceneKey = '';
-  let progressAt = 0, hasLayout = false;
-  const groups = [...new Set(chapters.map(c => c.group))];
-  $('#journey').style.height = `${(chapters.length + 1) * 100}vh`;
-  const stepButtons = chapters.map((chapter, i) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = String(i + 1).padStart(2, '0');
-    button.setAttribute('aria-label', `${chapter.group}: ${chapter.label}`);
-    button.addEventListener('click', () => go(i));
-    $('.steps').append(button);
-    return button;
-  });
-  const groupButtons = groups.map(group => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = group === 'Stats' ? 'Statistics' : group;
-    button.setAttribute('aria-label', `Tour ${group}`);
-    button.addEventListener('click', () => go(chapters.findIndex(c => c.group === group)));
-    $('.tour-sections').append(button);
-    return button;
-  });
-  function scrollHeight() { return Math.max(1, document.documentElement.scrollHeight - innerHeight); }
-  function go(i) {
-    window.scrollTo({top: Math.max(0,Math.min(last,i)) / last * scrollHeight(), behavior: reduced.matches ? 'instant' : 'smooth'});
+  const $=s=>document.querySelector(s),{chapters}=window.TOUR_CONTENT,pages=window.TOUR_PAGES;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)'),last=chapters.length-1;
+  const requested=new URLSearchParams(location.search).get('view');
+  let index=-1,profile='',page='',token=0,ready=false;
+  let width=1440,height=960,current={x:0,y:0,scale:1},focus=null;
+  const frame=$('#siteFrame'),camera=$('#camera'),viewport=$('.viewport');
+  const groups=[...new Set(chapters.map(c=>c.group))];
+  $('#journey').style.height='100svh';
+  const buttons=chapters.map((c,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0');b.setAttribute('aria-label',`${c.group}: ${c.label}`);b.onclick=()=>go(i);$('.steps').append(b);return b;});
+  const groupButtons=groups.map(g=>{const b=document.createElement('button');b.type='button';b.textContent=g==='Stats'?'Statistics':g;b.setAttribute('aria-label',`Tour ${g}`);b.onclick=()=>go(chapters.findIndex(c=>c.group===g));$('.tour-sections').append(b);return b;});
+  function status(message){$('#tourStatus').textContent=message;$('#tourStatus').hidden=!message;}
+  function overview(){const scale=Math.min(viewport.clientWidth/width,viewport.clientHeight/height);return {scale,x:(viewport.clientWidth-width*scale)/2,y:(viewport.clientHeight-height*scale)/2};}
+  function pose(f){const scale=Math.min(1.65,(viewport.clientWidth-32)/(f.w+12),(viewport.clientHeight-40)/(f.h+12));return {scale,x:(viewport.clientWidth-f.w*scale)/2-f.x*scale,y:(viewport.clientHeight-f.h*scale)/2-f.y*scale};}
+  function paint(p){current=p;viewport.scrollTop=0;viewport.scrollLeft=0;Object.assign(camera.style,{left:`${p.x}px`,top:`${p.y}px`,transform:`scale(${p.scale})`});if(focus)Object.assign($('#spotlight').style,{left:`${p.x+focus.x*p.scale-6}px`,top:`${p.y+focus.y*p.scale-6}px`,width:`${focus.w*p.scale+12}px`,height:`${focus.h*p.scale+12}px`});}
+  function animate(to,duration,alive){
+    const from={...current},start=performance.now();
+    return new Promise(resolve=>{function tick(now){if(!alive())return resolve();const t=reduced.matches?1:Math.min(1,(now-start)/duration),e=t*t*(3-2*t);paint(Object.fromEntries(['x','y','scale'].map(k=>[k,from[k]+(to[k]-from[k])*e])));if(t<1)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});
   }
-  $('#back').addEventListener('click', () => go(index - 1));
-  $('#next').addEventListener('click', () => go(index === last ? 0 : index + 1));
-  $('#enlargePreview').addEventListener('click', () => {
-    const c = chapters[index], detail = $('#previewDetail');
-    detail.dataset.profile = innerWidth < 700 ? 'mobile' : 'wide';
-    detail.replaceChildren($('#scenePreview').querySelector(`[data-tour-focus="${c.focus}"]`).cloneNode(true));
-    $('#previewTitle').textContent = `${c.group} · ${c.label}`;
-    $('#previewDialog').showModal();
-  });
-  $('#closePreview').addEventListener('click', () => $('#previewDialog').close());
-  document.addEventListener('keydown', e => {
-    if ($('#previewDialog').open || e.altKey || e.ctrlKey || e.metaKey || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
-    if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
-  });
-  function target(i) {
-    const c = chapters[i], root = $('#scenePreview');
-    const element = root.querySelector(`[data-tour-focus="${c.focus}"]`);
-    let x=0,y=0,node=element;
-    while (node && node !== root) { x+=node.offsetLeft; y+=node.offsetTop; node=node.offsetParent; }
-    return {x,y,w:element.offsetWidth,h:element.offsetHeight};
+  function copy(i){
+    const c=chapters[i];$('#count').textContent=`${c.group.toUpperCase()} · ${i+1} / ${chapters.length}`;
+    $('#headline').textContent=c.title;$('#description').textContent=profile==='mobile'&&c.mobile?c.mobile:c.description;
+    $('#context').textContent=c.context;$('#focusLabel').textContent=c.label.toUpperCase();$('#pin').textContent=i+1;
+    $('#pageCount').textContent=`${i+1} / ${chapters.length}`;$('#back').disabled=i===0;$('#next').textContent=i===last?'Replay ↺':'Next →';
+    $('#openSection').href={Data:'playground.html',Stats:'statistics.html',ML:'ml.html',Learn:'learn.html'}[c.group];$('#openSection').textContent=`Open ${c.group==='Learn'?'Learn / Refresh':c.group} ↗`;
+    buttons.forEach((b,n)=>{b.hidden=chapters[n].group!==c.group;b.classList.toggle('active',n===i);if(n===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
+    groupButtons.forEach((b,n)=>b.setAttribute('aria-pressed',String(groups[n]===c.group)));$('#progress').style.width=`${(i+1)/chapters.length*100}%`;
   }
-  function pose(f) {
-    const v = $('.viewport');
-    const scale = Math.min(profile === 'mobile' ? 1.12 : 1.6, (v.clientWidth-32)/(f.w+12), (v.clientHeight-40)/(f.h+12));
-    return {scale, x: (v.clientWidth-f.w*scale)/2-f.x*scale, y: (v.clientHeight-f.h*scale)/2-f.y*scale};
+  async function load(url,alive){
+    if(page===url && frame.contentDocument?.URL.includes(`${url}?tour=1`) && frame.contentDocument.readyState==='complete'){camera.style.visibility='visible';return;}
+    status('Opening the actual page…');camera.style.visibility='hidden';page=url;frame.src=`${url}?tour=1`;
+    await pages.until(()=>frame.contentDocument?.URL.includes(`${url}?tour=1`) && frame.contentDocument.readyState==='complete',alive);
+    await frame.contentDocument.fonts.ready;if(!alive())return;
+    paint(overview());camera.style.visibility='visible';
   }
-  function setScene(chapter) {
-    const nextKey = `${profile}-${chapter.scene}`;
-    if (nextKey === sceneKey) return;
-    sceneKey = nextKey;
-    const root = $('#scenePreview');
-    root.dataset.profile = profile;
-    root.dataset.scene = chapter.scene;
-    // Trusted, local static templates only. No user content or executable app code.
-    root.innerHTML = window.TOUR_PREVIEWS.scenes[chapter.scene];
-    if (!reduced.matches) root.animate([{opacity:0},{opacity:1}],{duration:180});
+  function bounds(element){
+    const r=element.getBoundingClientRect();let left=Math.max(0,r.left),top=Math.max(0,r.top),right=Math.min(width,r.right),bottom=Math.min(height,r.bottom);
+    for(let p=element.parentElement;p && p!==frame.contentDocument.body;p=p.parentElement){const s=frame.contentWindow.getComputedStyle(p),b=p.getBoundingClientRect();if(s.display==='contents')continue;if(/auto|scroll|hidden|clip/.test(s.overflowY)){top=Math.max(top,b.top);bottom=Math.min(bottom,b.bottom);}if(/auto|scroll|hidden|clip/.test(s.overflowX)){left=Math.max(left,b.left);right=Math.min(right,b.right);}}
+    return {x:left,y:top,w:Math.max(1,right-left),h:Math.max(1,bottom-top)};
   }
-  function render() {
-    pending = false;
-    const progress = Math.max(0,Math.min(last,scrollY/scrollHeight()*last));
-    progressAt = progress;
-    const next = Math.round(progress), c = chapters[next];
-    if (next !== index) {
-      index = next;
-      $('#count').textContent = `${c.group.toUpperCase()} · ${next+1} / ${chapters.length}`;
-      $('#headline').textContent = c.title;
-      $('#scenePreview').setAttribute('aria-label',`${c.group}: ${c.title} — interface excerpt`);
-      $('#description').textContent = profile === 'mobile' && c.mobile ? c.mobile : c.description;
-      $('#context').textContent = c.context;
-      $('#focusLabel').textContent = c.label.toUpperCase();
-      $('#pageCount').textContent = `${next+1} / ${chapters.length}`;
-      $('#pin').textContent = next+1;
-      $('#back').disabled = next === 0;
-      $('#next').textContent = next === last ? 'Replay ↺' : 'Next →';
-      $('#openSection').href = {Data:'playground.html',Stats:'statistics.html',ML:'ml.html',Learn:'learn.html'}[c.group];
-      $('#openSection').textContent = `Open ${c.group === 'Learn' ? 'Learn / Refresh' : c.group} ↗`;
-      stepButtons.forEach((b,i) => {
-        b.hidden = chapters[i].group !== c.group;
-        b.classList.toggle('active',i === next);
-        if (i === next) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current');
-      });
-      groupButtons.forEach((b,i) => b.setAttribute('aria-pressed',String(groups[i] === c.group)));
-    }
-    setScene(c);
-    let focus = target(next), position = pose(focus);
-    const lower = Math.floor(progress), upper = Math.min(last,lower+1);
-    // Focus is measured from the rendered component, never a screenshot rectangle.
-    if (!reduced.matches && chapters[lower].scene === chapters[upper].scene) {
-      const t = progress-lower, blend = t*t*(3-2*t);
-      const a = target(lower), b = target(upper), pa = pose(a), pb = pose(b);
-      focus = Object.fromEntries(['x','y','w','h'].map(k => [k,a[k]+(b[k]-a[k])*blend]));
-      position = Object.fromEntries(['x','y','scale'].map(k => [k,pa[k]+(pb[k]-pa[k])*blend]));
-    }
-    // CSS zoom re-renders glyphs at the display size rather than enlarging a bitmap layer.
-    Object.assign($('#camera').style,{zoom:position.scale,left:`${position.x/position.scale}px`,top:`${position.y/position.scale}px`});
-    Object.assign($('#spotlight').style,{left:`${position.x+focus.x*position.scale-6}px`,top:`${position.y+focus.y*position.scale-6}px`,width:`${focus.w*position.scale+12}px`,height:`${focus.h*position.scale+12}px`});
-    $('#progress').style.width = `${(progress+1)/chapters.length*100}%`;
+  async function reveal(element,alive){
+    for(let p=element.parentElement;p;p=p.parentElement){if(p===frame.contentDocument.body)break;const style=frame.contentWindow.getComputedStyle(p);if(/auto|scroll/.test(style.overflowY)&&p.scrollHeight>p.clientHeight+1){const r=element.getBoundingClientRect(),b=p.getBoundingClientRect();if(r.top<b.top||r.bottom>b.bottom)await pages.scroll(p,p.scrollTop+r.top-b.top-24,alive);}}
+    const root=frame.contentDocument.scrollingElement,r=element.getBoundingClientRect();if(r.top<0||r.bottom>height)await pages.scroll(root,root.scrollTop+r.top-70,alive);
   }
-  function layout() {
-    const previousProgress = progressAt;
-    profile = mode === 'mobile' || (!mode && innerWidth <= 1000) ? 'mobile' : 'wide';
-    document.body.dataset.layout = profile;
-    if (hasLayout) window.scrollTo({top:previousProgress/last*scrollHeight(),behavior:'instant'});
-    hasLayout = true;
-    index = -1;
-    render();
+  async function show(i){
+    const run=++token,alive=()=>run===token;index=i;ready=false;copy(i);viewport.dataset.state='moving';$('#spotlight').style.opacity='0';$('#enlargePreview').disabled=true;
+    try{
+      if(page)await animate(overview(),1000,alive);if(!alive())return;
+      const c=chapters[i],loc=pages.locations[c.scene];await load(loc.page,alive);if(!alive())return;
+      viewport.dataset.page=loc.page;viewport.dataset.scene=c.scene;status('');if(!reduced.matches)await pages.pause(650);
+      const element=await pages.prepare(frame,c,alive,status);if(!alive())return;
+      status('');await reveal(element,alive);if(!alive())return;focus=bounds(element);
+      if(focus.w<2||focus.h<2)throw Error('This section is not visible yet. Select this step to retry.');
+      if(!reduced.matches)await pages.pause(650);$('#spotlight').style.opacity='1';await animate(pose(focus),1900,alive);if(!alive())return;
+      camera.style.visibility='visible';ready=true;viewport.dataset.state='ready';$('#enlargePreview').disabled=false;
+    }catch(error){if(alive()){status(error.message==='cancelled'?'':error.message);viewport.dataset.state='error';}}
   }
-  addEventListener('scroll', () => { if (!pending) { pending = true; requestAnimationFrame(render); } },{passive:true});
-  addEventListener('resize',layout);
-  reduced.addEventListener('change',render);
-  layout();
-  document.fonts.ready.then(render);
+  function go(i){show(Math.max(0,Math.min(last,i)));}
+  $('#back').onclick=()=>go(index-1);$('#next').onclick=()=>go(index===last?0:index+1);
+  $('#showOverview').onclick=async()=>{if(!ready)return;const run=++token;$('#spotlight').style.opacity='0';await animate(overview(),1200,()=>run===token);};
+  document.addEventListener('keydown',e=>{if($('#previewDialog').open||e.altKey||e.ctrlKey||e.metaKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='ArrowRight'){e.preventDefault();go(index+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(index-1);}});
+  // Use intentional scroll gestures, not scroll events caused by a child page
+  // focusing an editor. One gesture advances one stop and allows the camera to finish.
+  let wheel=0,gestureAt=0,touchY=null;
+  addEventListener('wheel',e=>{if($('#previewDialog').open||e.ctrlKey)return;e.preventDefault();if(!ready)return;const now=performance.now();if(now-gestureAt>300)wheel=0;gestureAt=now;wheel+=e.deltaY;if(Math.abs(wheel)>70){go(index+(wheel>0?1:-1));wheel=0;}},{passive:false});
+  addEventListener('touchstart',e=>{touchY=e.touches[0]?.clientY;},{passive:true});
+  addEventListener('touchend',e=>{if($('#previewDialog').open||!ready||touchY===null)return;const delta=touchY-e.changedTouches[0].clientY;touchY=null;if(Math.abs(delta)>65)go(index+(delta>0?1:-1));},{passive:true});
+  // Preserve actual markup, all ancestors, selected values and original styles.
+  // The enlarged snapshot has no scripts and starts no second Python runtime.
+  $('#enlargePreview').onclick=()=>{
+    if(!ready)return;const d=frame.contentDocument,clone=d.documentElement.cloneNode(true);
+    const originals=[...d.querySelectorAll('*')],clones=[...clone.querySelectorAll('*')];
+    const scrolls=originals.slice(1).map((n,i)=>({i,top:n.scrollTop,left:n.scrollLeft})).filter(s=>s.top||s.left);
+    clone.querySelectorAll('script,base').forEach(n=>n.remove());
+    const original=[...d.querySelectorAll('input,textarea,select')];
+    clone.querySelectorAll('input,textarea,select').forEach((n,i)=>{const source=original[i];if(n.tagName==='SELECT')[...n.options].forEach(o=>o.toggleAttribute('selected',o.value===source.value));else if(n.tagName==='TEXTAREA')n.textContent=source.value;else n.setAttribute('value',source.value);});
+    scrolls.forEach(s=>clones[s.i]?.setAttribute('data-tour-scroll',`${s.top},${s.left}`));
+    const base=document.createElement('base');base.href=d.URL;clone.querySelector('head').prepend(base);
+    clone.querySelectorAll('a,button,input,textarea,select').forEach(n=>n.setAttribute('inert',''));
+    const snapshot=document.createElement('iframe');snapshot.title='Enlarged actual interface';snapshot.setAttribute('sandbox','allow-same-origin');snapshot.tabIndex=-1;snapshot.style.cssText=`width:${width}px;height:${height}px;border:0`;
+    snapshot.onload=async()=>{if(!snapshot.isConnected)return;await snapshot.contentDocument.fonts.ready;if(!snapshot.isConnected)return;snapshot.contentDocument.querySelectorAll('[data-tour-scroll]').forEach(n=>{const [top,left]=n.dataset.tourScroll.split(',').map(Number);n.scrollTop=top;n.scrollLeft=left;});snapshot.contentWindow.scrollTo(frame.contentWindow.scrollX,frame.contentWindow.scrollY);$('#previewDetail').scrollLeft=Math.max(0,focus.x-20);$('#previewDetail').scrollTop=Math.max(0,focus.y-20);};
+    snapshot.srcdoc='<!doctype html>'+clone.outerHTML;
+    $('#previewTitle').textContent=`${chapters[index].group} · ${chapters[index].label}`;$('#previewDetail').replaceChildren(snapshot);$('#previewDialog').showModal();
+  };
+  $('#closePreview').onclick=()=>$('#previewDialog').close();$('#previewDialog').addEventListener('close',()=>$('#previewDetail').replaceChildren());
+  function layout(){profile=requested==='mobile'||requested!=='wide'&&innerWidth<=1000?'mobile':'wide';document.body.dataset.layout=profile;width=profile==='mobile'?390:1440;height=profile==='mobile'?844:960;frame.style.width=`${width}px`;frame.style.height=`${height}px`;paint(overview());go(Math.max(0,index));}
+  let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(layout,180);});layout();
 })();

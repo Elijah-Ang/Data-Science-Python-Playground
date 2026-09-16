@@ -1,8 +1,8 @@
 # Web advertising readiness — 16 September 2026
 
 ## Implemented
-- Homepage preserved; only desktop fine-pointer tour button enlarged.
-- Zoomed follow-along tour expanded to 24 stops: Data, Statistics, ML and Learn / Refresh, with native text-rendered interface excerpts and enlarged detail views. See docs/tour-follow-along-plan.md.
+- Homepage preserved apart from the requested desktop tour button enlargement and left-side robot placement.
+- Follow-along tour has 24 stops on the actual Data, Statistics, ML and Learn / Refresh pages, with slower overview-to-focus movement and exact enlarged views. See docs/tour-follow-along-plan.md.
 - Separate illustrated lesson library removed at user request; interactive curriculum preserved.
 - Foundations Credits destination repaired.
 - Build emits canonical links and sitemap; robots advertises sitemap.

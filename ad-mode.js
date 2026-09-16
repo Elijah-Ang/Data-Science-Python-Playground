@@ -3,6 +3,10 @@
   'use strict';
   const key = 'dspp-ad-free';
   const params = new URLSearchParams(location.search);
+  // A same-origin tour frame is a disposable demonstration, never a user notebook.
+  let tourEmbed = false;
+  try { tourEmbed = window.parent !== window && params.get('tour') === '1' && /\/tutorial\.html$/.test(window.parent.location.pathname); } catch {}
+  window.DataPlaygroundTourEmbed = tourEmbed;
   // Cloudflare enforces private access; a URL parameter is not authentication.
   const adFree = location.hostname === 'private.dataplayground.science';
   try { sessionStorage.removeItem(key); } catch { /* Storage is optional. */ }
@@ -12,7 +16,7 @@
   window.DataPlaygroundAds = Object.freeze({
     adFree,
     native,
-    canLoadAdvertising: () => advertisingEnabled && !adFree && !native,
+    canLoadAdvertising: () => advertisingEnabled && !adFree && !native && !tourEmbed,
   });
   document.documentElement.dataset.adMode = adFree ? 'off' : 'standard';
   function start() {

@@ -16,8 +16,7 @@
   <link rel="icon" type="image/png" href="assets/icons/data-playground-slide.png" sizes="1254x1254">
   <link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="tutorial.css?v=tour7">
-  <link rel="stylesheet" href="tour-previews.css?v=tour7">
+  <link rel="stylesheet" href="tutorial.css?v=tour8">
   <script src="app-platform.js?v=platform2"></script>
 </head>
 <body data-theme="light">
@@ -25,7 +24,7 @@
   <nav class="tour-sections" aria-label="Tour sections"></nav>
 
   <main id="journey" aria-describedby="tour-description">
-    <p id="tour-description" class="sr-only">Follow Data, Statistics, Machine Learning and Learn / Refresh. Scroll, use Back and Next, or jump to a section. Previews are simplified interface excerpts with real labels and example results, not live controls.</p>
+    <p id="tour-description" class="sr-only">Follow Data, Statistics, Machine Learning and Learn / Refresh. The tour shows the actual pages in a separate demonstration. Each move shows the page overview before focusing on the next area. Scroll, use Back and Next, or jump to a section.</p>
     <div class="stage">
       <div class="stage-grid">
         <section class="narrative" aria-live="polite">
@@ -39,11 +38,12 @@
         <div class="visual">
           <div class="viewport" aria-label="Annotated preview of the current playground interface">
             <div id="camera">
-              <div id="scenePreview" class="tour-ui" role="img" aria-label="Interface excerpt"></div>
+              <iframe id="siteFrame" title="Actual playground demonstration" sandbox="allow-scripts allow-same-origin" tabindex="-1" aria-hidden="true" inert></iframe>
             </div>
             <div id="spotlight" aria-hidden="true"><span id="pin"></span></div>
+            <p id="tourStatus" role="status" hidden></p>
           </div>
-          <div class="visual-foot"><span id="focusLabel">NAVIGATE</span><button id="enlargePreview" type="button">Enlarge preview ↗</button></div>
+          <div class="visual-foot"><span id="focusLabel">NAVIGATE</span><div><button id="showOverview" type="button">Show whole page</button><button id="enlargePreview" type="button">Enlarge preview ↗</button></div></div>
         </div>
       </div>
 
@@ -59,13 +59,13 @@
     </div>
   </main>
   <dialog id="previewDialog" aria-labelledby="previewTitle">
-    <div class="preview-dialog-head"><div><h2 id="previewTitle">Interface excerpt</h2><p>Example view · controls are not live</p></div><button id="closePreview" type="button">Close preview ×</button></div>
-    <div id="previewDetail" class="tour-ui"></div>
+    <div class="preview-dialog-head"><div><h2 id="previewTitle">Page preview</h2><p>Actual interface · separate demonstration</p></div><button id="closePreview" type="button">Close preview ×</button></div>
+    <div id="previewDetail"></div>
   </dialog>
 
   <noscript><p class="noscript">Enable JavaScript to explore the guided tour.</p></noscript>
-  <script src="tour-content.js?v=tour7"></script>
-  <script src="tour-previews.js?v=tour7"></script>
-  <script src="tutorial.js?v=tour7"></script>
+  <script src="tour-content.js?v=tour8"></script>
+  <script src="tour-pages.js?v=tour8"></script>
+  <script src="tutorial.js?v=tour8"></script>
 </body>
 </html>

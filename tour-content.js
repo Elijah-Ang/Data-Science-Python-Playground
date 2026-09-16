@@ -1,4 +1,4 @@
-/* Follow-along copy; focus rectangles are measured from native UI excerpts. */
+/* Follow-along copy; focus rectangles are measured from the actual pages. */
 window.TOUR_CONTENT = (() => {
   const chapters = [];
   const add = (group,scene,focus,label,title,description,context,mobile) => chapters.push({group,scene,focus,label,title,description,context,mobile});

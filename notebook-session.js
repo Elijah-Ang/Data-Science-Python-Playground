@@ -70,7 +70,7 @@ import pandas as pd, numpy as np\nimport matplotlib.pyplot as plt\nimport seabor
     const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href=url; link.download='data-science-playground.ipynb'; link.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
   }
   function install(value) {
-    adapter=value;
+    adapter=window.DataPlaygroundTourEmbed ? {...value,persist:false,confirmLeave:false} : value;
     const actions = document.querySelector('.notebook-actions');
     if (actions) {
       const undo=document.createElement('button'); undo.type='button'; undo.className='toolbar-button'; undo.textContent='Undo delete'; undo.addEventListener('click',()=>{if (deleted) {adapter.insert(deleted.cell, deleted.index); deleted=null; save();}}); actions.append(undo);
@@ -94,6 +94,6 @@ import pandas as pd, numpy as np\nimport matplotlib.pyplot as plt\nimport seabor
     window.addEventListener('beforeunload',event => {save(); if (adapter.confirmLeave || (savingFailed && adapter.get().cells.length)) {event.preventDefault(); event.returnValue='';}});
   }
   return {install,save,restore,remember,beginTransition,
-    last:workspace => {try {return localStorage.getItem('dspp-last-setup:'+workspace)?.split(':').slice(1) || [];} catch {return [];}}
+    last:workspace => {if(window.DataPlaygroundTourEmbed)return [];try {return localStorage.getItem('dspp-last-setup:'+workspace)?.split(':').slice(1) || [];} catch {return [];}}
   };
 })();

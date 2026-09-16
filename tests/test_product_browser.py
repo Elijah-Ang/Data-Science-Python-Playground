@@ -15,10 +15,10 @@ with sync_playwright() as p:
     assert home.count() == 1 and home.is_visible()
     assert home.get_attribute('href') == 'index.html'
     assert page.locator('.steps button').count() == 24
-    page.wait_for_function("document.querySelector('#scenePreview [data-tour-focus]')", timeout=10000)
+    page.wait_for_function("document.querySelector('.viewport').dataset.state==='ready'", timeout=120000)
     assert page.locator('#next').is_visible()
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), (width, name)
-    results.append([width, name, 'guided tour navigation and 24 native previews passed'])
+    results.append([width, name, 'guided tour navigation and actual-page preview passed'])
     continue
    if name in ('privacy','help','acknowledgements','about'):
     assert page.locator('.home-nav').count()==0

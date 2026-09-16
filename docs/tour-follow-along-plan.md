@@ -1,59 +1,30 @@
-# Expanded follow-along tour
+# Exact-interface follow-along tour
 
-## Non-negotiables (updated after preview feedback)
-- Keep the original pinned stage, smooth camera pan/zoom, spotlight and scroll-scrub interaction.
-- Source-labelled HTML/CSS interface excerpts, not AI-generated interface text or a long illustrated article.
-- Homepage unchanged apart from the already requested desktop tour button.
-- No separate illustrated lesson library.
-- One short instruction per stop; show where to act and the resulting interface state.
+## Current requirements — 16 September 2026
 
-## Storyboard
-1. Start: show the homepage gate and nerdy robot. Explain that the gate opens Data; the robot opens Learn / Refresh.
-2. Choose: zoom to the Data dataset selector; then pull back to the inspector showing the selected data.
-3. Inspect: focus the columns and small data preview; explain what one row represents.
-4. Try: move to Suggested Route, show a selected task adding a notebook cell.
-5. Run and read: follow that exact cell to its real output. On mobile, pan from notebook down to output; on desktop, pan sideways.
-6. Get help: focus Challenges, open the real guide and show close/minimise controls without implying the screenshot itself is interactive.
-7. Statistics: pull back to the current HOME / DATA / STATS / ML switcher, switch to STATS, focus Study setup and then its confidence control. End on one verified estimate/interval output and the assumptions.
-8. Machine learning: switch to ML, focus setup and Workflow, then show the real train/validate/final-test sequence. Use a supervised example; do not imply clustering has a prediction target.
-9. Learn / Refresh: return to the nerdy robot and open the light-mode hub. Show Data Foundations as available; Statistics and ML learning paths remain clearly Coming soon.
-10. Choose a deck: follow Inspect, Wrangle / Preprocess and Visualise; zoom into the chapter buttons and connecting arrows.
-11. Practise: open a real lesson; focus Follow, Change and Transfer, then Run / Check answer / Reset code. Show actual successful output. Do not introduce saved progress.
-12. Finish: gently zoom out and offer direct links to Data, Stats, ML and Learn / Refresh, plus Replay.
+- Use the actual interface, not similarly styled recreations or AI-generated UI text.
+- Show the whole workspace before focusing on a control. Keep that page mounted across its stops.
+- Move slowly enough to follow: 1 s pull-back, 650 ms overview dwell, 1.4 s internal scroll where needed, 650 ms pause, then 1.9 s zoom-in.
+- Keep all 24 stops: Data (5), Statistics (5), ML (7), Learn / Refresh (7).
+- Move the homepage robot to the left on desktop; retain the existing left-side robot / speech-bubble arrangement on mobile. Do not change the rest of the homepage.
+- Keep the separate illustrated lesson library removed. Do not introduce saved learning.
 
-## Motion and controls
-- Retain scroll control, numbered chapter jumps, Back/Next and Replay.
-- Pan/zoom continuously within a capture; crossfade only when switching workspaces or opening a changed UI state.
-- Never interpolate unrelated capture coordinates across a page transition.
-- Hold each focus long enough to read one concise caption. Text must stay outside the moving camera surface.
-- Keep reduced-motion mode: immediate focus changes with no animated travel.
-- Keyboard chapter navigation, visible focus, meaningful capture alt text, and no automatic advancing.
+## Rendering and accuracy
 
-## Capture and accuracy plan
-- Capture the current real app in light mode at desktop, tablet and phone widths.
-- Execute one small deterministic Data task, one Statistics task and one supervised ML workflow; capture their actual results.
-- Record target rectangles from visible controls in each capture profile, rather than stretching desktop coordinates onto mobile.
-- Capture the hub, deck and practice views separately. Crop private information and browser chrome out.
-- Review every caption against current control labels. Do not claim the guide is live interactive code.
-- Keep a short text fallback inside the tour for accessibility and discovery, not a separate library.
+`tour-pages.js` maps steps to selectors in the real pages. `tutorial.js` embeds one same-origin application document at a time, using the original HTML, CSS, fonts, assets and renderers. No alternative component templates or screenshot rectangles are used. Existing historical raster captures remain in Git, but are not shipped.
 
-## Acceptance checks before replacing the restored tour
-- All 12 stops use current captures; captions and spotlight targets agree.
-- Phone, tablet and desktop framing stays legible; no clipped targets or page overflow.
-- Forward/back/replay, resizing mid-tour, reduced motion and keyboard navigation all work.
-- Python packages do not load merely to view the tour.
-- No unrelated changes to the homepage, lessons, theme choices or advertising.
+Data, Statistics and ML run their real example Python in the disposable frame. This needs the normal runtime download on a first visit; loading and failure states are explicit. Only one active page/runtime is retained. Navigating to another workspace unloads the previous one. Tour frames cannot restore or save notebook drafts, advertise or show leave-confirmation prompts. Lesson code is held only in the demonstration editor.
 
-## Implemented — 16 September 2026
+The camera measures actual element geometry and clips highlights to the real scrolling containers. Opening Workflow/Challenges and scrolling within the guide happen visibly at the page overview before zooming in. Ordinary document scroll events cannot advance the tour: intentional wheel/touch gestures, buttons and arrow keys control the steps. This prevents a child page focusing an editor from unexpectedly changing the chapter. Reduced-motion users get immediate transitions.
 
-The storyboard is now split into 24 focused stops: Data (5), Statistics (5), ML (7), Learn (7). The opening capture shows HOME / DATA / STATS / ML. Section shortcuts and direct workspace links keep the longer tour navigable. The homepage is unchanged.
+Enlarge preview uses an exact DOM snapshot with original ancestor structure and styles, preserving field values and scroll positions. Scripts are removed; controls are inert while the document and reference-window contents remain scrollable. It starts no additional runtime. Show whole page pulls the camera back without changing the step.
 
-The original screenshot implementation has been replaced after feedback about blur and incorrect crop coordinates. All 24 stops now render native HTML/CSS excerpts with the product's labels, palette, fonts, selected teaching examples and verified results. These are explicitly described as simplified interface excerpts, not pixel-exact screenshots or live controls. Historical captures remain in Git but are not shipped in the web build.
+## Verification
 
-Focus bounds are measured from the rendered component. CSS zoom repaints text at its display size; there is no enlarged raster text. An Enlarge preview dialog shows only the current excerpt at readable size and can be dismissed with its button or Escape. The camera still pans between related sections, crossfades on scene changes, and respects reduced motion. No Python runtime is loaded by the tour itself.
+Static checks cover 24 page/selector mappings, real-page retention, motion durations, draft isolation, advertising exclusion and robot placement. The browser regression script covers all steps at desktop/mobile widths, reduced motion, viewport containment and enlargement. Manual visual checks verify actual source layouts and runtime results; never present test coverage as proof of unexecuted browser tests.
 
-Verified examples: Data df.head(10); penguin Welch comparison (mean difference −26.9239 g, 95% CI −145.665 to 91.8172 g); supervised ML five-feature logistic route (final macro F1 0.916, 114 held-out rows); I01 DataFrame lesson accepted by Check answer. Statistics and ML lesson pathways remain explicitly Coming soon.
+The Statistics example is the real penguin Welch comparison (mean difference −26.9239 g, 95% CI −145.665 to 91.8172 g). ML uses five continuous measures and Logistic Regression. Learn demonstrates the actual I01 exercise and Check answer. Statistics and ML lesson pathways remain marked Coming soon.
 
-Static tests check all 24 stops, four sections, source labels, matching focus selectors and absence of raster text/live controls. Browser regression coverage includes section jumps, every stop, spotlight alignment, enlarged excerpts and Back/Next/Replay. Release still depends on PR 46 review/merge and deployment verification; these changes do not imply AdSense approval.
+Publication remains subject to the existing PR review gate and deployment verification. Nothing here implies AdSense approval.
 
-Local Chrome interaction checks: all 24 stops at 1440×1000, 834×900, 390×844 and 375×667; no horizontal overflow or narrative/footer overlap. Back, Next, Replay and section jumps exercised. The retained CI script also covers reduced-motion Chromium/WebKit; that automated script was not run locally in this session.
+Local Chrome checks on 16 September: all 24 desktop stops and all 24 phone stops reached the correct rendered targets. Executed Statistics, ML and I01 examples completed; enlarged Workflow/final-test views were inspected. Phone fixes include measuring past display:contents wrappers, deterministic scroll timing, and transform-only camera scaling to preserve iframe scroll geometry. Chromium/WebKit CI regression is updated but was not executed locally.

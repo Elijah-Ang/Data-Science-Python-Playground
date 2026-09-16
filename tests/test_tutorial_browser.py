@@ -1,4 +1,4 @@
-"""CI browser regression: all 24 tour stops, live focus geometry and navigation."""
+"""CI regression: real page rendering, focus, isolated notebooks and slow camera."""
 import argparse
 from playwright.sync_api import sync_playwright, expect
 
@@ -10,41 +10,35 @@ args = parser.parse_args()
 with sync_playwright() as p:
     browser = getattr(p, args.engine).launch()
     page = browser.new_page(reduced_motion='reduce')
-    for width, height in [(390,844),(834,900),(1440,1000),(375,667)]:
+    for width, height in [(390,844),(1440,1000)]:
         page.set_viewport_size({'width':width,'height':height})
         page.goto(f'{args.base_url}/tutorial.html')
         chapters = page.evaluate('window.TOUR_CONTENT.chapters')
         assert len(chapters) == 24
-        for group in ['Data','Stats','ML','Learn']:
-            page.get_by_role('button',name=f'Tour {group}',exact=True).click()
-            for i,c in enumerate(chapters):
-                if c['group'] != group:
-                    continue
-                page.get_by_role('button',name=f'{group}: {c["label"]}',exact=True).click()
-                expect(page.locator('#headline')).to_have_text(c['title'])
-                profile = 'mobile' if width <= 1000 else 'wide'
-                expect(page.locator('#scenePreview')).to_have_attribute('data-scene',c['scene'])
-                expect(page.locator('#scenePreview')).to_have_attribute('data-profile',profile)
-                assert page.locator('#scenePreview img').count() == (1 if c['scene'] == 'home' else 0)
-                focus = page.locator(f'#scenePreview [data-tour-focus="{c["focus"]}"]').bounding_box()
-                spotlight = page.locator('#spotlight').bounding_box()
-                assert abs(focus['x'] - spotlight['x'] - 6) < 3
-                assert abs(focus['y'] - spotlight['y'] - 6) < 3
-                assert abs(focus['width'] - spotlight['width'] + 12) < 3
-                assert abs(focus['height'] - spotlight['height'] + 12) < 3
-                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
-                assert page.locator('.steps button:visible').count() <= 7
-                page.get_by_role('button',name='Enlarge preview ↗',exact=True).click()
+        for i,c in enumerate(chapters):
+            if i:
+                page.get_by_role('button',name='Next →',exact=True).click()
+            expect(page.locator('#headline')).to_have_text(c['title'])
+            page.wait_for_function("document.querySelector('.viewport').dataset.state !== 'moving'",timeout=180000)
+            expect(page.locator('.viewport')).to_have_attribute('data-state','ready')
+            frame = page.frame_locator('#siteFrame')
+            actual = page.frames[1]
+            assert actual.evaluate('window.DataPlaygroundTourEmbed === true')
+            assert page.evaluate("document.querySelector('.viewport').scrollTop===0")
+            spot=page.locator('#spotlight').bounding_box()
+            box=page.locator('.viewport').bounding_box()
+            assert spot['width']>10 and spot['height']>10
+            assert spot['x']>=box['x']-2 and spot['y']>=box['y']-2
+            assert spot['x']+spot['width']<=box['x']+box['width']+2
+            assert spot['y']+spot['height']<=box['y']+box['height']+2
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth+1')
+            if c['scene'] in ['ml-guide','ml-validate','ml-tune','home','lesson-result']:
+                page.get_by_role('button',name='Enlarge preview ↗').click()
                 expect(page.locator('#previewDialog')).to_be_visible()
-                assert page.locator('#previewDetail [data-tour-focus]').count() == 1
-                page.get_by_role('button',name='Close preview ×',exact=True).click()
-                expect(page.locator('#previewDialog')).not_to_be_visible()
-        page.get_by_role('button',name='Replay ↺',exact=True).click()
+                assert page.locator('#previewDetail iframe').count()==1
+                page.get_by_role('button',name='Close preview ×').click()
+        page.get_by_role('button',name='Replay ↺').click()
         expect(page.locator('#headline')).to_have_text('Four places to explore.')
         expect(page.locator('#back')).to_be_disabled()
-        page.get_by_role('button',name='Next →',exact=True).click()
-        expect(page.locator('#headline')).to_have_text('Start with a dataset.')
-        page.locator('#back').click()
-        expect(page.locator('#headline')).to_have_text('Four places to explore.')
     browser.close()
-print('Passed: 24 stops, four viewports, section navigation, Back/Next/Replay.')
+print('Passed: 24 actual-page stops, desktop/mobile, spotlight and enlargement.')

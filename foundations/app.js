@@ -16,7 +16,7 @@ let runtimeStatus='Python starts when you open a lesson.';
 // Product policy: no saved learning, drafts, resume, completion records, progress
 // bars or tracking unless the user explicitly requests them in a future change.
 // Remove legacy drafts; current code exists only in the active editor.
-try { localStorage.removeItem('dspp-foundations-v1'); } catch {}
+try { if(!window.DataPlaygroundTourEmbed)localStorage.removeItem('dspp-foundations-v1'); } catch {}
 function url(lesson,round=0){return `#${lesson.deck}/${lesson.id}/${round}`;}
 function table(columns,rows,caption){return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}"><table><caption>${esc(caption)}</caption><thead><tr>${columns.map(x=>`<th scope="col">${esc(x)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(value=>`<td>${value===null?'<span title="Missing value">None</span>':typeof value==='string'&&value.trim()!==value?`&quot;${esc(value)}&quot;`:esc(value)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;}
 function datasetTable(dataset){const columns=Object.keys(dataset.columns);return table(dataset.index?['row',...columns]:columns,dataset.columns[columns[0]].map((_,i)=>[...(dataset.index?[dataset.index[i]]:[]),...columns.map(c=>dataset.columns[c][i])]),`${dataset.name} · ${dataset.columns[columns[0]].length} synthetic rows`);}

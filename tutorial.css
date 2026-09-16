@@ -90,7 +90,7 @@ button:focus-visible, a:focus-visible {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
+  overflow: clip;
   padding: calc(84px + env(safe-area-inset-top)) 4vw calc(64px + env(safe-area-inset-bottom));
 }
 .stage-grid {
@@ -134,7 +134,7 @@ h1 {
 .viewport {
   position: relative;
   height: 440px;
-  overflow: hidden;
+  overflow: clip;
   border: 1px solid #bfb5a3;
   border-radius: 8px;
   background: #ded6c6;
@@ -147,12 +147,12 @@ h1 {
   transform-origin: 0 0;
   /* Keep live text rasterised at its current size; no bitmap compositing hint. */
 }
-#siteCapture {
+#siteFrame {
   display: block;
   max-width: none;
-  height: auto;
+  border:0;
+  pointer-events:none;
   user-select: none;
-  -webkit-user-drag: none;
 }
 #spotlight {
   position: absolute;
@@ -241,6 +241,11 @@ button:disabled { opacity: .3; cursor: default; }
 #spotlight { transition: opacity .18s ease; }
 .visual-foot { align-items:center; min-height:36px; }
 #enlargePreview { border:0; background:transparent; color:var(--teal); text-decoration:underline; font-size:11px; min-height:36px; padding:0 4px; }
+#showOverview { border:0; background:transparent; color:var(--teal); text-decoration:underline; font-size:11px; min-height:36px; padding:0 10px; }
+#tourStatus { position:absolute; z-index:4; bottom:12px; left:12px; right:12px; margin:0; padding:10px 14px; border:1px solid var(--line); border-radius:5px; background:var(--card); color:var(--ink); font:13px/1.5 var(--body); }
+#tourStatus[hidden] { display:none; }
+#previewDetail { width:100%; height:65vh; overflow:auto; overscroll-behavior:contain; }
+#previewDetail iframe { display:block; max-width:none; }
 #previewDialog { width:min(760px,calc(100% - 24px)); max-height:calc(100dvh - 32px); padding:20px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); }
 #previewDialog::backdrop { background:rgba(23,33,54,.65); }
 .preview-dialog-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
