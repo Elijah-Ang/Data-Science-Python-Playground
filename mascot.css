@@ -1,0 +1,46 @@
+/* A shared fixed viewport prevents pose padding from moving surrounding content. */
+.mascot-cta { display:flex; align-items:center; flex-direction:column; color:var(--landing-ink); text-decoration:none; position:relative; isolation:isolate; border-radius:5px; }
+.mascot-cta:focus-visible { outline:3px solid var(--landing-cyan); outline-offset:7px; }
+.mascot-bubble { position:relative; display:block; max-width:260px; padding:13px 17px; background:var(--landing-paper); border:2px solid var(--landing-ink); box-shadow:4px 4px 0 var(--landing-gold); font:600 15px/1.45 var(--landing-body); text-align:left; transition:transform 250ms ease,box-shadow 250ms ease; }
+.mascot-bubble::after { content:""; position:absolute; width:13px; height:13px; left:58%; bottom:-9px; background:var(--landing-paper); border-right:2px solid var(--landing-ink); border-bottom:2px solid var(--landing-ink); transform:rotate(45deg); }
+.mascot-bubble strong { display:block; font:400 13px/1.5 var(--landing-display); color:var(--landing-cyan); margin-bottom:4px; }
+.mascot-bubble small { display:block; font-size:12px; color:var(--landing-muted); margin-top:4px; }
+.mascot-viewport { display:block; position:relative; width:180px; height:180px; flex-shrink:0; margin-top:8px; }
+.mascot-idle { position:absolute; inset:0; transform-origin:50% 90%; animation:mascot-breathe 5200ms ease-in-out infinite; }
+.mascot-layer { position:absolute; inset:0; display:block; width:100%; height:100%; object-fit:contain; opacity:0; transform-origin:50% 92%; }
+/* Alignment belongs to the image's independent translate/scale properties, so
+   transition transforms never replace it. Original PNG pixels are unmodified. */
+.mascot-layer { translate:var(--pose-x,8%) var(--pose-y,0%); scale:var(--pose-scale,1); }
+.mascot-layer:first-child { opacity:1; }
+.mascot-cta:hover .mascot-bubble,.mascot-cta:focus-visible .mascot-bubble { transform:translateY(-2px); box-shadow:5px 6px 0 var(--landing-gold); }
+.mascot-cta:active .mascot-bubble { transform:translateY(1px); box-shadow:2px 2px 0 var(--landing-gold); }
+[data-mascot][data-paused="true"] .mascot-idle { animation-play-state:paused; }
+@keyframes mascot-breathe { 0%,100%{transform:translate(0,0) rotate(-.4deg) scale(1)}50%{transform:translate(1px,-2px) rotate(.4deg) scale(1.008)} }
+@media(prefers-reduced-motion:reduce){.mascot-idle{animation:none}.mascot-bubble{transition:none}.mascot-cta:hover .mascot-bubble,.mascot-cta:focus-visible .mascot-bubble,.mascot-cta:active .mascot-bubble{transform:none}}
+/* The main scene remains the dominant illustration. */
+/* Keep the original centered title and scene geometry; the invitation takes no
+   space from the title. On tablets it uses the compact row below the copy. */
+.welcome-intro { position:relative; display:block; max-width:920px; }
+.welcome-title-line { display:block; }
+@media(min-width:1001px){
+ .welcome-intro > .mascot-cta{position:absolute;left:calc(50% + min(25vw,370px));top:8px;width:180px}
+ .mascot-viewport{width:150px;height:150px}
+ .mascot-bubble{padding:10px 12px;font-size:13px}
+ .mascot-bubble strong{font-size:12px}.mascot-bubble small{font-size:11px}
+}
+@media(min-width:641px) and (max-width:1000px){
+ .mascot-cta{flex-direction:row-reverse;justify-content:center;gap:8px;margin:15px auto 0;max-width:365px}
+ .mascot-viewport{width:100px;height:110px;margin:0}
+ .mascot-bubble{max-width:245px;padding:10px 12px;font-size:14px}
+ .mascot-bubble::after{left:-9px;bottom:28px;transform:rotate(135deg)}
+}
+@media(max-width:640px){
+ .welcome-intro{display:block}.welcome-intro h1{font-size:clamp(1.5rem,7.8vw,2.8rem)}
+ .mascot-cta{flex-direction:row-reverse;justify-content:center;gap:8px;margin:15px auto 0;max-width:365px}
+ .mascot-viewport{width:100px;height:110px;margin:0}.mascot-bubble{flex:1;max-width:245px;padding:10px 12px;font-size:14px}
+ .mascot-bubble strong{font-size:12px}.mascot-bubble small{font-size:12px}
+ .mascot-bubble::after{left:-9px;bottom:28px;transform:rotate(135deg)}
+ .scene-section{margin-top:12px}
+}
+/* Leave breathing room for the widest pointing hand and raised speech symbol. */
+.mascot-layer { inset:5%; width:90%; height:90%; }
