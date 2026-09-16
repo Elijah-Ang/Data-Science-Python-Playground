@@ -14,7 +14,7 @@ with sync_playwright() as p:
     home = page.locator('a.home-link')
     assert home.count() == 1 and home.is_visible()
     assert home.get_attribute('href') == 'index.html'
-    assert page.locator('.steps button').count() == 24
+    assert page.locator('.steps button').count() == 25
     page.wait_for_function("document.querySelector('.viewport').dataset.state==='ready'", timeout=120000)
     assert page.locator('#next').is_visible()
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'), (width, name)
