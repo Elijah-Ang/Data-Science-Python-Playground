@@ -1,4 +1,4 @@
-/* Actual application targets inside script-free, captured DOM snapshots. */
+/* Locations in the actual application. No duplicate markup or styling. */
 window.TOUR_PAGES = (() => {
   const locations = {
     data: {page:'playground.html', targets:{nav:'.top-actions',dataset:'.dataset-picker',route:'#suggestedRoute'}},
@@ -32,13 +32,33 @@ window.TOUR_PAGES = (() => {
   async function prepare(frame, chapter, alive, status) {
     const d=frame.contentDocument, w=frame.contentWindow, q=s=>d.querySelector(s);
     const scene=chapter.scene, loc=locations[scene];
-    // Script-free copies retain the application's own markup and styles.
-    if(['ml-guide','ml-validate','ml-tune'].includes(scene)) {
-      const step=scene==='ml-validate'?5:scene==='ml-tune'?7:0,article=q(`#workflow-step-${step}`),body=q('#guideBody');
-      if(article&&body)await scroll(body,article.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-85,alive);
+    if(loc.hash!==undefined && w.location.hash!==loc.hash) {w.location.hash=loc.hash;await pause(100);}
+    if(['playground.html','ml.html','statistics.html'].includes(loc.page)) {
+      if(!(scene==='data' && chapter.focus==='nav')) {
+        status('Preparing the real playground…');
+        await until(()=>q('#runAllButton') && !q('#runAllButton').disabled && !/loading|starting|preparing/i.test(q('#runtimeStatus')?.textContent||''),alive);
+      }
+      if(!['data-guide','ml-guide','ml-validate','ml-tune'].includes(scene) && q('#guideWindow') && !q('#guideWindow').hidden)q('#guideClose')?.click();
+      if(loc.page==='statistics.html') {const open=scene==='stats-study' && chapter.focus==='study';if(q('#studyPanel').hidden===open)q('#studyButton').click();}
     }
-    if(scene==='stats-results'||scene==='ml-results') {
+    if(scene==='data-run' && !q('#notebookPanel .cell')) {
+      q('#suggestedRoute button').click();await until(()=>q('#notebookPanel .cell'),alive);
+    }
+    if(scene==='data-run')await until(()=>q('#notebookPanel .cell')?.dataset.status==='done',alive);
+    if(['data-guide','ml-guide','ml-validate','ml-tune'].includes(scene)) {
+      if(q('#guideWindow').hidden)q('#guideButton').click();
+      const step=scene==='ml-validate'?5:scene==='ml-tune'?7:0,article=q(`#workflow-step-${step}`);
+      if(article){const body=q('#guideBody');await scroll(body,article.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-85,alive);}
+    }
+    if(scene==='stats-results' || scene==='ml-results') {
+      const done=()=>scene==='stats-results'?q('#routeStrip button:last-child')?.dataset.state==='done':/open|used/i.test(q('#holdoutState')?.textContent||'');
+      if(!done()) {status('Running the demonstration’s suggested route…');q('#runAllButton').click();await until(done,alive,120000);}
       const output=q('#outputBody');if(output)await scroll(output,output.scrollHeight,alive);
+    }
+    if(scene==='lesson-result') {
+      const editor=await until(()=>q('#foundationEditor'),alive);
+      editor.value=q('#foundationSolution code').textContent;editor.dispatchEvent(new w.Event('input',{bubbles:true}));q('#checkExercise').click();
+      status('Running the lesson example…');await until(()=>q('#foundationFeedback')?.dataset.state==='pass',alive,60000);
     }
     await d.fonts.ready;
     let selector=loc.targets[chapter.focus];

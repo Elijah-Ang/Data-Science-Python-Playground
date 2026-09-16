@@ -2,6 +2,7 @@
 window.TOUR_CONTENT = (() => {
   const chapters = [];
   const add = (group,scene,focus,label,title,description,context,mobile) => chapters.push({group,scene,focus,label,title,description,context,mobile});
+  add('Data','home','gate','Enter','Enter through the garden.','On the homepage, click Enter Data Playground on the garden gate. It opens the DATA workspace, where you can choose a dataset and start exploring.','On a phone, tap the same gate.');
   add('Data','data','nav','Navigate','Four places to explore.','HOME returns to the garden. DATA explores tables, STATS tests questions, and ML builds models. These buttons stay at the top of each workspace.','Scroll or use Next. Jump sections at the top.');
   add('Data','data','dataset','Choose','Start with a dataset.','Choose a bundled dataset. Wait for Python to be ready, then check the inspector for the source, columns and row count. Your working table is named df.','No upload or Python installation needed.');
   add('Data','data','route','Route','Follow a useful first route.','Start with Preview rows, then summary, filtering, a new column and a chart. Select a route task to add its Python cell. Read each result before continuing.','More tasks offers other questions to explore.','The suggested route is below the notebook. Swipe it sideways for later steps; tap a task to add its Python cell. Start with Preview rows, then read the result before continuing.');

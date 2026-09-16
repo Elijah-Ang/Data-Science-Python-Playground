@@ -2,7 +2,7 @@
 
 ## Implemented
 - Homepage preserved apart from the requested desktop tour button enlargement and left-side robot placement.
-- Follow-along tour has 24 stops on the actual Data, Statistics, ML and Learn / Refresh pages, with slower overview-to-focus movement and exact enlarged views. See docs/tour-follow-along-plan.md.
+- Follow-along tour has 25 stops, beginning at the homepage garden gate. Prepared exact-interface snapshots show Data, Statistics, ML and Learn / Refresh without loading Python, with slow overview-to-focus movement and enlarged views. See docs/tour-follow-along-plan.md.
 - Separate illustrated lesson library removed at user request; interactive curriculum preserved.
 - Foundations Credits destination repaired.
 - Build emits canonical links and sitemap; robots advertises sitemap.

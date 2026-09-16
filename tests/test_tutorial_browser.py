@@ -14,7 +14,7 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':width,'height':height})
         page.goto(f'{args.base_url}/tutorial.html')
         chapters = page.evaluate('window.TOUR_CONTENT.chapters')
-        assert len(chapters) == 24
+        assert len(chapters) == 25
         for i,c in enumerate(chapters):
             if i:
                 page.get_by_role('button',name='Next →',exact=True).click()
@@ -23,7 +23,8 @@ with sync_playwright() as p:
             expect(page.locator('.viewport')).to_have_attribute('data-state','ready')
             frame = page.frame_locator('#siteFrame')
             actual = page.frames[1]
-            assert actual.evaluate('window.DataPlaygroundTourEmbed === true')
+            assert actual.locator('script').count() == 0
+            assert page.locator('#siteFrame').get_attribute('sandbox') == 'allow-same-origin'
             assert page.evaluate("document.querySelector('.viewport').scrollTop===0")
             spot=page.locator('#spotlight').bounding_box()
             box=page.locator('.viewport').bounding_box()
@@ -38,7 +39,7 @@ with sync_playwright() as p:
                 assert page.locator('#previewDetail iframe').count()==1
                 page.get_by_role('button',name='Close preview ×').click()
         page.get_by_role('button',name='Replay ↺').click()
-        expect(page.locator('#headline')).to_have_text('Four places to explore.')
+        expect(page.locator('#headline')).to_have_text('Enter through the garden.')
         expect(page.locator('#back')).to_be_disabled()
     browser.close()
-print('Passed: 24 actual-page stops, desktop/mobile, spotlight and enlargement.')
+print('Passed: 25 script-free actual-interface stops, desktop/mobile, spotlight and enlargement.')

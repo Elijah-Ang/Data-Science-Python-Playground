@@ -27,11 +27,17 @@
     buttons.forEach((b,n)=>{b.hidden=chapters[n].group!==c.group;b.classList.toggle('active',n===i);if(n===i)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
     groupButtons.forEach((b,n)=>b.setAttribute('aria-pressed',String(groups[n]===c.group)));$('#progress').style.width=`${(i+1)/chapters.length*100}%`;
   }
-  async function load(url,alive){
-    if(page===url && frame.contentDocument?.URL.includes(`${url}?tour=1`) && frame.contentDocument.readyState==='complete'){camera.style.visibility='visible';return;}
-    status('Opening the actual page…');camera.style.visibility='hidden';page=url;frame.src=`${url}?tour=1`;
-    await pages.until(()=>frame.contentDocument?.URL.includes(`${url}?tour=1`) && frame.contentDocument.readyState==='complete',alive);
+  async function load(url,alive,chapter){
+    const snapshot=`assets/tour-snapshots/${profile}-${chapter.scene}-${chapter.focus}.html`;
+    if(frame.contentDocument?.URL.endsWith(snapshot) && frame.contentDocument.readyState==='complete'){camera.style.visibility='visible';return;}
+    const previous=page===url?frame.contentDocument:null;
+    const scrolls=previous?[...previous.querySelectorAll('[id]')].filter(n=>n.scrollTop||n.scrollLeft).map(n=>({id:n.id,top:n.scrollTop,left:n.scrollLeft})):[];
+    const rootTop=previous?.scrollingElement.scrollTop||0;
+    status('Opening the preview…');camera.style.visibility='hidden';page=url;frame.src=snapshot;
+    await pages.until(()=>frame.contentDocument?.URL.endsWith(snapshot) && frame.contentDocument.readyState==='complete',alive);
     await frame.contentDocument.fonts.ready;if(!alive())return;
+    for(const s of scrolls){const n=frame.contentDocument.getElementById(s.id);if(n){n.style.scrollBehavior='auto';n.scrollTop=s.top;n.scrollLeft=s.left;}}
+    frame.contentDocument.scrollingElement.style.scrollBehavior='auto';frame.contentDocument.scrollingElement.scrollTop=rootTop;
     paint(overview());camera.style.visibility='visible';
   }
   function bounds(element){
@@ -47,7 +53,7 @@
     const run=++token,alive=()=>run===token;index=i;ready=false;copy(i);viewport.dataset.state='moving';$('#spotlight').style.opacity='0';$('#enlargePreview').disabled=true;
     try{
       if(page)await animate(overview(),1000,alive);if(!alive())return;
-      const c=chapters[i],loc=pages.locations[c.scene];await load(loc.page,alive);if(!alive())return;
+      const c=chapters[i],loc=pages.locations[c.scene];await load(loc.page,alive,c);if(!alive())return;
       viewport.dataset.page=loc.page;viewport.dataset.scene=c.scene;status('');if(!reduced.matches)await pages.pause(650);
       const element=await pages.prepare(frame,c,alive,status);if(!alive())return;
       status('');await reveal(element,alive);if(!alive())return;focus=bounds(element);
@@ -76,7 +82,7 @@
     const original=[...d.querySelectorAll('input,textarea,select')];
     clone.querySelectorAll('input,textarea,select').forEach((n,i)=>{const source=original[i];if(n.tagName==='SELECT')[...n.options].forEach(o=>o.toggleAttribute('selected',o.value===source.value));else if(n.tagName==='TEXTAREA')n.textContent=source.value;else n.setAttribute('value',source.value);});
     scrolls.forEach(s=>clones[s.i]?.setAttribute('data-tour-scroll',`${s.top},${s.left}`));
-    const base=document.createElement('base');base.href=d.URL;clone.querySelector('head').prepend(base);
+    const base=document.createElement('base');base.href=d.baseURI;clone.querySelector('head').prepend(base);
     clone.querySelectorAll('a,button,input,textarea,select').forEach(n=>n.setAttribute('inert',''));
     const snapshot=document.createElement('iframe');snapshot.title='Enlarged actual interface';snapshot.setAttribute('sandbox','allow-same-origin');snapshot.tabIndex=-1;snapshot.style.cssText=`width:${width}px;height:${height}px;border:0`;
     snapshot.onload=async()=>{if(!snapshot.isConnected)return;await snapshot.contentDocument.fonts.ready;if(!snapshot.isConnected)return;snapshot.contentDocument.querySelectorAll('[data-tour-scroll]').forEach(n=>{const [top,left]=n.dataset.tourScroll.split(',').map(Number);n.scrollTop=top;n.scrollLeft=left;});snapshot.contentWindow.scrollTo(frame.contentWindow.scrollX,frame.contentWindow.scrollY);$('#previewDetail').scrollLeft=Math.max(0,focus.x-20);$('#previewDetail').scrollTop=Math.max(0,focus.y-20);};

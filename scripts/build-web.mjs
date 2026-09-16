@@ -61,7 +61,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data"];
+const directories = ["data", "assets/tour-snapshots"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",

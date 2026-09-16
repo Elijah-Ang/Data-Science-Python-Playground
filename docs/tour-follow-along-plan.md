@@ -1,30 +1,30 @@
 # Exact-interface follow-along tour
 
-## Current requirements — 16 September 2026
+## Experience
 
-- Use the actual interface, not similarly styled recreations or AI-generated UI text.
-- Show the whole workspace before focusing on a control. Keep that page mounted across its stops.
-- Move slowly enough to follow: 1 s pull-back, 650 ms overview dwell, 1.4 s internal scroll where needed, 650 ms pause, then 1.9 s zoom-in.
-- Keep all 24 stops: Data (5), Statistics (5), ML (7), Learn / Refresh (7).
-- Move the homepage robot to the left on desktop; retain the existing left-side robot / speech-bubble arrangement on mobile. Do not change the rest of the homepage.
-- Keep the separate illustrated lesson library removed. Do not introduce saved learning.
+25 stops begin with Enter Data Playground on the homepage garden gate, then Data (5), Statistics (5), ML (7), and Learn / Refresh (7). The robot stays on the left. Homepage design and learning persistence are unchanged.
 
-## Rendering and accuracy
+The original HTML/CSS, fonts, form values and real completed outputs are captured at desktop (1440×960) and phone (390×844) sizes. These are DOM snapshots, not screenshots or recreated components. Text remains sharp when enlarged. Snapshots load on demand; visitors never start Python in the tour. The actual workspaces still start Python normally when opened.
 
-`tour-pages.js` maps steps to selectors in the real pages. `tutorial.js` embeds one same-origin application document at a time, using the original HTML, CSS, fonts, assets and renderers. No alternative component templates or screenshot rectangles are used. Existing historical raster captures remain in Git, but are not shipped.
+Camera timing: 1 s pull-back, 650 ms overview dwell, 1.4 s scroll where needed, 650 ms pause, 1.9 s zoom-in. Scroll positions carry across snapshots of the same page. Reduced motion skips animation. Enlarge preview preserves original ancestors/styles and scroll context.
 
-Data, Statistics and ML run their real example Python in the disposable frame. This needs the normal runtime download on a first visit; loading and failure states are explicit. Only one active page/runtime is retained. Navigating to another workspace unloads the previous one. Tour frames cannot restore or save notebook drafts, advertise or show leave-confirmation prompts. Lesson code is held only in the demonstration editor.
+## Capture and refresh
 
-The camera measures actual element geometry and clips highlights to the real scrolling containers. Opening Workflow/Challenges and scrolling within the guide happen visibly at the page overview before zooming in. Ordinary document scroll events cannot advance the tour: intentional wheel/touch gestures, buttons and arrow keys control the steps. This prevents a child page focusing an editor from unexpectedly changing the chapter. Reduced-motion users get immediate transitions.
+After changing the actual interface or example results:
 
-Enlarge preview uses an exact DOM snapshot with original ancestor structure and styles, preserving field values and scroll positions. Scripts are removed; controls are inert while the document and reference-window contents remain scrollable. It starts no additional runtime. Show whole page pulls the camera back without changing the step.
+1. Run npm run build:web.
+2. Run node scripts/serve-tour-capture.mjs.
+3. Open http://127.0.0.1:8004/tutorial.html and click Capture desktop and mobile tour. Wait for Complete. This local authoring step runs the real example routes once for each profile and saves 50 HTML snapshots to assets/tour-snapshots.
+4. Stop the capture server. Rebuild and run node tests/test_tour_content.mjs. Inspect changed visuals before publishing.
+
+The maintainer capture helper retains original page selectors and preparation actions in scripts/tour-capture-pages.js. Keep its locations aligned with tour-pages.js. No capture server or helper ships in the public build. The server binds only to loopback, validates same-origin writes and restricts output filenames.
+
+Capture strips scripts and event handlers, freezes selected/input values and canvas output, and makes controls inert. Published frames use sandbox=allow-same-origin WITHOUT allow-scripts. They cannot initialise Python, run ad scripts, restore drafts or submit forms. Snapshots use noindex and original relative assets. No runtime fallback silently reintroduces Python loading.
+
+Examples are real results: Statistics compares Adelie and Chinstrap penguin mass (−26.9239 g; 95% CI −145.665 to 91.8172 g). ML uses five continuous measures with Logistic Regression. Lessons show the actual I01 exercise and checked answer. Statistics and ML lesson pathways remain Coming soon.
 
 ## Verification
 
-Static checks cover 24 page/selector mappings, real-page retention, motion durations, draft isolation, advertising exclusion and robot placement. The browser regression script covers all steps at desktop/mobile widths, reduced motion, viewport containment and enlargement. Manual visual checks verify actual source layouts and runtime results; never present test coverage as proof of unexecuted browser tests.
+Static checks cover all 25 mappings and 50 script-free snapshots, garden entry, camera timing, draft isolation and robot position. Browser regression covers desktop/mobile targets, spotlight containment, enlargement and replay. Publication remains subject to repository review requirements. This does not imply AdSense approval.
 
-The Statistics example is the real penguin Welch comparison (mean difference −26.9239 g, 95% CI −145.665 to 91.8172 g). ML uses five continuous measures and Logistic Regression. Learn demonstrates the actual I01 exercise and Check answer. Statistics and ML lesson pathways remain marked Coming soon.
-
-Publication remains subject to the existing PR review gate and deployment verification. Nothing here implies AdSense approval.
-
-Local Chrome checks on 16 September: all 24 desktop stops and all 24 phone stops reached the correct rendered targets. Executed Statistics, ML and I01 examples completed; enlarged Workflow/final-test views were inspected. Phone fixes include measuring past display:contents wrappers, deterministic scroll timing, and transform-only camera scaling to preserve iframe scroll geometry. Chromium/WebKit CI regression is updated but was not executed locally.
+16 September validation: all 25 desktop and 25 phone steps reached ready state in Chrome using the script-free snapshots. Garden entry and enlarged lesson view were visually inspected. Build, JavaScript checks and app-shell checks passed. The updated Chromium/WebKit CI script was not run locally.
