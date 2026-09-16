@@ -27,8 +27,8 @@ for (const file of [
   "app-platform.js",
   "landing.css",
   "landing.js",
-  "tutorial.css",
   "tutorial.js",
+  "tutorial.css",
   "playground-shared.css",
   "build-info.json",
   "manifest.webmanifest",
@@ -36,21 +36,7 @@ for (const file of [
   "assets/icons/app-icon-512.png",
   "assets/fonts/nunito-latin.woff2",
   "assets/licenses/manifest.json",
-  "data/ml-embedded-datasets.js",
-  ...[
-    "mobile-data",
-    "mobile-guide",
-    "mobile-ml",
-    "tablet-data",
-    "tablet-guide",
-    "tablet-ml",
-    "portrait-data",
-    "portrait-guide",
-    "portrait-ml",
-    "wide-data",
-    "wide-guide",
-    "wide-ml"
-  ].map(name => `assets/tour-captures/${name}.png`)
+  "data/ml-embedded-datasets.js"
 ]) {
   await fs.access(path.join(dist, file));
 }

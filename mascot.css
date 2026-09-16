@@ -23,7 +23,7 @@
 .welcome-intro { position:relative; display:block; max-width:920px; }
 .welcome-title-line { display:block; }
 @media(min-width:1001px){
- .welcome-intro > .mascot-cta{position:absolute;left:calc(50% + min(25vw,370px));top:8px;width:180px}
+ .welcome-intro > .mascot-cta{position:absolute;right:calc(50% + min(25vw,370px));left:auto;top:8px;width:180px}
  .mascot-viewport{width:150px;height:150px}
  .mascot-bubble{padding:10px 12px;font-size:13px}
  .mascot-bubble strong{font-size:12px}.mascot-bubble small{font-size:11px}

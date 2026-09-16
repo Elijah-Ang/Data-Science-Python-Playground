@@ -81,6 +81,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
   box-shadow: 1px 1px 0 var(--landing-orange);
   image-rendering: pixelated;
 }
+@media (min-width: 1100px) and (pointer: fine) {
+  .tour-button { min-height: 44px; padding: 12px 16px; font-size: 14px; }
+}
 .tour-button:hover {
   background: #fff2c9;
   transform: translate(2px, 2px);

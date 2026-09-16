@@ -274,7 +274,7 @@
   $('themeButton').onclick=()=>window.AppAppearance.apply(document.body.dataset.theme==='dark'?'light':'dark');$('guideButton').onclick=showGuide;$('guideClose').onclick=()=>$('guideWindow').close();$('guideWindow').onclose=()=>$('guideButton').setAttribute('aria-expanded','false');
   // Results and runtime variables cannot be recovered by reopening the page.
   window.addEventListener('beforeunload', event => {
-    if (!cells.length) return;
+    if (window.DataPlaygroundTourEmbed || !cells.length) return;
     event.preventDefault();
     event.returnValue = '';
   });

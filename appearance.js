@@ -4,8 +4,12 @@
   const moonIcon = '<path d="M20 15.3A8.5 8.5 0 0 1 8.7 4 8.5 8.5 0 1 0 20 15.3z"></path>';
   const sunIcon = '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>';
   const chromeColors = {dark:'#0c1125', light:'#efe8d7'};
-  let preference = 'system';
-  try { preference=localStorage.getItem('dspp-appearance') || 'system'; } catch {}
+  let preference = 'light';
+  try {
+    const saved = localStorage.getItem('dspp-appearance');
+    // Default to light, including legacy automatically saved system preferences.
+    if (saved === 'dark' || saved === 'light') preference = saved;
+  } catch {}
   function syncThemeControl(theme) {
     const button = document.getElementById('themeButton');
     if (!button) return;

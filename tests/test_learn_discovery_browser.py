@@ -132,8 +132,8 @@ with sync_playwright() as pw:
      assert abs(a['x']+a['width']/2-width/2)<1,(width,a)
      if width>1000:
       for line in page.locator('.welcome-title-line').all():
-       ink=line.evaluate('(e)=>{const r=document.createRange();r.selectNodeContents(e);const b=r.getBoundingClientRect();return {right:b.right}}')
-       assert ink['right']+12<=b['x'],(width,ink,b)
+       ink=line.evaluate('(e)=>{const r=document.createRange();r.selectNodeContents(e);const b=r.getBoundingClientRect();return {left:b.left,right:b.right}}')
+       assert b['x']+b['width']+12<=ink['left'] or ink['right']+12<=b['x'],(width,ink,b)
      else:assert b['y']>=a['y']+a['height']-1,(a,b)
      assert page.locator('.mascot-viewport').bounding_box()['height'] in [110,150,180]
     else:

@@ -44,10 +44,12 @@ const files = [
   "help.html",
   "acknowledgements.html",
   "offline.html",
+  "tutorial.js",
+  "tour-content.js",
+  "tour-pages.js",
   "tutorial.css",
   "landing.css",
   "playground-shared.css",
-  "tutorial.js",
   "landing.js",
   "landing-motion.js",
   "ml-app.js",
@@ -59,7 +61,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data", "assets/tour-captures"];
+const directories = ["data", "assets/tour-snapshots"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",
@@ -144,6 +146,15 @@ try {
 }
 
 const hash = content => createHash('sha256').update(content).digest('hex');
+// Keep canonical URLs and sitemap for the maintained public entry points.
+const publicRoutes = files.filter(file => file.endsWith('.html') && file !== 'offline.html');
+for (const route of publicRoutes) {
+  const filename = path.join(output, route);
+  const canonical = 'https://dataplayground.science/' + (route === 'index.html' ? '' : route);
+  const html = await fs.readFile(filename, 'utf8');
+  await fs.writeFile(filename, html.replace('</head>', `<link rel="canonical" href="${canonical}"></head>`));
+}
+await fs.writeFile(path.join(output,'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + publicRoutes.map(route => '<url><loc>https://dataplayground.science/' + (route === 'index.html' ? '' : route) + '</loc></url>').join('') + '</urlset>\n');
 async function inventory(directory, prefix='') {
   const entries=[];
   for (const item of (await fs.readdir(directory,{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))) {

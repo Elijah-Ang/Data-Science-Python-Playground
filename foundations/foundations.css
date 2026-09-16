@@ -149,6 +149,14 @@ body[data-foundations] [hidden] { display:none !important; }
 .chapter-jumps { display:flex; flex-wrap:wrap; gap:7px; margin-top:16px; }
 .chapter-jumps a { padding:7px 10px; border:1px solid var(--border); border-radius:4px; font:12px var(--mono); text-underline-offset:3px; }
 .chapter-jumps a:hover { border-color:var(--lesson-accent); }
+.chapter-step { display:inline-flex; align-items:center; gap:9px; max-width:100%; }
+.chapter-flow-arrow { color:var(--muted); font:20px/1 var(--mono); flex:none; }
+.chapter-step a { overflow-wrap:anywhere; }
+@media(max-width:600px) {
+  .chapter-jumps { flex-direction:column; align-items:flex-start; }
+  .chapter-step { flex-direction:column; align-items:flex-start; gap:7px; }
+  .chapter-flow-arrow { transform:rotate(90deg); margin-left:16px; }
+}
 .foundation-chapter { scroll-margin-top:85px; }
 .lesson-card { display:flex; flex-direction:column; gap:9px; }
 .card-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; }
