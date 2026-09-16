@@ -3,7 +3,6 @@ import path from "node:path";
 import {createHash} from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { build } from "esbuild";
-import { buildLearningPages } from './build-learning-pages.mjs';
 
 const root = path.resolve(import.meta.dirname, "..");
 const output = path.join(root, "dist");
@@ -45,7 +44,7 @@ const files = [
   "help.html",
   "acknowledgements.html",
   "offline.html",
-  "reading.css",
+  "tutorial.js",
   "tutorial.css",
   "landing.css",
   "playground-shared.css",
@@ -60,7 +59,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data"];
+const directories = ["data", "assets/tour-captures"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",
@@ -145,9 +144,8 @@ try {
 }
 
 const hash = content => createHash('sha256').update(content).digest('hex');
-// The same curriculum powers interactive practice and public, script-free reading.
-const learningRoutes = await buildLearningPages(output);
-const publicRoutes = [...files.filter(file => file.endsWith('.html') && file !== 'offline.html'), ...learningRoutes];
+// Keep canonical URLs and sitemap for the maintained public entry points.
+const publicRoutes = files.filter(file => file.endsWith('.html') && file !== 'offline.html');
 for (const route of publicRoutes) {
   const filename = path.join(output, route);
   const canonical = 'https://dataplayground.science/' + (route === 'index.html' ? '' : route);

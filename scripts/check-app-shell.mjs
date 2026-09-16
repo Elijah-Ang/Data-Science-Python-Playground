@@ -27,7 +27,7 @@ for (const file of [
   "app-platform.js",
   "landing.css",
   "landing.js",
-  "reading.css",
+  "tutorial.js",
   "tutorial.css",
   "playground-shared.css",
   "build-info.json",
