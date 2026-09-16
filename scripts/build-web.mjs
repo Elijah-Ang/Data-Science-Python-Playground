@@ -45,6 +45,7 @@ const files = [
   "acknowledgements.html",
   "offline.html",
   "tutorial.js",
+  "tour-content.js",
   "tutorial.css",
   "landing.css",
   "playground-shared.css",

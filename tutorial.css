@@ -225,6 +225,20 @@ button:disabled { opacity: .3; cursor: default; }
   background: var(--line);
 }
 #progress { height: 100%; width: 0; background: var(--orange); }
+.tour-sections {
+  position: fixed; top: calc(20px + env(safe-area-inset-top)); right: 4vw;
+  z-index: 10; display: flex; gap: 4px; padding: 3px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+}
+.tour-sections button {
+  min-height: 38px; padding: 0 14px; border: 0; border-radius: 3px;
+  color: var(--muted); background: transparent; font-size: 12px;
+}
+.tour-sections button[aria-pressed="true"] { background: var(--ink); color: var(--card); }
+.steps button[hidden] { display: none; }
+#openSection { display: inline-flex; align-items: center; min-height: 44px; margin-top: 14px; color: var(--teal); font: 12px var(--mono); }
+#camera { transition: opacity .18s ease; }
+#spotlight { transition: opacity .18s ease; }
 .noscript {
   position: fixed;
   right: 16px;
@@ -241,15 +255,17 @@ body[data-layout="mobile"] .viewport { max-width: 390px; height: 470px; margin: 
 body[data-layout="mobile"] .visual-foot { max-width: 390px; margin: 12px auto; }
 
 @media (max-width: 700px) {
+  .tour-sections { top: calc(67px + env(safe-area-inset-top)); left: 20px; right: 20px; justify-content: space-between; }
+  .tour-sections button { padding: 0 10px; min-height: 36px; font-size: 11px; }
   .home-link { left: 20px; top: calc(14px + env(safe-area-inset-top)); }
   .stage {
     min-height: 0;
-    padding: calc(76px + env(safe-area-inset-top)) 20px calc(75px + env(safe-area-inset-bottom));
+    padding: calc(124px + env(safe-area-inset-top)) 20px calc(65px + env(safe-area-inset-bottom));
   }
   .stage-grid { display: flex; flex-direction: column-reverse; gap: 18px; }
   .visual { width: 100%; }
   .viewport, body[data-layout="mobile"] .viewport {
-    height: 36svh;
+    height: 30svh;
     min-height: 180px;
     max-width: none;
     border-radius: 8px;
@@ -266,12 +282,13 @@ body[data-layout="mobile"] .visual-foot { max-width: 390px; margin: 12px auto; }
   .transport { gap: 4px; }
   #pageCount { display: none; }
   .transport button { padding: 0 10px; }
+  #openSection { margin-top: 3px; min-height: 36px; font-size: 11px; }
 }
 
 @media (max-height: 690px) and (max-width: 700px) {
-  .stage { padding-top: calc(70px + env(safe-area-inset-top)); }
+  .stage { padding-top: calc(116px + env(safe-area-inset-top)); }
   .stage-grid { gap: 12px; }
-  .viewport, body[data-layout="mobile"] .viewport { height: 29svh; min-height: 150px; }
+  .viewport, body[data-layout="mobile"] .viewport { height: 30svh; min-height: 185px; }
   h1 { font-size: 23px; }
   #description { font-size: 14px; }
   .context { font-size: 9px; }

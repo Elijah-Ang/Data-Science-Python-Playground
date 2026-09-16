@@ -44,4 +44,14 @@
 - Python packages do not load merely to view the tour.
 - No unrelated changes to the homepage, lessons, theme choices or advertising.
 
-Status: original tour restored as an interim baseline. This extension is planned, not implemented or captured yet.
+## Implemented — 16 September 2026
+
+The storyboard is now split into 24 focused stops: Data (5), Statistics (5), ML (7), Learn (7). The opening capture shows HOME / DATA / STATS / ML. Section shortcuts and direct workspace links keep the longer tour navigable. The homepage is unchanged.
+
+Thirty-four actual screenshots cover desktop and phone layouts; tablet-sized tour layouts use the phone capture profile rather than inventing tablet coordinates. The camera pans within matching scenes and crossfades between different pages. No Python runtime is loaded by the tour itself.
+
+Verified examples: Data df.head(10); penguin Welch comparison (mean difference −26.9239 g, 95% CI −145.665 to 91.8172 g); supervised ML five-feature logistic route (final macro F1 0.916, 114 held-out rows); I01 DataFrame lesson accepted by Check answer. Statistics and ML lesson pathways remain explicitly Coming soon.
+
+Static tests check all 24 stops, four sections, screenshot dimensions and valid focus bounds. Browser regression coverage includes section jumps, every stop, Back/Next/Replay and responsive image selection. Release still depends on PR 46 review/merge and deployment verification; these changes do not imply AdSense approval.
+
+Local Chrome interaction checks: all 24 stops at 1440×1000, 834×900, 390×844 and 375×667; no horizontal overflow or narrative/footer overlap. Back, Next, Replay and section jumps exercised. The retained CI script also covers reduced-motion Chromium/WebKit; that automated script was not run locally in this session.

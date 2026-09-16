@@ -2,7 +2,7 @@
 
 ## Implemented
 - Homepage preserved; only desktop fine-pointer tour button enlarged.
-- Original zoomed follow-along tour restored. Extension plan: docs/tour-follow-along-plan.md.
+- Zoomed follow-along tour expanded to 24 stops: Data, Statistics, ML and Learn / Refresh, with current desktop/phone captures. See docs/tour-follow-along-plan.md.
 - Separate illustrated lesson library removed at user request; interactive curriculum preserved.
 - Foundations Credits destination repaired.
 - Build emits canonical links and sitemap; robots advertises sitemap.

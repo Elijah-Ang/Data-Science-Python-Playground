@@ -5,7 +5,7 @@
   <script src="appearance.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="A focused guided tour of the Data Science Python Playground and Machine Learning Playground.">
+  <meta name="description" content="Follow the real interface through Data, Statistics, Machine Learning and interactive Python lessons in Learn / Refresh.">
   <meta name="theme-color" content="#efe8d7">
   <meta name="application-name" content="Data Science Playground Tour">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,31 +16,33 @@
   <link rel="icon" type="image/png" href="assets/icons/data-playground-slide.png" sizes="1254x1254">
   <link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="tutorial.css?v=tour5">
+  <link rel="stylesheet" href="tutorial.css?v=tour6">
   <script src="app-platform.js?v=platform2"></script>
 </head>
 <body data-theme="light">
   <a class="home-link" href="index.html" aria-label="Back to home">← Home</a>
+  <nav class="tour-sections" aria-label="Tour sections"></nav>
 
   <main id="journey" aria-describedby="tour-description">
-    <p id="tour-description" class="sr-only">A five-minute guided tour. Scroll through seven features to learn how to choose a dataset, inspect it, run Python, read evidence, use the guides, and explore Machine Learning.</p>
+    <p id="tour-description" class="sr-only">Follow the actual interface through Data, Statistics, Machine Learning and Learn / Refresh. Scroll, use Back and Next, or jump to a section. Previews are screenshots, not live controls.</p>
     <div class="stage">
       <div class="stage-grid">
         <section class="narrative" aria-live="polite">
-          <p class="eyebrow" id="count">FEATURE 01 / 07 · CHOOSE</p>
-          <h1 id="headline">Start with a question.</h1>
-          <p id="description">Choose a dataset at the top. Start with bike rentals and explore how demand changes through the day.</p>
-          <p class="context" id="context">One dataset. Plenty of questions.</p>
+          <p class="eyebrow" id="count">DATA · 1 / 24</p>
+          <h1 id="headline">Four places to explore.</h1>
+          <p id="description">Explore tables in DATA, test questions in STATS, build models in ML, or use the robot on HOME to open Learn / Refresh.</p>
+          <p class="context" id="context">Scroll or use Next. Jump sections at the top.</p>
+          <a id="openSection" href="playground.html">Open Data ↗</a>
         </section>
 
         <div class="visual">
           <div class="viewport" aria-label="Annotated preview of the current playground interface">
             <div id="camera">
-              <img id="siteCapture" src="assets/tour-captures/wide-data.png" alt="Current Data Playground interface" draggable="false" width="1440" height="1252">
+              <img id="siteCapture" src="assets/tour-captures/v2-wide-data.jpg" alt="Data Playground with HOME, DATA, STATS and ML navigation" draggable="false" width="1440" height="1000">
             </div>
             <div id="spotlight" aria-hidden="true"><span id="pin"></span></div>
           </div>
-          <div class="visual-foot"><span>Scroll to explore ↓</span><span id="focusLabel">CHOOSE</span></div>
+          <div class="visual-foot"><span>Guided preview · scroll to explore ↓</span><span id="focusLabel">NAVIGATE</span></div>
         </div>
       </div>
 
@@ -48,7 +50,7 @@
         <div class="steps" aria-label="Tour chapters"></div>
         <div class="transport">
           <button id="back" type="button" aria-label="Previous feature">←</button>
-          <span id="pageCount" aria-live="polite">1 / 7</span>
+          <span id="pageCount" aria-live="polite">1 / 24</span>
           <button id="next" type="button">Next →</button>
         </div>
       </footer>
@@ -57,6 +59,7 @@
   </main>
 
   <noscript><p class="noscript">Enable JavaScript to explore the guided tour.</p></noscript>
-  <script src="tutorial.js?v=tour4"></script>
+  <script src="tour-content.js?v=tour6"></script>
+  <script src="tutorial.js?v=tour6"></script>
 </body>
 </html>
