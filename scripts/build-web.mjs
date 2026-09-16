@@ -45,11 +45,10 @@ const files = [
   "help.html",
   "acknowledgements.html",
   "offline.html",
-  "tutorial.css",
   "reading.css",
+  "tutorial.css",
   "landing.css",
   "playground-shared.css",
-  "tutorial.js",
   "landing.js",
   "landing-motion.js",
   "ml-app.js",
@@ -61,7 +60,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data", "assets/tour-captures"];
+const directories = ["data"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",
