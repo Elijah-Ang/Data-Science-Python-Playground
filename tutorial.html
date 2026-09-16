@@ -1,62 +1,17 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <script src="ad-mode.js"></script>
-  <script src="appearance.js"></script>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="A focused guided tour of the Data Science Python Playground and Machine Learning Playground.">
-  <meta name="theme-color" content="#efe8d7">
-  <meta name="application-name" content="Data Science Playground Tour">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Playground Tour">
-  <title>Guided Tour · Data Science Python Playground</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" type="image/png" href="assets/icons/data-playground-slide.png" sizes="1254x1254">
-  <link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
-  <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="tutorial.css?v=tour5">
-  <script src="app-platform.js?v=platform2"></script>
-</head>
-<body data-theme="light">
-  <a class="home-link" href="index.html" aria-label="Back to home">← Home</a>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="A visual tour of Data Playground: explore data, practise Python, investigate statistics and evaluate machine-learning models."><meta name="theme-color" content="#efe8d7"><title>Guided Tour · Data Playground</title><link rel="icon" href="assets/icons/data-playground-slide.png"><link rel="stylesheet" href="assets/fonts/fonts.css"><link rel="stylesheet" href="reading.css"><script src="ad-mode.js"></script><script src="app-platform.js"></script></head><body>
+<header><nav aria-label="Main navigation"><a href="index.html">← Home</a><a href="playground.html">Data</a><a href="statistics.html">Statistics</a><a href="ml.html">Machine Learning</a><a href="learn.html">Learn / Refresh</a></nav></header>
+<main><p class="eyebrow">Your five-minute tour</p><h1>Find a question.<br>Try a little Python.</h1><p class="lede">Explore data, test an idea or practise a skill. Start anywhere; no account is needed for the public playground.</p><nav aria-label="Tour sections"><a href="#data">Data Playground</a><a href="#run">Notebook & output</a><a href="#stats">Statistics Playground</a><a href="#ml">Machine Learning</a><a href="#learn">Learn / Refresh</a><a href="#practice">Data Foundations practice</a></nav><p class="caption">Illustrated examples below explain the tools. They are not screenshots or live results.</p>
+<section class="tour-step" id="data"><div><p class="eyebrow">01 / Data Playground</p><h2>Meet the table first.</h2><p>Choose a bundled dataset. Check its size, column meanings and preview in the inspector. Each row is an observation; each column describes one part of it. Use Suggested Route for a starting point, or open Challenges for more questions.</p><a class="action" href="playground.html">Explore data →</a></div><figure class="diagram"><table><caption>Example: three café orders</caption><thead><tr><th scope="col">drink</th><th scope="col">price</th></tr></thead><tbody><tr><td>Latte</td><td>6.20</td></tr><tr><td>Tea</td><td>3.10</td></tr><tr><td>Mocha</td><td>6.80</td></tr></tbody></table><p>3 rows = three orders. 2 columns = drink and price.</p><figcaption>Illustrated data playground example.</figcaption></figure></section>
+<section class="tour-step" id="run"><div><p class="eyebrow">02 / Notebook &amp; output</p><h2>Change. Run. Read.</h2><p>Choose a route task to add and run its cell, or edit Python and press Run. Cells share the current Python session. On wide screens, output sits beside the notebook; on narrow screens, the notebook comes first, then output. Each pane scrolls independently.</p><a class="action" href="playground.html">Open the notebook →</a></div><figure class="diagram"><p class="eyebrow">Notebook · using the café table above</p><pre><code>df["price"].mean()</code></pre><p class="eyebrow">Output</p><pre><code>5.366666666666667</code></pre><p>(6.20 + 3.10 + 6.80) ÷ 3 ≈ 5.37 per order. This describes these three orders, not every order sold.</p><figcaption>Illustrated notebook &amp; output example.</figcaption></figure></section>
+<section class="tour-step" id="stats"><div><p class="eyebrow">03 / Statistics Playground</p><h2>Measure uncertainty.</h2><p>Open STATS. Choose a dataset, then use Study setup to describe your question and variables. Set the confidence level and follow the suggested route. Read estimates, intervals and assumptions together: a small p-value does not tell you an effect is large or useful.</p><a class="action" href="statistics.html">Investigate statistics →</a></div><figure class="diagram"><ol class="flow"><li>Question<small>What difference matters?</small></li><li>Study setup<small>Variables and design</small></li><li>Evidence<small>Estimate, interval, checks</small></li></ol><svg viewBox="0 0 440 145" role="img" aria-label="Illustrative confidence interval from minus one to five, estimate two, crossing zero" style="width:100%;height:auto"><path d="M40 104H405M141 30V112" stroke="#625b4b" stroke-dasharray="4 4"/><path d="M95 65H371M95 50V80M371 50V80" stroke="#137c9c" stroke-width="4"/><circle cx="233" cy="65" r="7" fill="#b94d25"/><g fill="#1d2945" font-family="system-ui" font-size="16"><text x="78" y="130">−1</text><text x="136" y="130">0</text><text x="227" y="130">2</text><text x="365" y="130">5</text><text x="164" y="23">Difference in means</text></g></svg><p>An interval crossing zero includes no difference as a plausible value under the method’s assumptions. It does not prove the groups are identical.</p><figcaption>Illustrated statistics playground example.</figcaption></figure></section>
+<section class="tour-step" id="ml"><div><p class="eyebrow">04 / Machine Learning</p><h2>Test predictions fairly.</h2><p>Open ML. Choose a dataset and target, select features and a model, then follow the modelling route. Use Workflow for guidance. Train to fit, validate to compare choices, and keep the final test set untouched until your choices are settled.</p><a class="action" href="ml.html">Try machine learning →</a></div><figure class="diagram"><ol class="flow"><li>Train<small>Learn from examples</small></li><li>Validate<small>Compare choices</small></li><li>Final test<small>Evaluate the settled model</small></li></ol><pre><code>Inputs → model → prediction
+Prediction + actual value → evaluation</code></pre><p>Fit preprocessing on training data only. Test information leaking into fitting or model choices makes evaluation overly optimistic.</p><figcaption>Illustrated machine learning example.</figcaption></figure></section>
+<section class="tour-step" id="learn"><div><p class="eyebrow">05 / Learn / Refresh</p><h2>One small table at a time.</h2><p>Open Learn / Refresh for optional learning paths. Data Foundations is available now: Inspect, Wrangle / Preprocess and Visualise. Statistics and Machine Learning learning paths are Coming soon; their playgrounds are already available.</p><a class="action" href="learn.html">Choose a learning path →</a></div><figure class="diagram"><ol class="flow"><li>Inspect<small>Understand rows and columns</small></li><li>Wrangle<small>Clean and reshape deliberately</small></li><li>Visualise<small>Choose a chart for your question</small></li></ol><p>Read explanations, diagrams and examples without starting Python in the <a href="lessons/index.html">illustrated lesson library</a>.</p><figcaption>Illustrated learn / refresh example.</figcaption></figure></section>
+<section class="tour-step" id="practice"><div><p class="eyebrow">06 / Data Foundations practice</p><h2>Less help as you go.</h2><p>Follow starts with guidance. Change applies the idea to a different table. Transfer asks you to work independently. Run executes your code; Check answer checks the task; Reset code restores the starter. Navigating or reloading starts fresh. Learning progress is not saved.</p><a class="action" href="data-foundations.html?from=learn#inspect/I01/0">Try the first practice →</a></div><figure class="diagram"><ol class="flow"><li>Follow<small>Complete a guided example</small></li><li>Change<small>Adapt to another table</small></li><li>Transfer<small>Choose the code yourself</small></li></ol><pre><code># Choose one column
+df["price"]
 
-  <main id="journey" aria-describedby="tour-description">
-    <p id="tour-description" class="sr-only">A five-minute guided tour. Scroll through seven features to learn how to choose a dataset, inspect it, run Python, read evidence, use the guides, and explore Machine Learning.</p>
-    <div class="stage">
-      <div class="stage-grid">
-        <section class="narrative" aria-live="polite">
-          <p class="eyebrow" id="count">FEATURE 01 / 07 · CHOOSE</p>
-          <h1 id="headline">Start with a question.</h1>
-          <p id="description">Choose a dataset at the top. Start with bike rentals and explore how demand changes through the day.</p>
-          <p class="context" id="context">One dataset. Plenty of questions.</p>
-        </section>
-
-        <div class="visual">
-          <div class="viewport" aria-label="Annotated preview of the current playground interface">
-            <div id="camera">
-              <img id="siteCapture" src="assets/tour-captures/wide-data.png" alt="Current Data Playground interface" draggable="false" width="1440" height="1252">
-            </div>
-            <div id="spotlight" aria-hidden="true"><span id="pin"></span></div>
-          </div>
-          <div class="visual-foot"><span>Scroll to explore ↓</span><span id="focusLabel">CHOOSE</span></div>
-        </div>
-      </div>
-
-      <footer aria-label="Tour controls">
-        <div class="steps" aria-label="Tour chapters"></div>
-        <div class="transport">
-          <button id="back" type="button" aria-label="Previous feature">←</button>
-          <span id="pageCount" aria-live="polite">1 / 7</span>
-          <button id="next" type="button">Next →</button>
-        </div>
-      </footer>
-      <div class="progress" aria-hidden="true"><div id="progress"></div></div>
-    </div>
-  </main>
-
-  <noscript><p class="noscript">Enable JavaScript to explore the guided tour.</p></noscript>
-  <script src="tutorial.js?v=tour4"></script>
-</body>
-</html>
+# A new context
+df["age"]</code></pre><p>The pattern stays the same; the column and question change. Review tasks bring several skills together.</p><figcaption>Illustrated data foundations practice example.</figcaption></figure></section>
+<section class="lesson-section"><h2>Before you leave</h2><p>Python runs on your device. Opening an interactive lesson or workspace for the first time may take a moment to load packages. Reading this tour and the lesson library does not start Python.</p><p>Use Stop / restart Python if a calculation gets stuck; restarting clears Python variables. Keep a copy of work you want to retain. See <a href="help.html">Help</a> for workspace storage and export behaviour, and <a href="privacy.html">Privacy</a> for hosting and advertising details.</p><a class="action" href="lessons/index.html">Browse the lesson library →</a></section></main>
+<footer><nav aria-label="Site information"><a href="about.html">About</a><a href="help.html">Help</a><a href="privacy.html">Privacy</a><a href="acknowledgements.html">Credits</a></nav></footer></body></html>
