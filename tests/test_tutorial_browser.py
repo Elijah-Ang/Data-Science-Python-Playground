@@ -1,6 +1,5 @@
-"""CI browser regression: all 24 tour stops, responsive images and navigation."""
+"""CI browser regression: all 24 tour stops, live focus geometry and navigation."""
 import argparse
-import re
 from playwright.sync_api import sync_playwright, expect
 
 parser = argparse.ArgumentParser()
@@ -24,10 +23,22 @@ with sync_playwright() as p:
                 page.get_by_role('button',name=f'{group}: {c["label"]}',exact=True).click()
                 expect(page.locator('#headline')).to_have_text(c['title'])
                 profile = 'mobile' if width <= 1000 else 'wide'
-                expect(page.locator('#siteCapture')).to_have_attribute('src',re.compile(f'/assets/tour-captures/v2-{profile}-{c["scene"]}\\.jpg$'))
-                page.wait_for_function('document.querySelector("#siteCapture").complete && document.querySelector("#siteCapture").naturalWidth > 0')
+                expect(page.locator('#scenePreview')).to_have_attribute('data-scene',c['scene'])
+                expect(page.locator('#scenePreview')).to_have_attribute('data-profile',profile)
+                assert page.locator('#scenePreview img').count() == (1 if c['scene'] == 'home' else 0)
+                focus = page.locator(f'#scenePreview [data-tour-focus="{c["focus"]}"]').bounding_box()
+                spotlight = page.locator('#spotlight').bounding_box()
+                assert abs(focus['x'] - spotlight['x'] - 6) < 3
+                assert abs(focus['y'] - spotlight['y'] - 6) < 3
+                assert abs(focus['width'] - spotlight['width'] + 12) < 3
+                assert abs(focus['height'] - spotlight['height'] + 12) < 3
                 assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
                 assert page.locator('.steps button:visible').count() <= 7
+                page.get_by_role('button',name='Enlarge preview ↗',exact=True).click()
+                expect(page.locator('#previewDialog')).to_be_visible()
+                assert page.locator('#previewDetail [data-tour-focus]').count() == 1
+                page.get_by_role('button',name='Close preview ×',exact=True).click()
+                expect(page.locator('#previewDialog')).not_to_be_visible()
         page.get_by_role('button',name='Replay ↺',exact=True).click()
         expect(page.locator('#headline')).to_have_text('Four places to explore.')
         expect(page.locator('#back')).to_be_disabled()

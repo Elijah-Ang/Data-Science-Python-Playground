@@ -1,12 +1,12 @@
 (() => {
   'use strict';
   const $ = selector => document.querySelector(selector);
-  const {chapters, scenes} = window.TOUR_CONTENT;
+  const {chapters} = window.TOUR_CONTENT;
   const last = chapters.length - 1;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const requestedMode = new URLSearchParams(location.search).get('view');
   const mode = ['mobile','wide'].includes(requestedMode) ? requestedMode : null;
-  let profile = 'wide', index = -1, pending = false, imageKey = '', loadId = 0;
+  let profile = 'wide', index = -1, pending = false, sceneKey = '';
   let progressAt = 0, hasLayout = false;
   const groups = [...new Set(chapters.map(c => c.group))];
   $('#journey').style.height = `${(chapters.length + 1) * 100}vh`;
@@ -34,40 +34,41 @@
   }
   $('#back').addEventListener('click', () => go(index - 1));
   $('#next').addEventListener('click', () => go(index === last ? 0 : index + 1));
+  $('#enlargePreview').addEventListener('click', () => {
+    const c = chapters[index], detail = $('#previewDetail');
+    detail.dataset.profile = innerWidth < 700 ? 'mobile' : 'wide';
+    detail.replaceChildren($('#scenePreview').querySelector(`[data-tour-focus="${c.focus}"]`).cloneNode(true));
+    $('#previewTitle').textContent = `${c.group} · ${c.label}`;
+    $('#previewDialog').showModal();
+  });
+  $('#closePreview').addEventListener('click', () => $('#previewDialog').close());
   document.addEventListener('keydown', e => {
-    if (e.altKey || e.ctrlKey || e.metaKey || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+    if ($('#previewDialog').open || e.altKey || e.ctrlKey || e.metaKey || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1); }
   });
-  function target(i) { const c = chapters[i]; return scenes[c.scene][profile].targets[c.focus]; }
+  function target(i) {
+    const c = chapters[i], root = $('#scenePreview');
+    const element = root.querySelector(`[data-tour-focus="${c.focus}"]`);
+    let x=0,y=0,node=element;
+    while (node && node !== root) { x+=node.offsetLeft; y+=node.offsetTop; node=node.offsetParent; }
+    return {x,y,w:element.offsetWidth,h:element.offsetHeight};
+  }
   function pose(f) {
     const v = $('.viewport');
     const scale = Math.min(profile === 'mobile' ? 1.12 : 1.6, (v.clientWidth-32)/(f.w+12), (v.clientHeight-40)/(f.h+12));
     return {scale, x: (v.clientWidth-f.w*scale)/2-f.x*scale, y: (v.clientHeight-f.h*scale)/2-f.y*scale};
   }
-  function setImage(chapter) {
+  function setScene(chapter) {
     const nextKey = `${profile}-${chapter.scene}`;
-    if (nextKey === imageKey) return;
-    imageKey = nextKey;
-    const request = ++loadId;
-    const image = $('#siteCapture');
-    const dimensions = scenes[chapter.scene][profile];
-    const preload = new Image();
-    $('#camera').style.opacity = '0';
-    $('#spotlight').style.opacity = '0';
-    preload.onload = () => {
-      if (request !== loadId) return;
-      image.src = preload.src;
-      image.style.width = `${dimensions.width}px`;
-      image.width = dimensions.width;
-      image.height = dimensions.height;
-      const current = chapters[Math.max(0,index)];
-      image.alt = `${current.group} guide: ${current.title} — captured ${profile === 'mobile' ? 'phone' : 'desktop'} interface`;
-      $('#camera').style.opacity = '1';
-      $('#spotlight').style.opacity = '1';
-    };
-    preload.onerror = () => { if (request === loadId) $('#context').textContent = 'Preview could not load. The instructions and section links still work.'; };
-    preload.src = `assets/tour-captures/v2-${nextKey}.jpg`;
+    if (nextKey === sceneKey) return;
+    sceneKey = nextKey;
+    const root = $('#scenePreview');
+    root.dataset.profile = profile;
+    root.dataset.scene = chapter.scene;
+    // Trusted, local static templates only. No user content or executable app code.
+    root.innerHTML = window.TOUR_PREVIEWS.scenes[chapter.scene];
+    if (!reduced.matches) root.animate([{opacity:0},{opacity:1}],{duration:180});
   }
   function render() {
     pending = false;
@@ -78,7 +79,7 @@
       index = next;
       $('#count').textContent = `${c.group.toUpperCase()} · ${next+1} / ${chapters.length}`;
       $('#headline').textContent = c.title;
-      $('#siteCapture').alt = `${c.group} guide: ${c.title} — captured ${profile === 'mobile' ? 'phone' : 'desktop'} interface`;
+      $('#scenePreview').setAttribute('aria-label',`${c.group}: ${c.title} — interface excerpt`);
       $('#description').textContent = profile === 'mobile' && c.mobile ? c.mobile : c.description;
       $('#context').textContent = c.context;
       $('#focusLabel').textContent = c.label.toUpperCase();
@@ -95,17 +96,18 @@
       });
       groupButtons.forEach((b,i) => b.setAttribute('aria-pressed',String(groups[i] === c.group)));
     }
-    setImage(c);
+    setScene(c);
     let focus = target(next), position = pose(focus);
     const lower = Math.floor(progress), upper = Math.min(last,lower+1);
-    // Never pan between unrelated coordinate systems on different pages.
+    // Focus is measured from the rendered component, never a screenshot rectangle.
     if (!reduced.matches && chapters[lower].scene === chapters[upper].scene) {
       const t = progress-lower, blend = t*t*(3-2*t);
       const a = target(lower), b = target(upper), pa = pose(a), pb = pose(b);
       focus = Object.fromEntries(['x','y','w','h'].map(k => [k,a[k]+(b[k]-a[k])*blend]));
       position = Object.fromEntries(['x','y','scale'].map(k => [k,pa[k]+(pb[k]-pa[k])*blend]));
     }
-    $('#camera').style.transform = `translate(${position.x}px,${position.y}px) scale(${position.scale})`;
+    // CSS zoom re-renders glyphs at the display size rather than enlarging a bitmap layer.
+    Object.assign($('#camera').style,{zoom:position.scale,left:`${position.x/position.scale}px`,top:`${position.y/position.scale}px`});
     Object.assign($('#spotlight').style,{left:`${position.x+focus.x*position.scale-6}px`,top:`${position.y+focus.y*position.scale-6}px`,width:`${focus.w*position.scale+12}px`,height:`${focus.h*position.scale+12}px`});
     $('#progress').style.width = `${(progress+1)/chapters.length*100}%`;
   }
@@ -122,4 +124,5 @@
   addEventListener('resize',layout);
   reduced.addEventListener('change',render);
   layout();
+  document.fonts.ready.then(render);
 })();

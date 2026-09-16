@@ -1,8 +1,8 @@
 # Expanded follow-along tour
 
-## Non-negotiables
+## Non-negotiables (updated after preview feedback)
 - Keep the original pinned stage, smooth camera pan/zoom, spotlight and scroll-scrub interaction.
-- Actual interface captures, not substitute diagrams or a long illustrated article.
+- Source-labelled HTML/CSS interface excerpts, not AI-generated interface text or a long illustrated article.
 - Homepage unchanged apart from the already requested desktop tour button.
 - No separate illustrated lesson library.
 - One short instruction per stop; show where to act and the resulting interface state.
@@ -48,10 +48,12 @@
 
 The storyboard is now split into 24 focused stops: Data (5), Statistics (5), ML (7), Learn (7). The opening capture shows HOME / DATA / STATS / ML. Section shortcuts and direct workspace links keep the longer tour navigable. The homepage is unchanged.
 
-Thirty-four actual screenshots cover desktop and phone layouts; tablet-sized tour layouts use the phone capture profile rather than inventing tablet coordinates. The camera pans within matching scenes and crossfades between different pages. No Python runtime is loaded by the tour itself.
+The original screenshot implementation has been replaced after feedback about blur and incorrect crop coordinates. All 24 stops now render native HTML/CSS excerpts with the product's labels, palette, fonts, selected teaching examples and verified results. These are explicitly described as simplified interface excerpts, not pixel-exact screenshots or live controls. Historical captures remain in Git but are not shipped in the web build.
+
+Focus bounds are measured from the rendered component. CSS zoom repaints text at its display size; there is no enlarged raster text. An Enlarge preview dialog shows only the current excerpt at readable size and can be dismissed with its button or Escape. The camera still pans between related sections, crossfades on scene changes, and respects reduced motion. No Python runtime is loaded by the tour itself.
 
 Verified examples: Data df.head(10); penguin Welch comparison (mean difference −26.9239 g, 95% CI −145.665 to 91.8172 g); supervised ML five-feature logistic route (final macro F1 0.916, 114 held-out rows); I01 DataFrame lesson accepted by Check answer. Statistics and ML lesson pathways remain explicitly Coming soon.
 
-Static tests check all 24 stops, four sections, screenshot dimensions and valid focus bounds. Browser regression coverage includes section jumps, every stop, Back/Next/Replay and responsive image selection. Release still depends on PR 46 review/merge and deployment verification; these changes do not imply AdSense approval.
+Static tests check all 24 stops, four sections, source labels, matching focus selectors and absence of raster text/live controls. Browser regression coverage includes section jumps, every stop, spotlight alignment, enlarged excerpts and Back/Next/Replay. Release still depends on PR 46 review/merge and deployment verification; these changes do not imply AdSense approval.
 
 Local Chrome interaction checks: all 24 stops at 1440×1000, 834×900, 390×844 and 375×667; no horizontal overflow or narrative/footer overlap. Back, Next, Replay and section jumps exercised. The retained CI script also covers reduced-motion Chromium/WebKit; that automated script was not run locally in this session.

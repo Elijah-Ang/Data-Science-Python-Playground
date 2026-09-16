@@ -1,31 +1,32 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-const sandbox = {window:{}};
-vm.runInNewContext(fs.readFileSync('tour-content.js','utf8'),sandbox);
-const {scenes,chapters} = sandbox.window.TOUR_CONTENT;
+const sandbox={window:{}};
+for (const file of ['tour-content.js','tour-previews.js']) vm.runInNewContext(fs.readFileSync(file,'utf8'),sandbox);
+const {chapters}=sandbox.window.TOUR_CONTENT;
+const {scenes}=sandbox.window.TOUR_PREVIEWS;
 assert.equal(chapters.length,24);
 for (const group of ['Data','Stats','ML','Learn']) assert.ok(chapters.filter(c=>c.group===group).length>=5,group);
 for (const c of chapters) {
   assert.ok(c.title && c.description && c.context);
-  for (const profile of ['wide','mobile']) {
-    const scene=scenes[c.scene][profile], r=scene.targets[c.focus];
-    assert.ok(r && r.w>0 && r.h>0,`${profile}/${c.scene}/${c.focus}`);
-    assert.ok(r.x>=0 && r.y>=0 && r.x+r.w<=scene.width+1 && r.y+r.h<=scene.height+1);
-    const jpg=fs.readFileSync(`assets/tour-captures/v2-${profile}-${c.scene}.jpg`);
-    assert.equal(jpg.readUInt16BE(0),0xffd8);
-    let offset=2, size;
-    while (offset<jpg.length) {
-      const marker=jpg.readUInt16BE(offset), length=jpg.readUInt16BE(offset+2);
-      if ([0xffc0,0xffc1,0xffc2].includes(marker)) { size={height:jpg.readUInt16BE(offset+5),width:jpg.readUInt16BE(offset+7)}; break; }
-      offset+=length+2;
-    }
-    assert.equal(size?.width,scene.width,`${profile}/${c.scene} width`);
-    assert.equal(size?.height,scene.height,`${profile}/${c.scene} height`);
-  }
+  assert.ok(scenes[c.scene]?.includes(`data-tour-focus="${c.focus}"`),`${c.scene}/${c.focus}`);
+  assert.doesNotMatch(scenes[c.scene],/<script|<iframe|<input|<button|on\w+=|tour-captures/i);
+  if(c.scene!=='home') assert.doesNotMatch(scenes[c.scene],/<img/);
 }
-assert.match(chapters[0].description,/STATS/);
-assert.ok(chapters.some(c=>c.description.includes('Coming soon')));
-assert.ok(chapters.some(c=>c.description.includes('Check answer')));
-assert.ok(chapters.some(c=>c.description.includes('0.916')));
-console.log('Tour: 24 stops, four sections, paired screenshots and valid focus rectangles.');
+const sources={
+  ml:fs.readFileSync('ml-app.js','utf8')+fs.readFileSync('ml.html','utf8'),
+  data:fs.readFileSync('playground.html','utf8'),
+  learn:fs.readFileSync('learn.html','utf8')
+};
+for(const phrase of ['Choose what to predict','Validate the initial model','Tune the model','Logistic Regression','Cross-validation gives several training-only validation results']) {
+  assert.ok(sources.ml.includes(phrase),phrase);
+  assert.ok(Object.values(scenes).some(html=>html.includes(phrase)),phrase);
+}
+for(const phrase of ['Preview rows','Summary stats','Questions to chase']) assert.ok(sources.data.includes(phrase),phrase);
+for(const phrase of ['Data Foundations','Coming soon']) assert.ok(sources.learn.includes(phrase),phrase);
+assert.ok(scenes['ml-results'].includes('0.916') && scenes['ml-results'].includes('114'));
+assert.ok(scenes['stats-results'].includes('−145.665 to 91.8172'));
+assert.ok(fs.existsSync('assets/mascot/robot-book.png'));
+assert.doesNotMatch(fs.readFileSync('tutorial.html','utf8'),/tour-captures|siteCapture/);
+assert.doesNotMatch(fs.readFileSync('tutorial.js','utf8'),/new Image|captures\[/);
+console.log('Tour: 24 source-labelled native previews, matching focus targets, no raster text or live controls.');

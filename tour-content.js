@@ -1,42 +1,5 @@
-/* Actual light-theme UI captures, 16 September 2026. Rectangles are document pixels.
-   Keep these paired with assets/tour-captures/v2-{wide,mobile}-*.jpg. */
+/* Follow-along copy; focus rectangles are measured from native UI excerpts. */
 window.TOUR_CONTENT = (() => {
-  const scenes = {};
-  function scene(name, wide, mobile, targets) {
-    scenes[name] = {wide:{width:1440,height:wide,targets:{}},mobile:{width:390,height:mobile,targets:{}}};
-    for (const [key, pair] of Object.entries(targets)) for (const [i, profile] of ['wide','mobile'].entries()) {
-      const [x,y,w,h] = pair[i];
-      scenes[name][profile].targets[key] = {x,y,w,h};
-    }
-  }
-  scene('data',1000,1866,{
-    nav:[[969,8,278,40],[11,39,272,40]],
-    dataset:[[18,67,361,37],[11,101,368,53]],
-    inspector:[[13,353,230,152],[11,372,368,104]],
-    route:[[278,165,1142,44],[10,1443,370,50]],
-    tools:[[1117,124,303,36],[10,1342,370,96]]
-  });
-  scene('data-run',1000,1987,{cell:[[278,264,672,107],[10,1048,370,127]],output:[[969,329,450,390],[10,1175,370,350]]});
-  scene('data-guide',1000,1987,{guide:[[340,84,760,400],[24,84,358,240]]});
-  scene('stats',1000,1879,{setup:[[0,58,1100,56],[0,92,390,163]],route:[[278,142,1142,44],[10,1411,370,50]]});
-  scene('stats-study',1329,2467,{study:[[0,114,1440,331],[0,255,390,430]],confidence:[[891,67,93,34],[10,211,181,34]]});
-  scene('stats-results',1000,6515,{output:[[968,237,452,690],[24,5500,342,185]]});
-  scenes['stats-results'].wide = {width:1189,height:640,targets:{output:{x:817,y:300,w:351,h:280}}};
-  scene('ml',1000,1878,{dataset:[[16,67,401,37],[10,101,370,37]],model:[[431,67,993,37],[10,146,370,108]],route:[[278,142,1142,44],[10,1404,370,50]]});
-  scene('ml-guide',1000,1878,{guide:[[340,84,760,400],[8,8,374,240]]});
-  scene('ml-results',1000,11407,{result:[[969,304,450,621],[10,10188,370,235]]});
-  // This desktop output was captured at a smaller viewport without resizing its scroll panel.
-  scenes['ml-results'].wide = {width:1200,height:640,targets:{result:{x:825,y:237,w:355,h:300}}};
-  for (const name of ['ml-validate','ml-tune']) {
-    scene(name,640,844,{guide:[[275,357,680,250],[54,446,317,275]]});
-    scenes[name].wide.width = 1189;
-  }
-  scene('home',1307,1116,{robot:[[1080,78,180,278],[12.5,236,365,110]]});
-  scene('learn',1000,1489,{pathways:[[102,373,1236,354],[18,388,354,330]]});
-  scene('decks',1000,1241,{decks:[[40,350,1360,450],[16,330,358,500]]});
-  scene('chapters',3641,8121,{chapters:[[40,281,1360,32],[16,313,358,228]],lesson:[[40,405,445,254],[16,633,358,254]]});
-  scene('lesson',1063,3396,{exercise:[[587,162,813,94],[16,326,358,107]],practice:[[721,266,679,570],[16,2550,358,565]]});
-  scene('lesson-result',1063,3611,{result:[[721,706,679,210],[17,3030,356,388]],progression:[[720,929,680,53],[16,3449,358,65]]});
   const chapters = [];
   const add = (group,scene,focus,label,title,description,context,mobile) => chapters.push({group,scene,focus,label,title,description,context,mobile});
   add('Data','data','nav','Navigate','Four places to explore.','HOME returns to the garden. DATA explores tables, STATS tests questions, and ML builds models. These buttons stay at the top of each workspace.','Scroll or use Next. Jump sections at the top.');
@@ -63,5 +26,5 @@ window.TOUR_CONTENT = (() => {
   add('Learn','lesson','exercise','Practice types','Follow. Change. Transfer.','First follow a guided example. Next change it for another context. Then transfer the idea independently. Read the tiny table and the task before writing code.','Hints and Reveal solution are there if you get stuck.');
   add('Learn','lesson','practice','Write Python','Try the code yourself.','Replace the blanks in Your Python. Run code shows what Python produces; Check answer also checks whether it meets the task. If it fails, read the feedback, edit and try again.','Control / Command + Enter runs your code.');
   add('Learn','lesson-result','progression','Next practice','Keep the skill moving.','After checking your result, choose Next practice to try the next variation. Use the breadcrumb or back link to return to the deck and pick another lesson.','Practice is session-only. No account or saved learning progress.');
-  return {scenes,chapters};
+  return {chapters};
 })();

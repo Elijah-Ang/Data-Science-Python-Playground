@@ -46,6 +46,8 @@ const files = [
   "offline.html",
   "tutorial.js",
   "tour-content.js",
+  "tour-previews.js",
+  "tour-previews.css",
   "tutorial.css",
   "landing.css",
   "playground-shared.css",
@@ -60,7 +62,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data", "assets/tour-captures"];
+const directories = ["data"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",
