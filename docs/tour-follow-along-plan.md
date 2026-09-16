@@ -6,7 +6,9 @@
 
 The original HTML/CSS, fonts, form values and real completed outputs are captured at desktop (1440×960) and phone (390×844) sizes. These are DOM snapshots, not screenshots or recreated components. Text remains sharp when enlarged. Snapshots load on demand; visitors never start Python in the tour. The actual workspaces still start Python normally when opened.
 
-Camera timing: 1 s pull-back, 650 ms overview dwell, 1.4 s scroll where needed, 650 ms pause, 1.9 s zoom-in. Scroll positions carry across snapshots of the same page. Reduced motion skips animation. Enlarge preview preserves original ancestors/styles and scroll context.
+Camera timing: 750 ms pull-back, 350 ms overview dwell, 1.05 s scroll where needed, 250 ms pause, 1.45 s zoom-in. Scroll positions carry across snapshots of the same page. Reduced motion skips animation. Enlarge preview preserves original ancestors/styles and scroll context. Routine loading notices are suppressed; genuine failures remain visible.
+
+The garden highlight measures the visible gate sign rather than the larger touch target. Challenges, Workflow and Statistics Study setup briefly highlight their real opening button with a Click/Tap cue, then reveal the captured panel within the same chapter. This uses parent-controlled visibility in script-free snapshots; no runtime is started.
 
 ## Capture and refresh
 
@@ -28,3 +30,5 @@ Examples are real results: Statistics compares Adelie and Chinstrap penguin mass
 Static checks cover all 25 mappings and 50 script-free snapshots, garden entry, camera timing, draft isolation and robot position. Browser regression covers desktop/mobile targets, spotlight containment, enlargement and replay. Publication remains subject to repository review requirements. This does not imply AdSense approval.
 
 16 September validation: all 25 desktop and 25 phone steps reached ready state in Chrome using the script-free snapshots. Garden entry and enlarged lesson view were visually inspected. Build, JavaScript checks and app-shell checks passed. The updated Chromium/WebKit CI script was not run locally.
+
+Follow-up verification: desktop and phone gate boxes fit the sign. Challenges, Study setup and Workflow each showed the Click/Tap button cue and then their panel; all six sequences reached ready state without a routine loading notice.

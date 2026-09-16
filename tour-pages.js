@@ -12,7 +12,7 @@ window.TOUR_PAGES = (() => {
     'ml-validate': {page:'ml.html', targets:{guide:'#workflow-step-5 .workflow-step-concepts'}},
     'ml-tune': {page:'ml.html', targets:{guide:'#workflow-step-7 .workflow-step-concepts'}},
     'ml-results': {page:'ml.html', targets:{result:'.output-panel'}},
-    home: {page:'index.html', targets:{robot:'.mascot-cta',gate:'.gate-hitbox'}},
+    home: {page:'index.html', targets:{robot:'.mascot-cta',gate:'.gate-glow'}},
     learn: {page:'learn.html', targets:{pathways:'.learn-pathways'}},
     decks: {page:'data-foundations.html', hash:'', targets:{decks:'.foundation-decks'}},
     chapters: {page:'data-foundations.html', hash:'#inspect', targets:{chapters:'.chapter-jumps'}},
@@ -20,6 +20,12 @@ window.TOUR_PAGES = (() => {
     'lesson-result': {page:'data-foundations.html', hash:'#inspect/I01/0', targets:{progression:'.foundation-navigation'}},
   };
   const pause = ms => new Promise(resolve => setTimeout(resolve,ms));
+  function opening(chapter) {
+    if(chapter.scene==='data-guide')return {button:'#guideButton',panel:'#guideWindow',label:'Challenges'};
+    if(chapter.scene==='ml-guide')return {button:'#guideButton',panel:'#guideWindow',label:'Workflow'};
+    if(chapter.scene==='stats-study'&&chapter.focus==='study')return {button:'#studyButton',panel:'#studyPanel',label:'Study setup'};
+    return null;
+  }
   async function until(test, alive, timeout=60000) {
     const start=performance.now();
     while(alive()) {
@@ -52,8 +58,8 @@ window.TOUR_PAGES = (() => {
     // browser smooth-scroll on every animation frame or measure before it settles.
     const behavior=element.style.scrollBehavior;
     element.style.scrollBehavior='auto';
-    await new Promise(resolve=>{function tick(now){if(!alive())return resolve();const t=reduced?1:Math.min(1,(now-began)/1400),e=t*t*(3-2*t);element.scrollTop=start+(to-start)*e;if(t<1)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});
+    await new Promise(resolve=>{function tick(now){if(!alive())return resolve();const t=reduced?1:Math.min(1,(now-began)/1050),e=t*t*(3-2*t);element.scrollTop=start+(to-start)*e;if(t<1)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});
     element.style.scrollBehavior=behavior;
   }
-  return {locations,prepare,scroll,until,pause};
+  return {locations,opening,prepare,scroll,until,pause};
 })();

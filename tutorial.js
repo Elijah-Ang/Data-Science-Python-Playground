@@ -33,7 +33,7 @@
     const previous=page===url?frame.contentDocument:null;
     const scrolls=previous?[...previous.querySelectorAll('[id]')].filter(n=>n.scrollTop||n.scrollLeft).map(n=>({id:n.id,top:n.scrollTop,left:n.scrollLeft})):[];
     const rootTop=previous?.scrollingElement.scrollTop||0;
-    status('Opening the preview…');camera.style.visibility='hidden';page=url;frame.src=snapshot;
+    camera.style.visibility='hidden';page=url;frame.src=snapshot;
     await pages.until(()=>frame.contentDocument?.URL.endsWith(snapshot) && frame.contentDocument.readyState==='complete',alive);
     await frame.contentDocument.fonts.ready;if(!alive())return;
     for(const s of scrolls){const n=frame.contentDocument.getElementById(s.id);if(n){n.style.scrollBehavior='auto';n.scrollTop=s.top;n.scrollLeft=s.left;}}
@@ -50,21 +50,37 @@
     const root=frame.contentDocument.scrollingElement,r=element.getBoundingClientRect();if(r.top<0||r.bottom>height)await pages.scroll(root,root.scrollTop+r.top-70,alive);
   }
   async function show(i){
-    const run=++token,alive=()=>run===token;index=i;ready=false;copy(i);viewport.dataset.state='moving';$('#spotlight').style.opacity='0';$('#enlargePreview').disabled=true;
+    const run=++token,alive=()=>run===token;index=i;ready=false;copy(i);status('');viewport.dataset.state='moving';viewport.dataset.phase='overview';$('#actionCue').hidden=true;$('#spotlight').style.opacity='0';$('#enlargePreview').disabled=true;
     try{
-      if(page)await animate(overview(),1000,alive);if(!alive())return;
+      if(page)await animate(overview(),750,alive);if(!alive())return;
       const c=chapters[i],loc=pages.locations[c.scene];await load(loc.page,alive,c);if(!alive())return;
-      viewport.dataset.page=loc.page;viewport.dataset.scene=c.scene;status('');if(!reduced.matches)await pages.pause(650);
+      const d=frame.contentDocument,opening=pages.opening(c);
+      // The actual gate sign, not its deliberately generous clickable hit area.
+      if(c.focus==='gate')for(const n of d.querySelectorAll('.gate-glow,.gate-glow img')){n.style.animation='none';n.style.transform='none';}
+      const panel=opening&&d.querySelector(opening.panel),button=opening&&d.querySelector(opening.button);
+      const panelDisplay=panel?.dataset.tourDisplay??panel?.style.display;
+      if(panel)panel.dataset.tourDisplay=panelDisplay;
+      if(panel&&button){panel.style.display='none';button.setAttribute('aria-expanded','false');}
+      viewport.dataset.page=loc.page;viewport.dataset.scene=c.scene;if(!reduced.matches)await pages.pause(350);if(!alive())return;
+      if(panel&&button){
+        await reveal(button,alive);if(!alive())return;focus=bounds(button);viewport.dataset.phase='button';
+        $('#actionCue').textContent=`${profile==='mobile'?'Tap':'Click'} ${opening.label}`;$('#actionCue').hidden=false;
+        $('#spotlight').style.opacity='1';await animate(pose(focus),650,alive);if(!alive())return;
+        if(!reduced.matches)await pages.pause(750);if(!alive())return;
+        $('#actionCue').hidden=true;$('#spotlight').style.opacity='0';
+        await animate(overview(),550,alive);if(!alive())return;
+        panel.style.display=panelDisplay;button.setAttribute('aria-expanded','true');viewport.dataset.phase='panel';
+      }
       const element=await pages.prepare(frame,c,alive,status);if(!alive())return;
       status('');await reveal(element,alive);if(!alive())return;focus=bounds(element);
       if(focus.w<2||focus.h<2)throw Error('This section is not visible yet. Select this step to retry.');
-      if(!reduced.matches)await pages.pause(650);$('#spotlight').style.opacity='1';await animate(pose(focus),1900,alive);if(!alive())return;
+      if(!reduced.matches)await pages.pause(250);$('#spotlight').style.opacity='1';await animate(pose(focus),1450,alive);if(!alive())return;
       camera.style.visibility='visible';ready=true;viewport.dataset.state='ready';$('#enlargePreview').disabled=false;
     }catch(error){if(alive()){status(error.message==='cancelled'?'':error.message);viewport.dataset.state='error';}}
   }
   function go(i){show(Math.max(0,Math.min(last,i)));}
   $('#back').onclick=()=>go(index-1);$('#next').onclick=()=>go(index===last?0:index+1);
-  $('#showOverview').onclick=async()=>{if(!ready)return;const run=++token;$('#spotlight').style.opacity='0';await animate(overview(),1200,()=>run===token);};
+  $('#showOverview').onclick=async()=>{if(!ready)return;const run=++token;$('#spotlight').style.opacity='0';await animate(overview(),900,()=>run===token);};
   document.addEventListener('keydown',e=>{if($('#previewDialog').open||e.altKey||e.ctrlKey||e.metaKey||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.key==='ArrowRight'){e.preventDefault();go(index+1);}if(e.key==='ArrowLeft'){e.preventDefault();go(index-1);}});
   // Use intentional scroll gestures, not scroll events caused by a child page
   // focusing an editor. One gesture advances one stop and allows the camera to finish.

@@ -25,6 +25,14 @@ with sync_playwright() as p:
             actual = page.frames[1]
             assert actual.locator('script').count() == 0
             assert page.locator('#siteFrame').get_attribute('sandbox') == 'allow-same-origin'
+            expect(page.locator('#tourStatus')).to_be_hidden()
+            expect(page.locator('#actionCue')).to_be_hidden()
+            if c['scene'] in ['data-guide', 'ml-guide']:
+                expect(frame.locator('#guideButton')).to_have_attribute('aria-expanded','true')
+                expect(frame.locator('#guideWindow')).to_be_visible()
+            if c['scene']=='stats-study' and c['focus']=='study':
+                expect(frame.locator('#studyButton')).to_have_attribute('aria-expanded','true')
+                expect(frame.locator('#studyPanel')).to_be_visible()
             assert page.evaluate("document.querySelector('.viewport').scrollTop===0")
             spot=page.locator('#spotlight').bounding_box()
             box=page.locator('.viewport').bounding_box()

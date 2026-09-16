@@ -11,8 +11,11 @@ for(const c of chapters){const loc=locations[c.scene];assert.ok(c.title&&c.descr
 const controller=fs.readFileSync('tutorial.js','utf8'),html=fs.readFileSync('tutorial.html','utf8');
 assert.match(html,/<iframe id="siteFrame"/);
 assert.doesNotMatch(html,/tour-previews|tour-captures|scenePreview/);
-assert.match(controller,/animate\(overview\(\),1000/);
-assert.match(controller,/animate\(pose\(focus\),1900/);
+assert.match(controller,/animate\(overview\(\),750/);
+assert.match(controller,/animate\(pose\(focus\),1450/);
+assert.doesNotMatch(controller,/Opening the preview/);
+assert.equal(locations.home.targets.gate,'.gate-glow');
+for(const [scene,focus] of [['data-guide','guide'],['ml-guide','guide'],['stats-study','study']])assert.ok(sandbox.window.TOUR_PAGES.opening({scene,focus}));
 assert.match(controller,/page===url\?frame.contentDocument/,'Scroll context is retained between same-page stops');
 assert.match(html,/sandbox="allow-same-origin"/);
 assert.doesNotMatch(html,/allow-scripts/);
