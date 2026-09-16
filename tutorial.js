@@ -5,7 +5,8 @@
   const requested=new URLSearchParams(location.search).get('view');
   let index=-1,profile='',page='',token=0,ready=false;
   let width=1440,height=960,current={x:0,y:0,scale:1},focus=null;
-  const frame=$('#siteFrame'),camera=$('#camera'),viewport=$('.viewport');
+  let frame=$('#siteFrame');
+  const camera=$('#camera'),viewport=$('.viewport');
   const groups=[...new Set(chapters.map(c=>c.group))];
   $('#journey').style.height='100svh';
   const buttons=chapters.map((c,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String(i+1).padStart(2,'0');b.setAttribute('aria-label',`${c.group}: ${c.label}`);b.onclick=()=>go(i);$('.steps').append(b);return b;});
@@ -33,12 +34,29 @@
     const previous=page===url?frame.contentDocument:null;
     const scrolls=previous?[...previous.querySelectorAll('[id]')].filter(n=>n.scrollTop||n.scrollLeft).map(n=>({id:n.id,top:n.scrollTop,left:n.scrollLeft})):[];
     const rootTop=previous?.scrollingElement.scrollTop||0;
-    camera.style.visibility='hidden';page=url;frame.src=snapshot;
-    await pages.until(()=>frame.contentDocument?.URL.endsWith(snapshot) && frame.contentDocument.readyState==='complete',alive);
-    await frame.contentDocument.fonts.ready;if(!alive())return;
-    for(const s of scrolls){const n=frame.contentDocument.getElementById(s.id);if(n){n.style.scrollBehavior='auto';n.scrollTop=s.top;n.scrollLeft=s.left;}}
-    frame.contentDocument.scrollingElement.style.scrollBehavior='auto';frame.contentDocument.scrollingElement.scrollTop=rootTop;
-    paint(overview());camera.style.visibility='visible';
+    // Keep the outgoing document painted while a script-free second frame loads.
+    // Only promote it after fonts, images and scroll context are ready.
+    const incoming=document.createElement('iframe');
+    incoming.title=frame.title;incoming.setAttribute('sandbox','allow-same-origin');
+    incoming.setAttribute('aria-hidden','true');incoming.inert=true;incoming.tabIndex=-1;
+    incoming.style.cssText=`position:absolute;left:0;top:0;width:${width}px;height:${height}px;border:0;opacity:0;pointer-events:none`;
+    camera.append(incoming);incoming.src=snapshot;
+    try{
+      await pages.until(()=>incoming.contentDocument?.URL.endsWith(snapshot)&&incoming.contentDocument.readyState==='complete',alive);
+      const d=incoming.contentDocument;
+      await d.fonts.ready;
+      await Promise.all([...d.images].map(img=>img.decode().catch(()=>{})));
+      if(!alive())return;
+      for(const s of scrolls){const n=d.getElementById(s.id);if(n){n.style.scrollBehavior='auto';n.scrollTop=s.top;n.scrollLeft=s.left;}}
+      d.scrollingElement.style.scrollBehavior='auto';d.scrollingElement.scrollTop=rootTop;
+      const opening=pages.opening(chapter),panel=opening&&d.querySelector(opening.panel);
+      if(panel){panel.dataset.tourDisplay=panel.style.display;panel.style.display='none';d.querySelector(opening.button)?.setAttribute('aria-expanded','false');}
+      if(chapter.focus==='gate')for(const n of d.querySelectorAll('.gate-glow,.gate-glow img')){n.style.animation='none';n.style.transform='none';}
+      const began=performance.now();
+      await new Promise(resolve=>{function tick(now){if(!alive())return resolve();const t=reduced.matches?1:Math.min(1,(now-began)/220);incoming.style.opacity=String(t);if(t<1)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});
+      if(!alive())return;
+      const outgoing=frame;frame=incoming;frame.id='siteFrame';frame.style.position='';frame.style.opacity='1';outgoing.remove();page=url;
+    }finally{if(frame!==incoming)incoming.remove();}
   }
   function bounds(element){
     const r=element.getBoundingClientRect();let left=Math.max(0,r.left),top=Math.max(0,r.top),right=Math.min(width,r.right),bottom=Math.min(height,r.bottom);

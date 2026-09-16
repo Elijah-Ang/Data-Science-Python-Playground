@@ -26,6 +26,8 @@ with sync_playwright() as p:
             assert actual.locator('script').count() == 0
             assert page.locator('#siteFrame').get_attribute('sandbox') == 'allow-same-origin'
             expect(page.locator('#tourStatus')).to_be_hidden()
+            assert page.locator('#camera iframe').count() == 1
+            expect(page.locator('#siteFrame')).to_be_visible()
             expect(page.locator('#actionCue')).to_be_hidden()
             if c['scene'] in ['data-guide', 'ml-guide']:
                 expect(frame.locator('#guideButton')).to_have_attribute('aria-expanded','true')

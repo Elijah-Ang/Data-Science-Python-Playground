@@ -10,6 +10,8 @@ Camera timing: 750 ms pull-back, 350 ms overview dwell, 1.05 s scroll where need
 
 The garden highlight measures the visible gate sign rather than the larger touch target. Challenges, Workflow and Statistics Study setup briefly highlight their real opening button with a Click/Tap cue, then reveal the captured panel within the same chapter. This uses parent-controlled visibility in script-free snapshots; no runtime is started.
 
+Preview changes are double-buffered: the outgoing frame remains painted while the incoming script-free frame loads, decodes images and resolves fonts. Same-page scroll context is restored before a 220 ms blend. Opening panels are hidden before that blend to avoid briefly exposing the answer before the button cue. Cancelled transitions remove their staged frame; the current preview remains intact. Reduced motion skips the blend.
+
 ## Capture and refresh
 
 After changing the actual interface or example results:
