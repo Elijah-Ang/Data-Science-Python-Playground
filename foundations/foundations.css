@@ -137,7 +137,9 @@ body[data-foundations] [hidden] { display:none !important; }
  .foundation-editor-wrap { flex:0 0 clamp(320px,38vh,400px); min-height:320px; overflow:hidden; }
  #foundationEditor { height:100%; min-height:100%; max-height:none; resize:none; }
  .foundation-line-numbers { max-height:100%; }
- .foundation-output { flex:1; min-height:80px; max-height:none; overflow:auto; }
+ /* Keep one vertical scrollbar for the desktop Python workspace. The output
+    grows with its plot, and the containing pane scrolls to its true bottom. */
+ .foundation-output { flex:0 0 auto; min-height:130px; max-height:none; overflow:visible; padding-bottom:72px; }
  .foundation-navigation { margin-top:12px; padding-top:10px; }
 }
 @media(max-width:800px) { #foundationHighlight { font-size:16px; } .foundation-practices ol { gap:10px; flex-wrap:wrap; } }
