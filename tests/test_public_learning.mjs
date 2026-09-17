@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'../dist');
 const sitemap=await fs.readFile(path.join(root,'sitemap.xml'),'utf8');
+const foundationsCss=await fs.readFile(path.join(root,'foundations/foundations.css'),'utf8');
+assert.match(foundationsCss,/\.foundation-output \{ flex:0 0 auto; min-height:130px; max-height:none; overflow:visible; padding-bottom:72px; \}/,'Desktop lessons must let the containing Python pane scroll through the complete output');
 const files=(await fs.readdir(root)).filter(f=>f.endsWith('.html'));
 assert.equal(await fs.stat(path.join(root,'lessons')).then(()=>true,()=>false),false,'Removed lesson library must not ship');
 for(const file of files){
