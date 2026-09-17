@@ -35,29 +35,34 @@ function deckPage(deck){
 }
 function lessonPage(lesson,roundIndex){
  const round=lesson.rounds[roundIndex],deck=C.decks.find(x=>x.id===lesson.deck),dataset=C.datasets[round.dataset];
+ const follow=!lesson.review&&roundIndex===0;
  const controlHelp=!lesson.review&&roundIndex===0&&!shownControlHelp; if(controlHelp)shownControlHelp=true;
  view={lesson,round,roundIndex};document.body.dataset.deck=lesson.deck;
  const previous=roundIndex?url(lesson,roundIndex-1):previousLesson(lesson),next=roundIndex<lesson.rounds.length-1?url(lesson,roundIndex+1):nextLesson(lesson);
  return `<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><span>${esc(deck.title)}</span><span aria-hidden="true">/</span><span>${lesson.id}</span></nav>
- <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${lesson.id} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(lesson.goal)}</p></div><section class="foundation-practices" aria-label="Exercise type"><p>Exercises within this concept</p><ol>${lesson.rounds.map((r,i)=>`<li ${i===roundIndex?'aria-current="step"':''}><strong>${esc(r.label)}</strong><span>${lesson.review?'Retrieval practice':i===0?'Guided practice':i===1?'A different context':'Try it independently'}</span>${i===roundIndex?'<em>Current exercise</em>':''}</li>`).join('')}</ol></section></header>
+ <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${lesson.id} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(follow?lesson.goal:round.label+' · '+(round.demand||'Apply what you learned'))}</p><button class="foundation-editor-jump" type="button">Go to editor ↓</button></div><section class="foundation-practices" aria-label="Exercise type"><p>Exercises within this concept</p><ol>${lesson.rounds.map((r,i)=>`<li ${i===roundIndex?'aria-current="step"':''}><strong>${esc(r.label)}</strong><span>${esc(r.demand||'Retrieval practice')}</span>${i===roundIndex?'<em>Current exercise</em>':''}</li>`).join('')}</ol></section></header>
  <div class="foundation-split"><article class="foundation-content" aria-label="Lesson content">
- <section><h3>${lesson.review?'Bring it together':'What this does'}</h3>${FoundationVisuals.diagram(round.visual)}<p>${esc(lesson.explanation)}</p></section>
- <section><h3>Given data</h3>${datasetTable(dataset)}${round.files?csvPreview(round):`<details><summary>View setup code</summary><pre><code>${esc(C.setupCode(round.dataset)+(round.setup?'\n\n'+round.setup:''))}</code></pre></details>`}${round.setup?auxiliaryTables(round,dataset):''}</section>
- ${!lesson.review?`<${roundIndex===0?'section':'details'}>${roundIndex===0?'<h3>Meet the syntax</h3>':'<summary>Recall the syntax</summary>'}<pre class="isolated-syntax"><code>${esc(lesson.syntaxCode)}</code></pre><dl class="foundation-syntax">${lesson.syntax.map(([code,meaning])=>`<dt>${esc(code)}</dt><dd>${esc(meaning)}</dd>`).join('')}</dl></${roundIndex===0?'section':'details'}><${roundIndex===0?'section':'details'}>${roundIndex===0?'<h3>See it once</h3>':'<summary>Revisit the worked example</summary>'}<pre><code>${esc(lesson.example)}</code></pre></${roundIndex===0?'section':'details'}>`:''}
- <section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3><p>${esc(round.task)}</p></section>
+ ${follow?FoundationTeaching.intro(C,lesson,round):''}
+ ${follow?`<section><h3>Meet the syntax</h3>${FoundationTeaching.syntax(lesson)}</section><section><h3>See it once</h3><pre><code>${esc(lesson.example)}</code></pre></section>`:''}
+ ${!follow?`<section class="foundation-practice-brief"><span class="foundation-eyebrow">${esc(round.label)} · ${esc(C.datasets[round.dataset].name)}</span><h3 class="practice-question">${esc(round.steps?.[0]||round.task)}</h3><p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>${round.steps?.length>1?`<h4>Your requirements</h4><ol>${round.steps.slice(1).map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:''}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:''}
+ ${round.id==='V01-1'?'':`<section><h3>${round.files?'Available file':'Your inputs'}</h3>${follow?`<p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>`:''}${datasetTable(dataset)}${round.files?csvPreview(round):''}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
+ ${follow?`<section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3>${taskMarkup(round)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:`<p class="foundation-revisit"><a href="${url(round.retrieves?C.lessons.find(l=>l.id===round.retrieves):lesson)}">Revisit the concept lesson →</a></p>${lesson.tools?.length?`<details><summary>Tools for this practice</summary><ul>${lesson.tools.map(tool=>`<li>${esc(tool)}</li>`).join('')}</ul></details>`:''}`}
+
  <details id="foundationHint"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
- <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Try explaining each step before moving on.</p><pre><code>${esc(round.solution)}</code></pre></details>
+ <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Keep any supplied setup in the editor and use this in the Your work section.</p><pre><code>${esc(round.solution)}</code></pre></details>
  ${lesson.stretch?`<details><summary>Optional stretch</summary><p>${esc(lesson.stretch)}</p></details>`:''}
- </article><section class="foundation-code-pane" aria-label="Python practice"><div class="foundation-task-reminder" tabindex="0" role="region" aria-label="Current task"><strong>Your task · ${esc(round.label)}</strong><p>${esc(round.task)}</p></div><div class="foundation-editor-head"><label for="foundationEditor">YOUR PYTHON</label><span>practice.py</span></div><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="foundationHighlight" aria-hidden="true"></pre><textarea id="foundationEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="editorHelp"></textarea></div>
- <span id="editorHelp" class="sr-only">Edit Python. Control or Command plus Enter runs it. Tab moves to the next control; use spaces to indent.</span>
+ </article><section class="foundation-code-pane" aria-label="Python practice"><div class="foundation-task-reminder" tabindex="0" role="region" aria-label="Current task"><strong>Your task · ${esc(round.label)}</strong>${taskMarkup(round)}</div><div class="foundation-editor-head"><label for="foundationEditor">YOUR PYTHON</label><button type="button" id="jumpToWork">Jump to your work ↓</button></div><p class="foundation-editor-shortcuts">Tab: indent · Shift+Tab: outdent · Esc, then Tab: leave editor</p><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="foundationHighlight" aria-hidden="true"></pre><textarea id="foundationEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="editorHelp"></textarea></div>
+ <span id="editorHelp" class="sr-only">Edit Python. Control or Command plus Enter runs it. Tab indents by four spaces. Shift plus Tab outdents. Press Escape, then Tab or Shift plus Tab to leave the editor.</span>
  <div class="foundation-actions"><button id="runExercise" class="primary" type="button">▶ Run code</button><button id="checkExercise" type="button">✓ Check answer</button><button id="resetExercise" type="button">Reset code</button><button id="stopPython" type="button" hidden>Stop / restart</button></div>
- ${controlHelp?'<p class="control-help"><strong>Run code</strong> shows what Python produces. <strong>Check answer</strong> also checks whether your result satisfies the task.</p>':''}
+ ${controlHelp?'<p class="control-help"><strong>Run code</strong> shows what Python produces. <strong>Check answer</strong> also checks whether your result satisfies the task.</p>':''}<p class="foundation-run-note">Each run executes all editor code in a fresh Python session. Display a value by leaving it on the final line; display charts with plt.show().</p>
  <div class="foundation-runtime" id="foundationRuntime" role="status">${esc(runtimeStatus)}</div><p class="foundation-feedback" id="foundationFeedback" role="status"></p>
  <div class="foundation-output" id="foundationOutput" role="region" aria-label="Python output"><h3>Output</h3><p class="empty-output">Run your code to see what Python returns.</p></div></section></div>
  <nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+lesson.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a>`}${next==='#'+lesson.deck?'<span class="deck-boundary">End of deck</span>':`<a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
 }
+function taskMarkup(round){return round.steps?.length>1?`<ol class="foundation-task-steps">${round.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:`<p>${esc(round.task)}</p>`;}
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{
+  if(typeof columns==='string')return `<details><summary>View ${esc(name)}</summary><p>This file is available in the lesson folder.</p><pre>${esc(columns)}</pre></details>`;
   const keys=Object.keys(columns),cell=value=>typeof value==='string'?'"'+value.replaceAll('"','""')+'"':String(value??'');
   const csv=[keys.join(','),...columns[keys[0]].map((_,i)=>keys.map(key=>cell(columns[key][i])).join(','))].join('\n');
   return `<details><summary>View ${esc(name)}</summary><p>This file is available in the lesson folder. Load it to create df.</p><pre>${esc(csv)}</pre></details>`;
@@ -71,8 +76,9 @@ function auxiliaryTables(round,dataset){
  if(round.setup.startsWith('first'))return table(columns,rows.slice(0,3),'first · first three rows')+table(columns,rows.slice(3),'second · remaining rows');
  return '';
 }
-function previousLesson(lesson){const list=C.lessons.filter(l=>l.deck===lesson.deck),i=list.indexOf(lesson);return i?url(list[i-1],list[i-1].rounds.length-1):'#'+lesson.deck;}
-function nextLesson(lesson){const list=C.lessons.filter(l=>l.deck===lesson.deck),i=list.indexOf(lesson);return i<list.length-1?url(list[i+1]):'#'+lesson.deck;}
+function pathLessons(lesson){return C.lessons.filter(l=>l.deck===lesson.deck&&(!lesson.path||l.path===lesson.path));}
+function previousLesson(lesson){const list=pathLessons(lesson),i=list.indexOf(lesson);return i?url(list[i-1],list[i-1].rounds.length-1):'#'+lesson.deck;}
+function nextLesson(lesson){const list=pathLessons(lesson),i=list.indexOf(lesson);return i<list.length-1?url(list[i+1]):'#'+lesson.deck;}
 function render(){
  generation++; if(busy&&bridge){bridge.restart();busy=false;runtimeStatus='Python will restart for this exercise.';}
  view=null;
@@ -90,15 +96,20 @@ function render(){
 }
 function bindEditor(){
  const editor=document.getElementById('foundationEditor'),{round}=view;
- editor.value=round.starter;
+ document.querySelector('.foundation-editor-jump').onclick=()=>{editor.scrollIntoView({block:'start',behavior:'instant'});editor.focus({preventScroll:true});};
+ editor.value=FoundationWorkspace.code(C,round);
+ document.getElementById('jumpToWork').onclick=()=>{const marker=editor.value.indexOf('# Your work\n');const position=marker<0?0:marker+'# Your work\n'.length;editor.focus();editor.setSelectionRange(position,position);editor.scrollTop=editor.value.slice(0,position).split('\n').length*parseFloat(getComputedStyle(editor).lineHeight)-40;editor.dispatchEvent(new Event('scroll'));};
  function numbers(){document.querySelector('.foundation-line-numbers').textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');document.getElementById('foundationHighlight').innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
  function syncScroll(){document.querySelector('.foundation-line-numbers').scrollTop=editor.scrollTop;const layer=document.getElementById('foundationHighlight');layer.scrollTop=editor.scrollTop;layer.scrollLeft=editor.scrollLeft;}
  editor.addEventListener('input',()=>{numbers();const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
  editor.addEventListener('scroll',syncScroll);
- editor.addEventListener('keydown',event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();execute(false);}});
+ FoundationEditor.attach(editor,()=>execute(false),backwards=>{
+  const target=backwards?document.querySelector('.foundation-task-reminder'):document.querySelector('.foundation-actions button:not(:disabled)');
+  target?.focus();
+ });
  document.getElementById('runExercise').onclick=()=>execute(false);
  document.getElementById('checkExercise').onclick=()=>execute(true);
- document.getElementById('resetExercise').onclick=()=>{cancelRun();render();document.getElementById('foundationFeedback').textContent='Starter restored. Your next run begins with fresh given data.';};
+ document.getElementById('resetExercise').onclick=()=>{cancelRun();render();document.getElementById('foundationFeedback').textContent='Setup and starter restored. Run executes everything in the editor.';};
  document.getElementById('stopPython').onclick=()=>{cancelRun();document.getElementById('foundationFeedback').textContent='Python stopped. Your code is preserved; Run to try again.';};
  numbers();
 }
@@ -119,7 +130,7 @@ async function execute(check){
  const timer=setTimeout(()=>{if(token===generation&&busy){cancelRun();feedback.textContent='Python took too long and was stopped. Your code is preserved. Try a smaller operation or Run again.';}},90000);
  try{
   const b=await getBridge();if(token!==generation)return;
-  const response=await b.send('run',{config:config(),request:{code,check,exercise:round,columns:C.datasets[round.dataset].columns}});
+  const response=await b.send('run',{config:config(),request:{code,check,explicitSetup:true,exercise:round,columns:C.datasets[round.dataset].columns}});
   if(token!==generation)return;
   const result=response.result;
   const edited=editor.value!==code;

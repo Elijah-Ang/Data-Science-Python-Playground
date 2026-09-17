@@ -27,10 +27,11 @@ with sync_playwright() as pw:
     })''')
     failures.extend([{'width':width,'theme':theme,'deck':deck,**b} for b in bad])
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
- # Confirm the actual lesson page switches diagrams with the exercise type.
+ # Practice rounds lead with their scenario rather than repeating teaching diagrams.
  for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facet-hist'),('#inspect/IR2/1','loc')]:
   page.evaluate('(route)=>{location.hash=route}',route)
-  page.wait_for_function('(variant)=>document.querySelector(".foundation-content .concept-visual")?.dataset.visual===variant',arg=variant)
+  page.wait_for_function('(route)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(route.split("/")[1])&&!!document.querySelector(".foundation-practice-brief")',arg=route)
+  assert page.locator(".foundation-content .concept-visual").count()==0
  # Contact sheets contain every card at a consistent readable size in both themes.
  page.set_viewport_size({'width':1280,'height':1000})
  for theme in ['light','dark']:
@@ -51,7 +52,7 @@ with sync_playwright() as pw:
   page.locator('#atlas').screenshot(path=str(out/f'{args.engine}-{theme}-alternate-rounds.png'))
   for item in page.locator('.concept-visual').evaluate_all('''els=>els.flatMap(svg=>[...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>260||r.y<0||r.y+r.height>108}).map(t=>({visual:svg.dataset.visual,text:t.textContent})))'''):
    failures.append({'theme':theme,**item})
- # All 326 rounds have valid diagrams, and retrieval rounds use the retrieved skill.
+ # All 324 rounds have valid diagrams, and retrieval rounds use the retrieved skill.
  result=page.evaluate('''()=>{
   let count=0;const failures=[];
   for(const l of FoundationsCurriculum.lessons)for(const r of l.rounds){
@@ -61,8 +62,8 @@ with sync_playwright() as pw:
   }
   return {count,failures};
  }''')
- assert result['count']==326 and not result['failures'],result
+ assert result['count']==324 and not result['failures'],result
  (out/f'{args.engine}-report.json').write_text(json.dumps({'rounds':result,'clipping':failures},indent=2))
  assert not failures,failures
  browser.close()
-print('All 106 cards, 326 round diagrams, three widths and both themes passed visual geometry/retrieval checks.')
+print('All 106 cards, 324 round diagrams, three widths and both themes passed visual geometry/retrieval checks.')
