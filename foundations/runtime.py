@@ -79,7 +79,9 @@ def _intent(code, exercise):
 
 
 def _equal(actual, expected, strict=False):
-    if isinstance(expected, pd.DataFrame):
+    if expected is None:
+        assert actual is None, 'Use the Python value None, not text or an omitted answer.'
+    elif isinstance(expected, pd.DataFrame):
         assert isinstance(actual, pd.DataFrame), 'Return a DataFrame, keeping the requested rows and columns.'
         assert_frame_equal(actual, expected, check_dtype=strict, check_names=False, check_exact=False, rtol=1e-6, atol=1e-7, check_categorical=strict)
     elif isinstance(expected, pd.Series):
@@ -124,6 +126,8 @@ def _plot_state(figures, rules):
                     'xscale': ax.get_xscale(), 'yscale': ax.get_yscale(), 'lines': [], 'patches': [], 'collections': []}
             if rules.get('limits'):
                 item['limits'] = [_numeric(ax.get_xlim()), _numeric(ax.get_ylim())]
+            if rules.get('zeroBaseline'):
+                item['zero_baseline'] = abs(ax.get_ylim()[0]) < 1e-9
             if rules.get('ticks'):
                 item['rotations'] = [t.get_rotation() for t in ax.get_xticklabels()]
             if rules.get('categorical'):
@@ -166,6 +170,12 @@ def _plot_state(figures, rules):
                 item['legend'] = None if legend is None else [legend.get_title().get_text(), [t.get_text() for t in legend.get_texts()]]
             if rules.get('annotations'):
                 item['annotations'] = [[t.get_text(), _numeric(getattr(t, 'xy', t.get_position()))] for t in ax.texts]
+            # In an ungrouped scatter, drawing order does not change the paired data.
+            # Keep labels, scales, reference lines and observation multiplicity intact.
+            if rules.get('semantic') == 'scatter':
+                for part in item['collections']:
+                    if 'points' in part:
+                        part['points'] = sorted(part['points'], key=lambda p: tuple(p))
             state['axes'].append(item)
         result.append(state)
     return result
@@ -186,7 +196,7 @@ def _compare_plots(actual, expected):
         assert actual == expected, 'Check titles, labels, categories and axis scales.'
 
 
-def _execute(code, columns, setup='', construction=False, files=None):
+def _execute(code, columns, setup='', construction=False, files=None, explicit_setup=False):
     if plt is not None:
         plt.show = _ORIGINAL_SHOW
         plt.subplots = _ORIGINAL_SUBPLOTS
@@ -200,13 +210,19 @@ def _execute(code, columns, setup='', construction=False, files=None):
     # Fresh names and fresh objects on every Run and Check, including after exceptions.
     data = {key: list(values) for key, values in columns.items()}
     env = {'__builtins__': __builtins__, 'pd': pd, 'np': np, 'plt': plt, 'sns': sns, 'data': data}
-    if construction:
+    if explicit_setup:
+        env = {'__builtins__': __builtins__}
+    elif construction:
         del env['data']
-    if not construction:
+    if not construction and not explicit_setup:
         env['df'] = pd.DataFrame(data)
     for filename, content in (files or {}).items():
-        pd.DataFrame(content).to_csv(filename, index=False)
-    if setup:
+        if isinstance(content, str):
+            with open(filename, 'w', encoding='utf-8') as supplied:
+                supplied.write(content)
+        else:
+            pd.DataFrame(content).to_csv(filename, index=False)
+    if setup and not explicit_setup:
         exec(setup, env)
     figures = []
     def capture_show(*args, **kwargs):
@@ -222,24 +238,26 @@ def _execute(code, columns, setup='', construction=False, files=None):
     env['display'] = display
     stream = BoundedOutputStream()
     last = None
+    has_result = False
     error = None
     with contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream), warnings.catch_warnings():
         warnings.simplefilter('ignore', FutureWarning)
         try:
             tree = ast.parse(code, filename='your_python.py')
             if tree.body and isinstance(tree.body[-1], ast.Expr):
+                has_result = True
                 expression = ast.Expression(tree.body.pop().value)
                 exec(compile(tree, 'your_python.py', 'exec'), env)
                 last = eval(compile(expression, 'your_python.py', 'eval'), env)
             else:
                 exec(compile(tree, 'your_python.py', 'exec'), env)
-            if last is not None:
+            if last is not None or (has_result and not figures and not stream.getvalue()):
                 outputs.append(last)
         except Exception as exc:
             error = ''.join(traceback.format_exception_only(type(exc), exc)).strip()
     if plt is not None:
         plt.show = _ORIGINAL_SHOW
-    return {'env': env, 'last': last, 'outputs': outputs, 'stdout': stream.getvalue(), 'figures': figures, 'error': error}
+    return {'env': env, 'last': last, 'has_result': has_result, 'outputs': outputs, 'stdout': stream.getvalue(), 'figures': figures, 'error': error}
 
 
 def run_foundation(request):
@@ -261,7 +279,7 @@ def run_foundation(request):
             expected_plot = _plot_state(expected['figures'], exercise.get('plot') or {})
     if os.path.exists('chart.png'):
         os.remove('chart.png')
-    actual = _execute(request['code'], columns, setup, construction, exercise.get('files'))
+    actual = _execute(request['code'], columns, setup, construction, exercise.get('files'), request.get('explicitSetup', False))
     passed = False
     feedback = ''
     if checking and not actual['error']:
@@ -285,6 +303,8 @@ def run_foundation(request):
                 got = actual['env'].get('df') if target == 'df' else actual['last']
                 if got is None and target == 'value':
                     got = actual['env'].get('result')
+                if target == 'value':
+                    assert actual['has_result'] or 'result' in actual['env'], 'Write your answer as the final expression, or assign it to result.'
                 _equal(got, wanted, exercise.get('strictDtype', False))
             if exercise.get('preserveData'):
                 _equal(actual['env'].get('df'), pd.DataFrame(columns), True)

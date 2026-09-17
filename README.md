@@ -14,7 +14,7 @@ npm run build:web
 npm run dev
 ```
 
-Then open <http://127.0.0.1:8000/>. The GitHub Pages build loads Pyodide on demand; analysis stays in the current browser session.
+Then open <http://127.0.0.1:8000/> (or <http://127.0.0.1:8000/learn.html> for lessons). Use this HTTP address for working exercises: opening an HTML file with `file://` can preview its appearance, but cannot load the Python worker and generated runtime reliably. `npm run dev` builds and serves the complete app from `dist`. The GitHub Pages build loads Pyodide on demand; analysis stays in the current browser session.
 
 ## iPhone and iPad build
 

@@ -5,14 +5,14 @@ import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url), c=require('../foundations/curriculum.js');
 assert.equal(c.lessons.length,106);
 assert.equal(c.lessons.filter(l=>l.review).length,17);
-assert.equal(c.lessons.reduce((n,l)=>n+l.rounds.length,0),326);
+assert.equal(c.lessons.reduce((n,l)=>n+l.rounds.length,0),324);
 for(const [prefix,count] of [['I',22],['W',31],['V',37]])for(let n=1;n<=count;n++)assert(c.lessons.some(l=>l.id===prefix+String(n).padStart(2,'0')));
-assert.equal(new Set(c.lessons.flatMap(l=>l.rounds.map(r=>r.id))).size,326);
+assert.equal(new Set(c.lessons.flatMap(l=>l.rounds.map(r=>r.id))).size,324);
 for(const [key,d] of Object.entries(c.datasets)){
  const lengths=Object.values(d.columns).map(v=>v.length);assert(lengths.every(n=>n===lengths[0]&&n>=4&&n<=10),key);
 }
 for(const l of c.lessons){
- assert(l.rounds.length>=3,l.id);assert(c.decks.find(d=>d.id===l.deck)?.chapters[l.chapter],l.id);
+ assert(l.rounds.length>=(l.id==='V01'?1:3),l.id);assert(c.decks.find(d=>d.id===l.deck)?.chapters[l.chapter],l.id);
  assert(l.goal&&l.explanation,l.id);
  if(!l.review){assert(l.syntax.every(parts=>parts.length===2&&parts.every(Boolean)),l.id);assert(l.example,l.id);assert(l.rounds[0].starter.includes('____'),l.id);assert.notEqual(l.rounds[0].starter,l.rounds[0].solution,l.id);}
  for(const r of l.rounds){assert(c.datasets[r.dataset],r.id);assert(r.task&&r.hint&&r.solution&&r.starter,r.id);assert(!r.solution.includes('____'),r.id);assert(!/\{(?:a|b|c|d|id|name|cat|n|threshold)\}/.test(r.solution),r.id);}
@@ -23,11 +23,11 @@ for(const d of c.decks){
 const page=fs.readFileSync(new URL('../playground.html',import.meta.url),'utf8');
 assert.equal((page.match(/href="data-foundations.html"/g)||[]).length,1);
 for(const file of ['index.html','ml.html','statistics.html'])assert(!fs.readFileSync(new URL('../'+file,import.meta.url),'utf8').includes('data-foundations.html'),file);
-console.log('Foundations: 106 ordered cards, 326 unique exercises, complete I/W/V IDs, valid tiny tables, review spacing and Data-only navigation.');
+console.log('Foundations: 106 ordered cards, 324 unique exercises, complete I/W/V IDs, valid tiny tables, review spacing and Data-only navigation.');
 
 const taskReviews=JSON.parse(fs.readFileSync(new URL('../docs/foundations-task-review.json',import.meta.url),'utf8')).exercises;
 const visuals=require('../foundations/visuals.js');
-assert.equal(c.lessons[c.lessons.findIndex(l=>l.id==='I01')+1].id,'I01CSV');
+assert.equal(c.lessons[c.lessons.findIndex(l=>l.id==='I02')+1].id,'I01CSV');
 assert.equal(c.lessons[c.lessons.findIndex(l=>l.id==='I18')+1].id,'I18S');
 for(const l of c.lessons){
  assert(['Core','Go Further','Review'].includes(l.level),l.id);
@@ -49,6 +49,27 @@ for(const r of c.lessons.find(l=>l.id==='V30').rounds)assert(!r.solution.include
 console.log('Visual definitions, tiering, task review, stable inserted IDs, distinct schemas and meaningful chart data passed.');
 
 for(const [id,focus] of Object.entries({W15:'.dt.',W16:'.dropna',V02:'ax.set',V24:'plt.subplots',V26:'set_xscale',V27:'ax.axvline',V28:'ax.annotate',V29:'ax.bar',V30:'bottom=first',V34:'fig.savefig'}))assert(c.lessons.find(l=>l.id===id).syntaxCode.includes(focus),id+' must isolate its new syntax');
+
+// A coherent route, visible requirements and a purpose for each practice round.
+const lesson=id=>c.lessons.find(l=>l.id===id);
+const core=c.lessons.filter(l=>l.deck==='visualise'&&l.path==='core');
+assert.equal(core[0].id,'V35');assert.equal(core.at(-1).id,'V37');
+assert(core.findIndex(l=>l.id==='V16')<core.findIndex(l=>l.id==='V03'));
+assert(!core.some(l=>l.level==='Go Further'));
+for(const l of c.lessons){
+ for(const r of l.rounds){
+  assert(r.demand&&r.steps.length,r.id);
+  assert(!/Return the Figure|Read the worked example/.test(r.task+' '+r.hint),r.id);
+  if(r.retrieves)assert(c.lessons.indexOf(lesson(r.retrieves))<c.lessons.indexOf(l),r.id+' retrieves a later lesson');
+ }
+ if(!l.review){
+  assert(new Set(l.rounds.map(r=>r.task)).size===l.rounds.length,l.id);
+  assert(new Set(l.rounds.map(r=>r.solution)).size===l.rounds.length,l.id);
+  if(l.id!=='W24'&&l.rounds[2])assert.equal(l.rounds[2].requiredCalls.length,0,l.id+' Transfer must allow equivalent methods');
+ }
+}
+assert(lesson('V37').rounds[1].solution.includes('["temperature"].mean()'));
+assert.equal(lesson('V37').rounds[1].steps.length,5);
 
 // Visual regression checks target previously misleading concepts, not just SVG presence.
 for(const l of c.lessons)for(const r of l.rounds){
@@ -74,3 +95,14 @@ for(const l of c.lessons){
  assert.equal(visualReviews[l.id],fingerprint,'Renew visual accuracy review for '+l.id);
 }
 console.log('Concept distinctions, signed symmetric correlations, swarm spacing, IQR fences and all visual review fingerprints passed.');
+
+// Practical tasks cannot regress into typing predictions as Python results.
+assert.equal(lesson('V01').rounds.length,1);
+for(const l of c.lessons)for(const r of l.rounds){
+ assert(!r.task.includes('predicted_rows'),r.id);
+ if(l.id!=='V35'&&r.retrieves!=='V35')assert(!/^(?:True|False|None|[0-9]+|\([0-9, ]+\))$/.test(r.solution.trim()),r.id);
+}
+assert(lesson('I01CSV').rounds[1].files['cafe.csv'].includes(';'));
+assert(lesson('I01CSV').rounds[2].solution.includes('.head()'));
+assert(lesson('I01').rounds[1].solution.includes('\n    "price":'));
+assert(lesson('I01').rounds[1].solution.includes('\n    "drink":'));

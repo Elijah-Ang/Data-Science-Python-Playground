@@ -4,7 +4,7 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const dist = path.join(root, "dist");
-const htmlFiles = ["index.html", "learn.html", "tutorial.html", "playground.html", "ml.html", "statistics.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
+const htmlFiles = ["index.html", "learn.html", "data-foundations.html", "tutorial.html", "playground.html", "ml.html", "statistics.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
 
 const manifest = JSON.parse(await fs.readFile(path.join(root, "manifest.webmanifest"), "utf8"));
 assert.equal(manifest.start_url, "./index.html");
@@ -17,6 +17,16 @@ for (const file of htmlFiles) {
   assert.match(source, /app-platform\.js/, `${file} must load the shared app platform bridge`);
   assert.doesNotMatch(source, /fonts\.(googleapis|gstatic)\.com/, `${file} must not depend on Google Fonts`);
   await fs.access(path.join(dist, file));
+  // A missing base stylesheet can leave readable HTML while destroying the UI.
+  // Require real stylesheets in both source previews and the deployed build.
+  for (const tag of source.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*>/g)) {
+    const href = tag[0].match(/href="([^"]+)"/)?.[1];
+    if (!href || /^(?:https?:|data:)/.test(href)) continue;
+    const relative = href.split('?')[0];
+    for (const directory of [root, dist]) {
+      await fs.access(path.resolve(directory, path.dirname(file), relative));
+    }
+  }
 }
 
 const config = JSON.parse(await fs.readFile(path.join(root, "capacitor.config.json"), "utf8"));

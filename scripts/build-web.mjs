@@ -23,9 +23,16 @@ const files = [
   "playground.html",
   "data-foundations.html",
   "foundations/foundations.css",
+  "foundations/playground-base.css",
   "foundations/app.js",
+  "foundations/editor.js",
+  "foundations/teaching.js",
+  "foundations/workspace.js",
   "foundations/curriculum.js",
   "foundations/refinements.js",
+  "foundations/progression.js",
+  "foundations/practical.js",
+  "foundations/code-style.js",
   "foundations/visuals.js",
   "foundations/worker.js",
   "foundations/runtime.py",
@@ -83,8 +90,6 @@ for (const directory of directories) {
   await fs.cp(path.join(root, directory), path.join(output, directory), { recursive: true });
 }
 
-const dataSource = await fs.readFile(path.join(root,'playground.html'),'utf8');
-await fs.writeFile(path.join(output,'foundations/playground-base.css'), dataSource.match(/<style>([\s\S]*?)<\/style>/)[1]);
 await fs.writeFile(path.join(output,'foundations/runtime-source.js'), 'window.FoundationsRuntimeSource = '+JSON.stringify((await fs.readFile(path.join(root,'table-serialization.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'foundations/runtime.py'),'utf8')))+';\n');
 
 const mlSource = await fs.readFile(path.join(root,'ml.html'),'utf8');

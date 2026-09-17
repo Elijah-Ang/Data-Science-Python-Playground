@@ -8,6 +8,7 @@ report={'engine':args.engine,'checks':[],'screenshots':[]};start=time.time()
 with sync_playwright() as p:
  browser=getattr(p,args.engine).launch();context=browser.new_context();page=context.new_page();errors=[]
  page.on('pageerror',lambda e:errors.append(str(e)))
+ page.on('console',lambda message:print(message.text,flush=True) if message.text.startswith('Audit:') else None)
  runtime_query='?runtime=local' if args.runtime=='local' else ''
  page.goto(args.base_url+'/playground.html'+runtime_query)
  assert page.locator('.route-tools .learn-refresh').count()==1
@@ -38,10 +39,12 @@ with sync_playwright() as p:
  def open_lesson(id,index=0):
   deck={'I':'inspect','W':'wrangle','V':'visualise'}[id[0]]
   page.evaluate('(hash)=>{location.hash=hash}',f'#{deck}/{id}/{index}')
-  page.wait_for_function('(id)=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id)',arg=id)
+  page.wait_for_function('([id,index])=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id) && document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[index].label',arg=[id,index])
   page.wait_for_function('!document.querySelector("#runExercise").disabled')
  def solution(id,index=0):return page.evaluate('([id,i])=>FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[i].solution',[id,index])
  def run(code,check=True):
+  if '# Supplied setup' not in code:
+   code=page.evaluate('(code)=>{const [deck,id,index]=location.hash.slice(1).split("/");const r=FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[Number(index)||0];return FoundationWorkspace.code(FoundationsCurriculum,r,code)}',code)
   page.locator('#foundationEditor').fill(code)
   page.locator('#checkExercise' if check else '#runExercise').click()
   page.wait_for_function('!document.querySelector("#runExercise").disabled',timeout=120000)
@@ -68,14 +71,42 @@ with sync_playwright() as p:
  assert page.evaluate('localStorage.getItem("dspp-foundations-v1")') is None
  page.locator('#foundationEditor').fill('# unsaved edit\ndf')
  page.locator('#resetExercise').click();assert page.locator('#foundationEditor').input_value()==starter
- assert 'fresh given data' in page.locator('#foundationFeedback').inner_text()
+ assert 'Setup and starter restored' in page.locator('#foundationFeedback').inner_text()
  assert page.locator('#runExercise').inner_text()=='▶ Run code'
  assert page.locator('#checkExercise').inner_text()=='✓ Check answer'
  assert page.locator('#resetExercise').inner_text()=='Reset code'
+ # Real editor keys: indentation must edit code, while Escape keeps focus escapable.
+ editor=page.locator('#foundationEditor')
+ editor.fill('df = {\n"price": [1, 2],\n"drink": ["Tea", "Latte"],\n}')
+ editor.evaluate('(e)=>{const s=e.value.indexOf("\\n")+1;const end=e.value.lastIndexOf("\\n");e.setSelectionRange(s,end);e.focus();}')
+ page.keyboard.press('Tab')
+ assert '\n    "price"' in editor.input_value() and '\n    "drink"' in editor.input_value()
+ page.keyboard.press('Shift+Tab')
+ assert '\n"price"' in editor.input_value() and '\n"drink"' in editor.input_value()
+ editor.fill('ab');editor.evaluate('(e)=>e.setSelectionRange(2,2)');page.keyboard.press('Tab')
+ assert editor.input_value()=='ab  '
+ # Native engines coalesce edit groups differently; both must support undo/redo.
+ page.keyboard.press('ControlOrMeta+z');assert editor.input_value()!='ab  '
+ page.keyboard.press('ControlOrMeta+Shift+z');assert editor.input_value()=='ab  '
+ editor.fill('');page.keyboard.press('Tab');assert editor.input_value()=='    '
+ page.keyboard.press('Shift+Tab');assert editor.input_value()==''
+ page.keyboard.press('Escape');page.keyboard.press('Tab');assert page.locator('#runExercise').evaluate('(e)=>document.activeElement===e')
+ editor.focus();page.keyboard.press('Escape');page.keyboard.press('Shift+Tab');assert not editor.evaluate('(e)=>document.activeElement===e')
+ open_lesson('I01',1)
+ example=solution('I01',1)
+ assert '\n    "price":' in example and '\n    "drink":' in example
+ open_lesson('I01CSV',1)
+ page.get_by_text('View cafe.csv',exact=True).click()
+ assert ';' in page.locator('details',has=page.locator('summary',has_text='View cafe.csv')).inner_text()
+ assert 'matches' in run(solution('I01CSV',1))
+ assert 'Not yet' in run('pd.read_csv("cafe.csv")')
+ open_lesson('I01CSV',2);assert 'matches' in run(solution('I01CSV',2))
+ assert page.locator('#foundationOutput table tbody tr').count()==5
+ report['checks'].append('Tab/Shift+Tab selection indentation, tab stops, undo, Escape focus exit, multiline solutions and CSV import/preview')
  report['checks'].append('Deck, round progression, hints/solutions, no draft persistence, legacy storage removal and exercise reset')
  open_lesson('I02')
  assert 'Not yet' in run('df.iloc[:2]')
- open_lesson('I02',2);assert 'matches' in run('df.iloc[:4]');open_lesson('I02')
+ open_lesson('I02',2);assert 'matches' in run('df.sample(n=3, random_state=1)');open_lesson('I02')
  assert 'Not yet' in run('df.tail(2)')
  assert 'could not finish' in run('df[')
  assert 'SyntaxError' in page.locator('#foundationOutput').inner_text()
@@ -106,16 +137,38 @@ with sync_playwright() as p:
  open_lesson('V37');assert 'matches' in run(solution('V37'))
  assert page.locator('#foundationOutput img').count()==3
  report['checks'].append('End-to-end cleaning, chart data validation, figure zoom, actual savefig export and three-chart report')
+ # Core/extension routes remain separate, and chart-choice and inspection tasks run in real Python.
+ open_lesson('V35');assert 'matches' in run('"scatter"')
+ open_lesson('I05',1);assert 'Not yet' in run('# no answer');assert 'Not yet' in run('None');assert 'matches' in run('df.head(3).dtypes')
+ assert page.locator('#foundationOutput table tbody tr').count()==5
+ assert page.locator('#foundationOutput .empty-output').count()==0
+ open_lesson('V08',1);assert 'matches' in run(solution('V08',1))
+ open_lesson('V37',1);assert 'matches' in run(solution('V37',1))
+ assert page.locator('.foundation-practice-brief ol > li').count()==4
+ assert page.locator('.foundation-practice-brief .practice-question').count()==1
+ page.locator('#foundationHint summary').click()
+ assert 'worked example' not in page.locator('#foundationHint').inner_text()
+ open_lesson('V37',2)
+ assert page.locator('.foundation-navigation .deck-boundary').inner_text().strip()=='End of deck'
+ assert page.locator('.foundation-navigation a[href*="V05"]').count()==0
+ open_lesson('V05');assert page.locator('.foundation-navigation .deck-boundary').inner_text().strip()=='Start of deck'
+ page.set_viewport_size({'width':390,'height':844});open_lesson('V37',1)
+ page.get_by_role('button',name='Go to editor ↓').click()
+ assert page.locator('#foundationEditor').evaluate('(e)=>document.activeElement===e')
+ editor_box=page.locator('#foundationEditor').bounding_box()
+ assert editor_box['y']>=-1,editor_box
+ report['checks'].append('Distinct round demands, inspection checks, numbered checkpoint, editor jump and separate core/extension sequences')
  # Production worker, full curriculum, no mock interpreter or result substitution.
  if args.all_solutions:
   result=page.evaluate('''async () => {
    const source=await (await fetch('foundations/worker.js')).text();
-   const bridge=createPythonBridge(source);
+   const bridge=createPythonBridge(source,{onStatus:data=>console.info('Audit: '+data.message)});
    const config={indexURL:AppPlatform.pyodideIndexUrl,seaborn:AppPlatform.seabornRequirement,source:FoundationsRuntimeSource};
    const failures=[];let count=0;
    for(const lesson of FoundationsCurriculum.lessons){
+    console.info('Audit: '+lesson.id);
     for(const exercise of lesson.rounds){
-     try{const response=await bridge.send('run',{config,request:{code:exercise.solution,check:true,exercise,columns:FoundationsCurriculum.datasets[exercise.dataset].columns}});
+     try{const response=await bridge.send('run',{config,request:{code:FoundationWorkspace.code(FoundationsCurriculum,exercise,exercise.solution),explicitSetup:true,check:true,exercise,columns:FoundationsCurriculum.datasets[exercise.dataset].columns}});
       if(!response.result.passed)failures.push({id:exercise.id,error:response.result.error||response.result.feedback});else count++;
      }catch(error){failures.push({id:exercise.id,error:String(error)});}
     }
@@ -193,8 +246,9 @@ with sync_playwright() as p:
  report['checks'].append('Short laptop: long checkpoint task cannot clip Run/Check/Reset; Python panel stays fixed')
  # Narrow-phone boundary and fading scaffold stay usable.
  page.set_viewport_size({'width':320,'height':740});open_lesson('I02',2)
- assert page.locator('summary',has_text='Recall the syntax').is_visible()
- assert not page.locator('.foundation-syntax').is_visible()
+ assert page.locator('.foundation-practice-brief').is_visible()
+ assert page.locator('.teaching-overview, .foundation-syntax').count()==0
+ assert page.locator('.foundation-revisit a').is_visible()
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
  page.locator('.foundation-skip').focus();page.locator('.foundation-skip').click()
  assert page.url.endswith('/2')
