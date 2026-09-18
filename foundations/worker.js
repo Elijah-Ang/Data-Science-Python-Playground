@@ -32,11 +32,11 @@ async function runtime(config) {
 onmessage = async ({data}) => {
   try {
     const py = await runtime(data.config);
-    await packages(py,{...data.config,plotting:data.config.plotting||data.request?.exercise.target==='plot'},(data.request?.code||'')+'\n'+(data.request?.exercise.solution||''));
+    await packages(py,{...data.config,plotting:data.config.plotting||data.request?.exercise?.target==='plot'||!!data.request?.challenge?.chart},(data.request?.code||'')+'\n'+(data.request?.exercise?.solution||''));
     postMessage({type:'status',message:'Python ready · runs on your device'});
     if (data.type === 'init') {postMessage({id:data.id,ok:true,packages:Object.keys(py.loadedPackages)});return;}
     py.globals.set('_foundation_request',JSON.stringify(data.request));
-    const response = await py.runPythonAsync('json.dumps(run_foundation(json.loads(_foundation_request)))');
+    const response = await py.runPythonAsync('json.dumps((run_challenge if \"challenge\" in json.loads(_foundation_request) else run_foundation)(json.loads(_foundation_request)))');
     postMessage({id:data.id,ok:true,result:JSON.parse(response)});
   } catch (error) {postMessage({id:data.id,ok:false,error:String(error)});}
 };

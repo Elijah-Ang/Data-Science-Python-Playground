@@ -59,9 +59,11 @@
         vec4 original=texture2D(picture,uv);
         vec4 pond=portrait>.5?vec4(670.,1310.,150.,90.):vec4(1353.,791.,145.,70.);
         float water=ellipse(px,pond);
-        float falls=portrait>.5?0.:ellipse(px,vec4(1395.,674.,57.,85.));
+        float falls=portrait>.5?0.:ellipse(px,vec4(1395.,680.,24.,62.));
+        float duck=portrait>.5?ellipse(px,vec4(678.,1308.,42.,46.)):ellipse(px,vec4(1354.,784.,44.,37.));
+        water*=1.-duck; falls*=1.-duck;
         float blue=smoothstep(.10,.25,original.b-original.r)*smoothstep(.1,.23,original.g-original.r);
-        vec2 ripple=vec2(sin(px.y*.12-time*2.8)*1.7+sin(px.x*.045+time*1.9)*.8,cos(px.x*.09-time*2.2)*1.1);
+        vec2 ripple=vec2(sin(px.y*.12-time*2.8)*.65+sin(px.x*.045+time*1.9)*.3,cos(px.x*.09-time*2.2)*.45);
         ripple.y+=falls*sin(px.y*.15-time*6.)*2.;
         vec4 crown=portrait>.5?vec4(302.,143.,295.,170.):vec4(449.,128.,290.,154.);
         float foliage=ellipse(px,crown)*smoothstep(.08,.22,original.g-max(original.r,original.b));
@@ -106,7 +108,7 @@
       return{width:1672,height:941,eyes:[475,209,39,18,864,322,39,20,349,609,43,20,1164,586,36,20],regions:[
         Z(1138,170,107,65,1,0,.007,5.9,1),
         Z(478,215,77,67,0,.7,.012,4.8,.5,478,250,.86),Z(485,265,38,30,.4,.5,.012,4.8,1),
-        Z(350,610,65,69,1,2,.045,4.7,1,352,662),Z(410,638,26,36,0,0,.19,2.35,1,397,660),
+
         Z(1354,784,33,28,4,1.5,.027,5.3,.9),Z(1287,813,37,21,1,1,.024,4.2,2),Z(1420,783,33,20,1,1,.02,4.7),
         Z(1014,81,56,37,0,2,.027,3.6,0,966,95),Z(1554,400,44,31,0,1,.06,3.2,1,1534,420),
         Z(628,348,65,38,1,2,.027,5.3,0,582,316),Z(700,382,61,49,2,0,.02,4.8,.2),
@@ -185,6 +187,12 @@
       balloons.strokes=mobile?[{points:[[660,199],[670,231],[681,237]],width:1.7},{points:[[712,158],[708,203],[701,234]],width:1.7},{points:[[754,212],[753,237],[750,245]],width:1.7}]:[{points:[[1351,200],[1368,222],[1382,227]],width:1.7},{points:[[1399,164],[1392,198],[1388,227]],width:1.7},{points:[[1431,209],[1415,224],[1403,229]],width:1.7}];
       for(const actor of specs)if(actor.kind==='slider'){actor.grow=1;actor.erasePad=7;}
       if(mobile)specs.push({kind:'cat',pivot:[164,1208],erasePad:2,grow:.5,paths:['M 106 1120 C 100 1107 98 1083 105 1076 Q 115 1063 136 1083 L 171 1077 Q 190 1044 200 1057 Q 209 1074 207 1090 Q 220 1102 216 1129 Q 213 1146 199 1153 L 207 1160 L 216 1148 L 224 1146 L 222 1135 L 231 1121 L 243 1128 L 246 1144 L 231 1154 Q 232 1169 220 1175 L 208 1177 Q 222 1190 213 1208 Q 204 1219 189 1211 L 175 1206 Q 172 1226 154 1225 Q 139 1223 134 1213 Q 116 1207 117 1194 Q 103 1186 116 1160 Q 106 1153 104 1144 Q 91 1135 100 1125 Z']});
+      if(!mobile){
+        const cat=actorSpecs('portrait').find(a=>a.kind==='cat');
+        cat.pivot=[355,701];
+        cat.paths=cat.paths.map(path=>{let coordinate=0;return path.replace(/-?\d+(?:\.\d+)?/g,value=>{const isX=coordinate++%2===0;return String((Number(value)-(isX?164:1208))*.85+(isX?355:701));});});
+        specs.push(cat);
+      }
       return specs;
     }
     // Fill only the narrow background revealed by moving cutouts. The original
@@ -227,7 +235,7 @@
         // The blue slide and frame are scenery, including gaps inside a robot's silhouette.
         // Keep the original blue neck and ear accents with their robot.
         if(actor.kind==='slider'){actor.removalMask=surface(sw,sh);actor.removalMask.getContext('2d').drawImage(mask,0,0);}
-        if(actor.kind==='slider'||actor.kind==='swing'){
+        if(actor.kind==='swing'||actor.kind==='butterfly'){
           const mp=m.getImageData(0,0,sw,sh),mobile=layout==='portrait';
           for(let y=0;y<sh;y++)for(let x=0;x<sw;x++){
             const gx=x+actor.x,gy=y+actor.y,j=(gy*w+gx)*4,k=(y*sw+x)*4;
@@ -235,7 +243,8 @@
             const neck=actor.kind==='slider'&&(mobile?gx>446&&gx<492&&gy>731&&gy<760:gx>836&&gx<888&&gy>344&&gy<374);
             const face=actor.kind==='slider'&&(mobile?gx>444&&gx<520&&gy>679&&gy<734:gx>831&&gx<917&&gy>294&&gy<343);
             const ear=actor.kind==='swing'&&(mobile?gx>726&&gx<742&&gy>1080&&gy<1104:gx>1202&&gx<1219&&gy>588&&gy<613);
-            if(!neck&&!face&&!ear&&b>90&&b-r>50&&b>g*1.12)mp.data[k+3]=0;
+            if(actor.kind==='swing'&&!neck&&!face&&!ear&&b>90&&b-r>50&&b>g*1.12)mp.data[k+3]=0;
+            if(actor.kind==='butterfly'&&g>r*1.12&&g>b*1.12)mp.data[k+3]=0;
           }
           m.putImageData(mp,0,0);
         }
@@ -274,7 +283,7 @@
       }
       repairContext.putImageData(rp,0,0);mend(ctx,repair);
       const [px,py,pw,ph]=slidePlates[layout].rect,patch=surface(pw,ph),pc=patch.getContext('2d');
-      pc.drawImage(slidePlate,0,0);pc.globalCompositeOperation='destination-in';pc.drawImage(repair,px,py,pw,ph,0,0,pw,ph);ctx.drawImage(patch,px,py);
+      pc.drawImage(slidePlate,0,0,pw,ph);ctx.drawImage(patch,px,py);
       return{clean,actors:specs};
     }
     function rotatePoint(p,pivot,angle){const c=Math.cos(angle),s=Math.sin(angle),x=p[0]-pivot[0],y=p[1]-pivot[1];return[pivot[0]+x*c-y*s,pivot[1]+x*s+y*c];}
@@ -288,6 +297,10 @@
         if(actor.kind==='tire'&&state.layout==='landscape'){dx=5;dy=9;}
         if(actor.kind==='balloons')angle=.075*Math.sin(time*Math.PI*2/5.4+.7)*strength;
         if(actor.kind==='slider'){const glide=(.5-.5*Math.cos(time*Math.PI*2/6.4))*strength;dx=-24*glide;dy=43*glide;}
+        if(actor.kind==='cat'&&state.layout==='landscape'){
+          c.save();c.fillStyle='rgba(105,67,20,.18)';c.beginPath();
+          c.ellipse(343,682,37,5,0,0,Math.PI*2);c.fill();c.restore();
+        }
         if(actor.kind==='cat'){angle=.025*Math.sin(time*Math.PI*2/3.8)*strength;dy=-2*(.5+.5*Math.sin(time*Math.PI*2/3.8))*strength;}
         if(actor.kind==='butterfly')scale=1-(.60*strength)*(.5+.5*Math.sin(time*Math.PI*2/0.82+actor.phase));
         scale=Math.max(.30,scale);
@@ -302,7 +315,7 @@
     function loadImage(url){return cache[url]||(cache[url]=new Promise((resolve,reject)=>{
       const img=new Image();img.crossOrigin='anonymous';
       img.onload=async()=>{try{await img.decode();if(!img.naturalWidth||!img.naturalHeight)throw Error('Artwork is empty.');resolve(img);}catch(error){reject(error);}};
-      img.onerror=()=>reject(Error('Artwork could not load.'));img.src=url;
+      img.onerror=()=>reject(Error('Artwork could not load: '+url));img.src=url;
     }));}
     function verifyFrame(){
       if(gl.isContextLost()||gl.getError()!==gl.NO_ERROR)throw Error('Artwork renderer unavailable.');
@@ -319,7 +332,41 @@
         const balloonSource=layout==='portrait'?await loadImage(base+'data-playground-desktop-source.webp'):img;
         if(own!==token)return;
         const plate=await loadImage(slidePlates[layout].url);if(own!==token)return;
-        const prepared=prepareActors(img,layout,balloonSource,plate);actors=prepared.actors;
+        const prepared=prepareActors(img,layout,balloonSource,plate);
+        const cleanSlider=await loadImage(new URL('assets/landing/robot-slide-clean.png?v=1',document.baseURI).href);
+        const slider=prepared.actors.find(a=>a.kind==='slider');
+        // Opaque character sprite: never erase robot paint by its blue colour.
+        const mobile=layout==='portrait';
+        const sx=mobile?405:802,sy=mobile?665:293,sw=mobile?151:136,sh=mobile?135:122;
+        slider.x=sx;slider.y=sy;slider.image=surface(sw,sh);
+        slider.image.getContext('2d').drawImage(cleanSlider,14,195,1099,1107,0,0,sw,sh);
+        if(layout==='landscape'){
+          const sandbox=await loadImage(new URL('assets/landing/sandbox-background-desktop.png',document.baseURI).href);
+          prepared.clean.getContext('2d').drawImage(sandbox,270,536,172,202,270,536,172,202);
+          const mobileImage=await loadImage(base+'data-playground-mobile-source.webp');
+          const mobilePlate=await loadImage(slidePlates.portrait.url);
+          const mobileActors=prepareActors(mobileImage,'portrait',img,mobilePlate).actors;
+          for(const kind of ['swing']){
+            const source=mobileActors.find(a=>a.kind===kind),destination=prepared.actors.find(a=>a.kind===kind);
+            const replacement=surface(destination.image.width,destination.image.height);
+            replacement.getContext('2d').drawImage(source.image,0,0,replacement.width,replacement.height);
+            destination.image=replacement;
+          }
+        }
+        if(mobile){
+          // Replace the old cat's entire repair area with sharp, aligned scenery.
+          const sandbox=await loadImage(new URL('assets/landing/sandbox-background-mobile.png',document.baseURI).href);
+          prepared.clean.getContext('2d').drawImage(sandbox,86,1040,174,196,86,1040,174,196);
+        }
+        // Share the clean character across layouts; keep its feet anchored on sand.
+        const cleanCat=await loadImage(new URL('assets/landing/robot-cat-clean-v3.png',document.baseURI).href);
+        const cat=prepared.actors.find(a=>a.kind==='cat');
+        const cw=mobile?145:132,ch=mobile?166:151;
+        cat.x=mobile?100:279;cat.y=mobile?1058:533;
+        cat.pivot=mobile?[164,1222]:[343,682];cat.image=surface(cw,ch);
+        cat.image.getContext('2d').drawImage(cleanCat,216,51,991,1136,0,0,cw,ch);
+        if(own!==token)return;
+        actors=prepared.actors;
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }

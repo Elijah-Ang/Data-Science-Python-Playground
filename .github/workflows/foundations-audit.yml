@@ -22,6 +22,8 @@ jobs:
       - run: node tests/test_foundations_curriculum.mjs
       - run: node tests/test_foundations_teaching.mjs
       - run: python tests/test_foundations_runtime.py
+      - run: node tests/test_workflow_challenges.mjs
+      - run: python tests/test_workflow_challenges_audit.py
       - run: python tests/test_foundations_workspace.py
   browser:
     name: Foundations real Pyodide (${{ matrix.engine }})
@@ -48,6 +50,7 @@ jobs:
       - run: python tests/test_foundations_cold_start.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_foundations_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote --all-solutions
       - run: python tests/test_foundations_teaching_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+      - run: python tests/test_workflow_challenges_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_foundations_visuals_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - uses: actions/upload-artifact@v4
         if: always()
@@ -56,3 +59,4 @@ jobs:
           path: |
             tests/evidence/foundations/
             tests/evidence/learning-styles/
+            tests/evidence/workflow-challenges/

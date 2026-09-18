@@ -25,6 +25,10 @@ const files = [
   "foundations/foundations.css",
   "foundations/playground-base.css",
   "foundations/app.js",
+  "challenges/registry.js",
+  "challenges/experience.js",
+  "challenges/challenges.css",
+  "challenges/runtime.py",
   "foundations/editor.js",
   "foundations/teaching.js",
   "foundations/workspace.js",
@@ -90,7 +94,7 @@ for (const directory of directories) {
   await fs.cp(path.join(root, directory), path.join(output, directory), { recursive: true });
 }
 
-await fs.writeFile(path.join(output,'foundations/runtime-source.js'), 'window.FoundationsRuntimeSource = '+JSON.stringify((await fs.readFile(path.join(root,'table-serialization.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'foundations/runtime.py'),'utf8')))+';\n');
+await fs.writeFile(path.join(output,'foundations/runtime-source.js'), 'window.FoundationsRuntimeSource = '+JSON.stringify((await fs.readFile(path.join(root,'table-serialization.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'foundations/runtime.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'challenges/runtime.py'),'utf8')))+';\n');
 
 const mlSource = await fs.readFile(path.join(root,'ml.html'),'utf8');
 await fs.writeFile(path.join(output,'statistics/playground-base.css'),mlSource.match(/<style>([\s\S]*?)<\/style>/)[1]);

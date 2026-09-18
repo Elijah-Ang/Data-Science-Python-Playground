@@ -33,7 +33,10 @@ for(const profile of ['wide','mobile'])for(const c of chapters){
 assert.match(controller,/getBoundingClientRect/);
 assert.match(fs.readFileSync('notebook-session.js','utf8'),/persist:false,confirmLeave:false/);
 assert.match(fs.readFileSync('ad-mode.js','utf8'),/!tourEmbed/);
-assert.match(fs.readFileSync('mascot.css','utf8'),/right:calc\(50% \+ min\(25vw,370px\)\);left:auto/);
+const homepage=fs.readFileSync('index.html','utf8');
+assert.match(homepage, /class="mascot-cta treehouse-guide" href="learn.html"/);
+assert.equal((homepage.match(/data-mascot/g)||[]).length,1);
+assert.ok(homepage.indexOf('data-scene') < homepage.indexOf('data-mascot'), 'Learning invitation belongs inside the playground scene');
 // Opening/running a tour must not read, overwrite or restore a visitor's drafts.
 const storageCalls=[];
 const sessionSandbox={window:{DataPlaygroundTourEmbed:true,addEventListener(){}},document:{querySelector(){return null;},addEventListener(){}},setInterval(){},setTimeout(){},clearTimeout(){},localStorage:{getItem(k){storageCalls.push(['get',k]);},setItem(k,v){storageCalls.push(['set',k,v]);}}};

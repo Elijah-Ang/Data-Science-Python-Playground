@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="landing.css?v=landing-tour4">
-  <link rel="stylesheet" href="mascot.css">
+  <link rel="stylesheet" href="mascot.css?v=blimp-raised11">
   <script defer src="mascot.js"></script>
   <script src="app-platform.js?v=platform2"></script>
 </head>
@@ -25,12 +25,25 @@
   <a class="tour-button" href="tutorial.html">Take a short tour</a>
   <main class="welcome-shell">
     <section class="welcome-intro" aria-labelledby="welcome-title">
+      <aside class="welcome-blimp" aria-label="Choose where to begin">
+        <img class="blimp-art" src="assets/landing/welcome-blimp-plain.png" alt="" width="1536" height="1024">
+        <p class="blimp-heading">WHERE TO BEGIN?</p>
+        <svg class="blimp-rigging" aria-hidden="true"><g fill="none" stroke="#594b37" stroke-width="3"><line/><line/></g><g fill="none" stroke="#d2b879" stroke-width="1"><line/><line/></g></svg>
+        <div class="blimp-directions">
+          <img class="blimp-flag" src="assets/landing/wayfinding-fabric-flag.png" alt="" aria-hidden="true">
+          <a class="blimp-choice" href="#learning-robot">
+            <img class="blimp-robot" src="assets/mascot/robot-book.png" alt="" width="1254" height="1254">
+            <span><strong>Learn or refresh Python</strong><span>Click the robot ↓</span></span>
+          </a>
+          <a class="blimp-choice" href="#playground-gate">
+            <img class="blimp-gate" src="assets/landing/gate-glow-desktop.png" alt="" width="164" height="80">
+            <span><strong>Jump into real datasets</strong><span>Click the gate →</span></span>
+          </a>
+        </div>
+      </aside>
       <div class="welcome-title-copy"><h1 id="welcome-title"><em><span class="welcome-title-line">Data Science</span> <span class="welcome-title-line">Python</span> <span class="welcome-title-line">Playground</span></em></h1>
       <p class="welcome-subtitle">Learn Python by exploring real datasets and evaluating models.</p></div>
-      <a class="mascot-cta" href="learn.html" aria-label="Open Learn and Refresh">
-        <span class="mascot-bubble"><strong>New here or rusty?</strong>Learn or refresh Python with me.<small>Optional. Explore whenever you like.</small></span>
-        <span class="mascot-viewport" data-mascot data-pose="book" aria-hidden="true"><span class="mascot-idle"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" decoding="async"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" decoding="async"></span></span>
-      </a>
+
     </section>
 
     <section class="scene-section" aria-labelledby="scene-title">
@@ -44,7 +57,16 @@
         <canvas class="scene-motion" aria-hidden="true"></canvas>
         <canvas class="scene-actors" aria-hidden="true"></canvas>
 
-        <a class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground">
+        <picture class="treehouse-repair" aria-hidden="true">
+          <source media="(max-width: 720px), (orientation: portrait)" srcset="assets/landing/treehouse-clean-mobile.png">
+          <img src="assets/landing/treehouse-clean-desktop.png" alt="" decoding="async">
+        </picture>
+      <a id="learning-robot" class="mascot-cta treehouse-guide" href="learn.html" aria-label="Open Learn and Refresh">
+        <span class="mascot-bubble"><strong>NEW HERE OR RUSTY?</strong>Learn or refresh Python with me.<span class="treehouse-guide-link">Learn / Refresh <span aria-hidden="true">→</span></span></span>
+        <span class="mascot-viewport" data-mascot data-pose="book" aria-hidden="true"><span class="mascot-idle"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" decoding="async"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" decoding="async"></span></span>
+      </a>
+
+        <a id="playground-gate" class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground">
           <picture class="gate-glow" aria-hidden="true">
             <source media="(max-width: 720px), (orientation: portrait)" srcset="assets/landing/gate-glow-mobile.png">
             <source media="(min-width: 721px)" srcset="assets/landing/gate-glow-desktop.png">
@@ -60,7 +82,7 @@
     <a href="about.html">About</a> · <a href="help.html">Help &amp; contact</a> · <a href="privacy.html">Privacy</a> · <a href="acknowledgements.html">Credits</a>
   </footer>
 
-  <script src="landing.js?v=static-scene2"></script>
-  <script src="landing-motion.js?v=motion4"></script>
+  <script src="landing.js?v=target-center7"></script>
+  <script src="landing-motion.js?v=mobile-sand16"></script>
 </body>
 </html>

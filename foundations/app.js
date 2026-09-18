@@ -25,13 +25,13 @@ function landing(){
  document.body.dataset.deck='';
  return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div></section>
 
- <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
+ <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews · ${ChallengeExperience.all.filter(c=>c.deck===d.id).length} challenges</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
  
  `;
 }
 function deckPage(deck){
  document.body.dataset.deck=deck.id;
- return `<header class="foundation-deck-heading"><span class="foundation-eyebrow">Deck ${deck.number}</span><h2>${esc(deck.title)}</h2><p>${esc(deck.description)}</p><nav class="chapter-jumps" aria-label="Jump to chapter">${deck.chapters.map((chapter,i)=>`<span class="chapter-step">${i?'<span class="chapter-flow-arrow" aria-hidden="true">→</span>':''}<a href="#${deck.id}/chapter/${i}">${esc(chapter)}</a></span>`).join('')}</nav></header>`+deck.chapters.map((chapter,i)=>{const items=C.lessons.filter(l=>l.deck===deck.id&&l.chapter===i);return items.length?`<section class="foundation-chapter" id="chapter-${i}" tabindex="-1"><h3>${String(i+1).padStart(2,'0')} / ${esc(chapter)}</h3><div class="lesson-library">${items.map(l=>`<a class="lesson-card ${l.review?'is-review':''}" href="${url(l)}"><div class="card-meta"><span class="card-id">${l.id}</span><span class="card-level">${esc(l.level)}</span></div>${FoundationVisuals.diagram(l.visual)}<h4>${esc(l.title)}</h4><p>${esc(l.goal)}</p><small>${l.minutes} min · ${l.rounds.length} ${l.review?'retrieval tasks':'practices'}</small></a>`).join('')}</div></section>`:'';}).join('');
+ return `<header class="foundation-deck-heading"><span class="foundation-eyebrow">Deck ${deck.number}</span><h2>${esc(deck.title)}</h2><p>${esc(deck.description)}</p>${ChallengeExperience.tabs(deck,'lessons')}<nav class="chapter-jumps" aria-label="Jump to chapter">${deck.chapters.map((chapter,i)=>`<span class="chapter-step">${i?'<span class="chapter-flow-arrow" aria-hidden="true">→</span>':''}<a href="#${deck.id}/chapter/${i}">${esc(chapter)}</a></span>`).join('')}</nav></header>`+deck.chapters.map((chapter,i)=>{const items=C.lessons.filter(l=>l.deck===deck.id&&l.chapter===i);return items.length?`<section class="foundation-chapter" id="chapter-${i}" tabindex="-1"><h3>${String(i+1).padStart(2,'0')} / ${esc(chapter)}</h3><div class="lesson-library">${items.map(l=>`<a class="lesson-card ${l.review?'is-review':''}" href="${url(l)}"><div class="card-meta"><span class="card-id">${l.id}</span><span class="card-level">${esc(l.level)}</span></div>${FoundationVisuals.diagram(l.visual)}<h4>${esc(l.title)}</h4><p>${esc(l.goal)}</p><small>${l.minutes} min · ${l.rounds.length} ${l.review?'retrieval tasks':'practices'}</small></a>`).join('')}</div></section>`:'';}).join('');
 }
 function lessonPage(lesson,roundIndex){
  const round=lesson.rounds[roundIndex],deck=C.decks.find(x=>x.id===lesson.deck),dataset=C.datasets[round.dataset];
@@ -51,14 +51,15 @@ function lessonPage(lesson,roundIndex){
  <details id="foundationHint"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
  <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Keep any supplied setup in the editor and use this in the Your work section.</p><pre><code>${esc(round.solution)}</code></pre></details>
  ${lesson.stretch?`<details><summary>Optional stretch</summary><p>${esc(lesson.stretch)}</p></details>`:''}
- </article><section class="foundation-code-pane" aria-label="Python practice"><div class="foundation-task-reminder" tabindex="0" role="region" aria-label="Current task"><strong>Your task · ${esc(round.label)}</strong>${taskMarkup(round)}</div><div class="foundation-editor-head"><label for="foundationEditor">YOUR PYTHON</label><button type="button" id="jumpToWork">Jump to your work ↓</button></div><p class="foundation-editor-shortcuts">Tab: indent · Shift+Tab: outdent · Esc, then Tab: leave editor</p><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="foundationHighlight" aria-hidden="true"></pre><textarea id="foundationEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="editorHelp"></textarea></div>
+ </article>${pythonPane(round,controlHelp)}</div>
+ ${['I22','W31','V37'].includes(lesson.id)&&roundIndex===lesson.rounds.length-1?`<a class="challenge-checkpoint-link" href="#${lesson.deck}/challenges">Try the workflow challenges →</a>`:''}<nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+lesson.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a>`}${next==='#'+lesson.deck?'<span class="deck-boundary">End of deck</span>':`<a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
+}
+function pythonPane(round,controlHelp,challenge=false){return `<section class="foundation-code-pane" aria-label="Python practice"><div class="foundation-task-reminder" tabindex="0" role="region" aria-label="Current task"><strong>Your task · ${esc(round.label)}</strong>${challenge?`<div class="case-output-chips">${round.deliverables.map(d=>`<span><code>${esc(d.fileName || d.name)}</code><small>${esc(d.format)}</small></span>`).join('')}</div><button class="case-read-brief" type="button" data-brief-target="case-deliverables">Read deliverables ↗</button>`:taskMarkup(round)}</div><div class="foundation-editor-head"><label for="foundationEditor">YOUR PYTHON</label><button type="button" id="jumpToWork">Jump to your work ↓</button></div><p class="foundation-editor-shortcuts">Tab: indent · Shift+Tab: outdent · Esc, then Tab: leave editor</p><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="foundationHighlight" aria-hidden="true"></pre><textarea id="foundationEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="editorHelp"></textarea></div>
  <span id="editorHelp" class="sr-only">Edit Python. Control or Command plus Enter runs it. Tab indents by four spaces. Shift plus Tab outdents. Press Escape, then Tab or Shift plus Tab to leave the editor.</span>
  <div class="foundation-actions"><button id="runExercise" class="primary" type="button">▶ Run code</button><button id="checkExercise" type="button">✓ Check answer</button><button id="resetExercise" type="button">Reset code</button><button id="stopPython" type="button" hidden>Stop / restart</button></div>
- ${controlHelp?'<p class="control-help"><strong>Run code</strong> shows what Python produces. <strong>Check answer</strong> also checks whether your result satisfies the task.</p>':''}<p class="foundation-run-note">Each run executes all editor code in a fresh Python session. Display a value by leaving it on the final line; display charts with plt.show().</p>
+ ${controlHelp?'<p class="control-help"><strong>Run code</strong> shows what Python produces. <strong>Check answer</strong> also checks whether your result satisfies the task.</p>':''}<p class="foundation-run-note">Each run executes all editor code in a fresh Python session. ${challenge?'Named outputs appear below when you run. Display charts with plt.show().':'Display a value by leaving it on the final line; display charts with plt.show().'}</p>
  <div class="foundation-runtime" id="foundationRuntime" role="status">${esc(runtimeStatus)}</div><p class="foundation-feedback" id="foundationFeedback" role="status"></p>
- <div class="foundation-output" id="foundationOutput" role="region" aria-label="Python output"><h3>Output</h3><p class="empty-output">Run your code to see what Python returns.</p></div></section></div>
- <nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+lesson.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a>`}${next==='#'+lesson.deck?'<span class="deck-boundary">End of deck</span>':`<a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
-}
+ ${challenge?'<section id="challengeResults" class="challenge-results" aria-label="Check results" aria-live="polite"></section>':''}<div class="foundation-output" id="foundationOutput" role="region" aria-label="Python output"><h3>Output</h3><p class="empty-output">Run your code to see what Python returns.</p></div></section>`;}
 function taskMarkup(round){return round.steps?.length>1?`<ol class="foundation-task-steps">${round.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:`<p>${esc(round.task)}</p>`;}
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{
@@ -84,11 +85,12 @@ function render(){
  view=null;
  const [deckId,id,roundValue]=location.hash.slice(1).split('/');
  const deck=C.decks.find(d=>d.id===deckId),lesson=C.lessons.find(l=>l.id===id&&l.deck===deckId);
- if(lesson){const index=/^\d+$/.test(roundValue||'0')?Number(roundValue||0):0;main.innerHTML=lessonPage(lesson,Math.min(index,lesson.rounds.length-1));bindEditor();ensureRuntime();}
+ if(deck&&id==='challenges'){document.body.dataset.deck=deck.id;const challenge=ChallengeExperience.all.find(c=>c.deck===deck.id&&c.id===roundValue);if(challenge){view={challenge,lesson:{id:challenge.id,title:challenge.title,deck:deck.id},round:{...challenge,target:challenge.chart?'plot':'value'}};main.innerHTML=ChallengeExperience.page(challenge,deck,{table,pythonPane,curriculum:C});bindEditor();ChallengeExperience.bind();ensureRuntime();}else main.innerHTML=ChallengeExperience.collection(deck);}
+ else if(lesson){const index=/^\d+$/.test(roundValue||'0')?Number(roundValue||0):0;main.innerHTML=lessonPage(lesson,Math.min(index,lesson.rounds.length-1));bindEditor();ensureRuntime();}
  else main.innerHTML=deck?deckPage(deck):landing();
  // A URL-only entry hint survives deck/lesson hashes and reloads, without stored learning state.
  const fromHub=new URLSearchParams(location.search).get('from')==='learn';
- const exit=document.querySelector('.back-playground');exit.href=view?'#'+view.lesson.deck:deck?'#':fromHub?'learn.html':'playground.html';exit.textContent=view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':fromHub?'← Learn / Refresh':'← Data Playground';
+ const exit=document.querySelector('.back-playground');exit.href=view?.challenge?'#'+view.lesson.deck+'/challenges':view?'#'+view.lesson.deck:deck?'#':fromHub?'learn.html':'playground.html';exit.textContent=view?.challenge?'← All challenges':view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':fromHub?'← Learn / Refresh':'← Data Playground';
  main.querySelectorAll('.foundation-content pre code').forEach(code=>{code.innerHTML=highlightPython(code.textContent);});
  document.title=view?`${view.lesson.id} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
@@ -97,11 +99,11 @@ function render(){
 function bindEditor(){
  const editor=document.getElementById('foundationEditor'),{round}=view;
  document.querySelector('.foundation-editor-jump').onclick=()=>{editor.scrollIntoView({block:'start',behavior:'instant'});editor.focus({preventScroll:true});};
- editor.value=FoundationWorkspace.code(C,round);
+ editor.value=view.challenge?view.challenge.starter:FoundationWorkspace.code(C,round);
  document.getElementById('jumpToWork').onclick=()=>{const marker=editor.value.indexOf('# Your work\n');const position=marker<0?0:marker+'# Your work\n'.length;editor.focus();editor.setSelectionRange(position,position);editor.scrollTop=editor.value.slice(0,position).split('\n').length*parseFloat(getComputedStyle(editor).lineHeight)-40;editor.dispatchEvent(new Event('scroll'));};
  function numbers(){document.querySelector('.foundation-line-numbers').textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');document.getElementById('foundationHighlight').innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
  function syncScroll(){document.querySelector('.foundation-line-numbers').scrollTop=editor.scrollTop;const layer=document.getElementById('foundationHighlight');layer.scrollTop=editor.scrollTop;layer.scrollLeft=editor.scrollLeft;}
- editor.addEventListener('input',()=>{numbers();const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
+ editor.addEventListener('input',()=>{numbers();if(view?.challenge&&view.lastCheck){document.getElementById('challengeResults').innerHTML=ChallengeExperience.results(view.lastCheck,true);}const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
  editor.addEventListener('scroll',syncScroll);
  FoundationEditor.attach(editor,()=>execute(false),backwards=>{
   const target=backwards?document.querySelector('.foundation-task-reminder'):document.querySelector('.foundation-actions button:not(:disabled)');
@@ -121,30 +123,33 @@ async function getBridge(){
 function config(){return {plotting:view?.round.target==='plot',scaling:view?.lesson.id==='W28',indexURL:window.AppPlatform?.pyodideIndexUrl||'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/',seaborn:window.AppPlatform?.seabornRequirement||'seaborn==0.13.2',source:window.FoundationsRuntimeSource};}
 async function ensureRuntime(){try{const b=await getBridge();await b.send('init',{config:config()});}catch(error){updateRuntime('Python could not start. Run to retry. '+error.message.slice(0,180));}}
 function setBusy(value){busy=value;for(const id of ['runExercise','checkExercise']){const button=document.getElementById(id);if(button)button.disabled=value;}const stop=document.getElementById('stopPython');if(stop)stop.hidden=!value;}
-function cancelRun(){generation++;bridge?.restart();setBusy(false);updateRuntime('Python restarts on your next run.');}
+function cancelRun(){generation++;if(view?.challenge){view.lastCheck=null;const checks=document.getElementById('challengeResults');if(checks){checks.innerHTML='';checks.removeAttribute('aria-busy');}}bridge?.restart();setBusy(false);updateRuntime('Python restarts on your next run.');}
 async function execute(check){
  if(busy||!view)return;
  const token=generation,{round}=view,editor=document.getElementById('foundationEditor'),code=editor.value;
  setBusy(true);
+ if(view.challenge){view.lastCheck=null;const checks=document.getElementById('challengeResults');checks.setAttribute('aria-busy','true');checks.innerHTML=check?'<h3>Check results</h3><p>Checking this run…</p>':'';}
  const feedback=document.getElementById('foundationFeedback');feedback.dataset.state='';feedback.textContent=check?'Running and checking…':'Running Python…';
  const timer=setTimeout(()=>{if(token===generation&&busy){cancelRun();feedback.textContent='Python took too long and was stopped. Your code is preserved. Try a smaller operation or Run again.';}},90000);
  try{
   const b=await getBridge();if(token!==generation)return;
-  const response=await b.send('run',{config:config(),request:{code,check,explicitSetup:true,exercise:round,columns:C.datasets[round.dataset].columns}});
+  const response=await b.send('run',{config:config(),request:view.challenge?{code,check,challenge:view.challenge}:{code,check,explicitSetup:true,exercise:round,columns:C.datasets[round.dataset].columns}});
   if(token!==generation)return;
   const result=response.result;
   const edited=editor.value!==code;
   renderOutput(result);
+  if(view.challenge){view.lastCheck=result.checked?result:null;document.getElementById('challengeResults').innerHTML=ChallengeExperience.results(result,edited);if(result.checked&&!edited)document.getElementById('challengeResults').scrollIntoView({block:'nearest',behavior:'instant'});}
   feedback.textContent=edited?'Code changed while Python ran. This output belongs to the earlier code. Check again to validate your edit.':result.feedback||(result.error?'Fix the error and try again.':'Run finished. Inspect the output, then Check your answer.');
   feedback.dataset.state=edited?'':result.error?'error':result.passed?'pass':'';
 
- }catch(error){if(token===generation){feedback.dataset.state='error';feedback.textContent='Python could not run. Your code is preserved. Run to retry.';updateRuntime(error.message.slice(0,240));}}
- finally{clearTimeout(timer);if(token===generation)setBusy(false);}
+ }catch(error){if(token===generation){if(view?.challenge)document.getElementById('challengeResults').innerHTML='';feedback.dataset.state='error';feedback.textContent='Python could not run. Your code is preserved. Run to retry.';updateRuntime(error.message.slice(0,240));}}
+ finally{clearTimeout(timer);if(token===generation){setBusy(false);document.getElementById('challengeResults')?.removeAttribute('aria-busy');}}
 }
 function renderOutput(result){
  const output=document.getElementById('foundationOutput');output.innerHTML='<h3>Output</h3>';
  if(result.stdout)output.innerHTML+=`<pre>${esc(result.stdout)}</pre>`;
  for(const item of result.outputs||[]){
+  if(item.label)output.innerHTML+=`<h4>${esc(item.label)}</h4>`;
   if(item.kind==='table')output.innerHTML+=table(item.value.columns,item.value.rows,'Python result');
   else if(item.kind==='text')output.innerHTML+=`<pre>${esc(item.value)}</pre>`;
   else if(item.kind==='figure')output.innerHTML+=`<div class="chart-wrap"><img src="${item.value}" alt="${esc(item.alt)}"><div class="figure-links"><a href="${item.value}">Open figure larger</a><a href="${item.value}" download="practice-figure.png">Download PNG</a></div></div>`;
