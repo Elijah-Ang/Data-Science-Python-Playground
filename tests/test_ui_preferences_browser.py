@@ -85,10 +85,21 @@ def check_landing(page, width, height, failures, evidence_dir):
 
     links = page.locator("a:visible")
     hrefs = [link.get_attribute("href") for link in links.all()]
+    expected_hrefs = {
+        "tutorial.html",
+        "#learning-robot",
+        "#playground-gate",
+        "learn.html",
+        "playground.html",
+        "about.html",
+        "help.html",
+        "privacy.html",
+        "acknowledgements.html",
+    }
     check(
         failures,
-        len(hrefs) == 7 and set(hrefs) == {"learn.html", "tutorial.html", "playground.html", "about.html", "help.html", "privacy.html", "acknowledgements.html"},
-        f"landing {width}: expected optional learning hub, tour, gate, and four review/support links ({hrefs!r})",
+        len(hrefs) == len(expected_hrefs) and set(hrefs) == expected_hrefs,
+        f"landing {width}: expected blimp wayfinding, learning hub, tour, gate, and four review/support links ({hrefs!r})",
     )
 
     tour = page.locator("a.tour-button")
