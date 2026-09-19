@@ -31,6 +31,7 @@ const files = [
   "challenges/runtime.py",
   "foundations/editor.js",
   "foundations/teaching.js",
+  "foundations/clarity.js",
   "foundations/workspace.js",
   "foundations/curriculum.js",
   "foundations/refinements.js",

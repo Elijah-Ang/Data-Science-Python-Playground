@@ -1,6 +1,6 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "72b741cb834a0cdb358721557b34670d6934f50ea733db25deda604c55b619fd",
+  "sha256": "c88e0c61ed9b04f52fc4a65b703f6534e10fa670f39d741641e7161667e469ab",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
@@ -874,5 +874,7 @@
         "VR6-4"
       ]
     }
-  ]
+  ],
+  "reviewed": "2026-09-19",
+  "reason": "Authorized teaching and task clarity revision; retains all 106 cards and 324 exercise identities. Workflow challenges unchanged."
 }

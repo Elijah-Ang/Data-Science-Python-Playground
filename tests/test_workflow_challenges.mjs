@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url), curriculum=require('../foundations/curriculum.js'), registry=require('../challenges/registry.js'), baseline=require('../challenges/foundations-baseline.json');
-assert.equal(createHash('sha256').update(JSON.stringify(curriculum)).digest('hex'),baseline.sha256,'Existing curriculum definitions must remain unchanged');
+assert.equal(createHash('sha256').update(JSON.stringify(curriculum)).digest('hex'),baseline.sha256,'Curriculum must match the reviewed Foundations baseline');
 const all=registry.challenges;
 assert.equal(all.length,30);
 assert.equal(new Set(all.map(c=>c.id)).size,all.length);

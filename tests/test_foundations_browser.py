@@ -120,8 +120,8 @@ with sync_playwright() as p:
  assert 'matches' in run('df.head(2)')
  report['checks'].append('Semantic equivalence, wrong values, syntax/KeyError recovery, fresh data, real infinite-loop restart')
  open_lesson('I01CSV');assert 'could not finish' in run('df');assert 'matches' in run(solution('I01CSV'))
- open_lesson('I09');assert page.locator('.foundation-content table th').first.inner_text()=='row'
- assert 'B' in page.locator('.foundation-content table').inner_text()
+ open_lesson('I09');assert page.locator('.foundation-table-scroll table th').first.inner_text()=='row'
+ assert 'B' in page.locator('.foundation-table-scroll table').inner_text()
  open_lesson('W28');assert 'matches' in run(solution('W28'))
  open_lesson('W31');assert 'matches' in run(solution('W31'))
  open_lesson('V16');assert 'matches' in run(solution('V16'))

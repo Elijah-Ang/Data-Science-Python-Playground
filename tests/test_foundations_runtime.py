@@ -33,6 +33,22 @@ for lesson in C['lessons']:
             failures.append((exercise['id'],str(exc)))
     if lesson['id'] in ['I22','W31','V37']:print(lesson['id'],count,'checked',flush=True)
 assert not failures, json.dumps(failures,indent=2)
+# Category summaries have no implicit sort requirement, but labels must still
+# match their values and explicitly ordered exercises remain strict.
+assert request('I15', code='df["flavour"].value_counts(normalize=True).sort_index()')['passed']
+assert request('I15', 1, code='df["size"].value_counts().sort_index(ascending=False)')['passed']
+assert request('I19', 1, code='df.groupby("size")["price"].sum().sort_index(ascending=False)')['passed']
+assert not request('I15', code='df["flavour"].value_counts(normalize=True).iloc[:1]')['passed']
+assert not request('I15', code='s = df["flavour"].value_counts(normalize=True)\ns.iloc[0] += 1\ns')['passed']
+assert not request('I12', 1, code='df.sort_values("tip", ascending=False)')['passed']
+# Executable truth table taught in Follow: A is a whole row repeated three times.
+example = namespace['pd'].DataFrame({'record': ['A', 'B', 'A', 'A'], 'value': [2, 9, 2, 2]})
+assert example.duplicated(keep='first').tolist() == [False, False, True, True]
+assert example.duplicated(keep='last').tolist() == [True, False, True, False]
+assert example.duplicated(keep=False).tolist() == [True, False, True, True]
+assert request('I17', 2)['passed']
+assert not request('I17', 2, code='df[df.duplicated()]')['passed']
+
 # Method intent and semantic equivalence are independent checks.
 assert not request('I02',code='df.iloc[:2]')['passed']
 assert not request('I02',code='# df.head(2)\ndf.iloc[:2]')['passed']

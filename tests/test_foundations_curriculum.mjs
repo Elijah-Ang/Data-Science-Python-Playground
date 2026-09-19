@@ -36,7 +36,7 @@ for(const l of c.lessons){
  if(!l.review)assert(l.syntaxCode&&l.rounds[0].starter.includes('____'),l.id);
  for(const r of l.rounds){
   const review=taskReviews[r.id];
-  assert(review&&review.sha256===createHash('sha256').update(JSON.stringify([r.task,r.solution,c.datasets[r.dataset],r.requiredCalls||[],r.requiredKeywords||[],r.forbiddenCalls||[]])).digest('hex'),'Task review must be renewed: '+r.id);
+  assert(review&&review.sha256===createHash('sha256').update(JSON.stringify([r.task,r.solution,c.datasets[r.dataset],r.requiredCalls||[],r.requiredKeywords||[],r.forbiddenCalls||[],!!r.unorderedIndex])).digest('hex'),'Task review must be renewed: '+r.id);
   assert(/df|supplied|long table|empty Figure/.test(r.task),r.id);
   for(const call of r.requiredCalls||[])assert(r.task.includes(call.split(':').pop()),r.id);
  }

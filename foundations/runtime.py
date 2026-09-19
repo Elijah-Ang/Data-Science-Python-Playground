@@ -78,7 +78,7 @@ def _intent(code, exercise):
         assert not present(requirement), 'Use the requested column operation instead of ' + requirement + '().'
 
 
-def _equal(actual, expected, strict=False):
+def _equal(actual, expected, strict=False, unordered_index=False):
     if expected is None:
         assert actual is None, 'Use the Python value None, not text or an omitted answer.'
     elif isinstance(expected, pd.DataFrame):
@@ -86,6 +86,12 @@ def _equal(actual, expected, strict=False):
         assert_frame_equal(actual, expected, check_dtype=strict, check_names=False, check_exact=False, rtol=1e-6, atol=1e-7, check_categorical=strict)
     elif isinstance(expected, pd.Series):
         assert isinstance(actual, pd.Series), 'Return a Series (one labelled column).'
+        if unordered_index:
+            assert actual.index.is_unique and expected.index.is_unique, 'Return one summary per category.'
+            # Align by labels only after checking the category set. Never discard
+            # extra categories or accept swapped category/value associations.
+            assert_index_equal(actual.index.sort_values(), expected.index.sort_values(), exact=False, check_names=False)
+            actual = actual.reindex(expected.index)
         assert_series_equal(actual, expected, check_dtype=strict, check_names=False, check_exact=False, rtol=1e-6, atol=1e-7, check_categorical=strict)
     elif isinstance(expected, pd.Index):
         assert_index_equal(actual, expected, exact=strict, check_names=False)
@@ -305,7 +311,7 @@ def run_foundation(request):
                     got = actual['env'].get('result')
                 if target == 'value':
                     assert actual['has_result'] or 'result' in actual['env'], 'Write your answer as the final expression, or assign it to result.'
-                _equal(got, wanted, exercise.get('strictDtype', False))
+                _equal(got, wanted, exercise.get('strictDtype', False), exercise.get('unorderedIndex', False))
             if exercise.get('preserveData'):
                 _equal(actual['env'].get('df'), pd.DataFrame(columns), True)
             passed = True

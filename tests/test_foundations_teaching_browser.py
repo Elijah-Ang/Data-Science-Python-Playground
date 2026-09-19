@@ -21,8 +21,12 @@ with sync_playwright() as p:
             page.wait_for_function('(r)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(r.id)&&Array.from(document.querySelectorAll(".foundation-practices li")).findIndex(e=>e.hasAttribute("aria-current"))===r.index', arg=item)
             panel = page.locator('.teaching-overview' if item['follow'] else '.foundation-practice-brief')
             if item['follow']:
-                assert panel.locator('.teaching-route li').count() == 3, item
-                assert panel.locator('svg[role="img"]').count() >= 1, item
+                assert panel.locator('.teaching-comparison').is_visible(), item
+                assert panel.locator('.teaching-example').is_visible(), item
+                assert panel.locator('.teaching-route, .teaching-tools').count() == 0, item
+                assert panel.locator('details').count() == 0, item
+                if item['deck'] == 'visualise':
+                    assert panel.locator('svg[role="img"]').count() >= 1, item
                 assert panel.locator('.teaching-summary').is_visible(), item
             else:
                 assert page.locator('.foundation-content>.foundation-practice-brief').count() == 1, item
@@ -42,6 +46,16 @@ with sync_playwright() as p:
     editor.fill('# Changed setup and work')
     page.locator('#resetExercise').click()
     assert editor.input_value() == starter
+    # Transfer keeps the complete concept reference at hand, including the
+    # concrete duplicate example; opening it must not replace the active code.
+    page.evaluate('location.hash="#inspect/I17/2"')
+    page.wait_for_function('document.querySelector(".foundation-breadcrumb")?.textContent.includes("I17")')
+    page.locator('#foundationEditor').fill('# Keep this work while checking the concept')
+    page.locator('.teaching-reference summary').click()
+    assert page.locator('.teaching-reference .teaching-flags').is_visible()
+    assert 'B · unique' in page.locator('.teaching-reference').inner_text()
+    assert page.locator('#foundationEditor').input_value() == '# Keep this work while checking the concept'
+    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
     assert not errors, errors
     print(f'All {len(rounds)} teaching panels rendered at 1440px and 320px without overflow or page errors.')
     browser.close()
