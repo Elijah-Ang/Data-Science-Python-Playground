@@ -90,9 +90,8 @@
     try{program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);}catch(e){console.warn('[Landing motion] Could not start animated landing motion.',e);return;}
     const locations={};['size','zones[0]','moves[0]','pivots[0]','amount','time','portrait','eyes[0]','picture','untouched'].forEach(k=>locations[k]=gl.getUniformLocation(program,k));
     const buffer=gl.createBuffer(),untouched=gl.createTexture();
-    let texture=null;
-    function bindArtworkTexture(tex,unit){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);}
-    bindArtworkTexture(untouched,1);gl.uniform1i(locations.picture,0);gl.uniform1i(locations.untouched,1);
+    let texture=gl.createTexture();
+    [texture,untouched].forEach((tex,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);});gl.uniform1i(locations.picture,0);gl.uniform1i(locations.untouched,1);
     let vertexCount=0;
     const zones=new Float32Array(MAX*4),moves=new Float32Array(MAX*4),pivots=new Float32Array(MAX*4);
     function zone(x,y,rx,ry,dx,dy,angle,period,phase=0,pivotX=x,pivotY=y,inner=.55,stopY=0){return{x,y,rx,ry,dx,dy,angle,period,phase,pivotX,pivotY,inner,stopY};}
@@ -324,7 +323,7 @@
       const pixels=new Uint8Array(canvas.width*canvas.height*4);
       gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
       if(gl.getError()!==gl.NO_ERROR)throw Error('Artwork frame could not be verified.');
-      try{assertArtwork(pixels);}catch(error){throw Error(error.message+' Canvas '+canvas.width+'x'+canvas.height+', buffer '+gl.drawingBufferWidth+'x'+gl.drawingBufferHeight+'.');}
+      assertArtwork(pixels);
     }
     function resize(){if(!current)return;const ratio=Math.min(devicePixelRatio||1,2),width=Math.min(current.width,Math.round(art.clientWidth*ratio)),height=Math.round(width*current.height/current.width);if(canvas.width!==width||canvas.height!==height){canvas.width=actorCanvas.width=width;canvas.height=actorCanvas.height=height;gl.viewport(0,0,canvas.width,canvas.height);}}
     async function setLayout(layout){
@@ -369,18 +368,25 @@
         cat.image.getContext('2d').drawImage(cleanCat,216,51,991,1136,0,0,cw,ch);
         if(own!==token)return;
         actors=prepared.actors;
-        // Size the drawing buffer before allocating the prepared texture.
-        // Raw premultiplied pixels avoid Linux WebKit's canvas upload state.
-        const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height).data;
-        for(let i=0;i<pixels.length;i+=4){const alpha=pixels[i+3]/255;pixels[i]=Math.round(pixels[i]*alpha);pixels[i+1]=Math.round(pixels[i+1]*alpha);pixels[i+2]=Math.round(pixels[i+2]*alpha);}
-        resize();
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
-        bindArtworkTexture(untouched,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
-        if(texture)gl.deleteTexture(texture);
-        texture=gl.createTexture();
-        bindArtworkTexture(texture,0);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
-        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,current.width,current.height,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(pixels.buffer));
-        gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();
+        try{verifyFrame();}catch(error){
+          if(!error.message.startsWith('Artwork rendered empty'))throw error;
+          // Linux WebKit can keep a prepared texture unreadable on its first
+          // draw. Retry once with a fresh texture after the graphics frame.
+          await new Promise(resolve=>requestAnimationFrame(resolve));
+          if(own!==token)return;
+          const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height).data;
+          for(let i=0;i<pixels.length;i+=4){const alpha=pixels[i+3]/255;pixels[i]=Math.round(pixels[i]*alpha);pixels[i+1]=Math.round(pixels[i+1]*alpha);pixels[i+2]=Math.round(pixels[i+2]*alpha);}
+          const previousTexture=texture;texture=gl.createTexture();
+          gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);
+          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+          gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+          gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,current.width,current.height,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(pixels.buffer));
+          gl.deleteTexture(previousTexture);gl.useProgram(program);gl.uniform1i(locations.picture,0);
+          draw();verifyFrame();
+        }
+        frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }
     function draw(){if(!loaded)return;regions.forEach((r,i)=>{const wave=Math.sin(time*Math.PI*2/r.period+r.phase);moves.set([r.dx*wave,r.dy*Math.sin(time*Math.PI*2/r.period+r.phase+.4),r.angle*wave,0],i*4);});gl.uniform4fv(locations['moves[0]'],moves);gl.uniform1f(locations.time,time+1.8);gl.uniform1f(locations.amount,state.motion);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,vertexCount);drawActors();}

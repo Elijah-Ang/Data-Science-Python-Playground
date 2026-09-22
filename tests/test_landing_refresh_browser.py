@@ -13,6 +13,13 @@ with sync_playwright() as p:
         # decoded canvases until collection, contaminating the next case.
         browser = getattr(p, args.engine).launch()
         page = browser.new_page(viewport={'width': width, 'height': height})
+        # Exercise the bounded recovery path as well as normal later frames.
+        page.add_init_script("""const draw=WebGLRenderingContext.prototype.drawArrays;
+            let first=true;
+            WebGLRenderingContext.prototype.drawArrays=function(...args){
+                if(first){first=false;return;}
+                return draw.apply(this,args);
+            };""")
         errors = []
         motion_messages = []
         page.on('pageerror', lambda e: errors.append(str(e)))
@@ -49,7 +56,7 @@ with sync_playwright() as p:
         page.close()
         browser.close()
 
-    for failure in ['blank-image', 'gpu-error', 'decode-error']:
+    for failure in ['blank-image', 'blank-frame', 'gpu-error', 'decode-error']:
         browser = getattr(p, args.engine).launch()
         page = browser.new_page()
         if failure == 'blank-image':
@@ -58,6 +65,8 @@ with sync_playwright() as p:
                     if(image instanceof HTMLImageElement)return;
                     return draw.call(this,image,...args);
                 };""")
+        elif failure == 'blank-frame':
+            page.add_init_script("WebGLRenderingContext.prototype.drawArrays=function(){};")
         elif failure == 'gpu-error':
             page.add_init_script("WebGLRenderingContext.prototype.getError=function(){return this.INVALID_OPERATION;};")
         else:
