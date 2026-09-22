@@ -14,7 +14,12 @@ with sync_playwright() as p:
         browser = getattr(p, args.engine).launch()
         page = browser.new_page(viewport={'width': width, 'height': height})
         # A transient empty first GPU draw must recover before revealing motion.
-        page.add_init_script("""const draw=WebGLRenderingContext.prototype.drawArrays;
+        page.add_init_script("""const locations=new Map();window.landUniforms={};
+            const location=WebGLRenderingContext.prototype.getUniformLocation;
+            WebGLRenderingContext.prototype.getUniformLocation=function(program,name){const result=location.call(this,program,name);locations.set(result,name);return result;};
+            const vectors=WebGLRenderingContext.prototype.uniform4fv;
+            WebGLRenderingContext.prototype.uniform4fv=function(loc,values){window.landUniforms[locations.get(loc)]=Array.from(values);return vectors.call(this,loc,values);};
+            const draw=WebGLRenderingContext.prototype.drawArrays;
             let first=true;
             WebGLRenderingContext.prototype.drawArrays=function(...args){
                 if(first){first=false;return;}
@@ -67,6 +72,8 @@ with sync_playwright() as p:
                     result.variants={};
                     const variants={
                         original,
+                        flat:'precision highp float; void main(){gl_FragColor=vec4(1.);}',
+                        texture:'precision highp float; varying vec2 uv; uniform sampler2D picture; void main(){gl_FragColor=texture2D(picture,uv);}',
                         falls:original.replace("portrait>.5?0.:ellipse(px,vec4(1395.,680.,24.,62.))", "ellipse(px,vec4(1395.,680.,24.,62.))*(1.-step(.5,portrait))"),
                         noEyes:original.replace('if(i==1||i==3||(portrait>.5&&i==2))continue;', 'continue;'),
                         noRipple:original.replace('vec4 color=texture2D(picture,lookup);', 'vec4 color=texture2D(picture,uv);')
@@ -78,8 +85,7 @@ with sync_playwright() as p:
                             const info=g.getActiveUniform(program,i),loc=g.getUniformLocation(test,info.name);
                             const value=g.getUniform(program,g.getUniformLocation(program,info.name));
                             if(info.size>1){
-                                const values=[];
-                                for(let j=0;j<info.size;j++){const entry=g.getUniformLocation(program,info.name.replace('[0]','['+j+']'));values.push(...(entry?g.getUniform(program,entry):[0,0,0,0]));}
+                                const values=window.landUniforms[info.name];
                                 g.uniform4fv(loc,new Float32Array(values));
                             }else if(info.type===g.FLOAT)g.uniform1f(loc,value);
                             else if(info.type===g.FLOAT_VEC2)g.uniform2fv(loc,value);
