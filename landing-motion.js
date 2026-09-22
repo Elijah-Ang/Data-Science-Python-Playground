@@ -89,8 +89,10 @@
     let program;
     try{program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);}catch(e){console.warn('[Landing motion] Could not start animated landing motion.',e);return;}
     const locations={};['size','zones[0]','moves[0]','pivots[0]','amount','time','portrait','eyes[0]','picture','untouched'].forEach(k=>locations[k]=gl.getUniformLocation(program,k));
-    const buffer=gl.createBuffer(),texture=gl.createTexture(),untouched=gl.createTexture();
-    [texture,untouched].forEach((tex,i)=>{gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);});gl.uniform1i(locations.picture,0);gl.uniform1i(locations.untouched,1);
+    const buffer=gl.createBuffer(),untouched=gl.createTexture();
+    let texture=null;
+    function bindArtworkTexture(tex,unit){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);}
+    bindArtworkTexture(untouched,1);gl.uniform1i(locations.picture,0);gl.uniform1i(locations.untouched,1);
     let vertexCount=0;
     const zones=new Float32Array(MAX*4),moves=new Float32Array(MAX*4),pivots=new Float32Array(MAX*4);
     function zone(x,y,rx,ry,dx,dy,angle,period,phase=0,pivotX=x,pivotY=y,inner=.55,stopY=0){return{x,y,rx,ry,dx,dy,angle,period,phase,pivotX,pivotY,inner,stopY};}
@@ -367,7 +369,15 @@
         cat.image.getContext('2d').drawImage(cleanCat,216,51,991,1136,0,0,cw,ch);
         if(own!==token)return;
         actors=prepared.actors;
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
+        // Allocate after Canvas2D preparation and upload CPU pixels. Reusing a
+        // canvas-backed texture can sample transparent on Linux WebKit.
+        const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height);
+        if(texture)gl.deleteTexture(texture);
+        texture=gl.createTexture();
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
+        bindArtworkTexture(untouched,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+        bindArtworkTexture(texture,0);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+        gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }
     function draw(){if(!loaded)return;regions.forEach((r,i)=>{const wave=Math.sin(time*Math.PI*2/r.period+r.phase);moves.set([r.dx*wave,r.dy*Math.sin(time*Math.PI*2/r.period+r.phase+.4),r.angle*wave,0],i*4);});gl.uniform4fv(locations['moves[0]'],moves);gl.uniform1f(locations.time,time+1.8);gl.uniform1f(locations.amount,state.motion);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,vertexCount);drawActors();}
