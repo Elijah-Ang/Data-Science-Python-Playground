@@ -45,7 +45,7 @@ with sync_playwright() as p:
                 print(page.evaluate("""() => {
                     const c=document.querySelector('.scene-motion'),g=c.getContext('webgl');
                     const program=g.getParameter(g.CURRENT_PROGRAM);
-                    const alpha=(w,h)=>{const p=new Uint8Array(w*h*4);g.readPixels(0,0,w,h,g.RGBA,g.UNSIGNED_BYTE,p);let visible=0;for(let i=3;i<p.length;i+=4)if(p[i]>24)visible++;return {visible,total:w*h,error:g.getError()};};
+                    const alpha=(w,h)=>{const p=new Uint8Array(w*h*4);g.readPixels(0,0,w,h,g.RGBA,g.UNSIGNED_BYTE,p);let visible=0;for(let i=3;i<p.length;i+=4)if(p[i]>24)visible++;const center=(Math.floor(h/2)*w+Math.floor(w/2))*4;return {visible,total:w*h,error:g.getError(),center:Array.from(p.slice(center,center+4))};};
                     const result={initial:alpha(c.width,c.height),uniforms:{}};
                     for(const name of ['size','amount','portrait','time'])result.uniforms[name]=g.getUniform(program,g.getUniformLocation(program,name));
                     const fb=g.createFramebuffer();g.bindFramebuffer(g.FRAMEBUFFER,fb);
@@ -72,6 +72,8 @@ with sync_playwright() as p:
                     result.variants={};
                     const variants={
                         original,
+                        fixed:'precision highp float; uniform sampler2D picture; void main(){gl_FragColor=texture2D(picture,vec2(.5));}',
+                        coords:'precision highp float; varying vec2 uv; void main(){gl_FragColor=vec4(uv,0.,1.);}',
                         flat:'precision highp float; void main(){gl_FragColor=vec4(1.);}',
                         texture:'precision highp float; varying vec2 uv; uniform sampler2D picture; void main(){gl_FragColor=texture2D(picture,uv);}',
                         falls:original.replace("portrait>.5?0.:ellipse(px,vec4(1395.,680.,24.,62.))", "ellipse(px,vec4(1395.,680.,24.,62.))*(1.-step(.5,portrait))"),

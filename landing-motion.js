@@ -25,7 +25,6 @@
       uniform float amount;
       uniform float portrait;
       void main(){
-        uv=position;
         vec2 p=position*size, d=vec2(0.);
         for(int i=0;i<32;i++){
           vec4 z=zones[i];
@@ -42,6 +41,7 @@
           d+=vec2(-(p.x-455.)*.04,p.y*.025)*tree;
         }
         vec2 outp=(p+d*amount)/size;
+        uv=p/size;
         gl_Position=vec4(outp.x*2.-1.,1.-outp.y*2.,0.,1.);
       }`;
     const fragment=`
