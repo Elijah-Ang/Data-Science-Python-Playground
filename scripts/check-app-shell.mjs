@@ -4,7 +4,7 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const dist = path.join(root, "dist");
-const htmlFiles = ["index.html", "learn.html", "data-foundations.html", "tutorial.html", "playground.html", "ml.html", "statistics.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
+const htmlFiles = ["index.html", "learn.html", "ml-learn.html", "data-foundations.html", "tutorial.html", "playground.html", "ml.html", "statistics.html", "privacy.html", "about.html", "help.html", "acknowledgements.html", "offline.html"];
 
 const manifest = JSON.parse(await fs.readFile(path.join(root, "manifest.webmanifest"), "utf8"));
 assert.equal(manifest.start_url, "./index.html");

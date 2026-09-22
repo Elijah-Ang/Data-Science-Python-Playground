@@ -3,6 +3,7 @@ import path from "node:path";
 import {createHash} from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { build } from "esbuild";
+import { buildMLLearning } from "./build-ml-learning.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const output = path.join(root, "dist");
@@ -17,6 +18,13 @@ const files = [
   "learn.html",
   "learn.css",
   "learn.js",
+  "ml-learn.html",
+  "ml-learning/app.js",
+  "ml-learning/learning.css",
+  "ml-learning/visuals.js",
+  "ml-learning/receipts.js",
+  "ml-learning/worker.js",
+  "ml-learning/datasets.json",
   "mascot.css",
   "mascot.js",
   "tutorial.html",
@@ -94,6 +102,7 @@ for (const file of files) {
 for (const directory of directories) {
   await fs.cp(path.join(root, directory), path.join(output, directory), { recursive: true });
 }
+await buildMLLearning(root,output);
 
 await fs.writeFile(path.join(output,'foundations/runtime-source.js'), 'window.FoundationsRuntimeSource = '+JSON.stringify((await fs.readFile(path.join(root,'table-serialization.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'foundations/runtime.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'challenges/runtime.py'),'utf8')))+';\n');
 
