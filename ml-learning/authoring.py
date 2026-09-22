@@ -124,23 +124,20 @@ def py(task,solution,test,*,dataset=None,setup='',outputs=None,message=None):
         tests.append(dict(name='Fitted prediction evidence',test='np.array_equal('+name+','+expression+')',message='Return the requested predictions from your fitted estimator in the supplied row order.'))
     return dict(kind='python',task=task,dataset=dataset,setup=setup,solution=solution.strip()+'\n',
         starter='# Write your Python here.\n',outputs=outputs,checks=tests,
-        hints=dict(think=message or 'Identify the requested output and which supplied rows it should describe.',
-                   tools='Use the syntax on this card and the supplied data. Inspect shapes and column names.',
-                   approach='Construct the requested result, inspect it, and connect it to the learning objective.'),
-        explanation=message or 'The solution constructs the requested evidence from the supplied population. Compare the output with the task before interpreting it.')
+        hints={},explanation='')
 
 def decide(task,options,correct,explanation,evidence=None):
     return dict(kind='decision',task=task,options=options,correct=[correct] if isinstance(correct,int) else correct,
         evidence=evidence or '',solution=explanation,explanation=explanation,
-        hints=dict(think='Start with the question and the meaning of the available evidence.',tools='Revisit the concept visual and definitions on this card.',approach='Eliminate claims that require information or assumptions the scenario does not provide.'))
+        hints={})
 
 def reflect(task,explanation,evidence=None):
     return dict(kind='reflection',task=task,evidence=evidence or '',solution=explanation,explanation=explanation,
-        hints=dict(think='Separate what was observed from what can be concluded.',tools='Use the concepts on this card to qualify your claim.',approach='State a conclusion, its supporting evidence and a relevant limitation.'))
+        hints={})
 
 def lesson(id,title,goal,explanation,syntax,visual,exercises,*,dataset='LINE24',chapter=0,example=None,models=()):
     CARDS[id]=dict(title=title,goal=goal,explanation=explanation,syntax=syntax,
-        syntaxBreakdown=explanation,visual=dict(type=visual,caption=goal,id=id),exercises=exercises,
+        syntaxBreakdown=[],visual=dict(type=visual,caption=goal,id=id),exercises=exercises,
         dataset=dataset,chapter=chapter,example=example or next((e['solution'] for e in exercises if e['kind']=='python'),None),models=list(models))
 
 def assemble():
@@ -153,6 +150,9 @@ def assemble():
     for spec in manifest['cards']:
         assert spec['id'] in CARDS,'Missing card '+spec['id']
         content=copy.deepcopy(CARDS[spec['id']])
+        if spec['kind']=='teaching':
+            import syntax_parts
+            syntax_parts.apply(content,spec['id'])
         assert len(content['exercises'])==len(spec['exercises']),spec['id']
         deck=decks[spec['deck']]
         content.update(id='ML-'+spec['id'],deck=deck['id'],kind=spec['kind'],tier=spec['tier'],
@@ -167,7 +167,8 @@ def assemble():
             e['label']=('Follow' if i==0 else 'Change' if i==1 else 'Transfer' if i==n-1 else 'Practise') if e['kind']=='python' and spec['kind']=='teaching' else ('Observe' if i==0 else 'Decide' if e['kind']=='decision' else 'Explain') if spec['kind']=='teaching' else 'Retrieval '+str(i+1)
         cards.append(content)
     challenges=workflows.challenges(manifest['challenges'])
-    return dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES)
+    import editorial
+    return editorial.apply(dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES))
 
 if __name__=='__main__':
     # Imported author modules use this same registry rather than a second __main__.

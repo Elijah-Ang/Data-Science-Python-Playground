@@ -4,7 +4,7 @@
   const main=document.getElementById('foundationsMain');
   const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const code=x=>`<pre><code>${esc(x)}</code></pre>`;
-  const [C,datasets]=await Promise.all(['ml-learning/curriculum.json','ml-learning/datasets.json'].map(async url=>{
+  const [C,datasets,challengeInputs]=await Promise.all(['ml-learning/curriculum.json','ml-learning/datasets.json','ml-learning/inputs.json'].map(async url=>{
     const r=await fetch(url);if(!r.ok)throw Error('Could not load '+url);return r.json();
   })).catch(error=>{main.innerHTML=`<h2>Learning content could not load</h2><p>${esc(error.message)}</p><p>Reload this page to try again.</p>`;throw error;});
   const byId=new Map(C.cards.map(c=>[c.id,c]));
@@ -28,13 +28,13 @@
     return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}; scroll for more columns"><table><caption>${esc(caption)}</caption><thead><tr>${columns.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${esc(typeof v==='number'?Number(v.toPrecision(6)):v===null?'missing':v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
   function datasetPreview(name,challengeInput=null){
-    const d=datasets[name];
+    const d=challengeInput?challengeInputs[view.challenge.id]:datasets[name];
     if(!d)return '<p>Use the input file named in the brief.</p>';
-    const dictionary=DatasetDictionary[d.file]||{};
+    const dictionary=DatasetDictionary[d.sourceFile||d.file]||{};
     const discovery=['clustering','pca'].includes(view?.card?.deck)||['ML-X17','ML-X18','ML-X19'].includes(view?.challenge?.id);
     const columns=discovery?d.columns.filter(c=>!['species','diagnosis'].includes(c)):d.columns;
     const preview=d.preview.map(row=>columns.map(c=>row[d.columns.indexOf(c)]));
-    return `<section><h3>${challengeInput?'Your input file':'Given data'} · ${esc(name)}</h3><p>${d.rows} observations. ${esc(dictionary.row||'Deterministic teaching observations; values illustrate the concept rather than a real population claim.')} ${challengeInput?'Load the CSV file yourself.':'The dataframe df is supplied afresh for each Run.'}</p>${d.file?`<p><a href="${esc(d.file)}" download>Download source CSV</a>${dictionary.source?` · <a href="${esc(dictionary.source)}" target="_blank" rel="noopener">Source and original dictionary</a>`:''}</p>`:''}${discovery?'<p>Reference labels are omitted from this preview and must remain outside fitting.</p>':''}${table(columns,preview,`${name} · ${d.preview.length===d.rows?'all rows':'first '+d.preview.length+' prepared rows'}`)}<details><summary>Column meanings, units and population</summary><p>${esc(dictionary.units||'Column names describe the supplied features and target. Keep the stated units and row identities when making comparisons.')}</p><p>${esc(dictionary.assumptions||'Synthetic data are deliberately small and reproducible. Their patterns illustrate an idea; they are not evidence about a real population.')}</p>${challengeInput?`<p>${esc(challengeInput.description)}</p>`:''}${table(['Column','Stored type'],columns.map(c=>[c,d.dtypes[c]]),'Input schema')}</details>${validationDesign(view?.exercise)}</section>`;
+    return `<section><h3>${challengeInput?'Challenge input':'Given data'} · ${esc(name)}</h3><p>${d.rows} observations. ${esc(dictionary.row||'Deterministic teaching observations; values illustrate the concept rather than a real population claim.')} ${challengeInput?'Load the CSV file yourself.':'The dataframe df is supplied afresh for each Run.'}</p>${d.file?`<p><a href="${esc(d.file)}" download>${challengeInput?'Download challenge input CSV':'Download source CSV'}</a>${challengeInput?` · <a href="${esc(d.sourceFile)}">Original source dataset</a>`:''}${dictionary.source?` · <a href="${esc(dictionary.source)}" target="_blank" rel="noopener">Source and original dictionary</a>`:''}</p>`:''}${challengeInput?`<p class="ml-input-contract">${esc(d.description)}</p>`:discovery?'<p>Reference labels are omitted from this preview and must remain outside fitting.</p>':''}${table(columns,preview,`${name} · ${d.preview.length===d.rows?'all rows':'first '+d.preview.length+' prepared rows'}`)}<details><summary>Column meanings, units and population</summary><p>${esc(dictionary.units||'Column names describe the supplied features and target. Keep the stated units and row identities when making comparisons.')}</p><p>${esc(dictionary.assumptions||'Synthetic data are deliberately small and reproducible. Their patterns illustrate an idea; they are not evidence about a real population.')}</p>${challengeInput?`<p>${esc(challengeInput.description)}</p>`:''}${table(['Column','Stored type'],columns.map(c=>[c,d.dtypes[c]]),'Input schema')}</details>${validationDesign(view?.exercise)}</section>`;
   }
   function validationDesign(ex){
     const p=ex?.protect;if(!p)return '';
@@ -44,8 +44,11 @@
     const scoring=!folds?'':p.stratified?'Select with macro F1 and compare with a most-frequent-class reference. Accuracy is supplementary.':'Select with negative RMSE (larger is better) and compare with a training-mean reference. Report final RMSE in original target units.';
     return `<section class="ml-validation-design"><h4>Declared validation design</h4><p>${esc(split)}</p>${folds?`<p>${esc(validation)} ${esc(scoring)} Open final-test evidence after selection and diagnosis.</p>`:''}</section>`;
   }
-  const collectionRegistry={collection:{id:'workflow',title:'Workflow Challenges',rootTitle:'Machine Learning',rootHref:'#',lessonsHref:'#',lessonsLabel:'Learning decks',contractNote:'These conditions describe a complete workflow. Use the declared Python variables beside the editor; Check inspects evidence from your Run.',briefLabel:'Independent ML briefs',introduction:'Assemble a complete workflow from a realistic question and inspectable evidence.',inputNote:'Choose any brief. Each runs independently with its supplied inputs. Prerequisites and time estimates are guidance.'},families:{activity:'Machine Learning'},challenges:C.challenges};
-  const challengeExperience=createChallengeExperience(collectionRegistry,{inputPreview:input=>{
+  const collectionRegistry={collection:{id:'workflow',title:'Workflow Challenges',rootTitle:'Machine Learning',omitDeckCrumb:true,rootHref:'#',lessonsHref:'#',lessonsLabel:'Learning decks',contractNote:'These conditions describe a complete workflow. Use the declared Python variables beside the editor; Check inspects evidence from your Run.',briefLabel:'Independent ML briefs',introduction:'Assemble a complete workflow from a realistic question and inspectable evidence.',inputNote:'Choose any brief. Each runs independently with its supplied inputs. Prerequisites and time estimates are guidance.'},families:{regression:'Regression',classification:'Classification',neural:'Neural networks',time:'Time-ordered prediction',clustering:'Clustering',pca:'PCA'},challenges:C.challenges};
+  const challengeExperience=createChallengeExperience(collectionRegistry,{
+    illustration:family=>MLLearningVisuals.illustration(family),
+    deliverables:ch=>`<ol class="ml-deliverable-groups">${ch.deliverableGroups.map(g=>`<li><h4>${esc(g.title)}</h4><p>${esc(g.summary)}</p></li>`).join('')}</ol>`,
+    inputPreview:input=>{
     const ch=view?.challenge;return datasetPreview(ch?.exercise.dataset,input);
   }});
   function coreNote(){return '<p class="ml-core-note"><strong>Core means essential within the relevant pathway or model family.</strong> You do not need to complete all '+C.counts.core+' Core cards before using a particular model or entering the Playground. Every lesson and challenge is freely accessible.</p>';}
@@ -97,10 +100,19 @@
     const next=index<card.exercises.length-1?url(card,index+1):position>=0&&position<list.length-1?url(list[position+1]):'#'+card.deck;
     return `<nav class="foundation-navigation" aria-label="Lesson navigation"><a href="${previous}">← Previous</a><a href="#${card.deck}">Deck overview</a><a href="${next}">${next==='#networks'?'Choose a neural route':'Next'} →</a></nav>`;
   }
+  function syntaxSupport(card,ex){
+    if(card.kind!=='teaching'||(ex.kind!=='python'&&card.id!=='ML-W11'))return '';
+    const parts=Array.isArray(card.syntaxBreakdown)?card.syntaxBreakdown:[];
+    const content=code(card.syntax)+`<dl class="ml-syntax-parts">${parts.map(p=>`<dt><code>${esc(p.code)}</code></dt><dd>${esc(p.meaning)}</dd>`).join('')}</dl>`;
+    const follow=ex.label==='Follow'||card.id==='ML-W11';
+    const syntax=follow?`<section class="ml-syntax"><h3>Meet the syntax</h3>${content}</section>`:`<details class="ml-syntax"><summary>Recall the syntax</summary>${content}</details>`;
+    const example=card.example&&ex.kind==='python'&&ex.label!=='Transfer'?`<details class="teaching-example" ${follow?'open':''}><summary>See it once</summary>${code(card.example)}</details>`:'';
+    return syntax+example;
+  }
   function lessonPage(card,index){
     const ex=card.exercises[index];
     const teaching=card.kind==='teaching';
-    return `<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a><span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><span class="foundation-eyebrow">${esc(card.id)} · ${card.tier==='core'?'CORE':'GO FURTHER'} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2><p>${esc(card.goal)}</p></header>${prerequisites(card)}<nav class="ml-exercise-tabs" aria-label="Exercises">${card.exercises.map((e,i)=>`<a href="${url(card,i)}" ${index===i?'aria-current="page"':''}>${i+1}. ${esc(e.label)}</a>`).join('')}</nav><div class="foundation-split"><article class="foundation-content"><section><h3>What this does</h3><p>${esc(card.explanation)}</p></section>${teaching?MLLearningVisuals.render(card.visual):''}${ex.kind==='python'?datasetPreview(ex.dataset):''}${ex.setup?`<details><summary>Supplied setup · runs before your code</summary><p>These previously introduced objects are supplied for this exercise. Your editor runs afterward.</p>${code(ex.setup)}</details>`:''}${teaching&&(ex.kind==='python'||card.id==='ML-W11')?`<section><h3>Meet the syntax</h3>${code(card.syntax)}<p>${esc(card.syntaxBreakdown)}</p></section>${card.example&&index===0&&ex.kind==='python'?`<details class="teaching-example" open><summary>See it once</summary>${code(card.example)}</details>`:''}`:''}<section class="foundation-task"><h3>Your task · ${esc(ex.label)}</h3><p>${esc(ex.task)}</p>${ex.evidence?`<p>${esc(ex.evidence)}</p>`:''}</section>${help(ex)}<details class="ml-sources"><summary>Sources and API context</summary><p>Concepts follow these references. Runnable Python is compatible with this Playground’s scikit-learn 1.4.2 / Pyodide 0.26.4 runtime.</p><ul>${card.sources.map(([title,href])=>`<li><a href="${esc(href)}" target="_blank" rel="noopener">${esc(title)}</a></li>`).join('')}</ul></details></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${card.id==='ML-N-R1'?neuralFork():''}${navigation(card,index)}</div>`;
+    return `<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a><span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><span class="foundation-eyebrow">${esc(card.id)} · ${card.tier==='core'?'CORE':'GO FURTHER'} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2><p>${esc(card.goal)}</p></header>${prerequisites(card)}<nav class="ml-exercise-tabs" aria-label="Exercises">${card.exercises.map((e,i)=>`<a href="${url(card,i)}" ${index===i?'aria-current="page"':''}>${i+1}. ${esc(e.label)}</a>`).join('')}</nav><div class="foundation-split"><article class="foundation-content"><section><h3>What this does</h3><p>${esc(card.explanation)}</p></section>${teaching?MLLearningVisuals.render(card.visual):''}${ex.kind==='python'?datasetPreview(ex.dataset):''}${ex.setup?`<details><summary>Supplied setup · runs before your code</summary><p>These previously introduced objects are supplied for this exercise. Your editor runs afterward.</p>${code(ex.setup)}</details>`:''}${syntaxSupport(card,ex)}<section class="foundation-task"><h3>Your task · ${esc(ex.label)}</h3><p>${esc(ex.task)}</p>${ex.evidence?`<p>${esc(ex.evidence)}</p>`:''}</section>${help(ex)}<details class="ml-sources"><summary>Sources and API context</summary><p>Concepts follow these references. Runnable Python is compatible with this Playground’s scikit-learn 1.4.2 / Pyodide 0.26.4 runtime.</p><ul>${card.sources.map(([title,href])=>`<li><a href="${esc(href)}" target="_blank" rel="noopener">${esc(title)}</a></li>`).join('')}</ul></details></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${card.id==='ML-N-R1'?neuralFork():''}${navigation(card,index)}</div>`;
   }
   function pythonPane(ex){
     ex=view?.exercise||ex;
@@ -130,7 +142,8 @@
   function showChecks(){
     const editor=document.getElementById('mlEditor'),r=receipts.check(editor.value);
     if(!r){document.getElementById('mlFeedback').textContent='Run the current code first. Check does not execute or refit a model.';return;}
-    document.getElementById('mlResults').innerHTML=`<h3>Check results · this run only</h3><ul>${r.checks.map(c=>`<li class="${esc(c.status)}"><h4>${esc({'correct':'✓ Consistent','needs-attention':'△ Needs attention','unavailable':'○ Unable to check','self-review':'◇ Self-review'}[c.status])} · ${esc(c.name)}</h4><p>${esc(c.message)}</p></li>`).join('')}</ul>`;
+    const checks=items=>`<ul>${items.map(c=>`<li class="${esc(c.status)}"><h4>${esc({'correct':'✓ Consistent','needs-attention':'△ Needs attention','unavailable':'○ Unable to check','self-review':'◇ Self-review'}[c.status])} · ${esc(c.name)}</h4><p>${esc(c.message)}</p></li>`).join('')}</ul>`;
+    document.getElementById('mlResults').innerHTML=`<h3>Check results · this run only</h3>`+(view.challenge?view.challenge.deliverableGroups.map(g=>`<section><h3>${esc(g.title)}</h3>${checks(r.checks.filter(c=>g.checks.includes(c.name)))}</section>`).join(''):checks(r.checks));
   }
   async function run(){
     if(busy||!view)return;
@@ -146,7 +159,7 @@
         workerSource=workerSource||await(await fetch('ml-learning/worker.js')).text();
         bridge=createPythonBridge(workerSource,{onStatus:r=>{if(view&&busy)document.getElementById('mlStatus').textContent=r.message;}});
       }
-      const d=datasets[exercise.dataset],files={};
+      const d=exercise.inputFile?{file:exercise.inputFile}:datasets[exercise.dataset],files={};
       if(d?.file){const response=await fetch(d.file);if(!response.ok)throw Error('Input file could not load.');files[d.file]=await response.text();}
       const response=await bridge.send('run',{config:{indexURL:AppPlatform.pyodideIndexUrl,...MLLearningRuntime},files,request:{exercise,code:submitted}});
       if(screen!==generation)return;

@@ -5,7 +5,11 @@ import {createHash} from 'node:crypto';
 import {productionInventory} from './ml-production.mjs';
 
 export async function buildMLLearning(root,output){
-  const registry=JSON.parse(execFileSync('python3',[path.join(root,'ml-learning/authoring.py')],{cwd:root,encoding:'utf8',maxBuffer:20*1024*1024}));
+  const executable=process.env.PYTHON || (process.platform==='win32'?'python':'python3');
+  let authored;
+  try{authored=execFileSync(executable,[path.join(root,'ml-learning/authoring.py')],{cwd:root,encoding:'utf8',maxBuffer:20*1024*1024});}
+  catch(error){throw new Error('ML content authoring requires Python 3. Set PYTHON to its executable path. '+error.message);}
+  const registry=JSON.parse(authored);
   const api=productionInventory();
   registry.models=Object.entries(api.MODELS).map(([id,m])=>({
     id,name:m.name,family:m.family,task:m.task,

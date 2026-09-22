@@ -5,6 +5,8 @@ import pandas as pd
 FIXTURE_VERSION = 1
 
 def learning_fixture(name):
+    if name.startswith('ML-X'):
+        return pd.read_csv('data/ml-learning/'+name+'.csv')
     if name.endswith('_REVIEW'):
         base=name.removesuffix('_REVIEW')
         df=learning_fixture(base).copy()

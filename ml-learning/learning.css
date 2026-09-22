@@ -26,11 +26,11 @@ body[data-ml-learning]{--lesson-accent:var(--mint)}
 .ml-exercise-tabs a[aria-current]{border-color:var(--lesson-accent);box-shadow:inset 0 -3px var(--lesson-accent)}
 .ml-concept{margin:0;border:1px solid var(--border);border-radius:5px;background:var(--panel);padding:12px}
 .ml-concept-scroll{overflow:auto;max-width:100%}
-.ml-concept svg{display:block;width:100%;min-width:420px;fill:var(--panel);stroke:var(--ink);stroke-width:1.5}
+.ml-concept svg{display:block;width:100%;min-width:560px;fill:var(--panel);stroke:var(--ink);stroke-width:1.5}
 .ml-concept svg text{fill:var(--ink);stroke:none;font:14px var(--body)}
 .ml-concept svg .accent{fill:color-mix(in srgb,var(--mint) 20%,var(--panel));stroke:var(--mint)}
 .ml-concept svg .accent-stroke{stroke:var(--violet);stroke-width:3}
-.ml-concept svg .thin{stroke:var(--border);stroke-width:1}
+.ml-concept svg .thin{stroke:var(--muted);stroke-width:1}
 .ml-concept svg marker path{fill:var(--ink);stroke:none}
 .ml-concept figcaption{margin-top:10px;font-size:13px;line-height:1.5;color:var(--muted)}
 .ml-prerequisites,.ml-sources{font-size:14px;line-height:1.8}
@@ -78,3 +78,9 @@ body[data-ml-learning]{--lesson-accent:var(--mint)}
 
 .ml-diagram-scroll-note{display:none}
 @media(max-width:600px){.ml-diagram-scroll-note{display:block;margin-top:6px}}
+
+.ml-syntax-parts dt{margin-top:14px;font-weight:700;overflow-wrap:anywhere}
+.ml-syntax-parts dd{margin:5px 0 16px;line-height:1.65}
+.ml-deliverable-groups h4{margin:0 0 8px;text-transform:uppercase;font-size:14px;letter-spacing:.04em}
+.ml-deliverable-groups p{line-height:1.65}
+.ml-input-contract{border-left:3px solid var(--lesson-accent);padding-left:12px}

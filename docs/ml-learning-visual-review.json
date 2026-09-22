@@ -1,0 +1,2062 @@
+{
+  "teachingCount": 81,
+  "primitiveVariantCount": 55,
+  "captures": [
+    {
+      "id": "ML-F01",
+      "family": "tasks",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F01-light-1440.png",
+      "title": "What question are we answering?"
+    },
+    {
+      "id": "ML-F02",
+      "family": "table",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F02-light-1440.png",
+      "title": "Features and target"
+    },
+    {
+      "id": "ML-F03",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F03-light-1440.png",
+      "title": "What fitting does"
+    },
+    {
+      "id": "ML-F04",
+      "family": "table",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F04-light-1440.png",
+      "title": "Predicting new rows"
+    },
+    {
+      "id": "ML-F05",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F05-light-1440.png",
+      "title": "Measuring prediction error"
+    },
+    {
+      "id": "ML-F06",
+      "family": "split",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F06-light-1440.png",
+      "title": "Seen is not unseen"
+    },
+    {
+      "id": "ML-F07",
+      "family": "split",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F07-light-1440.png",
+      "title": "Making a reproducible split"
+    },
+    {
+      "id": "ML-F08",
+      "family": "classification",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F08-light-1440.png",
+      "title": "Predicting classes"
+    },
+    {
+      "id": "ML-F09",
+      "family": "split",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F09-light-1440.png",
+      "title": "Preserving class representation"
+    },
+    {
+      "id": "ML-F10",
+      "family": "pipeline",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-F10-light-1440.png",
+      "title": "Could we know this at prediction time?"
+    },
+    {
+      "id": "ML-W01",
+      "family": "split",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W01-light-1440.png",
+      "title": "Explore training data"
+    },
+    {
+      "id": "ML-W02",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W02-light-1440.png",
+      "title": "A useful reference"
+    },
+    {
+      "id": "ML-W03",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W03-light-1440.png",
+      "title": "Learn a scale from training rows"
+    },
+    {
+      "id": "ML-W04",
+      "family": "table",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W04-light-1440.png",
+      "title": "Encode categories without inventing order"
+    },
+    {
+      "id": "ML-W05",
+      "family": "pipeline",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W05-light-1440.png",
+      "title": "Prepare different feature types together"
+    },
+    {
+      "id": "ML-W06",
+      "family": "pipeline",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W06-light-1440.png",
+      "title": "Keep preparation with the estimator"
+    },
+    {
+      "id": "ML-W07",
+      "family": "pipeline",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W07-light-1440.png",
+      "title": "Learn missing-value replacements safely"
+    },
+    {
+      "id": "ML-W08",
+      "family": "folds",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W08-light-1440.png",
+      "title": "What a fold does"
+    },
+    {
+      "id": "ML-W09",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W09-light-1440.png",
+      "title": "Read cross-validation evidence"
+    },
+    {
+      "id": "ML-W10",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W10-light-1440.png",
+      "title": "Settings, learned values and fit quality"
+    },
+    {
+      "id": "ML-W11",
+      "family": "folds",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W11-light-1440.png",
+      "title": "How a search makes a choice"
+    },
+    {
+      "id": "ML-W12",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W12-light-1440.png",
+      "title": "Diagnose without opening the final test"
+    },
+    {
+      "id": "ML-W13",
+      "family": "split",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W13-light-1440.png",
+      "title": "Finish once, then report"
+    },
+    {
+      "id": "ML-W14",
+      "family": "time",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-W14-light-1440.png",
+      "title": "Respect time"
+    },
+    {
+      "id": "ML-R01",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R01-light-1440.png",
+      "title": "Read a fitted line"
+    },
+    {
+      "id": "ML-R02",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R02-light-1440.png",
+      "title": "RMSE and R\u00b2 answer different questions"
+    },
+    {
+      "id": "ML-R03",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R03-light-1440.png",
+      "title": "Read residual patterns and limits"
+    },
+    {
+      "id": "ML-R04",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R04-light-1440.png",
+      "title": "Several predictors, conditional comparisons"
+    },
+    {
+      "id": "ML-R05",
+      "family": "table",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R05-light-1440.png",
+      "title": "Read coefficients after encoding"
+    },
+    {
+      "id": "ML-R06",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R06-light-1440.png",
+      "title": "Correlated predictors and unstable coefficients"
+    },
+    {
+      "id": "ML-R07",
+      "family": "regression",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R07-light-1440.png",
+      "title": "Make curved features"
+    },
+    {
+      "id": "ML-R08",
+      "family": "folds",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R08-light-1440.png",
+      "title": "Validate polynomial flexibility"
+    },
+    {
+      "id": "ML-R09",
+      "family": "tree",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R09-light-1440.png",
+      "title": "Trees predict with leaf averages"
+    },
+    {
+      "id": "ML-R10",
+      "family": "tree",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R10-light-1440.png",
+      "title": "Control tree complexity"
+    },
+    {
+      "id": "ML-R11",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-R11-light-1440.png",
+      "title": "What fitted explanations cannot establish"
+    },
+    {
+      "id": "ML-C01",
+      "family": "classification",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C01-light-1440.png",
+      "title": "Read a confusion matrix"
+    },
+    {
+      "id": "ML-C02",
+      "family": "classification",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C02-light-1440.png",
+      "title": "Precision and recall"
+    },
+    {
+      "id": "ML-C03",
+      "family": "classification",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C03-light-1440.png",
+      "title": "Macro F1 and imbalance"
+    },
+    {
+      "id": "ML-C04",
+      "family": "classification",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C04-light-1440.png",
+      "title": "Labels and probabilities"
+    },
+    {
+      "id": "ML-C05",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C05-light-1440.png",
+      "title": "Logistic regression"
+    },
+    {
+      "id": "ML-C06",
+      "family": "folds",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C06-light-1440.png",
+      "title": "A logistic workflow"
+    },
+    {
+      "id": "ML-C07",
+      "family": "classification",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C07-light-1440.png",
+      "title": "Threshold choices depend on costs"
+    },
+    {
+      "id": "ML-C08",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C08-light-1440.png",
+      "title": "Neighbour voting"
+    },
+    {
+      "id": "ML-C09",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C09-light-1440.png",
+      "title": "Validate k on a meaningful scale"
+    },
+    {
+      "id": "ML-C10",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C10-light-1440.png",
+      "title": "Margins and support vectors"
+    },
+    {
+      "id": "ML-C11",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C11-light-1440.png",
+      "title": "Nonlinear SVM behaviour"
+    },
+    {
+      "id": "ML-C12",
+      "family": "tree",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C12-light-1440.png",
+      "title": "One feature, one rule"
+    },
+    {
+      "id": "ML-C13",
+      "family": "tree",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C13-light-1440.png",
+      "title": "One-R with numeric inputs"
+    },
+    {
+      "id": "ML-C14",
+      "family": "tree",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C14-light-1440.png",
+      "title": "Classification trees"
+    },
+    {
+      "id": "ML-C15",
+      "family": "gaussian",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C15-light-1440.png",
+      "title": "Gaussian Naive Bayes"
+    },
+    {
+      "id": "ML-C16",
+      "family": "table",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C16-light-1440.png",
+      "title": "Match Naive Bayes to feature types"
+    },
+    {
+      "id": "ML-C17",
+      "family": "gaussian",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C17-light-1440.png",
+      "title": "LDA shares a covariance shape"
+    },
+    {
+      "id": "ML-C18",
+      "family": "gaussian",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C18-light-1440.png",
+      "title": "QDA allows class-specific shapes"
+    },
+    {
+      "id": "ML-C19",
+      "family": "gaussian",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-C19-light-1440.png",
+      "title": "Covariance support and regularisation limits"
+    },
+    {
+      "id": "ML-N01",
+      "family": "network",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-N01-light-1440.png",
+      "title": "From inputs to network outputs"
+    },
+    {
+      "id": "ML-N02",
+      "family": "network",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-N02-light-1440.png",
+      "title": "Learning weights by reducing loss"
+    },
+    {
+      "id": "ML-N03",
+      "family": "network",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-N03-light-1440.png",
+      "title": "Neural classification workflow"
+    },
+    {
+      "id": "ML-N04",
+      "family": "network",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-N04-light-1440.png",
+      "title": "Neural regression workflow"
+    },
+    {
+      "id": "ML-N05",
+      "family": "network",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-N05-light-1440.png",
+      "title": "Convergence, early stopping and validation"
+    },
+    {
+      "id": "ML-N06",
+      "family": "network",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-N06-light-1440.png",
+      "title": "Capacity and regularisation"
+    },
+    {
+      "id": "ML-U01",
+      "family": "tasks",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U01-light-1440.png",
+      "title": "Discovery has no prediction target"
+    },
+    {
+      "id": "ML-U02",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U02-light-1440.png",
+      "title": "Distance depends on scale and context"
+    },
+    {
+      "id": "ML-U03",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U03-light-1440.png",
+      "title": "K-Means assigns points to centroids"
+    },
+    {
+      "id": "ML-U04",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U04-light-1440.png",
+      "title": "Choosing k requires evidence and judgement"
+    },
+    {
+      "id": "ML-U05",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U05-light-1440.png",
+      "title": "Describe clusters in meaningful units"
+    },
+    {
+      "id": "ML-U06",
+      "family": "geometry",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U06-light-1440.png",
+      "title": "When K-Means geometry misleads"
+    },
+    {
+      "id": "ML-U07",
+      "family": "hierarchy",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U07-light-1440.png",
+      "title": "Hierarchical merging"
+    },
+    {
+      "id": "ML-U08",
+      "family": "hierarchy",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U08-light-1440.png",
+      "title": "Turn a hierarchy into groups"
+    },
+    {
+      "id": "ML-U09",
+      "family": "hierarchy",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U09-light-1440.png",
+      "title": "Sampled hierarchies describe sampled rows"
+    },
+    {
+      "id": "ML-U10",
+      "family": "tasks",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-U10-light-1440.png",
+      "title": "Interpret discovery without inventing truth"
+    },
+    {
+      "id": "ML-P01",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P01-light-1440.png",
+      "title": "New coordinates, not selected original columns"
+    },
+    {
+      "id": "ML-P02",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P02-light-1440.png",
+      "title": "Fit a reusable PCA representation"
+    },
+    {
+      "id": "ML-P03",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P03-light-1440.png",
+      "title": "Explained variance is not predictive accuracy"
+    },
+    {
+      "id": "ML-P04",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P04-light-1440.png",
+      "title": "Select a retained representation"
+    },
+    {
+      "id": "ML-P05",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P05-light-1440.png",
+      "title": "Component weights and scores"
+    },
+    {
+      "id": "ML-P06",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P06-light-1440.png",
+      "title": "Two dimensions are a view"
+    },
+    {
+      "id": "ML-P07",
+      "family": "pca",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-P07-light-1440.png",
+      "title": "Equivalent signs and reconstruction"
+    },
+    {
+      "id": "ML-M01",
+      "family": "tasks",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-M01-light-1440.png",
+      "title": "Choose the task before the family"
+    },
+    {
+      "id": "ML-M02",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-M02-light-1440.png",
+      "title": "Compare candidates on common evidence"
+    },
+    {
+      "id": "ML-M03",
+      "family": "comparison",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-M03-light-1440.png",
+      "title": "Explain a result responsibly"
+    },
+    {
+      "id": "ML-M04",
+      "family": "tasks",
+      "theme": "light",
+      "width": 1440,
+      "file": "ML-M04-light-1440.png",
+      "title": "What changes outside this dataset?"
+    },
+    {
+      "id": "ML-F01",
+      "family": "tasks",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F01-dark-1440.png",
+      "title": "What question are we answering?"
+    },
+    {
+      "id": "ML-F01",
+      "family": "tasks",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F01-light-320.png",
+      "title": "What question are we answering?"
+    },
+    {
+      "id": "ML-F01",
+      "family": "tasks",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F01-light-390.png",
+      "title": "What question are we answering?"
+    },
+    {
+      "id": "ML-F02",
+      "family": "table",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F02-dark-1440.png",
+      "title": "Features and target"
+    },
+    {
+      "id": "ML-F02",
+      "family": "table",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F02-light-320.png",
+      "title": "Features and target"
+    },
+    {
+      "id": "ML-F02",
+      "family": "table",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F02-light-390.png",
+      "title": "Features and target"
+    },
+    {
+      "id": "ML-F03",
+      "family": "regression",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F03-dark-1440.png",
+      "title": "What fitting does"
+    },
+    {
+      "id": "ML-F03",
+      "family": "regression",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F03-light-320.png",
+      "title": "What fitting does"
+    },
+    {
+      "id": "ML-F03",
+      "family": "regression",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F03-light-390.png",
+      "title": "What fitting does"
+    },
+    {
+      "id": "ML-F06",
+      "family": "split",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F06-dark-1440.png",
+      "title": "Seen is not unseen"
+    },
+    {
+      "id": "ML-F06",
+      "family": "split",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F06-light-320.png",
+      "title": "Seen is not unseen"
+    },
+    {
+      "id": "ML-F06",
+      "family": "split",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F06-light-390.png",
+      "title": "Seen is not unseen"
+    },
+    {
+      "id": "ML-F08",
+      "family": "F08",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F08-dark-1440.png",
+      "title": "Predicting classes"
+    },
+    {
+      "id": "ML-F08",
+      "family": "F08",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F08-light-320.png",
+      "title": "Predicting classes"
+    },
+    {
+      "id": "ML-F08",
+      "family": "F08",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F08-light-390.png",
+      "title": "Predicting classes"
+    },
+    {
+      "id": "ML-F09",
+      "family": "F09",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F09-dark-1440.png",
+      "title": "Preserving class representation"
+    },
+    {
+      "id": "ML-F09",
+      "family": "F09",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F09-light-320.png",
+      "title": "Preserving class representation"
+    },
+    {
+      "id": "ML-F09",
+      "family": "F09",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F09-light-390.png",
+      "title": "Preserving class representation"
+    },
+    {
+      "id": "ML-F10",
+      "family": "F10",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F10-dark-1440.png",
+      "title": "Could we know this at prediction time?"
+    },
+    {
+      "id": "ML-F10",
+      "family": "F10",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F10-light-320.png",
+      "title": "Could we know this at prediction time?"
+    },
+    {
+      "id": "ML-F10",
+      "family": "F10",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F10-light-390.png",
+      "title": "Could we know this at prediction time?"
+    },
+    {
+      "id": "ML-W02",
+      "family": "W02",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W02-dark-1440.png",
+      "title": "A useful reference"
+    },
+    {
+      "id": "ML-W02",
+      "family": "W02",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W02-light-320.png",
+      "title": "A useful reference"
+    },
+    {
+      "id": "ML-W02",
+      "family": "W02",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W02-light-390.png",
+      "title": "A useful reference"
+    },
+    {
+      "id": "ML-W03",
+      "family": "W03",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W03-dark-1440.png",
+      "title": "Learn a scale from training rows"
+    },
+    {
+      "id": "ML-W03",
+      "family": "W03",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W03-light-320.png",
+      "title": "Learn a scale from training rows"
+    },
+    {
+      "id": "ML-W03",
+      "family": "W03",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W03-light-390.png",
+      "title": "Learn a scale from training rows"
+    },
+    {
+      "id": "ML-W04",
+      "family": "W04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W04-dark-1440.png",
+      "title": "Encode categories without inventing order"
+    },
+    {
+      "id": "ML-W04",
+      "family": "W04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W04-light-320.png",
+      "title": "Encode categories without inventing order"
+    },
+    {
+      "id": "ML-W04",
+      "family": "W04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W04-light-390.png",
+      "title": "Encode categories without inventing order"
+    },
+    {
+      "id": "ML-W05",
+      "family": "pipeline",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W05-dark-1440.png",
+      "title": "Prepare different feature types together"
+    },
+    {
+      "id": "ML-W05",
+      "family": "pipeline",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W05-light-320.png",
+      "title": "Prepare different feature types together"
+    },
+    {
+      "id": "ML-W05",
+      "family": "pipeline",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W05-light-390.png",
+      "title": "Prepare different feature types together"
+    },
+    {
+      "id": "ML-W07",
+      "family": "W07",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W07-dark-1440.png",
+      "title": "Learn missing-value replacements safely"
+    },
+    {
+      "id": "ML-W07",
+      "family": "W07",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W07-light-320.png",
+      "title": "Learn missing-value replacements safely"
+    },
+    {
+      "id": "ML-W07",
+      "family": "W07",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W07-light-390.png",
+      "title": "Learn missing-value replacements safely"
+    },
+    {
+      "id": "ML-W08",
+      "family": "folds",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W08-dark-1440.png",
+      "title": "What a fold does"
+    },
+    {
+      "id": "ML-W08",
+      "family": "folds",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W08-light-320.png",
+      "title": "What a fold does"
+    },
+    {
+      "id": "ML-W08",
+      "family": "folds",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W08-light-390.png",
+      "title": "What a fold does"
+    },
+    {
+      "id": "ML-W09",
+      "family": "comparison",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W09-dark-1440.png",
+      "title": "Read cross-validation evidence"
+    },
+    {
+      "id": "ML-W09",
+      "family": "comparison",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W09-light-320.png",
+      "title": "Read cross-validation evidence"
+    },
+    {
+      "id": "ML-W09",
+      "family": "comparison",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W09-light-390.png",
+      "title": "Read cross-validation evidence"
+    },
+    {
+      "id": "ML-W10",
+      "family": "W10",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W10-dark-1440.png",
+      "title": "Settings, learned values and fit quality"
+    },
+    {
+      "id": "ML-W10",
+      "family": "W10",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W10-light-320.png",
+      "title": "Settings, learned values and fit quality"
+    },
+    {
+      "id": "ML-W10",
+      "family": "W10",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W10-light-390.png",
+      "title": "Settings, learned values and fit quality"
+    },
+    {
+      "id": "ML-W14",
+      "family": "time",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W14-dark-1440.png",
+      "title": "Respect time"
+    },
+    {
+      "id": "ML-W14",
+      "family": "time",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W14-light-320.png",
+      "title": "Respect time"
+    },
+    {
+      "id": "ML-W14",
+      "family": "time",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W14-light-390.png",
+      "title": "Respect time"
+    },
+    {
+      "id": "ML-R02",
+      "family": "R02",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R02-dark-1440.png",
+      "title": "RMSE and R\u00b2 answer different questions"
+    },
+    {
+      "id": "ML-R02",
+      "family": "R02",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R02-light-320.png",
+      "title": "RMSE and R\u00b2 answer different questions"
+    },
+    {
+      "id": "ML-R02",
+      "family": "R02",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R02-light-390.png",
+      "title": "RMSE and R\u00b2 answer different questions"
+    },
+    {
+      "id": "ML-R04",
+      "family": "R04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R04-dark-1440.png",
+      "title": "Several predictors, conditional comparisons"
+    },
+    {
+      "id": "ML-R04",
+      "family": "R04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R04-light-320.png",
+      "title": "Several predictors, conditional comparisons"
+    },
+    {
+      "id": "ML-R04",
+      "family": "R04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R04-light-390.png",
+      "title": "Several predictors, conditional comparisons"
+    },
+    {
+      "id": "ML-R05",
+      "family": "R05",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R05-dark-1440.png",
+      "title": "Read coefficients after encoding"
+    },
+    {
+      "id": "ML-R05",
+      "family": "R05",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R05-light-320.png",
+      "title": "Read coefficients after encoding"
+    },
+    {
+      "id": "ML-R05",
+      "family": "R05",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R05-light-390.png",
+      "title": "Read coefficients after encoding"
+    },
+    {
+      "id": "ML-R06",
+      "family": "R06",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R06-dark-1440.png",
+      "title": "Correlated predictors and unstable coefficients"
+    },
+    {
+      "id": "ML-R06",
+      "family": "R06",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R06-light-320.png",
+      "title": "Correlated predictors and unstable coefficients"
+    },
+    {
+      "id": "ML-R06",
+      "family": "R06",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R06-light-390.png",
+      "title": "Correlated predictors and unstable coefficients"
+    },
+    {
+      "id": "ML-R07",
+      "family": "R07",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R07-dark-1440.png",
+      "title": "Make curved features"
+    },
+    {
+      "id": "ML-R07",
+      "family": "R07",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R07-light-320.png",
+      "title": "Make curved features"
+    },
+    {
+      "id": "ML-R07",
+      "family": "R07",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R07-light-390.png",
+      "title": "Make curved features"
+    },
+    {
+      "id": "ML-R08",
+      "family": "R08",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R08-dark-1440.png",
+      "title": "Validate polynomial flexibility"
+    },
+    {
+      "id": "ML-R08",
+      "family": "R08",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R08-light-320.png",
+      "title": "Validate polynomial flexibility"
+    },
+    {
+      "id": "ML-R08",
+      "family": "R08",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R08-light-390.png",
+      "title": "Validate polynomial flexibility"
+    },
+    {
+      "id": "ML-R09",
+      "family": "R09",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R09-dark-1440.png",
+      "title": "Trees predict with leaf averages"
+    },
+    {
+      "id": "ML-R09",
+      "family": "R09",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R09-light-320.png",
+      "title": "Trees predict with leaf averages"
+    },
+    {
+      "id": "ML-R09",
+      "family": "R09",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R09-light-390.png",
+      "title": "Trees predict with leaf averages"
+    },
+    {
+      "id": "ML-R10",
+      "family": "R10",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R10-dark-1440.png",
+      "title": "Control tree complexity"
+    },
+    {
+      "id": "ML-R10",
+      "family": "R10",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R10-light-320.png",
+      "title": "Control tree complexity"
+    },
+    {
+      "id": "ML-R10",
+      "family": "R10",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R10-light-390.png",
+      "title": "Control tree complexity"
+    },
+    {
+      "id": "ML-R11",
+      "family": "R11",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R11-dark-1440.png",
+      "title": "What fitted explanations cannot establish"
+    },
+    {
+      "id": "ML-R11",
+      "family": "R11",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R11-light-320.png",
+      "title": "What fitted explanations cannot establish"
+    },
+    {
+      "id": "ML-R11",
+      "family": "R11",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R11-light-390.png",
+      "title": "What fitted explanations cannot establish"
+    },
+    {
+      "id": "ML-C01",
+      "family": "classification",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C01-dark-1440.png",
+      "title": "Read a confusion matrix"
+    },
+    {
+      "id": "ML-C01",
+      "family": "classification",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C01-light-320.png",
+      "title": "Read a confusion matrix"
+    },
+    {
+      "id": "ML-C01",
+      "family": "classification",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C01-light-390.png",
+      "title": "Read a confusion matrix"
+    },
+    {
+      "id": "ML-C03",
+      "family": "C03",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C03-dark-1440.png",
+      "title": "Macro F1 and imbalance"
+    },
+    {
+      "id": "ML-C03",
+      "family": "C03",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C03-light-320.png",
+      "title": "Macro F1 and imbalance"
+    },
+    {
+      "id": "ML-C03",
+      "family": "C03",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C03-light-390.png",
+      "title": "Macro F1 and imbalance"
+    },
+    {
+      "id": "ML-C04",
+      "family": "C04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C04-dark-1440.png",
+      "title": "Labels and probabilities"
+    },
+    {
+      "id": "ML-C04",
+      "family": "C04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C04-light-320.png",
+      "title": "Labels and probabilities"
+    },
+    {
+      "id": "ML-C04",
+      "family": "C04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C04-light-390.png",
+      "title": "Labels and probabilities"
+    },
+    {
+      "id": "ML-C05",
+      "family": "C05",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C05-dark-1440.png",
+      "title": "Logistic regression"
+    },
+    {
+      "id": "ML-C05",
+      "family": "C05",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C05-light-320.png",
+      "title": "Logistic regression"
+    },
+    {
+      "id": "ML-C05",
+      "family": "C05",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C05-light-390.png",
+      "title": "Logistic regression"
+    },
+    {
+      "id": "ML-C07",
+      "family": "C07",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C07-dark-1440.png",
+      "title": "Threshold choices depend on costs"
+    },
+    {
+      "id": "ML-C07",
+      "family": "C07",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C07-light-320.png",
+      "title": "Threshold choices depend on costs"
+    },
+    {
+      "id": "ML-C07",
+      "family": "C07",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C07-light-390.png",
+      "title": "Threshold choices depend on costs"
+    },
+    {
+      "id": "ML-C08",
+      "family": "C08",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C08-dark-1440.png",
+      "title": "Neighbour voting"
+    },
+    {
+      "id": "ML-C08",
+      "family": "C08",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C08-light-320.png",
+      "title": "Neighbour voting"
+    },
+    {
+      "id": "ML-C08",
+      "family": "C08",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C08-light-390.png",
+      "title": "Neighbour voting"
+    },
+    {
+      "id": "ML-C09",
+      "family": "C09",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C09-dark-1440.png",
+      "title": "Validate k on a meaningful scale"
+    },
+    {
+      "id": "ML-C09",
+      "family": "C09",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C09-light-320.png",
+      "title": "Validate k on a meaningful scale"
+    },
+    {
+      "id": "ML-C09",
+      "family": "C09",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C09-light-390.png",
+      "title": "Validate k on a meaningful scale"
+    },
+    {
+      "id": "ML-C10",
+      "family": "C10",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C10-dark-1440.png",
+      "title": "Margins and support vectors"
+    },
+    {
+      "id": "ML-C10",
+      "family": "C10",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C10-light-320.png",
+      "title": "Margins and support vectors"
+    },
+    {
+      "id": "ML-C10",
+      "family": "C10",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C10-light-390.png",
+      "title": "Margins and support vectors"
+    },
+    {
+      "id": "ML-C11",
+      "family": "C11",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C11-dark-1440.png",
+      "title": "Nonlinear SVM behaviour"
+    },
+    {
+      "id": "ML-C11",
+      "family": "C11",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C11-light-320.png",
+      "title": "Nonlinear SVM behaviour"
+    },
+    {
+      "id": "ML-C11",
+      "family": "C11",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C11-light-390.png",
+      "title": "Nonlinear SVM behaviour"
+    },
+    {
+      "id": "ML-C12",
+      "family": "C12",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C12-dark-1440.png",
+      "title": "One feature, one rule"
+    },
+    {
+      "id": "ML-C12",
+      "family": "C12",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C12-light-320.png",
+      "title": "One feature, one rule"
+    },
+    {
+      "id": "ML-C12",
+      "family": "C12",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C12-light-390.png",
+      "title": "One feature, one rule"
+    },
+    {
+      "id": "ML-C13",
+      "family": "C13",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C13-dark-1440.png",
+      "title": "One-R with numeric inputs"
+    },
+    {
+      "id": "ML-C13",
+      "family": "C13",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C13-light-320.png",
+      "title": "One-R with numeric inputs"
+    },
+    {
+      "id": "ML-C13",
+      "family": "C13",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C13-light-390.png",
+      "title": "One-R with numeric inputs"
+    },
+    {
+      "id": "ML-C14",
+      "family": "C14",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C14-dark-1440.png",
+      "title": "Classification trees"
+    },
+    {
+      "id": "ML-C14",
+      "family": "C14",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C14-light-320.png",
+      "title": "Classification trees"
+    },
+    {
+      "id": "ML-C14",
+      "family": "C14",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C14-light-390.png",
+      "title": "Classification trees"
+    },
+    {
+      "id": "ML-C15",
+      "family": "C15",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C15-dark-1440.png",
+      "title": "Gaussian Naive Bayes"
+    },
+    {
+      "id": "ML-C15",
+      "family": "C15",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C15-light-320.png",
+      "title": "Gaussian Naive Bayes"
+    },
+    {
+      "id": "ML-C15",
+      "family": "C15",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C15-light-390.png",
+      "title": "Gaussian Naive Bayes"
+    },
+    {
+      "id": "ML-C17",
+      "family": "C17",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C17-dark-1440.png",
+      "title": "LDA shares a covariance shape"
+    },
+    {
+      "id": "ML-C17",
+      "family": "C17",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C17-light-320.png",
+      "title": "LDA shares a covariance shape"
+    },
+    {
+      "id": "ML-C17",
+      "family": "C17",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C17-light-390.png",
+      "title": "LDA shares a covariance shape"
+    },
+    {
+      "id": "ML-C18",
+      "family": "gaussian",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C18-dark-1440.png",
+      "title": "QDA allows class-specific shapes"
+    },
+    {
+      "id": "ML-C18",
+      "family": "gaussian",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C18-light-320.png",
+      "title": "QDA allows class-specific shapes"
+    },
+    {
+      "id": "ML-C18",
+      "family": "gaussian",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C18-light-390.png",
+      "title": "QDA allows class-specific shapes"
+    },
+    {
+      "id": "ML-N01",
+      "family": "network",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-N01-dark-1440.png",
+      "title": "From inputs to network outputs"
+    },
+    {
+      "id": "ML-N01",
+      "family": "network",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-N01-light-320.png",
+      "title": "From inputs to network outputs"
+    },
+    {
+      "id": "ML-N01",
+      "family": "network",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-N01-light-390.png",
+      "title": "From inputs to network outputs"
+    },
+    {
+      "id": "ML-N02",
+      "family": "N02",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-N02-dark-1440.png",
+      "title": "Learning weights by reducing loss"
+    },
+    {
+      "id": "ML-N02",
+      "family": "N02",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-N02-light-320.png",
+      "title": "Learning weights by reducing loss"
+    },
+    {
+      "id": "ML-N02",
+      "family": "N02",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-N02-light-390.png",
+      "title": "Learning weights by reducing loss"
+    },
+    {
+      "id": "ML-N04",
+      "family": "N04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-N04-dark-1440.png",
+      "title": "Neural regression workflow"
+    },
+    {
+      "id": "ML-N04",
+      "family": "N04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-N04-light-320.png",
+      "title": "Neural regression workflow"
+    },
+    {
+      "id": "ML-N04",
+      "family": "N04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-N04-light-390.png",
+      "title": "Neural regression workflow"
+    },
+    {
+      "id": "ML-N05",
+      "family": "N05",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-N05-dark-1440.png",
+      "title": "Convergence, early stopping and validation"
+    },
+    {
+      "id": "ML-N05",
+      "family": "N05",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-N05-light-320.png",
+      "title": "Convergence, early stopping and validation"
+    },
+    {
+      "id": "ML-N05",
+      "family": "N05",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-N05-light-390.png",
+      "title": "Convergence, early stopping and validation"
+    },
+    {
+      "id": "ML-U02",
+      "family": "U02",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U02-dark-1440.png",
+      "title": "Distance depends on scale and context"
+    },
+    {
+      "id": "ML-U02",
+      "family": "U02",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U02-light-320.png",
+      "title": "Distance depends on scale and context"
+    },
+    {
+      "id": "ML-U02",
+      "family": "U02",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U02-light-390.png",
+      "title": "Distance depends on scale and context"
+    },
+    {
+      "id": "ML-U03",
+      "family": "geometry",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U03-dark-1440.png",
+      "title": "K-Means assigns points to centroids"
+    },
+    {
+      "id": "ML-U03",
+      "family": "geometry",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U03-light-320.png",
+      "title": "K-Means assigns points to centroids"
+    },
+    {
+      "id": "ML-U03",
+      "family": "geometry",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U03-light-390.png",
+      "title": "K-Means assigns points to centroids"
+    },
+    {
+      "id": "ML-U04",
+      "family": "U04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U04-dark-1440.png",
+      "title": "Choosing k requires evidence and judgement"
+    },
+    {
+      "id": "ML-U04",
+      "family": "U04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U04-light-320.png",
+      "title": "Choosing k requires evidence and judgement"
+    },
+    {
+      "id": "ML-U04",
+      "family": "U04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U04-light-390.png",
+      "title": "Choosing k requires evidence and judgement"
+    },
+    {
+      "id": "ML-U05",
+      "family": "U05",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U05-dark-1440.png",
+      "title": "Describe clusters in meaningful units"
+    },
+    {
+      "id": "ML-U05",
+      "family": "U05",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U05-light-320.png",
+      "title": "Describe clusters in meaningful units"
+    },
+    {
+      "id": "ML-U05",
+      "family": "U05",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U05-light-390.png",
+      "title": "Describe clusters in meaningful units"
+    },
+    {
+      "id": "ML-U07",
+      "family": "hierarchy",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U07-dark-1440.png",
+      "title": "Hierarchical merging"
+    },
+    {
+      "id": "ML-U07",
+      "family": "hierarchy",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U07-light-320.png",
+      "title": "Hierarchical merging"
+    },
+    {
+      "id": "ML-U07",
+      "family": "hierarchy",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U07-light-390.png",
+      "title": "Hierarchical merging"
+    },
+    {
+      "id": "ML-U09",
+      "family": "U09",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U09-dark-1440.png",
+      "title": "Sampled hierarchies describe sampled rows"
+    },
+    {
+      "id": "ML-U09",
+      "family": "U09",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U09-light-320.png",
+      "title": "Sampled hierarchies describe sampled rows"
+    },
+    {
+      "id": "ML-U09",
+      "family": "U09",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U09-light-390.png",
+      "title": "Sampled hierarchies describe sampled rows"
+    },
+    {
+      "id": "ML-U10",
+      "family": "U10",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-U10-dark-1440.png",
+      "title": "Interpret discovery without inventing truth"
+    },
+    {
+      "id": "ML-U10",
+      "family": "U10",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-U10-light-320.png",
+      "title": "Interpret discovery without inventing truth"
+    },
+    {
+      "id": "ML-U10",
+      "family": "U10",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-U10-light-390.png",
+      "title": "Interpret discovery without inventing truth"
+    },
+    {
+      "id": "ML-P01",
+      "family": "pca",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-P01-dark-1440.png",
+      "title": "New coordinates, not selected original columns"
+    },
+    {
+      "id": "ML-P01",
+      "family": "pca",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-P01-light-320.png",
+      "title": "New coordinates, not selected original columns"
+    },
+    {
+      "id": "ML-P01",
+      "family": "pca",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-P01-light-390.png",
+      "title": "New coordinates, not selected original columns"
+    },
+    {
+      "id": "ML-P05",
+      "family": "P05",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-P05-dark-1440.png",
+      "title": "Component weights and scores"
+    },
+    {
+      "id": "ML-P05",
+      "family": "P05",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-P05-light-320.png",
+      "title": "Component weights and scores"
+    },
+    {
+      "id": "ML-P05",
+      "family": "P05",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-P05-light-390.png",
+      "title": "Component weights and scores"
+    },
+    {
+      "id": "ML-P07",
+      "family": "P07",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-P07-dark-1440.png",
+      "title": "Equivalent signs and reconstruction"
+    },
+    {
+      "id": "ML-P07",
+      "family": "P07",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-P07-light-320.png",
+      "title": "Equivalent signs and reconstruction"
+    },
+    {
+      "id": "ML-P07",
+      "family": "P07",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-P07-light-390.png",
+      "title": "Equivalent signs and reconstruction"
+    },
+    {
+      "id": "ML-M04",
+      "family": "M04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-M04-dark-1440.png",
+      "title": "What changes outside this dataset?"
+    },
+    {
+      "id": "ML-M04",
+      "family": "M04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-M04-light-320.png",
+      "title": "What changes outside this dataset?"
+    },
+    {
+      "id": "ML-M04",
+      "family": "M04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-M04-light-390.png",
+      "title": "What changes outside this dataset?"
+    }
+  ],
+  "cardHashes": {
+    "ML-F01": "887bdb864fd5b88e3a4290339b0cc38b60437f9b0db40a06321b48864395fa7f",
+    "ML-F02": "020c039ec9f289209d2280bc74c7a5e80997e2b38d68dbfbc0df2043bbb2986f",
+    "ML-F03": "9d9444497ef0cc760a9218b50f85f7141e8d679262fe7df9b55501089c377731",
+    "ML-F04": "6e23ea20fe4b073603d40cf799c052ff47cbea0aff0be6b8a812536624bb57a7",
+    "ML-F05": "397a4934591bfb9a966ba866f292ad27cb52bb7b2bedf1560c4a71414f7c998b",
+    "ML-F06": "13d35e1b275d380c386357d5d89b59a487e654902db42e10ab05f264d4e69ff4",
+    "ML-F07": "85f4b68b19d6ccabc75d5ff42deab4e52bcf1b172d50d3ce1a34d9b314c03d34",
+    "ML-F08": "e949e767853534caf8e1eda3a6676f22831166e7102d4b8aca524d25e98ee942",
+    "ML-F09": "ad1431a91b1b83085b39ee0af51220ca07a1f0e73b57b3025650b04276d4241d",
+    "ML-F10": "3ead1d8221664b9aa6429bac803385240bb8e3c437ecd049195beb6a059446ef",
+    "ML-W01": "98ce338dcbcdb78c1649808a5b67ba15218eece1c67eb0210d17e1e237e6da2a",
+    "ML-W02": "b715350d3d28a58a889f5c250fa540b7ce276680cbdbc9a37337c95fdad2c9f5",
+    "ML-W03": "bfcea0a85b963c51321ec742a93751f2d74ea247e3c7551f034f365ffc6ac606",
+    "ML-W04": "446d8bd9dd7ddc00c6a308bcde1d7787ef7cdc7e9f4009de8a9331860b1a63fe",
+    "ML-W05": "be8745a2a765edebd4eeaeb00faa396ae2ca8760ace0d46c23dda53f9ee1d454",
+    "ML-W06": "e85ada98cc162cb0967397617b9f1496efd4acb0af471d167562aafe1c2a5808",
+    "ML-W07": "778144d21f0372fd514f7d7d5ba12a56f93839ddefdb7baa4ed202c4198b0883",
+    "ML-W08": "2e4e8e9f96982f4d495ee80ae29b8732bd35546e72442a3ab236ae5bf50b134f",
+    "ML-W09": "a918939b8a53d44019c8a4eb312356fb83a683dd1a2fcb7bc6df4e08d5cba781",
+    "ML-W10": "da91f0daa5e35b95d1bb452c187ae1a3b4d703de8da84d0c240091b4451a327d",
+    "ML-W11": "f5c8d120f18a2f48f915ba66ab127cae935663faaf5437b41739ef503595bca9",
+    "ML-W12": "e51fdb45b7dbd23b535f2ec1dbc9131e8349bc35ef8932d3e26d281c78a59259",
+    "ML-W13": "bb8dbf495254a79090c338b4715bfdc9747b02e7f35b19fafa74349634855d27",
+    "ML-W14": "6d596687e85b105d77476f4d4bae8926f6f77bb9fc2095d8de9948e21c82063a",
+    "ML-R01": "785557210e0f5e73abcdb5ec094fdd534c2b39bdba2d48be64a4675fe632bb13",
+    "ML-R02": "65ae2b76d353b9d46d2250134e6f67e78b586da2b87859d02dbf0af2790d3f9f",
+    "ML-R03": "6c6d7380d2ef63d7875d15a28ddfd0b8c45857527d660224771eecf7227d6a39",
+    "ML-R04": "d034d9668c491938672031d31093f609c8304c53614c63ab45821fdb328c6e65",
+    "ML-R05": "3e4ac909a4d2443a758bd097369f70cc4ef270501e7692e30d2a74eb3c529181",
+    "ML-R06": "3d734356f06fa01b483204dd4fccc883c52c9e9fceef9065bf11972ce7e85eeb",
+    "ML-R07": "635a10135bc43f03e2e89dac14e2becafc46780d04e715a5f50a9f6e3efb60e7",
+    "ML-R08": "e16f9aa050e0f32447bbe088095eb1b47c6d7aefd8be200091d7638e1d8b43a2",
+    "ML-R09": "4e4b961d8ecd47332afb54b5f4b338802aa4c6377cc2e4c76ef25fad87fe8496",
+    "ML-R10": "42ec658f73937bd18f2c75901f7b9aab81070b856ae627ce312d116f11bc36f8",
+    "ML-R11": "4713f4069d3f89cff10d4dc675f902227d0b5d297f7f69eb42d45f409e20d593",
+    "ML-C01": "933ab9d880a3216b525cdd1284285e1223905a81a0227f12d8d86fd8dc592f9e",
+    "ML-C02": "cbe5c15c78a4b6038bcaf82cc08b5ed9439c99f5966fac44027a2a7349f681ff",
+    "ML-C03": "d84b21af347e97ee76ded9a4abddc4ed3f9058447cb1e3e9bcaa68c4929bc327",
+    "ML-C04": "23b3b41ba530d726b0afada72129dc1f447e695bb8133ebcbc492870350e989b",
+    "ML-C05": "170aef26a15645fb9f5d5a0c6fd57acd164e44170e8f24745047c562c610ff4c",
+    "ML-C06": "0e6ff9791fbf9cddd7aeab3d1aa27076f79bb446f8e76a9c80220270851adf79",
+    "ML-C07": "0915c6d7a696e374a93292b614767c7799f7b32d19f847f4060bc0a3ec21180a",
+    "ML-C08": "2c84e39ada2df8b28507450e318914b2516be5f5072b57e410ed139fad357bd2",
+    "ML-C09": "fd163f7067b84b108054ce4f138dd2bbdc2df11ebc1f9f29d0c995e7380fe1b1",
+    "ML-C10": "e0241b3d4d59ea3d2c0dad37edb78e030806f182d592c2ada57e2c9552055f1c",
+    "ML-C11": "0288400577c66239d2747bed12b504e073380b5a1f4ec33934f1bba3b9e02955",
+    "ML-C12": "be25cd1559e3813485621c723c2b512ad14dbd743315bed2cc2155d375668ab2",
+    "ML-C13": "3ca5cba135590baf8a44283726c800b5f78b2fb995f6ff6a9696efddc99a7649",
+    "ML-C14": "c166a65fa1a75a066f647efabe9aedb1c407562183897ee1b7d8e85229ed3a0f",
+    "ML-C15": "0e9586abaca604ed32217db9e2c5498b305b1519e43feb23edaec0f64f7161bd",
+    "ML-C16": "6b97310f19a80bc448de0d88ccb1444b600ecd1cb053ee7e85e3ef42cbf4a8c8",
+    "ML-C17": "3024b7ce332f252e686209a6b199094af5bad90e405eb3573964f460cebfb5c8",
+    "ML-C18": "cf21356a9ea26e28e4b91e2963a194e81021ec47622ae98ad8fd7ccb9c971484",
+    "ML-C19": "4219c8423753fce57fd352a12fe116e5ea8dfac9d9616de579e5f9a086f45f91",
+    "ML-N01": "1192b8dadba7f92bd3f404f65bce0112f1f2abb32f7f4e1f2aba91dec9d96b78",
+    "ML-N02": "03ae7a8017d0a7af66adb73be60a7ee605ea8354fc906bff07d119b10a6fe31b",
+    "ML-N03": "1d8a563292f638123c9725725d56d96e0296b4bbb2c6707270e0f27b34f3ba9b",
+    "ML-N04": "eb7bfbfb9c14d76cada248bff27e39b6d991c621642d0c8bc417f5b341d33436",
+    "ML-N05": "4dd49e7480acdb069ed91f42eb19bdbadc781e4e56f7b8580e32f4aa42199d6d",
+    "ML-N06": "fe34875f85e153f090f6b2726e66d2eff63f54072301354e904aa604dfe5c9bc",
+    "ML-U01": "d7084a2237f3b3e603f14c1dcadf77f781c49c4e193b38f7d0229769cd29bce7",
+    "ML-U02": "55ce6ac918f5bda2a0f4926e739a266f37fc056ea968d48fe3f80b1689196186",
+    "ML-U03": "a20b227acb0289ca633e982a2cbfd7e4de0ba1afb5922650bd8949fff80b8128",
+    "ML-U04": "aaf260c31a72bf36d37eb4b816117e06ea4872516ce6a6b7820c409c2eab3581",
+    "ML-U05": "4e8d08223381de17c1e5976c1c336d25299d43cfb7d673ac7b2f0c187ed1cdd6",
+    "ML-U06": "6fa549276e3d621accef41e3d5ccd514d77d16d8ff006a97fbd6237af991cee1",
+    "ML-U07": "7503239021db4de548d6dc1be3bed65b3fc4831b3501496629c46c9318057764",
+    "ML-U08": "98bd97fde4c0e039afe504d0d2a0ae09e5aa6ac7f7a2283359d631d8c118992f",
+    "ML-U09": "5194048222e9c0b8312e235090bd4cd625613e8f157c6fe8e84debb7e57d676b",
+    "ML-U10": "52850051b5f488247914f68ac8afe22c71583a45074da0c74beb6c9c2a2eb484",
+    "ML-P01": "002082455ae6959662486d5717e897e540f4a1a17e27df0673ef3e709709a675",
+    "ML-P02": "3b95c3d38dc1098861fb0ff1e812c7bf6d548b5fa743b22af0348ff65cfdfb06",
+    "ML-P03": "083a3e7ae28a25f77f6f56d85a97c168868e9079170d38f401d2197bd32f0c8c",
+    "ML-P04": "ba6f284c188bab03b39d41194dbb7daa50598f92c4b0939fe5d9ea09504e518b",
+    "ML-P05": "2e92b7e4441a0fef8e2ece4c688bf154b5dda4d8e8dfdeae53d9cbf2cad71da3",
+    "ML-P06": "3181ef60fb766389a6ee57e99cdeacf0ce51b38b96ec422dee78b6f89a3a8891",
+    "ML-P07": "95855667e1a30f555ada55240894f076996436538ed7b7eda917ef68b876880b",
+    "ML-M01": "9647e08612f897c90b623354b104fc3bc209054319e685eeabbfd59a8e7e5e21",
+    "ML-M02": "872952bd4d8fff51929638c3f589042c80ff378bfc000d3f31de76de77d55d61",
+    "ML-M03": "ec1ce16f7618169111c11895af6d0d72fb40770d13546469fb218b4220311da6",
+    "ML-M04": "603ab19501a65a32d3fe7e0bc5f078779cba09c52adc8c3838e1f0d9e3dd5213"
+  },
+  "sourceHashes": {
+    "ml-learning/visuals.js": "ae039bf54d16ed463afda6a437bddf6bdd6ab3852cc593109bea494de6ea680b",
+    "ml-learning/learning.css": "30a2b07b25c2e18df93dd9df8052942197660c67f9025421218c13239f7becc4",
+    "ml-learning/app.js": "d5f618049a99425360e50bcd27fbda0f538e11fc6d5550cf17096f05bbfbdb0c"
+  }
+}

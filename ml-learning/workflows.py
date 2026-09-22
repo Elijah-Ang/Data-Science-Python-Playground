@@ -1,7 +1,10 @@
 """Complete workflow briefs and cumulative retrieval, with ordinary notebook Python."""
 import copy
+import json
+from pathlib import Path
 from authoring import CARDS,lesson,py,decide,reflect,workflow_contract
 from verticals import IMPORTS,check,SUPERVISED_CHECKS,REGRESSION_CHECKS,CLASSIFICATION_CHECKS,LINEAR,NEURAL,HIERARCHY,PCA,one_r
+from brief_groups import groups
 
 FLAGS=['chocolate','fruity','caramel','peanutyalmondy','nougat','crispedricewafer','hard','bar','pluribus']
 CHEM=['fixed acidity','volatile acidity','citric acid','residual sugar','chlorides','free sulfur dioxide','total sulfur dioxide','density','pH','sulphates','alcohol']
@@ -206,6 +209,7 @@ BRIEFS=[
 
 def challenges(specs):
     result=[]
+    inputs=json.loads((Path(__file__).parent/'inputs.json').read_text())
     for i,(spec,brief) in enumerate(zip(specs,BRIEFS)):
         title,key,models,question,planning,think,tools,approach=brief
         assert spec['id']=='X'+str(i+1).zfill(2)
@@ -219,9 +223,10 @@ def challenges(specs):
         s=DATA[key]
         if i==9:
             s={**DATA['candy_binary'],'numeric':['sugarpercent','pricepercent']}
-        prefix="import numpy as np\nimport pandas as pd\ndf=pd.read_csv("+repr(s['file'])+",sep="+repr(s.get('sep',','))+")\n"+s.get('prepare','')+"\n"
+        prepared=inputs['ML-'+spec['id']]
+        prefix="import numpy as np\nimport pandas as pd\ndf=pd.read_csv("+repr(prepared['file'])+")\n"
         exercise['solution']=prefix+exercise['solution']
-        exercise.update(id='ML-'+spec['id'],kind='python',preload=False,starter='# Write your workflow here.\n',task=question)
+        exercise.update(id='ML-'+spec['id'],dataset='ML-'+spec['id'],inputFile=prepared['file'],kind='python',preload=False,starter='# Write your workflow here.\n',task=question)
         if i==4:
             marker='# This solution nominates'
             ablation="""# Training-only contextual-feature ablation on identical folds.
@@ -245,11 +250,11 @@ ablation_results=cross_validate(measurement_model,X_train[measurement_columns],y
         deliverables=[dict(name=c['name'],contract='Interpretation' if c.get('selfReview') else 'Workflow condition',label=c['name'],requirement=c['message'],format='Self-review' if c.get('selfReview') else 'Run evidence',kind='self-review' if c.get('selfReview') else 'value') for c in exercise['checks']]
         minutes='45–60 minutes' if i in (3,14,15) else '40–50 minutes' if len(models)>1 else '30–45 minutes'
         result.append(dict(id='ML-'+spec['id'],deck='workflows',title=title,question=question,minutes=minutes,
-          family='activity',tags=models+(['discovery','profiles'] if i>=16 else ['validation','reference','final-test discipline']),
+          family=('time' if i==3 else 'regression' if i<3 else 'neural' if i in (14,15) else 'clustering' if i in (16,17) else 'pca' if i==18 else 'classification'),tags=models+(['discovery','profiles'] if i>=16 else ['validation','reference','final-test discipline']),
           models=models,prerequisites=['ML-'+d for d in spec['deps']],planning=[planning],hints=exercise['hints'],
-          inputs=[dict(name='df',file=s['file'],description=('Fixed, deterministic 600-row sample after deduplication.' if key=='Wine600' else 'Use the declared prepared population. ')+s.get('prepare',''),columns=s['numeric']+s['binary']+s['category'])],
+          inputs=[dict(prepared,name='df')],
           policies=['Keep target-derived inputs out of X.','Use training-only selection for prediction, or reference-free fitting for discovery.'],
-          deliverables=deliverables,deliverableType='Complete workflow and evidence',reference=exercise['solution'],
+          deliverables=deliverables,deliverableGroups=groups(exercise,i),deliverableType='Complete workflow and evidence',reference=exercise['solution'],
           explanationSteps=[think,approach,'Inspect the returned evidence and qualify the claim for the stated population.'],
           alternative='Equivalent ordinary Python is welcome. A defensible candidate or grouping need not match the solution’s choice; objective evidence must remain consistent.',
           exercise=exercise))

@@ -23,7 +23,7 @@ import weakref
 import numpy as np
 import pandas as pd
 
-RUNTIME_VERSION = 1
+RUNTIME_VERSION = 2
 MAX_TEXT = 24000
 MAX_EVENTS = 5000
 
@@ -103,14 +103,19 @@ class LearningTrace:
     def method(self,name):
         def decorate(original):
             @functools.wraps(original)
-            def call(estimator,x,*args,**kwargs):
+            def call(estimator,*args,**kwargs):
+                x=args[0] if args else kwargs.get('X')
                 rows=self.rows(x);depth=self.depth
                 if name in ('fit','fit_transform') and len(self.models)<MAX_EVENTS:
                     self.models[id(estimator)]=weakref.ref(estimator)
                 self.add(name,type(estimator).__name__,rows,depth)
+                event=self.events[-1] if not self.overflow else None
+                if event is not None:event['modelId']=id(estimator)
                 self.depth+=1
                 try:
-                    result=original(estimator,x,*args,**kwargs)
+                    result=original(estimator,*args,**kwargs)
+                    if event is not None and name in ('predict','predict_proba','decision_function') and depth==0:
+                        event['predictionHash']=hashlib.sha256(json.dumps(_plain(np.asarray(result)),sort_keys=True).encode()).hexdigest()
                     if name in ('fit','fit_transform') and type(estimator).__name__=='PCA':
                         self.pca_evidence[id(estimator)]=(weakref.ref(estimator),estimator.components_.tolist(),estimator.explained_variance_.tolist())
                     if name=='fit' and type(estimator).__name__=='KMeans':
@@ -136,13 +141,14 @@ class LearningTrace:
             return call
         return decorate
     def __enter__(self):
+        if 'sklearn' not in sys.modules:return self
         from sklearn import preprocessing,impute,compose,pipeline,linear_model,tree,neighbors,svm,naive_bayes,discriminant_analysis,neural_network,dummy,cluster,decomposition
         from sklearn.model_selection import _validation,GridSearchCV
         owners=[preprocessing.StandardScaler,preprocessing.OneHotEncoder,preprocessing.PolynomialFeatures,impute.SimpleImputer,compose.ColumnTransformer,compose.TransformedTargetRegressor,pipeline.Pipeline,linear_model.LinearRegression,linear_model.Ridge,linear_model.LogisticRegression,tree.DecisionTreeRegressor,tree.DecisionTreeClassifier,neighbors.KNeighborsClassifier,svm.SVC,naive_bayes.GaussianNB,naive_bayes.BernoulliNB,discriminant_analysis.LinearDiscriminantAnalysis,discriminant_analysis.QuadraticDiscriminantAnalysis,neural_network.MLPRegressor,neural_network.MLPClassifier,dummy.DummyRegressor,dummy.DummyClassifier,cluster.KMeans,decomposition.PCA,GridSearchCV]
         helper=sys.modules.get('ml_helpers')
         if helper:owners.extend([helper.OneRClassifier,helper.OneRPreprocessor])
         for owner in owners:
-            for name in ('fit','transform','fit_transform','predict','predict_proba'):
+            for name in ('fit','transform','fit_transform','predict','predict_proba','decision_function','set_params'):
                 if hasattr(owner,name):self.patch(owner,name,self.method(name))
         self.patch(_validation,'_fit_and_score',self.phase('cv'))
         self.patch(_validation,'_fit_and_predict',self.phase('oof'))
@@ -173,10 +179,35 @@ class LearningTrace:
         first=next((i for i,e in enumerate(self.events) if e['kind']=='validationFold'),len(self.events))
         return not any(e['kind'] in ('fit','fit_transform') and e['depth']==0 and e['estimator'] in preprocessors for e in self.events[:first])
     def final_after_selection(self):
-        exposures=[i for i,e in enumerate(self.events) if e['kind'].startswith('predict') and e['rows'] and set(e['rows'])&self.test_ids]
-        return bool(exposures) and not any(e['stage'] in ('cv','oof') for e in self.events[min(exposures)+1:])
+        exposures=[i for i,e in enumerate(self.events) if e['kind'] in ('predict','predict_proba','decision_function') and e['rows'] and set(e['rows'])&self.test_ids]
+        if not exposures or self.overflow:return False
+        later=self.events[min(exposures)+1:]
+        if any(e['stage'] in ('cv','oof') or e['kind'] in ('fit','fit_transform','set_params','selection') for e in later):return False
+        predictions=[self.events[i] for i in exposures if self.events[i]['depth']==0]
+        if len({e.get('modelId') for e in predictions})>1:return False
+        seen={}
+        for e in predictions:
+            key=(e['kind'],tuple(e['rows']))
+            if key in seen and seen[key]!=e.get('predictionHash'):return False
+            seen[key]=e.get('predictionHash')
+        return True
+
+class _SelectionBindings(ast.NodeTransformer):
+    """Record changes to the declared workflow choices, at execution time.
+
+    Fits/searches/set_params and prediction identities cover estimator aliases;
+    these bindings additionally cover choosing an already fitted candidate.
+    """
+    choices={'chosen_name','selected','final_model','model','search'}
+    def visit_Assign(self,node):
+        self.generic_visit(node)
+        names={n.id for target in node.targets for n in ast.walk(target) if isinstance(n,ast.Name)}
+        if not names & self.choices:return node
+        note=ast.Expr(ast.Call(ast.Name('_learning_selection',ast.Load()),[],[]))
+        return [node,ast.copy_location(note,node)]
 
 def _figure_evidence():
+    if 'matplotlib.pyplot' not in sys.modules:return []
     import matplotlib.pyplot as plt
     figures=[]
     for number in plt.get_fignums()[:4]:
@@ -202,10 +233,11 @@ def run_learning(request):
     if os.path.isdir(source_data):shutil.copytree(source_data,os.path.join(workspace.name,'data'))
     try:
         os.chdir(workspace.name)
-        import matplotlib
-        matplotlib.use('Agg')
-        import matplotlib.pyplot as plt
-        plt.close('all')
+        if 'matplotlib' in sys.modules:
+            import matplotlib
+            matplotlib.use('Agg')
+            import matplotlib.pyplot as plt
+            plt.close('all')
         if exercise.get('dataset') and exercise.get('preload',True):ns['df']=learning_fixture(exercise['dataset'])
         exec(exercise.get('setup',''),ns)
         test_ids=[];expected_folds=[]
@@ -229,6 +261,8 @@ def run_learning(request):
             warnings.simplefilter('always')
             try:
                 tree=ast.parse(code,mode='exec')
+                ns['_learning_selection']=lambda:trace.add('selection','declared workflow choice',None,0)
+                tree=ast.fix_missing_locations(_SelectionBindings().visit(tree))
                 if tree.body and isinstance(tree.body[-1],ast.Expr):
                     last=tree.body.pop();exec(compile(tree,'<learner>','exec'),ns)
                     ns['_last_output']=eval(compile(ast.Expression(last.value),'<learner>','eval'),ns)
@@ -256,7 +290,7 @@ def run_learning(request):
             if rows not in row_keys:
                 row_keys[rows]=len(row_sets);row_sets.append(rows)
             events.append({k:v for k,v in event.items() if k!='rows'}|{'rowSet':row_keys[rows]})
-        receipt['provenance']={'events':events,'rowSets':row_sets,'truncated':trace.overflow,'testExposed':any(e['kind'].startswith('predict') and e['rows'] and set(e['rows'])&trace.test_ids for e in trace.events)}
+        receipt['provenance']={'events':events,'rowSets':row_sets,'truncated':trace.overflow,'testExposed':any(e['kind'] in ('predict','predict_proba','decision_function') and e['rows'] and set(e['rows'])&trace.test_ids for e in trace.events)}
         receipt['downloads']=[]
         for filename in sorted(os.listdir('.')):
             if not filename.lower().endswith(('.png','.svg','.csv')) or not os.path.isfile(filename):continue
@@ -270,7 +304,7 @@ def run_learning(request):
         ns.clear()
         if 'check_ns' in locals():check_ns.clear()
         if trace:trace.lineage.clear()
-        if 'plt' in locals():plt.close('all')
+        if 'matplotlib.pyplot' in sys.modules:sys.modules['matplotlib.pyplot'].close('all')
         os.chdir(previous_directory)
         workspace.cleanup()
         gc.collect()

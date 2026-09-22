@@ -1,0 +1,2429 @@
+{
+  "ML-X01": {
+    "name": "ML-X01 challenge input",
+    "file": "data/ml-learning/ML-X01.csv",
+    "sourceFile": "data/gapminder.csv",
+    "sourceHash": "714f8a23e9d7429052a1e9b45d20b9adeb64f46c067ed46320e68182e4607b6d",
+    "sha256": "d4d20c6d4d88f619ccd3eb89ad9096d8fb5253f26bf9321260b3f2a1ae216077",
+    "rows": 142,
+    "columns": [
+      "country",
+      "year",
+      "gdpPercap",
+      "lifeExp"
+    ],
+    "dtypes": {
+      "country": "object",
+      "year": "int64",
+      "gdpPercap": "float64",
+      "lifeExp": "float64"
+    },
+    "preview": [
+      [
+        "Afghanistan",
+        2007,
+        974.5803384,
+        43.828
+      ],
+      [
+        "Albania",
+        2007,
+        5937.029526,
+        76.423
+      ],
+      [
+        "Algeria",
+        2007,
+        6223.367465,
+        72.301
+      ],
+      [
+        "Angola",
+        2007,
+        4797.231267,
+        42.731
+      ],
+      [
+        "Argentina",
+        2007,
+        12779.37964,
+        75.32
+      ],
+      [
+        "Australia",
+        2007,
+        34435.36744,
+        81.235
+      ],
+      [
+        "Austria",
+        2007,
+        36126.4927,
+        79.829
+      ],
+      [
+        "Bahrain",
+        2007,
+        29796.04834,
+        75.635
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "lifeExp",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. Each row is one country in 2007."
+  },
+  "ML-X02": {
+    "name": "ML-X02 challenge input",
+    "file": "data/ml-learning/ML-X02.csv",
+    "sourceFile": "data/candy-power-ranking.csv",
+    "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sha256": "b917b9b0aaaee85e84161081128241a6d219d537b4bd18017ecf13eadae7102a",
+    "rows": 85,
+    "columns": [
+      "sugarpercent",
+      "winpercent"
+    ],
+    "dtypes": {
+      "sugarpercent": "float64",
+      "winpercent": "float64"
+    },
+    "preview": [
+      [
+        0.73199999,
+        66.971725
+      ],
+      [
+        0.60399997,
+        67.602936
+      ],
+      [
+        0.011,
+        32.261086
+      ],
+      [
+        0.011,
+        46.116505
+      ],
+      [
+        0.90600002,
+        52.341465
+      ],
+      [
+        0.465,
+        50.347546
+      ],
+      [
+        0.60399997,
+        56.914547
+      ],
+      [
+        0.31299999,
+        23.417824
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "winpercent",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X03": {
+    "name": "ML-X03 challenge input",
+    "file": "data/ml-learning/ML-X03.csv",
+    "sourceFile": "data/candy-power-ranking.csv",
+    "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sha256": "493998f13d7226449119ae825c552234f39e0dca4ba912d5cdcc3722f6768d7a",
+    "rows": 85,
+    "columns": [
+      "sugarpercent",
+      "pricepercent",
+      "chocolate",
+      "fruity",
+      "caramel",
+      "peanutyalmondy",
+      "nougat",
+      "crispedricewafer",
+      "hard",
+      "bar",
+      "pluribus",
+      "winpercent"
+    ],
+    "dtypes": {
+      "sugarpercent": "float64",
+      "pricepercent": "float64",
+      "chocolate": "int64",
+      "fruity": "int64",
+      "caramel": "int64",
+      "peanutyalmondy": "int64",
+      "nougat": "int64",
+      "crispedricewafer": "int64",
+      "hard": "int64",
+      "bar": "int64",
+      "pluribus": "int64",
+      "winpercent": "float64"
+    },
+    "preview": [
+      [
+        0.73199999,
+        0.86000001,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        66.971725
+      ],
+      [
+        0.60399997,
+        0.51099998,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        67.602936
+      ],
+      [
+        0.011,
+        0.116,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        32.261086
+      ],
+      [
+        0.011,
+        0.51099998,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        46.116505
+      ],
+      [
+        0.90600002,
+        0.51099998,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        52.341465
+      ],
+      [
+        0.465,
+        0.76700002,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        50.347546
+      ],
+      [
+        0.60399997,
+        0.76700002,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        56.914547
+      ],
+      [
+        0.31299999,
+        0.51099998,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        23.417824
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "winpercent",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X04": {
+    "name": "ML-X04 challenge input",
+    "file": "data/ml-learning/ML-X04.csv",
+    "sourceFile": "data/seoul-bike.csv",
+    "sourceHash": "d2f7a0f0ba95e82678ead794429a18a7f696aa3b82c9b9ec34ec47806ff0767b",
+    "sha256": "27790af6fc3b1e9ab43e65d72fb758bb28cfec4fc28f984cafde8bd63eeaee9f",
+    "rows": 8760,
+    "columns": [
+      "Date",
+      "Temperature(°C)",
+      "Humidity(%)",
+      "Wind speed (m/s)",
+      "Visibility (10m)",
+      "Solar Radiation (MJ/m2)",
+      "Rainfall(mm)",
+      "Snowfall (cm)",
+      "Holiday",
+      "Hour",
+      "Seasons",
+      "Rented Bike Count"
+    ],
+    "dtypes": {
+      "Date": "object",
+      "Temperature(°C)": "float64",
+      "Humidity(%)": "int64",
+      "Wind speed (m/s)": "float64",
+      "Visibility (10m)": "int64",
+      "Solar Radiation (MJ/m2)": "float64",
+      "Rainfall(mm)": "float64",
+      "Snowfall (cm)": "float64",
+      "Holiday": "object",
+      "Hour": "int64",
+      "Seasons": "object",
+      "Rented Bike Count": "int64"
+    },
+    "preview": [
+      [
+        "01/12/2017",
+        -5.2,
+        37,
+        2.2,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        0,
+        "Winter",
+        254
+      ],
+      [
+        "01/12/2017",
+        -5.5,
+        38,
+        0.8,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        1,
+        "Winter",
+        204
+      ],
+      [
+        "01/12/2017",
+        -6.0,
+        39,
+        1.0,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        2,
+        "Winter",
+        173
+      ],
+      [
+        "01/12/2017",
+        -6.2,
+        40,
+        0.9,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        3,
+        "Winter",
+        107
+      ],
+      [
+        "01/12/2017",
+        -6.0,
+        36,
+        2.3,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        4,
+        "Winter",
+        78
+      ],
+      [
+        "01/12/2017",
+        -6.4,
+        37,
+        1.5,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        5,
+        "Winter",
+        100
+      ],
+      [
+        "01/12/2017",
+        -6.6,
+        35,
+        1.3,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        6,
+        "Winter",
+        181
+      ],
+      [
+        "01/12/2017",
+        -7.4,
+        38,
+        0.9,
+        2000,
+        0.0,
+        0.0,
+        0.0,
+        "No Holiday",
+        7,
+        "Winter",
+        460
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "Rented Bike Count",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. Rows are already ordered by parsed Date then Hour. Keep this chronological order; reserve the last 20%."
+  },
+  "ML-X05": {
+    "name": "ML-X05 challenge input",
+    "file": "data/ml-learning/ML-X05.csv",
+    "sourceFile": "data/palmer-penguins.csv",
+    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sha256": "6ae46cde86a27871486aa7a62a3f8c409778d78e088e6fbb00b6b5b013717595",
+    "rows": 333,
+    "columns": [
+      "bill_length_mm",
+      "bill_depth_mm",
+      "flipper_length_mm",
+      "body_mass_g",
+      "sex",
+      "island",
+      "year",
+      "species"
+    ],
+    "dtypes": {
+      "bill_length_mm": "float64",
+      "bill_depth_mm": "float64",
+      "flipper_length_mm": "int64",
+      "body_mass_g": "int64",
+      "sex": "object",
+      "island": "object",
+      "year": "int64",
+      "species": "object"
+    },
+    "preview": [
+      [
+        39.1,
+        18.7,
+        181,
+        3750,
+        "male",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        39.5,
+        17.4,
+        186,
+        3800,
+        "female",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        40.3,
+        18.0,
+        195,
+        3250,
+        "female",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        36.7,
+        19.3,
+        193,
+        3450,
+        "female",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        39.3,
+        20.6,
+        190,
+        3650,
+        "male",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        38.9,
+        17.8,
+        181,
+        3625,
+        "female",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        39.2,
+        19.6,
+        195,
+        4675,
+        "male",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ],
+      [
+        41.1,
+        17.6,
+        182,
+        3200,
+        "female",
+        "Torgersen",
+        2007,
+        "Adelie"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "species",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X06": {
+    "name": "ML-X06 challenge input",
+    "file": "data/ml-learning/ML-X06.csv",
+    "sourceFile": "data/car-evaluation.csv",
+    "sourceHash": "8aef39dfcdf8824bcfe507300efc412ae0aa0ed13770658f2e8875ed32f1e221",
+    "sha256": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
+    "rows": 1728,
+    "columns": [
+      "buying",
+      "maintenance",
+      "doors",
+      "persons",
+      "luggage_boot",
+      "safety",
+      "acceptability"
+    ],
+    "dtypes": {
+      "buying": "object",
+      "maintenance": "object",
+      "doors": "object",
+      "persons": "object",
+      "luggage_boot": "object",
+      "safety": "object",
+      "acceptability": "object"
+    },
+    "preview": [
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "med",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "high",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "med",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "high",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "big",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "big",
+        "med",
+        "unacc"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "acceptability",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X07": {
+    "name": "ML-X07 challenge input",
+    "file": "data/ml-learning/ML-X07.csv",
+    "sourceFile": "data/palmer-penguins.csv",
+    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sha256": "f08c3275b518ca0d84264e74625679c16fa20974ce9e20dc3e4815823b295df7",
+    "rows": 333,
+    "columns": [
+      "bill_length_mm",
+      "bill_depth_mm",
+      "flipper_length_mm",
+      "body_mass_g",
+      "species"
+    ],
+    "dtypes": {
+      "bill_length_mm": "float64",
+      "bill_depth_mm": "float64",
+      "flipper_length_mm": "int64",
+      "body_mass_g": "int64",
+      "species": "object"
+    },
+    "preview": [
+      [
+        39.1,
+        18.7,
+        181,
+        3750,
+        "Adelie"
+      ],
+      [
+        39.5,
+        17.4,
+        186,
+        3800,
+        "Adelie"
+      ],
+      [
+        40.3,
+        18.0,
+        195,
+        3250,
+        "Adelie"
+      ],
+      [
+        36.7,
+        19.3,
+        193,
+        3450,
+        "Adelie"
+      ],
+      [
+        39.3,
+        20.6,
+        190,
+        3650,
+        "Adelie"
+      ],
+      [
+        38.9,
+        17.8,
+        181,
+        3625,
+        "Adelie"
+      ],
+      [
+        39.2,
+        19.6,
+        195,
+        4675,
+        "Adelie"
+      ],
+      [
+        41.1,
+        17.6,
+        182,
+        3200,
+        "Adelie"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "species",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X08": {
+    "name": "ML-X08 challenge input",
+    "file": "data/ml-learning/ML-X08.csv",
+    "sourceFile": "data/breast-cancer.csv",
+    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sha256": "940477a05f3c1cbdee1bfa90a223f2dc6daaf0587c6f0fb6b0e27872d3067ac5",
+    "rows": 569,
+    "columns": [
+      "radius_mean",
+      "texture_mean",
+      "smoothness_mean",
+      "concavity_mean",
+      "symmetry_mean",
+      "diagnosis"
+    ],
+    "dtypes": {
+      "radius_mean": "float64",
+      "texture_mean": "float64",
+      "smoothness_mean": "float64",
+      "concavity_mean": "float64",
+      "symmetry_mean": "float64",
+      "diagnosis": "object"
+    },
+    "preview": [
+      [
+        17.99,
+        10.38,
+        0.1184,
+        0.3001,
+        0.2419,
+        "M"
+      ],
+      [
+        20.57,
+        17.77,
+        0.08474,
+        0.0869,
+        0.1812,
+        "M"
+      ],
+      [
+        19.69,
+        21.25,
+        0.1096,
+        0.1974,
+        0.2069,
+        "M"
+      ],
+      [
+        11.42,
+        20.38,
+        0.1425,
+        0.2414,
+        0.2597,
+        "M"
+      ],
+      [
+        20.29,
+        14.34,
+        0.1003,
+        0.198,
+        0.1809,
+        "M"
+      ],
+      [
+        12.45,
+        15.7,
+        0.1278,
+        0.1578,
+        0.2087,
+        "M"
+      ],
+      [
+        18.25,
+        19.98,
+        0.09463,
+        0.1127,
+        0.1794,
+        "M"
+      ],
+      [
+        13.71,
+        20.83,
+        0.1189,
+        0.09366,
+        0.2196,
+        "M"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "diagnosis",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X09": {
+    "name": "ML-X09 challenge input",
+    "file": "data/ml-learning/ML-X09.csv",
+    "sourceFile": "data/car-evaluation.csv",
+    "sourceHash": "8aef39dfcdf8824bcfe507300efc412ae0aa0ed13770658f2e8875ed32f1e221",
+    "sha256": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
+    "rows": 1728,
+    "columns": [
+      "buying",
+      "maintenance",
+      "doors",
+      "persons",
+      "luggage_boot",
+      "safety",
+      "acceptability"
+    ],
+    "dtypes": {
+      "buying": "object",
+      "maintenance": "object",
+      "doors": "object",
+      "persons": "object",
+      "luggage_boot": "object",
+      "safety": "object",
+      "acceptability": "object"
+    },
+    "preview": [
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "med",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "high",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "med",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "high",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "big",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "big",
+        "med",
+        "unacc"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "acceptability",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X10": {
+    "name": "ML-X10 challenge input",
+    "file": "data/ml-learning/ML-X10.csv",
+    "sourceFile": "data/candy-power-ranking.csv",
+    "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sha256": "1d5c474787d972e7db8d42ed4236d39b831b49fc8da76bb7e231ca72ce8adaea",
+    "rows": 85,
+    "columns": [
+      "sugarpercent",
+      "pricepercent",
+      "chocolate",
+      "fruity",
+      "caramel",
+      "peanutyalmondy",
+      "nougat",
+      "crispedricewafer",
+      "hard",
+      "bar",
+      "pluribus",
+      "winpercent",
+      "popular"
+    ],
+    "dtypes": {
+      "sugarpercent": "float64",
+      "pricepercent": "float64",
+      "chocolate": "int64",
+      "fruity": "int64",
+      "caramel": "int64",
+      "peanutyalmondy": "int64",
+      "nougat": "int64",
+      "crispedricewafer": "int64",
+      "hard": "int64",
+      "bar": "int64",
+      "pluribus": "int64",
+      "winpercent": "float64",
+      "popular": "object"
+    },
+    "preview": [
+      [
+        0.73199999,
+        0.86000001,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        66.971725,
+        "50% or above"
+      ],
+      [
+        0.60399997,
+        0.51099998,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        67.602936,
+        "50% or above"
+      ],
+      [
+        0.011,
+        0.116,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        32.261086,
+        "below 50%"
+      ],
+      [
+        0.011,
+        0.51099998,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        46.116505,
+        "below 50%"
+      ],
+      [
+        0.90600002,
+        0.51099998,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        52.341465,
+        "50% or above"
+      ],
+      [
+        0.465,
+        0.76700002,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        50.347546,
+        "50% or above"
+      ],
+      [
+        0.60399997,
+        0.76700002,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        56.914547,
+        "50% or above"
+      ],
+      [
+        0.31299999,
+        0.51099998,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        23.417824,
+        "below 50%"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "popular",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. popular is 50% or above when winpercent >= 50, otherwise below 50%. winpercent is retained only for the leakage-detection task: exclude it from X."
+  },
+  "ML-X11": {
+    "name": "ML-X11 challenge input",
+    "file": "data/ml-learning/ML-X11.csv",
+    "sourceFile": "data/breast-cancer.csv",
+    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sha256": "940477a05f3c1cbdee1bfa90a223f2dc6daaf0587c6f0fb6b0e27872d3067ac5",
+    "rows": 569,
+    "columns": [
+      "radius_mean",
+      "texture_mean",
+      "smoothness_mean",
+      "concavity_mean",
+      "symmetry_mean",
+      "diagnosis"
+    ],
+    "dtypes": {
+      "radius_mean": "float64",
+      "texture_mean": "float64",
+      "smoothness_mean": "float64",
+      "concavity_mean": "float64",
+      "symmetry_mean": "float64",
+      "diagnosis": "object"
+    },
+    "preview": [
+      [
+        17.99,
+        10.38,
+        0.1184,
+        0.3001,
+        0.2419,
+        "M"
+      ],
+      [
+        20.57,
+        17.77,
+        0.08474,
+        0.0869,
+        0.1812,
+        "M"
+      ],
+      [
+        19.69,
+        21.25,
+        0.1096,
+        0.1974,
+        0.2069,
+        "M"
+      ],
+      [
+        11.42,
+        20.38,
+        0.1425,
+        0.2414,
+        0.2597,
+        "M"
+      ],
+      [
+        20.29,
+        14.34,
+        0.1003,
+        0.198,
+        0.1809,
+        "M"
+      ],
+      [
+        12.45,
+        15.7,
+        0.1278,
+        0.1578,
+        0.2087,
+        "M"
+      ],
+      [
+        18.25,
+        19.98,
+        0.09463,
+        0.1127,
+        0.1794,
+        "M"
+      ],
+      [
+        13.71,
+        20.83,
+        0.1189,
+        0.09366,
+        0.2196,
+        "M"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "diagnosis",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X12": {
+    "name": "ML-X12 challenge input",
+    "file": "data/ml-learning/ML-X12.csv",
+    "sourceFile": "data/candy-power-ranking.csv",
+    "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sha256": "7b4f204bbea1c47c1572ff52b252742ab5b87dfe856568d7f8e4a538bbd92b8f",
+    "rows": 85,
+    "columns": [
+      "chocolate",
+      "fruity",
+      "caramel",
+      "peanutyalmondy",
+      "nougat",
+      "crispedricewafer",
+      "hard",
+      "bar",
+      "pluribus",
+      "popular"
+    ],
+    "dtypes": {
+      "chocolate": "int64",
+      "fruity": "int64",
+      "caramel": "int64",
+      "peanutyalmondy": "int64",
+      "nougat": "int64",
+      "crispedricewafer": "int64",
+      "hard": "int64",
+      "bar": "int64",
+      "pluribus": "int64",
+      "popular": "object"
+    },
+    "preview": [
+      [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        "50% or above"
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        "50% or above"
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        "below 50%"
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        "below 50%"
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        "50% or above"
+      ],
+      [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        "50% or above"
+      ],
+      [
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        "50% or above"
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        "below 50%"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "popular",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. popular is 50% or above when original winpercent >= 50, otherwise below 50%. The target-derived winpercent column has been removed; use the nine flags as X."
+  },
+  "ML-X13": {
+    "name": "ML-X13 challenge input",
+    "file": "data/ml-learning/ML-X13.csv",
+    "sourceFile": "data/car-evaluation.csv",
+    "sourceHash": "8aef39dfcdf8824bcfe507300efc412ae0aa0ed13770658f2e8875ed32f1e221",
+    "sha256": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
+    "rows": 1728,
+    "columns": [
+      "buying",
+      "maintenance",
+      "doors",
+      "persons",
+      "luggage_boot",
+      "safety",
+      "acceptability"
+    ],
+    "dtypes": {
+      "buying": "object",
+      "maintenance": "object",
+      "doors": "object",
+      "persons": "object",
+      "luggage_boot": "object",
+      "safety": "object",
+      "acceptability": "object"
+    },
+    "preview": [
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "med",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "small",
+        "high",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "med",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "med",
+        "high",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "big",
+        "low",
+        "unacc"
+      ],
+      [
+        "vhigh",
+        "vhigh",
+        "2",
+        "2",
+        "big",
+        "med",
+        "unacc"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "acceptability",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X14": {
+    "name": "ML-X14 challenge input",
+    "file": "data/ml-learning/ML-X14.csv",
+    "sourceFile": "data/palmer-penguins.csv",
+    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sha256": "f08c3275b518ca0d84264e74625679c16fa20974ce9e20dc3e4815823b295df7",
+    "rows": 333,
+    "columns": [
+      "bill_length_mm",
+      "bill_depth_mm",
+      "flipper_length_mm",
+      "body_mass_g",
+      "species"
+    ],
+    "dtypes": {
+      "bill_length_mm": "float64",
+      "bill_depth_mm": "float64",
+      "flipper_length_mm": "int64",
+      "body_mass_g": "int64",
+      "species": "object"
+    },
+    "preview": [
+      [
+        39.1,
+        18.7,
+        181,
+        3750,
+        "Adelie"
+      ],
+      [
+        39.5,
+        17.4,
+        186,
+        3800,
+        "Adelie"
+      ],
+      [
+        40.3,
+        18.0,
+        195,
+        3250,
+        "Adelie"
+      ],
+      [
+        36.7,
+        19.3,
+        193,
+        3450,
+        "Adelie"
+      ],
+      [
+        39.3,
+        20.6,
+        190,
+        3650,
+        "Adelie"
+      ],
+      [
+        38.9,
+        17.8,
+        181,
+        3625,
+        "Adelie"
+      ],
+      [
+        39.2,
+        19.6,
+        195,
+        4675,
+        "Adelie"
+      ],
+      [
+        41.1,
+        17.6,
+        182,
+        3200,
+        "Adelie"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "species",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X15": {
+    "name": "ML-X15 challenge input",
+    "file": "data/ml-learning/ML-X15.csv",
+    "sourceFile": "data/wine-quality.csv",
+    "sourceHash": "21ef5e115c7e7bcc2309ee10a2704736529f8e41e062adc44a38bb2ff091131d",
+    "sha256": "3c107d3f1db747e5615d2d9943e784f80899eb9b9bf77f0a416f58d7a14ffdd4",
+    "rows": 600,
+    "columns": [
+      "fixed acidity",
+      "volatile acidity",
+      "citric acid",
+      "residual sugar",
+      "chlorides",
+      "free sulfur dioxide",
+      "total sulfur dioxide",
+      "density",
+      "pH",
+      "sulphates",
+      "alcohol",
+      "quality"
+    ],
+    "dtypes": {
+      "fixed acidity": "float64",
+      "volatile acidity": "float64",
+      "citric acid": "float64",
+      "residual sugar": "float64",
+      "chlorides": "float64",
+      "free sulfur dioxide": "float64",
+      "total sulfur dioxide": "float64",
+      "density": "float64",
+      "pH": "float64",
+      "sulphates": "float64",
+      "alcohol": "float64",
+      "quality": "int64"
+    },
+    "preview": [
+      [
+        5.3,
+        0.32,
+        0.12,
+        6.6,
+        0.043,
+        22.0,
+        141.0,
+        0.9937,
+        3.36,
+        0.6,
+        10.4,
+        6
+      ],
+      [
+        6.4,
+        0.3,
+        0.27,
+        4.4,
+        0.055,
+        17.0,
+        135.0,
+        0.9925,
+        3.23,
+        0.44,
+        12.2,
+        6
+      ],
+      [
+        6.5,
+        0.22,
+        0.32,
+        2.2,
+        0.028,
+        36.0,
+        92.0,
+        0.99076,
+        3.27,
+        0.59,
+        11.9,
+        7
+      ],
+      [
+        8.0,
+        0.24,
+        0.48,
+        6.8,
+        0.047,
+        13.0,
+        134.0,
+        0.99616,
+        3.23,
+        0.7,
+        10.0,
+        5
+      ],
+      [
+        8.9,
+        0.29,
+        0.35,
+        1.9,
+        0.067,
+        25.0,
+        57.0,
+        0.997,
+        3.18,
+        1.36,
+        10.3,
+        6
+      ],
+      [
+        6.6,
+        0.21,
+        0.39,
+        2.3,
+        0.041,
+        31.0,
+        102.0,
+        0.99221,
+        3.22,
+        0.58,
+        10.9,
+        7
+      ],
+      [
+        8.8,
+        0.24,
+        0.54,
+        2.5,
+        0.083,
+        25.0,
+        57.0,
+        0.9983,
+        3.39,
+        0.54,
+        9.2,
+        5
+      ],
+      [
+        5.4,
+        0.15,
+        0.32,
+        2.5,
+        0.037,
+        10.0,
+        51.0,
+        0.98878,
+        3.04,
+        0.58,
+        12.6,
+        6
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "quality",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. Exact seed-42 sample of 600 rows after source deduplication; do not sample or deduplicate it again."
+  },
+  "ML-X16": {
+    "name": "ML-X16 challenge input",
+    "file": "data/ml-learning/ML-X16.csv",
+    "sourceFile": "data/breast-cancer.csv",
+    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sha256": "940477a05f3c1cbdee1bfa90a223f2dc6daaf0587c6f0fb6b0e27872d3067ac5",
+    "rows": 569,
+    "columns": [
+      "radius_mean",
+      "texture_mean",
+      "smoothness_mean",
+      "concavity_mean",
+      "symmetry_mean",
+      "diagnosis"
+    ],
+    "dtypes": {
+      "radius_mean": "float64",
+      "texture_mean": "float64",
+      "smoothness_mean": "float64",
+      "concavity_mean": "float64",
+      "symmetry_mean": "float64",
+      "diagnosis": "object"
+    },
+    "preview": [
+      [
+        17.99,
+        10.38,
+        0.1184,
+        0.3001,
+        0.2419,
+        "M"
+      ],
+      [
+        20.57,
+        17.77,
+        0.08474,
+        0.0869,
+        0.1812,
+        "M"
+      ],
+      [
+        19.69,
+        21.25,
+        0.1096,
+        0.1974,
+        0.2069,
+        "M"
+      ],
+      [
+        11.42,
+        20.38,
+        0.1425,
+        0.2414,
+        0.2597,
+        "M"
+      ],
+      [
+        20.29,
+        14.34,
+        0.1003,
+        0.198,
+        0.1809,
+        "M"
+      ],
+      [
+        12.45,
+        15.7,
+        0.1278,
+        0.1578,
+        0.2087,
+        "M"
+      ],
+      [
+        18.25,
+        19.98,
+        0.09463,
+        0.1127,
+        0.1794,
+        "M"
+      ],
+      [
+        13.71,
+        20.83,
+        0.1189,
+        0.09366,
+        0.2196,
+        "M"
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": "diagnosis",
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required."
+  },
+  "ML-X17": {
+    "name": "ML-X17 challenge input",
+    "file": "data/ml-learning/ML-X17.csv",
+    "sourceFile": "data/palmer-penguins.csv",
+    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sha256": "2a4767f91f980defcb450f599853cabff3e5b8e8f87572eafc7ecaf7c11ce013",
+    "rows": 333,
+    "columns": [
+      "bill_length_mm",
+      "bill_depth_mm",
+      "flipper_length_mm",
+      "body_mass_g"
+    ],
+    "dtypes": {
+      "bill_length_mm": "float64",
+      "bill_depth_mm": "float64",
+      "flipper_length_mm": "int64",
+      "body_mass_g": "int64"
+    },
+    "preview": [
+      [
+        39.1,
+        18.7,
+        181,
+        3750
+      ],
+      [
+        39.5,
+        17.4,
+        186,
+        3800
+      ],
+      [
+        40.3,
+        18.0,
+        195,
+        3250
+      ],
+      [
+        36.7,
+        19.3,
+        193,
+        3450
+      ],
+      [
+        39.3,
+        20.6,
+        190,
+        3650
+      ],
+      [
+        38.9,
+        17.8,
+        181,
+        3625
+      ],
+      [
+        39.2,
+        19.6,
+        195,
+        4675
+      ],
+      [
+        41.1,
+        17.6,
+        182,
+        3200
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": null,
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. Fitting input contains measurements only; species/diagnosis reference labels are not supplied or required."
+  },
+  "ML-X18": {
+    "name": "ML-X18 challenge input",
+    "file": "data/ml-learning/ML-X18.csv",
+    "sourceFile": "data/breast-cancer.csv",
+    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sha256": "e705ad35f5cfaa0997081e1d51a5064b14985ace464de53078d28f64eaad94e3",
+    "rows": 569,
+    "columns": [
+      "radius_mean",
+      "texture_mean",
+      "smoothness_mean",
+      "concavity_mean",
+      "symmetry_mean"
+    ],
+    "dtypes": {
+      "radius_mean": "float64",
+      "texture_mean": "float64",
+      "smoothness_mean": "float64",
+      "concavity_mean": "float64",
+      "symmetry_mean": "float64"
+    },
+    "preview": [
+      [
+        17.99,
+        10.38,
+        0.1184,
+        0.3001,
+        0.2419
+      ],
+      [
+        20.57,
+        17.77,
+        0.08474,
+        0.0869,
+        0.1812
+      ],
+      [
+        19.69,
+        21.25,
+        0.1096,
+        0.1974,
+        0.2069
+      ],
+      [
+        11.42,
+        20.38,
+        0.1425,
+        0.2414,
+        0.2597
+      ],
+      [
+        20.29,
+        14.34,
+        0.1003,
+        0.198,
+        0.1809
+      ],
+      [
+        12.45,
+        15.7,
+        0.1278,
+        0.1578,
+        0.2087
+      ],
+      [
+        18.25,
+        19.98,
+        0.09463,
+        0.1127,
+        0.1794
+      ],
+      [
+        13.71,
+        20.83,
+        0.1189,
+        0.09366,
+        0.2196
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": null,
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. This is the 569-row measurement population. Creating the reproducible sample of at most 500 rows remains part of the hierarchy task. Fitting input contains measurements only; species/diagnosis reference labels are not supplied or required."
+  },
+  "ML-X19": {
+    "name": "ML-X19 challenge input",
+    "file": "data/ml-learning/ML-X19.csv",
+    "sourceFile": "data/breast-cancer.csv",
+    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sha256": "afc2d85af29047847e275bd8033b2f28f945a09bc50fad5ac8b80db50ed71683",
+    "rows": 569,
+    "columns": [
+      "radius_mean",
+      "texture_mean",
+      "perimeter_mean",
+      "area_mean",
+      "smoothness_mean",
+      "compactness_mean",
+      "concavity_mean",
+      "concave_points_mean",
+      "symmetry_mean",
+      "fractal_dimension_mean",
+      "radius_se",
+      "texture_se",
+      "perimeter_se",
+      "area_se",
+      "smoothness_se",
+      "compactness_se",
+      "concavity_se",
+      "concave_points_se",
+      "symmetry_se",
+      "fractal_dimension_se",
+      "radius_worst",
+      "texture_worst",
+      "perimeter_worst",
+      "area_worst",
+      "smoothness_worst",
+      "compactness_worst",
+      "concavity_worst",
+      "concave_points_worst",
+      "symmetry_worst",
+      "fractal_dimension_worst"
+    ],
+    "dtypes": {
+      "radius_mean": "float64",
+      "texture_mean": "float64",
+      "perimeter_mean": "float64",
+      "area_mean": "float64",
+      "smoothness_mean": "float64",
+      "compactness_mean": "float64",
+      "concavity_mean": "float64",
+      "concave_points_mean": "float64",
+      "symmetry_mean": "float64",
+      "fractal_dimension_mean": "float64",
+      "radius_se": "float64",
+      "texture_se": "float64",
+      "perimeter_se": "float64",
+      "area_se": "float64",
+      "smoothness_se": "float64",
+      "compactness_se": "float64",
+      "concavity_se": "float64",
+      "concave_points_se": "float64",
+      "symmetry_se": "float64",
+      "fractal_dimension_se": "float64",
+      "radius_worst": "float64",
+      "texture_worst": "float64",
+      "perimeter_worst": "float64",
+      "area_worst": "float64",
+      "smoothness_worst": "float64",
+      "compactness_worst": "float64",
+      "concavity_worst": "float64",
+      "concave_points_worst": "float64",
+      "symmetry_worst": "float64",
+      "fractal_dimension_worst": "float64"
+    },
+    "preview": [
+      [
+        17.99,
+        10.38,
+        122.8,
+        1001.0,
+        0.1184,
+        0.2776,
+        0.3001,
+        0.1471,
+        0.2419,
+        0.07871,
+        1.095,
+        0.9053,
+        8.589,
+        153.4,
+        0.006399,
+        0.04904,
+        0.05373,
+        0.01587,
+        0.03003,
+        0.006193,
+        25.38,
+        17.33,
+        184.6,
+        2019.0,
+        0.1622,
+        0.6656,
+        0.7119,
+        0.2654,
+        0.4601,
+        0.1189
+      ],
+      [
+        20.57,
+        17.77,
+        132.9,
+        1326.0,
+        0.08474,
+        0.07864,
+        0.0869,
+        0.07017,
+        0.1812,
+        0.05667,
+        0.5435,
+        0.7339,
+        3.398,
+        74.08,
+        0.005225,
+        0.01308,
+        0.0186,
+        0.0134,
+        0.01389,
+        0.003532,
+        24.99,
+        23.41,
+        158.8,
+        1956.0,
+        0.1238,
+        0.1866,
+        0.2416,
+        0.186,
+        0.275,
+        0.08902
+      ],
+      [
+        19.69,
+        21.25,
+        130.0,
+        1203.0,
+        0.1096,
+        0.1599,
+        0.1974,
+        0.1279,
+        0.2069,
+        0.05999,
+        0.7456,
+        0.7869,
+        4.585,
+        94.03,
+        0.00615,
+        0.04006,
+        0.03832,
+        0.02058,
+        0.0225,
+        0.004571,
+        23.57,
+        25.53,
+        152.5,
+        1709.0,
+        0.1444,
+        0.4245,
+        0.4504,
+        0.243,
+        0.3613,
+        0.08758
+      ],
+      [
+        11.42,
+        20.38,
+        77.58,
+        386.1,
+        0.1425,
+        0.2839,
+        0.2414,
+        0.1052,
+        0.2597,
+        0.09744,
+        0.4956,
+        1.156,
+        3.445,
+        27.23,
+        0.00911,
+        0.07458,
+        0.05661,
+        0.01867,
+        0.05963,
+        0.009208,
+        14.91,
+        26.5,
+        98.87,
+        567.7,
+        0.2098,
+        0.8663,
+        0.6869,
+        0.2575,
+        0.6638,
+        0.173
+      ],
+      [
+        20.29,
+        14.34,
+        135.1,
+        1297.0,
+        0.1003,
+        0.1328,
+        0.198,
+        0.1043,
+        0.1809,
+        0.05883,
+        0.7572,
+        0.7813,
+        5.438,
+        94.44,
+        0.01149,
+        0.02461,
+        0.05688,
+        0.01885,
+        0.01756,
+        0.005115,
+        22.54,
+        16.67,
+        152.2,
+        1575.0,
+        0.1374,
+        0.205,
+        0.4,
+        0.1625,
+        0.2364,
+        0.07678
+      ],
+      [
+        12.45,
+        15.7,
+        82.57,
+        477.1,
+        0.1278,
+        0.17,
+        0.1578,
+        0.08089,
+        0.2087,
+        0.07613,
+        0.3345,
+        0.8902,
+        2.217,
+        27.19,
+        0.00751,
+        0.03345,
+        0.03672,
+        0.01137,
+        0.02165,
+        0.005082,
+        15.47,
+        23.75,
+        103.4,
+        741.6,
+        0.1791,
+        0.5249,
+        0.5355,
+        0.1741,
+        0.3985,
+        0.1244
+      ],
+      [
+        18.25,
+        19.98,
+        119.6,
+        1040.0,
+        0.09463,
+        0.109,
+        0.1127,
+        0.074,
+        0.1794,
+        0.05742,
+        0.4467,
+        0.7732,
+        3.18,
+        53.91,
+        0.004314,
+        0.01382,
+        0.02254,
+        0.01039,
+        0.01369,
+        0.002179,
+        22.88,
+        27.66,
+        153.2,
+        1606.0,
+        0.1442,
+        0.2576,
+        0.3784,
+        0.1932,
+        0.3063,
+        0.08368
+      ],
+      [
+        13.71,
+        20.83,
+        90.2,
+        577.9,
+        0.1189,
+        0.1645,
+        0.09366,
+        0.05985,
+        0.2196,
+        0.07451,
+        0.5835,
+        1.377,
+        3.856,
+        50.96,
+        0.008805,
+        0.03029,
+        0.02488,
+        0.01448,
+        0.01486,
+        0.005412,
+        17.06,
+        28.14,
+        110.6,
+        897.0,
+        0.1654,
+        0.3682,
+        0.2678,
+        0.1556,
+        0.3196,
+        0.1151
+      ]
+    ],
+    "index": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "delimiter": ",",
+    "target": null,
+    "description": "Ready to load: comma-delimited UTF-8, header row, no saved index. No filtering or target construction is required. Fitting input contains measurements only; species/diagnosis reference labels are not supplied or required."
+  }
+}

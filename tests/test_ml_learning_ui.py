@@ -14,9 +14,10 @@ with sync_playwright() as p:
     browser=getattr(p,args.engine).launch()
     page=browser.new_page(viewport={'width':1440,'height':1000})
     page.on('pageerror',lambda e:errors.append(str(e)))
-    page.add_init_script("""window.__mlRunPosts=0;window.__mlWrites=[];
+    page.add_init_script("""window.__mlRunPosts=0;window.__mlWorkerCount=0;window.__mlWrites=[];
       const NativeWorker=Worker;
       window.Worker=class extends NativeWorker{
+        constructor(...args){super(...args);window.__mlWorkerCount++;}
         postMessage(message,...rest){if(message.type==='run')window.__mlRunPosts++;return super.postMessage(message,...rest);}
       };
       const original=Storage.prototype.setItem;
@@ -31,13 +32,40 @@ with sync_playwright() as p:
     assert page.get_by_role('heading',name='Refreshing something?').is_visible()
     assert 'within the relevant pathway' in page.locator('.ml-core-note').inner_text()
     assert page.locator('.ml-index-item').count()==17
+    assert page.locator('[aria-current="location"]').inner_text().strip()=='ML'
     registry=page.evaluate('MLLearning.curriculum')
+    # Concept-only routes must not even instantiate a Python worker.
+    assert page.evaluate('__mlRunPosts')==0
+    assert page.evaluate('__mlWorkerCount')==0
+    for index,label in enumerate(['Follow','Change','Transfer']):
+        page.evaluate('(hash)=>location.hash=hash',f'#foundations/ML-F04/{index}')
+        page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=f'ML-F04-{index+1}')
+        assert page.locator('.foundation-task').is_visible()
+        if label=='Follow':
+            assert page.locator('section.ml-syntax .ml-syntax-parts').is_visible()
+            assert page.locator('.teaching-example').get_attribute('open') is not None
+        else:
+            assert page.locator('details.ml-syntax').get_attribute('open') is None
+            assert not page.locator('.ml-syntax-parts').is_visible()
+            if label=='Change':assert page.locator('.teaching-example').get_attribute('open') is None
+            else:assert page.locator('.teaching-example').count()==0
+
+    page.evaluate("location.hash='#foundations/ML-F01/0'")
+    page.wait_for_function("MLLearning.activity?.id==='ML-F01-1'")
+    page.locator('input[name="mlChoice"]').first.check()
+    page.locator('#mlConceptCheck').click()
+    assert page.locator('#mlConceptResult').inner_text()
+    assert page.evaluate('__mlWorkerCount')==0
     # Every card and every challenge must render from its canonical route.
     for card in registry['cards']:
         page.evaluate('(hash)=>location.hash=hash','#'+card['deck']+'/'+card['id']+'/0')
         page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=card['exercises'][0]['id'])
         assert page.get_by_role('heading',name=card['title'],exact=True).is_visible()
-        if card['kind']=='teaching':assert page.locator('.ml-concept svg').count()==1
+        if card['kind']=='teaching':
+            assert page.locator('.ml-concept svg').count()==1
+            assert page.locator('.ml-concept figcaption').inner_text().startswith('Schematic')
+            clipped=page.locator('.ml-concept svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox();return b.x<0||b.y<0||b.x+b.width>560.5||b.y+b.height>235.5}).map(n=>n.textContent)')
+            assert not clipped,(card['id'],clipped)
         if card['id']=='ML-F-K1':
             design=page.locator('.ml-validation-design').inner_text()
             assert '20%' in design and '42' in design and 'folds' not in design
@@ -46,6 +74,10 @@ with sync_playwright() as p:
         page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=challenge['id'])
         assert page.get_by_role('heading',name=challenge['title'],exact=True).is_visible()
         assert page.locator('#case-help').get_attribute('open') is None
+        assert page.locator('.foundation-breadcrumb').inner_text().split()==['Machine','Learning','/','Workflow','Challenges','/',challenge['id']]
+        assert page.locator('.ml-deliverable-groups > li').count()==4
+        assert page.get_by_role('link',name='Download challenge input CSV',exact=True).get_attribute('href')==challenge['exercise']['inputFile']
+        assert page.get_by_role('link',name='Original source dataset',exact=True).count()==1
         assert 'fit(' not in page.locator('#mlEditor').input_value()
         if challenge['exercise'].get('protect'):
             design=page.locator('.ml-validation-design').inner_text()

@@ -25,6 +25,7 @@ const files = [
   "ml-learning/receipts.js",
   "ml-learning/worker.js",
   "ml-learning/datasets.json",
+  "ml-learning/inputs.json",
   "mascot.css",
   "mascot.js",
   "tutorial.html",
