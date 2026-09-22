@@ -13,12 +13,14 @@ with sync_playwright() as p:
  page.goto(args.base_url+'/playground.html'+runtime_query)
  assert page.locator('.route-tools .learn-refresh').count()==1
  assert page.locator('.data-route-actions #moreTasksToggle').count()==1
+ page.wait_for_function("getComputedStyle(document.querySelector('.learn-refresh')).backgroundImage!=='none'")
  learn_style=page.locator('.learn-refresh').evaluate('(e)=>{const s=getComputedStyle(e),b=e.getBoundingClientRect();return {background:s.backgroundImage,radius:s.borderRadius,width:b.width,height:b.height}}')
  assert 'linear-gradient' in learn_style['background'] and 'url(' not in learn_style['background']
  assert float(learn_style['radius'].replace('px',''))>=18 and learn_style['width']>=162 and learn_style['height']>=36
  assert page.locator('.learn-refresh img').count()==0
  assert page.locator('.learn-refresh-icon svg, .learn-refresh-rays svg').count()==2
  page.locator('.learn-refresh').click();page.wait_for_url('**/data-foundations.html')
+ page.wait_for_selector('.foundation-deck')
  assert page.locator('.foundation-deck').count()==3
  assert page.locator('.mode-switch a').count()==4
  assert page.locator('.mode-switch a[href="data-foundations.html"]').count()==0
@@ -88,6 +90,15 @@ with sync_playwright() as p:
  # Native engines coalesce edit groups differently; both must support undo/redo.
  page.keyboard.press('ControlOrMeta+z');assert editor.input_value()!='ab  '
  page.keyboard.press('ControlOrMeta+Shift+z');assert editor.input_value()=='ab  '
+ # Exercise the documented setRangeText fallback, including consecutive indents.
+ page.evaluate('()=>{window.originalEditorCommand=document.execCommand;document.execCommand=()=>false;}')
+ editor.fill('ab');editor.focus();editor.press('End');editor.press('Tab');editor.press('Tab')
+ assert editor.input_value()=='ab      '
+ page.keyboard.press('ControlOrMeta+z');assert editor.input_value()=='ab  '
+ page.keyboard.press('ControlOrMeta+z');assert editor.input_value()=='ab'
+ page.keyboard.press('ControlOrMeta+Shift+z');assert editor.input_value()=='ab  '
+ page.keyboard.press('ControlOrMeta+Shift+z');assert editor.input_value()=='ab      '
+ page.evaluate('()=>{document.execCommand=originalEditorCommand;}')
  editor.fill('');page.keyboard.press('Tab');assert editor.input_value()=='    '
  page.keyboard.press('Shift+Tab');assert editor.input_value()==''
  page.keyboard.press('Escape');page.keyboard.press('Tab');assert page.locator('#runExercise').evaluate('(e)=>document.activeElement===e')

@@ -22,13 +22,14 @@ with sync_playwright() as pw:
  page.evaluate("""()=>{
   const animate=Element.prototype.animate;
   window.heldPoseAnimations=[];
-  Element.prototype.animate=function(...args){
+  window.holdPoseAnimations=()=>{window.heldPoseAnimations=[];Element.prototype.animate=function(...args){
    const animation=animate.apply(this,args);
    if(this.matches('.mascot-layer')){
     animation.pause();animation.currentTime=150;heldPoseAnimations.push(animation);
    }
    return animation;
-  };
+  };};
+  holdPoseAnimations();
   window.restorePoseAnimation=()=>{Element.prototype.animate=animate;heldPoseAnimations.forEach(a=>a.play());};
  }""")
  cta.focus()
@@ -48,7 +49,9 @@ with sync_playwright() as pw:
  # A leave during a blend queues the return instead of snapping an active image.
  page.locator('.tour-button').focus();page.mouse.move(0,0)
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
+ page.evaluate('holdPoseAnimations()')
  cta.hover();page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="blending"');page.mouse.move(0,0)
+ page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
  report['checks'].append('Real overlapping layers, transform/opacity-only motion, fixed viewport, focus and queued hover reactions')
  # The original WebGL scene is already verified above and by its own regression.

@@ -20,6 +20,11 @@ function indentation(value,start,end,outdent=false){
 }
 function attach(editor,run,leave){
  let leaveOnTab=false;
+ let internalEdit=false,undoEdits=[],redoEdits=[];
+ const snapshot=()=>({value:editor.value,start:editor.selectionStart,end:editor.selectionEnd});
+ const bound=stack=>{while(stack.length>20||stack.reduce((n,e)=>n+e.before.value.length+e.after.value.length,0)>200000)stack.shift();};
+ const restore=state=>{editor.value=state.value;editor.setSelectionRange(state.start,state.end);editor.dispatchEvent(new Event('input',{bubbles:true}));};
+ editor.addEventListener('input',()=>{if(!internalEdit){undoEdits=[];redoEdits=[];}});
  editor.addEventListener('blur',()=>{leaveOnTab=false;});
  editor.addEventListener('keydown',event=>{
   if(['Shift','Control','Alt','Meta'].includes(event.key))return;
@@ -27,24 +32,43 @@ function attach(editor,run,leave){
   if(event.key==='Tab'&&leaveOnTab){leaveOnTab=false;if(leave){event.preventDefault();leave(event.shiftKey);}return;}
   leaveOnTab=false;
   if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();run();return;}
-  // WebKit ports do not all map the platform shortcut to native textarea history.
-  // Use that same history explicitly for the shared Data/ML editor.
+  // Some WebKit ports fall back to setRangeText, which creates no native undo item.
+  // Keep only bounded indentation edits in this active editor, never in storage.
   if(event.key.toLowerCase()==='z'&&(event.ctrlKey||event.metaKey)&&!event.altKey){
-   if(document.execCommand(event.shiftKey?'redo':'undo'))event.preventDefault();
+   const redo=event.shiftKey,from=redo?redoEdits:undoEdits,to=redo?undoEdits:redoEdits;
+   const entry=from[from.length-1],before=editor.value;
+   const matching=entry&&before===(redo?entry.before.value:entry.after.value);
+   internalEdit=true;
+   try{
+    if(!matching||entry.native)document.execCommand(redo?'redo':'undo');
+    if(editor.value!==before){
+     if(matching&&editor.value===(redo?entry.after.value:entry.before.value)){from.pop();to.push(entry);}
+     else{undoEdits=[];redoEdits=[];}
+     event.preventDefault();
+    }else if(matching){
+     from.pop();to.push(entry);restore(redo?entry.after:entry.before);event.preventDefault();
+    }
+   }finally{internalEdit=false;}
    return;
   }
   if(event.key!=='Tab'||event.ctrlKey||event.metaKey||event.altKey)return;
   event.preventDefault();
+  const before=snapshot();
   const edit=indentation(editor.value,editor.selectionStart,editor.selectionEnd,event.shiftKey);
   const top=editor.scrollTop,left=editor.scrollLeft;
   editor.setSelectionRange(edit.from,edit.to);
   // Native insertion retains the browser's undo history; setRangeText is a fallback.
-  if(!document.execCommand('insertText',false,edit.text)){
-   editor.setRangeText(edit.text,edit.from,edit.to,'end');
-  }
-  editor.setSelectionRange(edit.start,edit.end);
-  editor.scrollTop=top;editor.scrollLeft=left;
-  editor.dispatchEvent(new Event('input',{bubbles:true}));
+  internalEdit=true;
+  try{
+   const native=!!document.execCommand('insertText',false,edit.text);
+   if(!native){
+    editor.setRangeText(edit.text,edit.from,edit.to,'end');
+   }
+   editor.setSelectionRange(edit.start,edit.end);
+   editor.scrollTop=top;editor.scrollLeft=left;
+   editor.dispatchEvent(new Event('input',{bubbles:true}));
+   if(before.value!==editor.value){undoEdits.push({before,after:snapshot(),native});bound(undoEdits);redoEdits=[];}
+  }finally{internalEdit=false;}
  });
 }
 const api={indentation,attach};
