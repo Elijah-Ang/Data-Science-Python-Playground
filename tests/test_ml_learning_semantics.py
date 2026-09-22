@@ -26,6 +26,7 @@ def accepted(id,code,label):
     assert all(c['status'] in ('correct','self-review') for c in r['checks']),(label,r['checks'])
     print('Accepted:',label,flush=True)
 linear=activities['ML-W-K1-1']['solution']
+rejected('ML-W-K1-1',linear.replace('prepare = ColumnTransformer',"y_train=pd.Series(np.roll(y_train.to_numpy(),1),index=y_train.index)\nprepare = ColumnTransformer"),'misaligned training targets')
 rejected('ML-W-K1-1',linear.replace('model = Pipeline',"leaking=StandardScaler().fit(X[['distance','weight']])\nmodel = Pipeline"),'fitting preprocessing before the split boundary')
 rejected('ML-W-K1-1',linear.replace('model = Pipeline',"leaking=StandardScaler().fit(X_train[['distance','weight']])\nmodel = Pipeline"),'fitting preparation once before cross-validation')
 rejected('ML-W-K1-1',linear.replace('folds = KFold(n_splits=5, shuffle=True, random_state=42)','folds = KFold(n_splits=5, shuffle=True, random_state=43)'),'inconsistent fold contract')

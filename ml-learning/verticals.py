@@ -12,6 +12,7 @@ def check(name, test, message):
     return dict(name=name, test=test, message=message)
 
 SUPERVISED_CHECKS = [
+    check('Aligned split inputs and targets','X_train.equals(X.loc[X_train.index]) and X_test.equals(X.loc[X_test.index]) and y_train.equals(y.loc[X_train.index]) and y_test.equals(y.loc[X_test.index])','Preserve the feature rows, target values and row order together through the split.'),
     check('Protected final rows','trace.no_test_fit()','Fit preprocessing, candidates and references on training rows only.'),
     check('Observable training provenance','trace.verified_fits()','Keep row identity through dataframe/pipeline APIs so fitting can be verified.'),
     check('Cross-validation','trace.phase_present("cv")','Compare training-only validation folds before final evaluation.'),

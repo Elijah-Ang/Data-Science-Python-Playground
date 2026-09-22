@@ -16,9 +16,17 @@ with sync_playwright() as p:
         errors = []
         motion_messages = []
         page.on('pageerror', lambda e: errors.append(str(e)))
-        page.on('console', lambda message: motion_messages.append(message.text) if '[Landing motion]' in message.text else None)
+        def record_motion(message):
+            if '[Landing motion]' not in message.text:return
+            motion_messages.append(message.text)
+            for value in message.args:
+                stack=value.evaluate('(value)=>value?.stack || null')
+                if stack:motion_messages.append(stack)
+        page.on('console', record_motion)
         for attempt in range(3):
-            page.goto(args.base_url) if attempt == 0 else page.reload()
+            page.goto(args.base_url,wait_until='domcontentloaded') if attempt == 0 else page.reload(wait_until='domcontentloaded')
+            # Inspect the on-screen scene, including the below-fold portrait layout.
+            page.locator('[data-scene]').scroll_into_view_if_needed()
             try:
                 page.wait_for_function("document.querySelector('[data-scene]').dataset.motion === 'ready'",timeout=90000)
             except Exception:

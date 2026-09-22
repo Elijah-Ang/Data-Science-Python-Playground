@@ -139,7 +139,7 @@ print('Final RMSE:',final_rmse)
     checks+=[
         check('Declared features and target','X.equals(df['+repr(columns)+']) and y.equals(df['+repr(s['target'])+'])','Use precisely the declared population, legitimate feature columns and target.'),
         check('Candidate coverage','set(cv_results.index)==set('+repr(models)+') and len(selected)=='+str(len(models)),'Evaluate each requested candidate on the common validation design.'),
-        check('Nomination','chosen_name in selected','Nominate a supported candidate before final testing.'),
+        check('Nomination','chosen_name in selected and type(final_model.named_steps["model"]).__name__==type(selected[chosen_name].named_steps["model"]).__name__','Fit the nominated model family before final testing; the reported choice must match the final estimator.'),
         dict(name='Interpretation',selfReview=True,message='Explain the question, validation/reference evidence, selection rationale and limitations. Model choice and prose are self-review; a complex model is not automatically better.')
     ]
     classes={'simple_linear':'LinearRegression','multiple_linear':'LinearRegression','polynomial':'Ridge','regression_tree':'DecisionTreeRegressor','classification_tree':'DecisionTreeClassifier','logistic':'LogisticRegression','svm_cls':'SVC','knn_cls':'KNeighborsClassifier','lda':'LinearDiscriminantAnalysis','qda':'QuadraticDiscriminantAnalysis','mlp_reg':'TransformedTargetRegressor','mlp_cls':'MLPClassifier','naive_bayes':'GaussianNB' if s['numeric'] else 'BernoulliNB'}
