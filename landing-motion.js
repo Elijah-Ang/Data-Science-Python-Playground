@@ -25,6 +25,7 @@
       uniform float amount;
       uniform float portrait;
       void main(){
+        uv=position;
         vec2 p=position*size, d=vec2(0.);
         for(int i=0;i<32;i++){
           vec4 z=zones[i];
@@ -41,7 +42,6 @@
           d+=vec2(-(p.x-455.)*.04,p.y*.025)*tree;
         }
         vec2 outp=(p+d*amount)/size;
-        uv=p/size;
         gl_Position=vec4(outp.x*2.-1.,1.-outp.y*2.,0.,1.);
       }`;
     const fragment=`
@@ -51,7 +51,7 @@
       uniform sampler2D untouched;
       uniform vec2 size;
       uniform float time,amount,portrait;
-      uniform vec4 eyes[4];
+      uniform vec4 eyes[3];
       float ellipse(vec2 p,vec4 e){return 1.-smoothstep(.7,1.,length((p-e.xy)/e.zw));}
       void main(){
         vec2 px=uv*size;
@@ -72,8 +72,8 @@
         vec4 color=texture2D(picture,lookup);
         float shimmer=sin(px.y*.24-time*3.8+sin(px.x*.05))*sin(px.x*.047+time*.7);
         color.rgb+=vec3(.02,.055,.065)*shimmer*water*blue*amount;
-        for(int i=0;i<4;i++){
-          if(i==1||i==3||(portrait>.5&&i==2))continue;
+        for(int i=0;i<3;i++){
+          if(i==1||(portrait>.5&&i==2))continue;
           vec4 eye=eyes[i];
           float phase=mod(time+float(i)*1.27,5.1+float(i)*.31);
           float blink=smoothstep(0.,.10,phase)*(1.-smoothstep(.13,.25,phase));
@@ -367,12 +367,7 @@
         cat.image.getContext('2d').drawImage(cleanCat,216,51,991,1136,0,0,cw,ch);
         if(own!==token)return;
         actors=prepared.actors;
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();
-        // Verify after layout and the first animation frame have settled. Some
-        // WebKit graphics backends expose an empty initial drawing buffer.
-        await new Promise(resolve=>requestAnimationFrame(resolve));
-        if(own!==token)return;
-        resize();draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes.slice(0,12)));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }
     function draw(){if(!loaded)return;regions.forEach((r,i)=>{const wave=Math.sin(time*Math.PI*2/r.period+r.phase);moves.set([r.dx*wave,r.dy*Math.sin(time*Math.PI*2/r.period+r.phase+.4),r.angle*wave,0],i*4);});gl.uniform4fv(locations['moves[0]'],moves);gl.uniform1f(locations.time,time+1.8);gl.uniform1f(locations.amount,state.motion);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,vertexCount);drawActors();}

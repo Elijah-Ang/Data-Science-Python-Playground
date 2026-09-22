@@ -20,7 +20,7 @@ with sync_playwright() as p:
             const vectors=WebGLRenderingContext.prototype.uniform4fv;
             WebGLRenderingContext.prototype.uniform4fv=function(loc,values){window.landUniforms[locations.get(loc)]=Array.from(values);return vectors.call(this,loc,values);};
             const draw=WebGLRenderingContext.prototype.drawArrays;
-            let first=true;
+            let first=false;
             WebGLRenderingContext.prototype.drawArrays=function(...args){
                 if(first){first=false;return;}
                 return draw.apply(this,args);
@@ -47,14 +47,15 @@ with sync_playwright() as p:
                     const program=g.getParameter(g.CURRENT_PROGRAM);
                     const alpha=(w,h)=>{const p=new Uint8Array(w*h*4);g.readPixels(0,0,w,h,g.RGBA,g.UNSIGNED_BYTE,p);let visible=0;for(let i=3;i<p.length;i+=4)if(p[i]>24)visible++;const center=(Math.floor(h/2)*w+Math.floor(w/2))*4;return {visible,total:w*h,error:g.getError(),center:Array.from(p.slice(center,center+4))};};
                     const result={initial:alpha(c.width,c.height),uniforms:{}};
-                    for(const name of ['size','amount','portrait','time'])result.uniforms[name]=g.getUniform(program,g.getUniformLocation(program,name));
+                    for(const name of ['size','amount','portrait','time','picture','untouched'])result.uniforms[name]=g.getUniform(program,g.getUniformLocation(program,name));
                     const fb=g.createFramebuffer();g.bindFramebuffer(g.FRAMEBUFFER,fb);
-                    result.textures=[];
+                    result.textures=[];let rawPicture;
                     for(let unit=0;unit<2;unit++){
                         g.activeTexture(g.TEXTURE0+unit);
                         const tex=g.getParameter(g.TEXTURE_BINDING_2D);
                         g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
-                        result.textures.push({status:g.checkFramebufferStatus(g.FRAMEBUFFER),alpha:alpha(941,1672)});
+                        if(unit===0){rawPicture=new Uint8Array(941*1672*4);g.readPixels(0,0,941,1672,g.RGBA,g.UNSIGNED_BYTE,rawPicture);}
+                        result.textures.push({min:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER),mag:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER),wrap:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_WRAP_S),status:g.checkFramebufferStatus(g.FRAMEBUFFER),alpha:alpha(941,1672)});
                     }
                     g.bindFramebuffer(g.FRAMEBUFFER,null);g.deleteFramebuffer(fb);
                     g.uniform1f(g.getUniformLocation(program,'amount'),0);
@@ -64,6 +65,7 @@ with sync_playwright() as p:
                     g.uniform1f(g.getUniformLocation(program,'portrait'),0);
                     g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
                     result.landscapeShader=alpha(c.width,c.height);
+                    result.afterPortrait={amount:g.getUniform(program,g.getUniformLocation(program,'amount')),picture:g.getUniform(program,g.getUniformLocation(program,'picture'))};
                     g.uniform1f(g.getUniformLocation(program,'portrait'),1);
                     const shaders=g.getAttachedShaders(program);
                     const vert=shaders.find(s=>g.getShaderParameter(s,g.SHADER_TYPE)===g.VERTEX_SHADER);
@@ -98,6 +100,11 @@ with sync_playwright() as p:
                         result.variants[name]={linked:g.getProgramParameter(test,g.LINK_STATUS),alpha:alpha(c.width,c.height)};
                         g.deleteProgram(test);g.deleteShader(f);
                     }
+                    g.useProgram(program);g.activeTexture(g.TEXTURE0);
+                    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,941,1672,0,g.RGBA,g.UNSIGNED_BYTE,rawPicture);
+                    g.uniform1i(g.getUniformLocation(program,'picture'),0);
+                    g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                    result.rawUploaded=alpha(c.width,c.height);
                     return result;
                 }"""),flush=True)
                 print({'engine':args.engine,'viewport':[width,height],'attempt':attempt,'motion':page.locator('[data-scene]').get_attribute('data-motion'),'messages':motion_messages,'errors':errors},flush=True)
