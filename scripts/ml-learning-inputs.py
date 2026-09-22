@@ -50,7 +50,7 @@ def assets():
         decoded=pd.read_csv(io.StringIO(text))
         preview=json.loads(decoded.head(8).to_json(orient='split',date_format='iso'))
         result[id]=dict(name=id+' challenge input',file=path,sourceFile=spec['file'],
-            sourceHash=hashlib.sha256((ROOT/spec['file']).read_bytes()).hexdigest(),
+            sourceHash=hashlib.sha256((ROOT/spec['file']).read_text().encode()).hexdigest(),sourceHashEncoding='UTF-8 with LF line endings',
             sha256=hashlib.sha256(text.encode()).hexdigest(),rows=len(decoded),columns=list(decoded),
             dtypes={c:str(t) for c,t in decoded.dtypes.items()},preview=preview['data'],index=preview['index'],
             delimiter=',',target=target,description=notes)

@@ -16,7 +16,7 @@ Corrections include city-level versus individual causal interpretation in R-R1, 
 
 ## Prepared challenge inputs
 
-Each challenge loads `data/ml-learning/ML-Xnn.csv`; `ml-learning/inputs.json` records exact SHA-256, row count, column order, inferred dtypes, delimiter, target, preview and original-source hash. Original datasets remain separate provenance links. The generator's `--check` reconstructs every asset, and `test_ml_learning_inputs.py` independently decodes and checks all 19 contracts.
+Each challenge loads `data/ml-learning/ML-Xnn.csv`; `ml-learning/inputs.json` records exact SHA-256, row count, column order, inferred dtypes, delimiter, target, preview and original-source hash (UTF-8 with LF-normalized line endings, independent of Git checkout settings). Original datasets remain separate provenance links. The generator's `--check` reconstructs every asset, and `test_ml_learning_inputs.py` independently decodes and checks all 19 contracts.
 
 Wine600 is the exact fixed deduplicated sample. Gapminder is the prepared 2007 country population. Seoul is already chronological. Candy popular is explicitly derived at winpercent >= 50: X10 deliberately retains the forbidden source for its leakage task; X12 removes it. Discovery inputs contain measurements only. Ward's file contains all 569 five-feature observations because constructing the reproducible 500-row sample is explicitly part of that task. No interpretation-only labels are needed by these briefs, so none are supplied.
 

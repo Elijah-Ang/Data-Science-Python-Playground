@@ -1,6 +1,6 @@
 # Prepared Workflow Challenge input inventory
 
-Every asset is comma-delimited UTF-8 with a header and no saved dataframe index. Exact ordered columns, stored types, target, first-eight-row preview, row count and full SHA-256 are in [inputs.json](../ml-learning/inputs.json). The reconstruction and independent decode tests verify all of these, not just the totals.
+Every asset is comma-delimited UTF-8 with a header and no saved dataframe index. Exact ordered columns, stored types, target, first-eight-row preview, row count and full SHA-256 are in [inputs.json](../ml-learning/inputs.json). The reconstruction and independent decode tests verify all of these, not just the totals. Original-source hashes normalize text line endings to LF so Windows/macOS Git checkout settings cannot change provenance; challenge-asset hashes still cover the exact downloadable bytes.
 
 | Challenge input | Rows | Columns | Target | SHA-256 prefix |
 |---|---:|---:|---|---|

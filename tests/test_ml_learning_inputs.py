@@ -10,6 +10,8 @@ assert set(inputs)=={c['id'] for c in r['challenges']}
 for c in r['challenges']:
  m=inputs[c['id']];raw=(ROOT/m['file']).read_bytes();df=pd.read_csv(io.BytesIO(raw),sep=m['delimiter'])
  assert hashlib.sha256(raw).hexdigest()==m['sha256']
+ assert m['sourceHashEncoding']=='UTF-8 with LF line endings'
+ assert hashlib.sha256((ROOT/m['sourceFile']).read_text().encode()).hexdigest()==m['sourceHash']
  assert len(df)==m['rows'] and list(df)==m['columns']
  assert {c:str(t) for c,t in df.dtypes.items()}==m['dtypes']
  assert json.loads(df.head(8).to_json(orient='split'))['data']==m['preview']

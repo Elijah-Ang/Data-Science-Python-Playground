@@ -4,6 +4,7 @@
     "file": "data/ml-learning/ML-X01.csv",
     "sourceFile": "data/gapminder.csv",
     "sourceHash": "714f8a23e9d7429052a1e9b45d20b9adeb64f46c067ed46320e68182e4607b6d",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "d4d20c6d4d88f619ccd3eb89ad9096d8fb5253f26bf9321260b3f2a1ae216077",
     "rows": 142,
     "columns": [
@@ -87,6 +88,7 @@
     "file": "data/ml-learning/ML-X02.csv",
     "sourceFile": "data/candy-power-ranking.csv",
     "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "b917b9b0aaaee85e84161081128241a6d219d537b4bd18017ecf13eadae7102a",
     "rows": 85,
     "columns": [
@@ -150,6 +152,7 @@
     "file": "data/ml-learning/ML-X03.csv",
     "sourceFile": "data/candy-power-ranking.csv",
     "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "493998f13d7226449119ae825c552234f39e0dca4ba912d5cdcc3722f6768d7a",
     "rows": 85,
     "columns": [
@@ -312,7 +315,8 @@
     "name": "ML-X04 challenge input",
     "file": "data/ml-learning/ML-X04.csv",
     "sourceFile": "data/seoul-bike.csv",
-    "sourceHash": "d2f7a0f0ba95e82678ead794429a18a7f696aa3b82c9b9ec34ec47806ff0767b",
+    "sourceHash": "c69a068cea02997f6ff3ed54b52432678d15c0cec472df79dc2823c7f6401660",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "27790af6fc3b1e9ab43e65d72fb758bb28cfec4fc28f984cafde8bd63eeaee9f",
     "rows": 8760,
     "columns": [
@@ -475,7 +479,8 @@
     "name": "ML-X05 challenge input",
     "file": "data/ml-learning/ML-X05.csv",
     "sourceFile": "data/palmer-penguins.csv",
-    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sourceHash": "eea2dc664a94848aa8f0317a7ff48afca433804bd0b30f738e982aaa6cfc079b",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "6ae46cde86a27871486aa7a62a3f8c409778d78e088e6fbb00b6b5b013717595",
     "rows": 333,
     "columns": [
@@ -598,7 +603,8 @@
     "name": "ML-X06 challenge input",
     "file": "data/ml-learning/ML-X06.csv",
     "sourceFile": "data/car-evaluation.csv",
-    "sourceHash": "8aef39dfcdf8824bcfe507300efc412ae0aa0ed13770658f2e8875ed32f1e221",
+    "sourceHash": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
     "rows": 1728,
     "columns": [
@@ -711,7 +717,8 @@
     "name": "ML-X07 challenge input",
     "file": "data/ml-learning/ML-X07.csv",
     "sourceFile": "data/palmer-penguins.csv",
-    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sourceHash": "eea2dc664a94848aa8f0317a7ff48afca433804bd0b30f738e982aaa6cfc079b",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "f08c3275b518ca0d84264e74625679c16fa20974ce9e20dc3e4815823b295df7",
     "rows": 333,
     "columns": [
@@ -804,7 +811,8 @@
     "name": "ML-X08 challenge input",
     "file": "data/ml-learning/ML-X08.csv",
     "sourceFile": "data/breast-cancer.csv",
-    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sourceHash": "e625156c38943b03f749477157b8c1e3aa0e564c4b4705abeadfdc4ace9e2acf",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "940477a05f3c1cbdee1bfa90a223f2dc6daaf0587c6f0fb6b0e27872d3067ac5",
     "rows": 569,
     "columns": [
@@ -907,7 +915,8 @@
     "name": "ML-X09 challenge input",
     "file": "data/ml-learning/ML-X09.csv",
     "sourceFile": "data/car-evaluation.csv",
-    "sourceHash": "8aef39dfcdf8824bcfe507300efc412ae0aa0ed13770658f2e8875ed32f1e221",
+    "sourceHash": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
     "rows": 1728,
     "columns": [
@@ -1021,6 +1030,7 @@
     "file": "data/ml-learning/ML-X10.csv",
     "sourceFile": "data/candy-power-ranking.csv",
     "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "1d5c474787d972e7db8d42ed4236d39b831b49fc8da76bb7e231ca72ce8adaea",
     "rows": 85,
     "columns": [
@@ -1193,7 +1203,8 @@
     "name": "ML-X11 challenge input",
     "file": "data/ml-learning/ML-X11.csv",
     "sourceFile": "data/breast-cancer.csv",
-    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sourceHash": "e625156c38943b03f749477157b8c1e3aa0e564c4b4705abeadfdc4ace9e2acf",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "940477a05f3c1cbdee1bfa90a223f2dc6daaf0587c6f0fb6b0e27872d3067ac5",
     "rows": 569,
     "columns": [
@@ -1297,6 +1308,7 @@
     "file": "data/ml-learning/ML-X12.csv",
     "sourceFile": "data/candy-power-ranking.csv",
     "sourceHash": "46c17cdb8c0212bc3e0cee2a9617a75d1ce642cd1559c332b1d9a2c4ed19b8cb",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "7b4f204bbea1c47c1572ff52b252742ab5b87dfe856568d7f8e4a538bbd92b8f",
     "rows": 85,
     "columns": [
@@ -1439,7 +1451,8 @@
     "name": "ML-X13 challenge input",
     "file": "data/ml-learning/ML-X13.csv",
     "sourceFile": "data/car-evaluation.csv",
-    "sourceHash": "8aef39dfcdf8824bcfe507300efc412ae0aa0ed13770658f2e8875ed32f1e221",
+    "sourceHash": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "976b0e0a4446645ccce8bb0c3a4b90f2276017b380bfd53dfb7ba40cf672ab7f",
     "rows": 1728,
     "columns": [
@@ -1552,7 +1565,8 @@
     "name": "ML-X14 challenge input",
     "file": "data/ml-learning/ML-X14.csv",
     "sourceFile": "data/palmer-penguins.csv",
-    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sourceHash": "eea2dc664a94848aa8f0317a7ff48afca433804bd0b30f738e982aaa6cfc079b",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "f08c3275b518ca0d84264e74625679c16fa20974ce9e20dc3e4815823b295df7",
     "rows": 333,
     "columns": [
@@ -1646,6 +1660,7 @@
     "file": "data/ml-learning/ML-X15.csv",
     "sourceFile": "data/wine-quality.csv",
     "sourceHash": "21ef5e115c7e7bcc2309ee10a2704736529f8e41e062adc44a38bb2ff091131d",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "3c107d3f1db747e5615d2d9943e784f80899eb9b9bf77f0a416f58d7a14ffdd4",
     "rows": 600,
     "columns": [
@@ -1808,7 +1823,8 @@
     "name": "ML-X16 challenge input",
     "file": "data/ml-learning/ML-X16.csv",
     "sourceFile": "data/breast-cancer.csv",
-    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sourceHash": "e625156c38943b03f749477157b8c1e3aa0e564c4b4705abeadfdc4ace9e2acf",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "940477a05f3c1cbdee1bfa90a223f2dc6daaf0587c6f0fb6b0e27872d3067ac5",
     "rows": 569,
     "columns": [
@@ -1911,7 +1927,8 @@
     "name": "ML-X17 challenge input",
     "file": "data/ml-learning/ML-X17.csv",
     "sourceFile": "data/palmer-penguins.csv",
-    "sourceHash": "5c1a3613fc1bcf57bbeceb0c2c61079c8e81a78ee934f9e6f9bffab94d7b23f3",
+    "sourceHash": "eea2dc664a94848aa8f0317a7ff48afca433804bd0b30f738e982aaa6cfc079b",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "2a4767f91f980defcb450f599853cabff3e5b8e8f87572eafc7ecaf7c11ce013",
     "rows": 333,
     "columns": [
@@ -1994,7 +2011,8 @@
     "name": "ML-X18 challenge input",
     "file": "data/ml-learning/ML-X18.csv",
     "sourceFile": "data/breast-cancer.csv",
-    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sourceHash": "e625156c38943b03f749477157b8c1e3aa0e564c4b4705abeadfdc4ace9e2acf",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "e705ad35f5cfaa0997081e1d51a5064b14985ace464de53078d28f64eaad94e3",
     "rows": 569,
     "columns": [
@@ -2087,7 +2105,8 @@
     "name": "ML-X19 challenge input",
     "file": "data/ml-learning/ML-X19.csv",
     "sourceFile": "data/breast-cancer.csv",
-    "sourceHash": "aa298c49bfd9c5469feab6c60bfcb64b1747a9766413e4735fcf76a2ed106d52",
+    "sourceHash": "e625156c38943b03f749477157b8c1e3aa0e564c4b4705abeadfdc4ace9e2acf",
+    "sourceHashEncoding": "UTF-8 with LF line endings",
     "sha256": "afc2d85af29047847e275bd8033b2f28f945a09bc50fad5ac8b80db50ed71683",
     "rows": 569,
     "columns": [
