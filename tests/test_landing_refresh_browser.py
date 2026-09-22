@@ -59,6 +59,37 @@ with sync_playwright() as p:
                     g.uniform1f(g.getUniformLocation(program,'portrait'),0);
                     g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
                     result.landscapeShader=alpha(c.width,c.height);
+                    g.uniform1f(g.getUniformLocation(program,'portrait'),1);
+                    const shaders=g.getAttachedShaders(program);
+                    const vert=shaders.find(s=>g.getShaderParameter(s,g.SHADER_TYPE)===g.VERTEX_SHADER);
+                    const frag=shaders.find(s=>g.getShaderParameter(s,g.SHADER_TYPE)===g.FRAGMENT_SHADER);
+                    const original=g.getShaderSource(frag);
+                    result.variants={};
+                    const variants={
+                        original,
+                        falls:original.replace("portrait>.5?0.:ellipse(px,vec4(1395.,680.,24.,62.))", "ellipse(px,vec4(1395.,680.,24.,62.))*(1.-step(.5,portrait))"),
+                        noEyes:original.replace('if(i==1||i==3||(portrait>.5&&i==2))continue;', 'continue;'),
+                        noRipple:original.replace('vec4 color=texture2D(picture,lookup);', 'vec4 color=texture2D(picture,uv);')
+                    };
+                    for(const [name,source] of Object.entries(variants)){
+                        const f=g.createShader(g.FRAGMENT_SHADER);g.shaderSource(f,source);g.compileShader(f);
+                        const test=g.createProgram();g.attachShader(test,vert);g.attachShader(test,f);g.linkProgram(test);g.useProgram(test);
+                        for(let i=0;i<g.getProgramParameter(program,g.ACTIVE_UNIFORMS);i++){
+                            const info=g.getActiveUniform(program,i),loc=g.getUniformLocation(test,info.name);
+                            const value=g.getUniform(program,g.getUniformLocation(program,info.name));
+                            if(info.size>1){
+                                const values=[];
+                                for(let j=0;j<info.size;j++)values.push(...g.getUniform(program,g.getUniformLocation(program,info.name.replace('[0]','['+j+']'))));
+                                g.uniform4fv(loc,new Float32Array(values));
+                            }else if(info.type===g.FLOAT)g.uniform1f(loc,value);
+                            else if(info.type===g.FLOAT_VEC2)g.uniform2fv(loc,value);
+                            else if(info.type===g.SAMPLER_2D)g.uniform1i(loc,value);
+                        }
+                        const a=g.getAttribLocation(test,'position');g.enableVertexAttribArray(a);g.vertexAttribPointer(a,2,g.FLOAT,false,0,0);
+                        g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                        result.variants[name]={linked:g.getProgramParameter(test,g.LINK_STATUS),alpha:alpha(c.width,c.height)};
+                        g.deleteProgram(test);g.deleteShader(f);
+                    }
                     return result;
                 }"""),flush=True)
                 print({'engine':args.engine,'viewport':[width,height],'attempt':attempt,'motion':page.locator('[data-scene]').get_attribute('data-motion'),'messages':motion_messages,'errors':errors},flush=True)
