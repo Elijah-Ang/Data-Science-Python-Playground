@@ -55,7 +55,7 @@ with sync_playwright() as p:
                         const tex=g.getParameter(g.TEXTURE_BINDING_2D);
                         g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
                         if(unit===0){rawPicture=new Uint8Array(941*1672*4);g.readPixels(0,0,941,1672,g.RGBA,g.UNSIGNED_BYTE,rawPicture);}
-                        result.textures.push({min:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER),mag:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER),wrap:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_WRAP_S),status:g.checkFramebufferStatus(g.FRAMEBUFFER),alpha:alpha(941,1672)});
+                        result.textures.push({min:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER),mag:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER),wrap:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_WRAP_S),wrapT:g.getTexParameter(g.TEXTURE_2D,g.TEXTURE_WRAP_T),status:g.checkFramebufferStatus(g.FRAMEBUFFER),alpha:alpha(941,1672)});
                     }
                     g.bindFramebuffer(g.FRAMEBUFFER,null);g.deleteFramebuffer(fb);
                     g.uniform1f(g.getUniformLocation(program,'amount'),0);
@@ -105,6 +105,15 @@ with sync_playwright() as p:
                     g.uniform1i(g.getUniformLocation(program,'picture'),0);
                     g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
                     result.rawUploaded=alpha(c.width,c.height);
+                    const fresh=g.createTexture();g.bindTexture(g.TEXTURE_2D,fresh);
+                    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+                    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
+                    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,941,1672,0,g.RGBA,g.UNSIGNED_BYTE,rawPicture);
+                    g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                    result.freshTexture=alpha(c.width,c.height);
+                    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.NEAREST);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.NEAREST);
+                    g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                    result.nearest=alpha(c.width,c.height);
                     return result;
                 }"""),flush=True)
                 print({'engine':args.engine,'viewport':[width,height],'attempt':attempt,'motion':page.locator('[data-scene]').get_attribute('data-motion'),'messages':motion_messages,'errors':errors},flush=True)
