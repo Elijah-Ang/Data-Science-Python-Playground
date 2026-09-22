@@ -79,7 +79,7 @@ with sync_playwright() as p:
                             const value=g.getUniform(program,g.getUniformLocation(program,info.name));
                             if(info.size>1){
                                 const values=[];
-                                for(let j=0;j<info.size;j++)values.push(...g.getUniform(program,g.getUniformLocation(program,info.name.replace('[0]','['+j+']'))));
+                                for(let j=0;j<info.size;j++){const entry=g.getUniformLocation(program,info.name.replace('[0]','['+j+']'));values.push(...(entry?g.getUniform(program,entry):[0,0,0,0]));}
                                 g.uniform4fv(loc,new Float32Array(values));
                             }else if(info.type===g.FLOAT)g.uniform1f(loc,value);
                             else if(info.type===g.FLOAT_VEC2)g.uniform2fv(loc,value);
