@@ -114,6 +114,9 @@ with sync_playwright() as p:
                     g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.NEAREST);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.NEAREST);
                     g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
                     result.nearest=alpha(c.width,c.height);
+                    g.activeTexture(g.TEXTURE2);g.bindTexture(g.TEXTURE_2D,fresh);g.uniform1i(g.getUniformLocation(program,'picture'),2);
+                    g.clear(g.COLOR_BUFFER_BIT);g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                    result.unitTwo=alpha(c.width,c.height);
                     return result;
                 }"""),flush=True)
                 print({'engine':args.engine,'viewport':[width,height],'attempt':attempt,'motion':page.locator('[data-scene]').get_attribute('data-motion'),'messages':motion_messages,'errors':errors},flush=True)
