@@ -38,12 +38,19 @@ with sync_playwright() as p:
         page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=card['exercises'][0]['id'])
         assert page.get_by_role('heading',name=card['title'],exact=True).is_visible()
         if card['kind']=='teaching':assert page.locator('.ml-concept svg').count()==1
+        if card['id']=='ML-F-K1':
+            design=page.locator('.ml-validation-design').inner_text()
+            assert '20%' in design and '42' in design and 'folds' not in design
     for challenge in registry['challenges']:
         page.evaluate('(hash)=>location.hash=hash','#workflows/challenges/'+challenge['id'])
         page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=challenge['id'])
         assert page.get_by_role('heading',name=challenge['title'],exact=True).is_visible()
         assert page.locator('#case-help').get_attribute('open') is None
         assert 'fit(' not in page.locator('#mlEditor').input_value()
+        if challenge['exercise'].get('protect'):
+            design=page.locator('.ml-validation-design').inner_text()
+            assert '20%' in design and 'five' in design
+            assert ('forward' if challenge['exercise']['protect'].get('time') else '42') in design
     for width in [1440,1280,1024,768,390,320]:
         page.set_viewport_size({'width':width,'height':960})
         for theme in ['light','dark']:

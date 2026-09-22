@@ -13,6 +13,13 @@ with sync_playwright() as p:
         # decoded canvases until collection, contaminating the next case.
         browser = getattr(p, args.engine).launch()
         page = browser.new_page(viewport={'width': width, 'height': height})
+        # A transient empty first GPU draw must recover before revealing motion.
+        page.add_init_script("""const draw=WebGLRenderingContext.prototype.drawArrays;
+            let first=true;
+            WebGLRenderingContext.prototype.drawArrays=function(...args){
+                if(first){first=false;return;}
+                return draw.apply(this,args);
+            };""")
         errors = []
         motion_messages = []
         page.on('pageerror', lambda e: errors.append(str(e)))

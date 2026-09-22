@@ -322,7 +322,7 @@
       const pixels=new Uint8Array(canvas.width*canvas.height*4);
       gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
       if(gl.getError()!==gl.NO_ERROR)throw Error('Artwork frame could not be verified.');
-      assertArtwork(pixels);
+      try{assertArtwork(pixels);}catch(error){throw Error(error.message+' Canvas '+canvas.width+'x'+canvas.height+', buffer '+gl.drawingBufferWidth+'x'+gl.drawingBufferHeight+'.');}
     }
     function resize(){if(!current)return;const ratio=Math.min(devicePixelRatio||1,2),width=Math.min(current.width,Math.round(art.clientWidth*ratio)),height=Math.round(width*current.height/current.width);if(canvas.width!==width||canvas.height!==height){canvas.width=actorCanvas.width=width;canvas.height=actorCanvas.height=height;gl.viewport(0,0,canvas.width,canvas.height);}}
     async function setLayout(layout){
@@ -367,7 +367,12 @@
         cat.image.getContext('2d').drawImage(cleanCat,216,51,991,1136,0,0,cw,ch);
         if(own!==token)return;
         actors=prepared.actors;
-        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();
+        // Verify after layout and the first animation frame have settled. Some
+        // WebKit graphics backends expose an empty initial drawing buffer.
+        await new Promise(resolve=>requestAnimationFrame(resolve));
+        if(own!==token)return;
+        resize();draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }
     function draw(){if(!loaded)return;regions.forEach((r,i)=>{const wave=Math.sin(time*Math.PI*2/r.period+r.phase);moves.set([r.dx*wave,r.dy*Math.sin(time*Math.PI*2/r.period+r.phase+.4),r.angle*wave,0],i*4);});gl.uniform4fv(locations['moves[0]'],moves);gl.uniform1f(locations.time,time+1.8);gl.uniform1f(locations.amount,state.motion);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT);gl.drawArrays(gl.TRIANGLES,0,vertexCount);drawActors();}
