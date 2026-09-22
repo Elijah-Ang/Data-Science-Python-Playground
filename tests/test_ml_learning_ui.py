@@ -59,7 +59,7 @@ with sync_playwright() as p:
     # Shared neural Next ends at a fork; task-specific paths do not cross branches.
     page.emulate_media(forced_colors='active',reduced_motion='reduce')
     page.evaluate("location.hash='#workflows/challenges/ML-X19'")
-    page.wait_for_function("MLLearning.activity?.id==='ML-X19'")
+    page.wait_for_function("window.MLLearning?.activity?.id==='ML-X19'")
     assert page.locator('#mlRun').is_visible()
     assert page.locator('.ml-contract summary').is_visible()
     page.locator('.ml-contract summary').click()
@@ -71,15 +71,15 @@ with sync_playwright() as p:
     assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
     page.evaluate("document.documentElement.style.zoom=''")
     page.evaluate("location.hash='#networks/ML-N-R1/2'")
-    page.wait_for_function("MLLearning.activity?.id==='ML-N-R1-3'")
+    page.wait_for_function("window.MLLearning?.activity?.id==='ML-N-R1-3'")
     assert page.locator('.foundation-navigation a').last.get_attribute('href')=='#networks'
     page.evaluate("location.hash='#networks/ML-N04/3'")
-    page.wait_for_function("MLLearning.activity?.id==='ML-N04-4'")
+    page.wait_for_function("window.MLLearning?.activity?.id==='ML-N04-4'")
     assert 'ML-N-K1' in page.locator('.foundation-navigation a').last.get_attribute('href')
     # Real UI Run + repeated Check must not make additional worker run requests.
     page.set_viewport_size({'width':1280,'height':1000})
     page.evaluate("location.hash='#workflow/ML-W-K1/0'")
-    page.wait_for_function("MLLearning.activity?.id==='ML-W-K1-1'")
+    page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     solution=page.evaluate('MLLearning.activity.solution')
     page.locator('#mlEditor').fill(solution)
     page.locator('#mlRun').click()
@@ -96,7 +96,7 @@ with sync_playwright() as p:
     # Keyboard escape exits the editor; navigation/reload discards the draft.
     page.locator('#mlEditor').focus();page.keyboard.press('Escape');page.keyboard.press('Tab')
     assert page.locator('#mlRun').evaluate('(e)=>e===document.activeElement')
-    page.reload();page.wait_for_function("MLLearning.activity?.id==='ML-W-K1-1'")
+    page.reload();page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     assert page.locator('#mlEditor').input_value()!=solution
     writes=page.evaluate('__mlWrites')
     assert not any('learning' in key.lower() or 'foundation' in key.lower() for key in writes),writes

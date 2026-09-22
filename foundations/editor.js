@@ -27,6 +27,12 @@ function attach(editor,run,leave){
   if(event.key==='Tab'&&leaveOnTab){leaveOnTab=false;if(leave){event.preventDefault();leave(event.shiftKey);}return;}
   leaveOnTab=false;
   if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();run();return;}
+  // WebKit ports do not all map the platform shortcut to native textarea history.
+  // Use that same history explicitly for the shared Data/ML editor.
+  if(event.key.toLowerCase()==='z'&&(event.ctrlKey||event.metaKey)&&!event.altKey){
+   if(document.execCommand(event.shiftKey?'redo':'undo'))event.preventDefault();
+   return;
+  }
   if(event.key!=='Tab'||event.ctrlKey||event.metaKey||event.altKey)return;
   event.preventDefault();
   const edit=indentation(editor.value,editor.selectionStart,editor.selectionEnd,event.shiftKey);

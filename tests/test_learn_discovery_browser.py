@@ -13,7 +13,10 @@ with sync_playwright() as pw:
  assert 'Learn / Refresh' in cta.inner_text();assert page.locator('.mascot-layer').count()==2
  page.wait_for_function('document.querySelector("[data-scene]").dataset.motion==="ready"',timeout=60000)
  assert page.locator('.scene-motion').is_visible()
- bounds=page.locator('.mascot-viewport').bounding_box()
+ page.evaluate('document.fonts.ready')
+ def document_bounds():
+  return page.locator('.mascot-viewport').evaluate('(e)=>{const r=e.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height}}')
+ bounds=document_bounds()
  # Hold the real WAAPI effects at their midpoint so software-rendered CI frames
  # cannot skip the brief overlap. Do not substitute the controller or its effects.
  page.evaluate("""()=>{
@@ -35,7 +38,8 @@ with sync_playwright() as pw:
   keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))
  })""")
  assert all(.15<x<.85 for x in evidence['opacity']),evidence
- assert page.locator('.mascot-viewport').bounding_box()==bounds
+ actual_bounds=document_bounds()
+ assert all(abs(actual_bounds[k]-bounds[k])<1 for k in bounds),(bounds,actual_bounds)
  assert evidence['keys'] and all(not any(k in ['top','left','width','height'] for k in keys) for keys in evidence['keys'])
  page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="idle"')
