@@ -93,8 +93,8 @@ The difficult slice gate passed before bulk authoring in native pinned Python
 and actual Chromium/WebKit Pyodide: mixed LinearRegression workflow, both
 One-R paths, target-transformed MLP regression, sampled Ward hierarchy and PCA.
 
-New validation covers all 197 Python activities, 95 conceptual decision or
-self-review exercises structurally, every card/challenge route, six viewport
+New validation covers all 197 Python activities (178 card exercises plus 19 challenges),
+62 decision and 52 self-review exercises structurally, every card/challenge route, six viewport
 widths, light/dark themes, forced colours/reduced motion, 200% zoom, keyboard
 editor escape, no saved learning, stale receipts, repeated Check without Run,
 12 repeated fits without retained Python models, source/export isolation and
