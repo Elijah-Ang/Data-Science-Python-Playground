@@ -35,8 +35,32 @@ with sync_playwright() as p:
             # Inspect the on-screen scene, including the below-fold portrait layout.
             page.locator('[data-scene]').scroll_into_view_if_needed()
             try:
-                page.wait_for_function("document.querySelector('[data-scene]').dataset.motion === 'ready'",timeout=90000)
+                page.wait_for_function("document.querySelector('[data-scene]').dataset.motion === 'ready'",timeout=30000)
             except Exception:
+                print(page.evaluate("""() => {
+                    const c=document.querySelector('.scene-motion'),g=c.getContext('webgl');
+                    const program=g.getParameter(g.CURRENT_PROGRAM);
+                    const alpha=(w,h)=>{const p=new Uint8Array(w*h*4);g.readPixels(0,0,w,h,g.RGBA,g.UNSIGNED_BYTE,p);let visible=0;for(let i=3;i<p.length;i+=4)if(p[i]>24)visible++;return {visible,total:w*h,error:g.getError()};};
+                    const result={initial:alpha(c.width,c.height),uniforms:{}};
+                    for(const name of ['size','amount','portrait','time'])result.uniforms[name]=g.getUniform(program,g.getUniformLocation(program,name));
+                    const fb=g.createFramebuffer();g.bindFramebuffer(g.FRAMEBUFFER,fb);
+                    result.textures=[];
+                    for(let unit=0;unit<2;unit++){
+                        g.activeTexture(g.TEXTURE0+unit);
+                        const tex=g.getParameter(g.TEXTURE_BINDING_2D);
+                        g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
+                        result.textures.push({status:g.checkFramebufferStatus(g.FRAMEBUFFER),alpha:alpha(941,1672)});
+                    }
+                    g.bindFramebuffer(g.FRAMEBUFFER,null);g.deleteFramebuffer(fb);
+                    g.uniform1f(g.getUniformLocation(program,'amount'),0);
+                    g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                    result.still=alpha(c.width,c.height);
+                    g.uniform1f(g.getUniformLocation(program,'amount'),1);
+                    g.uniform1f(g.getUniformLocation(program,'portrait'),0);
+                    g.drawArrays(g.TRIANGLES,0,Math.ceil(941/7)*Math.ceil(1672/7)*6);
+                    result.landscapeShader=alpha(c.width,c.height);
+                    return result;
+                }"""),flush=True)
                 print({'engine':args.engine,'viewport':[width,height],'attempt':attempt,'motion':page.locator('[data-scene]').get_attribute('data-motion'),'messages':motion_messages,'errors':errors},flush=True)
                 raise
             assert page.locator('.scene-motion').is_visible()
