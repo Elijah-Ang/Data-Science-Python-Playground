@@ -12,10 +12,16 @@ with sync_playwright() as p:
     for width, height in [(1440, 900), (390, 844)]:
         page = browser.new_page(viewport={'width': width, 'height': height})
         errors = []
+        motion_messages = []
         page.on('pageerror', lambda e: errors.append(str(e)))
+        page.on('console', lambda message: motion_messages.append(message.text) if '[Landing motion]' in message.text else None)
         for attempt in range(3):
             page.goto(args.base_url) if attempt == 0 else page.reload()
-            page.wait_for_function("document.querySelector('[data-scene]').dataset.motion === 'ready'")
+            try:
+                page.wait_for_function("document.querySelector('[data-scene]').dataset.motion === 'ready'",timeout=90000)
+            except Exception:
+                print({'engine':args.engine,'viewport':[width,height],'attempt':attempt,'motion':page.locator('[data-scene]').get_attribute('data-motion'),'messages':motion_messages,'errors':errors},flush=True)
+                raise
             assert page.locator('.scene-motion').is_visible()
         # GPU context loss must restore the full image without reloading.
         page.evaluate("""() => {

@@ -63,10 +63,14 @@ with sync_playwright() as p:
  assert page.locator('#foundationHighlight .py-number').count()>0
  assert page.locator('#foundationOutput table tbody tr').count()==4
  page.locator('.foundation-navigation a').last.click();assert page.url.endswith('/1')
+ page.wait_for_function('document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id==="I01").rounds[1].label')
  starter=page.locator('#foundationEditor').input_value()
  page.locator('#foundationEditor').fill('# unsaved edit\ndf')
  page.locator('.foundation-navigation a').last.click()
- page.go_back();assert page.locator('#foundationEditor').input_value()==starter
+ page.wait_for_function('document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id==="I01").rounds[2].label')
+ page.go_back()
+ page.wait_for_function('(starter)=>document.querySelector("#foundationEditor")?.value===starter',arg=starter)
+ assert page.locator('#foundationEditor').input_value()==starter
  page.locator('#foundationEditor').fill('# unsaved edit\ndf')
  page.evaluate('localStorage.setItem("dspp-foundations-v1", JSON.stringify({version:1,drafts:{"I01-1":"legacy draft"},passed:{"I01":true},last:"I01"}))')
  page.reload();assert page.locator('#foundationEditor').input_value()==starter
