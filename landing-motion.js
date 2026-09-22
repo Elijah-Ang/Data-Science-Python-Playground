@@ -369,14 +369,17 @@
         cat.image.getContext('2d').drawImage(cleanCat,216,51,991,1136,0,0,cw,ch);
         if(own!==token)return;
         actors=prepared.actors;
-        // Allocate after Canvas2D preparation and upload CPU pixels. Reusing a
-        // canvas-backed texture can sample transparent on Linux WebKit.
-        const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height);
-        if(texture)gl.deleteTexture(texture);
-        texture=gl.createTexture();
+        // Size the drawing buffer before allocating the prepared texture.
+        // Raw premultiplied pixels avoid Linux WebKit's canvas upload state.
+        const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height).data;
+        for(let i=0;i<pixels.length;i+=4){const alpha=pixels[i+3]/255;pixels[i]=Math.round(pixels[i]*alpha);pixels[i+1]=Math.round(pixels[i+1]*alpha);pixels[i+2]=Math.round(pixels[i+2]*alpha);}
+        resize();
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);
         bindArtworkTexture(untouched,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
-        bindArtworkTexture(texture,0);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+        if(texture)gl.deleteTexture(texture);
+        texture=gl.createTexture();
+        bindArtworkTexture(texture,0);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,current.width,current.height,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(pixels.buffer));
         gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();verifyFrame();frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}
     }
