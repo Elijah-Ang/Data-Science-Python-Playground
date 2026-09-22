@@ -8,8 +8,10 @@ parser.add_argument('--base-url', default='http://127.0.0.1:8001')
 args = parser.parse_args()
 
 with sync_playwright() as p:
-    browser = getattr(p, args.engine).launch()
     for width, height in [(1440, 900), (390, 844)]:
+        # Fresh graphics process per viewport: closed WebKit pages can retain
+        # decoded canvases until collection, contaminating the next case.
+        browser = getattr(p, args.engine).launch()
         page = browser.new_page(viewport={'width': width, 'height': height})
         errors = []
         motion_messages = []
@@ -32,8 +34,10 @@ with sync_playwright() as p:
         assert page.locator('.scene-art').is_visible()
         assert not errors, errors
         page.close()
+        browser.close()
 
     for failure in ['blank-image', 'gpu-error', 'decode-error']:
+        browser = getattr(p, args.engine).launch()
         page = browser.new_page()
         if failure == 'blank-image':
             page.add_init_script("""const draw=CanvasRenderingContext2D.prototype.drawImage;
@@ -51,5 +55,5 @@ with sync_playwright() as p:
         assert page.locator('.scene-actors').evaluate("(el)=>getComputedStyle(el).opacity") == '0'
         assert page.locator('.scene-motion').evaluate("(el)=>getComputedStyle(el).opacity") == '0'
         page.close()
-    browser.close()
+        browser.close()
 print(f'{args.engine}: refresh, portrait, context loss, and setup failure checks passed')
