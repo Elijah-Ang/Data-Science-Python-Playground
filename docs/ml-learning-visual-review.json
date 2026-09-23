@@ -1,6 +1,6 @@
 {
   "teachingCount": 81,
-  "primitiveVariantCount": 55,
+  "primitiveVariantCount": 56,
   "captures": [
     {
       "id": "ML-F01",
@@ -700,7 +700,7 @@
     },
     {
       "id": "ML-F03",
-      "family": "regression",
+      "family": "F03",
       "theme": "dark",
       "width": 1440,
       "file": "ML-F03-dark-1440.png",
@@ -708,7 +708,7 @@
     },
     {
       "id": "ML-F03",
-      "family": "regression",
+      "family": "F03",
       "theme": "light",
       "width": 320,
       "file": "ML-F03-light-320.png",
@@ -716,11 +716,35 @@
     },
     {
       "id": "ML-F03",
-      "family": "regression",
+      "family": "F03",
       "theme": "light",
       "width": 390,
       "file": "ML-F03-light-390.png",
       "title": "What fitting does"
+    },
+    {
+      "id": "ML-F05",
+      "family": "regression",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F05-dark-1440.png",
+      "title": "Measuring prediction error"
+    },
+    {
+      "id": "ML-F05",
+      "family": "regression",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F05-light-320.png",
+      "title": "Measuring prediction error"
+    },
+    {
+      "id": "ML-F05",
+      "family": "regression",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F05-light-390.png",
+      "title": "Measuring prediction error"
     },
     {
       "id": "ML-F06",
@@ -2055,7 +2079,7 @@
     "ML-M04": "603ab19501a65a32d3fe7e0bc5f078779cba09c52adc8c3838e1f0d9e3dd5213"
   },
   "sourceHashes": {
-    "ml-learning/visuals.js": "ae039bf54d16ed463afda6a437bddf6bdd6ab3852cc593109bea494de6ea680b",
+    "ml-learning/visuals.js": "c4df1462819dca2e5ab3babb87c201c37c818e0df23dc33a694e2f86e4a6ba65",
     "ml-learning/learning.css": "30a2b07b25c2e18df93dd9df8052942197660c67f9025421218c13239f7becc4",
     "ml-learning/app.js": "d5f618049a99425360e50bcd27fbda0f538e11fc6d5550cf17096f05bbfbdb0c"
   }

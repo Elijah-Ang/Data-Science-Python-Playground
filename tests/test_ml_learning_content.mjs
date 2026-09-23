@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
 import {execFileSync} from 'node:child_process';
 import {productionInventory} from '../scripts/ml-production.mjs';
 const c=JSON.parse(execFileSync('python3',['ml-learning/authoring.py'],{encoding:'utf8',maxBuffer:20*1024*1024}));
@@ -56,3 +58,12 @@ for(const e of all.filter(e=>e.kind==='python'))assert(e.packages.includes('nump
 assert.deepEqual(all.find(e=>e.id==='ML-F02-1').packages,['numpy','pandas']);
 assert(!all.find(e=>e.id==='ML-F03-1').packages.includes('matplotlib'));
 assert(all.find(e=>e.id==='ML-W01-1').packages.includes('matplotlib'));
+
+// Fitting precedes residuals: its schematic must show the learning transition.
+const visualContext={window:{}};
+vm.runInNewContext(readFileSync('ml-learning/visuals.js','utf8'),visualContext);
+const fitting=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F03').visual);
+const residuals=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F05').visual);
+for(const label of ['Observations X, y','Unfitted estimator','Fitted estimator','Learned line'])assert(fitting.includes(label));
+assert(!/residual|actual −|predicted/i.test(fitting));
+assert(residuals.includes('actual −')&&residuals.includes('Residuals measure signed vertical differences.'));

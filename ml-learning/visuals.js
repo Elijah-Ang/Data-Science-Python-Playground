@@ -27,6 +27,19 @@
   // Variants share geometry but teach the particular card's concept.
   function variant(v){
     const id=v.id||'';
+    if(id==='F03'){
+      const observations=[[12,85],[34,76],[57,53],[82,43],[108,18]];
+      const plot=(x,fitted)=>line(x,172,x+132,172)+line(x,172,x,55)+
+        (fitted?line(x+8,155,x+120,67,'class="accent-stroke"'):'')+
+        observations.map(([a,b])=>'<circle cx="'+(x+a)+'" cy="'+(60+b)+'" r="4"/>').join('');
+      return text(86,27,'Observations X, y','text-anchor="middle"')+plot(20,false)+
+        arrow(158,112,186,112)+text(275,27,'Unfitted estimator','text-anchor="middle"')+
+        '<rect x="193" y="55" width="164" height="117" rx="4"/>'+
+        text(275,99,'LinearRegression()','text-anchor="middle"')+text(275,133,'No learned line yet','text-anchor="middle"')+
+        arrow(364,112,392,112)+text(472,27,'Fitted estimator','text-anchor="middle"')+plot(406,true)+
+        text(472,193,'Learned line','text-anchor="middle"')+
+        text(280,225,'fit(X, y) learns the line from these observations.','text-anchor="middle"');
+    }
     if(id==='F09')return box(20,25,520,45,'Illustrative population: 8 A + 4 B')+arrow(155,75,155,105)+arrow(415,75,415,105)+box(20,112,245,55,'Training: 6 A + 3 B','accent')+box(295,112,245,55,'Test: 2 A + 1 B')+text(278,216,'Stratification preserves class proportions approximately.','text-anchor="middle"');
     if(id==='W02')return box(20,25,240,60,'Training outcomes')+arrow(270,55,302,55)+box(310,25,230,60,'Learn a constant','accent')+text(278,140,'Regression: training mean','text-anchor="middle"')+text(278,176,'Classification: most frequent training class','text-anchor="middle"')+text(278,216,'Evaluate the reference on the same rows as the candidate.','text-anchor="middle"');
     if(id==='U04')return box(15,25,150,50,'Candidate k values')+arrow(170,50,205,50)+box(212,25,335,50,'Inertia + silhouette','accent')+arrow(378,80,378,115)+box(212,123,335,50,'Sizes + profiles + purpose')+text(278,218,'A score supports a choice; it does not prove natural classes.','text-anchor="middle"');
