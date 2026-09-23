@@ -95,6 +95,23 @@ with sync_playwright() as p:
                 if width in [1440,390] and theme=='light':
                     name=(route or 'landing').replace('#','').replace('/','-')
                     page.screenshot(path=str(out/(args.engine+'-'+str(width)+'-'+name+'.png')),full_page=True)
+    # Desktop lessons must keep both long panes and navigation inside the viewport.
+    for width in [1440,801]:
+        page.set_viewport_size({'width':width,'height':900})
+        page.evaluate("location.hash='#foundations/ML-F03/0'")
+        page.wait_for_function("window.MLLearning?.activity?.id==='ML-F03-1'")
+        geometry=page.evaluate('''() => {
+          const lesson=document.querySelector('.ml-lesson');
+          const content=document.querySelector('.foundation-content');
+          const editor=document.querySelector('.ml-code-pane');
+          const next=document.querySelector('.foundation-navigation');
+          return {lessonBottom:lesson.getBoundingClientRect().bottom,
+            nextBottom:next.getBoundingClientRect().bottom,
+            contentOverflow:content.scrollHeight-content.clientHeight,
+            editorOverflow:editor.scrollHeight-editor.clientHeight};
+        }''')
+        assert geometry['lessonBottom']<=901 and geometry['nextBottom']<=901,(width,geometry)
+        assert geometry['contentOverflow']>100 and geometry['editorOverflow']>100,(width,geometry)
     # Shared neural Next ends at a fork; task-specific paths do not cross branches.
     page.emulate_media(forced_colors='active',reduced_motion='reduce')
     page.evaluate("location.hash='#workflows/challenges/ML-X19'")
