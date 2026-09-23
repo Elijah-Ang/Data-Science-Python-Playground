@@ -1,0 +1,52 @@
+name: Validate ML Learning
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  curriculum:
+    name: ML curriculum and semantic checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.10'
+      - run: npm run check:ml-learning
+      - run: python -m pip install -r tests/requirements-pyodide-parity.txt
+      - run: python tests/test_ml_learning_inputs.py
+      - run: python tests/test_ml_learning_verticals.py
+      - run: python tests/test_ml_learning_runtime.py
+      - run: python tests/test_ml_learning_semantics.py
+  browser:
+    name: ML learning real Pyodide (${{ matrix.engine }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.11'
+      - run: npm ci && npm run build:web
+      - run: python -m pip install playwright==1.52.0
+      - run: python -m playwright install --with-deps ${{ matrix.engine }}
+      - name: Serve built site
+        run: nohup python -m http.server 8000 -d dist > /tmp/ml-learning-http.log 2>&1 &
+      - run: python tests/test_ml_learning_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote --all-solutions
+      - run: python tests/test_ml_learning_ui.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ml-learning-${{ matrix.engine }}
+          path: tests/evidence/ml-learning/

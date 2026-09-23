@@ -8,6 +8,13 @@ The root route (`index.html`) is the lightweight pixel-art welcome landing page.
 
 Install the pinned JavaScript dependencies, build the web release, and serve it locally:
 
+Use Node 22+ and Python 3.10+ (standard library only for web builds). The ML
+curriculum is assembled by Python during `build:web` and `dev`; scientific
+Python packages are needed only for native validation. The build uses
+`python3` on macOS/Linux and `python` on Windows. Set `PYTHON` to a Python
+executable path if yours has another name, for example
+`PYTHON=/path/to/python npm run build:web` (PowerShell: `$env:PYTHON='C:\Python312\python.exe'`).
+
 ```bash
 npm ci
 npm run build:web

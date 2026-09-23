@@ -1,0 +1,785 @@
+{
+  "label": "staged",
+  "network": "local production Pyodide assets; fresh HTTP browser cache; warm OS cache",
+  "runs": 3,
+  "rows": [
+    {
+      "engine": "chromium",
+      "activity": "ML-F02-1",
+      "repeat": 1,
+      "elapsedMs": 2580.7999999970198,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas"
+      ],
+      "phases": {
+        "baseMs": 2496.2000000029802,
+        "activityPackagesMs": 0.5,
+        "executionMs": 80.20000000298023
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-F02-1",
+      "repeat": 2,
+      "elapsedMs": 2574.5,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas"
+      ],
+      "phases": {
+        "baseMs": 2491,
+        "activityPackagesMs": 0.5,
+        "executionMs": 80.69999998807907
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-F02-1",
+      "repeat": 3,
+      "elapsedMs": 2576.0999999940395,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas"
+      ],
+      "phases": {
+        "baseMs": 2496.5999999940395,
+        "activityPackagesMs": 0.5,
+        "executionMs": 76.80000001192093
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-F03-1",
+      "repeat": 1,
+      "elapsedMs": 4698.4000000059605,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2490.8999999910593,
+        "activityPackagesMs": 1670.9000000059605,
+        "executionMs": 524.9000000059605
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-F03-1",
+      "repeat": 2,
+      "elapsedMs": 4658.100000008941,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2548.0999999940395,
+        "activityPackagesMs": 1603.1000000089407,
+        "executionMs": 494.3999999910593
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-F03-1",
+      "repeat": 3,
+      "elapsedMs": 4487.399999991059,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2434.800000011921,
+        "activityPackagesMs": 1560.3999999910593,
+        "executionMs": 489.90000000596046
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-W01-1",
+      "repeat": 1,
+      "elapsedMs": 5601.100000008941,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "matplotlib-pyodide",
+        "pyparsing",
+        "kiwisolver",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2415.5999999940395,
+        "activityPackagesMs": 1924.9000000059605,
+        "executionMs": 1258.7000000029802
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-W01-1",
+      "repeat": 2,
+      "elapsedMs": 5591.600000008941,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "kiwisolver",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2405.4000000059605,
+        "activityPackagesMs": 1928.7000000029802,
+        "executionMs": 1255.2999999970198
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-W01-1",
+      "repeat": 3,
+      "elapsedMs": 5531.29999999702,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "kiwisolver",
+        "matplotlib-pyodide",
+        "pyparsing",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2396.5,
+        "activityPackagesMs": 1881.0999999940395,
+        "executionMs": 1251.2999999970198
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-X01",
+      "repeat": 1,
+      "elapsedMs": 5659.29999999702,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "kiwisolver",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2370.0999999940395,
+        "activityPackagesMs": 1872.5,
+        "executionMs": 1414.2000000029802
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-X01",
+      "repeat": 2,
+      "elapsedMs": 6054.29999999702,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "kiwisolver",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2483.2000000029802,
+        "activityPackagesMs": 2151.9000000059605,
+        "executionMs": 1416.7999999970198
+      }
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-X01",
+      "repeat": 3,
+      "elapsedMs": 5808.5,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "kiwisolver",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2450.3999999910593,
+        "activityPackagesMs": 1953.300000011921,
+        "executionMs": 1402.2999999970198
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F02-1",
+      "repeat": 1,
+      "elapsedMs": 2856,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas"
+      ],
+      "phases": {
+        "baseMs": 2808,
+        "activityPackagesMs": 1,
+        "executionMs": 42
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F02-1",
+      "repeat": 2,
+      "elapsedMs": 2851,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas"
+      ],
+      "phases": {
+        "baseMs": 2805,
+        "activityPackagesMs": 1.0000000000004547,
+        "executionMs": 41.999999999999545
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F02-1",
+      "repeat": 3,
+      "elapsedMs": 2878,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas"
+      ],
+      "phases": {
+        "baseMs": 2832,
+        "activityPackagesMs": 1,
+        "executionMs": 42
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F03-1",
+      "repeat": 1,
+      "elapsedMs": 5010,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2787,
+        "activityPackagesMs": 1775,
+        "executionMs": 446
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F03-1",
+      "repeat": 2,
+      "elapsedMs": 5332,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 3135,
+        "activityPackagesMs": 1759,
+        "executionMs": 435
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F03-1",
+      "repeat": 3,
+      "elapsedMs": 5116,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2917,
+        "activityPackagesMs": 1748,
+        "executionMs": 449.0000000000009
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-W01-1",
+      "repeat": 1,
+      "elapsedMs": 6288,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "kiwisolver",
+        "fonttools",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2940,
+        "activityPackagesMs": 2087,
+        "executionMs": 1259
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-W01-1",
+      "repeat": 2,
+      "elapsedMs": 6404,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "matplotlib-pyodide",
+        "kiwisolver",
+        "fonttools",
+        "pyparsing",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 3010,
+        "activityPackagesMs": 2117,
+        "executionMs": 1274.000000000001
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-W01-1",
+      "repeat": 3,
+      "elapsedMs": 6364,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "pyparsing",
+        "kiwisolver",
+        "matplotlib-pyodide",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2956,
+        "activityPackagesMs": 2125,
+        "executionMs": 1281
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-X01",
+      "repeat": 1,
+      "elapsedMs": 6484,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "matplotlib-pyodide",
+        "pyparsing",
+        "kiwisolver",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2970,
+        "activityPackagesMs": 2092,
+        "executionMs": 1419.000000000001
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-X01",
+      "repeat": 2,
+      "elapsedMs": 6551,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "kiwisolver",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 3006,
+        "activityPackagesMs": 2135,
+        "executionMs": 1407
+      }
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-X01",
+      "repeat": 3,
+      "elapsedMs": 6575.000000000001,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "pyparsing",
+        "kiwisolver",
+        "matplotlib-pyodide",
+        "fonttools",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ],
+      "phases": {
+        "baseMs": 2983,
+        "activityPackagesMs": 2141,
+        "executionMs": 1448
+      }
+    }
+  ],
+  "medians": [
+    {
+      "engine": "chromium",
+      "activity": "ML-F02-1",
+      "medianMs": 2576.0999999940395,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas"
+      ]
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-F03-1",
+      "medianMs": 4658.100000008941,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ]
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-W01-1",
+      "medianMs": 5591.600000008941,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "matplotlib-pyodide",
+        "pyparsing",
+        "kiwisolver",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ]
+    },
+    {
+      "engine": "chromium",
+      "activity": "ML-X01",
+      "medianMs": 5808.5,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "kiwisolver",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F02-1",
+      "medianMs": 2856,
+      "packages": [
+        "six",
+        "pytz",
+        "python-dateutil",
+        "numpy",
+        "pandas"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-F03-1",
+      "medianMs": 5116,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "scipy",
+        "scikit-learn"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-W01-1",
+      "medianMs": 6364,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "pyparsing",
+        "matplotlib-pyodide",
+        "kiwisolver",
+        "fonttools",
+        "threadpoolctl",
+        "joblib",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "activity": "ML-X01",
+      "medianMs": 6551,
+      "packages": [
+        "six",
+        "python-dateutil",
+        "pytz",
+        "numpy",
+        "pandas",
+        "cycler",
+        "packaging",
+        "matplotlib-pyodide",
+        "pyparsing",
+        "kiwisolver",
+        "fonttools",
+        "joblib",
+        "threadpoolctl",
+        "openblas",
+        "Pillow",
+        "matplotlib",
+        "scipy",
+        "scikit-learn"
+      ]
+    }
+  ]
+}

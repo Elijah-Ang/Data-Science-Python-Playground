@@ -10,22 +10,26 @@ with sync_playwright() as pw:
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.goto(base+'/index.html');page.wait_for_function('document.querySelector(".mascot-layer").complete')
  cta=page.get_by_role('link',name='Open Learn and Refresh');assert cta.count()==1
- assert 'Optional' in cta.inner_text();assert page.locator('.mascot-layer').count()==2
+ assert 'Learn / Refresh' in cta.inner_text();assert page.locator('.mascot-layer').count()==2
  page.wait_for_function('document.querySelector("[data-scene]").dataset.motion==="ready"',timeout=60000)
  assert page.locator('.scene-motion').is_visible()
- bounds=page.locator('.mascot-viewport').bounding_box()
+ page.evaluate('document.fonts.ready')
+ def document_bounds():
+  return page.locator('.mascot-viewport').evaluate('(e)=>{const r=e.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height}}')
+ bounds=document_bounds()
  # Hold the real WAAPI effects at their midpoint so software-rendered CI frames
  # cannot skip the brief overlap. Do not substitute the controller or its effects.
  page.evaluate("""()=>{
   const animate=Element.prototype.animate;
   window.heldPoseAnimations=[];
-  Element.prototype.animate=function(...args){
+  window.holdPoseAnimations=()=>{window.heldPoseAnimations=[];Element.prototype.animate=function(...args){
    const animation=animate.apply(this,args);
    if(this.matches('.mascot-layer')){
     animation.pause();animation.currentTime=150;heldPoseAnimations.push(animation);
    }
    return animation;
-  };
+  };};
+  holdPoseAnimations();
   window.restorePoseAnimation=()=>{Element.prototype.animate=animate;heldPoseAnimations.forEach(a=>a.play());};
  }""")
  cta.focus()
@@ -35,7 +39,8 @@ with sync_playwright() as pw:
   keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))
  })""")
  assert all(.15<x<.85 for x in evidence['opacity']),evidence
- assert page.locator('.mascot-viewport').bounding_box()==bounds
+ actual_bounds=document_bounds()
+ assert all(abs(actual_bounds[k]-bounds[k])<1 for k in bounds),(bounds,actual_bounds)
  assert evidence['keys'] and all(not any(k in ['top','left','width','height'] for k in keys) for keys in evidence['keys'])
  page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="idle"')
@@ -44,7 +49,9 @@ with sync_playwright() as pw:
  # A leave during a blend queues the return instead of snapping an active image.
  page.locator('.tour-button').focus();page.mouse.move(0,0)
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
+ page.evaluate('holdPoseAnimations()')
  cta.hover();page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="blending"');page.mouse.move(0,0)
+ page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
  report['checks'].append('Real overlapping layers, transform/opacity-only motion, fixed viewport, focus and queued hover reactions')
  # The original WebGL scene is already verified above and by its own regression.
@@ -80,19 +87,20 @@ with sync_playwright() as pw:
  report['checks'].append('Six assets and choreographed poses; hidden/pagehide pause; reduced-motion static book including focus')
  # Navigation stays native for the new CTA; the original gate remains intact.
  cta.click();page.wait_for_url('**/learn.html')
- assert page.locator('.learn-path.is-available').get_attribute('href')=='data-foundations.html?from=learn'
+ assert page.locator('.learn-path.is-available[data-path="data"]').get_attribute('href')=='data-foundations.html?from=learn'
+ assert page.locator('.learn-path.is-available[data-path="ml"]').get_attribute('href')=='ml-learn.html?from=learn'
  assert page.locator('.path-status').count()==0
- assert page.locator('.path-lock').count()==2
+ assert page.locator('.path-lock').count()==1
  for card in page.locator('.is-planned').all():
   outer=card.bounding_box();lock=card.locator('.path-lock').bounding_box()
   assert abs(outer['x']+outer['width']/2-lock['x']-lock['width']/2)<2
   assert abs(outer['y']+outer['height']/2-lock['y']-lock['height']/2)<4
   assert card.evaluate('(e)=>getComputedStyle(e,"::before").backgroundColor')!='rgba(0, 0, 0, 0)'
 
- for subject in ['Statistics','Machine Learning']:
+ for subject in ['Statistics']:
   url=page.url;button=page.locator(f'[data-coming-soon="{subject}"]');assert 'coming soon' in button.inner_text().lower()
   button.click();assert page.url==url;assert page.locator('#pathAnnouncement').inner_text()==subject+' lessons are coming soon.'
- page.locator('.is-available').click();page.wait_for_url('**/data-foundations.html?from=learn')
+ page.locator('.is-available[data-path="data"]').click();page.wait_for_url('**/data-foundations.html?from=learn')
  assert page.locator('.back-playground').get_attribute('href')=='learn.html'
  assert page.locator('.hero-note,.foundation-note,.foundation-guidance').count()==0
  page.reload();assert page.locator('.back-playground').get_attribute('href')=='learn.html'
@@ -102,7 +110,7 @@ with sync_playwright() as pw:
  assert page.locator('.back-playground').get_attribute('href')=='learn.html'
  page.locator('.back-playground').click();page.wait_for_url('**/learn.html')
  assert page.locator('.back-playground').inner_text()=='← Home'
- page.locator('.is-available').click();page.wait_for_url('**/data-foundations.html?from=learn')
+ page.locator('.is-available[data-path="data"]').click();page.wait_for_url('**/data-foundations.html?from=learn')
  assert page.locator('.foundation-deck').count()==3
  page.goto(base+'/learn.html');page.locator('.back-playground').click();page.wait_for_url('**/index.html')
  # Use a fresh page, with real time for the existing gate's transition.
@@ -129,20 +137,19 @@ with sync_playwright() as pw:
      for part in ['.mascot-bubble','.mascot-viewport']:
       box=page.locator(part).bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1,(width,part,box)
      a=page.locator('.welcome-title-copy').bounding_box();b=page.locator('.mascot-cta').bounding_box()
-     assert abs(a['x']+a['width']/2-width/2)<1,(width,a)
-     if width>1000:
-      for line in page.locator('.welcome-title-line').all():
-       ink=line.evaluate('(e)=>{const r=document.createRange();r.selectNodeContents(e);const b=r.getBoundingClientRect();return {left:b.left,right:b.right}}')
-       assert b['x']+b['width']+12<=ink['left'] or ink['right']+12<=b['x'],(width,ink,b)
-     else:assert b['y']>=a['y']+a['height']-1,(a,b)
-     assert page.locator('.mascot-viewport').bounding_box()['height'] in [110,150,180]
+     # The current garden landing places desktop copy beside the scene;
+     # test readable separation, not the superseded centred-title coordinates.
+     assert a['x']>=0 and a['x']+a['width']<=width+1,(width,a)
+     separated=(a['x']+a['width']<=b['x']+1 or b['x']+b['width']<=a['x']+1 or a['y']+a['height']<=b['y']+1 or b['y']+b['height']<=a['y']+1)
+     assert separated,(width,a,b)
+     assert b['width']>=44 and b['height']>=44
     else:
      assert page.locator('body').get_attribute('data-theme')==theme
      assert page.locator('.learn-path').count()==3
      assert page.locator('.learn-robot').count()==0
     f=out/f'{args.engine}-{route}-{width}-{theme}.png';page.screenshot(path=str(f),full_page=True);report['screenshots'].append(str(f))
  # No script dependency for the two available routes and planned status labels.
- nojs=browser.new_context(java_script_enabled=False);p2=nojs.new_page();p2.goto(base+'/index.html');assert p2.locator('.mascot-cta').is_visible();p2.locator('.mascot-cta').click();assert p2.locator('.is-available').is_visible();nojs.close()
+ nojs=browser.new_context(java_script_enabled=False);p2=nojs.new_page();p2.goto(base+'/index.html');assert p2.locator('.mascot-cta').is_visible();p2.locator('.mascot-cta').click();assert p2.locator('.is-available[data-path="data"]').is_visible();nojs.close()
  assert not errors,errors
  report['checks'].append('Five viewports, both appearance settings, no overlap/overflow, static no-JavaScript fallback, no page errors')
  browser.close()
