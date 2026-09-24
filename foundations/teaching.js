@@ -21,7 +21,7 @@
   }
   function reference(curriculum, lesson, round) {
     const {source}=model(curriculum,lesson,round), g=source.guide;
-    return '<div class="teaching-recall"><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+'<p>'+esc(g.note)+'</p></div>';
+    return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+'<p>'+esc(g.note)+'</p></div>';
   }
   function example(guide, id) {
     return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+(id==='I17'?duplicateExample():'')+'</div>';
@@ -34,7 +34,7 @@
     // miniature for table concepts. No second abstract Input/Operation/Result strip.
     const diagram = m.source.id === 'V35'
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
-      : m.source.deck==='visualise' ? '<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>' : '';
+      : '<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>';
     return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'"><h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+comparison(g,m.source.id)+'<p class="teaching-note">'+esc(g.note)+'</p></section>';
   }
   function syntax(lesson) {

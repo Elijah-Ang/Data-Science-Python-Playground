@@ -1,50 +1,15 @@
-body[data-ml-learning]{--lesson-accent:var(--mint)}
-.ml-orientation{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:12px 0 24px}
-.ml-orientation article{padding:24px;border:1px solid var(--border);border-top:4px solid var(--lesson-accent);border-radius:5px;background:var(--panel)}
-.ml-orientation article+article{border-top-color:var(--violet)}
-.ml-orientation h3{margin:0 0 12px;font-size:21px}
-.ml-orientation p{color:var(--muted);margin:0 0 14px;line-height:1.7}
-.ml-primary-link{display:inline-block;padding:10px 14px;background:var(--lesson-accent);color:var(--bg);font-weight:800;border-radius:4px;text-decoration:none}
-.ml-core-note{padding:16px 20px;border-left:4px solid var(--violet);background:var(--panel);line-height:1.7}
-.ml-route-map{margin:25px 0;padding:22px;background:var(--panel);border:1px solid var(--border);border-radius:5px}
-.ml-route-map h3{margin-top:0}
-.ml-route-map ul{display:flex;flex-wrap:wrap;gap:12px 25px;padding-left:22px}
-.ml-route-map p{line-height:1.8;color:var(--muted)}
-.ml-deck-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.ml-deck-grid .foundation-deck{min-height:235px;padding:20px}
-.ml-deck-grid .foundation-deck h3{font-size:17px;margin-top:18px}
-.ml-index{margin:38px 0}
-.ml-index>h3{font:22px var(--display)}
-.ml-index-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.ml-index-item{background:var(--panel);border:1px solid var(--border);padding:17px;border-radius:5px;min-width:0}
-.ml-index-item h4{margin:0 0 10px}
-.ml-index-item p{margin:8px 0;color:var(--muted);line-height:1.65}
-.ml-index-item a{display:inline-block;padding:3px 0;text-underline-offset:3px}
-.ml-concepts-nav{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px}
-.ml-concepts-nav a,.ml-exercise-tabs a{padding:9px 12px;border:1px solid var(--border);border-radius:4px;text-decoration:none;background:var(--panel)}
-.ml-exercise-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
-.ml-exercise-tabs a[aria-current]{border-color:var(--lesson-accent);box-shadow:inset 0 -3px var(--lesson-accent)}
-.ml-concept{margin:0;border:1px solid var(--border);border-radius:5px;background:var(--panel);padding:12px}
+
+.ml-concept{margin:0}
 .ml-concept-scroll{overflow:auto;max-width:100%}
 .ml-concept svg{display:block;width:100%;min-width:560px;fill:var(--panel);stroke:var(--ink);stroke-width:1.5}
 .ml-concept svg text{fill:var(--ink);stroke:none;font:14px var(--body)}
-.ml-concept svg .accent{fill:color-mix(in srgb,var(--mint) 20%,var(--panel));stroke:var(--mint)}
+.ml-concept svg .accent{fill:color-mix(in srgb,var(--lesson-accent) 20%,var(--panel));stroke:var(--lesson-accent)}
 .ml-concept svg .accent-stroke{stroke:var(--violet);stroke-width:3}
 .ml-concept svg .thin{stroke:var(--muted);stroke-width:1}
 .ml-concept svg marker path{fill:var(--ink);stroke:none}
-.ml-concept figcaption{margin-top:10px;font-size:13px;line-height:1.5;color:var(--muted)}
+.ml-concept figcaption{line-height:1.5}
 .ml-prerequisites,.ml-sources{font-size:14px;line-height:1.8}
 .ml-prerequisites a{display:inline}
-.ml-learning .lesson-card{grid-template-columns:75px 1fr}
-.ml-lesson .foundation-lesson-heading{display:block}
-.ml-lesson .foundation-content{line-height:1.7}
-.ml-editor{display:block;resize:vertical;width:100%;min-height:340px;max-height:70vh;padding:18px;border:0;outline-offset:-3px;background:var(--code);color:var(--code-ink);font:14px/1.65 var(--mono);tab-size:4;white-space:pre;overflow:auto;box-sizing:border-box}
-.ml-editor-head{font:12px var(--display);padding:15px;border-bottom:1px solid var(--border)}
-.ml-code-pane{max-height:calc(100vh - 100px);overflow:auto}
-.ml-code-pane .foundation-task-reminder{padding:16px;position:static}
-.ml-code-pane .foundation-actions{display:flex;flex-wrap:wrap;gap:8px;padding:12px}
-.ml-code-pane button{min-height:44px;cursor:pointer}
-.ml-code-pane .foundation-runtime,.ml-code-pane .foundation-feedback{padding:10px 16px;margin:0}
 .ml-output{padding:16px;min-height:100px;overflow-wrap:anywhere}
 .ml-output pre{max-height:420px;overflow:auto;padding:12px;font:12px/1.65 var(--mono);background:var(--code);color:var(--code-ink);border-radius:4px}
 .ml-output img{display:block;width:100%;height:auto;background:white}
@@ -65,16 +30,31 @@ body[data-ml-learning]{--lesson-accent:var(--mint)}
 .ml-choice button{padding:12px 16px;min-height:44px;margin-top:15px;cursor:pointer}
 .ml-error{border-left:4px solid var(--orange);padding:12px;white-space:pre-wrap}
 .ml-empty{color:var(--muted);line-height:1.7}
-.ml-network-fork{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:25px 0}
-.ml-network-fork a{display:block;border:1px solid var(--lesson-accent);padding:20px;border-radius:5px;text-decoration:none}
 .ml-data-note{font-size:14px;color:var(--muted);line-height:1.7}
 .ml-output-names{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
 .ml-output-names code{padding:4px 6px;background:var(--panel-2);border-radius:3px;overflow-wrap:anywhere}
-@media(max-width:1100px){.ml-deck-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ml-index-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:800px){.ml-code-pane{position:static;max-height:none}.ml-editor{min-height:280px;font-size:16px}.ml-orientation{grid-template-columns:1fr}.ml-lesson .foundation-split{grid-template-columns:1fr}.ml-index-grid{grid-template-columns:1fr}.ml-network-fork{grid-template-columns:1fr}}
-@media(max-width:440px){.ml-deck-grid{grid-template-columns:1fr}.ml-orientation article{padding:18px}.ml-concept{padding:8px}.ml-route-map{padding:16px}.ml-exercise-tabs a{padding:10px}.ml-learning .lesson-card{grid-template-columns:70px 1fr}.ml-primary-link{color:var(--paper-ink)}}
+.ml-editor-reference{padding:10px 15px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--lesson-accent) 4%,var(--panel));font-size:12px;line-height:1.5;max-height:135px;overflow:auto;flex-shrink:0}
+.ml-editor-reference-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ml-editor-reference-head strong{font:11px var(--display);color:var(--lesson-accent)}
+.ml-editor-reference-head button{border:0;background:none;color:var(--lesson-accent);font:700 12px var(--body);cursor:pointer;min-height:32px}
+.ml-editor-reference p{margin:4px 0 8px}
+.ml-editor-head-actions{display:flex;align-items:center;gap:8px}
+.ml-editor-head-actions #mlBriefJump{display:none}
+.ml-editor-dictionary{display:grid;gap:3px}
+.ml-editor-dictionary>div{display:grid;grid-template-columns:minmax(115px,auto) 1fr;gap:7px;border-top:1px solid var(--border-soft);padding:3px 0}
+.ml-editor-dictionary code,.ml-editor-terms code{font:12px var(--mono);color:var(--lesson-accent)}
+.ml-editor-terms span{display:block;margin:5px 0}
+.ml-editor-route{font-weight:700;color:var(--muted)}
+@media(min-width:801px){
+  .ml-code-pane:has(.ml-editor-reference) .foundation-task-reminder{max-height:118px}
+  .ml-editor-reference{max-height:48px;padding:6px 15px}
+  .ml-editor-reference>p{display:none}
+  .ml-editor-dictionary{display:flex;gap:8px;flex-wrap:wrap}
+  .ml-editor-dictionary>div{display:block;border:0;padding:0}
+  .ml-editor-dictionary>div span,.ml-editor-terms,.ml-editor-route{display:none}
+}
 @media(prefers-reduced-motion:reduce){body[data-ml-learning] *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-@media(forced-colors:active){.ml-concept svg{stroke:CanvasText}.ml-concept svg text{fill:CanvasText}.ml-concept svg .accent,.ml-concept svg .accent-stroke{stroke:Highlight}.ml-primary-link{border:2px solid ButtonText}.ml-results li{border-width:2px}}
+@media(forced-colors:active){.ml-concept svg{stroke:CanvasText}.ml-concept svg text{fill:CanvasText}.ml-concept svg .accent,.ml-concept svg .accent-stroke{stroke:Highlight}.ml-results li{border-width:2px}}
 
 .ml-diagram-scroll-note{display:none}
 @media(max-width:600px){.ml-diagram-scroll-note{display:block;margin-top:6px}}
@@ -85,3 +65,59 @@ body[data-ml-learning]{--lesson-accent:var(--mint)}
 .ml-deliverable-groups p{line-height:1.65}
 .ml-input-contract{border-left:3px solid var(--lesson-accent);padding-left:12px}
 @media(min-width:801px){.foundations-main:has(.ml-lesson)>.ml-lesson{display:flex;flex:1;flex-direction:column;min-height:0}.ml-lesson>.foundation-split{flex:1;min-height:0}}
+
+/* All deck, chapter, card, stage and editor geometry comes from Foundations. */
+.ml-contract { padding:16px; flex-shrink:0; }
+.ml-contract h3 { font:12px/1.6 var(--display); color:var(--lesson-accent); }
+.ml-contract p { font-size:13px; line-height:1.6; }
+.ml-column-guide { margin-top:14px; }
+.ml-column-guide h4 { margin:0 0 8px; font-size:14px; }
+.ml-validation-design { margin-top:16px; }
+.ml-choice { overflow:auto; height:100%; min-height:0; }
+.ml-output { flex-shrink:0; }
+.ml-thumbnail { height:145px; }
+.ml-thumbnail g { fill:none; stroke:var(--lesson-accent); stroke-width:2; }
+.ml-thumbnail rect { fill:var(--panel); }
+.ml-thumbnail text { fill:var(--ink); stroke:none; font:16px var(--mono); }
+.ml-thumbnail text.main { font-size:18px; font-weight:700; }
+.ml-thumbnail text.tight { font-size:14px; font-weight:700; }
+.ml-thumbnail text.bar-label { font-size:15px; font-weight:700; }
+.ml-thumbnail text.aside-main { font-size:16px; font-weight:700; }
+.ml-thumbnail text.cell { font-size:14px; }
+.ml-thumbnail text.minor { font-size:13px; fill:var(--muted); }
+.ml-thumbnail .accent { fill:color-mix(in srgb,var(--lesson-accent) 24%,var(--panel)); stroke:var(--lesson-accent); }
+.ml-thumbnail .mini-wash { fill:color-mix(in srgb,var(--lesson-accent) 11%,var(--panel)); stroke:var(--border-soft); }
+.ml-thumbnail .mini-dot { fill:var(--lesson-accent); stroke:none; }
+.ml-thumbnail .mini-ring { fill:none; stroke:var(--lesson-accent); stroke-width:2; stroke-dasharray:5 4; }
+.ml-thumbnail .mini-axis,.ml-thumbnail .mini-wire,.ml-thumbnail .mini-separator { fill:none; stroke:var(--border); stroke-width:2; }
+.ml-thumbnail .mini-feature { fill:none; stroke:var(--violet); stroke-width:4; }
+.ml-thumbnail .mini-cut { fill:none; stroke:var(--orange); stroke-width:2; stroke-dasharray:5 5; }
+.ml-thumbnail .mini-arrow { fill:none; stroke:var(--lesson-accent); stroke-width:2; }
+.ml-rubric { list-style:none; margin:12px 0; padding:0; border-top:1px solid var(--border-soft); }
+.ml-rubric li { display:grid; grid-template-columns:minmax(138px,.43fr) minmax(0,1fr); gap:12px 18px; align-items:start; padding:13px 0; border-bottom:1px solid var(--border-soft); }
+.ml-rubric strong { color:var(--lesson-accent); font:12px/1.5 var(--mono); overflow-wrap:anywhere; }
+.ml-rubric span { font-size:14px; line-height:1.55; }
+@media(max-width:600px){.ml-rubric li{grid-template-columns:1fr;gap:4px;padding:12px 0}}
+@media(max-width:800px){.ml-choice{height:auto;}}
+@media(max-width:600px){
+  .ml-editor-reference{max-height:none;padding:14px}
+  .ml-editor-dictionary>div{grid-template-columns:1fr;gap:1px}
+  .ml-code-pane .foundation-editor-wrap{grid-template-columns:minmax(0,1fr)}
+  .ml-code-pane .foundation-line-numbers{display:none}
+  .ml-code-pane #mlHighlight{inset:0;white-space:pre-wrap;overflow-wrap:anywhere}
+  .ml-code-pane #mlEditor{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+  .ml-code-pane{scroll-margin-top:12px}
+  .ml-code-pane .foundation-editor-head{scroll-margin-top:12px}
+  .ml-editor-head-actions #mlBriefJump{display:inline-flex}
+  .ml-editor-head-actions{gap:5px}
+  .ml-editor-head-actions button{font-size:11px;padding:4px}
+}
+@media(max-width:480px){
+  .ml-lesson .foundation-practices ol:has(> li:nth-child(4)){grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+.ml-workflow-map ol { list-style:none; counter-reset:workflow; padding:0; display:grid; gap:0; }
+.ml-workflow-map li { counter-increment:workflow; display:grid; grid-template-columns:30px 1fr; gap:4px 10px; padding:12px 0; border-bottom:1px solid var(--border-soft); }
+.ml-workflow-map li::before { content:counter(workflow,decimal-leading-zero); grid-row:span 2; color:var(--lesson-accent); font:12px/1.8 var(--mono); }
+.ml-workflow-map strong { font-size:14px; }
+.ml-workflow-map span { grid-column:2; font-size:13px; color:var(--muted); line-height:1.6; }

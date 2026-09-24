@@ -74,3 +74,8 @@ run('ML-X12',activities['ML-X12']['solution']+"\ndf.iloc[:1].to_csv('data/candy-
 assert source_csv.read_bytes()==original,'A learner export must not overwrite the next run’s bundled input.'
 accepted('ML-X12',activities['ML-X12']['solution'],'fresh inputs after an in-run source export')
 print('Semantic alternatives, negatives, recovery and generated-resource cleanup passed.')
+
+knn=activities['ML-X07']['solution']
+assert 'preprocessor = StandardScaler()' in knn
+rejected('ML-X07',knn.replace('preprocessor = StandardScaler()', 'preprocessor = "passthrough"'),'KNN without the playground scaling recipe')
+accepted('ML-X07',knn,'canonical playground KNN preparation')

@@ -23,7 +23,7 @@ import weakref
 import numpy as np
 import pandas as pd
 
-RUNTIME_VERSION = 2
+RUNTIME_VERSION = 3
 MAX_TEXT = 24000
 MAX_EVENTS = 5000
 
@@ -83,7 +83,7 @@ class LearningTrace:
     def __init__(self,test_ids=(),expected_folds=()):
         self.events=[];self.patches=[];self.stage='user';self.depth=0
         self.test_ids=set(test_ids);self.lineage={};self.models={};self.overflow=False
-        self.expected_folds=set(expected_folds);self.pca_evidence={};self.kmeans_evidence=[]
+        self.validation_runs=[];self.diagnostic_runs=[];self.expected_folds=set(expected_folds);self.pca_evidence={};self.kmeans_evidence=[]
     def rows(self,x):
         if isinstance(x,(pd.DataFrame,pd.Series)):
             return [str(i) for i in x.index]
@@ -150,9 +150,99 @@ class LearningTrace:
         for owner in owners:
             for name in ('fit','transform','fit_transform','predict','predict_proba','decision_function','set_params'):
                 if hasattr(owner,name):self.patch(owner,name,self.method(name))
-        self.patch(_validation,'_fit_and_score',self.phase('cv'))
+        import sklearn.model_selection as selection
+        self.patch(selection,'cross_validate',self.validation_result)
+        self.patch(selection,'cross_val_predict',self.diagnostic_result)
+        self.patch(_validation,'_fit_and_score' ,self.phase('cv'))
         self.patch(_validation,'_fit_and_predict',self.phase('oof'))
         return self
+    def validation_result(self, original):
+        @functools.wraps(original)
+        def call(estimator, X, y=None, **kwargs):
+            result=original(estimator, X, y, **kwargs)
+            self.validation_runs.append(dict(modelId=id(estimator), rows=self.rows(X),
+                estimator=type(estimator).__name__, recipe=repr(estimator),
+                scoring=kwargs.get('scoring'), scores=np.asarray(result['test_score']).copy()))
+            return result
+        return call
+    def diagnostic_result(self, original):
+        @functools.wraps(original)
+        def call(estimator, X, y=None, **kwargs):
+            result=original(estimator, X, y, **kwargs)
+            self.diagnostic_runs.append(dict(modelId=id(estimator),rows=self.rows(X),predictions=np.asarray(result).copy()))
+            return result
+        return call
+    def assessment(self, ns, spec):
+        """Evidence for the supported open-choice workflow contract, never prose grading."""
+        result={}
+        def verify(name, fn):
+            try:result[name]=bool(fn())
+            except (KeyError,NameError,TypeError,ValueError,AttributeError,IndexError):result[name]=False
+        df=ns['df']
+        X=ns.get('X');y=ns.get('y');train=ns.get('X_train');test=ns.get('X_test')
+        yt=ns.get('y_train');yv=ns.get('y_test')
+        verify('features', lambda: ns['target']==spec['target'] and len(ns['feature_names'])>0
+               and set(ns['feature_names'])<=set(spec['available']) and len(set(ns['feature_names']))==len(ns['feature_names'])
+               and X.equals(df[ns['feature_names']]) and y.equals(df[spec['target']]))
+        verify('split',lambda: train.index.is_unique and test.index.is_unique
+               and set(train.index).isdisjoint(test.index) and set(train.index)|set(test.index)==set(df.index)
+               and .15<=len(test)/len(df)<=.3 and train.equals(X.loc[train.index]) and test.equals(X.loc[test.index])
+               and yt.equals(y.loc[train.index]) and yv.equals(y.loc[test.index]))
+        if result['split']:
+            self.test_ids=set(map(str,test.index))
+            try:
+                f=ns['folds'];pairs=list(f.split(train,yt))
+                self.expected_folds={(tuple(map(str,train.index[a])),tuple(map(str,train.index[b]))) for a,b in pairs}
+                result['folds']=type(f).__name__ in ('KFold','StratifiedKFold') and 3<=len(pairs)<=5 and f.shuffle
+                if spec['classification']:
+                    result['folds'] &= type(f).__name__=='StratifiedKFold' and set(yt)==set(yv)==set(y)
+            except (KeyError,AttributeError,TypeError,ValueError):result['folds']=False
+        else:result['folds']=False
+        verify('boundary',lambda: result['split'] and self.no_test_fit() and self.verified_fits() and self.preparation_inside_folds())
+        allowed=('f1_macro','balanced_accuracy') if spec['classification'] else ('neg_root_mean_squared_error','neg_mean_absolute_error')
+        verify('metric',lambda: ns['metric'] in allowed)
+        def matching_run(model, scores):
+            return any(r['modelId']==id(model) and r['rows']==list(map(str,train.index))
+                       and r['scoring']==ns['metric'] and np.array_equal(r['scores'],np.asarray(scores)) for r in self.validation_runs)
+        verify('baseline',lambda: type(ns['reference']).__name__==('DummyClassifier' if spec['classification'] else 'DummyRegressor')
+               and matching_run(ns['reference'],ns['reference_results']['test_score']) and np.isfinite(ns['reference_results']['test_score']).all())
+        def candidates_valid():
+            from sklearn.pipeline import Pipeline
+            allowed_models=('LogisticRegression','DecisionTreeClassifier','KNeighborsClassifier','GaussianNB','LinearDiscriminantAnalysis','SVC','MLPClassifier') if spec['classification'] else ('LinearRegression','Ridge','DecisionTreeRegressor')
+            for name, candidate in ns['candidates'].items():
+                if not isinstance(candidate,Pipeline) or type(candidate.steps[-1][1]).__name__ not in allowed_models:return False
+                if not matching_run(candidate,ns['cv_results'][name]['test_score']):return False
+                if not np.isfinite(ns['cv_results'][name]['test_score']).all():return False
+            return bool(ns['candidates']) and set(ns['candidates'])==set(ns['cv_results']) and self.matching_folds()
+        verify('validation',lambda: result['folds'] and result['metric'] and candidates_valid())
+        verify('diagnosis',lambda: any(r['modelId']==id(ns['candidates'][ns['chosen_name']]) and r['rows']==list(map(str,train.index)) and np.array_equal(r['predictions'],ns['diagnostic_predictions']) for r in self.diagnostic_runs))
+        verify('selection',lambda: ns['chosen_name'] in ns['candidates']
+               and repr(ns['final_model'])==repr(ns['candidates'][ns['chosen_name']])
+               and any(e['kind']=='fit' and e.get('modelId')==id(ns['final_model']) and e['depth']==0
+                       and e['rows']==list(map(str,train.index)) for e in self.events))
+        def final_valid():
+            preds=np.asarray(ns['final_predictions'])
+            digest=hashlib.sha256(json.dumps(_plain(preds),sort_keys=True).encode()).hexdigest()
+            events=[e for e in self.events if e['depth']==0 and e['kind'] in ('predict','predict_proba','decision_function')
+                    and e['rows'] and set(e['rows'])&self.test_ids]
+            return len(events)==1 and events[0].get('modelId')==id(ns['final_model']) and events[0]['rows']==list(map(str,test.index)) and events[0].get('predictionHash')==digest and self.final_after_selection()
+        verify('final',lambda: result['split'] and final_valid())
+        def correct_metric():
+            from sklearn.metrics import f1_score, balanced_accuracy_score, mean_squared_error, mean_absolute_error
+            metric=ns['metric'];pred=ns['final_predictions']
+            value={'f1_macro':lambda:f1_score(yv,pred,average='macro'),'balanced_accuracy':lambda:balanced_accuracy_score(yv,pred),
+                   'neg_root_mean_squared_error':lambda:np.sqrt(mean_squared_error(yv,pred)),
+                   'neg_mean_absolute_error':lambda:mean_absolute_error(yv,pred)}[metric]()
+            return np.isclose(ns['final_score'],value)
+        verify('score',lambda: correct_metric())
+        result['_details']={
+            'features':'Observed selected features: '+str(ns.get('feature_names','not supplied'))+'. Outcome: '+str(ns.get('target','not supplied'))+'.',
+            'metric':'Observed scoring rule: '+str(ns.get('metric','not supplied'))+'.',
+            'baseline':'Recorded cross_validate runs using a dummy: '+str(sum(r['estimator'] in ('DummyRegressor','DummyClassifier') for r in self.validation_runs))+'.',
+            'final':'Observed top-level final-row prediction calls: '+str(sum(e['depth']==0 and e['kind'] in ('predict','predict_proba','decision_function') and bool(e['rows']) and bool(set(e['rows'])&self.test_ids) for e in self.events))+'.',
+            'score':'Reported final score: '+str(ns.get('final_score','not supplied'))+'.',
+        }
+        return result
     def __exit__(self,*args):
         for owner,name,old in reversed(self.patches):setattr(owner,name,old)
         self.patches.clear();self.lineage.clear()
@@ -176,8 +266,53 @@ class LearningTrace:
         return bool(folds) and all((tuple(e['rows']),tuple(e['validationRows'])) in self.expected_folds for e in folds)
     def preparation_inside_folds(self):
         preprocessors={'StandardScaler','OneHotEncoder','ColumnTransformer','SimpleImputer','PolynomialFeatures','OneRPreprocessor'}
-        first=next((i for i,e in enumerate(self.events) if e['kind']=='validationFold'),len(self.events))
-        return not any(e['kind'] in ('fit','fit_transform') and e['depth']==0 and e['estimator'] in preprocessors for e in self.events[:first])
+        return not any(e['kind'] in ('fit','fit_transform') and e['depth']==0 and e['estimator'] in preprocessors and e['stage'] not in ('cv','oof') for e in self.events)
+    def preparation_matches(self, pipeline, groups, polynomial=False, drop_first=False):
+        """Inspect the taught preparation without fitting or executing it again.
+
+        Compare operations per original feature, accepting direct transformers,
+        nested pipelines and equivalent ColumnTransformer group names.
+        """
+        try:
+            steps=pipeline.steps
+            if polynomial:
+                expansion,scale=steps[0][1],steps[1][1]
+                return (len(steps)==3 and type(expansion).__name__=='PolynomialFeatures'
+                        and not expansion.include_bias and expansion.degree in (2,3)
+                        and type(scale).__name__=='StandardScaler' and scale.with_mean and scale.with_std
+                        and type(steps[-1][1]).__name__=='Ridge')
+            def operations(transformer,columns):
+                if isinstance(transformer,str):
+                    return {c:[] for c in columns} if transformer=='passthrough' else {}
+                name=type(transformer).__name__
+                if name=='FunctionTransformer' and transformer.func is None:return {c:[] for c in columns}
+                if name=='ColumnTransformer':
+                    found={}
+                    for _,child,selected in getattr(transformer,'transformers_',transformer.transformers):
+                        if isinstance(child,str) and child=='drop':continue
+                        names=[columns[c] if isinstance(c,(int,np.integer)) else c for c in selected]
+                        child_ops=operations(child,names)
+                        if set(found)&set(child_ops):return {}
+                        found.update(child_ops)
+                    return found
+                if name=='Pipeline':
+                    found={c:[] for c in columns}
+                    for _,child in transformer.steps:
+                        current=operations(child,columns)
+                        if set(current)!=set(found):return {}
+                        found={c:found[c]+current[c] for c in columns}
+                    return found
+                if name=='StandardScaler' and transformer.with_mean and transformer.with_std:op='scale'
+                elif (name=='OneHotEncoder' and transformer.handle_unknown=='ignore'
+                      and transformer.drop==('first' if drop_first else None)):op='one-hot encode'
+                else:op='unsupported'
+                return {c:[op] for c in columns}
+            expected={c:[] if group['operation']=='passthrough' else group['operation'].split(' → ')
+                      for group in groups for c in group['columns']}
+            columns=list(getattr(pipeline,'feature_names_in_',expected))
+            return len(steps)==2 and operations(steps[0][1],columns)==expected
+        except (AttributeError,TypeError,ValueError,IndexError):
+            return False
     def final_after_selection(self):
         exposures=[i for i,e in enumerate(self.events) if e['kind'] in ('predict','predict_proba','decision_function') and e['rows'] and set(e['rows'])&self.test_ids]
         if not exposures or self.overflow:return False
@@ -241,7 +376,7 @@ def run_learning(request):
         if exercise.get('dataset') and exercise.get('preload',True):ns['df']=learning_fixture(exercise['dataset'])
         exec(exercise.get('setup',''),ns)
         test_ids=[];expected_folds=[]
-        if exercise.get('protect'):
+        if exercise.get('protect') and not exercise.get('assessment'):
             spec=exercise['protect'];df=ns.get('df')
             if df is None:df=learning_fixture(exercise['dataset'])
             if spec.get('time'):
@@ -256,6 +391,8 @@ def run_learning(request):
                 test_ids=list(map(str,test.index))
                 splitter=(StratifiedKFold if spec.get('stratified') else KFold)(5,shuffle=True,random_state=42)
             expected_folds=[(tuple(map(str,train.index[a])),tuple(map(str,train.index[b]))) for a,b in splitter.split(train,train[spec['target']])]
+        if exercise.get('assessment'):
+            import sklearn
         trace=LearningTrace(test_ids,expected_folds)
         with warnings.catch_warnings(record=True) as caught,contextlib.redirect_stdout(stdout),contextlib.redirect_stderr(stderr),trace:
             warnings.simplefilter('always')
@@ -270,6 +407,7 @@ def run_learning(request):
             except Exception:receipt['error']=traceback.format_exc(limit=6)[-MAX_TEXT:]
         # Trusted checks inspect current objects without fitting a reference model.
         check_ns={**ns,'np':np,'pd':pd,'trace':trace,'_same_partition':_same_partition,'_pca_equivalent':_pca_equivalent}
+        if exercise.get('assessment'):check_ns['workflow_evidence']=trace.assessment(ns,exercise['assessment'])
         for check in exercise.get('checks',[]):
             status='correct';message=check.get('success','The requested evidence is consistent.')
             try:
@@ -279,6 +417,9 @@ def run_learning(request):
                     status='needs-attention';message=check['message']
             except (NameError,KeyError,AttributeError,TypeError,ValueError,IndexError):
                 status='unavailable';message=check.get('missing','Run the code and create the requested output before checking this deliverable.')
+            if check.get('evidenceKey') and 'workflow_evidence' in check_ns:
+                detail=check_ns['workflow_evidence'].get('_details',{}).get(check['evidenceKey'])
+                if detail:message+=' '+detail
             receipt['checks'].append({'name':check['name'],'status':status,'message':message})
         for name in exercise.get('outputs',['_last_output']):
             if name in ns:receipt['outputs'][name]=_plain(ns[name])

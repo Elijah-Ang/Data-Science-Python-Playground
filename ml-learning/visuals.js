@@ -8,6 +8,7 @@
   const arrow=(x,y,a,b)=>line(x,y,a,b,'marker-end="url(#ml-arrow)"');
   const dots=[[55,154],[95,158],[132,118],[178,122],[227,92],[278,80],[327,69],[372,34]];
   const types={
+    workflow:()=>[['Question / X, y','Split: reserve test','Training-only folds'],['Dummy + candidate','Choose + diagnose','Final predict / explain']].map((row,r)=>row.map((label,c)=>box(12+c*182,30+r*96,166,60,label,c===2?'accent':'')+(c<2?arrow(179+c*182,60+r*96,192+c*182,60+r*96):'')).join('')).join('')+text(280,222,'Fit preparation inside folds. Open final evidence once.','text-anchor="middle"'),
     tasks:()=>box(10,92,112,45,'Question')+line(122,114,148,114)+line(148,27,148,192)+['Predict quantity','Predict label','Discover groups','Reduce dimensions'].map((label,i)=>arrow(148,27+i*55,178,27+i*55)+box(182,5+i*55,350,43,label)).join(''),
     table:()=>['Observation','Feature X₁','Feature X₂','Target y'].map((s,i)=>box(20+i*130,22,122,36,s,i===3?'accent':'' )).join('')+[0,1,2].map(r=>['row '+(r+1),[2,5,8][r],['standard','express','economy'][r],['known','known','unknown'][r]].map((v,i)=>box(20+i*130,65+r*41,122,35,v,i===3?'accent':'' )).join('')).join('')+text(282,218,'Keep row identities aligned; new rows provide X.','text-anchor="middle"'),
     split:()=>box(20,25,510,36,'Observations')+arrow(160,64,160,95)+arrow(440,64,440,95)+box(20,100,310,50,'Training → fit / validate','accent')+box(370,100,160,50,'Final test')+line(350,75,350,180,'stroke-dasharray="6 5"')+text(278,208,'Protect final rows from preparation and selection.','text-anchor="middle"'),
@@ -121,9 +122,257 @@
     }
     return null;
   }
+  let diagramId=0;
+  // Card-size scenes use short, lesson-specific labels. The full diagrams above
+  // have a different purpose and remain available inside each lesson.
+  const miniSpecs=Object.freeze({
+    F01:'fork|Predict quantity|Predict class|Discover groups',
+    F02:'table|One observation|Features X|Target y',
+    F03:'plot|Observed points|fit(X, y)|Learned line',
+    F04:'flow|New feature row|fitted.predict|Predicted value',
+    F05:'residual|Actual y|Predicted y|Error distance',
+    F06:'split|All observations|Seen for learning|Unseen for test',
+    F07:'split|Aligned X and y|Seeded train rows|Reserved test rows',
+    F08:'scatter|Feature space|Class A or B|New row label',
+    F09:'split|A and B classes|Training mix|Test mix',
+    F10:'guard|Known at decision|Prediction time|Later outcome',
+    'F-R1':'choice|X versus y|fit versus predict|Recall the roles',
+    'F-R2':'choice|Training evidence|Final evidence|Keep them apart',
+    'F-K1':'flow|Define X and y|Split, fit, predict|Read the error',
+    F11:'pipeline|Delivery X|Linear model|Minutes of error',
+    F12:'pipeline|Specimen X|Classifier|Class errors',
+    W01:'table|Training rows|Types and gaps|Inspect before fit',
+    W02:'bars|Dummy score|Model score|Same folds',
+    W03:'scatter|Unequal units|Scaled distance|Nearby rows',
+    W04:'table|Category value|One-hot columns|No false order',
+    W05:'pipeline|Numeric: scale|Category: encode|Estimator',
+    W06:'flow|Prepare in pipe|Fit each fold|Predict new rows',
+    W07:'table|Missing value|Train median|Reuse at predict',
+    W08:'folds|Fold fit rows|Validation rows|Final held out',
+    W09:'bars|Fold 1|Fold 2|Score spread',
+    W10:'choice|Set before fit|Learned after fit|Check quality',
+    W11:'folds|Try settings|Compare folds|Choose recipe',
+    W12:'residual|Out-of-fold|Training only|Test sealed',
+    W13:'flow|Choose with CV|Refit training|Test only once',
+    W14:'time|Earlier fit|Later validate|Latest test',
+    'W-R1':'choice|Impute and scale|Encode categories|Fit within folds',
+    'W-R2':'choice|Compare CV|Diagnose errors|Open test once',
+    'W-K1':'pipeline|Mixed inputs|Shared folds|Final MAE',
+    W15:'guard|Spot the leak|Repair boundary|Rerun folds',
+    W16:'bars|Training fit|Validation fit|Hidden errors',
+    'W-K2':'flow|Frame question|Validate recipe|Report result',
+    'W-K3':'flow|Stratify labels|Choose macro F1|Final class errors',
+    R01:'plot|Intercept|Slope|New prediction',
+    R02:'choice|RMSE: error units|R²: versus mean|Different meanings',
+    R03:'residual|Residual pattern|Large misses|Limits',
+    R04:'choice|Change weight|Hold distance|Compare prediction',
+    R05:'table|Economy reference|Indicator columns|Coefficients',
+    R06:'choice|Correlated X|Shifting weights|Stable predictions',
+    R07:'curve|x and x²|Curved fit|Validate it',
+    R08:'curve|More degrees|Train improves|Validate first',
+    R09:'tree|Split on X|Leaf average A|Leaf average B',
+    R10:'tree|Control depth|Larger leaves|Validate error',
+    R11:'choice|Prediction works|Association seen|No causal claim',
+    'R-R1':'choice|Read weights|Inspect residuals|Report RMSE',
+    'R-R2':'choice|Line or curve|Tree flexibility|Common folds',
+    'R-K1':'flow|Candy features|Compare models|Final RMSE',
+    C01:'matrix|True class|Predicted class|Count each error',
+    C02:'matrix|Precision|Recall|Error costs',
+    C03:'bars|Class A F1|Class B F1|Macro average',
+    C04:'prob|Class chance|Threshold|Final label',
+    C05:'scatter|Linear boundary|Class A|Class B',
+    C06:'folds|Scale inside CV|Logistic fit|Macro F1',
+    C07:'prob|Lower threshold|More alerts|Fewer misses',
+    C08:'scatter|Query point|Nearby votes|Chosen label',
+    C09:'bars|Small k|Large k|Validate k',
+    C10:'scatter|Margin|Support rows|Scaled SVC',
+    C11:'curve|RBF boundary|Curved regions|Tune with CV',
+    C12:'tree|One feature|Majority rule|Default class',
+    C13:'tree|Numeric cut|Binned values|One-R rule',
+    C14:'tree|Class counts|Purer leaves|Predicted class',
+    C15:'gauss|Class prior|Feature density|Posterior',
+    C16:'table|Binary counts|Word counts|Continuous X',
+    C17:'gauss|Different means|Shared shape|LDA',
+    C18:'gauss|Class A shape|Class B shape|QDA',
+    C19:'gauss|Few rows|Covariance fit|Regularise',
+    'C-R1':'choice|Confusion counts|Macro F1|Reference score',
+    'C-R2':'choice|Neighbour scale|SVM margin|One-R rule',
+    'C-R3':'choice|Tree leaves|Bayes likelihood|LDA or QDA',
+    'C-K1':'flow|Penguin X|Choose by CV|Inspect confusion',
+    N01:'network|Input features|Hidden units|Output',
+    N02:'curve|Current weights|Training loss|Update weights',
+    N03:'network|Scaled X|Class outputs|Macro F1',
+    N04:'network|Scaled X|One output|Original units',
+    N05:'curve|Training loss|Validation gap|Stop in time',
+    N06:'network|More capacity|Regularisation|Validation',
+    'N-R1':'choice|Inputs and units|Loss and convergence|Class or value',
+    'N-K1':'flow|Wine X|Tune network|Original RMSE',
+    'N-K2':'flow|Penguin X|Tune network|Class errors',
+    U01:'fork|No target y|Find groups|Describe structure',
+    U02:'scatter|Original units|Scaled space|Distance changes',
+    U03:'cluster|Assign point|Move centroid|Repeat',
+    U04:'choice|Inertia|Silhouette|Inspect profiles too',
+    U05:'table|Cluster label|Original units|Group profile',
+    U06:'cluster|Elongated shape|Centroid limit|Check geometry',
+    U07:'hierarchy|Small merges|Larger merges|Dendrogram',
+    U08:'hierarchy|Cut height|Group count|Describe groups',
+    U09:'hierarchy|Sample rows|Keep row IDs|Interpret sample',
+    U10:'guard|Fit without label|Profile groups|Avoid truth claim',
+    'U-R1':'choice|Scale distance|Choose k|Profile groups',
+    'U-R2':'choice|Linkage|Cut height|Sample scope',
+    'U-K1':'flow|Prepare X|Find groups|Profile in units',
+    P01:'pca|Original X|New axes|Scores',
+    P02:'pipeline|Fit scaler|Fit PCA|Transform new X',
+    P03:'choice|Variance kept|Prediction score|Not equivalent',
+    P04:'bars|Component shares|Retained prefix|Target variance',
+    P05:'table|Feature weights|Row scores|Keep IDs',
+    P06:'pca|Two-axis view|Other axes|Lost detail',
+    P07:'pca|Flip both signs|Same projection|Same rebuilt X',
+    'P-R1':'choice|Scale then PCA|Retain variance|Read loadings',
+    'P-K1':'flow|Penguin X|Retain axes|Explain plot',
+    M01:'fork|Predict number|Predict class|Discover pattern',
+    M02:'choice|Candidate A|Candidate B|Use common folds',
+    M03:'choice|Observed score|Error meaning|State limits',
+    M04:'guard|Original setting|New setting|Check transfer',
+    'M-R1':'choice|Pick the task|Match metric|Explain claim',
+    'M-K1':'flow|Frame task|Choose evidence|Qualify result'
+  });
+  const miniTableRows=Object.freeze({
+    F02:[['row 01','distance','minutes'],['row 02','weight','minutes']],
+    W01:[['row 01','numeric','check range'],['row 02','category','check gaps']],
+    W04:[['express','0 · 1 · 0','aligned'],['economy','0 · 0 · 1','aligned']],
+    W07:[['missing','learn 4','fill with 4'],['new row','reuse 4','no refit']],
+    R05:[['economy','0 · 0','reference'],['express','1 · 0','effect']],
+    C16:[['binary','0 / 1','Bernoulli'],['measured','real value','Gaussian']],
+    U05:[['group 0','mean length','n rows'],['group 1','mean length','n rows']],
+    P05:[['feature','axis weight','component'],['row ID','axis score','location']]
+  });
+  const miniLabel=(x,y,value,cls='',anchor='middle')=>text(x,y,value,'class="'+cls+'" text-anchor="'+anchor+'"');
+  function miniBox(x,y,w,h,value,accent=false){
+    const limit=Math.floor((w-18)/10.5);
+    const words=value.split(' ');
+    let rows=[value];
+    if(value.length>limit&&words.length>1&&h>=50){
+      const midpoint=Math.ceil(words.length/2);
+      rows=[words.slice(0,midpoint).join(' '),words.slice(midpoint).join(' ')];
+    }
+    return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="7" class="'+(accent?'accent':'')+'"/>'+
+      rows.map((row,i)=>miniLabel(x+w/2,y+h/2+(rows.length===1?6:-3+i*21),row,rows.length===1&&row.length>limit?'tight':'main')).join('');
+  }
+  const miniArrow=(x,y,a,b)=>'<path d="M'+x+' '+y+'L'+a+' '+b+'m-7 -5l7 5l-7 5" class="mini-arrow"/>';
+  const miniAside=parts=>'<path d="M376 24V176" class="mini-separator"/>'+parts.map((part,i)=>miniLabel(396,53+i*49,part,i===0?'aside-main':'aside','start')).join('');
+  function miniScene(mode,parts,key){
+    const [a,b,c]=parts;
+    if(key==='F11')return '<path d="M30 25V158H305" class="mini-axis"/><path d="M50 144L290 43" class="mini-feature"/>'+
+      [[65,131],[93,127],[128,103],[174,95],[206,76],[251,60]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+
+      miniArrow(310,99,345,99)+miniBox(357,52,175,93,'MAE in minutes',true)+miniLabel(163,184,'Delivery line','main');
+    if(key==='F12')return [0,1,2].map(row=>[0,1,2].map(col=>'<rect x="'+(28+col*65)+'" y="'+(24+row*48)+'" width="57" height="42" rx="4" class="'+(row===col?'accent':'mini-wash')+'"/>').join('')).join('')+
+      miniArrow(240,95,279,95)+miniBox(290,50,242,88,'Which classes missed?',true)+miniLabel(124,188,'Class confusion','main');
+    if(mode==='residual')return '<path d="M34 25V172H350" class="mini-axis"/><path d="M50 153L325 44" class="mini-feature"/>'+
+      [[97,100],[161,151],[224,55],[310,90]].map(([x,y])=>'<path d="M'+x+' '+y+'V'+(153-(x-50)*109/275)+'" class="mini-cut"/><circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('')+miniAside(parts);
+    if(key==='W05')return miniBox(25,25,188,55,a,true)+miniBox(25,115,188,55,b,true)+
+      '<path d="M215 52H310V95H345M215 142H310V95" class="mini-feature"/>'+miniBox(350,65,180,62,c);
+    if(key==='W03')return '<path d="M25 152H235M320 152H535" class="mini-axis"/>'+
+      [52,74,103,177,211].map(x=>'<circle cx="'+x+'" cy="135" r="6" class="mini-dot"/>').join('')+
+      [356,386,415,444,475].map(x=>'<circle cx="'+x+'" cy="135" r="6" class="mini-dot"/>').join('')+
+      '<path d="M130 35V155M415 35V155" class="mini-cut"/>'+miniArrow(245,100,306,100)+
+      miniLabel(130,28,'Train: fit μ, σ','main')+miniLabel(427,28,'New X: reuse','main')+miniLabel(280,187,'No test-row fit','main');
+    if(key==='U02')return '<path d="M35 155H245M35 155V35M310 155H530M310 155V35" class="mini-axis"/>'+
+      [[70,63],[95,110],[168,83],[205,128]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('')+
+      [[358,72],[380,99],[409,84],[431,111]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('')+
+      miniLabel(140,29,'Raw units','main')+miniLabel(420,29,'Scaled space','main')+miniLabel(280,181,'Distances change','main');
+    if(key==='C08')return '<path d="M25 170H350M25 170V25" class="mini-axis"/>'+
+      [[87,65],[113,95],[125,54],[218,113],[245,136],[265,104]].map(([x,y],i)=>i<3?'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>':'<rect x="'+x+'" y="'+y+'" width="12" height="12" class="mini-dot"/>').join('')+
+      '<circle cx="154" cy="100" r="58" class="mini-ring"/><circle cx="154" cy="100" r="8" class="accent"/>'+miniAside(parts);
+    if(key==='C10')return '<path d="M25 170H350M25 170V25" class="mini-axis"/>'+
+      '<path d="M125 170L222 25M95 170L192 25M155 170L252 25" class="mini-cut"/>'+
+      [[70,70],[95,94],[132,60],[260,120],[280,88],[309,119]].map(([x,y],i)=>i<3?'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>':'<rect x="'+x+'" y="'+y+'" width="12" height="12" class="mini-dot"/>').join('')+miniAside(parts);
+    if(key==='U03')return '<circle cx="103" cy="86" r="55" class="mini-ring"/><circle cx="267" cy="105" r="55" class="mini-ring"/>'+
+      [[68,69],[95,59],[116,104],[235,79],[276,77],[290,123]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+
+      '<path d="M94 77l17 18m0 -18L94 95M259 97l17 18m0 -18l-17 18" class="mini-feature"/>'+miniAside(parts);
+    if(key==='U06')return '<ellipse cx="130" cy="100" rx="110" ry="32" transform="rotate(-25 130 100)" class="mini-ring"/>'+
+      '<circle cx="275" cy="103" r="60" class="mini-ring"/>'+
+      [[70,119],[100,105],[135,91],[170,71],[246,84],[277,120],[300,88]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+miniAside(parts);
+    if(key==='R08'||key==='N05')return '<path d="M30 25V170H350" class="mini-axis"/>'+
+      '<path d="M45 37Q130 150 330 154" class="mini-feature"/>'+
+      '<path d="M45 42Q180 171 330 65" class="mini-cut"/>'+miniAside(parts);
+    if(key==='N02')return '<path d="M30 25V170H350" class="mini-axis"/>'+
+      '<path d="M45 45C92 100 147 133 205 144S290 150 330 152" class="mini-feature"/>'+
+      [45,95,150,205,265,330].map((x,i)=>'<circle cx="'+x+'" cy="'+[45,100,133,144,150,152][i]+'" r="4" class="mini-dot"/>').join('')+miniAside(parts);
+    if(key==='C11')return '<path d="M25 170H350M25 170V25" class="mini-axis"/>'+
+      '<path d="M45 49Q120 171 200 102T330 145" class="mini-feature"/>'+
+      [[68,87],[105,111],[171,44],[239,67],[289,94]].map(([x,y],i)=>i<3?'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>':'<rect x="'+x+'" y="'+y+'" width="12" height="12" class="mini-dot"/>').join('')+miniAside(parts);
+    if(key==='C15')return '<path d="M35 155H345" class="mini-axis"/>'+
+      '<path d="M45 153Q115 20 177 153M181 153Q260 15 335 153" class="mini-feature"/>'+
+      miniLabel(114,174,'Class A','aside-main')+miniLabel(260,174,'Class B','aside-main')+miniAside(parts);
+    if(key==='C17'||key==='C18'||key==='C19'){
+      const first=key==='C19'?'<ellipse cx="105" cy="96" rx="68" ry="55" class="mini-ring"/>':'<ellipse cx="105" cy="96" rx="78" ry="45" class="mini-ring"/>';
+      const second=key==='C17'?'<ellipse cx="263" cy="96" rx="78" ry="45" class="mini-ring"/>':key==='C18'?'<ellipse cx="263" cy="96" rx="48" ry="68" class="mini-ring"/>':'<ellipse cx="263" cy="96" rx="68" ry="55" class="mini-ring"/>';
+      return first+second+'<circle cx="105" cy="96" r="5" class="mini-dot"/><circle cx="263" cy="96" r="5" class="mini-dot"/>'+miniAside(parts);
+    }
+    if(key==='N06')return [0,1].map(group=>[0,1,2].map(i=>'<circle cx="'+(80+group*270)+'" cy="'+(50+i*48)+'" r="'+(group?10:6)+'" class="'+(i===1?'accent':'mini-dot')+'"/>').join('')).join('')+
+      '<path d="M100 98H325" class="mini-arrow"/>'+miniLabel(80,184,'Capacity','main')+miniLabel(350,184,'Penalty','main')+miniLabel(276,30,'Tune both','main');
+    if(key==='N03'||key==='N04'){
+      const inputs=[{x:40,y:61},{x:40,y:131}],hidden=[{x:170,y:35},{x:170,y:96},{x:170,y:157}];
+      const outputs=key==='N03'?[{x:315,y:43},{x:315,y:96},{x:315,y:149}]:[{x:315,y:96}];
+      return inputs.flatMap(p=>hidden.map(q=>'<path d="M'+p.x+' '+p.y+'L'+q.x+' '+q.y+'" class="mini-wire"/>')).join('')+
+        hidden.flatMap(p=>outputs.map(q=>'<path d="M'+p.x+' '+p.y+'L'+q.x+' '+q.y+'" class="mini-wire"/>')).join('')+
+        inputs.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="10" class="mini-dot"/>').join('')+
+        hidden.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="10" class="accent"/>').join('')+
+        outputs.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="10" class="mini-dot"/>').join('')+miniAside(parts);
+    }
+    if(key==='U07')return '<path d="M48 160V126H126V160M87 126V83H196V160M268 160V118H334V160M301 118V83H141M141 83V43H301" class="mini-feature"/>'+miniAside(parts);
+    if(key==='U09')return miniBox(20,57,130,65,'Sample n',true)+miniArrow(155,89,180,89)+
+      '<path d="M205 157V122H255V157M230 122V75H300V157M312 157V103H352V157M332 103V75H265M265 75V38H332" class="mini-feature"/>'+miniAside(parts);
+    if(key==='P04')return '<path d="M30 158H345" class="mini-axis"/>'+
+      [95,74,51,32,17].map((height,i)=>'<rect x="'+(42+i*56)+'" y="'+(157-height)+'" width="38" height="'+height+'" rx="3" class="'+(i<3?'accent':'mini-wash')+'"/>').join('')+
+      '<path d="M217 24V175" class="mini-cut"/>'+miniAside(parts);
+    if(key==='P06')return '<path d="M35 166H345M35 166V28" class="mini-axis"/><path d="M66 151L292 44M171 98L113 35" class="mini-feature"/>'+
+      [[83,133],[118,121],[151,109],[185,88],[216,82],[244,60]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+
+      '<path d="M60 49Q185 2 320 42" class="mini-cut"/>'+miniAside(parts);
+    if(key==='P07')return '<path d="M35 168H350M35 168V25" class="mini-axis"/>'+
+      '<path d="M178 100L314 33m-7 1l7 -1l-3 8M178 100L42 167m7 -1l-7 1l3 -8" class="mini-feature"/>'+
+      '<circle cx="178" cy="100" r="7" class="mini-dot"/>'+miniAside(parts);
+    if(mode==='flow'||mode==='pipeline')return miniBox(18,62,150,72,a)+miniArrow(172,98,198,98)+miniBox(205,62,150,72,b,true)+miniArrow(359,98,385,98)+miniBox(392,62,150,72,c);
+    if(mode==='fork')return miniBox(20,67,172,66,a,true)+'<path d="M192 100H235V55H273M235 100V145H273"/>'+miniBox(280,25,255,60,b)+miniBox(280,115,255,60,c);
+    if(mode==='split')return miniBox(120,18,320,45,a)+'<path d="M280 63V83H145V99M280 83H415V99"/>'+miniBox(28,105,235,65,b,true)+miniBox(297,105,235,65,c);
+    if(mode==='guard')return '<path d="M30 102H530" class="mini-axis"/><path d="M360 27V171" class="mini-cut"/>'+miniBox(30,42,160,42,a,true)+miniBox(202,42,145,42,b)+miniBox(374,113,160,42,c)+miniLabel(357,188,'NOW','minor');
+    if(mode==='table')return [a,b,c].map((part,i)=>miniBox(16+i*183,25,170,53,part,i===1)).join('')+[0,1].map((row)=>[0,1,2].map(col=>'<rect x="'+(16+col*183)+'" y="'+(89+row*42)+'" width="170" height="34" rx="3" class="'+(col===1?'mini-wash':'')+'"/>'+miniLabel(101+col*183,112+row*42,miniTableRows[key][row][col],'cell')).join('')).join('');
+    if(mode==='bars')return [a,b,c].map((part,i)=>'<rect x="'+(55+i*170)+'" y="'+(146-[75,112,88][i])+'" width="90" height="'+[75,112,88][i]+'" rx="4" class="'+(i===1?'accent':'mini-wash')+'"/>'+miniLabel(100+i*170,172,part,'bar-label')).join('')+'<path d="M25 147H535" class="mini-axis"/>';
+    if(mode==='plot'||mode==='curve'){
+      const axes='<path d="M34 25V172H350" class="mini-axis"/>';
+      const dots=[[64,143],[97,124],[131,128],[161,104],[196,85],[224,90],[264,59],[310,45]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('');
+      const fit=mode==='curve'?'<path d="M47 42Q145 200 327 34" class="mini-feature"/>':'<path d="M50 153L325 44" class="mini-feature"/>';
+      return axes+fit+dots+miniAside(parts);
+    }
+    if(mode==='choice')return miniBox(25,30,240,58,a,true)+miniBox(295,30,240,58,b)+miniLabel(280,143,c,'main')+'<path d="M120 107H440" class="mini-separator"/>';
+    if(mode==='matrix')return [0,1].map(row=>[0,1].map(col=>'<rect x="'+(35+col*135)+'" y="'+(30+row*68)+'" width="125" height="58" rx="5" class="'+(row===col?'accent':'mini-wash')+'"/>'+miniLabel(97+col*135,67+row*68,[['TP','FP'],['FN','TN']][row][col],'main')).join('')).join('')+miniAside(parts);
+    if(mode==='folds')return [0,1,2,3].map(row=>[0,1,2,3].map(col=>'<rect x="'+(30+col*76)+'" y="'+(28+row*37)+'" width="67" height="29" rx="3" class="'+(row===col?'accent':'mini-wash')+'"/>'+miniLabel(63+col*76,49+row*37,row===col?'V':'T','minor')).join('')).join('')+miniAside(parts);
+    if(mode==='time')return [0,1,2].map((i)=>miniBox(22+i*103,27+i*54,150+i*72,37,parts[i],i===0)).join('')+'<path d="M30 181H540m-8 -6l8 6l-8 6" class="mini-axis"/>';
+    if(mode==='tree')return miniBox(166,18,225,55,a,true)+'<path d="M225 73L134 113M332 73L426 113"/>'+miniBox(25,118,220,55,b)+miniBox(315,118,220,55,c);
+    if(mode==='scatter'||mode==='cluster'){
+      const dots1=[[65,58],[88,48],[114,78],[135,45],[89,92]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('');
+      const dots2=[[216,126],[245,104],[277,139],[302,110],[266,77]].map(([x,y])=>'<rect x="'+x+'" y="'+y+'" width="12" height="12" class="mini-dot"/>').join('');
+      return '<path d="M35 172H350M35 172V22" class="mini-axis"/>'+(mode==='cluster'?'<circle cx="101" cy="70" r="53" class="mini-ring"/><circle cx="265" cy="119" r="55" class="mini-ring"/><path d="M95 63l12 14m0 -14L95 77M259 112l12 14m0 -14l-12 14" class="mini-feature"/>':'<path d="M145 169L208 30" class="mini-cut"/>')+dots1+dots2+miniAside(parts);
+    }
+    if(mode==='prob')return [0,1,2].map((i)=>'<rect x="45" y="'+(35+i*49)+'" width="'+[90,210,270][i]+'" height="26" rx="4" class="'+(i===1?'accent':'mini-wash')+'"/>').join('')+'<path d="M207 20V178" class="mini-cut"/>'+miniAside(parts);
+    if(mode==='gauss')return '<ellipse cx="107" cy="95" rx="74" ry="48" class="mini-ring"/><ellipse cx="258" cy="96" rx="55" ry="67" class="mini-ring accent"/>'+miniAside(parts);
+    if(mode==='network')return [0,1,2].map(layer=>Array.from({length:layer===1?3:2},(_,i)=>({x:45+layer*142,y:(layer===1?42+i*51:64+i*72),layer}))).flat().map((p,_,all)=>all.filter(q=>q.layer===p.layer+1).map(q=>'<path d="M'+p.x+' '+p.y+'L'+q.x+' '+q.y+'" class="mini-wire"/>').join('')+'<circle cx="'+p.x+'" cy="'+p.y+'" r="12" class="'+(p.layer===1?'accent':'mini-dot')+'"/>').join('')+miniAside(parts);
+    if(mode==='hierarchy')return '<path d="M48 160V126H126V160M87 126V83H196V160M268 160V118H334V160M301 118V83H141M141 83V43H301" class="mini-feature"/><path d="M27 105H352" class="mini-cut"/>'+miniAside(parts);
+    if(mode==='pca')return '<path d="M35 167H340M35 167V26" class="mini-axis"/><path d="M67 151L291 40M171 98L113 33" class="mini-feature"/>'+[[88,132],[119,123],[151,112],[181,91],[213,84],[247,59]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+miniAside(parts);
+    throw Error('Unknown card thumbnail mode: '+mode);
+  }
+  function thumbnail(card){
+    const key=card.id.replace(/^ML-/,'');
+    const spec=miniSpecs[key];
+    if(!spec)throw Error('Missing lesson-specific thumbnail: '+key);
+    const [mode,...parts]=spec.split('|');
+    const description=card.title+': '+parts.join(', ');
+    return '<svg class="concept-visual ml-thumbnail" viewBox="0 0 560 200" role="img" aria-label="'+esc(description)+'"><title>'+esc(description)+'</title><g>'+miniScene(mode,parts,key)+'</g></svg>';
+  }
   function render(visual){
-    const kind=visual?.type||'tasks',content=variant(visual)||(types[kind]||types.tasks)();
-    return '<figure class="ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="ml-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>Schematic · '+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
+    const kind=visual?.type||'tasks',id='ml-arrow-'+(++diagramId),content=(variant(visual)||(types[kind]||types.tasks)()).replaceAll('url(#ml-arrow)','url(#'+id+')');
+    return '<figure class="teaching-illustration ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="'+id+'" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>Schematic · '+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
   }
   function illustration(family){
     const scenes={
@@ -137,5 +386,5 @@
     const names={regression:'Regression',classification:'Classification',neural:'Neural networks',time:'Time-ordered prediction',clustering:'Clustering',pca:'PCA representation'};
     return '<svg class="case-illustration ml-case-illustration" viewBox="0 0 64 64" role="img" aria-label="'+esc(names[family]||family)+' workflow illustration"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">'+(scenes[family]||scenes.classification)+'</g></svg>';
   }
-  root.MLLearningVisuals={render,illustration,types:Object.keys(types),family:v=>variant(v)?v.id:v.type};
+  root.MLLearningVisuals={render,thumbnail,illustration,types:Object.keys(types),family:v=>variant(v)?v.id:v.type};
 })(window);

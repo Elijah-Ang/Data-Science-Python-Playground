@@ -12,7 +12,7 @@ def groups(exercise,index):
           ('Final evidence','Fit the nominated model on training rows and evaluate the reserved rows once. Report saved predictions, the requested metrics and labelled evidence; explain limitations without using the final test for further selection.')]
         mapping={
           0:['Aligned split inputs and targets','Protected final rows','Observable training provenance','Declared features and target','Forward split'],
-          1:['Cross-validation','Matching folds','Fold-local preparation','Reference evidence','Candidate coverage','Nomination','Requested model families','Production One-R'],
+          1:['Cross-validation','Matching folds','Fold-local preparation','Reference evidence','Candidate coverage','Nomination','Requested model families','Production preparation','Production One-R'],
           2:['Training-only diagnosis','Last-block diagnosis','Training-only ablation'],
           3:['Final-test discipline','Predictions match the chosen fit','Original-unit RMSE','Class predictions','Macro F1','Interpretation','Class-labelled probabilities']}
     elif index==16:

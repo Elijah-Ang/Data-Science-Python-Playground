@@ -25,9 +25,9 @@ with sync_playwright() as p:
                 assert panel.locator('.teaching-example').is_visible(), item
                 assert panel.locator('.teaching-route, .teaching-tools').count() == 0, item
                 assert panel.locator('details').count() == 0, item
-                if item['deck'] == 'visualise':
-                    assert panel.locator('svg[role="img"]').count() >= 1, item
+                assert panel.locator('svg[role="img"]').count() >= 1, item
                 assert panel.locator('.teaching-summary').is_visible(), item
+                assert page.locator('.teaching-syntax-parts code span').evaluate_all('(nodes)=>nodes.every(e=>getComputedStyle(e).display!=="none")'), item
             else:
                 assert page.locator('.foundation-content>.foundation-practice-brief').count() == 1, item
                 assert page.locator('.teaching-overview, .foundation-syntax').count() == 0, item
@@ -35,7 +35,7 @@ with sync_playwright() as p:
             assert page.locator('summary', has_text='View setup code').count() == 0, item
             expected = page.evaluate('(r)=>FoundationWorkspace.code(FoundationsCurriculum,FoundationsCurriculum.lessons.find(l=>l.id===r.id).rounds[r.index])', item)
             assert page.locator('#foundationEditor').input_value() == expected, item
-            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), item
+            assert page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth) <= innerWidth + 1'), item
             assert panel.evaluate('(e)=>e.scrollWidth<=e.clientWidth+1'), item
     page.evaluate('location.hash="#inspect/I02/1"')
     page.wait_for_function('document.querySelector(".foundation-breadcrumb")?.textContent.includes("I02")')
@@ -51,11 +51,11 @@ with sync_playwright() as p:
     page.evaluate('location.hash="#inspect/I17/2"')
     page.wait_for_function('document.querySelector(".foundation-breadcrumb")?.textContent.includes("I17")')
     page.locator('#foundationEditor').fill('# Keep this work while checking the concept')
-    page.locator('.teaching-reference summary').click()
+    assert page.locator('.teaching-reference').evaluate('(e)=>e.tagName==="SECTION"')
     assert page.locator('.teaching-reference .teaching-flags').is_visible()
     assert 'B · unique' in page.locator('.teaching-reference').inner_text()
     assert page.locator('#foundationEditor').input_value() == '# Keep this work while checking the concept'
-    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
+    assert page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth) <= innerWidth + 1')
     assert not errors, errors
     print(f'All {len(rounds)} teaching panels rendered at 1440px and 320px without overflow or page errors.')
     browser.close()

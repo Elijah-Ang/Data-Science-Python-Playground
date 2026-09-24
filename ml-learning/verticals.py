@@ -36,8 +36,8 @@ X = df[['distance', 'weight', 'service', 'weekend']]
 y = df['duration']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 prepare = ColumnTransformer([
-    ('numeric', StandardScaler(), ['distance', 'weight']),
-    ('category', OneHotEncoder(handle_unknown='ignore', sparse_output=False), ['service']),
+    ('numeric', 'passthrough', ['distance', 'weight']),
+    ('category', OneHotEncoder(handle_unknown='ignore', sparse_output=False, drop='first'), ['service']),
     ('flags', 'passthrough', ['weekend'])
 ])
 model = Pipeline([('prepare', prepare), ('model', LinearRegression())])
@@ -153,8 +153,8 @@ ratios = pca.explained_variance_ratio_
 cumulative = np.cumsum(ratios)
 retained = int(np.searchsorted(cumulative,0.9)+1)
 reduced = scores[:,:retained]
-weights = pd.DataFrame(pca.components_[:2].T,index=X.columns,columns=['PC1','PC2'])
-scores2 = scores[:,:2]
+weights = pd.DataFrame(pca.components_[:2].T.copy(),index=X.columns,columns=['PC1','PC2'])
+scores2 = scores[:,:2].copy()
 fig, ax = plt.subplots(figsize=(6,4))
 ax.scatter(scores2[:,0],scores2[:,1],s=12)
 ax.set(title='Two-component view of measurements',xlabel='PC1 score',ylabel='PC2 score')

@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 
-FIXTURE_VERSION = 1
+FIXTURE_VERSION = 2
 
 def learning_fixture(name):
     if name.startswith('ML-X'):
@@ -23,6 +23,25 @@ def learning_fixture(name):
                 if df[c].nunique()>4:df[c]+=rng.normal(0,float(df[c].std())*.05,len(df))
         return df
     rng = np.random.default_rng(42)
+    if name in ('ENERGY72', 'SUPPORT120', 'REPAIR96', 'SENSOR150'):
+        seeds={'ENERGY72':121,'SUPPORT120':232,'REPAIR96':343,'SENSOR150':454}
+        rng=np.random.default_rng(seeds[name])
+        n={'ENERGY72':72,'SUPPORT120':120,'REPAIR96':96,'SENSOR150':150}[name]
+        if name=='ENERGY72':
+            area=rng.uniform(25,180,n); occupants=rng.integers(1,6,n)
+            use=40+1.8*area+15*occupants+rng.normal(0,22,n)
+            return pd.DataFrame({'area_m2':area,'occupants':occupants,'monthly_kwh':use,'end_month_bill':use*.3})
+        if name=='SUPPORT120':
+            queue=rng.integers(0,35,n); age=rng.uniform(0,8,n)
+            late=np.where(queue+3*age+rng.normal(0,9,n)>43,'late','on_time')
+            return pd.DataFrame({'queue_at_open':queue,'age_hours_at_open':age,'resolution':late,'closed_late_flag':(late=='late').astype(int)})
+        if name=='REPAIR96':
+            jobs=rng.integers(0,15,n); age=rng.uniform(1,12,n)
+            hours=3+1.5*jobs+.7*age+rng.normal(0,2,n)
+            return pd.DataFrame({'ticket_id':np.arange(9000,9000+n),'jobs_waiting':jobs,'device_age_years':age,'repair_hours':hours,'invoice_labor_hours':hours+.2})
+        vibration=rng.uniform(0,8,n); temperature=rng.uniform(18,70,n)
+        failure=np.where(vibration+.07*temperature+rng.normal(0,1.5,n)>9,'fault','normal')
+        return pd.DataFrame({'unit_id':np.arange(3000,3000+n),'vibration_mm_s':vibration,'temperature_c':temperature,'next_week_state':failure,'replacement_authorized':(failure=='fault').astype(int)})
     if name == 'LINE12':
         return pd.DataFrame({'distance':[1,2,2,3,4,5,5,6,7,8,9,10], 'duration':[8,11,13,14,20,22,24,25,31,33,35,41]})
     if name in ('LINE24', 'LINE24B'):

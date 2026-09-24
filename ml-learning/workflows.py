@@ -1,5 +1,6 @@
 """Complete workflow briefs and cumulative retrieval, with ordinary notebook Python."""
 import copy
+import ast
 import json
 from pathlib import Path
 from authoring import CARDS,lesson,py,decide,reflect,workflow_contract
@@ -25,35 +26,12 @@ DATA={
  'Wine600':dict(file='data/wine-quality.csv',sep=';',target='quality',numeric=CHEM,binary=[],category=[],task='regression',prepare="df=df.drop_duplicates().reset_index(drop=True).sample(600,random_state=42).reset_index(drop=True)"),
 }
 
-def recipe(model,spec):
-    scaled=model in ('logistic','svm_cls','knn_cls','mlp_cls','mlp_reg')
-    parts=[]
-    if spec['numeric']:parts.append("('numeric', "+("StandardScaler()" if scaled else "'passthrough'")+", "+repr(spec['numeric'])+")")
-    if spec['binary']:parts.append("('flags', 'passthrough', "+repr(spec['binary'])+")")
-    if spec['category']:parts.append("('category', OneHotEncoder(handle_unknown='ignore', sparse_output=False"+(", drop='first'" if model=='multiple_linear' else "")+"), "+repr(spec['category'])+")")
-    prepare='ColumnTransformer(['+', '.join(parts)+'])'
-    definitions={
-      'simple_linear':('from sklearn.linear_model import LinearRegression','LinearRegression()',None),
-      'multiple_linear':('from sklearn.linear_model import LinearRegression','LinearRegression()',None),
-      'regression_tree':('from sklearn.tree import DecisionTreeRegressor','DecisionTreeRegressor(random_state=42)',{'model__max_depth':[3,5,None]}),
-      'classification_tree':('from sklearn.tree import DecisionTreeClassifier','DecisionTreeClassifier(random_state=42)',{'model__max_depth':[3,5,None]}),
-      'logistic':('from sklearn.linear_model import LogisticRegression','LogisticRegression(max_iter=2000,random_state=42)',{'model__C':[.1,1,10]}),
-      'svm_cls':('from sklearn.svm import SVC','SVC(random_state=42)',{'model__C':[.5,2,10]}),
-      'knn_cls':('from sklearn.neighbors import KNeighborsClassifier','KNeighborsClassifier()',{'model__n_neighbors':[3,5,9]}),
-      'lda':('from sklearn.discriminant_analysis import LinearDiscriminantAnalysis',"LinearDiscriminantAnalysis(solver='lsqr')",{'model__shrinkage':[None,'auto']}),
-      'qda':('from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis','QuadraticDiscriminantAnalysis(reg_param=.1)',{'model__reg_param':[.1,.2,.5,.9]}),
-      'mlp_cls':('from sklearn.neural_network import MLPClassifier','MLPClassifier(hidden_layer_sizes=(24,),max_iter=500,early_stopping=True,random_state=42)',{'model__hidden_layer_sizes':[(16,),(24,)]}),
-      'mlp_reg':('from sklearn.neural_network import MLPRegressor',"TransformedTargetRegressor(regressor=MLPRegressor(hidden_layer_sizes=(24,),max_iter=800,early_stopping="+str(not spec.get('time',False))+",tol=1e-3,random_state=42),transformer=StandardScaler())",{'model__regressor__hidden_layer_sizes':[(16,),(24,)]}),
-    }
-    if model=='polynomial':
-        return "from sklearn.preprocessing import PolynomialFeatures\nfrom sklearn.linear_model import Ridge\nmodel=Pipeline([('polynomial',PolynomialFeatures(degree=2,include_bias=False)),('scale',StandardScaler()),('model',Ridge())])",{'polynomial__degree':[2,3]}
-    if model=='naive_bayes':
-        if spec['numeric']:
-            definitions[model]=('from sklearn.naive_bayes import GaussianNB','GaussianNB()',{'model__var_smoothing':[1e-11,1e-9,1e-7]})
-        else:
-            definitions[model]=('from sklearn.naive_bayes import BernoulliNB','BernoulliNB()',{'model__alpha':[.1,1,5]})
-    imports,estimator,grid=definitions[model]
-    return imports+'\nmodel=Pipeline([(\'prepare\', '+prepare+"), ('model', "+estimator+")])",grid
+PLAYGROUND = json.loads((Path(__file__).parent/'playground-workflows.json').read_text())
+
+def recipe(model, spec):
+    key = next(key for key, value in DATA.items() if value is spec)
+    shared = PLAYGROUND['recipes'][key][model]
+    return shared['code'], ast.literal_eval(shared['grid']) or None
 
 def supervised(key,models,id='temporary'):
     s=DATA[key];classification=s['task']=='classification'
@@ -65,16 +43,19 @@ def supervised(key,models,id='temporary'):
     else:
         code+="X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=.2,random_state=42"+(",stratify=y" if classification else "")+")\n"
         code+=("folds=StratifiedKFold" if classification else "folds=KFold")+"(n_splits=5,shuffle=True,random_state=42)\n"
-    code+="candidates={}\ngrids={}\n"
+    code+="training_summary=X_train.describe(include=\"all\")\nprint(training_summary)\ncandidates={}\ngrids={}\n"
     for model in models:
         build,grid=recipe(model,s)
         code+=build+"\ncandidates["+repr(model)+"]=model\ngrids["+repr(model)+"]="+repr(grid)+"\n"
-    code+="""reference_results=cross_validate("""+("DummyClassifier(strategy='most_frequent')" if classification else "DummyRegressor(strategy='mean')")+""",X_train,y_train,cv=folds,scoring="""+repr(metric)+""")
+    code+="""# Validate initial candidates on matching training folds.
+initial_results={name:cross_validate(candidate,X_train,y_train,cv=folds,scoring="""+repr(metric)+""") for name,candidate in candidates.items()}
+# Compare with a simple reference before tuning.
+reference_results=cross_validate("""+("DummyClassifier(strategy='most_frequent')" if classification else "DummyRegressor(strategy='mean')")+""",X_train,y_train,cv=folds,scoring="""+repr(metric)+""")
 rows=[]
 selected={}
 loss_curves={}
 for name,candidate in candidates.items():
-    initial=cross_validate(candidate,X_train,y_train,cv=folds,scoring="""+repr(metric)+""")
+    initial=initial_results[name]
     grid=grids[name]
     if grid:
         search=GridSearchCV(candidate,grid,cv=folds,scoring="""+repr(metric)+""",n_jobs=1)
@@ -148,6 +129,11 @@ print('Final RMSE:',final_rmse)
     classes={'simple_linear':'LinearRegression','multiple_linear':'LinearRegression','polynomial':'Ridge','regression_tree':'DecisionTreeRegressor','classification_tree':'DecisionTreeClassifier','logistic':'LogisticRegression','svm_cls':'SVC','knn_cls':'KNeighborsClassifier','lda':'LinearDiscriminantAnalysis','qda':'QuadraticDiscriminantAnalysis','mlp_reg':'TransformedTargetRegressor','mlp_cls':'MLPClassifier','naive_bayes':'GaussianNB' if s['numeric'] else 'BernoulliNB'}
     expected={name:classes[name] for name in models}
     checks.append(check('Requested model families','all(type(selected[name].named_steps["model"]).__name__==expected for name,expected in '+repr(expected)+'.items())','Fit the requested production model families; a candidate name alone does not establish its estimator type.'))
+    preparation_checks = []
+    for name in models:
+        groups = PLAYGROUND['recipes'][key][name]['preparation']
+        preparation_checks.append('trace.preparation_matches(selected['+repr(name)+'], '+repr(groups)+', polynomial='+str(name=='polynomial')+', drop_first='+str(name in ('simple_linear','multiple_linear'))+')')
+    checks.append(check('Production preparation', ' and '.join(preparation_checks), 'Use the playground preparation for each model: scale where required, preserve numeric flags, encode named categories, and keep all preparation inside the pipeline.'))
     return dict(id=id,kind='python',dataset=s.get('dataset',key),solution=code,setup='',outputs=['cv_results','reference_results','chosen_name','loss_curves']+(['matrix','final_f1','final_accuracy'] if classification else ['residuals','final_rmse']),checks=checks,protect=dict(target=s['target'],stratified=classification,time=bool(s.get('time'))))
 
 KMEANS=dict(id='ML-X17',kind='python',dataset='penguins',outputs=['evidence','sizes','profiles','labels'],
@@ -249,7 +235,8 @@ ablation_results=cross_validate(measurement_model,X_train[measurement_columns],y
         workflow_contract(exercise)
         deliverables=[dict(name=c['name'],contract='Interpretation' if c.get('selfReview') else 'Workflow condition',label=c['name'],requirement=c['message'],format='Self-review' if c.get('selfReview') else 'Run evidence',kind='self-review' if c.get('selfReview') else 'value') for c in exercise['checks']]
         minutes='45–60 minutes' if i in (3,14,15) else '40–50 minutes' if len(models)>1 else '30–45 minutes'
-        result.append(dict(id='ML-'+spec['id'],deck='workflows',title=title,question=question,minutes=minutes,
+        workflow = PLAYGROUND['discovery'][models[0]] if i>=16 else max((PLAYGROUND['recipes']['candy_mixed' if i==9 else key][model] for model in models), key=lambda r:len(r['steps']))
+        result.append(dict(workflowSteps=workflow['steps'],playgroundRoute=dict(dataset=workflow['dataset'],scenario=workflow['scenario'],models=models),id='ML-'+spec['id'],deck='workflows',title=title,question=question,minutes=minutes,
           family=('time' if i==3 else 'regression' if i<3 else 'neural' if i in (14,15) else 'clustering' if i in (16,17) else 'pca' if i==18 else 'classification'),tags=models+(['discovery','profiles'] if i>=16 else ['validation','reference','final-test discipline']),
           models=models,prerequisites=['ML-'+d for d in spec['deps']],planning=[planning],hints=exercise['hints'],
           inputs=[dict(prepared,name='df')],

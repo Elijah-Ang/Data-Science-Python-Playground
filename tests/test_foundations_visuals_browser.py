@@ -27,11 +27,11 @@ with sync_playwright() as pw:
     })''')
     failures.extend([{'width':width,'theme':theme,'deck':deck,**b} for b in bad])
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
- # Practice rounds lead with their scenario rather than repeating teaching diagrams.
+ # Practice rounds keep a visible, stage-specific concept visual beside their reference.
  for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facet-hist'),('#inspect/IR2/1','loc')]:
   page.evaluate('(route)=>{location.hash=route}',route)
   page.wait_for_function('(route)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(route.split("/")[1])&&!!document.querySelector(".foundation-practice-brief")',arg=route)
-  assert page.locator(".foundation-content .concept-visual").count()==0
+  assert page.locator(".teaching-reference .concept-visual").get_attribute("data-visual")==variant
  # Contact sheets contain every card at a consistent readable size in both themes.
  page.set_viewport_size({'width':1280,'height':1000})
  for theme in ['light','dark']:

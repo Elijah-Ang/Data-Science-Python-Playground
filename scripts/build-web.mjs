@@ -39,6 +39,7 @@ const files = [
   "challenges/challenges.css",
   "challenges/runtime.py",
   "foundations/editor.js",
+  "foundations/learning-ui.js",
   "foundations/teaching.js",
   "foundations/clarity.js",
   "foundations/workspace.js",
