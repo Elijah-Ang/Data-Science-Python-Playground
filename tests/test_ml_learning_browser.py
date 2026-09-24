@@ -67,6 +67,16 @@ with sync_playwright() as p:
           (linear,code+"\nextra_search=GridSearchCV(model,{'model__fit_intercept':[True,False]},cv=folds,scoring='neg_root_mean_squared_error').fit(X_train,y_train)\nfinal_predictions=final_model.predict(X_test)",False,'new search after final exposure'),
           (linear,code+"\nextra_mae=float(np.abs(y_test-final_predictions).mean())\nreport=pd.DataFrame({'actual':y_test,'predicted':final_predictions})\nreport.to_csv('final-report.csv',index=False)",True,'report saved final predictions'),
         ]
+    readiness=by_id.get('ML-W-K2-1')
+    if readiness:
+        code=readiness['solution']
+        alternatives += [
+          (readiness,code.replace("['jobs_waiting', 'device_age_years']", "['jobs_waiting', 'invoice_labor_hours']"),False,'readiness post-outcome feature'),
+          (readiness,code.replace('cv_results = {', 'from sklearn.preprocessing import StandardScaler\nscaler = StandardScaler().fit(X_train)\ncv_results = {'),False,'readiness preprocessing outside folds'),
+          (readiness,code.replace("print('Reference validation:'", "reference_results['test_score'][:] = 0\nprint('Reference validation:'"),False,'readiness invented reference scores'),
+          (readiness,code.replace('final_predictions = final_model.predict(X_test)', 'probe = final_model.predict(X_test)\nchosen_name = "simple"\nfinal_predictions = final_model.predict(X_test)'),False,'readiness final-test selection'),
+          (readiness,code.replace("['jobs_waiting', 'device_age_years']", "['jobs_waiting']").replace('random_state=42','random_state=91').replace('test_size=.2','test_size=.25').replace('from sklearn.linear_model import LinearRegression','from sklearn.linear_model import LinearRegression, Ridge').replace('LinearRegression()','Ridge(alpha=1)'),True,'readiness legitimate alternative choices'),
+        ]
     if pca:
         alternatives+=[
           (pca,pca['solution']+"\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1",True,'paired PCA sign'),

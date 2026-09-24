@@ -3,13 +3,7 @@
 const C=window.FoundationsCurriculum;
 const main=document.getElementById('foundationsMain');
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-// One token pass keeps strings/comments intact and escapes all learner text.
-function highlightPython(code){
- const tokens=/(#[^\n]*|(?:"""[\s\S]*?(?:"""|$)|\x27\x27\x27[\s\S]*?(?:\x27\x27\x27|$)|"(?:\\.|[^"\\\n])*"?|\x27(?:\\.|[^\x27\\\n])*\x27?)|\b(?:False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b|\b(?:print|len|range|list|dict|str|int|float|sum|min|max|set|tuple|sorted)\b|\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b|[+*/%=<>!&|~^-]+)/g;
- let result='',start=0;
- for(const match of code.matchAll(tokens)){const token=match[0];let kind=token[0]==='#'?'comment':/^["\x27]/.test(token)?'string':/^\d/.test(token)?'number':/^[+*/%=<>!&|~^-]/.test(token)?'operator':/^(print|len|range|list|dict|str|int|float|sum|min|max|set|tuple|sorted)$/.test(token)?'builtin':'keyword';result+=esc(code.slice(start,match.index))+`<span class="py-${kind}">${esc(token)}</span>`;start=match.index+token.length;}
- return result+esc(code.slice(start));
-}
+const highlightPython=FoundationLearning.highlightPython;
 let shownControlHelp=false;
 let view=null, generation=0, bridge=null, bridgePromise=null, busy=false;
 let runtimeStatus='Python starts when you open a lesson.';
@@ -40,13 +34,13 @@ function lessonPage(lesson,roundIndex){
  view={lesson,round,roundIndex};document.body.dataset.deck=lesson.deck;
  const previous=roundIndex?url(lesson,roundIndex-1):previousLesson(lesson),next=roundIndex<lesson.rounds.length-1?url(lesson,roundIndex+1):nextLesson(lesson);
  return `<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><span>${esc(deck.title)}</span><span aria-hidden="true">/</span><span>${lesson.id}</span></nav>
- <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${lesson.id} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(follow?lesson.goal:round.label+' · '+(round.demand||'Apply what you learned'))}</p><button class="foundation-editor-jump" type="button">Go to editor ↓</button></div><section class="foundation-practices" aria-label="Exercise type"><p>Exercises within this concept</p><ol>${lesson.rounds.map((r,i)=>`<li ${i===roundIndex?'aria-current="step"':''}><strong>${esc(r.label)}</strong><span>${esc(r.demand||'Retrieval practice')}</span>${i===roundIndex?'<em>Current exercise</em>':''}</li>`).join('')}</ol></section></header>
+ <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${lesson.id} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(follow?lesson.goal:round.label+' · '+(round.demand||'Apply what you learned'))}</p><button class="foundation-editor-jump" type="button">Go to editor ↓</button></div>${FoundationLearning.stages(lesson.rounds,roundIndex)}</header>
  <div class="foundation-split"><article class="foundation-content" aria-label="Lesson content">
  ${follow?FoundationTeaching.intro(C,lesson,round):''}
- ${follow?`<section class="teaching-worked"><h3>Follow the code</h3><p>Apply the idea to the supplied table. Read from top to bottom; the final line displays the result.</p><pre><code>${esc(lesson.example)}</code></pre><details class="teaching-reference"><summary>Syntax reference</summary>${FoundationTeaching.syntax(lesson)}</details></section>`:''}
+ ${follow?`<section class="teaching-worked"><h3>Follow the code</h3><p>Apply the idea to the supplied table. Read from top to bottom; the final line displays the result.</p><pre><code>${esc(lesson.example)}</code></pre><section class="teaching-reference"><h3>Meet the syntax</h3>${FoundationTeaching.syntax(lesson)}</section></section>`:''}
  ${!follow?`<section class="foundation-practice-brief"><span class="foundation-eyebrow">${esc(round.label)} · ${esc(C.datasets[round.dataset].name)}</span><h3 class="practice-question">${esc(round.steps?.[0]||round.task)}</h3><p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>${round.steps?.length>1?`<h4>Your requirements</h4><ol>${round.steps.slice(1).map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:''}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:''}
  ${round.id==='V01-1'?'':`<section><h3>${round.files?'Available file':'Your inputs'}</h3>${follow?`<p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>`:''}${datasetTable(dataset)}${round.files?csvPreview(round):''}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
- ${follow?`<section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3>${taskMarkup(round)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:`<p class="foundation-revisit"><a href="${url(round.retrieves?C.lessons.find(l=>l.id===round.retrieves):lesson)}">Revisit the concept lesson →</a></p><details class="teaching-reference"><summary>Concept reference</summary>${FoundationTeaching.reference(C,lesson,round)}</details>`}
+ ${follow?`<section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3>${taskMarkup(round)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:`<p class="foundation-revisit"><a href="${url(round.retrieves?C.lessons.find(l=>l.id===round.retrieves):lesson)}">Revisit the concept lesson →</a></p><section class="teaching-reference"><h3>Remember the idea</h3>${FoundationTeaching.reference(C,lesson,round)}</section>`}
 
  <details id="foundationHint"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
  <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Keep any supplied setup in the editor and use this in the Your work section.</p><pre><code>${esc(round.solution)}</code></pre></details>
@@ -63,10 +57,10 @@ function pythonPane(round,controlHelp,challenge=false){return `<section class="f
 function taskMarkup(round){return round.steps?.length>1?`<ol class="foundation-task-steps">${round.steps.map(step=>`<li>${esc(step)}</li>`).join('')}</ol>`:`<p>${esc(round.task)}</p>`;}
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{
-  if(typeof columns==='string')return `<details><summary>View ${esc(name)}</summary><p>This file is available in the lesson folder.</p><pre>${esc(columns)}</pre></details>`;
+  if(typeof columns==='string')return `<section><h3>File · ${esc(name)}</h3><p>This file is available in the lesson folder.</p><pre>${esc(columns)}</pre></section>`;
   const keys=Object.keys(columns),cell=value=>typeof value==='string'?'"'+value.replaceAll('"','""')+'"':String(value??'');
   const csv=[keys.join(','),...columns[keys[0]].map((_,i)=>keys.map(key=>cell(columns[key][i])).join(','))].join('\n');
-  return `<details><summary>View ${esc(name)}</summary><p>This file is available in the lesson folder. Load it to create df.</p><pre>${esc(csv)}</pre></details>`;
+  return `<section><h3>File · ${esc(name)}</h3><p>This file is available in the lesson folder. Load it to create df.</p><pre>${esc(csv)}</pre></section>`;
  }).join('');
 }
 function auxiliaryTables(round,dataset){
@@ -91,7 +85,7 @@ function render(){
  // A URL-only entry hint survives deck/lesson hashes and reloads, without stored learning state.
  const fromHub=new URLSearchParams(location.search).get('from')==='learn';
  const exit=document.querySelector('.back-playground');exit.href=view?.challenge?'#'+view.lesson.deck+'/challenges':view?'#'+view.lesson.deck:deck?'#':fromHub?'learn.html':'playground.html';exit.textContent=view?.challenge?'← All challenges':view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':fromHub?'← Learn / Refresh':'← Data Playground';
- main.querySelectorAll('.foundation-content pre code').forEach(code=>{code.innerHTML=highlightPython(code.textContent);});
+ FoundationLearning.highlightContent(main);
  document.title=view?`${view.lesson.id} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
  if(deck&&id==='chapter'){const chapter=document.getElementById('chapter-'+roundValue);chapter?.focus({preventScroll:true});chapter?.scrollIntoView({block:'start'});}

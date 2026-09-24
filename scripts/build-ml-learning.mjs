@@ -3,8 +3,10 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {productionInventory} from './ml-production.mjs';
+import {checkLearningWorkflows} from './sync-ml-workflows.mjs';
 
 export async function buildMLLearning(root,output){
+  checkLearningWorkflows();
   const executable=process.env.PYTHON || (process.platform==='win32'?'python':'python3');
   let authored;
   try{authored=execFileSync(executable,[path.join(root,'ml-learning/authoring.py')],{cwd:root,encoding:'utf8',maxBuffer:20*1024*1024});}

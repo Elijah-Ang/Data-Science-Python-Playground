@@ -3,6 +3,7 @@ import copy
 import ast
 import builtins
 import json
+import re
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
@@ -63,8 +64,8 @@ def workflow_contract(exercise):
     names=set(exercise['outputs'])|(reads-set(dir(builtins))-{'np','pd','trace','_same_partition','_pca_equivalent'})
     exercise['contract']=[dict(name=n,description=CONTRACT_MEANINGS.get(n,'Requested result described in the task and deliverables.')) for n in sorted(names)]
 DECKS=[
- dict(id='foundations',key='F',title='ML Foundations',description='Questions, examples, predictions and honest evaluation.',chapters=['Questions and tables','Learning from examples','Honest evaluation']),
- dict(id='workflow',key='W',title='Supervised Workflow',description='Prepare, validate, compare, diagnose and finish.',chapters=['Prepare','Validate and compare','Select, diagnose and finish']),
+ dict(id='foundations',key='F',title='ML Foundations',description='Questions and Python basics, then complete regression and classification workflows.',chapters=['Questions and tables','Learning from examples','Honest evaluation']),
+ dict(id='workflow',key='W',title='Supervised Workflow',description='Prepare, validate, debug and demonstrate readiness on unfamiliar data.',chapters=['Prepare','Validate and compare','Select, diagnose and finish']),
  dict(id='regression',key='R',title='Regression',description='Predict quantities with lines, curves and trees.',chapters=['Lines and evidence','Several predictors','Curves and trees']),
  dict(id='classification',key='C',title='Classification',description='Understand class evidence and nine model families.',chapters=['Evidence','Probabilities and neighbours','Margins and rules','Class distributions']),
  dict(id='networks',key='N',title='Neural Networks',description='Shared network ideas, then a regression or classification route.',chapters=['Shared network concepts','Task workflows','Go Further']),
@@ -106,10 +107,81 @@ SOURCES={
   ['Unsupervised learning lab','https://islp.readthedocs.io/en/latest/labs/Ch12-unsup-lab.html']]
 }
 
+def evidence_feedback(task, test):
+    """Turn the observable contract into a useful next check, without grading prose."""
+    first=re.split(r'(?<=[.!?])\s+| Then explain:',task,maxsplit=1)[0].rstrip('.!?')
+    focus=first.lower()
+    lower=test.lower()
+    if 'residual' in focus:
+        cue='Calculate actual minus predicted on the same evaluation rows and preserve their original indices.'+(' Plot those aligned residuals against the requested input.' if any(x in focus for x in ('draw ','plot ')) else '')
+    elif any(x in focus for x in ('draw ', 'plot ', ' chart', 'dendrogram')):
+        cue='Check both the returned evidence and the figure: plot the requested population, labels and axes from that same result.'
+    elif 'macro f1' in focus or 'macro-f1' in focus:
+        cue='Compute F1 separately for each class, then average classes equally; check the declared label order.'
+    elif 'precision' in focus or 'recall' in focus:
+        cue='Count the requested class’s true positives, false positives and false negatives before dividing.'
+    elif 'confusion matrix' in focus:
+        cue='Keep actual labels on rows, predicted labels on columns and the requested class order, including empty classes.'
+    elif 'support-vector' in focus:
+        cue='Read the fitted support-vector count for each class in the estimator’s class order.'
+    elif any(x in focus for x in ('scaler','standardise','standardize','scaling')):
+        cue='Fit the scaler only on the declared training population, then transform the requested rows without refitting.'
+    elif 'imput' in focus:
+        cue='Learn replacement values from training rows and apply those same fitted values to the requested rows.'
+    elif 'encod' in focus:
+        cue='Keep the fitted category schema and transformed column order; unseen categories must follow the stated policy.'
+    elif 'pca' in focus or 'component' in focus:
+        cue='Reuse the fitted scale and PCA axes, preserve row order and distinguish new coordinates from original columns.'
+    elif 'fold' in focus or 'cross-valid' in focus or 'search' in focus:
+        cue='Compare the requested candidates on matching training folds and read validation scores before using final-test rows.'
+    elif 'pipeline' in focus:
+        cue='Fit the named preparation and estimator together on training rows, then predict the requested rows through that fitted pipeline.'
+    elif 'coefficient' in focus or 'slope' in focus or 'intercept' in focus:
+        cue='Read the fitted coefficient or intercept in the specified feature order and keep its original units.'
+    elif 'rmse' in focus or 'r²' in focus or 'r2' in focus or 'mae' in focus:
+        cue='Use the stated actual and predicted rows; RMSE and MAE are errors in target units, while R² uses its declared reference.'
+    elif 'split' in focus or 'stratif' in focus:
+        cue='Check partition sizes, class balance where requested, disjoint row identities and aligned X/y indices.'
+    elif 'probabilit' in focus or 'threshold' in focus:
+        cue='Keep probabilities aligned with fitted class labels and apply the stated threshold without assuming a fixed column order.'
+    elif 'centroid' in focus or 'cluster' in focus or 'silhouette' in focus:
+        cue='Check the scaled fitting rows, aligned group labels and original-unit profiles; group IDs are arbitrary.'
+    elif 'tree' in focus or 'leaf' in focus:
+        cue='Use the fitted tree and its declared depth or leaf settings; verify the requested row reaches the reported leaf.'
+    elif 'network' in focus or 'hidden' in focus:
+        cue='Separate configured network settings from fitted attributes and keep predictions aligned with the requested rows.'
+    elif 'predict' in focus:
+        cue='Use the fitted model on the stated input rows and schema; keep predictions in that row and class order.'
+    elif 'count' in focus or 'frequency' in focus:
+        cue='Count the stated population and categories, preserving the named labels and their order.'
+    elif any(x in lower for x in ('x_train','x_test','y_train','y_test')) and any(x in lower for x in ('index','disjoint','test_size','len(x_test)')):
+        cue='Check the split size, row identities and X/y index alignment; the held-out rows must not also be training rows.'
+    elif 'fig.' in lower or 'fig.axes' in lower:
+        cue='Check both the returned values and the requested plot: the plotted rows and axes must match the data named in this task.'
+    elif any(x in lower for x in ('mean_squared','root_mean','rmse','r2_score','f1_score','precision','recall','accuracy')):
+        cue='Recalculate the named metric from the specified actual and predicted rows; keep its class order or original target units.'
+    elif any(x in lower for x in ('pca.', 'components_', 'explained_variance_', 'cumulative')):
+        cue='Check the fitted PCA components, retained dimensions and row order; component scores are not original columns.'
+    elif any(x in lower for x in ('scaler.', 'imputer.', 'encoder.', 'transform(', 'statistics_', 'mean_')):
+        cue='Check which rows fitted the preparation step and which rows were only transformed; preserve the learned schema.'
+    elif any(x in lower for x in ('cv_results_', 'best_params_', 'test_score', 'search.')):
+        cue='Read validation results from the requested training folds and candidate settings, rather than training fit or final-test rows.'
+    elif any(x in lower for x in ('cluster_centers_', 'labels_', 'linkage_matrix', 'silhouette', 'inertia')):
+        cue='Check the fitted grouping and align every label or profile with its original observation before summarising it.'
+    elif any(x in lower for x in ('model.predict', 'model.coef_', 'model.intercept_', 'model.classes_', 'named_steps', 'network.')):
+        cue='Use the supplied or fitted estimator, then check the requested attribute, prediction rows and output shape.'
+    elif any(x in lower for x in ('answer.equals', 'x.equals', 'y.equals', 'list(answer.columns)', 'list(answer.index)')):
+        cue='Match the requested dataframe or series values, column names and row index exactly.'
+    elif any(x in lower for x in ('shape', 'len(answer)', 'isfinite', 'np.allclose', 'np.isclose')):
+        cue='Check the returned shape and values against the stated inputs; keep the requested row and class order.'
+    else:
+        cue='Compare the returned values and labels with the exact evidence requested in the task.'
+    return f'{first}. {cue}'
+
 def py(task,solution,test,*,dataset=None,setup='',outputs=None,message=None):
     outputs=outputs or ['answer']
     if isinstance(test,str):
-        tests=[dict(name='Requested evidence',test=test,message=message or 'Inspect the task, output values and input population, then try again.')]
+        tests=[dict(name='Requested evidence',test=test,message=message or evidence_feedback(task,test))]
     else:tests=copy.deepcopy(test)
     # Compare prediction values with the learner's fitted estimator, without fitting again.
     # This catches arbitrary arrays that merely have the requested shape/classes.
@@ -147,13 +219,17 @@ def assemble():
     manifest=json.loads((ROOT/'manifest.json').read_text())
     decks={d['key']:d for d in DECKS}
     cards=[]
+    import mastery, transfer_practice, model_bridges
     for spec in manifest['cards']:
+        if spec['id'] in mastery.IDS:continue
         assert spec['id'] in CARDS,'Missing card '+spec['id']
         content=copy.deepcopy(CARDS[spec['id']])
         if spec['kind']=='teaching':
             import syntax_parts
             syntax_parts.apply(content,spec['id'])
-        assert len(content['exercises'])==len(spec['exercises']),spec['id']
+        transfer_practice.append(content,spec['id'])
+        bridge_count=1 if spec['id'] in model_bridges.IDS else 0
+        assert len(content['exercises'])+bridge_count==len(spec['exercises']),spec['id']
         deck=decks[spec['deck']]
         content.update(id='ML-'+spec['id'],deck=deck['id'],kind=spec['kind'],tier=spec['tier'],
                        prerequisites=['ML-'+d for d in spec['deps']],sources=SOURCES[deck['id']])
@@ -167,8 +243,8 @@ def assemble():
             e['label']=('Follow' if i==0 else 'Change' if i==1 else 'Transfer' if i==n-1 else 'Practise') if e['kind']=='python' and spec['kind']=='teaching' else ('Observe' if i==0 else 'Decide' if e['kind']=='decision' else 'Explain') if spec['kind']=='teaching' else 'Retrieval '+str(i+1)
         cards.append(content)
     challenges=workflows.challenges(manifest['challenges'])
-    import editorial
-    return editorial.apply(dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES))
+    import editorial, python_path
+    return model_bridges.extend(transfer_practice.enrich(mastery.extend(python_path.apply(editorial.apply(dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES))))))
 
 if __name__=='__main__':
     # Imported author modules use this same registry rather than a second __main__.

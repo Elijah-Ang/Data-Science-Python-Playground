@@ -370,21 +370,28 @@
         actors=prepared.actors;
         gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,untouched);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,prepared.clean);gl.uniform2f(locations.size,current.width,current.height);gl.uniform4fv(locations['zones[0]'],zones);gl.uniform4fv(locations['pivots[0]'],pivots);gl.uniform4fv(locations['eyes[0]'],new Float32Array(current.eyes));gl.uniform1f(locations.portrait,layout==='portrait'?1:0);geometry(current.width,current.height);resize();loaded=true;draw();
         try{verifyFrame();}catch(error){
-          if(!error.message.startsWith('Artwork rendered empty'))throw error;
-          // Linux WebKit can keep a prepared texture unreadable on its first
-          // draw. Retry once with a fresh texture after the graphics frame.
-          await new Promise(resolve=>requestAnimationFrame(resolve));
-          if(own!==token)return;
-          const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height).data;
-          for(let i=0;i<pixels.length;i+=4){const alpha=pixels[i+3]/255;pixels[i]=Math.round(pixels[i]*alpha);pixels[i+1]=Math.round(pixels[i+1]*alpha);pixels[i+2]=Math.round(pixels[i+2]*alpha);}
-          const previousTexture=texture;texture=gl.createTexture();
-          gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);
-          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-          gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
-          gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,current.width,current.height,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(pixels.buffer));
-          gl.deleteTexture(previousTexture);gl.useProgram(program);gl.uniform1i(locations.picture,0);
-          draw();verifyFrame();
+          if(error.message==='Artwork renderer unavailable.'&&!gl.isContextLost()){
+            // A transient WebGL error can clear before the next graphics frame.
+            // Keep the still-image fallback if the retry also fails.
+            await new Promise(resolve=>requestAnimationFrame(resolve));
+            if(own!==token)return;
+            draw();verifyFrame();
+          }else if(error.message.startsWith('Artwork rendered empty')){
+            // Linux WebKit can keep a prepared texture unreadable on its first
+            // draw. Retry once with a fresh texture after the graphics frame.
+            await new Promise(resolve=>requestAnimationFrame(resolve));
+            if(own!==token)return;
+            const pixels=prepared.clean.getContext('2d').getImageData(0,0,current.width,current.height).data;
+            for(let i=0;i<pixels.length;i+=4){const alpha=pixels[i+3]/255;pixels[i]=Math.round(pixels[i]*alpha);pixels[i+1]=Math.round(pixels[i+1]*alpha);pixels[i+2]=Math.round(pixels[i+2]*alpha);}
+            const previousTexture=texture;texture=gl.createTexture();
+            gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,texture);
+            gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+            gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+            gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,current.width,current.height,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array(pixels.buffer));
+            gl.deleteTexture(previousTexture);gl.useProgram(program);gl.uniform1i(locations.picture,0);
+            draw();verifyFrame();
+          }else throw error;
         }
         frame.classList.add('motion-ready');frame.dataset.motion='ready';
       }catch(e){if(own!==token)return;fallback();console.warn('[Landing motion] Artwork animation unavailable; keeping the original image.',e);}

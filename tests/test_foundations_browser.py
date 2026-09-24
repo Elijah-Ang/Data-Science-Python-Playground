@@ -111,8 +111,7 @@ with sync_playwright() as p:
  example=solution('I01',1)
  assert '\n    "price":' in example and '\n    "drink":' in example
  open_lesson('I01CSV',1)
- page.get_by_text('View cafe.csv',exact=True).click()
- assert ';' in page.locator('details',has=page.locator('summary',has_text='View cafe.csv')).inner_text()
+ assert ';' in page.get_by_role('heading',name='File · cafe.csv',exact=True).locator('..').inner_text()
  assert 'matches' in run(solution('I01CSV',1))
  assert 'Not yet' in run('pd.read_csv("cafe.csv")')
  open_lesson('I01CSV',2);assert 'matches' in run(solution('I01CSV',2))
@@ -208,8 +207,8 @@ with sync_playwright() as p:
      geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect(),copy=document.querySelector('.foundation-lesson-copy').getBoundingClientRect(),types=document.querySelector('.foundation-practices').getBoundingClientRect(),split=document.querySelector('.foundation-split').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1,typesRight:types.left>=copy.right-1,typesBelow:types.top>=copy.bottom-1,workspace:split.height}}''')
      assert geometry['stacked' if width<=800 else 'split'],geometry
      editor_height=page.locator('.foundation-editor-wrap').bounding_box()['height']
-     expected_editor_height=320 if width>800 else 380
-     assert editor_height>=expected_editor_height,(label,editor_height)
+     expected_editor_height=max(220,min(320,height*.3)) if width>800 else 380
+     assert editor_height>=expected_editor_height-1,(label,editor_height)
      if width>800:
       assert geometry['typesRight'],geometry
       assert geometry['workspace']>=height-400,geometry

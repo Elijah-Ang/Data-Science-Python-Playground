@@ -10,7 +10,12 @@ for(const card of c.cards){
   for(const key of ['title','goal','explanation','syntax','visual','sources','chapter'])assert(card[key],card.id+' missing '+key);
   assert(card.sources.length);
   if(card.kind==='teaching'){
-    assert(card.exercises.length>=2&&card.exercises.length<=4);
+    assert.equal(card.exercises[0].kind,'python',card.id+' must introduce a runnable Python skill');
+    assert(card.pythonSkill.length>20,card.id+' must name its Python skill');
+    assert.equal(card.exercises[0].label,'Follow');
+    assert.equal(card.exercises[0].starter,card.exercises[0].solution,card.id+' Follow should run before learners adapt it');
+    assert.equal(card.exercises[1].label,'Change');
+    assert(card.exercises.length>=3&&card.exercises.length<=4);
     if(card.exercises.some(e=>e.kind==='python')){
       assert(Array.isArray(card.syntaxBreakdown)&&card.syntaxBreakdown.length,card.id+' syntax parts');
       for(const part of card.syntaxBreakdown){
@@ -29,6 +34,10 @@ for(const card of c.cards){
 assert.deepEqual([...coreModels].sort(),Object.keys(productionInventory().MODELS).sort());
 for(const ch of c.challenges){
   assert(ch.prerequisites.every(id=>ids.has(id)));
+  assert(ch.workflowSteps.length>=7,ch.id+' needs the complete playground sequence');
+  assert.equal(ch.workflowSteps[0].id,'frame');
+  assert(ch.playgroundRoute.dataset&&ch.playgroundRoute.scenario);
+  if(ch.family!=='clustering'&&ch.family!=='pca')assert.equal(ch.workflowSteps.at(-1).id,'final');
   assert(ch.inputs.length&&ch.deliverables.length&&ch.reference&&ch.explanationSteps.length);
   assert(!ch.exercise.starter.includes('fit('),'Challenges cannot start with a solution-shaped scaffold');
   assert.equal(ch.exercise.preload,false);
@@ -67,3 +76,10 @@ const residuals=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.
 for(const label of ['Observations X, y','Unfitted estimator','Fitted estimator','Learned line'])assert(fitting.includes(label));
 assert(!/residual|actual −|predicted/i.test(fitting));
 assert(residuals.includes('actual −')&&residuals.includes('Residuals measure signed vertical differences.'));
+
+for(const card of c.cards.filter(c=>c.kind==='teaching')){
+  if(card.exercises.at(-1).modelBridge){
+    assert.equal(card.exercises.at(-1).label,'Apply',card.id);
+    assert.equal(card.exercises.at(-2).label,'Transfer',card.id);
+  }else assert.equal(card.exercises.at(-1).label,'Transfer',card.id);
+}
