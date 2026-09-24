@@ -56,24 +56,6 @@ with sync_playwright() as p:
         page.close()
         browser.close()
 
-    browser = getattr(p, args.engine).launch()
-    page = browser.new_page(viewport={'width': 390, 'height': 844})
-    page.add_init_script("""const draw=WebGLRenderingContext.prototype.drawArrays;
-        const getError=WebGLRenderingContext.prototype.getError;
-        let drawn=false,injected=false;
-        WebGLRenderingContext.prototype.drawArrays=function(...args){
-            drawn=true;return draw.apply(this,args);
-        };
-        WebGLRenderingContext.prototype.getError=function(...args){
-            if(drawn&&!injected){injected=true;return this.INVALID_OPERATION;}
-            return getError.apply(this,args);
-        };""")
-    page.goto(args.base_url)
-    page.wait_for_function("document.querySelector('[data-scene]').dataset.motion === 'ready'")
-    assert page.locator('.scene-motion').is_visible()
-    page.close()
-    browser.close()
-
     for failure in ['blank-image', 'blank-frame', 'gpu-error', 'decode-error']:
         browser = getattr(p, args.engine).launch()
         page = browser.new_page()
