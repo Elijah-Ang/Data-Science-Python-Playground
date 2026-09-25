@@ -116,7 +116,7 @@ function progress(c){
   ()=>['A monthly intake report needs a count for each month in df. Parse date, then display counts by month number in ascending order. Preserve df.','dates = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")\ndates.dt.month.value_counts().sort_index()','Count month numbers; sorting the index puts the calendar in order.',{bridge:'sort_index() sorts a Series by its labels, unlike sort_values(), which sorts the counts.'}]],
  W16:[
   d=>[`Parse price as numeric in df. This report requires both a known price and known ${d.a}; keep only eligible rows and display df.`,`df["price"] = pd.to_numeric(df["price"], errors="coerce")\ndf = df.dropna(subset=["price", ${q(d.a)}])\ndf`,'subset can name both fields required for this report.',{target:'df'}],
-  ()=>['Preserve df. A report needs a valid numeric price but accepts missing discounts. Display a dictionary with keys rows (eligible DataFrame, with parsed prices) and excluded (number removed).','clean = df.copy()\nclean["price"] = pd.to_numeric(clean["price"], errors="coerce")\neligible = clean.dropna(subset=["price"])\n{"rows": eligible, "excluded": len(df) - len(eligible)}','Keep the denominator before filtering; do not drop rows for unrelated gaps.']],
+  ()=>['Preserve df. A report needs a valid numeric price but accepts missing discounts. Parse price in a separate copy and display the eligible rows as a DataFrame.','clean = df.copy()\nclean["price"] = pd.to_numeric(clean["price"], errors="coerce")\nclean.dropna(subset=["price"])','Filter only on parsed price; unrelated missing discounts do not exclude a row.',{dataset:'messy_games',preserveData:true,resultKind:'DataFrame',reflection:'How many rows were excluded because price was absent or invalid?'}]],
  W17:[
   d=>[`For this exercise only, a missing ${d.a} is confirmed to mean no discount. Fill those gaps with zero in df and display it; preserve all known values.`,`df[${q(d.a)}] = df[${q(d.a)}].fillna(0)\ndf`,'Use the supplied meaning of missingness, not a habitual default.',{target:'df'}],
   d=>[`Preserve df in a separate clean copy. Add ${d.a}_missing to record the original missing mask, then fill missing ${d.a} with its observed median. Keep every row; display clean.`,`clean = df.copy()\nclean[${q(d.a+'_missing')}] = clean[${q(d.a)}].isna()\nclean[${q(d.a)}] = clean[${q(d.a)}].fillna(clean[${q(d.a)}].median())\nclean`,'Record the missing mask before replacing the unknown values.',{target:'copy'}]],
@@ -284,7 +284,7 @@ function progress(c){
 
  // Fix the analytical question, and write checkpoint requirements as actual steps.
  {const r=lesson('V37').rounds[1];r.task=r.task.replace('total selected temperature','mean selected temperature').replace('"Totals"','"Means"').replace('(sky, Total)','(sky, Mean temperature)');r.solution=r.solution.replace('["temperature"].sum()','["temperature"].mean()').replace('title="Totals"','title="Means"').replace('ylabel="Total"','ylabel="Mean temperature"');}
- const checkpointHints={I22:'Build the profile dictionary one entry at a time. Inspect df without assigning transformed data back to it.',W31:'Copy first. Remove confirmed duplicate records before calculating the imputation median; preserve unknown prices.',V37:'Define selected once, then reuse it for all three Figures. Compute the grouped summary before drawing exact bars.'};
+ const checkpointHints={I22:'Use the column names as row labels in a compact quality table. Inspect df without changing it.',W31:'Copy first. Remove confirmed duplicate records before calculating the imputation median; preserve unknown prices.',V37:'Define selected once, then reuse it for all three Figures. Compute the grouped summary before drawing exact bars.'};
  for(const [id,hint] of Object.entries(checkpointHints))for(const r of lesson(id).rounds)r.hint=hint;
  const followHints={
   I01:'A dictionary pairs each quoted column name with a list; both lists need the same number of rows.',I01CSV:'The quoted filename names the input file; assignment stores the returned table.',
@@ -318,12 +318,10 @@ function progress(c){
   if(r.forbiddenCalls?.includes('apply')&&!r.task.includes('apply'))r.task+=' Do not use apply().';
   r.steps=r.task.split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean);
  }
- for(const r of lesson('I22').rounds){const d=D[r.dataset];r.steps=[
-  'Preserve df; build a dictionary named profile.',
-  'Add shape (rows, columns), columns (list of names), and types (the dtypes Series).',
-  `Add missing (missing counts per column) and categories (value_counts for ${d.c}).`,
-  'Leave profile on the final line to display the dictionary.'
- ];r.task=r.steps.join(' ');}
+ revise('I22',0,'Preserve df. Before sharing the table, display a column-quality DataFrame indexed by the original field names, with dtype (as text) and missing (count) columns.',
+  'pd.DataFrame({"dtype": df.dtypes.astype(str), "missing": df.isna().sum()})',
+  'Put each field on one row so its storage type and missing count can be checked together.',
+  {preserveData:true,resultKind:'DataFrame',starter:'pd.DataFrame({"dtype": df.dtypes.astype(str), "missing": ____})'});
  // Inspection checkpoints now answer different questions with earlier tools.
  revise('I22',1,'Using df, prepare a profile of students scoring at least 70. Select hours and score in that order and display their describe() summary. Preserve df.',
   'selected = df[df["score"] >= 70]\nselected[["hours", "score"]].describe()',

@@ -154,7 +154,7 @@ define('choose-chart','panels','relationship / distribution / categories',()=>[8
 define('honest-bars','bars','zero baseline; deliberate category order',()=>bars([9,6,3],{kind:'Total, descending'}));
 define('ordered-counts','bars','zero baseline; explicit category order',()=>bars([3,5,2],{kind:'Count',labels:['A','B','C']}));
 // Checkpoints have their own operations, rather than a generic plot collage.
-define('profile','table-transform','inspect without changing the original table',()=>table(6,16,93,['name','value'],[['A',2],['B','NaN']])+arrow()+table(149,5,106,['profile','result'],[['shape','(2,2)'],['columns','2 labels'],['types','2 dtypes'],['missing','0, 1'],['counts','A:1 B:1']]));
+define('profile','table-transform','column types and missing counts; original unchanged',()=>table(6,16,93,['name','price'],[['A',2],['B','NaN']])+arrow()+table(149,16,106,['field','dtype','miss'],[['name','object',0],['price','float64',1]]));
 define('clean-pipeline','table-transform','copy → deduplicate → clean → sort',()=>table(7,16,92,['raw'],[['" TEA "'],['" TEA "'],['"Mint "']])+arrow()+table(150,16,103,['clean'],[['"mint"'],['"tea"']])+text(11,82,'original stays intact'));
 define('report','panels','filter first, then compare three views',()=>scene['choose-chart'].draw().replace('Counts','Summary'));
 const mapping={

@@ -1,6 +1,6 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "c88e0c61ed9b04f52fc4a65b703f6534e10fa670f39d741641e7161667e469ab",
+  "sha256": "09e8a7ad3ce21732750347cd49271b3a00b797e182fa0211ea40f78615300eb5",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
@@ -875,6 +875,6 @@
       ]
     }
   ],
-  "reviewed": "2026-09-19",
-  "reason": "Authorized teaching and task clarity revision; retains all 106 cards and 324 exercise identities. Workflow challenges unchanged."
+  "reviewed": "2026-09-25",
+  "reason": "Reviewed task and teaching changes: Foundations keeps all 106 cards and 324 exercise identities while replacing two artificial dictionary outputs and shortening repeated chart instructions. Workflow challenges unchanged. The commit field records the original curriculum provenance."
 }

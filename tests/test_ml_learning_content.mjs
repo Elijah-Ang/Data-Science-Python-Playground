@@ -63,6 +63,24 @@ for(const e of all){
 }
 assert.equal(new Set(all.map(e=>JSON.stringify(e.hints))).size,all.length,'Each task needs its own help');
 
+// Comparisons expose each result directly. Every checked output name must be
+// visible in the task, including the copied regression retrieval exercise.
+for(const [id,names] of Object.entries({
+  'ML-R02-3':['evaluation_mean','training_mean'],
+  'ML-R-R1-2':['evaluation_mean','training_mean'],
+  'ML-R09-2':['leaf','prediction'],
+  'ML-C03-2':['macro_f1','accuracy'],
+  'ML-C03-3':['macro_f1','accuracy'],
+  'ML-U02-2':['raw_distance','scaled_distance'],
+  'ML-U03-2':['cluster','distance'],
+  'ML-P06-2':['retained_scores','view_2d'],
+})){
+  const e=all.find(ex=>ex.id===id);
+  assert.deepEqual(e.outputs,names,id+' named results');
+  for(const name of names)assert(e.task.includes(name),id+' hides '+name);
+  assert(e.checks.every(check=>!check.test.includes("answer[")),id+' retains a hidden dictionary contract');
+}
+
 for(const e of all.filter(e=>e.kind==='python'))assert(e.packages.includes('numpy')&&e.packages.includes('pandas'));
 assert.deepEqual(all.find(e=>e.id==='ML-F02-1').packages,['numpy','pandas']);
 assert(!all.find(e=>e.id==='ML-F03-1').packages.includes('matplotlib'));
