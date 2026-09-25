@@ -1044,7 +1044,7 @@
       "note": "Combine earlier skills — Filter whole records so each pair stays together."
     },
     "I22-1": {
-      "sha256": "c9d02a646c4fef0f69dd136965b738dcbfc0f87e942da75cd0d184f2b1b3a7e0",
+      "sha256": "1ade0f4d99a1656a9a29649265935b6c8a02dbe635c5dbb968b8b89e5f06b981",
       "criteria": [
         "purpose",
         "given input",
