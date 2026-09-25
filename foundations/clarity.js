@@ -364,7 +364,7 @@ guide('V36', 'Bar length represents magnitude, so use a zero baseline. Choose an
  [['sort_values(ascending=False)','Rank computed summaries from largest to smallest.'],['sort_index()','Order a summary by its category labels instead.'],['ax.set_ylim(bottom=0)','Keep the bar baseline at zero.']],
  'Calculate the requested mean or total from the full eligible population; do not omit observations to make a pattern clearer.');
 // Checkpoints retrieve the preceding concepts rather than introducing new APIs.
-guide('I22','Build an inspection from the question: choose records, choose fields, then summarize.', 'A report about one station must filter that station before calculating its weather summaries.', [['Structure','shape, columns and dtypes describe what arrived.'],['Completeness','isna().sum() counts gaps; value_counts() counts category observations.'],['Profile','describe() or grouped means summarize the relevant measurements.']], 'Preserve df so each inspection uses the original evidence.');
+guide('I22','Inspect field quality before choosing records and summaries for a question.', 'A column-quality table puts each original field beside its storage type and missing count.', [['df.dtypes.astype(str)','Convert each dtype to text for the quality table.'],['df.isna().sum()','Count missing entries in each field.'],['pd.DataFrame(...)','Align the two Series by field name into one table.']], 'Preserve df so later inspections use the original evidence.');
 guide('W31','A cleaning policy specifies which records and values may change, and why.', 'Parse a numeric field before deciding whether it meets a report’s required-field policy.', [['Copy and deduplicate','Keep the source; remove only confirmed accidental copies.'],['Normalize and parse','Clean labels, convert types and keep invalid values visible as gaps.'],['Prepare the handoff','Apply the stated fill and eligibility rules, then select, sort and reset as requested.']], 'The order matters: calculate an imputation median after removing accidental copies.');
 guide('V37','Build several views of the same selected population so the charts answer a coherent question.', 'A distribution and a grouped mean can complement each other only when their populations are clear.', [['Select once','Store the eligible records and reuse them for every Figure.'],['Choose each summary','A histogram counts observations; a scatter pairs values; exact bars use calculated means or totals.'],['Finish each Figure','Set its labels, arrange the layout and display it.']], 'The task states the population, chart types and aggregation; each Figure must follow that same brief.');
 
@@ -411,6 +411,24 @@ function clarify(c) {
   if(r.retrieves)continue; // Refresh copied retrievals after their source contracts.
   r.task=r.task.replace(/Using df, use /g,'Using df, call ')
    .replace(/Practise: /g,'Use: ').replace(/care-about threshold/g,'review threshold').replace(/Using df, show df /g,'Using df, show ').replace(/Using df, compare df /g,'Using df, compare ');
+  // V01/V02 teach chart finishing, and the panel/export lessons need their
+  // own display instructions. Later exercises can use the shared editor cue.
+  if(l.deck==='visualise'&&r.target==='plot'&&!(['V01','V02','V24','V34','V37'].includes(l.id)||(['V31','V32','V33'].includes(l.id)&&r.label==='Follow'))){
+   r.task=r.task.replace(/ Finish with fig\.tight_layout\(\) and (?:display with )?plt\.show\(\)\./g,'')
+    .replace(/ Finish with tight_layout and show\./g,'')
+    .replace(/ Finish g\.figure with tight_layout\(\) and display with plt\.show\(\)\./g,'')
+    .replace(/; finish with g\.figure\.tight_layout\(\) and plt\.show\(\)\./g,'.')
+    .replace(/ Finish the returned Figure and display it\./g,'')
+    .replace(/ Display the chart with plt\.show\(\)\./g,'')
+    .replace(/ Display the Figure\./g,'')
+    .replace(/(?: |;) ?display the Figure\./g,'.');
+   r.task=r.task.replace(/ Use title ("[^"]+"), x label ("[^"]+") and y label ("[^"]+")\./g,' Chart: title $1; x $2; y $3.')
+    .replace(/ Give the chart title ("[^"]+") and axis labels ("[^"]+") and ("[^"]+")\./g,' Chart: title $1; x $2; y $3.')
+    .replace(/ Title the chart ("[^"]+"); label x ("[^"]+") and y ("[^"]+")\./g,' Chart: title $1; x $2; y $3.')
+    .replace(/ Use title ("[^"]+"), x label ("[^"]+"), y label ("[^"]+")\./g,' Chart: title $1; x $2; y $3.')
+    .replace(/ Title ("[^"]+"), x label ("[^"]+"), y label ("[^"]+")\./g,' Chart: title $1; x $2; y $3.')
+    .replace(/ Title ("[^"]+"); x label ("[^"]+"); y label ("[^"]+")\./g,' Chart: title $1; x $2; y $3.');
+  }
   r.task=r.task.replace(/Use: ([^.]+(?:\(\))?[^.]*?)\.(?=\s|$)/g, (match, list, offset, text)=> {
    const before=text.slice(0,offset);
    const missing=list.split(', ').filter(call=>!before.includes(call.replace(/\(\)$/,'')));

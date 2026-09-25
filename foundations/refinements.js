@@ -197,7 +197,7 @@ function refine(c){
  }
  for(const l of L)for(const r of l.rounds){
   r.task=r.task.replace('Using df, create one empty Figure','Create one empty Figure').replace(/Display clean\. Display clean\./g,'Display clean.').replace(/ Label y "Residual"\./g,'');
-  if(l.id==='I22'){r.preserveData=true;r.resultKind='dictionary';}
+  if(l.id==='I22'){r.preserveData=true;r.resultKind='DataFrame';}
   if(l.id==='W31')r.resultKind='DataFrame';
   if(l.id==='V37')r.resultKind='three Figures';
   if(l.id==='W31')r.task=r.task.replace('Create clean as a separate copy.', 'Create clean as a separate copy of df.');

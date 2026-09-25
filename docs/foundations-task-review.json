@@ -1,7 +1,7 @@
 {
   "baseSHA": "bd473733a1edb5d22b73bb24f1156da2df5316f0",
-  "reviewed": "2026-09-19",
-  "scope": "All 106 cards and 324 exercises: task/solution alignment, essential options taught before use, explicit outputs and meaningful ordering; 89 Follow concept guides plus 3 checkpoint references.",
+  "reviewed": "2026-09-25",
+  "scope": "All 106 cards and 324 exercises: task/solution alignment, explicit outputs, chart label requirements, shared chart finishing guidance, and practical DataFrame outputs in W16 and I22.",
   "exercises": {
     "I01-1": {
       "sha256": "3427bc316af4e00d397eee35326effbf28887f4d026ff6abf7b83a49ccabf503",
@@ -1044,7 +1044,7 @@
       "note": "Combine earlier skills — Filter whole records so each pair stays together."
     },
     "I22-1": {
-      "sha256": "0fca064389cc70e12c29fefff6ffb43ba7b216dbf2ac667adcc20fe194d5b484",
+      "sha256": "1ade0f4d99a1656a9a29649265935b6c8a02dbe635c5dbb968b8b89e5f06b981",
       "criteria": [
         "purpose",
         "given input",
@@ -1772,7 +1772,7 @@
       "note": "Adapt a requirement — subset can name both fields required for this report."
     },
     "W16-3": {
-      "sha256": "b7b26000337809470ccf433c2240cd9551793c9ebc5cc9bc9ea509bc01f41a0b",
+      "sha256": "c6119c0606fcae0300c466bcd6667654ec84a3fd0dd11a8b7629ef55c986e4ef",
       "criteria": [
         "purpose",
         "given input",
@@ -1782,7 +1782,7 @@
         "readable code"
       ],
       "assessment": "reviewed",
-      "note": "Choose and combine — Keep the denominator before filtering; do not drop rows for unrelated gaps."
+      "note": "Choose and combine — Parse price in a copy and keep eligible rows, including rows with unrelated gaps."
     },
     "W17-1": {
       "sha256": "485dafa943dbcbb879edfde580b229a892e296b20d2b3ab68640fb571bf0a6b4",
@@ -1876,7 +1876,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR3-2": {
-      "sha256": "b7b26000337809470ccf433c2240cd9551793c9ebc5cc9bc9ea509bc01f41a0b",
+      "sha256": "c6119c0606fcae0300c466bcd6667654ec84a3fd0dd11a8b7629ef55c986e4ef",
       "criteria": [
         "purpose",
         "given input",
@@ -2578,7 +2578,7 @@
       "note": "Follow the technique — subplots returns the whole Figure and its Axes; unpack both names."
     },
     "V16-1": {
-      "sha256": "6cda187d8006e0ec011696f807a3f051db21258eddb47448e54cbee8b9845b3f",
+      "sha256": "fcb62ade75096128d65f0e5d030c952523073ca175691acd0618b14e7dda2442",
       "criteria": [
         "purpose",
         "given input",
@@ -2591,7 +2591,7 @@
       "note": "Follow the technique — Keep x and y from the same row; one point represents one paired observation."
     },
     "V16-2": {
-      "sha256": "8d0e0b2f8210bc77f684f25fa0fea32836b92fa1e96c43900072ec8d94fda8b4",
+      "sha256": "08f148788b2187ddab0e074a5caa0e908fc828d6e372fe75d17702d0a71d3406",
       "criteria": [
         "purpose",
         "given input",
@@ -2604,7 +2604,7 @@
       "note": "Adapt a requirement — Changing the question changes both the data mapping and axis labels."
     },
     "V16-3": {
-      "sha256": "c683a1d6c6658cdf252674d02dcdba66871d96b2325e3d0ee5b9206aad463265",
+      "sha256": "9ae82db24af1a4eba913e9541569c0883630d4542bd0671fac3ab5ac4173a7dd",
       "criteria": [
         "purpose",
         "given input",
@@ -2656,7 +2656,7 @@
       "note": "Choose and combine — Translate the question into the selected observations and the quantity on each axis."
     },
     "V04-1": {
-      "sha256": "1d217abc328c0a222021f0e9989731f9ebb57b2ed580da6b406d5c2914a2ba7c",
+      "sha256": "1acba8f7e71cb43ab8fd7e4d3ecab3b44d779b9adf1ae7c63da5ef3b5e2b022d",
       "criteria": [
         "purpose",
         "given input",
@@ -2669,7 +2669,7 @@
       "note": "Follow the technique — Bins group a numeric measurement; the vertical height here is a count."
     },
     "V04-2": {
-      "sha256": "3aa1e22722c79aae4ed93958fd6d0832621cbabb8199c1cb7147cc92c8753350",
+      "sha256": "93ff9f387e20dfd315aea2200b105a8bc02f5b033616b4b347c5e4b9f60eae2f",
       "criteria": [
         "purpose",
         "given input",
@@ -2682,7 +2682,7 @@
       "note": "Adapt a requirement — Bins change how observations are grouped; filtering changes which observations enter the chart."
     },
     "V04-3": {
-      "sha256": "674af337027c8e4aaea6138c888319326cc2a193bc3397ef8be999f581344113",
+      "sha256": "9fd6cc159dba7f0c1c5a35277f1656426adf956adeb82d5e0096bcdf7d1e1cfd",
       "criteria": [
         "purpose",
         "given input",
@@ -2695,7 +2695,7 @@
       "note": "Choose and combine — Bins change how observations are grouped; filtering changes which observations enter the chart."
     },
     "V08-1": {
-      "sha256": "e47bf3fb41774ce83ad0fe517a1da1207693872c5c1310235e19ca3a60508f58",
+      "sha256": "ebbd94cf5e5d7ac87db77934ef658fe47a7281afa4179a8046a847f59ab8e9a7",
       "criteria": [
         "purpose",
         "given input",
@@ -2708,7 +2708,7 @@
       "note": "Follow the technique — Category counts use x alone; supplying a numeric y changes the question."
     },
     "V08-2": {
-      "sha256": "63d9673448b854a2eada7958910425536362adaf6c2a6e00096e7708bc5e22dc",
+      "sha256": "f11253e22b1a54c1af8a06e0024a324811674a65a453ffa502bdc817ce28f94a",
       "criteria": [
         "purpose",
         "given input",
@@ -2721,7 +2721,7 @@
       "note": "Adapt a requirement — A missing category must appear in the count index before plotting."
     },
     "V08-3": {
-      "sha256": "c3a18691ad7385c9553b69790e5c8d1c166b2ca66aae727c59aaaefb819fe1e4",
+      "sha256": "222460879e42a52567e52f59ae3b7af16906b7250543679de4670f3e48605da1",
       "criteria": [
         "purpose",
         "given input",
@@ -2747,7 +2747,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR1-2": {
-      "sha256": "c683a1d6c6658cdf252674d02dcdba66871d96b2325e3d0ee5b9206aad463265",
+      "sha256": "9ae82db24af1a4eba913e9541569c0883630d4542bd0671fac3ab5ac4173a7dd",
       "criteria": [
         "purpose",
         "given input",
@@ -2760,7 +2760,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR1-3": {
-      "sha256": "674af337027c8e4aaea6138c888319326cc2a193bc3397ef8be999f581344113",
+      "sha256": "9fd6cc159dba7f0c1c5a35277f1656426adf956adeb82d5e0096bcdf7d1e1cfd",
       "criteria": [
         "purpose",
         "given input",
@@ -2773,7 +2773,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V18-1": {
-      "sha256": "e3d0f5f765b0fb8fa4527117885cb0aae3217002851e73991876f0041b9bf3b2",
+      "sha256": "ed49cfb94b74fd304346615e9f2ddbb740e4c8cf03a7688b9dfc3be382eae4e2",
       "criteria": [
         "purpose",
         "given input",
@@ -2786,7 +2786,7 @@
       "note": "Follow the technique — A line implies order; estimator=None preserves observations instead of averaging repeated times."
     },
     "V18-2": {
-      "sha256": "1800f78930a83d2b195610ca748ec69d2cb5fca749c18ed4817c74edc7b61b9e",
+      "sha256": "d556c6ba7a16b404b5c126f10b214b62a9e381a344ee4c862f58444a7a4bde0c",
       "criteria": [
         "purpose",
         "given input",
@@ -2799,7 +2799,7 @@
       "note": "Adapt a requirement — Restrict the time window before connecting observations."
     },
     "V18-3": {
-      "sha256": "6713fa06833491a79da0ff97b69f286ba77906360c2ac743b714c3fb2ca60ba1",
+      "sha256": "db81fdedb67fc5774c3e25a7f1f133d976f0ff672794dfe7b1a3692bc7c98f2e",
       "criteria": [
         "purpose",
         "given input",
@@ -2812,7 +2812,7 @@
       "note": "Choose and combine — An ordered time question supports connecting neighboring observations."
     },
     "V09-1": {
-      "sha256": "67165df96e98ae2d1860e90b9bfb2fc626612a8309ba66c84849836b3f71b80f",
+      "sha256": "ee0b3ba7113bd841c0451707476a348701590d3bd0854ef3e9798079afcc5a68",
       "criteria": [
         "purpose",
         "given input",
@@ -2825,7 +2825,7 @@
       "note": "Follow the technique — The default bar height is a mean, not the number of records."
     },
     "V09-2": {
-      "sha256": "1dea1008908bbc2314e76158f3765136d60bca34e10558742f4cb692780f652f",
+      "sha256": "e593848cb4f2ec73836d72e7799b28bb3ee85730995f4a8e266c5786c653839a",
       "criteria": [
         "purpose",
         "given input",
@@ -2838,7 +2838,7 @@
       "note": "Adapt a requirement — The center of interest changed from mean to median."
     },
     "V09-3": {
-      "sha256": "6aacd9160e7b5db2299f31a81a892b9be9020debb9a7acdb58ebbcb4fd9a00ce",
+      "sha256": "0159879d9cec2b69abb52d1c54a020c4b48ef0693bb8480176285a6f85c82c55",
       "criteria": [
         "purpose",
         "given input",
@@ -2851,7 +2851,7 @@
       "note": "Choose and combine — Calculate the requested group mean before drawing exact bars."
     },
     "V13-1": {
-      "sha256": "eb8e7ac849651d059404e8d406406a4ee311d08158c97f3f3b0569635062b57a",
+      "sha256": "59e8115bf277ff9f71640767f951db5027221697cbfd2f223c81cecbfe84ef9e",
       "criteria": [
         "purpose",
         "given input",
@@ -2864,7 +2864,7 @@
       "note": "Follow the technique — Jitter changes sideways placement, not the measured value."
     },
     "V13-2": {
-      "sha256": "660f41dcf38de741f404c1ab4d1783c10e947a9b529edfb13416a14c840599e6",
+      "sha256": "3b8538c10938a48a6b3ffaae338059f3edc12de6a94eb028cde74122364ad031",
       "criteria": [
         "purpose",
         "given input",
@@ -2877,7 +2877,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V13-3": {
-      "sha256": "4effb05e18328d41097b64f323a672fdd1d389602e1d1b1d695acb55e5d44784",
+      "sha256": "246186b4e4902aa418a44f718d5147fa5d4c5c4363e1c340e63706488341c13e",
       "criteria": [
         "purpose",
         "given input",
@@ -2890,7 +2890,7 @@
       "note": "Choose and combine — Retain individual records instead of aggregating their mean."
     },
     "V11-1": {
-      "sha256": "c4a6d7a0ccfaca2758e906ea5dc5e7e028e725e59a37efe848d09147baeedfa9",
+      "sha256": "6fae56302ed245f8ad7cced180538e8d714ebc72dfd4312a37a544a1df82e0ea",
       "criteria": [
         "purpose",
         "given input",
@@ -2903,7 +2903,7 @@
       "note": "Follow the technique — Whiskers stop at observed values within the fences; flagged points are not automatically errors."
     },
     "V11-2": {
-      "sha256": "b4cedfe336be221cf4fb037bdff1db0392beb4b0025ab89cfd98d31713f8c716",
+      "sha256": "9342747333528af520bd8e364400b3dc841c0b404319d3ddbc7f83353a14dc0f",
       "criteria": [
         "purpose",
         "given input",
@@ -2916,7 +2916,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V11-3": {
-      "sha256": "0d643452d0835797821447ea8a7ba836e999b70c70bc83c9905e58f0abf3bc34",
+      "sha256": "11643acf4d5c56d2fb95e05b3b6c9898fc3bb18e799eb243965abfd35eab8668",
       "criteria": [
         "purpose",
         "given input",
@@ -2929,7 +2929,7 @@
       "note": "Choose and combine — A distribution by category differs from one overall rating distribution."
     },
     "V03-1": {
-      "sha256": "dadbf4fa52ea3358bf05f21fcafd0ef92d5185e67d3d32cf0238c014a5e876ae",
+      "sha256": "27e8d5423d36af85e683011925c73aaf1d81820d27705f1e406eef7e7e578076",
       "criteria": [
         "purpose",
         "given input",
@@ -2942,7 +2942,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V03-2": {
-      "sha256": "57da3828103b790fc21bb80420b07e3654473bec75e49952426f0c92c0425c73",
+      "sha256": "a310762d9da698cc8f49a254b29eaeda5126f20a16ef851b5cceff2e855229f9",
       "criteria": [
         "purpose",
         "given input",
@@ -2955,7 +2955,7 @@
       "note": "Adapt a requirement — Map only the channel needed by this question."
     },
     "V03-3": {
-      "sha256": "f67c70161084e76ec7116f5c5bb7bfc9c71246d65f50df571b84a9d0154acde0",
+      "sha256": "1e08aa63ba151d33228d90128d00a18e41810a0dff0948fd6860f800db966961",
       "criteria": [
         "purpose",
         "given input",
@@ -2968,7 +2968,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V17-1": {
-      "sha256": "24876747995d59b2eecdfc07a47edfebdc9386fa9bba874bd680fa31497dc1b4",
+      "sha256": "affc121eb7bf0df9741f7578b12707b897fd00088247d94b53d878982cd6d312",
       "criteria": [
         "purpose",
         "given input",
@@ -2981,7 +2981,7 @@
       "note": "Follow the technique — Use the same category for hue and style so colour is not the only cue."
     },
     "V17-2": {
-      "sha256": "170cf1d307dbeba5b2601b3edf95830c568712bdb58f9b5943c49aaec861c969",
+      "sha256": "eec6513c0c267c0a4db9f3754dcb737c983610be49b1be6dab9af0c0511dc7e9",
       "criteria": [
         "purpose",
         "given input",
@@ -2994,7 +2994,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V17-3": {
-      "sha256": "b40b98efd30d7bc442804eb26d173c48160d091347d3cca70773acac962d4fc0",
+      "sha256": "96aad764f5f21959d2f71cd760cbe614b31ad0ed5bc14dd393cb71196d86ad4d",
       "criteria": [
         "purpose",
         "given input",
@@ -3007,7 +3007,7 @@
       "note": "Choose and combine — Redundant mappings let shape carry information when colour is hard to distinguish."
     },
     "VR2-1": {
-      "sha256": "6713fa06833491a79da0ff97b69f286ba77906360c2ac743b714c3fb2ca60ba1",
+      "sha256": "db81fdedb67fc5774c3e25a7f1f133d976f0ff672794dfe7b1a3692bc7c98f2e",
       "criteria": [
         "purpose",
         "given input",
@@ -3020,7 +3020,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR2-2": {
-      "sha256": "6aacd9160e7b5db2299f31a81a892b9be9020debb9a7acdb58ebbcb4fd9a00ce",
+      "sha256": "0159879d9cec2b69abb52d1c54a020c4b48ef0693bb8480176285a6f85c82c55",
       "criteria": [
         "purpose",
         "given input",
@@ -3033,7 +3033,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR2-3": {
-      "sha256": "4effb05e18328d41097b64f323a672fdd1d389602e1d1b1d695acb55e5d44784",
+      "sha256": "246186b4e4902aa418a44f718d5147fa5d4c5c4363e1c340e63706488341c13e",
       "criteria": [
         "purpose",
         "given input",
@@ -3046,7 +3046,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V22-1": {
-      "sha256": "1d4da4b784ee067ebcef3f10f792212aabf698aec57026a6f439d6a76869913d",
+      "sha256": "494df225e7acf6e299d3189de90abac602c98460d75afb114430c2ebe7c5967d",
       "criteria": [
         "purpose",
         "given input",
@@ -3059,7 +3059,7 @@
       "note": "Follow the technique — Build a correlation matrix first, then keep the colour scale fixed from -1 to 1."
     },
     "V22-2": {
-      "sha256": "2fd31001f481aba9a8a146788b71f39cff30064d54457bb304457eec2fe44c86",
+      "sha256": "ebcc9abdb133950a11a6bcf286f0cc8dd57a7d5f8b718ad3d665b9ccc090644f",
       "criteria": [
         "purpose",
         "given input",
@@ -3072,7 +3072,7 @@
       "note": "Adapt a requirement — Select the variables before correlating; keep the signed scale fixed."
     },
     "V22-3": {
-      "sha256": "8550fa0c9e0e7d3af40a42607da3279199e390abd7f58773fa9a9e19563f30aa",
+      "sha256": "ff79aef56f74229d318914482a91235192fecd57bd70199f768e5847d2f15107",
       "criteria": [
         "purpose",
         "given input",
@@ -3124,7 +3124,7 @@
       "note": "Choose and combine — Both panels must describe the same selected records."
     },
     "V25-1": {
-      "sha256": "47b49462100abb2edb8cdfbee911eda761cc099a1fbb27ccfc7c04eb8c500639",
+      "sha256": "9fc56ff6edafc2eea978d7de757ca4bf4dfe4f0ec0a7a9402a62f1c5a578ffa9",
       "criteria": [
         "purpose",
         "given input",
@@ -3137,7 +3137,7 @@
       "note": "Follow the technique — A legend describes the mapped category; redundant shapes help when colour is insufficient."
     },
     "V25-2": {
-      "sha256": "c11257a93b14bdc199ed3262293ff143e2d1c0efba67639f93e9abf65a313ced",
+      "sha256": "f78a913fa41753fb7d8683cd7234e144c172d897bd45cf702a75ef3e16a6aaa0",
       "criteria": [
         "purpose",
         "given input",
@@ -3150,7 +3150,7 @@
       "note": "Make overlap and category order explicit — palette=\"colorblind\", ax.legend(title=...), style= are the tools to try."
     },
     "V25-3": {
-      "sha256": "cef98dc9eef7e976f3b1510ed33ec3dfcedc8424c007ba6632054eb2917a8a98",
+      "sha256": "c2ab09b2a91ddb83bf55bf03206cdc913a084b7c76c36d657389b3e876f7f44f",
       "criteria": [
         "purpose",
         "given input",
@@ -3163,7 +3163,7 @@
       "note": "Choose and combine — The legend must describe the mapped field, not a leftover label from another chart."
     },
     "V26-1": {
-      "sha256": "47a04335ab95568562220b487f3658d2df9eec80d9bbc5b6b71b31fcb4d803d7",
+      "sha256": "e27643b5a510426abe6289e2885239ae154e8269cbc661abd09066bccf9d0aab",
       "criteria": [
         "purpose",
         "given input",
@@ -3176,7 +3176,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V26-2": {
-      "sha256": "62c341518e852cc7a21d0b521941f9cacc6604a0f7cc07f0047c6bd566c56289",
+      "sha256": "4f154c3d79adb1cc6f82212e46b991275c81a4c7e08aa4074d54a7d03f0f6672",
       "criteria": [
         "purpose",
         "given input",
@@ -3189,7 +3189,7 @@
       "note": "Adapt the workflow — Choose the observations first, then map the requested measurements to the chart."
     },
     "V26-3": {
-      "sha256": "2d2dadc590529dc682aa599acdca5a764615582ff5b508335360f7b14ae3cb21",
+      "sha256": "27388c95b71e973e2a9851f951784dbb5988d712be4c6e49a3a447ce6af724a3",
       "criteria": [
         "purpose",
         "given input",
@@ -3202,7 +3202,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V27-1": {
-      "sha256": "cfb916655a0170f1795044b829bc28f7c527a4475bb3578957f45647b482ceff",
+      "sha256": "0d55d633bf855966ec2904adfd9324c895ca58c7452cffb901163f5a96c50223",
       "criteria": [
         "purpose",
         "given input",
@@ -3215,7 +3215,7 @@
       "note": "Follow the technique — Horizontal benchmarks use y units and vertical benchmarks use x units."
     },
     "V27-2": {
-      "sha256": "09d48e246ab5298e3054706a6d947e595b2005b402a57bb504e485866a18fd5a",
+      "sha256": "e2fe1bc8165baf26257dfacaaa759e13870612a5b2447c858002ae10e242e351",
       "criteria": [
         "purpose",
         "given input",
@@ -3228,7 +3228,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V27-3": {
-      "sha256": "a853e844d1b23ef529847104f20d47b105726220ccec1d08e713f6f94c6b05b7",
+      "sha256": "4449b5d2a6b6e46a5e60593c064bd880a84cbce148c1e9ae86f2c71b0d654df7",
       "criteria": [
         "purpose",
         "given input",
@@ -3241,7 +3241,7 @@
       "note": "Choose and combine — A y-value benchmark requires a horizontal line."
     },
     "VR3-1": {
-      "sha256": "8550fa0c9e0e7d3af40a42607da3279199e390abd7f58773fa9a9e19563f30aa",
+      "sha256": "ff79aef56f74229d318914482a91235192fecd57bd70199f768e5847d2f15107",
       "criteria": [
         "purpose",
         "given input",
@@ -3267,7 +3267,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR3-3": {
-      "sha256": "a853e844d1b23ef529847104f20d47b105726220ccec1d08e713f6f94c6b05b7",
+      "sha256": "4449b5d2a6b6e46a5e60593c064bd880a84cbce148c1e9ae86f2c71b0d654df7",
       "criteria": [
         "purpose",
         "given input",
@@ -3280,7 +3280,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V29-1": {
-      "sha256": "c0e419c4c4921d3c231f5e09bf36c1a59b4e937a3279df1b7c621e79a7d2514a",
+      "sha256": "8eab2bb5e56eaf8c44373ebcfeee586032fe5365a4bef7175ae925e198d8baca",
       "criteria": [
         "purpose",
         "given input",
@@ -3293,7 +3293,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V29-2": {
-      "sha256": "f9c7dcc70e9bd89236f962e1e4e844f7fc0babbc9dca5d87571297b4e1356c07",
+      "sha256": "41f57b87bb6fe8f5b2b29a60bd49eef3f96dff819b99673c2d7364de238b5a5c",
       "criteria": [
         "purpose",
         "given input",
@@ -3306,7 +3306,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V29-3": {
-      "sha256": "2ce01b658f5bbbfceed1b1d278864cbaae636ee19dbd83df689ac8e98e158369",
+      "sha256": "cc030fa37dc6889adfaf84b824687723dcec05d3a8016317f0703c44c9401626",
       "criteria": [
         "purpose",
         "given input",
@@ -3358,7 +3358,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V36-1": {
-      "sha256": "075d07b9a3f23b44b6c2b6b75e145ec380e242031485a61b7119e042a36a930f",
+      "sha256": "abd7fa863c3efbcf6dbe16f92eb1e0ff283e818aa059694f0bebd8eb11262eaa",
       "criteria": [
         "purpose",
         "given input",
@@ -3371,7 +3371,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V36-2": {
-      "sha256": "dbde71401eacfccfec012c0db7e76667d8c6a2d87c1bb41157e5e82560417820",
+      "sha256": "6f946b301fbeefefc4174e26ac775e5b113ed679b999c871ef55e2039ec22659",
       "criteria": [
         "purpose",
         "given input",
@@ -3384,7 +3384,7 @@
       "note": "Adapt a requirement — Bar lengths need a zero baseline; the height must represent the requested mean."
     },
     "V36-3": {
-      "sha256": "3ae3c13b9cb2b8f88d9e84ecbcf8ce167020dfc15a9dc0baa3263b1b9e89b384",
+      "sha256": "f8556e4ffcabf8e6c421e964f0c714a4bcc7f5d8e7e6e738aefa8e1434e21a8c",
       "criteria": [
         "purpose",
         "given input",
@@ -3436,7 +3436,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V05-1": {
-      "sha256": "b05e14b0bb48159a2332c1c7dcc5a6001d5bcbfc11e7ada8d1086d1aaa875b87",
+      "sha256": "4d4e75b5faeb36cfddd3c44712ff6ef5e186774c10d2a9679229d224ac9d781f",
       "criteria": [
         "purpose",
         "given input",
@@ -3449,7 +3449,7 @@
       "note": "Follow the technique — Density is not a count. cut=0 prevents the curve extending beyond observed values."
     },
     "V05-2": {
-      "sha256": "a04f51fd325ddec08f8dfc94d197fd142116e79c338656a83f0afb7f9ab77d9d",
+      "sha256": "3ba9a8ee97ecc91739e3606d06ffbfcc476bd07c2dd18b2063d8f536f2030e80",
       "criteria": [
         "purpose",
         "given input",
@@ -3462,7 +3462,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V05-3": {
-      "sha256": "b0d57bec0a855f7777d4998b08d0feb8a24f9d696fba8d0ae63791738d3fa419",
+      "sha256": "13a5adff558ebcf15b413507dd1d855a8c62f0b618640b82005fa59f6c40ec0d",
       "criteria": [
         "purpose",
         "given input",
@@ -3475,7 +3475,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V06-1": {
-      "sha256": "b1c9f3273506d37970e7a19ff1932be4b26d3cb1ff5b042de935bead00db177a",
+      "sha256": "d91ac46fbd8ea6d546192487a99e142d01fb560e527d4938c948d97c3f066c5f",
       "criteria": [
         "purpose",
         "given input",
@@ -3488,7 +3488,7 @@
       "note": "Follow the technique — The ECDF height is the fraction at or below the horizontal value."
     },
     "V06-2": {
-      "sha256": "2d93c41d9eacd2b7cbb4b6700d10b37188bba0afd3a839a1366e26b935e3d58e",
+      "sha256": "fabb224bd52ab292976cee963c75ca506a7e690863426ceda130161df58386cc",
       "criteria": [
         "purpose",
         "given input",
@@ -3501,7 +3501,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V06-3": {
-      "sha256": "36512a180282c518cad21e8f753ec9c32ff5dd3147018ba60a8c394b697f3a3b",
+      "sha256": "9e6a66a848be361aac7ddef43ef5e6fbb3ba8697eee8367cd00d438739aaea64",
       "criteria": [
         "purpose",
         "given input",
@@ -3514,7 +3514,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V07-1": {
-      "sha256": "103a4980dcf4b7768f84d372adce9141f224489cdf412ca925e07eaa387ffc01",
+      "sha256": "9386333f01bc30344f38c34f4d4d45cdc6491466e463c01657fdb80b6848bad4",
       "criteria": [
         "purpose",
         "given input",
@@ -3527,7 +3527,7 @@
       "note": "Follow the technique — Pass the same ax to both calls so the rug marks and distribution share a scale."
     },
     "V07-2": {
-      "sha256": "71828d973017ceaf48cc5daaa37c37eff8c3d92369fc1bda39aa418846c6eb65",
+      "sha256": "7ac0bea03d676d96d04a44ff79e04c1ec392c3affeec76b794d495b9da993422",
       "criteria": [
         "purpose",
         "given input",
@@ -3540,7 +3540,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V07-3": {
-      "sha256": "a6717c63b6ae4bd91a2aa9bb909673974c6da2981db8684e968a9467defef67e",
+      "sha256": "a7c7277c0db0d0ca1b73a81133d2ab5b08320b42440c35ca8c738a72a658166d",
       "criteria": [
         "purpose",
         "given input",
@@ -3553,7 +3553,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V10-1": {
-      "sha256": "585a0f28a3414e2f5a1b4e28108fddf58aab289b47fccdcd3d4f6b5287d67d25",
+      "sha256": "e64e8f2e2e7a7af1122a191b5736cf93a49fa7c6476a757a421809bc8a0c6c7f",
       "criteria": [
         "purpose",
         "given input",
@@ -3566,7 +3566,7 @@
       "note": "Follow the technique — One SD describes spread of observations, not a confidence interval for the mean."
     },
     "V10-2": {
-      "sha256": "8a14e978b82883ddd3fa9b81b3fcac9c4eea91759f96de013342d2660a551e92",
+      "sha256": "2d3b6e10ba0c384effa352def973f2fe651e31f4c0fa7001cd6f24f7e8d4842c",
       "criteria": [
         "purpose",
         "given input",
@@ -3579,7 +3579,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V10-3": {
-      "sha256": "2d97ad83d5666e2e3779be7343a38c29c6513ccee85f8acebc4d3cdf371aa851",
+      "sha256": "07c3cfc1fd6c18f36b3e1d19d92e7c7d4cd150eb6d214b85e88fedaeaed81d4b",
       "criteria": [
         "purpose",
         "given input",
@@ -3592,7 +3592,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V12-1": {
-      "sha256": "2fdcd5a14c4f2c2e86dbabca9991b4ea26b6a3833069570e9246e4fd52090317",
+      "sha256": "8769c27ac926a9dc5c812b05ff582969c3f0c178418f51e4d2cc4bb6bca4a461",
       "criteria": [
         "purpose",
         "given input",
@@ -3605,7 +3605,7 @@
       "note": "Follow the technique — The smooth shape depends on a density estimate; tiny groups do not support strong tail claims."
     },
     "V12-2": {
-      "sha256": "095cf6879f4f372b341d5de026dbc48d82994f5ff2c0bfd92e8f0e5a2bb3a529",
+      "sha256": "f6ae7eb4bd167c21a558f453cafa231741f61610af64fe2a28a732b3473fd16b",
       "criteria": [
         "purpose",
         "given input",
@@ -3618,7 +3618,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V12-3": {
-      "sha256": "f7105d698181a1da1ea8e6cd0115fb62aacf55e076227596cbb058d33eb0dca0",
+      "sha256": "54180c8392425f3f3c4f2df71c27cff7c58b726ac9b7c24341f6c14ffed52c0d",
       "criteria": [
         "purpose",
         "given input",
@@ -3631,7 +3631,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V14-1": {
-      "sha256": "ea069d571160678be1766fa4bb29db5248d5d9833f2fbf6a9b99dfb121a704a5",
+      "sha256": "eb9a9716c05f6c81f27c60695ad6788a9303c2ecc71a7d0d4013a8ddebe5bfc1",
       "criteria": [
         "purpose",
         "given input",
@@ -3644,7 +3644,7 @@
       "note": "Follow the technique — Swarm packing moves points along the category direction while retaining their measurements."
     },
     "V14-2": {
-      "sha256": "0e3106ff470d2f4d93100e160375a575ff760d27712458fbe24b4ca3c4dcb4be",
+      "sha256": "33ad387e6037abed8654ac5f5ed007070d8a9fa4b703b1ae05a7a0ef792f8b93",
       "criteria": [
         "purpose",
         "given input",
@@ -3657,7 +3657,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V14-3": {
-      "sha256": "2904eee08c41674f4e790adfe0fcfe2825c85f937fa286d068b549c126106899",
+      "sha256": "32b8aa0ea379dbd0745e83fb1afd2bff87310dc9e56c23b741edba00bab05d60",
       "criteria": [
         "purpose",
         "given input",
@@ -3670,7 +3670,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V15-1": {
-      "sha256": "e16af5a372d2cc8633fa7e14bc3439e9971e81f9380b3fcc18799143bbcc18a9",
+      "sha256": "66eee775b61f1e30454334cd116da9326cc4f11b9a6f94dea0066cd9973a1d22",
       "criteria": [
         "purpose",
         "given input",
@@ -3683,7 +3683,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V15-2": {
-      "sha256": "cfa0efa2cb1edc51cd02f969db83d7496c4463d91b2ed21ece984e5ac556b13c",
+      "sha256": "dee8cc14ff8cfc22e85f60f55f8c37ad8110125201f9783a4779d18cfdbc9c0b",
       "criteria": [
         "purpose",
         "given input",
@@ -3696,7 +3696,7 @@
       "note": "Adapt the workflow — Choose the observations first, then map the requested measurements to the chart."
     },
     "V15-3": {
-      "sha256": "837e18f861c2c6b90a6bfbbecfcc3972948abbf30c76fdc2b98da1fe46b10cf6",
+      "sha256": "923d4f8b18f108b91e52112681034410d95ee0d03ba8769138508365a7538911",
       "criteria": [
         "purpose",
         "given input",
@@ -3709,7 +3709,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "VR4-1": {
-      "sha256": "b0d57bec0a855f7777d4998b08d0feb8a24f9d696fba8d0ae63791738d3fa419",
+      "sha256": "13a5adff558ebcf15b413507dd1d855a8c62f0b618640b82005fa59f6c40ec0d",
       "criteria": [
         "purpose",
         "given input",
@@ -3722,7 +3722,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR4-2": {
-      "sha256": "36512a180282c518cad21e8f753ec9c32ff5dd3147018ba60a8c394b697f3a3b",
+      "sha256": "9e6a66a848be361aac7ddef43ef5e6fbb3ba8697eee8367cd00d438739aaea64",
       "criteria": [
         "purpose",
         "given input",
@@ -3735,7 +3735,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR4-3": {
-      "sha256": "2d97ad83d5666e2e3779be7343a38c29c6513ccee85f8acebc4d3cdf371aa851",
+      "sha256": "07c3cfc1fd6c18f36b3e1d19d92e7c7d4cd150eb6d214b85e88fedaeaed81d4b",
       "criteria": [
         "purpose",
         "given input",
@@ -3748,7 +3748,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR4-4": {
-      "sha256": "837e18f861c2c6b90a6bfbbecfcc3972948abbf30c76fdc2b98da1fe46b10cf6",
+      "sha256": "923d4f8b18f108b91e52112681034410d95ee0d03ba8769138508365a7538911",
       "criteria": [
         "purpose",
         "given input",
@@ -3761,7 +3761,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V19-1": {
-      "sha256": "10ae261a56b0e31177a11376fd09c381f5648d92db689908329a740e7dd6f992",
+      "sha256": "f239577d6d410a19c7f513591b453832d3dd7f1e15a1f606a487af061b1fcb74",
       "criteria": [
         "purpose",
         "given input",
@@ -3774,7 +3774,7 @@
       "note": "Follow the technique — Repeated times are aggregated when estimator is mean; the SD band shows within-time spread."
     },
     "V19-2": {
-      "sha256": "e6f264b1e7a1ad4ea941b6913e2d8a0e01a7c1c4f4a834bec996042d20382919",
+      "sha256": "738fd78ffb6d74303165016d3af149c32569f0cb99bcf4e23c3dde18bef109c0",
       "criteria": [
         "purpose",
         "given input",
@@ -3787,7 +3787,7 @@
       "note": "Adapt a requirement — Selecting a replicate changes the unit represented by each point."
     },
     "V19-3": {
-      "sha256": "075b2007f76eff7a243ffd46917b3bb6e837fc49cf99ae71632bf3ac736b05fe",
+      "sha256": "de769a29949f09bd13776756b459c83f56778ec293f46a216167bc7518772377",
       "criteria": [
         "purpose",
         "given input",
@@ -3800,7 +3800,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V20-1": {
-      "sha256": "d8aa771c217768068543e56a810530b99d955f749378bafa9f4abf65086df0e8",
+      "sha256": "12d351e1deaef5d365643f166594e80b0525854d43e65e6cb0bfd63029e862a7",
       "criteria": [
         "purpose",
         "given input",
@@ -3813,7 +3813,7 @@
       "note": "Follow the technique — ci=None removes the displayed confidence band; it does not make the fit certain."
     },
     "V20-2": {
-      "sha256": "7b34bd49914c011404fab162d7bfd6e772f91b68e408796946297daa3ffa44f2",
+      "sha256": "1c914a0e82362884f00f3215d83600bbe90a828e71787dc1d1762f285b65e5ab",
       "criteria": [
         "purpose",
         "given input",
@@ -3826,7 +3826,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V20-3": {
-      "sha256": "2f13a587d435cb7d6203ef15f4992af2c88eed773a5f6e3cfe7707589e32c40a",
+      "sha256": "e82e552e0ceae2840b430fc0eef238f1649036de951377fa509e85d5ab5c7aa2",
       "criteria": [
         "purpose",
         "given input",
@@ -3839,7 +3839,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V21-1": {
-      "sha256": "e6d15b1c0687fd54f2169b773aa33a3a13770a5ddc1b3ceb485db50956e32b09",
+      "sha256": "3b2c09df0813157f7ed3097efe6b96ee0e503acc481aaffe134d9dadc66603a9",
       "criteria": [
         "purpose",
         "given input",
@@ -3852,7 +3852,7 @@
       "note": "Follow the technique — Residuals are observed minus predicted, not the original measured y values."
     },
     "V21-2": {
-      "sha256": "9a63edb47c8788ab76ebc62032e51822f354b65c512a609c7073350a868b73a2",
+      "sha256": "125b213786859a3a23a1ddf45c14f791f3fbc966c2139dc36b98743d32eb8432",
       "criteria": [
         "purpose",
         "given input",
@@ -3865,7 +3865,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V21-3": {
-      "sha256": "c7152bb10fbcd5c8d5f278ce90f58e0727ca542d5e644a6a9b4d9edd7035c16a",
+      "sha256": "acf10dc142619ce74e3f03f1ccce765f4af4e67b4b7bd562ba36680210773c2b",
       "criteria": [
         "purpose",
         "given input",
@@ -3878,7 +3878,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V23-1": {
-      "sha256": "2d17b208aa215b6747721c1fc840e90c3f516618e4b158087e63fc8587e64b72",
+      "sha256": "f2d0e016e7550ce9985a80318f5723bdf4c97b68fd3b24dd7a4b103199dcb263",
       "criteria": [
         "purpose",
         "given input",
@@ -3891,7 +3891,7 @@
       "note": "Follow the technique — A category-count matrix and a measurement-average matrix answer different questions."
     },
     "V23-2": {
-      "sha256": "2cee756005aae5ad095f8d3207f3f39fc9fe23a484901cc3825fca86476d58d3",
+      "sha256": "544b31a41c52842e5c5d296b3b85357f517fc8ea45534e0f272fe6889494cc05",
       "criteria": [
         "purpose",
         "given input",
@@ -3904,7 +3904,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V23-3": {
-      "sha256": "2fca656a4dfe52e2f625d9fded6e02ccc037d165acf20e55135bcbc2f9a0b402",
+      "sha256": "c5ca72c26f4f8ecd591f9f11db38e6a0e479be106c1ae8cae05173c5a231fcc1",
       "criteria": [
         "purpose",
         "given input",
@@ -3917,7 +3917,7 @@
       "note": "Choose and combine — A crosstab counts; a pivot table with a mean summarizes ratings."
     },
     "VR5-1": {
-      "sha256": "075b2007f76eff7a243ffd46917b3bb6e837fc49cf99ae71632bf3ac736b05fe",
+      "sha256": "de769a29949f09bd13776756b459c83f56778ec293f46a216167bc7518772377",
       "criteria": [
         "purpose",
         "given input",
@@ -3930,7 +3930,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR5-2": {
-      "sha256": "2f13a587d435cb7d6203ef15f4992af2c88eed773a5f6e3cfe7707589e32c40a",
+      "sha256": "e82e552e0ceae2840b430fc0eef238f1649036de951377fa509e85d5ab5c7aa2",
       "criteria": [
         "purpose",
         "given input",
@@ -3943,7 +3943,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR5-3": {
-      "sha256": "c7152bb10fbcd5c8d5f278ce90f58e0727ca542d5e644a6a9b4d9edd7035c16a",
+      "sha256": "acf10dc142619ce74e3f03f1ccce765f4af4e67b4b7bd562ba36680210773c2b",
       "criteria": [
         "purpose",
         "given input",
@@ -3956,7 +3956,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR5-4": {
-      "sha256": "2fca656a4dfe52e2f625d9fded6e02ccc037d165acf20e55135bcbc2f9a0b402",
+      "sha256": "c5ca72c26f4f8ecd591f9f11db38e6a0e479be106c1ae8cae05173c5a231fcc1",
       "criteria": [
         "purpose",
         "given input",
@@ -3969,7 +3969,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V28-1": {
-      "sha256": "909213e8bb79c9f55545b0d877840721cfaf8265bdafc9137e91e3dc0fcfc7a4",
+      "sha256": "b437a482836d3c668b8a9de836f2bdeaa324f96019818c90201d2e0f6a207f3b",
       "criteria": [
         "purpose",
         "given input",
@@ -3982,7 +3982,7 @@
       "note": "Follow the technique — Find the target row, then use both coordinates from that same row for the annotation."
     },
     "V28-2": {
-      "sha256": "62d79691c307cd959f5c54d5cf828075ea014eb286caf74f307eafd9c6f52fa2",
+      "sha256": "974bfb004fa6d582e4eba25f5f8714d4516446bf09fc602f55f17271a76ecc82",
       "criteria": [
         "purpose",
         "given input",
@@ -3995,7 +3995,7 @@
       "note": "Adapt a requirement — Find the minimum of the measured field, then label its paired coordinates."
     },
     "V28-3": {
-      "sha256": "06059925af92072558528e00c7de52217848e1635f20ff0765019e54875b2d72",
+      "sha256": "64d6b68b8dbaccc9169abb62d567823cb60f8454e7b4c58e3a9000e849a1443b",
       "criteria": [
         "purpose",
         "given input",
@@ -4008,7 +4008,7 @@
       "note": "Choose and combine — Find the peak inside the report population, not in the original table."
     },
     "V30-1": {
-      "sha256": "6ef7987c2b6332806ec56a7432986394c72950a29ea428f5feae078d27a546b9",
+      "sha256": "aec1697cf57dca814dd2ace4c673d7e5d59b84f50c07d112520012bc59012f47",
       "criteria": [
         "purpose",
         "given input",
@@ -4021,7 +4021,7 @@
       "note": "Follow the technique — The upper bars need bottom equal to the lower component, not zero."
     },
     "V30-2": {
-      "sha256": "cda26095fcfe46ff51403873dbaa1a152174fa99641cbd2ae25fe6301f3cdf34",
+      "sha256": "6a72cc003381fd5fce12281cfd93f7e2d5d6b70814b6992a24c1639a936a601b",
       "criteria": [
         "purpose",
         "given input",
@@ -4034,7 +4034,7 @@
       "note": "Adapt a requirement — The upper component needs the lower component as its bottom."
     },
     "V30-3": {
-      "sha256": "89a3a2f9bd7a6c1676623817f5b5db4244ad86a21d3c313fe0b353837bcb2e62",
+      "sha256": "c00faf67e3820508bb6a65aba93285da13490486f3bc5270a07be7716d5a40fd",
       "criteria": [
         "purpose",
         "given input",
@@ -4060,7 +4060,7 @@
       "note": "Follow the technique — pairplot owns its Figure; do not create an extra empty Figure first."
     },
     "V31-2": {
-      "sha256": "ebccc484afa977a3d90db102b2db29af3a219892156ae114afb8f38e5a8666ea",
+      "sha256": "98e42bc1da610ff9c9500e2a2210544e8d2cb74d1ca98ee312b961ada876e812",
       "criteria": [
         "purpose",
         "given input",
@@ -4073,7 +4073,7 @@
       "note": "Adapt a requirement — The upper and lower panels repeat the same variable pairs with swapped axes."
     },
     "V31-3": {
-      "sha256": "2e2482b786d503f39ca37a7b4ad96b75df7ed1989707d155a03dcd882527e928",
+      "sha256": "1566e6f967750f1548e4e1d3563a5bf4b8c1b6718c05d96a4f9aeee53797c32e",
       "criteria": [
         "purpose",
         "given input",
@@ -4099,7 +4099,7 @@
       "note": "Follow the technique — jointplot owns a Figure with a central Axes and marginal Axes."
     },
     "V32-2": {
-      "sha256": "3402f98df73ab48bad8e88f609139b11e7cd50a6aa7b682fe146bc230a1c62bc",
+      "sha256": "7d13f0bdb8179bad74265e891f2a49719bdc3803bd6cdd0ed5527f39323bc1e0",
       "criteria": [
         "purpose",
         "given input",
@@ -4112,7 +4112,7 @@
       "note": "Adapt a requirement — Use g.ax_joint to target the relationship panel without altering the margins."
     },
     "V32-3": {
-      "sha256": "ce98028f2b5f65108752808bdf11b7f8e74a576a1fc7a31c5a810b1f947c6820",
+      "sha256": "bfae96c6be15f4990a6dee1de3b1cd1afaf90994ef5eddd445777c7b8cd2d36a",
       "criteria": [
         "purpose",
         "given input",
@@ -4138,7 +4138,7 @@
       "note": "Follow the technique — Figure-level functions create their own panels; height describes each panel."
     },
     "V33-2": {
-      "sha256": "ff9a78a72d6670d415f15d99cc094c8022c204671f7338dda27384f71c51da0e",
+      "sha256": "fb510f1a4ed1f6a59d36769ed6de2e49c58296cf7a84c0247a445bf2d87a58fd",
       "criteria": [
         "purpose",
         "given input",
@@ -4151,7 +4151,7 @@
       "note": "Compare category distributions across panels — relplot(kind=\"scatter\"), catplot(kind=\"box\"), displot(kind=\"hist\"), col= are the tools to try."
     },
     "V33-3": {
-      "sha256": "651e69b2ba6b374ecca6a05228204eaeddb1a9b48cb44a338d670ad402b20818",
+      "sha256": "cda891c0da8b48e58f70beb141f672ae5e06d9c912ea8ec77d1530f2ada6dcc6",
       "criteria": [
         "purpose",
         "given input",
@@ -4164,7 +4164,7 @@
       "note": "Choose distribution panels for a new context — relplot(kind=\"scatter\"), catplot(kind=\"box\"), displot(kind=\"hist\"), col= are the tools to try."
     },
     "VR6-1": {
-      "sha256": "06059925af92072558528e00c7de52217848e1635f20ff0765019e54875b2d72",
+      "sha256": "64d6b68b8dbaccc9169abb62d567823cb60f8454e7b4c58e3a9000e849a1443b",
       "criteria": [
         "purpose",
         "given input",
@@ -4177,7 +4177,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR6-2": {
-      "sha256": "89a3a2f9bd7a6c1676623817f5b5db4244ad86a21d3c313fe0b353837bcb2e62",
+      "sha256": "c00faf67e3820508bb6a65aba93285da13490486f3bc5270a07be7716d5a40fd",
       "criteria": [
         "purpose",
         "given input",
@@ -4190,7 +4190,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR6-3": {
-      "sha256": "2e2482b786d503f39ca37a7b4ad96b75df7ed1989707d155a03dcd882527e928",
+      "sha256": "1566e6f967750f1548e4e1d3563a5bf4b8c1b6718c05d96a4f9aeee53797c32e",
       "criteria": [
         "purpose",
         "given input",
@@ -4203,7 +4203,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR6-4": {
-      "sha256": "651e69b2ba6b374ecca6a05228204eaeddb1a9b48cb44a338d670ad402b20818",
+      "sha256": "cda891c0da8b48e58f70beb141f672ae5e06d9c912ea8ec77d1530f2ada6dcc6",
       "criteria": [
         "purpose",
         "given input",
