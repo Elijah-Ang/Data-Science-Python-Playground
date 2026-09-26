@@ -389,8 +389,15 @@ function clarify(c) {
  // These summaries are keyed by category; display order is not part of the question.
  for(const id of ['I15','I19'])for(const r of byId[id].rounds)r.unorderedIndex=true;
  byId.W15.rounds[1].unorderedIndex=true;
- task('W19',1,'Summarise df by size. Display columns size, total (sum of price), and n (number of non-missing prices), in that order, with size sorted alphabetically.');
- task('W19',2,'For df records with age at least 2, display average weight and row count by species. Use columns species, average, n, in that order, with species sorted alphabetically.');
+ task('W19',1,'Summarise df by size. Display columns size, total (sum of price), and n (number of non-missing prices), in that order.');
+ task('W19',2,'For df records with age at least 2, display average weight and row count by species. Use columns species, average, n, in that order.');
+ // Labelled category summaries may be arranged differently without changing
+ // their answer. Keep ordered records and explicitly ordered columns strict.
+ for(const r of byId.I20.rounds){r.unorderedIndex=true;r.unorderedColumns=true;}
+ for(const r of byId.W21.rounds){r.unorderedIndex=true;r.unorderedColumns=true;}
+ for(const r of byId.W23.rounds){r.unorderedIndex=true;r.unorderedColumns=true;}
+ for(const r of byId.W19.rounds)r.unorderedRowsBy=c.datasets[r.dataset].c;
+ byId.I22.rounds[2].unorderedIndex=true;
  task('W04',2,'Prepare a separate clean copy of df without name and room for a measurement handoff. Preserve df and display clean.');
  task('W18',2,'Preserve df. Remove confirmed extra identical rows into a separate clean table, keeping each first occurrence. Sort by order ascending and reset to consecutive row labels without adding an index column. Display clean.');
  task('W27',2,'For df records with age at least 3, display a table containing age, then weight, then integer indicator columns for species.');
@@ -399,6 +406,14 @@ function clarify(c) {
  byId.V29.explanation=guides.V29.idea+' '+guides.V29.example+' '+guides.V29.note;
  byId.V29.syntax=[['groupby(...).mean() / .sum()','Calculate the requested group means / totals.'],['ax.bar(summary.index, summary.values)','Draw the category labels and calculated heights.']];
  byId.V29.syntaxCode='means = df.groupby("flavour")["price"].mean()\nax.bar(means.index, means.values)';
+ // Category/value pairs carry the evidence in these charts; their display
+ // order is flexible. Keep the explicitly ranked and table-order charts strict.
+ for(const id of ['V08','V09','V29','V36'])for(const r of byId[id].rounds){
+  if(id==='V08'&&r.label==='Change')continue;
+  if(id==='V36'&&r.label==='Follow')continue;
+  r.plot={...r.plot,unorderedBars:true};
+ }
+ for(const r of byId.V37.rounds)r.plot={...r.plot,unorderedBars:true,unorderedBarsFigure:2};
  byId.I01CSV.syntax.push(['sep=";"','Use semicolons rather than the default commas to separate fields.']);
  byId.I11.syntax[1]=['(test1) | (test2)','True when either or both comparisons are True.'];
  // Stale suggestions must not describe an earlier version of the exercise.
@@ -410,7 +425,8 @@ function clarify(c) {
  for(const l of c.lessons)for(const r of l.rounds){
   if(r.retrieves)continue; // Refresh copied retrievals after their source contracts.
   r.task=r.task.replace(/Using df, use /g,'Using df, call ')
-   .replace(/Practise: /g,'Use: ').replace(/care-about threshold/g,'review threshold').replace(/Using df, show df /g,'Using df, show ').replace(/Using df, compare df /g,'Using df, compare ');
+   .replace(/Practise: /g,'Use: ').replace(/care-about threshold/g,'review threshold').replace(/Using df, show df /g,'Using df, show ').replace(/Using df, compare df /g,'Using df, compare ')
+   .replace(/ Leave the (?:DataFrame|Series|tuple) as the final expression\./g,'');
   // V01/V02 teach chart finishing, and the panel/export lessons need their
   // own display instructions. Later exercises can use the shared editor cue.
   if(l.deck==='visualise'&&r.target==='plot'&&!(['V01','V02','V24','V34','V37'].includes(l.id)||(['V31','V32','V33'].includes(l.id)&&r.label==='Follow'))){

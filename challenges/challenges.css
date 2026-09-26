@@ -147,3 +147,33 @@
 
 @media(max-width:600px){.case-file{grid-template-columns:72px minmax(0,1fr);gap:12px}.case-file .case-illustration{width:72px;height:72px;padding:0;margin-top:18px}}
 @media(max-width:360px){.case-file{grid-template-columns:48px minmax(0,1fr);gap:12px}.case-file .case-illustration{display:block;width:48px;height:48px;margin-top:20px}}
+
+/* Keep the brief readable while its code and feedback sit beside it. */
+@media(min-width:801px){
+  .case-brief{scroll-padding-top:64px}
+  .case-brief-nav{position:sticky;top:0;z-index:2;margin-top:-1px;padding:10px 0;border-bottom:1px solid var(--border-soft);background:var(--bg)}
+}
+.case-requirements{padding:clamp(16px,2vw,24px)}
+.case-requirements ol{margin-top:8px}
+.case-requirements li{padding:15px 0 17px}
+.case-requirements li p{max-width:66ch;font-size:15px;line-height:1.6;margin-top:9px}
+.case-output-heading{align-items:center;gap:8px 14px}
+.case-output-heading strong{font-size:15px;line-height:1.4}
+.case-output-contract{flex-wrap:wrap;align-items:center;gap:5px 8px;font-size:12px}
+.case-output-contract-label{font:700 10px/1.4 var(--mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.case-output-contract code{display:inline-block;padding:3px 7px;border:1px solid var(--border-soft);border-radius:3px;background:color-mix(in srgb,var(--lesson-accent) 7%,var(--panel));overflow-wrap:anywhere}
+.case-reminder-question{font-size:13px;line-height:1.55}
+.case-help .case-solution-intro{max-width:66ch;margin-top:16px}
+.case-help .case-solution-intro code{font-size:12px;color:var(--lesson-accent)}
+.case-help pre.case-solution-code{margin-top:10px;border-left:3px solid var(--lesson-accent);max-height:none}
+.case-help .case-solution-setup{margin-top:14px;border:1px solid var(--border-soft);border-radius:4px;padding:0 12px 12px}
+.case-help .case-solution-setup>summary{font-size:12px;min-height:44px}
+.case-help .case-solution-setup pre{max-height:300px}
+.case-results-body .check-correct:not(:has(p)){padding:8px 0}
+.case-results-body .check-correct:not(:has(p)) strong{font-size:13px}
+@media(max-width:600px){
+  .case-requirements{padding:16px}
+  .case-output-heading{display:flex;align-items:flex-start;flex-direction:column}
+  .case-output-contract{margin-top:2px}
+  .case-help pre.case-solution-code{font-size:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+}

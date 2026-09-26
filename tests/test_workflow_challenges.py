@@ -20,7 +20,7 @@ with tempfile.TemporaryDirectory() as temp:
   assert states(r)['eligible']=='correct' and states(r)['counts']=='correct' and states(r)['means']=='needs-attention'
   r=run('IC08',challenges['IC08']['reference']+'\ndel means')
   assert states(r)['means']=='unavailable' and states(r)['counts']=='correct'
-  r=run('IC08',challenges['IC08']['reference'].replace("means = eligible.groupby('group').score.mean()","raise ValueError('test interruption')"))
+  r=run('IC08',challenges['IC08']['reference'].replace("means = eligible.groupby('group')['score'].mean()","raise ValueError('test interruption')"))
   assert r['error'] and states(r)['eligible']=='correct' and states(r)['means']=='unavailable'
   r=run('IC08',challenges['IC08']['reference']+'\nmeans = "not numeric"')
   assert states(r)['means']=='needs-attention'
@@ -53,6 +53,20 @@ with tempfile.TemporaryDirectory() as temp:
    'WC04':"clean = df.loc[~df.duplicated('order_id')].copy()\nremoved_count = len(df)-len(clean)",
   }
   for id,code in alternatives.items():assert run(id,challenges[id]['setup']+'\n'+code)['passed'],id
+  # Labelled summaries and cross-tabs have the same meaning in a different display order.
+  assert run('IC08',challenges['IC08']['reference']+'\ncounts = counts.iloc[::-1]\nmeans = means.iloc[::-1]')['passed']
+  assert run('IC09',challenges['IC09']['reference']+'\ncross_tab = cross_tab.iloc[::-1, ::-1]')['passed']
+  assert run('WC01',challenges['WC01']['reference']+'\nlabels = labels[::-1]')['passed']
+  assert run('IC07',challenges['IC07']['reference']+'\nsummary = summary.iloc[::-1, ::-1]\nknown = known.iloc[::-1]')['passed']
+  assert run('WC08',challenges['WC08']['reference']+'\ncombined = combined.iloc[::-1]')['passed']
+  assert run('WC09',challenges['WC09']['reference']+'\nlong = long.iloc[::-1]\nduration_records = duration_records.iloc[::-1]')['passed']
+  assert run('WC10',challenges['WC10']['reference']+'\nclean = clean.iloc[::-1]')['passed']
+  assert states(run('IC08',challenges['IC08']['reference']+'\nmeans = means.iloc[::-1].set_axis(means.index)'))['means']=='needs-attention'
+  assert states(run('IC09',challenges['IC09']['reference']+'\ncross_tab.columns = ["incorrect"] * len(cross_tab.columns)'))['cross_tab']=='needs-attention'
+  assert states(run('WC09',challenges['WC09']['reference']+'\nlong.loc[long.index[0], "measure"] = "minutes"'))['long']=='needs-attention'
+  assert run('VC01',challenges['VC01']['reference'].replace('counts = work.drink.value_counts()', 'counts = work.drink.value_counts().iloc[::-1]'))['passed']
+  assert run('VC06',challenges['VC06']['reference'].replace("x='group', y='score', jitter=False", "x='group', y='score', order=['B', 'A'], jitter=False"))['passed']
+  assert run('VC07',challenges['VC07']['reference'].replace("    y='minutes',\n", "    y='minutes',\n    order=sorted(observations.depot.unique(), reverse=True),\n"))['passed']
   for id in ('VC01','VC05','VC10'):
    c=challenges[id];code=c['reference'].replace('ax.bar(', 'ax.barh(')
    x,y=c['chart']['xLabel'],c['chart']['yLabel']
@@ -61,7 +75,7 @@ with tempfile.TemporaryDirectory() as temp:
   assert run('VC02',challenges['VC02']['reference'].replace('bins=5','bins=3'))['passed']
   assert run('VC06',challenges['VC06']['reference'].replace('jitter=False','jitter=.15'))['passed']
   assert run('VC03',challenges['VC03']['reference'].replace('ax.scatter(pairs.hours, pairs.score)',"sns.scatterplot(data=pairs,x='hours',y='score',ax=ax)"))['passed']
-  assert run('VC07',challenges['VC07']['reference'].replace("sns.boxplot(\n    data=observations,\n    x='depot',\n    y='minutes',\n    order=sorted(observations.depot.unique()),\n    ax=ax,\n)","labels = sorted(observations.depot.unique())\nax.boxplot([observations.loc[observations.depot == label, 'minutes'] for label in labels], labels=labels)"))['passed']
+  assert run('VC07',challenges['VC07']['reference'].replace("sns.boxplot(\n    data=observations,\n    x='depot',\n    y='minutes',\n    ax=ax,\n)","labels = sorted(observations.depot.unique())\nax.boxplot([observations.loc[observations.depot == label, 'minutes'] for label in labels], labels=labels)"))['passed']
   assert run('IC08')['passed']
  finally:os.chdir(before)
 print('30 reference workflows, alternatives, independent failures, source preservation, charts, CSV isolation and export checks passed.')

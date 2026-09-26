@@ -52,7 +52,7 @@
     {
       "id": "ML-F03-2",
       "kind": "python",
-      "fingerprint": "027132b3e8338918d944c50b9b2103bcacc22f9d7eaf46ab3080c51ce21261c4",
+      "fingerprint": "568ed437dc08959b7043d18424ad39f8a98d08c13560484c6cdf22e2c30dfd72",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -88,7 +88,7 @@
     {
       "id": "ML-F05-2",
       "kind": "python",
-      "fingerprint": "35aa06873ad9873ec8e78dfd144816f34ee7dc92d7c7f158a7c5bea4e6e19b0b",
+      "fingerprint": "3c8fb2aa50a34de5a49a78a737c5c0af1d9182a29995aed3c7d4c56413a83f88",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -100,7 +100,7 @@
     {
       "id": "ML-F06-1",
       "kind": "python",
-      "fingerprint": "c3e98f061591c04c3f0f3ed730f46dbe76637335cbb947ace1ef29548a1083d6",
+      "fingerprint": "b56e5759f0b93e0b66cb6641e827023a25c3edd5a35d00b78b3b804cd083e064",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -196,7 +196,7 @@
     {
       "id": "ML-W01-2",
       "kind": "python",
-      "fingerprint": "004ebe4b784f62be901782707e2da742087535f5eea5f8940b151e451dc406c9",
+      "fingerprint": "f6ee0856c8b351a2228e2b20214ce5e6f0957950ca8a0255ab78ad2d9e0ea5d2",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -214,7 +214,7 @@
     {
       "id": "ML-W02-2",
       "kind": "python",
-      "fingerprint": "20ca504e426a2bc9e8822e6180301a2636491b226b3d9d597c5181c1f76c4839",
+      "fingerprint": "ae9fee1ff577122bd1812178825936b282c93a925642dbdd0dd54bb2e6be894e",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -262,7 +262,7 @@
     {
       "id": "ML-W04-4",
       "kind": "python",
-      "fingerprint": "17d18b62e1b89c5c0cd126a502e369603fde087e774600490e599851f568807e",
+      "fingerprint": "a42d85b3ea3502b0314df3e74c1e5bc04627aa8e0e1c29ded8ff719b998f1fc9",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -322,7 +322,7 @@
     {
       "id": "ML-W08-1",
       "kind": "python",
-      "fingerprint": "90520bcc8d3bf48521574f6dea9ff840761ccfda3e1d7feb9e28c579789ba690",
+      "fingerprint": "c0fefbbe982aca473606dee8b9117de59ddd50d4f82163d4477fc2f539dc7d58",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -364,19 +364,19 @@
     {
       "id": "ML-W10-1",
       "kind": "python",
-      "fingerprint": "16147fe0455e174c127305be9a01378c9e820f76bc665b400d0f7c18e58bd44f",
+      "fingerprint": "8921dff6b52b8322cc2f291ca9d66982ef0dd6b80d4489c9101d4ce0adbd5111",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-W10-2",
       "kind": "decision",
-      "fingerprint": "298986ad931864b9774e59d0d65d2ded50946ca8d157a6d8f7b4fd6ad65f54bc",
+      "fingerprint": "87c491530a2376ff1f40c56fbb80124fcdaf2aaf0018f9e07f5b5bb75334212a",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-W10-3",
       "kind": "reflection",
-      "fingerprint": "eb18a94ea839d57f2d52621864815651a997ee471b39169b277bb12b5cce6687",
+      "fingerprint": "828e234f49245e4e80d1a0bc5aeecd1bc6ad3eb4167abb94e1b7eaec9679656d",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -436,61 +436,61 @@
     {
       "id": "ML-W14-1",
       "kind": "python",
-      "fingerprint": "7ace6d45518ed65d26c56e5e4ac9891a3c529eefd78df646dca8b33c5e486790",
+      "fingerprint": "e9124080f01a1abdbf33adbdaf637588747990523707fe870bea2b8196a4b970",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-W14-2",
       "kind": "python",
-      "fingerprint": "aebaab85caca01c2399b31d29ce013691456b1ca6a3c7942e80c8231665fb213",
+      "fingerprint": "04055954404aefab8db7a81b67f294d78dbad74200ac7703f38d6651dc98c7a5",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-W14-3",
       "kind": "python",
-      "fingerprint": "46bc46f5ad33b4bce89a364fb3c2508c236124f8fddf48d0cb70e8cbdbd5f6c9",
+      "fingerprint": "5d9ceadc63c0ca3cc25225c4ff9a7551479e4b688711c24a5c80e7c1c7c26a5f",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-W14-4",
       "kind": "reflection",
-      "fingerprint": "236d987293357c90fd17c54b3bde113d0b83a23ae1812ab9fa5166464e1319e4",
+      "fingerprint": "637ca88ae1a4b992626e87805d961e471adf6dfe05ee6c27e5c22e44dd77bc61",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R01-1",
       "kind": "python",
-      "fingerprint": "cc72addf02f5e9e6b94a558f6051d61d9f7ee528665e96c15671aad3552c80b5",
+      "fingerprint": "acab1e3fe86abd073d94f405e4437df0288f381e50a30bbb20c76a86e6722674",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R01-2",
       "kind": "python",
-      "fingerprint": "a7e52e4722d878da5061c1336e70f8dcefc0d32ff38580ff462d3dadfe7687f6",
+      "fingerprint": "405b33ea1d5ff9233993c9c5a4aba26ccec3bb2c8970e695b5b810fbc2bdf36f",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R01-3",
       "kind": "reflection",
-      "fingerprint": "266961e5f36face6770668132c800cc2f707b61fbc11a0ef7856e4bd1d2b3ff2",
+      "fingerprint": "2b9853724d20fd4ba3f98a551ba2f6a3798ec01d1d770d0c39efc55d75f01b17",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R02-1",
       "kind": "python",
-      "fingerprint": "ddecb5268bbb415745d89aae0dd5fa6c176e1683daeff4d921e592506911dc38",
+      "fingerprint": "694e670a86d84893395defa1beb284d58334c41e127abbfb56af20810a37f47c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R02-2",
       "kind": "decision",
-      "fingerprint": "99b738053270e56afc4ae5c03ff61dd2206750179b908c6b56d97c656290ce59",
+      "fingerprint": "bb2935e7779e2ff86e384bd4a096f42c8fcb0ad1caa7cd7abbe841c156336ea3",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R02-3",
       "kind": "python",
-      "fingerprint": "ea6a07bb3a399281cb397aafeb416743ddf7c2a7f2e9e69852c554a7aaa0bb9b",
+      "fingerprint": "fcaabe50a7163276b31d336585772ca14aa3294eef5a778e20dc6ae75cc1e179",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -550,7 +550,7 @@
     {
       "id": "ML-R06-1",
       "kind": "python",
-      "fingerprint": "3496fb45d7c3a35d8e1f5fc882117180a5dac38240e9eb6456366d5f11f91581",
+      "fingerprint": "19c5c9654b063add52f6a293bcae40c5d7940a01132dd2e5530295002aa09df4",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -574,7 +574,7 @@
     {
       "id": "ML-R07-2",
       "kind": "python",
-      "fingerprint": "e45fd48216b040af5acb9629c849020f22671fef0493aa82760519eabb444c9f",
+      "fingerprint": "73c5c8c648e66c0057dfe9b7a1f364eb8bb8a2cdab3f714d924745fce2966419",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -586,7 +586,7 @@
     {
       "id": "ML-R08-1",
       "kind": "python",
-      "fingerprint": "20e262f536026b4fb1102dd06c27eea14d5dd1efec79c0d27045d30c17c94ac8",
+      "fingerprint": "3ee32ca11121c18a538a32ea245a980cf7dd8b1436999faef2ae436c2af9c487",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -598,7 +598,7 @@
     {
       "id": "ML-R08-3",
       "kind": "python",
-      "fingerprint": "8b99789044ccbb26750cc4e0a85b95a6dcd4d20a611afa1006c98730d66a30c4",
+      "fingerprint": "ab72f2bf59d9c6a0322bd73019187b5bceda8a37990caa31470e9dc1559e536d",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -634,13 +634,13 @@
     {
       "id": "ML-R10-1",
       "kind": "python",
-      "fingerprint": "7c19cc3506f0f22f1618179df009660bcfbeac91ac2c35849234f47e144ef256",
+      "fingerprint": "8326cae5875784b11b3996b789173162c512717d039d0bab7175e7254f1cd9a7",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R10-2",
       "kind": "python",
-      "fingerprint": "30a2faddc88e8a73d81f9ca31089ec58536e311a094dd7427f6b61c5f22bdf1b",
+      "fingerprint": "32822745b680e2f26e10b0d1f5d5671da1466bedc0bed0a2b58806939b9c1f46",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -652,19 +652,19 @@
     {
       "id": "ML-R11-1",
       "kind": "python",
-      "fingerprint": "c6d6735dfd2d159ef7ef4808eb0ad0c170214f70c9f6dc2171b9189922f80f54",
+      "fingerprint": "6a8cc118b215d2d30f37d12a5b5ae9e2cc637ae975c9c7d4d3ea080b166a4b0c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R11-2",
       "kind": "reflection",
-      "fingerprint": "c27e87807b149a6ccbccf147a2d62860067d3f3a55d05da83b4869e5876c53c5",
+      "fingerprint": "35e6d3bfc4b52e69f31fa6eb3ce102db15deccee650343bf88ddae9b506ea8ba",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R11-3",
       "kind": "reflection",
-      "fingerprint": "1834a5e82ca3e9812cd1bf336f2d38326591a207a1893ec2d7154db994813cc6",
+      "fingerprint": "93b770fc17a412a917380e0cb46b6dd3e20c0660785a81c8bc4ac59e743ce9e8",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -688,19 +688,19 @@
     {
       "id": "ML-C02-1",
       "kind": "python",
-      "fingerprint": "8c540abf5a477d6fed6da3190dc9478efb70f8d9092d38d817f68aded2269ff3",
+      "fingerprint": "91141cda92780b36d8c7f9ae7e3c19493f451550f17257085259635e9a8363ee",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C02-2",
       "kind": "decision",
-      "fingerprint": "8c58e944abae8da157091aeaec33069796d2632051aa211c813f12e26db36cdc",
+      "fingerprint": "938b3212745a8190a5ea7be65c7ac3969cca3651a5645d6fefb15411f248438c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C02-3",
       "kind": "python",
-      "fingerprint": "2c6c28865d997a4b835ad19fb8d7d7cedc5567ede74370ec8af73992de784fd8",
+      "fingerprint": "d8c48fe7becb57afc3de4ef4cf3b2074852e0d7b66d0ea734110e81f3b6d1ca0",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -754,13 +754,13 @@
     {
       "id": "ML-C05-3",
       "kind": "python",
-      "fingerprint": "d0f05c3cfb44119e3aba010c24fdb9b44b77e5f5ec5ed5f2f537919d0be90b71",
+      "fingerprint": "cfee0bd6f754f32ea417a2c34b876d4b95141c052341283cbc7f266d5da18fe1",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C06-1",
       "kind": "python",
-      "fingerprint": "764c415236e594dec0235f87ae79f0c10045f756c7aeab3c68f9438d5c75b3a4",
+      "fingerprint": "bd961a3f6b2604c873e1bfd8973211c799700e29288af61b05c23bed6feea205",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -802,7 +802,7 @@
     {
       "id": "ML-C08-1",
       "kind": "python",
-      "fingerprint": "dc89c0f1c2c1a751a397e44eca09e738c2f691bd5c7335661322b0463754cfed",
+      "fingerprint": "763b04ce167e90de1c46663372665d4b7a177012040bdeee3beda1a92e0bf4b5",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -820,7 +820,7 @@
     {
       "id": "ML-C09-1",
       "kind": "python",
-      "fingerprint": "356538bae037d936ffe52ad0d57d2949af5cf846e68aa05ff01cacf19cd62071",
+      "fingerprint": "7ca12d7bb886b8d2fbaeb679717363c8196f34e4495cf676f13bfa26277d0575",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -844,7 +844,7 @@
     {
       "id": "ML-C10-2",
       "kind": "python",
-      "fingerprint": "45f0462548ec5446ed1f8dc13e5c5fc52909dc0b5a6258f45b67f1cbc627b131",
+      "fingerprint": "b63a16bd0d863285b5a8286b5e9f7d6577ca65f311dc1a884028f467fdf5a34b",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -862,7 +862,7 @@
     {
       "id": "ML-C11-1",
       "kind": "python",
-      "fingerprint": "e6667f065152f84623ef772c8dd4af1400aa78ce1151b68b8bc3b559dbecba21",
+      "fingerprint": "a009282f242d98a13143d4e15a2e275ecbc75a0bcabec2de91b6587d97eba77a",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -880,7 +880,7 @@
     {
       "id": "ML-C12-1",
       "kind": "python",
-      "fingerprint": "67bf1f5a030fc170bf015e89770dac31ab88ddd70b7dd4d420bc3d6a7f0924d6",
+      "fingerprint": "184d73552519a83e7350edc262b5764b73d49f959b912df0825c318b3fdcf0a6",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -904,37 +904,37 @@
     {
       "id": "ML-C13-2",
       "kind": "python",
-      "fingerprint": "6f739d60df9b6df7837842dd061e9c24c74d85e77f2424ea65e79c529514a589",
+      "fingerprint": "f695986a03c70ca6a98a150e39eda1e96183a02fc8ce107212f9aab3d48080ab",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C13-3",
       "kind": "python",
-      "fingerprint": "27c79566ecf431bd2e324a414bffc0281f8de04d7a56f3228e8f851f78b579ba",
+      "fingerprint": "358c5d04252d9ff375e91637b1d757ae3f33e7dc1c1c342334e7e905e79fbd9a",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C14-1",
       "kind": "python",
-      "fingerprint": "51e4623f5d8d4fa9aaa87026361df289db8500986f297a5904bb3fceb5e5914a",
+      "fingerprint": "5cdd6140e3333b32a7c6b5842275dfcd0af07bfd920f6cdc9061968c2b5f12a4",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C14-2",
       "kind": "decision",
-      "fingerprint": "fc149b85406fcc96ff209758011bb23cf452c562ef440d2ef92cbaddb95d1dd8",
+      "fingerprint": "5623536c5994f554fe1cb257119fd9578d9c39d3616d0a7624da47a41b31d063",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C14-3",
       "kind": "python",
-      "fingerprint": "992f73551bb7ef008a32a8b6e1a2d533a6e70a0ef44e613795e5fa4b25a8c142",
+      "fingerprint": "0323652aee10fd1519c85fefd11fdff6ca561cbcdbd3d1d0874d0daaf5d707fe",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C14-4",
       "kind": "reflection",
-      "fingerprint": "1f84d53a8d32d27088f2f8e99dba01050ad881ebbb4ba6f995f5b831fe2247ed",
+      "fingerprint": "9eb96298ca9823ec8c4ea91f59a81f5e6d16f858f0a376b4638bd0bd0af373b9",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -988,13 +988,13 @@
     {
       "id": "ML-C17-1",
       "kind": "python",
-      "fingerprint": "a7148fe4f957c2a8e64107c346b9a56c21185f6f1c9d2e36778d90e0fa2eea33",
+      "fingerprint": "cbb384104b25f1d17b860139f4d3e2724e89849447416db4049c9b56bb21dafe",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C17-2",
       "kind": "python",
-      "fingerprint": "f33b5c2d462cc26de8c4c19f984b97f556540449007bb62e3c477b0753e303eb",
+      "fingerprint": "79ac9610c8dcfa5dfd50531a3092ac9d7fb0fe458044112d2305aefb5ec83012",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1018,7 +1018,7 @@
     {
       "id": "ML-C18-3",
       "kind": "python",
-      "fingerprint": "e86e35a58bfa2d3914c8845db6cdd05b0c2c89684fb37f2ef8c2555c7a9adf97",
+      "fingerprint": "bf90e6442f0d3de8c1f6691bc99d40545bd5e880af1babc695f9fc68d4db58fb",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1090,7 +1090,7 @@
     {
       "id": "ML-N03-2",
       "kind": "python",
-      "fingerprint": "7a7c6d82324e9487891b9118dea645f05dbd3359220f120fded582dff94e09c6",
+      "fingerprint": "7a1204afc7a614b48423ba89145ad0fd068d0a479e5fbd274f705cc8ab4ea8c4",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1120,7 +1120,7 @@
     {
       "id": "ML-N04-3",
       "kind": "python",
-      "fingerprint": "4ea6659fd2f49714ce0287cd150e67e1d63d65e37b3aae9c1e3f4d838f2ab0c5",
+      "fingerprint": "266dc675af969d68558979dd01ff6d6c5afc37a98260b21828ea384e6f23490e",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1132,49 +1132,49 @@
     {
       "id": "ML-N05-1",
       "kind": "python",
-      "fingerprint": "7599a50dcd782bb63327abaf1ed109760d8cbc03a05f5724525a58257f618971",
+      "fingerprint": "428e10b7df072bbd609d1e58ff0bb517b8db2aedad3f93af150225c6f69f428f",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-N05-2",
       "kind": "decision",
-      "fingerprint": "c90e0237879bef5366b4407d6f386258803076ce8b80d5167a149c2796c05ed5",
+      "fingerprint": "55b584d85c287f7647aca8a3094dbf560a7c55a854bb990a5851434a40556452",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-N05-3",
       "kind": "decision",
-      "fingerprint": "d25b66796e8c34b69bf24c7c1b3b9f26e0842d5fad66afc4aef1dd0fc1af8ca6",
+      "fingerprint": "27c53dc8c8fc015b58ca4c4d32107fc7fba6898659ad400ad6d621ef7e3c2f1c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-N05-4",
       "kind": "reflection",
-      "fingerprint": "7e63c6c2b8ef6b1633104efb6851cf3c9a40f3037ad63a9dfc94c3e9074de5cf",
+      "fingerprint": "4856f591eeef3d61b23a82a20d7bd58092a501c13868b987dfb8c913489e57c2",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-N06-1",
       "kind": "python",
-      "fingerprint": "b8bb193d1f5fba8336277f2dd606d030bbbe24e5cc3516f99a2b07f876019eb9",
+      "fingerprint": "6ff92cb8a5dcb85fe57c9c861019b0a35a750f066caeb070b9b5c8917c37c02c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-N06-2",
       "kind": "decision",
-      "fingerprint": "3f154b090e8fcba597968b9ec6deca4fa2fc011fd97bd40f70c5899c1ed5b106",
+      "fingerprint": "5de46c4b734d313c036ecd6c81935f8ed32ecc4c1bed6ed2408cc239dc6aab5e",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-N06-3",
       "kind": "reflection",
-      "fingerprint": "e8f21234a72766e17ac05fbae1e99aa1beb50b6609a91eb4231cd12f3bb85768",
+      "fingerprint": "33277c418c9504239ab6b65fb0c77f01522e9350f790335fd02670c9044ac5af",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-U01-1",
       "kind": "python",
-      "fingerprint": "f65fa0e7d1a763c073108a03737a8489fc86d8b35fcfa290b44f29a4423abb14",
+      "fingerprint": "8a8686c1bcbaf987596b5d0b4a7705db76d64e0f8822d83bd306aa12db6a0928",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1210,7 +1210,7 @@
     {
       "id": "ML-U03-1",
       "kind": "python",
-      "fingerprint": "79b3c5ebf7ed96c821449d384df37297db6658605a12ec2d7aedcdfebb3c2760",
+      "fingerprint": "acde7bccc92c62218dd9c5a3da9999974e0fe4edff8ac564f89c96587153dd30",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1258,7 +1258,7 @@
     {
       "id": "ML-U05-2",
       "kind": "python",
-      "fingerprint": "92c18d25e14071d100466fa3308653206ec5726d3a8321f49fbd8cc7e3e4cbd9",
+      "fingerprint": "5370377c23046ba3e0964673f15b9fcb674d4efae58002b2b30bfbeb6d2fd4b7",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1270,7 +1270,7 @@
     {
       "id": "ML-U06-1",
       "kind": "python",
-      "fingerprint": "aa68a4cbd9c0d37539a02ef06f822a644b0de58752946eb1c656dd56d02709ff",
+      "fingerprint": "aef70d94a4ca052b658073e47917a2a0aa3cd7b7462082a8c2c0a285f695e3b9",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1288,7 +1288,7 @@
     {
       "id": "ML-U07-1",
       "kind": "python",
-      "fingerprint": "93480df39833443f7f4b5ba23c91a257ba56f3194c6ca697c781c2e70f90f38d",
+      "fingerprint": "b0b73eb95973920c957e306f1d44258102a7853367fce19edbab12aba72263ec",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1306,19 +1306,19 @@
     {
       "id": "ML-U07-4",
       "kind": "python",
-      "fingerprint": "b352a75f60c06277e362f2bc49a78c21baa238c04e3a65b88ee4c78d28101768",
+      "fingerprint": "9f826c7b7a44c0cb354e330e74937743116603b447da034480cd5fb72d33a4be",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-U08-1",
       "kind": "python",
-      "fingerprint": "1bb96b1e6d616d52702f648ba70c361e9d3f554656b7a2fa3f7d42910dcde11e",
+      "fingerprint": "24ab146a00ef63866b4fa6c367e1a28578fa01c9915828fa40a5bbcef55d0d02",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-U08-2",
       "kind": "python",
-      "fingerprint": "cbdd00e7680bb9fb66b95b21e99467e6f0d059eb108d63cf2af85e39625a1d6d",
+      "fingerprint": "14898b3a1c1e5ed8f3e9e7a0732fa39ae33feef026a25bc46346a88fe2811f94",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1384,7 +1384,7 @@
     {
       "id": "ML-P02-1",
       "kind": "python",
-      "fingerprint": "5bc506e70feeb60ba4777f387a1a8284977ff657928627b9744f27617d13ad07",
+      "fingerprint": "480236c7059d99e159e00ad4956a3e3059e734894a931137995d1aecb65302dd",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1396,13 +1396,13 @@
     {
       "id": "ML-P02-3",
       "kind": "python",
-      "fingerprint": "62252dd2dfa6007fb732f89318cf6c185743a51493080ab1c7dc64e4a81cb8fc",
+      "fingerprint": "e4143d539db9d09f8279482a23bf3b3e5179b21e156902caceb2d93173294cf5",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-P02-4",
       "kind": "python",
-      "fingerprint": "c55dd8afa42bd5e63cf82bb80349c7109bf50734f4639606891524a4750e156a",
+      "fingerprint": "09fbfe4a6102025476d4ace713090200d8e7aaa11661a28863208ef8221eaeb2",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1426,13 +1426,13 @@
     {
       "id": "ML-P04-1",
       "kind": "python",
-      "fingerprint": "631927a8d10d610e42ced52c343e89fcf48120e33c6b95a33987742e7eb8fdbc",
+      "fingerprint": "7bf60eb4c82d55d1c5e614b68dcde13da1f86a2155a46fb2873a669768af930c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-P04-2",
       "kind": "python",
-      "fingerprint": "45d43fd9d7a3bd482920ba1705d6ac4a63d2370db2fc08adeb45e450ffac7f96",
+      "fingerprint": "0f2f9c1a8c174a3ae3c7b3d935d5650adc683b1e9e9abfba89fe5ebe65cf397e",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1504,7 +1504,7 @@
     {
       "id": "ML-M01-1",
       "kind": "python",
-      "fingerprint": "84d2e346b545c2cedbff2619602595356650fff8477f7faaf5f1ae97bd8e0fcc",
+      "fingerprint": "b724015a77f059267c47e4c7c985416fe9b0cd8e91e920a7f5849c01997cc5c9",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1528,7 +1528,7 @@
     {
       "id": "ML-M02-1",
       "kind": "python",
-      "fingerprint": "d386322d4a99d17f43394e671c26b6f41c44de11da24ccf79f9ba618cee8570f",
+      "fingerprint": "9706799f7906844909158c79f8e37780607c5f6a126a33877bb6434e8527f3e0",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1546,37 +1546,37 @@
     {
       "id": "ML-M03-1",
       "kind": "python",
-      "fingerprint": "c0452053888544898118df760978a6af7ea3a0519ec7e7a212798ddc33c55d9c",
+      "fingerprint": "7e1e553d5a03572b4ca673e07704ea04692a57e10dbfa8668267aac7137b4111",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M03-2",
       "kind": "decision",
-      "fingerprint": "af89d7773e43bdce554faccd571abf6295b1d586683418b5ce5f36aaafbe9e24",
+      "fingerprint": "742fb89986b9ec32c07eeea8cb31f0d3ae797c3864a934c6ce71468b4d573bad",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M03-3",
       "kind": "reflection",
-      "fingerprint": "ec80e971dc1b7336365b93578868e04219859adbe28e45db1c57babed395d4a7",
+      "fingerprint": "38ed207ad7ed10e5968bbb9d10b09494ba80df2a7a24c6e8656261ceadb37ca1",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M04-1",
       "kind": "python",
-      "fingerprint": "ebfa7ec2711284ea0b32b244237e2e26eb939536f456dcd2f838dc92d8b170b1",
+      "fingerprint": "efea9a27186f42ba498ec5bd0b93e80714fec21dda945ced6fe41d79642ccf84",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M04-2",
       "kind": "reflection",
-      "fingerprint": "84741142540d049ff2fdc3074ae34d4db1f83a3ef4bc5a8fa1bf30d5d2c08f08",
+      "fingerprint": "4d119775f54ff5f403cc0f1428a7070f831de83433b924100d8e6ea7ee19424a",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M04-3",
       "kind": "reflection",
-      "fingerprint": "74558df94c6af5d5927393c211e84d96fc021af8bf3d4a78fd56a65cf806f0d5",
+      "fingerprint": "8156eb62a87b0ac397d64573d16fdec0935f717fcea6f89b6732f319ef2de74e",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1678,13 +1678,13 @@
     {
       "id": "ML-R-R2-2",
       "kind": "python",
-      "fingerprint": "f1fb57adf093b17dd5b22b970b1fec9e1274effd2b4ca6ccaa4cc02315724112",
+      "fingerprint": "465455d1f8c4b9537ff2a50fb52aa02796e72cdc49199635d7e31e10f64b4339",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-R-R2-3",
       "kind": "python",
-      "fingerprint": "a412e28f06d22b2cfff11907ac65f5cd03272d85ffe53f586a11624fc1fa8a3e",
+      "fingerprint": "19261aa1c918f3ef4272b9c42273281c74e81bf7798c130c12c65b6f05fd78b2",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1720,7 +1720,7 @@
     {
       "id": "ML-C-R2-3",
       "kind": "python",
-      "fingerprint": "783b9fa7fc16fae2a438c37c739738bce8b2ba9641dd3323b13aee591fd0c8d6",
+      "fingerprint": "608ada0f7628fd06d3e5469ff44de6691f29363f3b0eaa826b52e33f2575b432",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1798,7 +1798,7 @@
     {
       "id": "ML-P-R1-1",
       "kind": "python",
-      "fingerprint": "d84c34cbe6cc0d7d2ff0c631503e5277db01ce787670802560320cf6caea4874",
+      "fingerprint": "ac40da568fe165fdcb034535ebb95d912df26c994c564d539516770dc2bf400f",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1846,13 +1846,13 @@
     {
       "id": "ML-R-K1-1",
       "kind": "python",
-      "fingerprint": "50f75da8c2ff12c3918be959cf2a1111a6cd113c1dadd760ab4161770410bdc4",
+      "fingerprint": "722cd21afc53cf856a31703d95c55a9d7e773def8b400ffbb08a87ce7c051fff",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-C-K1-1",
       "kind": "python",
-      "fingerprint": "c84b9a024d95d416eca027d1f6682d35bab22163f703588a579b993426a218a5",
+      "fingerprint": "71bb681b99cce4cdbb4f13a1d4aa184cad3ed4798942eef47fb646dd0987e7dc",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1864,7 +1864,7 @@
     {
       "id": "ML-N-K2-1",
       "kind": "python",
-      "fingerprint": "9127af38ca4860dd37604a3d060476ac3889871be19929e9ee8673ebaed20ca0",
+      "fingerprint": "bfb0def8ced2ec9aebc941d03638803971568e86479bacf59ae06eee0d8dfb44",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1876,7 +1876,7 @@
     {
       "id": "ML-P-K1-1",
       "kind": "python",
-      "fingerprint": "ff463a1b9414c85b963768daa1a4889e1203acdc22e83afc992bf3f1d00a380e",
+      "fingerprint": "982883f03f4897058dc65f754504bd3a682184f403dbe55f8778f5d15c744d93",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
@@ -1972,115 +1972,115 @@
     {
       "id": "ML-X01",
       "kind": "python",
-      "fingerprint": "84c731e103134a734356e0cce53ac011d5c7f7ec17403e8fb632a24b49793b1f",
+      "fingerprint": "7c3b78f5c0cc221407382e51b0bfdc23ef824647f7672922266bd228c746272d",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X02",
       "kind": "python",
-      "fingerprint": "59584f7baef48ffd23d7c10ee4cb8f66511ae9faba337940274ae22a7244513e",
+      "fingerprint": "51eb5dbfe81c143c196e071fc81cc5d19548c109c7901a68eb6ae08de1178f1e",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X03",
       "kind": "python",
-      "fingerprint": "c5092a41c65e420362d9e04100842cd08ff451bd0c360e05114627b2146837cc",
+      "fingerprint": "dc481132026529ba24384518be41383e5eafcce1ed4130b775c8a5f386f60b47",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X04",
       "kind": "python",
-      "fingerprint": "30b1a690a263ad635fc05ea207b83dc444b8505b0b5be5720e8b30d94f2bb865",
+      "fingerprint": "c655366192b2b83f8fa4256fa77c8ae1da161c2a04d6eee943f5e0d465994d5c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X05",
       "kind": "python",
-      "fingerprint": "f5754a116c5c46c0dc0a1ea3c9005c0f78a2e4452704a1407b14a88a0765a0d9",
+      "fingerprint": "7a6fbf0f9697456e8dd0b8400499d37757d4c2aaa1e87955138dd3c80de53e07",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X06",
       "kind": "python",
-      "fingerprint": "9afe6adb8519ffb70cfeb173edd8d71edd00ca575dc9d21cf6f1b430f69ec1a1",
+      "fingerprint": "fc9824d07cb18cda14b912e5cb5bf9eb3e7184613e01597cf6333815bcc642ec",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X07",
       "kind": "python",
-      "fingerprint": "18afc24f04657aaafc08002943e793e08b43d245d1c6914a104292a6e453c576",
+      "fingerprint": "f6ee8fca6cddf38ed42576b296753d9c3575cc086ebed43deda5d49beb94e53c",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X08",
       "kind": "python",
-      "fingerprint": "12e3fadba7c742eade59f1c673e4ee90397c2ab0fc55813166314f0a8e025d57",
+      "fingerprint": "38116efc14cc835fa60728c2a5522e1ecabc6d60a5d5c98fb7c371ec34dffa77",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X09",
       "kind": "python",
-      "fingerprint": "910493e60cdca4e3dc2f41cdd3993ea8cf8bdc136b85cfe314072c5b6c7839da",
+      "fingerprint": "a571622cdbd7c71bbdac546e0807cc75d133733dc0893b89c08bab7c48617671",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X10",
       "kind": "python",
-      "fingerprint": "df828910ba3d301b72b269a6b4f9cff6e5e1e1ee47a9d8d8b7d66cfa469d0fb8",
+      "fingerprint": "91d7011250ebc355984ae6b7be2e49c7ddbf1f2a5eb8c0239671c7d6d3d043ba",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X11",
       "kind": "python",
-      "fingerprint": "45ef63ecc5905e6f34e4539c90e6e9a7668307a2e4aa4e6e2514ce6e6138260c",
+      "fingerprint": "dbfa5633e726f57354e4d13da6fd4e73b576395927e369aba47caa62ce524d89",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X12",
       "kind": "python",
-      "fingerprint": "4e30a9d476e0dcfcb59966858045b5eb54e6ee9d97c1e4621e0b3ac5ad5b3ac4",
+      "fingerprint": "74be7f44b7cc145f539e4f3602dfe2223402aae6652efc97c6adde82aec38877",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X13",
       "kind": "python",
-      "fingerprint": "243d39c524d61301d8f018bcb1b815e3e004fa58f8e9c0c9eb4cbe07eb6545d6",
+      "fingerprint": "3779db3814b0afd5dab085ec300b3f7998ce3f827a6752a1d1e62c1508d193aa",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X14",
       "kind": "python",
-      "fingerprint": "00d7e4e9ad9f240c42f0896f8c0f89ea7234c03d4dd38a072b2366dbbacae2d9",
+      "fingerprint": "eefd6a783649621bc24354bddaab2893a67c9510941a3a94cb9dae3902aa8f0d",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X15",
       "kind": "python",
-      "fingerprint": "186a9a1ec8279a0a39fbf93af00c84c06d99f35d9b90b5e303050ff8686810fd",
+      "fingerprint": "59feb5489dae144e6d3eaa3f97eeb93a145c9c11de56edb5786c5eb4c889c529",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X16",
       "kind": "python",
-      "fingerprint": "0c5312857ba79a741362d3a936568057ef18c3745496327750195af48455e677",
+      "fingerprint": "20c098814a2191eaf23772d6aa3e8fd958222142924291dd113ee7ed6f51b097",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X17",
       "kind": "python",
-      "fingerprint": "d84c36472d54772ec659a562119e7a21cc4442e69a975746774c17a5bda54478",
+      "fingerprint": "d69b3965d70d9ad613d65efc1d0266668035cddb4a1bad4676b9c95d0191fad3",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X18",
       "kind": "python",
-      "fingerprint": "500ec946b2c53a1865a5ac6a3a07db3b552c8718b450ac208ce578ae3afb3b78",
+      "fingerprint": "c2b2a4aae39e79df710055c6dd53df9fd5016c238fad3f9b18c97a21ee559f2a",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-X19",
       "kind": "python",
-      "fingerprint": "48d9a946f8899e71a48144d3aaa015b090059dd866c265d698bf044436a2cc23",
+      "fingerprint": "e6591aa832e5f9d5af99b6d5cce41c916bb7006bd37b2996aad2771a9fe776c0",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     }
   ]

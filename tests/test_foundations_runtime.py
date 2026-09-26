@@ -38,8 +38,14 @@ assert not failures, json.dumps(failures,indent=2)
 assert request('I15', code='df["flavour"].value_counts(normalize=True).sort_index()')['passed']
 assert request('I15', 1, code='df["size"].value_counts().sort_index(ascending=False)')['passed']
 assert request('I19', 1, code='df.groupby("size")["price"].sum().sort_index(ascending=False)')['passed']
+assert request('I20', code='pd.crosstab(df["flavour"], df["shelf"]).sort_index(ascending=False)[["B", "A"]]')['passed']
+assert request('W21', code='df.pivot_table(index="flavour", columns="shelf", values="price", aggfunc="mean").sort_index(ascending=False)[["B", "A"]]')['passed']
+assert request('W19', 1, code='df.groupby("size", as_index=False).agg(total=("price", "sum"), n=("price", "count")).sort_values("size", ascending=False).reset_index(drop=True)')['passed']
+assert request('I22', 2, code='selected = df[df["station"] == "East"]\nselected.groupby("sky")[["temperature", "humidity"]].mean().sort_index(ascending=False)')['passed']
 assert not request('I15', code='df["flavour"].value_counts(normalize=True).iloc[:1]')['passed']
 assert not request('I15', code='s = df["flavour"].value_counts(normalize=True)\ns.iloc[0] += 1\ns')['passed']
+assert not request('I20', code='pd.crosstab(df["flavour"], df["shelf"])[["A"]]')['passed']
+assert not request('W19', 1, code='df.groupby("size", as_index=False).agg(total=("price", "sum"), n=("price", "mean"))')['passed']
 assert not request('I12', 1, code='df.sort_values("tip", ascending=False)')['passed']
 # Executable truth table taught in Follow: A is a whole row repeated three times.
 example = namespace['pd'].DataFrame({'record': ['A', 'B', 'A', 'A'], 'value': [2, 9, 2, 2]})
@@ -109,7 +115,7 @@ assert not request('W31',2,code='clean = df.copy().drop_duplicates()\nclean')['p
 assert request('I03',1,code='df.shape[0]')['passed']
 assert not request('I03',1,code='df.shape[1]')['passed']
 assert not request('I05',1,code='None')['passed']
-assert request('I05',1,code='df.head(3).dtypes')['passed']
+assert request('I05',1,code='df.dtypes')['passed']
 assert request('I01CSV',2,code='table = pd.read_csv("pets.csv")\ntable.iloc[:5]')['passed']
 assert not request('I01CSV',2,code='pd.read_csv("pets.csv")')['passed']
 assert not request('I01CSV',2,code='{"predicted_rows": 6, "table": pd.read_csv("pets.csv")}')['passed']
@@ -140,4 +146,21 @@ ex=next(l for l in C['lessons'] if l['id']=='V08')['rounds'][1]
 assert not request('V08',1,code=ex['solution'].replace(', "Snow"',''))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V36')['rounds'][1]
 assert not request('V36',1,code=ex['solution'].replace('bottom=0','bottom=3'))['passed']
+# Category charts compare labelled heights, so a different display order is
+# valid while swapped category/height pairs are still incorrect.
+for id,round_index,series in [('V08',2,'counts'),('V09',2,'means'),('V29',0,'means'),
+                              ('V29',1,'totals'),('V29',2,'means'),('V36',1,'means'),
+                              ('V36',2,'means'),('V37',1,'totals')]:
+ ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][round_index]
+ original=f'ax.bar({series}.index, {series}.values)'
+ assert original in ex['solution'],(id,round_index)
+ reordered=ex['solution'].replace(original,f'ax.bar({series}.index[::-1], {series}.values[::-1])')
+ assert request(id,round_index,code=reordered)['passed'],(id,round_index,'reordered')
+ if id!='V08':  # Its two included genres happen to have equal counts.
+  wrong=ex['solution'].replace(original,f'ax.bar({series}.index, {series}.values[::-1])')
+  assert not request(id,round_index,code=wrong)['passed'],(id,round_index,'swapped values')
+ex=next(l for l in C['lessons'] if l['id']=='V08')['rounds'][0]
+assert request('V08',code=ex['solution'].replace('x="flavour", ax=ax','x="flavour", order=["mint", "fruity", "chocolate"], ax=ax'))['passed']
+ex=next(l for l in C['lessons'] if l['id']=='V09')['rounds'][1]
+assert request('V09',1,code=ex['solution'].replace('errorbar=None, ax=ax','errorbar=None, order=["Cloud", "Sun", "Rain"], ax=ax'))['passed']
 print(json.dumps({'solutions':count,'intent_semantic_negative_and_recovery_checks':'passed','seconds':round(time.time()-start,1)}))

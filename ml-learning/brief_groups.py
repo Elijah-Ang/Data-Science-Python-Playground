@@ -19,18 +19,18 @@ def groups(exercise,index):
         descriptions=[('Discovery population','Load the four supplied Penguin measurements and fit scaling to this declared population; no species labels enter fitting.'),
           ('Compare groupings','Compare k=2–8 with inertia, silhouette and geometry. Justify a grouping without treating a score as proof of natural classes.'),
           ('Assignments & profiles','Return one assignment per fitted row, group sizes and aligned original-unit profiles.'),
-          ('Interpretation','Use a labelled measurement-space figure and the evidence to explain the grouping and its limitations.')]
+          ('Interpretation','Explain the grouping and its limits using scores, sizes and original-unit profiles; a labelled plot can help.')]
         mapping={0:['Reference-free inputs'],1:['k evidence'],2:['Assignments','Original-unit profiles'],3:['Choice and interpretation']}
     elif index==17:
         descriptions=[('Population & sample','Scale the supplied five-measurement population; preserve the identities of the seed-42 sample of at most 500 rows.'),
-          ('Hierarchy & cuts','Build Ward linkage on the scaled sample and compare cuts from k=2–8. Include a labelled truncated dendrogram.'),
+          ('Hierarchy & cuts','Build Ward linkage on the scaled sample and compare cuts from k=2–8. A labelled dendrogram can help interpret the merges.'),
           ('Aligned profiles','Attach the chosen cut labels to exactly the sampled rows and report original-unit group means.'),
           ('Interpretation','Explain a defensible cut, sample scope and distance assumptions; group identifiers are names, not classes.')]
-        mapping={0:['Sampled population','Population scaler'],1:['Ward hierarchy','Hierarchy cut'],2:['Aligned profiles'],3:['Interpretation']}
+        mapping={0:['Sampled population','Population scaler'],1:['Ward hierarchy','Hierarchy cut','Cut comparison'],2:['Aligned profiles'],3:['Interpretation']}
     else:
         descriptions=[('Measurement population','Load all 30 supplied measurements and standardise them without diagnosis labels.'),
           ('Variance & retention','Fit PCA and find the smallest component count retaining at least 90% variance; report ratios and cumulative variance.'),
-          ('Representation & view','Return the retained scores plus consistent feature weights and a separate labelled two-component view.'),
+          ('Representation & view','Return the retained scores, consistent feature weights and a separate two-component score array; a labelled plot is optional.'),
           ('Interpretation','Distinguish retained information from the two-axis picture. Explain axis weights without claiming causal effects.')]
         mapping={0:['Target-free inputs'],1:['Minimum retained dimension','Variance evidence'],2:['Weights and scores','Two-dimensional view'],3:['Interpretation']}
     names=[c['name'] for c in exercise['checks']]

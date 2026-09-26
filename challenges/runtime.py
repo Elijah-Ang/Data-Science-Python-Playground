@@ -1,12 +1,35 @@
 """Challenge validation is separate from the existing lesson checker."""
 
 
-def _challenge_frame_equal(actual, expected, check_index=False):
+def _challenge_frame_equal(
+    actual,
+    expected,
+    check_index=False,
+    unordered_index=False,
+    unordered_columns=False,
+    unordered_rows_by=None,
+):
     if isinstance(expected, pd.DataFrame):
         assert isinstance(actual, pd.DataFrame), "Produce the requested table."
-        assert list(actual.columns) == list(
-            expected.columns
-        ), "Check column names and order."
+        if unordered_columns:
+            assert actual.columns.is_unique and expected.columns.is_unique, "Use each column label once."
+            assert set(actual.columns) == set(expected.columns), "Check the requested column labels."
+            actual = actual.reindex(columns=expected.columns)
+        else:
+            assert list(actual.columns) == list(
+                expected.columns
+            ), "Check column names and order."
+        if unordered_index:
+            assert actual.index.is_unique and expected.index.is_unique, "Use each row label once."
+            assert set(actual.index) == set(expected.index), "Check the requested row labels."
+            actual = actual.reindex(expected.index)
+        if unordered_rows_by:
+            keys = unordered_rows_by
+            assert all(key in actual.columns for key in keys), "Keep the requested row identifiers."
+            assert not actual.duplicated(keys).any(), "Use each record and measure once."
+            assert not expected.duplicated(keys).any(), "The expected row identifiers are not unique."
+            actual = actual.sort_values(keys).reset_index(drop=True)
+            expected = expected.sort_values(keys).reset_index(drop=True)
         if not check_index:
             actual, expected = actual.reset_index(drop=True), expected.reset_index(
                 drop=True
@@ -21,15 +44,15 @@ def _challenge_frame_equal(actual, expected, check_index=False):
             atol=1e-7,
         )
     else:
-        if (
-            isinstance(expected, pd.Series)
-            and isinstance(actual, pd.Series)
-            and not check_index
-        ):
-            actual, expected = actual.reset_index(drop=True), expected.reset_index(
-                drop=True
-            )
-        _equal(actual, expected, False)
+        if isinstance(expected, pd.Series):
+            # Category labels carry meaning even when their display order does not.
+            if not check_index and not unordered_index and isinstance(actual, pd.Series):
+                actual, expected = actual.reset_index(drop=True), expected.reset_index(
+                    drop=True
+                )
+            _equal(actual, expected, False, unordered_index=unordered_index)
+        else:
+            _equal(actual, expected, False)
 
 
 def _chart_numbers(values):
@@ -81,18 +104,22 @@ def _check_axis(ax, rule, evidence):
     if kind == "bars":
         labels = [str(x) for x in source.index]
         values = np.asarray(source.values, dtype=float)
+        assert len(set(labels)) == len(labels), "Use each category label once."
+        by_label = dict(zip(labels, values))
         bars = [p for p in ax.patches if hasattr(p, "get_width")]
         assert len(bars) == len(values) or (
             not bars and rule.get("allowPoints")
         ), "Show every requested category exactly once."
-        vertical = [t.get_text() for t in ax.get_xticklabels()] == labels
-        horizontal = [t.get_text() for t in ax.get_yticklabels()] == labels
+        x_labels = [t.get_text() for t in ax.get_xticklabels()]
+        y_labels = [t.get_text() for t in ax.get_yticklabels()]
+        vertical = len(x_labels) == len(labels) and set(x_labels) == set(labels)
+        horizontal = len(y_labels) == len(labels) and set(y_labels) == set(labels)
         valid = False
         if vertical and bars:
             valid = (
                 _same_points(
                     [[p.get_x() + p.get_width() / 2, p.get_height()] for p in bars],
-                    np.column_stack([ax.get_xticks(), values]),
+                    np.column_stack([ax.get_xticks(), [by_label[x] for x in x_labels]]),
                 )
                 and all(abs(p.get_y()) < 1e-7 for p in bars)
                 and abs(ax.get_ylim()[0]) < 1e-7
@@ -101,7 +128,7 @@ def _check_axis(ax, rule, evidence):
             valid = valid or (
                 _same_points(
                     [[p.get_y() + p.get_height() / 2, p.get_width()] for p in bars],
-                    np.column_stack([ax.get_yticks(), values]),
+                    np.column_stack([ax.get_yticks(), [by_label[y] for y in y_labels]]),
                 )
                 and all(abs(p.get_x()) < 1e-7 for p in bars)
                 and abs(ax.get_xlim()[0]) < 1e-7
@@ -120,10 +147,14 @@ def _check_axis(ax, rule, evidence):
                     )
             valid = (
                 vertical
-                and _same_points(points, np.column_stack([ax.get_xticks(), values]))
+                and _same_points(
+                    points, np.column_stack([ax.get_xticks(), [by_label[x] for x in x_labels]])
+                )
             ) or (
                 horizontal
-                and _same_points(points, np.column_stack([values, ax.get_yticks()]))
+                and _same_points(
+                    points, np.column_stack([[by_label[y] for y in y_labels], ax.get_yticks()])
+                )
             )
         assert (
             valid
@@ -168,10 +199,10 @@ def _check_axis(ax, rule, evidence):
             points, source[[rule["x"], rule["y"]]].to_numpy()
         ), "Plot every complete pair once, keeping the two coordinates together."
     elif kind == "points":
-        labels = sorted(source[rule["group"]].unique())
-        assert [
-            t.get_text() for t in ax.get_xticklabels()
-        ] == labels, "Label and order the groups alphabetically."
+        labels = [t.get_text() for t in ax.get_xticklabels()]
+        assert len(labels) == source[rule["group"]].nunique() and set(labels) == set(
+            source[rule["group"]].astype(str)
+        ), "Label every group once."
         points = []
         for collection in ax.collections:
             if hasattr(collection, "get_offsets"):
@@ -198,10 +229,10 @@ def _check_axis(ax, rule, evidence):
     elif kind == "box":
         from matplotlib.cbook import boxplot_stats
 
-        labels = sorted(source[rule["group"]].unique())
-        assert [
-            t.get_text() for t in ax.get_xticklabels()
-        ] == labels, "Label and order the depots alphabetically."
+        labels = [t.get_text() for t in ax.get_xticklabels()]
+        assert len(labels) == source[rule["group"]].nunique() and set(labels) == set(
+            source[rule["group"]].astype(str)
+        ), "Label every depot once."
         # Standard Matplotlib and Seaborn boxes expose their median, caps and whiskers as lines.
         ticks = np.asarray(ax.get_xticks(), dtype=float)
         for position, label in zip(ticks, labels):
@@ -486,11 +517,22 @@ def run_challenge(request):
                                 "fits"
                             ], "Include all chart labels within the exported image."
                     else:
-                        _challenge_frame_equal(
-                            actual["env"][name],
-                            expected["env"][name],
-                            check_index=deliverable.get("checkIndex", False),
-                        )
+                        actual_value = actual["env"][name]
+                        expected_value = expected["env"][name]
+                        if deliverable.get("unorderedItems"):
+                            assert isinstance(actual_value, list), "Produce the requested list."
+                            assert len(actual_value) == len(expected_value) and sorted(
+                                actual_value
+                            ) == sorted(expected_value), "Check the distinct requested labels."
+                        else:
+                            _challenge_frame_equal(
+                                actual_value,
+                                expected_value,
+                                check_index=deliverable.get("checkIndex", False),
+                                unordered_index=deliverable.get("unorderedIndex", False),
+                                unordered_columns=deliverable.get("unorderedColumns", False),
+                                unordered_rows_by=deliverable.get("unorderedRowsBy"),
+                            )
                 except (
                     AssertionError,
                     TypeError,

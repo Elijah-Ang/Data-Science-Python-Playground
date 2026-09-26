@@ -48,6 +48,8 @@ accepted('ML-W-K1-1',linear+"\nextra_mae=float(np.abs(y_test-final_predictions).
 accepted('ML-W-K1-1',linear.replace('final_rmse = root_mean_squared_error(y_test, final_predictions)','final_rmse = float(np.sqrt(np.mean((np.asarray(y_test)-final_predictions)**2)))'),'equivalent RMSE calculation')
 rejected('ML-X04',activities['ML-X04']['solution'].replace('folds=TimeSeriesSplit(n_splits=5)','folds=KFold(n_splits=5,shuffle=True,random_state=42)'),'shuffled chronological validation')
 rejected('ML-X12',activities['ML-X12']['solution'].replace("X=df[","df['popular_copy']=df['popular']\nX=df[",1).replace("y=df['popular']","X['popular_copy']=df['popular_copy']\ny=df['popular']",1),'target-derived classifier input')
+rejected('ML-C14-1',activities['ML-C14-1']['solution'].replace('leaf=int(model.apply(X_test.iloc[:1])[0])','leaf=-1'),'unrelated classification-tree leaf ID')
+rejected('ML-U06-1',activities['ML-U06-1']['solution']+'\nanswer=[0.0,0.0,0.0]','fabricated K-Means inertia values')
 neural=activities['ML-N-K1-1']['solution']
 rejected('ML-N-K1-1',neural.replace('final_rmse = root_mean_squared_error(y_test, final_predictions)','final_rmse = root_mean_squared_error((y_test-y_train.mean())/y_train.std(), final_predictions)'),'scaled target mixed with original-unit predictions')
 cluster=activities['ML-X17']['solution']
@@ -55,6 +57,7 @@ accepted('ML-X17',cluster.replace('labels=model.labels_','labels=(model.labels_+
 rejected('ML-X17',cluster.replace('profiles=X.groupby(labels).mean()','profiles=X.groupby(labels).mean()+2'),'incorrect original-unit profiles')
 hierarchy=activities['ML-X18']['solution']
 rejected('ML-X18',hierarchy.replace('profiles = sample.groupby(labels).mean()','profiles = X.iloc[:len(labels)].groupby(labels).mean()'),'sample label/population misalignment')
+rejected('ML-X18',hierarchy.replace("cut_evidence.append({'k':k, 'silhouette':silhouette_score(scaled_sample, assignments)})","cut_evidence.append({'k':k, 'silhouette':0.0})"),'fabricated hierarchy-cut comparison')
 pca=activities['ML-X19']['solution']
 accepted('ML-X19',pca+"\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1",'paired PCA sign change')
 rejected('ML-X19',pca+"\nweights.iloc[:,0]*=-1",'unpaired PCA sign change')

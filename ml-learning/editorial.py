@@ -4,10 +4,10 @@ from pathlib import Path
 TASKS = {
  'ML-R04-1':'Return named distance and weight coefficients from the supplied fitted two-feature line.',
  'ML-C10-1':'Use the supplied fitted scaled SVM to predict held-away labels.',
- 'ML-C12-1':'Inspect the learned rules of the supplied fitted discrete One-R pipeline.',
- 'ML-C17-1':'Inspect the class means of the supplied fitted LDA model.',
- 'ML-U07-1':'Inspect and return the supplied Ward linkage matrix for scaled CLUSTER36.',
- 'ML-P02-1':'Inspect and return the supplied component scores from PCA fitted to scaled PCA48.',
+ 'ML-C12-1':'Store the fitted One-R classifier’s rules_ dictionary in answer.',
+ 'ML-C17-1':'Build answer as a table of fitted LDA means, with model.classes_ as rows and X_train column names as columns.',
+ 'ML-U07-1':'Store the supplied Ward linkage matrix for scaled CLUSTER36 in answer.',
+ 'ML-P02-1':'Store the supplied PCA component scores for every PCA48 row in answer.',
 }
 
 def apply(registry):

@@ -49,6 +49,19 @@ with sync_playwright() as p:
         assert page.locator('.ml-syntax-parts code span').evaluate_all('(nodes)=>nodes.every(e=>getComputedStyle(e).display!=="none")')
         assert page.locator('#mlHighlight .py-comment,#mlHighlight .py-function').count()>0
 
+    # A practice sentence appears once; long generated setup stays available on demand.
+    page.evaluate("location.hash='#regression/ML-R02/2'")
+    page.wait_for_function("MLLearning.activity?.id==='ML-R02-3'")
+    prompt=page.locator('.foundation-practice-brief')
+    heading=prompt.locator('.practice-question').inner_text().strip()
+    assert not prompt.locator('p').first.inner_text().strip().startswith(heading)
+    setup_case=next((card,ex) for card in registry['cards'] for ex in card['exercises'] if ex.get('setup') and not (card['kind']=='teaching' and ex is card['exercises'][0]))
+    card,ex=setup_case
+    page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{card['exercises'].index(ex)}")
+    page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=ex['id'])
+    assert page.locator('.ml-supplied-setup').count()==1
+    assert page.locator('.ml-supplied-setup pre').is_hidden()
+
     page.evaluate("location.hash='#foundations/ML-F08/1'")
     page.wait_for_function("MLLearning.activity?.id==='ML-F08-2'")
     page.locator('input[name="mlChoice"]').first.check()

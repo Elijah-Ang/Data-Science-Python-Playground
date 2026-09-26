@@ -51,6 +51,9 @@ for(const l of curriculum.lessons) for(const r of l.rounds) {
     const source=curriculum.lessons.find(item=>item.id===r.retrieves).rounds[2];
     assert.equal(r.task,source.task,r.id+' retrieval uses the current brief');
     assert.equal(r.unorderedIndex,source.unorderedIndex,r.id+' retrieval uses the same checking rules');
+    assert.equal(r.unorderedColumns,source.unorderedColumns,r.id+' retrieval uses the same column rules');
+    assert.equal(r.unorderedRowsBy,source.unorderedRowsBy,r.id+' retrieval uses the same group rules');
+    assert.deepEqual(r.plot,source.plot,r.id+' retrieval uses the same plot rules');
   }
   assert(!/largest.*first/.test(r.task)||!r.unorderedIndex,r.id+' no redundant summary sort contract');
   assert((r.task.match(/Display the chart with plt.show/g)||[]).length<=1,r.id);

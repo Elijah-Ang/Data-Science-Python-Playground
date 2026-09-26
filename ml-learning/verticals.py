@@ -113,6 +113,7 @@ HIERARCHY = dict(id='ML-X18',dataset='breast',outputs=['sample','linkage_matrix'
         check('Ward hierarchy','linkage_matrix.shape==(len(sample)-1,4) and np.allclose(linkage_matrix, __import__("scipy.cluster.hierarchy",fromlist=["linkage"]).linkage(scaled_sample,method="ward"))','Construct Ward linkage from scaled sampled rows.'),
         check('Aligned profiles','profiles.index.equals(pd.Index(np.unique(labels))) and np.allclose(profiles.values, sample.groupby(labels).mean().values)','Profile sampled rows with their own cluster assignments.'),
         check('Hierarchy cut','2<=len(np.unique(labels))<=8 and _same_partition(labels,__import__("scipy.cluster.hierarchy",fromlist=["cut_tree"]).cut_tree(linkage_matrix,n_clusters=len(np.unique(labels))).ravel())','Use a coherent cut of the fitted hierarchy; renamed cluster IDs are welcome.'),
+        check('Cut comparison','len(cut_evidence)==7 and [row["k"] for row in cut_evidence]==list(range(2,9)) and np.allclose([row["silhouette"] for row in cut_evidence],[silhouette_score(scaled_sample,cut_tree(linkage_matrix,n_clusters=k).ravel()) for k in range(2,9)])','Compare every cut from two through eight groups using silhouette on the same scaled sample.'),
         check('Population scaler','np.allclose(scaler.mean_,X.mean())','Fit the exploratory scaler on the declared population before sampling.')],
     solution="""from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, dendrogram, cut_tree
@@ -140,7 +141,7 @@ PCA = dict(id='ML-X19',dataset='breast',outputs=['ratios','cumulative','retained
         check('Minimum retained dimension','retained==int(np.searchsorted(cumulative,.9)+1) and reduced.shape==(len(X),retained) and np.allclose(reduced,pca.transform(scaled)[:,:retained])','Choose the smallest component prefix reaching 90%.'),
         check('Variance evidence','np.allclose(ratios,pca.explained_variance_ratio_) and np.allclose(cumulative,np.cumsum(ratios))','Use PCA explained variance and its cumulative sum.'),
         check('Weights and scores','weights.shape==(X.shape[1],2) and np.allclose(scores2,scaled @ weights.values) and trace.pca_axes(pca,weights.values)','Keep PCA axes, scores and sign choices consistent.'),
-        check('Two-dimensional view','scores2.shape==(len(X),2)','Draw a separate two-axis view of the full reduced representation.')],
+        check('Two-dimensional view','scores2.shape==(len(X),2)','Return two PCA scores per observation, distinct from the retained representation.')],
     solution="""from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt

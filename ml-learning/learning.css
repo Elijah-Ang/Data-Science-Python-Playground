@@ -121,3 +121,10 @@
 .ml-workflow-map li::before { content:counter(workflow,decimal-leading-zero); grid-row:span 2; color:var(--lesson-accent); font:12px/1.8 var(--mono); }
 .ml-workflow-map strong { font-size:14px; }
 .ml-workflow-map span { grid-column:2; font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* Long generated inputs remain available without interrupting the exercise brief. */
+.ml-supplied-setup { padding:12px 16px; border:1px solid var(--border-soft); border-radius:5px; background:var(--panel); }
+.ml-supplied-setup>summary { color:var(--lesson-accent); font-size:14px; }
+.ml-supplied-setup>p { max-width:66ch; color:var(--muted); font-size:13px; line-height:1.6; }
+.ml-supplied-setup pre { max-height:340px; }
+.ml-output-names code { border:1px solid var(--border-soft); padding:5px 8px; background:var(--panel-2); }

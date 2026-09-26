@@ -4,7 +4,7 @@ import ast
 import json
 from pathlib import Path
 from authoring import CARDS,lesson,py,decide,reflect,workflow_contract
-from verticals import IMPORTS,check,SUPERVISED_CHECKS,REGRESSION_CHECKS,CLASSIFICATION_CHECKS,LINEAR,NEURAL,HIERARCHY,PCA,one_r
+from verticals import check,SUPERVISED_CHECKS,REGRESSION_CHECKS,CLASSIFICATION_CHECKS,LINEAR,NEURAL,HIERARCHY,PCA,one_r
 from brief_groups import groups
 
 FLAGS=['chocolate','fruity','caramel','peanutyalmondy','nougat','crispedricewafer','hard','bar','pluribus']
@@ -31,19 +31,39 @@ PLAYGROUND = json.loads((Path(__file__).parent/'playground-workflows.json').read
 def recipe(model, spec):
     key = next(key for key, value in DATA.items() if value is spec)
     shared = PLAYGROUND['recipes'][key][model]
-    return shared['code'], ast.literal_eval(shared['grid']) or None
+    return compact_recipe(shared['code']), ast.literal_eval(shared['grid']) or None
+
+def compact_recipe(code):
+    """Show the runnable pipeline, without Playground display-only expressions."""
+    nodes=[node for node in ast.parse(code).body
+           if not (isinstance(node,ast.Expr) and isinstance(node.value,ast.Name))]
+    used={name.id for node in nodes for name in ast.walk(node)
+          if isinstance(name,ast.Name) and isinstance(name.ctx,ast.Load)}
+    nodes=[node for node in nodes
+           if not (isinstance(node,ast.Assign)
+                   and all(isinstance(target,ast.Name) and target.id not in used for target in node.targets))]
+    return '# Prepare inputs and construct the candidate pipeline.\n'+ast.unparse(ast.Module(body=nodes,type_ignores=[]))
+
+def supervised_imports(classification, time):
+    folds='TimeSeriesSplit' if time else 'StratifiedKFold' if classification else 'KFold'
+    reference='DummyClassifier' if classification else 'DummyRegressor'
+    metrics='f1_score, accuracy_score, confusion_matrix' if classification else 'root_mean_squared_error'
+    return ('from sklearn.base import clone\n'
+            'from sklearn.model_selection import train_test_split, '+folds+', cross_validate, cross_val_predict, GridSearchCV\n'
+            'from sklearn.dummy import '+reference+'\n'
+            'from sklearn.metrics import '+metrics+'\n')
 
 def supervised(key,models,id='temporary'):
     s=DATA[key];classification=s['task']=='classification'
     metric='f1_macro' if classification else 'neg_root_mean_squared_error'
     columns=s['numeric']+s['binary']+s['category']
-    code=IMPORTS+"\nimport matplotlib.pyplot as plt\nX=df["+repr(columns)+"]\ny=df["+repr(s['target'])+"]\n"
+    code=supervised_imports(classification,bool(s.get('time')))+"\nimport matplotlib.pyplot as plt\nX=df["+repr(columns)+"]\ny=df["+repr(s['target'])+"]\n"
     if s.get('time'):
-        code+="from sklearn.model_selection import TimeSeriesSplit\ncut=int(len(df)*.8)\nX_train,X_test=X.iloc[:cut],X.iloc[cut:]\ny_train,y_test=y.iloc[:cut],y.iloc[cut:]\nfolds=TimeSeriesSplit(n_splits=5)\n"
+        code+="cut=int(len(df)*.8)\nX_train,X_test=X.iloc[:cut],X.iloc[cut:]\ny_train,y_test=y.iloc[:cut],y.iloc[cut:]\nfolds=TimeSeriesSplit(n_splits=5)\n"
     else:
         code+="X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=.2,random_state=42"+(",stratify=y" if classification else "")+")\n"
         code+=("folds=StratifiedKFold" if classification else "folds=KFold")+"(n_splits=5,shuffle=True,random_state=42)\n"
-    code+="training_summary=X_train.describe(include=\"all\")\nprint(training_summary)\ncandidates={}\ngrids={}\n"
+    code+="candidates={}\ngrids={}\n"
     for model in models:
         build,grid=recipe(model,s)
         code+=build+"\ncandidates["+repr(model)+"]=model\ngrids["+repr(model)+"]="+repr(grid)+"\n"
@@ -53,7 +73,6 @@ initial_results={name:cross_validate(candidate,X_train,y_train,cv=folds,scoring=
 reference_results=cross_validate("""+("DummyClassifier(strategy='most_frequent')" if classification else "DummyRegressor(strategy='mean')")+""",X_train,y_train,cv=folds,scoring="""+repr(metric)+""")
 rows=[]
 selected={}
-loss_curves={}
 for name,candidate in candidates.items():
     initial=initial_results[name]
     grid=grids[name]
@@ -68,11 +87,6 @@ for name,candidate in candidates.items():
         validation_score=float(np.mean(initial['test_score']))
         settings='Keep defaults: no production search'
     rows.append({'model':name,'initial_score':float(np.mean(initial['test_score'])),'selected_score':validation_score,'settings':str(settings)})
-    fitted=selected[name].named_steps.get('model')
-    if hasattr(fitted,'regressor_'):
-        fitted=fitted.regressor_
-    if hasattr(fitted,'loss_curve_'):
-        loss_curves[name]=list(fitted.loss_curve_)
 cv_results=pd.DataFrame(rows).set_index('model')
 # This solution nominates by mean training-fold score. Other evidence-based choices can be defensible.
 chosen_name=cv_results.selected_score.idxmax()
@@ -116,6 +130,15 @@ final_predictions=final_model.predict(X_test)
 final_rmse=root_mean_squared_error(y_test,final_predictions)
 print('Final RMSE:',final_rmse)
 """
+    if any(model.startswith('mlp_') for model in models):
+        code+="""loss_curves={}
+for name,candidate in selected.items():
+    fitted=candidate.named_steps['model']
+    if hasattr(fitted,'regressor_'):
+        fitted=fitted.regressor_
+    if hasattr(fitted,'loss_curve_'):
+        loss_curves[name]=list(fitted.loss_curve_)
+"""
     checks=copy.deepcopy(CLASSIFICATION_CHECKS if classification else REGRESSION_CHECKS)
     if s.get('time'):
         checks=[c for c in checks if c['name']!='Training-only diagnosis']
@@ -134,7 +157,10 @@ print('Final RMSE:',final_rmse)
         groups = PLAYGROUND['recipes'][key][name]['preparation']
         preparation_checks.append('trace.preparation_matches(selected['+repr(name)+'], '+repr(groups)+', polynomial='+str(name=='polynomial')+', drop_first='+str(name in ('simple_linear','multiple_linear'))+')')
     checks.append(check('Production preparation', ' and '.join(preparation_checks), 'Use the playground preparation for each model: scale where required, preserve numeric flags, encode named categories, and keep all preparation inside the pipeline.'))
-    return dict(id=id,kind='python',dataset=s.get('dataset',key),solution=code,setup='',outputs=['cv_results','reference_results','chosen_name','loss_curves']+(['matrix','final_f1','final_accuracy'] if classification else ['residuals','final_rmse']),checks=checks,protect=dict(target=s['target'],stratified=classification,time=bool(s.get('time'))))
+    outputs=['cv_results','reference_results','chosen_name']
+    if any(model.startswith('mlp_') for model in models):outputs.append('loss_curves')
+    outputs+=['matrix','final_f1','final_accuracy'] if classification else ['residuals','final_rmse']
+    return dict(id=id,kind='python',dataset=s.get('dataset',key),solution=code,setup='',outputs=outputs,checks=checks,protect=dict(target=s['target'],stratified=classification,time=bool(s.get('time'))))
 
 KMEANS=dict(id='ML-X17',kind='python',dataset='penguins',outputs=['evidence','sizes','profiles','labels'],
  solution="""from sklearn.preprocessing import StandardScaler
@@ -240,7 +266,7 @@ ablation_results=cross_validate(measurement_model,X_train[measurement_columns],y
           family=('time' if i==3 else 'regression' if i<3 else 'neural' if i in (14,15) else 'clustering' if i in (16,17) else 'pca' if i==18 else 'classification'),tags=models+(['discovery','profiles'] if i>=16 else ['validation','reference','final-test discipline']),
           models=models,prerequisites=['ML-'+d for d in spec['deps']],planning=[planning],hints=exercise['hints'],
           inputs=[dict(prepared,name='df')],
-          policies=['Keep target-derived inputs out of X.','Use training-only selection for prediction, or reference-free fitting for discovery.'],
+          policies=(['Use only the supplied measurements for fitting.','Keep group labels, scores and profiles aligned with the rows they describe.'] if i>=16 else ['Keep target-derived inputs out of X.','Use training-only selection for prediction.']),
           deliverables=deliverables,deliverableGroups=groups(exercise,i),deliverableType='Complete workflow and evidence',reference=exercise['solution'],
           explanationSteps=[think,approach,'Inspect the returned evidence and qualify the claim for the stated population.'],
           alternative='Equivalent ordinary Python is welcome. A defensible candidate or grouping need not match the solution’s choice; objective evidence must remain consistent.',

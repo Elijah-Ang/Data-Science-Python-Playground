@@ -155,10 +155,10 @@ const registry = {
         {
           "id": "dimensions",
           "name": "dimensions",
-          "label": "Dimensions",
-          "requirement": "Store the full table’s (row count, column count) in dimensions.",
+          "label": "Table shape",
+          "requirement": "Store the shape of the full df in dimensions: its number of rows and columns (df.shape).",
           "kind": "value",
-          "feedback": "Read dimensions from the whole input table, not a filtered or preview table.",
+          "feedback": "Use the shape of the full imported df, not the five-row preview.",
           "checkIndex": true,
           "format": "tuple"
         },
@@ -166,11 +166,12 @@ const registry = {
           "id": "types",
           "name": "types",
           "label": "Column types",
-          "requirement": "Store a type for every imported column in types.",
+          "requirement": "Store the data type of each imported column in types (df.dtypes).",
           "kind": "value",
           "feedback": "Include a data type for every imported column.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         }
       ],
       "solution": "df = pd.read_csv('delivery.csv')\npreview = df.head()\ndimensions = df.shape\ntypes = df.dtypes\npreview",
@@ -204,7 +205,7 @@ const registry = {
       ],
       "collection": "workflow",
       "explanationSteps": [
-        "The preview is a sample; dimensions and types describe the entire imported file.",
+        "The preview contains five rows; df.shape and df.dtypes describe the entire imported file.",
         "Keeping df intact allows a later analyst to inspect records beyond the first five."
       ]
     },
@@ -562,11 +563,12 @@ const registry = {
           "id": "missing",
           "name": "missing",
           "label": "Required-field gaps",
-          "requirement": "Store missing counts for hours and score, in that order, in missing.",
+          "requirement": "Store the missing-value count for each of hours and score in missing.",
           "kind": "value",
           "feedback": "Count unknown cells in the requested columns; zero values are not missing.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "eligible",
@@ -1228,24 +1230,26 @@ const registry = {
           "id": "counts",
           "name": "counts",
           "label": "Morning counts",
-          "requirement": "Store drink counts for shift AM in counts, with drink labels sorted alphabetically.",
+          "requirement": "Store the number of AM orders for each drink in counts.",
           "kind": "value",
           "feedback": "Check the selected population and count each record once under the correct category.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "proportions",
           "name": "proportions",
           "label": "Morning proportions",
-          "requirement": "Store fractions of AM orders for the same labels and order in proportions. Fractions should sum to 1.",
+          "requirement": "Store each drink’s share of AM orders in proportions, using the same drink labels as counts. The shares should sum to 1.",
           "kind": "value",
           "feedback": "Use the same population and category labels as the counts; return fractions rather than percentages.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         }
       ],
-      "solution": "morning = df[df['shift'] == 'AM']\ncounts = morning.groupby('drink').drink.agg('count')\nproportions = counts / counts.sum()\ncounts",
+      "solution": "morning = df[df['shift'] == 'AM']\ncounts = morning['drink'].value_counts()\nproportions = counts / counts.sum()\ncounts",
       "hints": {
         "think": "Which orders belong in the denominator?",
         "tools": "Boolean selection, groupby(), agg(), value_counts() and arithmetic",
@@ -1268,17 +1272,17 @@ const registry = {
       "deliverableType": "Category profile",
       "chart": null,
       "explanation": "Select AM orders and calculate counts and fractions using that same population.",
-      "alternative": "Dividing counts by the number of morning orders produces the same proportions as normalised counts.",
+      "alternative": "Group counts and normalised value counts are equivalent when they use the same AM orders.",
       "setup": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', 'Latte', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', 'Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'Latte', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', 'Latte', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', 'Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'Latte', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', 'Latte', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', 'Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'Latte', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\nmorning = df[df['shift'] == 'AM']\ncounts = morning.groupby('drink').drink.agg('count')\nproportions = counts / counts.sum()\ncounts",
+      "reference": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', 'Latte', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', 'Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'Tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'Latte', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', 'Latte', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'Tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'Latte', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', 'Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\nmorning = df[df['shift'] == 'AM']\ncounts = morning['drink'].value_counts()\nproportions = counts / counts.sum()\ncounts",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
       "collection": "workflow",
       "explanationSteps": [
         "Counts and proportions use AM orders only; using all orders as the denominator would understate the morning mix.",
-        "Sorting labels aligns the two summaries so the same position always describes the same drink."
+        "Each share divides that drink’s count by the total number of AM orders."
       ]
     },
     {
@@ -1416,22 +1420,25 @@ const registry = {
         {
           "id": "summary",
           "name": "summary",
-          "label": "Numeric profile",
-          "requirement": "Create summary for steps and minutes in week Current, in that column order. Include count, mean, sample standard deviation, minimum, 25%, 50%, 75% and maximum, in that row order; ignore unknown values separately for each measurement.",
+          "label": "Current-week summary",
+          "requirement": "Use the Current-week steps and minutes columns to create summary with their standard descriptive statistics (describe()). Each column should ignore its own missing values.",
           "kind": "value",
           "feedback": "Describe only the requested measures and reporting period.",
           "checkIndex": true,
-          "format": "DataFrame"
+          "format": "DataFrame",
+          "unorderedIndex": true,
+          "unorderedColumns": true
         },
         {
           "id": "known",
           "name": "known",
           "label": "Known measurements",
-          "requirement": "Store non-missing counts for the same two columns in known.",
+          "requirement": "Store the count of known values for steps and minutes in known.",
           "kind": "value",
           "feedback": "Count known measurements separately for each requested field.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         }
       ],
       "solution": "current = df.loc[df.week == 'Current', ['steps', 'minutes']]\nsummary = current.describe()\nknown = current.count()\nsummary",
@@ -1637,8 +1644,8 @@ const registry = {
         {
           "id": "eligible",
           "name": "eligible",
-          "label": "Comparable population",
-          "requirement": "Create eligible for attended=True and known score, preserving all columns and source order.",
+          "label": "Attendees with scores",
+          "requirement": "Filter df to rows where attended is True and score is present. Store them in eligible, with every original column and row order preserved.",
           "kind": "frame",
           "feedback": "Check all required eligibility conditions and keep the requested source columns and order.",
           "checkIndex": false,
@@ -1648,27 +1655,29 @@ const registry = {
           "id": "counts",
           "name": "counts",
           "label": "Group counts",
-          "requirement": "Store eligible row counts by group in counts, labels alphabetically ordered.",
+          "requirement": "Store the number of rows in eligible for each group in counts.",
           "kind": "value",
           "feedback": "Check the selected population and count each record once under the correct category.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "means",
           "name": "means",
           "label": "Mean scores",
-          "requirement": "Store mean score by group in means using exactly the same eligible population and order.",
+          "requirement": "Store the mean score of rows in eligible for each group in means.",
           "kind": "value",
           "feedback": "Check the eligible population and unknown measurements; compare means rather than totals.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         }
       ],
-      "solution": "eligible = df[df.attended & df.score.notna()]\ncounts = eligible.groupby('group').score.agg('count')\nmeans = eligible.groupby('group').score.mean()\nmeans",
+      "solution": "eligible = df[df.attended & df.score.notna()]\ncounts = eligible.groupby('group')['score'].count()\nmeans = eligible.groupby('group')['score'].mean()\nmeans",
       "hints": {
         "think": "Are the counts and averages describing the same learners?",
-        "tools": "notna(), groupby(), agg() and mean()",
+        "tools": "notna(), groupby(), count() and mean()",
         "approach": "Use one eligible population for both group sizes and mean scores."
       },
       "prerequisites": [
@@ -1691,7 +1700,7 @@ const registry = {
       "alternative": "Named group aggregations can calculate both outputs together; expose the requested separate named results afterwards.",
       "setup": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, None, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n        ('S013', 'Learner 13', 'A', 4, 73, False, '2026-04-07'),\n        ('S014', 'Learner 14', 'B', 6, 86, True, '2026-04-07'),\n        ('S015', 'Learner 15', 'A', 8, 95, True, '2026-04-08'),\n        ('S016', 'Learner 16', 'B', 1, 50, True, '2026-04-08'),\n        ('S017', 'Learner 17', 'A', 2, 57, False, '2026-04-09'),\n        ('S018', 'Learner 18', 'B', 5, 80, True, '2026-04-09'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, None, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n        ('S013', 'Learner 13', 'A', 4, 73, False, '2026-04-07'),\n        ('S014', 'Learner 14', 'B', 6, 86, True, '2026-04-07'),\n        ('S015', 'Learner 15', 'A', 8, 95, True, '2026-04-08'),\n        ('S016', 'Learner 16', 'B', 1, 50, True, '2026-04-08'),\n        ('S017', 'Learner 17', 'A', 2, 57, False, '2026-04-09'),\n        ('S018', 'Learner 18', 'B', 5, 80, True, '2026-04-09'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, None, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n        ('S013', 'Learner 13', 'A', 4, 73, False, '2026-04-07'),\n        ('S014', 'Learner 14', 'B', 6, 86, True, '2026-04-07'),\n        ('S015', 'Learner 15', 'A', 8, 95, True, '2026-04-08'),\n        ('S016', 'Learner 16', 'B', 1, 50, True, '2026-04-08'),\n        ('S017', 'Learner 17', 'A', 2, 57, False, '2026-04-09'),\n        ('S018', 'Learner 18', 'B', 5, 80, True, '2026-04-09'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)\n\neligible = df[df.attended & df.score.notna()]\ncounts = eligible.groupby('group').score.agg('count')\nmeans = eligible.groupby('group').score.mean()\nmeans",
+      "reference": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, None, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n        ('S013', 'Learner 13', 'A', 4, 73, False, '2026-04-07'),\n        ('S014', 'Learner 14', 'B', 6, 86, True, '2026-04-07'),\n        ('S015', 'Learner 15', 'A', 8, 95, True, '2026-04-08'),\n        ('S016', 'Learner 16', 'B', 1, 50, True, '2026-04-08'),\n        ('S017', 'Learner 17', 'A', 2, 57, False, '2026-04-09'),\n        ('S018', 'Learner 18', 'B', 5, 80, True, '2026-04-09'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)\n\neligible = df[df.attended & df.score.notna()]\ncounts = eligible.groupby('group')['score'].count()\nmeans = eligible.groupby('group')['score'].mean()\nmeans",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -1890,29 +1899,31 @@ const registry = {
         {
           "id": "cross_tab",
           "name": "cross_tab",
-          "label": "Category combinations",
-          "requirement": "Create cross_tab with category rows and region columns for in_stock=True records. Count records, not units. Sort both label axes alphabetically.",
+          "label": "Category by region counts",
+          "requirement": "Create cross_tab with one row per category and one column per region for available (in_stock=True) records. Each cell is the number of records in that category and region, not the sum of quantity.",
           "kind": "value",
           "feedback": "Count available records in each category/region combination and check both label axes.",
           "checkIndex": true,
-          "format": "DataFrame"
+          "format": "DataFrame",
+          "unorderedIndex": true,
+          "unorderedColumns": true
         },
         {
           "id": "categories",
           "name": "categories",
           "label": "Observed categories",
-          "requirement": "Store the number of distinct categories among those same available records in categories.",
+          "requirement": "Store the number of distinct categories in the in_stock=True rows in categories.",
           "kind": "value",
           "feedback": "Count distinct categories in the selected population.",
           "checkIndex": true,
           "format": "number"
         }
       ],
-      "solution": "available = df[df.in_stock]\neast = available[available.region == 'East'].groupby('category').category.agg('count')\nwest = available[available.region == 'West'].groupby('category').category.agg('count')\ncross_tab = pd.DataFrame({'East': east, 'West': west})\ncategories = available.category.nunique()\ncross_tab",
+      "solution": "available = df[df.in_stock]\ncross_tab = pd.crosstab(available['category'], available['region'])\ncategories = available['category'].nunique()\ncross_tab",
       "hints": {
         "think": "Is the requested cell a count of records or a sum of quantities?",
-        "tools": "Boolean selection, groupby(), agg(), DataFrame() and nunique()",
-        "approach": "Select available records, count each category within each region, then combine those counts into the requested table."
+        "tools": "Boolean selection, pd.crosstab() for category-by-region counts, and nunique()",
+        "approach": "Select available records, count category and region combinations, then count distinct available categories."
       },
       "prerequisites": [
         "I01",
@@ -1930,18 +1941,18 @@ const registry = {
       ],
       "deliverableType": "Category matrix",
       "chart": null,
-      "explanation": "Select available records, count category/region combinations and inspect distinct categories in that population.",
-      "alternative": "You can construct the table from separately calculated counts or equivalent grouped summaries. Keep region columns and category rows alphabetically ordered.",
+      "explanation": "Select available records, count category and region combinations, then count distinct available categories.",
+      "alternative": "Grouping by category and region and then reshaping the counts is also valid. Keep the category and region labels attached to their values.",
       "setup": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n        ('P017', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P018', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n        ('P017', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P018', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n        ('P017', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P018', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)\n\navailable = df[df.in_stock]\neast = available[available.region == 'East'].groupby('category').category.agg('count')\nwest = available[available.region == 'West'].groupby('category').category.agg('count')\ncross_tab = pd.DataFrame({'East': east, 'West': west})\ncategories = available.category.nunique()\ncross_tab",
+      "reference": "import pandas as pd\n\n# Supplied input: df (18 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n        ('P017', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P018', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)\n\navailable = df[df.in_stock]\ncross_tab = pd.crosstab(available['category'], available['region'])\ncategories = available['category'].nunique()\ncross_tab",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
       "collection": "workflow",
       "explanationSteps": [
         "The cells count order lines, not quantities, so large orders do not weigh more than small ones.",
-        "Labelled rows and columns preserve the category/region relationship when the two regional counts are aligned."
+        "The category and region labels identify each count; their alphabetical order does not affect the result."
       ]
     },
     {
@@ -2091,8 +2102,8 @@ const registry = {
         {
           "id": "dimensions",
           "name": "dimensions",
-          "label": "Table dimensions",
-          "requirement": "Store the complete table dimensions in dimensions.",
+          "label": "Table shape",
+          "requirement": "Store the shape of the full df in dimensions: its number of rows and columns (df.shape).",
           "kind": "value",
           "feedback": "Read dimensions from the whole input table, not a filtered or preview table.",
           "checkIndex": true,
@@ -2101,22 +2112,24 @@ const registry = {
         {
           "id": "missing",
           "name": "missing",
-          "label": "Missingness assessment",
-          "requirement": "Store missing counts for every column in missing, retaining source column order.",
+          "label": "Missing values by column",
+          "requirement": "Store the missing-value count for every column in missing.",
           "kind": "value",
           "feedback": "Count unknown cells in the requested columns; zero values are not missing.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "mean_minutes",
           "name": "mean_minutes",
           "label": "Completed-delivery means",
-          "requirement": "Store mean minutes by depot for status Delivered only, with depot labels alphabetically ordered. Unknown durations are excluded from the mean.",
+          "requirement": "Store the mean minutes for Delivered records by depot in mean_minutes. Unknown durations are excluded from each mean.",
           "kind": "value",
           "feedback": "Use completed deliveries only and omit unknown durations from each depot mean.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         }
       ],
       "solution": "dimensions = df.shape\nmissing = df.isna().sum()\nmean_minutes = df[df.status == 'Delivered'].groupby('depot').minutes.mean()\nmean_minutes",
@@ -2152,7 +2165,7 @@ const registry = {
       ],
       "collection": "workflow",
       "explanationSteps": [
-        "Dimensions and missingness describe all incoming records, including incomplete deliveries.",
+        "The table shape and missing counts describe all incoming records, including incomplete deliveries.",
         "Only completed deliveries belong in the duration summary; unknown durations do not represent zero-minute deliveries."
       ]
     },
@@ -2340,14 +2353,15 @@ const registry = {
           "id": "labels",
           "name": "labels",
           "label": "Final labels",
-          "requirement": "Store alphabetically sorted unique product labels as a list named labels.",
+          "requirement": "Store each distinct cleaned product label once in a list named labels.",
           "kind": "value",
           "feedback": "Check normalised spellings, uniqueness and alphabetical order.",
           "checkIndex": true,
-          "format": "list"
+          "format": "list",
+          "unorderedItems": true
         }
       ],
-      "solution": "clean = df.copy()\nclean['product'] = (\n    clean['product'].str.strip().str.lower().replace({'note-book': 'notebook'})\n)\nlabels = sorted(clean['product'].unique())\nclean",
+      "solution": "clean = df.copy()\nclean['product'] = (\n    clean['product'].str.strip().str.lower().replace({'note-book': 'notebook'})\n)\nlabels = list(clean['product'].unique())\nclean",
       "hints": {
         "think": "Which differences are accidental formatting, and which labels represent different products?",
         "tools": "copy(), str.strip(), str.lower(), replace() and unique()",
@@ -2372,7 +2386,7 @@ const registry = {
       "alternative": "Equivalent literal replacements are valid, but do not remove punctuation from unrelated labels.",
       "setup": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)\n\nclean = df.copy()\nclean['product'] = (\n    clean['product'].str.strip().str.lower().replace({'note-book': 'notebook'})\n)\nlabels = sorted(clean['product'].unique())\nclean",
+      "reference": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('P001', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, False),\n        ('P002', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P003', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, True),\n        ('P004', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P005', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P006', 'PEN', 'Writing', 'West', 6, 1.2, None, False),\n        ('P007', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P008', 'Note-book', 'Paper', 'West', 8, 3.5, 1, True),\n        ('P009', ' Notebook ', 'Paper', 'East', 2, 3.5, 0, True),\n        ('P010', 'PEN', 'Writing', 'West', 5, 1.2, None, True),\n        ('P011', ' pencil', 'Writing', 'East', 3, 0.8, 0.5, False),\n        ('P012', 'Note-book', 'Paper', 'West', 4, 3.5, 1, True),\n        ('P013', ' Notebook ', 'Paper', 'East', 1, 3.5, 0, True),\n        ('P014', 'PEN', 'Writing', 'West', 6, 1.2, None, True),\n        ('P015', ' pencil', 'Writing', 'East', 2, 0.8, 0.5, True),\n        ('P016', 'Note-book', 'Paper', 'West', 8, 3.5, 1, False),\n    ],\n    columns=['order_id', 'product', 'category', 'region', 'quantity', 'unit_price', 'discount', 'in_stock'],\n)\n\nclean = df.copy()\nclean['product'] = (\n    clean['product'].str.strip().str.lower().replace({'note-book': 'notebook'})\n)\nlabels = list(clean['product'].unique())\nclean",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -3669,7 +3683,7 @@ const registry = {
       "subject": "data",
       "family": "delivery",
       "title": "Combine two batches",
-      "question": "Combine two compatible delivery exports into one clearly ordered handoff.",
+      "question": "Combine two compatible delivery exports into one handoff.",
       "inputs": [
         {
           "name": "df",
@@ -3873,11 +3887,14 @@ const registry = {
           "id": "combined",
           "name": "combined",
           "label": "Combined deliveries",
-          "requirement": "Create combined from df and second. Rename duration in second to minutes and parse it numerically. Keep the same columns and column order as df; sort by delivery_id and reset the index.",
+          "requirement": "Create combined from df and second. Rename duration in second to minutes and parse it numerically. Keep the same columns and column order as df, with every row from both batches.",
           "kind": "frame",
           "feedback": "Check aligned names, numeric duration values, included batches and final row/column order.",
-          "checkIndex": true,
-          "format": "DataFrame"
+          "checkIndex": false,
+          "format": "DataFrame",
+          "unorderedRowsBy": [
+            "delivery_id"
+          ]
         },
         {
           "id": "record_count",
@@ -3890,7 +3907,7 @@ const registry = {
           "format": "number"
         }
       ],
-      "solution": "batch = second.rename(columns={'duration': 'minutes'}).copy()\nbatch['minutes'] = pd.to_numeric(batch.minutes)\ncombined = (\n    pd.concat([df, batch[df.columns]], ignore_index=True)\n    .sort_values('delivery_id')\n    .reset_index(drop=True)\n)\nrecord_count = len(combined)\ncombined",
+      "solution": "batch = second.rename(columns={'duration': 'minutes'}).copy()\nbatch['minutes'] = pd.to_numeric(batch.minutes)\ncombined = pd.concat([df, batch[df.columns]], ignore_index=True)\nrecord_count = len(combined)\ncombined",
       "hints": {
         "think": "Are similarly named fields expressing the same quantity in the same unit?",
         "tools": "rename(), to_numeric(), concat(), sort_values() and reset_index()",
@@ -3917,7 +3934,7 @@ const registry = {
       "alternative": "Align names and types in separate copies before concatenation; the order of those independent preparations may differ.",
       "setup": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Pending', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Returned', 61, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Pending', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Returned', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 33, 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Pending', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Returned', 62, 1.9, '2026-04-06'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Supplied input: second (12 rows)\nsecond = pd.DataFrame(\n    [\n        ('D112', 'North', 'Returned', 1.9, '2026-04-06', '62'),\n        ('D111', 'West', 'Pending', 1.2, '2026-04-06', '26'),\n        ('D110', 'East', 'Delivered', 4, '2026-04-05', '49'),\n        ('D109', 'North', 'Delivered', 3.3, '2026-04-05', '33'),\n        ('D108', 'West', 'Returned', 2.6, '2026-04-04', '29'),\n        ('D107', 'East', 'Pending', 1.9, '2026-04-04', '72'),\n        ('D106', 'North', 'Delivered', 1.2, '2026-04-03', '37'),\n        ('D105', 'West', 'Delivered', 4, '2026-04-03', '45'),\n        ('D104', 'East', 'Returned', 3.3, '2026-04-02', '61'),\n        ('D103', 'North', 'Pending', 2.6, '2026-04-02', '25'),\n        ('D102', 'West', 'Delivered', 1.9, '2026-04-01', '48'),\n        ('D101', 'East', 'Delivered', 1.2, '2026-04-01', '32'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'weight_kg', 'date', 'duration'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Pending', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Returned', 61, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Pending', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Returned', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 33, 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Pending', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Returned', 62, 1.9, '2026-04-06'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Supplied input: second (12 rows)\nsecond = pd.DataFrame(\n    [\n        ('D112', 'North', 'Returned', 1.9, '2026-04-06', '62'),\n        ('D111', 'West', 'Pending', 1.2, '2026-04-06', '26'),\n        ('D110', 'East', 'Delivered', 4, '2026-04-05', '49'),\n        ('D109', 'North', 'Delivered', 3.3, '2026-04-05', '33'),\n        ('D108', 'West', 'Returned', 2.6, '2026-04-04', '29'),\n        ('D107', 'East', 'Pending', 1.9, '2026-04-04', '72'),\n        ('D106', 'North', 'Delivered', 1.2, '2026-04-03', '37'),\n        ('D105', 'West', 'Delivered', 4, '2026-04-03', '45'),\n        ('D104', 'East', 'Returned', 3.3, '2026-04-02', '61'),\n        ('D103', 'North', 'Pending', 2.6, '2026-04-02', '25'),\n        ('D102', 'West', 'Delivered', 1.9, '2026-04-01', '48'),\n        ('D101', 'East', 'Delivered', 1.2, '2026-04-01', '32'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'weight_kg', 'date', 'duration'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Pending', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Returned', 61, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Pending', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Returned', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 33, 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Pending', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Returned', 62, 1.9, '2026-04-06'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Supplied input: second (12 rows)\nsecond = pd.DataFrame(\n    [\n        ('D112', 'North', 'Returned', 1.9, '2026-04-06', '62'),\n        ('D111', 'West', 'Pending', 1.2, '2026-04-06', '26'),\n        ('D110', 'East', 'Delivered', 4, '2026-04-05', '49'),\n        ('D109', 'North', 'Delivered', 3.3, '2026-04-05', '33'),\n        ('D108', 'West', 'Returned', 2.6, '2026-04-04', '29'),\n        ('D107', 'East', 'Pending', 1.9, '2026-04-04', '72'),\n        ('D106', 'North', 'Delivered', 1.2, '2026-04-03', '37'),\n        ('D105', 'West', 'Delivered', 4, '2026-04-03', '45'),\n        ('D104', 'East', 'Returned', 3.3, '2026-04-02', '61'),\n        ('D103', 'North', 'Pending', 2.6, '2026-04-02', '25'),\n        ('D102', 'West', 'Delivered', 1.9, '2026-04-01', '48'),\n        ('D101', 'East', 'Delivered', 1.2, '2026-04-01', '32'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'weight_kg', 'date', 'duration'],\n)\n\nbatch = second.rename(columns={'duration': 'minutes'}).copy()\nbatch['minutes'] = pd.to_numeric(batch.minutes)\ncombined = (\n    pd.concat([df, batch[df.columns]], ignore_index=True)\n    .sort_values('delivery_id')\n    .reset_index(drop=True)\n)\nrecord_count = len(combined)\ncombined",
+      "reference": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Pending', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Returned', 61, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Pending', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Returned', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 33, 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Pending', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Returned', 62, 1.9, '2026-04-06'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Supplied input: second (12 rows)\nsecond = pd.DataFrame(\n    [\n        ('D112', 'North', 'Returned', 1.9, '2026-04-06', '62'),\n        ('D111', 'West', 'Pending', 1.2, '2026-04-06', '26'),\n        ('D110', 'East', 'Delivered', 4, '2026-04-05', '49'),\n        ('D109', 'North', 'Delivered', 3.3, '2026-04-05', '33'),\n        ('D108', 'West', 'Returned', 2.6, '2026-04-04', '29'),\n        ('D107', 'East', 'Pending', 1.9, '2026-04-04', '72'),\n        ('D106', 'North', 'Delivered', 1.2, '2026-04-03', '37'),\n        ('D105', 'West', 'Delivered', 4, '2026-04-03', '45'),\n        ('D104', 'East', 'Returned', 3.3, '2026-04-02', '61'),\n        ('D103', 'North', 'Pending', 2.6, '2026-04-02', '25'),\n        ('D102', 'West', 'Delivered', 1.9, '2026-04-01', '48'),\n        ('D101', 'East', 'Delivered', 1.2, '2026-04-01', '32'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'weight_kg', 'date', 'duration'],\n)\n\nbatch = second.rename(columns={'duration': 'minutes'}).copy()\nbatch['minutes'] = pd.to_numeric(batch.minutes)\ncombined = pd.concat([df, batch[df.columns]], ignore_index=True)\nrecord_count = len(combined)\ncombined",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -4038,22 +4055,30 @@ const registry = {
         {
           "id": "long",
           "name": "long",
-          "label": "Long measurement table",
-          "requirement": "Create long with record_id, measure and value, using steps and minutes only. Keep record order within each measure; list steps before minutes.",
+          "label": "One row per measurement",
+          "requirement": "Create long with record_id, measure and value, using steps and minutes only. Include both measurements for every source record, including unknown values.",
           "kind": "frame",
           "feedback": "Keep each record connected to both requested measurements, with the stated labels and ordering.",
           "checkIndex": false,
-          "format": "DataFrame"
+          "format": "DataFrame",
+          "unorderedRowsBy": [
+            "record_id",
+            "measure"
+          ]
         },
         {
           "id": "duration_records",
           "name": "duration_records",
           "label": "Duration extract",
-          "requirement": "Create duration_records from long for measure minutes and value at least 35, preserving long-table order.",
+          "requirement": "Create duration_records from long for measure minutes and value at least 35.",
           "kind": "frame",
           "feedback": "Select only qualifying duration measurements, not step counts.",
           "checkIndex": false,
-          "format": "DataFrame"
+          "format": "DataFrame",
+          "unorderedRowsBy": [
+            "record_id",
+            "measure"
+          ]
         }
       ],
       "solution": "long = df.melt(\n    id_vars=['record_id'],\n    value_vars=['steps', 'minutes'],\n    var_name='measure',\n    value_name='value',\n)\nduration_records = long[(long.measure == 'minutes') & (long.value >= 35)]\nlong",
@@ -4076,7 +4101,7 @@ const registry = {
       "deliverableType": "Long measurements",
       "chart": null,
       "explanation": "Retain the record identifier while stacking the two measures, then select qualifying duration observations.",
-      "alternative": "Equivalent reshaping is accepted if every requested identifier/measurement pair appears once in the declared order.",
+      "alternative": "Equivalent reshaping is accepted if every requested record and measurement pair appears once with the correct value.",
       "setup": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('A001', 'Morning', '2026-04-01', 2500, 20, 'Previous'),\n        ('A002', 'Evening', '2026-04-01', 3070, 27, 'Previous'),\n        ('A003', 'Morning', '2026-04-02', 3640, 34, 'Previous'),\n        ('A004', 'Evening', '2026-04-02', 4210, 41, 'Previous'),\n        ('A005', 'Morning', '2026-04-03', 4780, 48, 'Previous'),\n        ('A006', 'Evening', '2026-04-03', 5350, 55, 'Previous'),\n        ('A007', 'Morning', '2026-04-04', 5920, 21, 'Previous'),\n        ('A008', 'Evening', '2026-04-04', 2640, 28, 'Previous'),\n        ('A009', 'Morning', '2026-04-05', 3210, 35, 'Previous'),\n        ('A010', 'Evening', '2026-04-05', 3780, 42, 'Previous'),\n        ('A011', 'Morning', '2026-04-06', 4350, 49, 'Previous'),\n        ('A012', 'Evening', '2026-04-06', 4920, 56, 'Previous'),\n    ],\n    columns=['record_id', 'group', 'date', 'steps', 'minutes', 'week'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('A001', 'Morning', '2026-04-01', 2500, 20, 'Previous'),\n        ('A002', 'Evening', '2026-04-01', 3070, 27, 'Previous'),\n        ('A003', 'Morning', '2026-04-02', 3640, 34, 'Previous'),\n        ('A004', 'Evening', '2026-04-02', 4210, 41, 'Previous'),\n        ('A005', 'Morning', '2026-04-03', 4780, 48, 'Previous'),\n        ('A006', 'Evening', '2026-04-03', 5350, 55, 'Previous'),\n        ('A007', 'Morning', '2026-04-04', 5920, 21, 'Previous'),\n        ('A008', 'Evening', '2026-04-04', 2640, 28, 'Previous'),\n        ('A009', 'Morning', '2026-04-05', 3210, 35, 'Previous'),\n        ('A010', 'Evening', '2026-04-05', 3780, 42, 'Previous'),\n        ('A011', 'Morning', '2026-04-06', 4350, 49, 'Previous'),\n        ('A012', 'Evening', '2026-04-06', 4920, 56, 'Previous'),\n    ],\n    columns=['record_id', 'group', 'date', 'steps', 'minutes', 'week'],\n)\n\n# Your work\n\n",
       "reference": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('A001', 'Morning', '2026-04-01', 2500, 20, 'Previous'),\n        ('A002', 'Evening', '2026-04-01', 3070, 27, 'Previous'),\n        ('A003', 'Morning', '2026-04-02', 3640, 34, 'Previous'),\n        ('A004', 'Evening', '2026-04-02', 4210, 41, 'Previous'),\n        ('A005', 'Morning', '2026-04-03', 4780, 48, 'Previous'),\n        ('A006', 'Evening', '2026-04-03', 5350, 55, 'Previous'),\n        ('A007', 'Morning', '2026-04-04', 5920, 21, 'Previous'),\n        ('A008', 'Evening', '2026-04-04', 2640, 28, 'Previous'),\n        ('A009', 'Morning', '2026-04-05', 3210, 35, 'Previous'),\n        ('A010', 'Evening', '2026-04-05', 3780, 42, 'Previous'),\n        ('A011', 'Morning', '2026-04-06', 4350, 49, 'Previous'),\n        ('A012', 'Evening', '2026-04-06', 4920, 56, 'Previous'),\n    ],\n    columns=['record_id', 'group', 'date', 'steps', 'minutes', 'week'],\n)\n\nlong = df.melt(\n    id_vars=['record_id'],\n    value_vars=['steps', 'minutes'],\n    var_name='measure',\n    value_name='value',\n)\nduration_records = long[(long.measure == 'minutes') & (long.value >= 35)]\nlong",
@@ -4244,11 +4269,14 @@ const registry = {
           "id": "clean",
           "name": "clean",
           "label": "Billing handoff",
-          "requirement": "Create clean after keeping the first row per order_id. Trim and lowercase drink; parse price as numeric and exclude unknown prices. Keep only order_id, drink and price; sort by order_id and reset the index.",
+          "requirement": "Create clean after keeping the first row per order_id. Trim and lowercase drink; parse price as numeric and exclude unknown prices. Keep only order_id, drink and price.",
           "kind": "frame",
           "feedback": "Check duplicate IDs, normalised drink labels, valid prices, requested columns and reset ordering.",
-          "checkIndex": true,
-          "format": "DataFrame"
+          "checkIndex": false,
+          "format": "DataFrame",
+          "unorderedRowsBy": [
+            "order_id"
+          ]
         },
         {
           "id": "removed_count",
@@ -4261,7 +4289,7 @@ const registry = {
           "format": "number"
         }
       ],
-      "solution": "clean = df.drop_duplicates(subset=['order_id'], keep='first').copy()\nclean['drink'] = clean.drink.str.strip().str.lower()\nclean['price'] = pd.to_numeric(clean.price, errors='coerce')\nclean = (\n    clean.dropna(subset=['price'])[['order_id', 'drink', 'price']]\n    .sort_values('order_id')\n    .reset_index(drop=True)\n)\nremoved_count = len(df) - len(clean)\nclean",
+      "solution": "clean = df.drop_duplicates(subset=['order_id'], keep='first').copy()\nclean['drink'] = clean.drink.str.strip().str.lower()\nclean['price'] = pd.to_numeric(clean.price, errors='coerce')\nclean = clean.dropna(subset=['price'])[['order_id', 'drink', 'price']]\nremoved_count = len(df) - len(clean)\nclean",
       "hints": {
         "think": "Which losses are intentional policy decisions rather than accidental data loss?",
         "tools": "drop_duplicates(), str.strip(), str.lower(), to_numeric(), dropna() and sort_values()",
@@ -4289,7 +4317,7 @@ const registry = {
       "alternative": "A sequence of explicit intermediate copies or a readable chain is valid. Keep the duplicate policy ahead of eligibility filtering.",
       "setup": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 'invalid', 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C008', ' Mocha', 'Large', None, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 'invalid', 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C008', ' Mocha', 'Large', None, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 'invalid', 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C008', ' Mocha', 'Large', None, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\nclean = df.drop_duplicates(subset=['order_id'], keep='first').copy()\nclean['drink'] = clean.drink.str.strip().str.lower()\nclean['price'] = pd.to_numeric(clean.price, errors='coerce')\nclean = (\n    clean.dropna(subset=['price'])[['order_id', 'drink', 'price']]\n    .sort_values('order_id')\n    .reset_index(drop=True)\n)\nremoved_count = len(df) - len(clean)\nclean",
+      "reference": "import pandas as pd\n\n# Supplied input: df (16 rows)\ndf = pd.DataFrame(\n    [\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 'invalid', 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C008', ' Mocha', 'Large', None, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\nclean = df.drop_duplicates(subset=['order_id'], keep='first').copy()\nclean['drink'] = clean.drink.str.strip().str.lower()\nclean['price'] = pd.to_numeric(clean.price, errors='coerce')\nclean = clean.dropna(subset=['price'])[['order_id', 'drink', 'price']]\nremoved_count = len(df) - len(clean)\nclean",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -4482,11 +4510,12 @@ const registry = {
           "id": "counts",
           "name": "counts",
           "label": "Drink counts",
-          "requirement": "Store counts after trimming and lowercasing drink in counts, with labels alphabetically ordered. Preserve df.",
+          "requirement": "Store the number of orders for each drink after trimming and lowercasing its label in counts. Preserve df.",
           "kind": "value",
           "feedback": "Check the selected population and count each record once under the correct category.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "fig",
@@ -4499,7 +4528,7 @@ const registry = {
           "format": "Figure"
         }
       ],
-      "solution": "work = df.copy()\nwork['drink'] = work.drink.str.strip().str.lower()\ncounts = work.drink.value_counts().sort_index()\nfig, ax = plt.subplots()\nax.bar(counts.index, counts.values)\nax.set(title='Café drink demand', xlabel='Drink', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
+      "solution": "work = df.copy()\nwork['drink'] = work.drink.str.strip().str.lower()\ncounts = work.drink.value_counts()\nfig, ax = plt.subplots()\nax.bar(counts.index, counts.values)\nax.set(title='Café drink demand', xlabel='Drink', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
       "hints": {
         "think": "Does each spelling represent a different drink or just different formatting?",
         "tools": "String accessors, value_counts(), Axes.bar() or Axes.barh(), or Axes.scatter() for a labelled point comparison",
@@ -4531,7 +4560,7 @@ const registry = {
       "alternative": "Labelled individual points are also valid for comparing these summaries. Vertical and horizontal orientations are accepted; bars must use a zero baseline.",
       "setup": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)",
       "starter": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\nwork = df.copy()\nwork['drink'] = work.drink.str.strip().str.lower()\ncounts = work.drink.value_counts().sort_index()\nfig, ax = plt.subplots()\nax.bar(counts.index, counts.values)\nax.set(title='Café drink demand', xlabel='Drink', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
+      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\nwork = df.copy()\nwork['drink'] = work.drink.str.strip().str.lower()\ncounts = work.drink.value_counts()\nfig, ax = plt.subplots()\nax.bar(counts.index, counts.values)\nax.set(title='Café drink demand', xlabel='Drink', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -5378,11 +5407,12 @@ const registry = {
           "id": "means",
           "name": "means",
           "label": "Group means",
-          "requirement": "Create means with mean parsed minutes by group, labels alphabetically ordered; omit invalid durations, not entire groups.",
+          "requirement": "Store the mean parsed minutes for each group in means. Omit invalid durations, not entire groups.",
           "kind": "value",
           "feedback": "Check the eligible population and unknown measurements; compare means rather than totals.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "fig",
@@ -5576,14 +5606,14 @@ const registry = {
           "id": "fig",
           "name": "fig",
           "label": "Figure",
-          "requirement": "Create fig showing every eligible score as a point within its group. Put groups on the horizontal axis in alphabetical order and scores on the vertical axis; modest sideways jitter is optional. Add a meaningful title and labels, and display the figure.",
+          "requirement": "Create fig showing every eligible score as a point within its group. Put groups on the horizontal axis and scores on the vertical axis; modest sideways jitter is optional. Add a meaningful title and labels, and display the figure.",
           "kind": "figure",
           "feedback": "Check the plotted population, quantities, labels and scale.",
           "checkIndex": false,
           "format": "Figure"
         }
       ],
-      "solution": "observations = df.loc[df.attended & df.score.notna(), ['group', 'score']]\nfig, ax = plt.subplots()\nsns.stripplot(\n    data=observations, x='group', y='score', order=['A', 'B'], jitter=False, ax=ax\n)\nax.set(title='Attending learner scores', xlabel='Group', ylabel='Score')\nfig.tight_layout()\nplt.show()",
+      "solution": "observations = df.loc[df.attended & df.score.notna(), ['group', 'score']]\nfig, ax = plt.subplots()\nsns.stripplot(\n    data=observations, x='group', y='score', jitter=False, ax=ax\n)\nax.set(title='Attending learner scores', xlabel='Group', ylabel='Score')\nfig.tight_layout()\nplt.show()",
       "hints": {
         "think": "Would a single average make the individual observations visible?",
         "tools": "Boolean selection and sns.stripplot() or Axes.scatter()",
@@ -5614,7 +5644,7 @@ const registry = {
       "alternative": "Unjittered or modestly jittered points are accepted; the measured score and group membership must not change.",
       "setup": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, 94, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)",
       "starter": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, 94, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, 94, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)\n\nobservations = df.loc[df.attended & df.score.notna(), ['group', 'score']]\nfig, ax = plt.subplots()\nsns.stripplot(\n    data=observations, x='group', y='score', order=['A', 'B'], jitter=False, ax=ax\n)\nax.set(title='Attending learner scores', xlabel='Group', ylabel='Score')\nfig.tight_layout()\nplt.show()",
+      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('S001', 'Learner 1', 'A', 2, 55, False, '2026-04-01'),\n        ('S002', 'Learner 2', 'B', 5, 78, True, '2026-04-01'),\n        ('S003', 'Learner 3', 'A', 3, 68, True, '2026-04-02'),\n        ('S004', 'Learner 4', 'B', 7, None, True, '2026-04-02'),\n        ('S005', 'Learner 5', 'A', 4, 72, False, '2026-04-03'),\n        ('S006', 'Learner 6', 'B', 6, 85, True, '2026-04-03'),\n        ('S007', 'Learner 7', 'A', 8, 94, True, '2026-04-04'),\n        ('S008', 'Learner 8', 'B', 1, 49, True, '2026-04-04'),\n        ('S009', 'Learner 9', 'A', 2, 56, False, '2026-04-05'),\n        ('S010', 'Learner 10', 'B', 5, 79, True, '2026-04-05'),\n        ('S011', 'Learner 11', 'A', 3, 69, True, '2026-04-06'),\n        ('S012', 'Learner 12', 'B', 7, 91, True, '2026-04-06'),\n    ],\n    columns=['submission_id', 'student', 'group', 'hours', 'score', 'attended', 'date'],\n)\n\nobservations = df.loc[df.attended & df.score.notna(), ['group', 'score']]\nfig, ax = plt.subplots()\nsns.stripplot(\n    data=observations, x='group', y='score', jitter=False, ax=ax\n)\nax.set(title='Attending learner scores', xlabel='Group', ylabel='Score')\nfig.tight_layout()\nplt.show()",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -5818,14 +5848,14 @@ const registry = {
           "id": "fig",
           "name": "fig",
           "label": "Figure",
-          "requirement": "Create fig comparing depot medians, middle 50%, and 1.5-IQR whiskers, including outliers. Put depots on the horizontal axis in alphabetical order and minutes on the vertical axis. Add a meaningful title and labels, and display the figure.",
+          "requirement": "Create fig comparing depot medians, middle 50%, and 1.5-IQR whiskers, including outliers. Put depots on the horizontal axis and minutes on the vertical axis. Add a meaningful title and labels, and display the figure.",
           "kind": "figure",
           "feedback": "Check the plotted population, quantities, labels and scale.",
           "checkIndex": false,
           "format": "Figure"
         }
       ],
-      "solution": "work = df.copy()\nwork['minutes'] = pd.to_numeric(work.minutes, errors='coerce')\nobservations = work[['depot', 'minutes']].dropna()\nfig, ax = plt.subplots()\nsns.boxplot(\n    data=observations,\n    x='depot',\n    y='minutes',\n    order=sorted(observations.depot.unique()),\n    ax=ax,\n)\nax.set(title='Delivery duration spread', xlabel='Depot', ylabel='Minutes')\nfig.tight_layout()\nplt.show()",
+      "solution": "work = df.copy()\nwork['minutes'] = pd.to_numeric(work.minutes, errors='coerce')\nobservations = work[['depot', 'minutes']].dropna()\nfig, ax = plt.subplots()\nsns.boxplot(\n    data=observations,\n    x='depot',\n    y='minutes',\n    ax=ax,\n)\nax.set(title='Delivery duration spread', xlabel='Depot', ylabel='Minutes')\nfig.tight_layout()\nplt.show()",
       "hints": {
         "think": "What could two groups with similar means still differ in?",
         "tools": "to_numeric(), dropna(), sns.boxplot() or Axes.boxplot()",
@@ -5857,7 +5887,7 @@ const registry = {
       "alternative": "Matplotlib or Seaborn box plots are accepted with the same group quartiles, 1.5-IQR whiskers and visible outliers.",
       "setup": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (24 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Delivered', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Delivered', None, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Delivered', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Delivered', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 'bad', 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Delivered', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Delivered', 62, 1.9, '2026-04-06'),\n        ('D013', 'East', 'Delivered', 46, 2.6, '2026-04-07'),\n        ('D014', 'West', 'Delivered', 38, 3.3, '2026-04-07'),\n        ('D015', 'North', 'Delivered', 73, 4, '2026-04-08'),\n        ('D016', 'East', 'Delivered', 30, 1.2, '2026-04-08'),\n        ('D017', 'West', 'Delivered', 34, 1.9, '2026-04-09'),\n        ('D018', 'North', 'Delivered', 50, 2.6, '2026-04-09'),\n        ('D019', 'East', 'Delivered', 27, 3.3, '2026-04-10'),\n        ('D020', 'West', 'Delivered', 63, 4, '2026-04-10'),\n        ('D021', 'North', 'Delivered', 47, 1.2, '2026-04-11'),\n        ('D022', 'East', 'Delivered', 180, 1.9, '2026-04-11'),\n        ('D023', 'West', 'Delivered', 74, 2.6, '2026-04-12'),\n        ('D024', 'North', 'Delivered', 31, 3.3, '2026-04-12'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)",
       "starter": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (24 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Delivered', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Delivered', None, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Delivered', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Delivered', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 'bad', 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Delivered', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Delivered', 62, 1.9, '2026-04-06'),\n        ('D013', 'East', 'Delivered', 46, 2.6, '2026-04-07'),\n        ('D014', 'West', 'Delivered', 38, 3.3, '2026-04-07'),\n        ('D015', 'North', 'Delivered', 73, 4, '2026-04-08'),\n        ('D016', 'East', 'Delivered', 30, 1.2, '2026-04-08'),\n        ('D017', 'West', 'Delivered', 34, 1.9, '2026-04-09'),\n        ('D018', 'North', 'Delivered', 50, 2.6, '2026-04-09'),\n        ('D019', 'East', 'Delivered', 27, 3.3, '2026-04-10'),\n        ('D020', 'West', 'Delivered', 63, 4, '2026-04-10'),\n        ('D021', 'North', 'Delivered', 47, 1.2, '2026-04-11'),\n        ('D022', 'East', 'Delivered', 180, 1.9, '2026-04-11'),\n        ('D023', 'West', 'Delivered', 74, 2.6, '2026-04-12'),\n        ('D024', 'North', 'Delivered', 31, 3.3, '2026-04-12'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (24 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Delivered', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Delivered', None, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Delivered', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Delivered', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 'bad', 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Delivered', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Delivered', 62, 1.9, '2026-04-06'),\n        ('D013', 'East', 'Delivered', 46, 2.6, '2026-04-07'),\n        ('D014', 'West', 'Delivered', 38, 3.3, '2026-04-07'),\n        ('D015', 'North', 'Delivered', 73, 4, '2026-04-08'),\n        ('D016', 'East', 'Delivered', 30, 1.2, '2026-04-08'),\n        ('D017', 'West', 'Delivered', 34, 1.9, '2026-04-09'),\n        ('D018', 'North', 'Delivered', 50, 2.6, '2026-04-09'),\n        ('D019', 'East', 'Delivered', 27, 3.3, '2026-04-10'),\n        ('D020', 'West', 'Delivered', 63, 4, '2026-04-10'),\n        ('D021', 'North', 'Delivered', 47, 1.2, '2026-04-11'),\n        ('D022', 'East', 'Delivered', 180, 1.9, '2026-04-11'),\n        ('D023', 'West', 'Delivered', 74, 2.6, '2026-04-12'),\n        ('D024', 'North', 'Delivered', 31, 3.3, '2026-04-12'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\nwork = df.copy()\nwork['minutes'] = pd.to_numeric(work.minutes, errors='coerce')\nobservations = work[['depot', 'minutes']].dropna()\nfig, ax = plt.subplots()\nsns.boxplot(\n    data=observations,\n    x='depot',\n    y='minutes',\n    order=sorted(observations.depot.unique()),\n    ax=ax,\n)\nax.set(title='Delivery duration spread', xlabel='Depot', ylabel='Minutes')\nfig.tight_layout()\nplt.show()",
+      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (24 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Delivered', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Delivered', None, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Delivered', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Delivered', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 'bad', 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Delivered', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Delivered', 62, 1.9, '2026-04-06'),\n        ('D013', 'East', 'Delivered', 46, 2.6, '2026-04-07'),\n        ('D014', 'West', 'Delivered', 38, 3.3, '2026-04-07'),\n        ('D015', 'North', 'Delivered', 73, 4, '2026-04-08'),\n        ('D016', 'East', 'Delivered', 30, 1.2, '2026-04-08'),\n        ('D017', 'West', 'Delivered', 34, 1.9, '2026-04-09'),\n        ('D018', 'North', 'Delivered', 50, 2.6, '2026-04-09'),\n        ('D019', 'East', 'Delivered', 27, 3.3, '2026-04-10'),\n        ('D020', 'West', 'Delivered', 63, 4, '2026-04-10'),\n        ('D021', 'North', 'Delivered', 47, 1.2, '2026-04-11'),\n        ('D022', 'East', 'Delivered', 180, 1.9, '2026-04-11'),\n        ('D023', 'West', 'Delivered', 74, 2.6, '2026-04-12'),\n        ('D024', 'North', 'Delivered', 31, 3.3, '2026-04-12'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\nwork = df.copy()\nwork['minutes'] = pd.to_numeric(work.minutes, errors='coerce')\nobservations = work[['depot', 'minutes']].dropna()\nfig, ax = plt.subplots()\nsns.boxplot(\n    data=observations,\n    x='depot',\n    y='minutes',\n    ax=ax,\n)\nax.set(title='Delivery duration spread', xlabel='Depot', ylabel='Minutes')\nfig.tight_layout()\nplt.show()",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -6243,7 +6273,7 @@ const registry = {
         {
           "id": "population",
           "name": "population",
-          "label": "Shared population",
+          "label": "Eligible morning orders",
           "requirement": "Create population as AM orders with known numeric price; trim and lowercase drink. Preserve other fields and source order.",
           "kind": "frame",
           "feedback": "Both views need the same eligible morning orders with standardised drink labels.",
@@ -6254,24 +6284,25 @@ const registry = {
           "id": "counts",
           "name": "counts",
           "label": "Drink frequencies",
-          "requirement": "Store drink counts from population in counts, labels alphabetically ordered.",
+          "requirement": "Store the number of orders for each drink in population in counts.",
           "kind": "value",
           "feedback": "Check the selected population and count each record once under the correct category.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "fig",
           "name": "fig",
           "label": "Figure",
-          "requirement": "Create fig with two panels in this order: zero-based bars comparing drink counts, then price frequencies across at least two contiguous numeric intervals. Both panels must use population. Title and label both views, and display the figure.",
+          "requirement": "Create fig with two panels: bars comparing drink counts, then price frequencies across at least two contiguous numeric intervals. Bar heights must start at zero. Both panels must use population. Title and label both views, and display the figure.",
           "kind": "figure",
           "feedback": "Check the plotted population, quantities, labels and scale.",
           "checkIndex": false,
           "format": "Figure"
         }
       ],
-      "solution": "population = df[(df['shift'] == 'AM') & df.price.notna()].copy()\npopulation['drink'] = population.drink.str.strip().str.lower()\ncounts = population.drink.value_counts().sort_index()\nfig, axes = plt.subplots(1, 2, figsize=(9, 4))\naxes[0].bar(counts.index, counts.values)\naxes[0].set(title='Morning drink demand', xlabel='Drink', ylabel='Orders')\naxes[1].hist(population.price, bins=4)\naxes[1].set(title='Morning order prices', xlabel='Price (dollars)', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
+      "solution": "population = df[(df['shift'] == 'AM') & df.price.notna()].copy()\npopulation['drink'] = population.drink.str.strip().str.lower()\ncounts = population.drink.value_counts()\nfig, axes = plt.subplots(1, 2, figsize=(9, 4))\naxes[0].bar(counts.index, counts.values)\naxes[0].set(title='Morning drink demand', xlabel='Drink', ylabel='Orders')\naxes[1].hist(population.price, bins=4)\naxes[1].set(title='Morning order prices', xlabel='Price (dollars)', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
       "hints": {
         "think": "Would two different populations make the panels tell a consistent story?",
         "tools": "Boolean selection, string accessors, value_counts(), subplots(), bar() and hist()",
@@ -6316,7 +6347,7 @@ const registry = {
       "alternative": "You may use either plotting library for either panel, but both panels must use the one declared population.",
       "setup": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', None, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)",
       "starter": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', None, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\n# Your work\n\n",
-      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', None, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\npopulation = df[(df['shift'] == 'AM') & df.price.notna()].copy()\npopulation['drink'] = population.drink.str.strip().str.lower()\ncounts = population.drink.value_counts().sort_index()\nfig, axes = plt.subplots(1, 2, figsize=(9, 4))\naxes[0].bar(counts.index, counts.values)\naxes[0].set(title='Morning drink demand', xlabel='Drink', ylabel='Orders')\naxes[1].hist(population.price, bins=4)\naxes[1].set(title='Morning order prices', xlabel='Price (dollars)', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
+      "reference": "import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\n# Supplied input: df (20 rows)\ndf = pd.DataFrame(\n    [\n        ('C001', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-01'),\n        ('C002', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-01'),\n        ('C003', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-02'),\n        ('C004', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-02'),\n        ('C005', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-03'),\n        ('C006', 'tea', 'Large', None, 1, 'AM', '2026-04-03'),\n        ('C007', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-04'),\n        ('C008', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-04'),\n        ('C009', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-05'),\n        ('C010', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-05'),\n        ('C011', 'LATTE', 'Small', 4.5, 0.5, 'PM', '2026-04-06'),\n        ('C012', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-06'),\n        ('C013', ' Latte ', 'Small', 4.5, 0, 'AM', '2026-04-07'),\n        ('C014', 'tea', 'Large', 2.8, 1, 'PM', '2026-04-07'),\n        ('C015', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-08'),\n        ('C016', ' Mocha', 'Large', 5.2, None, 'AM', '2026-04-08'),\n        ('C017', ' Latte ', 'Small', 4.5, 0, 'PM', '2026-04-09'),\n        ('C018', 'tea', 'Large', 2.8, 1, 'AM', '2026-04-09'),\n        ('C019', 'LATTE', 'Small', 4.5, 0.5, 'AM', '2026-04-10'),\n        ('C020', ' Mocha', 'Large', 5.2, None, 'PM', '2026-04-10'),\n    ],\n    columns=['order_id', 'drink', 'size', 'price', 'tip', 'shift', 'date'],\n)\n\npopulation = df[(df['shift'] == 'AM') & df.price.notna()].copy()\npopulation['drink'] = population.drink.str.strip().str.lower()\ncounts = population.drink.value_counts()\nfig, axes = plt.subplots(1, 2, figsize=(9, 4))\naxes[0].bar(counts.index, counts.values)\naxes[0].set(title='Morning drink demand', xlabel='Drink', ylabel='Orders')\naxes[1].hist(population.price, bins=4)\naxes[1].set(title='Morning order prices', xlabel='Price (dollars)', ylabel='Orders')\nfig.tight_layout()\nplt.show()",
       "policies": [
         "Keep all supplied source tables unchanged. Work on separate outputs."
       ],
@@ -6532,11 +6563,12 @@ const registry = {
           "id": "units",
           "name": "units",
           "label": "Category unit totals",
-          "requirement": "Store summed quantity by category in units, with category labels alphabetically ordered.",
+          "requirement": "Store the total quantity sold for each category in units.",
           "kind": "value",
           "feedback": "Sum quantities in the requested population; count records only when the question asks for record counts.",
           "checkIndex": true,
-          "format": "Series"
+          "format": "Series",
+          "unorderedIndex": true
         },
         {
           "id": "fig",

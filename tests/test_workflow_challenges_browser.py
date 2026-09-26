@@ -33,7 +33,7 @@ with sync_playwright() as p:
  page.locator('#challengeResults').screenshot(path=str(out/(args.engine+'-mixed-feedback.png')))
  page.locator('#foundationEditor').fill(c['reference']);assert page.locator('.case-stale').count()==1
  run(c['reference']);assert page.locator('.case-stale').count()==0
- run(c['reference'].replace("means = eligible.groupby('group').score.mean()","raise ValueError('test stop')"))
+ run(c['reference'].replace("means = eligible.groupby('group')['score'].mean()","raise ValueError('test stop')"))
  assert page.locator('.check-unavailable').count()==1 and page.locator('.check-correct').count()==3
  assert 'test stop' in page.locator('#foundationOutput').inner_text()
  run(c['reference']);assert page.locator('.check-unavailable').count()==0
@@ -50,8 +50,11 @@ with sync_playwright() as p:
  c=get('VC01');open_challenge(c);run(c['reference'].replace('ax.bar(','ax.barh(').replace("xlabel='Drink', ylabel='Orders'","xlabel='Orders', ylabel='Drink'"));assert page.locator('.check-needs-attention,.check-unavailable').count()==0
  page.locator('.case-help>summary').click();assert page.locator('.case-help details[open]').count()==0
  page.get_by_text('Hint 1 — Think',exact=True).click();assert page.locator('.case-help details[open]').count()==1
- assert page.locator('.case-help pre').is_hidden()
- page.get_by_text('Explained solution',exact=True).click();assert page.locator('.case-help pre').is_visible()
+ assert page.locator('.case-solution-code').is_hidden()
+ page.get_by_text('Explained solution',exact=True).click()
+ assert page.locator('.case-solution-code').is_visible()
+ assert page.locator('.case-solution-code').inner_text().strip()==c['solution'].strip()
+ assert page.locator('.case-solution-setup pre').is_hidden()
  # Audit regressions must also hold in the browser's actual Matplotlib/Pyodide versions.
  c=get('VC01');open_challenge(c)
  run(c['reference'].replace('ax.bar(counts.index, counts.values)','ax.scatter(counts.index, counts.values)'))

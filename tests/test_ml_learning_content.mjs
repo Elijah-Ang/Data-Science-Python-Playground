@@ -63,22 +63,55 @@ for(const e of all){
 }
 assert.equal(new Set(all.map(e=>JSON.stringify(e.hints))).size,all.length,'Each task needs its own help');
 
-// Comparisons expose each result directly. Every checked output name must be
-// visible in the task, including the copied regression retrieval exercise.
+// Small exercises name their output variables; complete workflows show a
+// separate variable contract beside the brief.
+for(const e of all.filter(e=>e.kind==='python'&&!e.contract)){
+  for(const name of e.outputs.filter(name=>!['answer','X','y','X_train','X_test'].includes(name)))
+    assert(e.task.includes(name),e.id+' hides output '+name);
+}
+for(const challenge of c.challenges){
+  const contractNames=new Set(challenge.exercise.contract.map(item=>item.name));
+  for(const name of challenge.exercise.outputs)
+    assert(contractNames.has(name),challenge.id+' hides output '+name);
+}
 for(const [id,names] of Object.entries({
+  'ML-F05-2':['original_rmse','shifted_rmse'],
+  'ML-W02-2':['model_rmse','reference_rmse'],
+  'ML-W10-1':['fit_intercept','distance_coefficient'],
+  'ML-W14-1':['train','test'],
+  'ML-R01-1':['slope','intercept'],
+  'ML-R02-1':['rmse','r2'],
   'ML-R02-3':['evaluation_mean','training_mean'],
   'ML-R-R1-2':['evaluation_mean','training_mean'],
   'ML-R09-2':['leaf','prediction'],
+  'ML-R11-1':['slope','training_r2'],
+  'ML-C02-1':['precision_b','recall_b'],
   'ML-C03-2':['macro_f1','accuracy'],
   'ML-C03-3':['macro_f1','accuracy'],
+  'ML-C14-1':['leaf','label'],
+  'ML-N05-1':['iterations_used','iteration_limit'],
+  'ML-N06-1':['layers','alpha'],
   'ML-U02-2':['raw_distance','scaled_distance'],
   'ML-U03-2':['cluster','distance'],
+  'ML-U08-2':['sizes_2','sizes_4'],
+  'ML-P04-2':['retained_80','retained_95'],
+  'ML-P-R1-1':['retained_80','retained_95'],
   'ML-P06-2':['retained_scores','view_2d'],
 })){
   const e=all.find(ex=>ex.id===id);
   assert.deepEqual(e.outputs,names,id+' named results');
   for(const name of names)assert(e.task.includes(name),id+' hides '+name);
   assert(e.checks.every(check=>!check.test.includes("answer[")),id+' retains a hidden dictionary contract');
+}
+
+const evidenceTable=all.find(e=>e.id==='ML-M03-1');
+assert(evidenceTable.task.includes('4.2')&&evidenceTable.task.includes('0.8'));
+assert(!evidenceTable.solution.includes("'role'"),'The report exercise should not invent a role column.');
+const hierarchy=c.challenges.find(ch=>ch.id==='ML-X18');
+assert(hierarchy.exercise.checks.some(check=>check.name==='Cut comparison'));
+for(const ch of c.challenges.filter(ch=>ch.family!=='clustering'&&ch.family!=='pca')){
+  assert(!ch.reference.includes('training_summary='),ch.id+' should omit unrequested table summaries');
+  assert(!/\n(?:preprocessor|pipeline)\n/.test(ch.reference),ch.id+' should omit Playground display expressions');
 }
 
 for(const e of all.filter(e=>e.kind==='python'))assert(e.packages.includes('numpy')&&e.packages.includes('pandas'));
