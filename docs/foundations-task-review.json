@@ -1,10 +1,10 @@
 {
   "baseSHA": "bd473733a1edb5d22b73bb24f1156da2df5316f0",
-  "reviewed": "2026-09-25",
-  "scope": "All 106 cards and 324 exercises: task/solution alignment, explicit outputs, chart label requirements, shared chart finishing guidance, and practical DataFrame outputs in W16 and I22.",
+  "reviewed": "2026-09-26",
+  "scope": "All 106 cards and 324 exercises: read every task, reference, hint and check; clarify shape and dtype language, remove incidental order rules, align labelled summaries and category charts with their checks, and keep meaningful time/rank order.",
   "exercises": {
     "I01-1": {
-      "sha256": "3427bc316af4e00d397eee35326effbf28887f4d026ff6abf7b83a49ccabf503",
+      "sha256": "3995ccd0ce31ba2fed3bda85dfc1e1f5007be296ac7690fc0c2edd9dbc028b70",
       "criteria": [
         "purpose",
         "given input",
@@ -17,7 +17,7 @@
       "note": "Follow the technique — A dictionary pairs each quoted column name with a list; both lists need the same number of rows."
     },
     "I01-2": {
-      "sha256": "7ba1daa0d34e83b70d3bb01df3a374fda87ebda816e90fa2b5cb55f92b05dbd8",
+      "sha256": "b9db73bb0068bbd74f2022c899c87a26db5596b14528e16034fbc83e7154e113",
       "criteria": [
         "purpose",
         "given input",
@@ -30,7 +30,7 @@
       "note": "Adapt the workflow — Dictionary keys determine the initial column order."
     },
     "I01-3": {
-      "sha256": "871e643f2272c7f42353d9a99b87912992c043d44ef126b924b2441120f64f3f",
+      "sha256": "8f9218466e4787510d0817ad99bfda3c2aa61a01ac01b1b784be9e649743233c",
       "criteria": [
         "purpose",
         "given input",
@@ -43,7 +43,7 @@
       "note": "Combine earlier skills — Use the supplied lists as dictionary values; each position represents the same pet."
     },
     "I02-1": {
-      "sha256": "4984d5ea39e00cfc834e2ba011911c2e60f28146ee9c45147e937a7be76c71d5",
+      "sha256": "01c514e4f921adbe0ab4c45deda7495e39158681c7b826a32921dc8187f403fd",
       "criteria": [
         "purpose",
         "given input",
@@ -56,7 +56,7 @@
       "note": "Follow the technique — head starts at the beginning; the number in parentheses limits the rows."
     },
     "I02-2": {
-      "sha256": "e958e04378f42bcf310867fee6e76aba04d1c8a213bea32b3a871c3b2c13bc1c",
+      "sha256": "3ca0d051d5aa5618ad50bc01322144bcffd7680fff2a4a48ed98e5d923bcae94",
       "criteria": [
         "purpose",
         "given input",
@@ -69,7 +69,7 @@
       "note": "Adapt a requirement — The end of a table calls for tail, not head."
     },
     "I02-3": {
-      "sha256": "70b543c875dcc8434866eb186555e34074b868ab6ffdf558f7d7954b65b2decc",
+      "sha256": "400a8bcaa01c2819d9e71a44b5684816e1ce239e8ff59d6f8c3204459d797ee9",
       "criteria": [
         "purpose",
         "given input",
@@ -82,7 +82,7 @@
       "note": "Choose and combine — A reproducible sample needs both a sample size and a random seed."
     },
     "I01CSV-1": {
-      "sha256": "add9377db67ef48ba3909b48259341ca882e1a02d88f3f00749feaed5d9c5953",
+      "sha256": "f8f02d0e80f529ec9954fdbe45fe2955f49d57e94e6981eaca2c381a1cd8deb5",
       "criteria": [
         "purpose",
         "given input",
@@ -95,7 +95,7 @@
       "note": "Follow the technique — read_csv returns a DataFrame; assign it before displaying it."
     },
     "I01CSV-2": {
-      "sha256": "e8dd14a27ff3cbacccbd505e3a372408f7601d9b5ccc84e1fec128ca9caca350",
+      "sha256": "30ec93c05a124b4eb35c79259272e4fd38dd66e20946378d12f54e490d5d84af",
       "criteria": [
         "purpose",
         "given input",
@@ -108,7 +108,7 @@
       "note": "Adapt the workflow — Check the file preview: the separator is a semicolon, not the default comma."
     },
     "I01CSV-3": {
-      "sha256": "f16cdc0a163cfdaa9faf25eaf47c43337bcce8fc4677fc45a12984578c03cb74",
+      "sha256": "7ccce03aa7d7fdd75a5a1b2d7d1788b1f43c5edbb65b175aadfefb663c58b7a6",
       "criteria": [
         "purpose",
         "given input",
@@ -121,7 +121,7 @@
       "note": "Combine earlier skills — Use the import skill with the earlier first-rows inspection skill."
     },
     "I03-1": {
-      "sha256": "ac150b08e99fd9479d10877a164f5d63de0415ed83e69845b9615ae231b745d2",
+      "sha256": "3af09ee1b25688aed1d00ee1cb660d618a37a3593ca8ee495ac0c64f61976927",
       "criteria": [
         "purpose",
         "given input",
@@ -134,7 +134,7 @@
       "note": "Follow the technique — shape is an attribute, so do not add parentheses. Rows come before columns."
     },
     "I03-2": {
-      "sha256": "f165f8b024eedf044c2e89797aa9e3e3cdce9b1b3025b0dfaf7d378b4245a9c7",
+      "sha256": "44d17f2bb190cef5f364b6ff50f576b211107492fefc2759f6a910586ecf00e7",
       "criteria": [
         "purpose",
         "given input",
@@ -144,10 +144,10 @@
         "readable code"
       ],
       "assessment": "reviewed",
-      "note": "Adapt the workflow — len counts records; shape describes both dimensions."
+      "note": "Adapt the workflow — len counts records; df.shape gives both row and column counts."
     },
     "I03-3": {
-      "sha256": "9dd247100c77810242a94f82409c063c5d34f26135a3034cf1c1c24bc4b4d658",
+      "sha256": "dd2206bcafa59f5af2aaa70fe566b04c0897948311341d58ff9fd610ceb32452",
       "criteria": [
         "purpose",
         "given input",
@@ -160,7 +160,7 @@
       "note": "Combine earlier skills — Inspect the loaded table itself; head() would reduce the row count."
     },
     "I04-1": {
-      "sha256": "f557783da1d9606aabee40ea6466fe4a84526cd6908609c7c42e2617d6e3c68d",
+      "sha256": "fdc2535ffa040989b6e845753d3e7b487e0ec03f4df3080290ab1ece2feba6ea",
       "criteria": [
         "purpose",
         "given input",
@@ -173,7 +173,7 @@
       "note": "Follow the technique — columns describes fields; index describes row labels."
     },
     "I04-2": {
-      "sha256": "359f7f391c1bad7d8161c17c805918e76535dd5eb3be8cb9fc1f1c33f1afe1ed",
+      "sha256": "c8ec4bd96e0fba35a5626e2b89337c1e3f1966797634ae51aec6f26d7b23bd06",
       "criteria": [
         "purpose",
         "given input",
@@ -186,7 +186,7 @@
       "note": "Adapt a requirement — index describes rows; columns describes fields."
     },
     "I04-3": {
-      "sha256": "1a62c0b66fd66cb890c710881bb682eae89b0a836a2642c3dd6ac62b2e2d64ca",
+      "sha256": "77faf1fd337c4fb4a2abc28ee69b13d9fd7ea4f9657d8f32ba0474c207d637bd",
       "criteria": [
         "purpose",
         "given input",
@@ -199,7 +199,7 @@
       "note": "Combine earlier skills — Read the actual names rather than guessing from the dataset description."
     },
     "I05-1": {
-      "sha256": "974c5bd68025aa4a08b7b5a3550a224a385f3131c420699c1dc2593009107dc6",
+      "sha256": "a1e2c579d4d652f8edd8ac4b26b93e0bfef7e46910781c6e2b4dd2da4793fdee",
       "criteria": [
         "purpose",
         "given input",
@@ -212,7 +212,7 @@
       "note": "Follow the technique — info prints a report and returns None; dtypes is the Series to leave on the final line."
     },
     "I05-2": {
-      "sha256": "64bca0c665869b81867c8749f6b26b22cd04f2f4f85b34b30ad88dc8e8ca5b30",
+      "sha256": "6f0eee1e9b13877a54bbc8257fe3d3c89eaa3bfc25817bd480535d33ea4a5ee4",
       "criteria": [
         "purpose",
         "given input",
@@ -225,7 +225,7 @@
       "note": "Adapt the workflow — Use dtypes for a returned result; info() prints its overview."
     },
     "I05-3": {
-      "sha256": "62dd15bb72ec65798cba03b836165681e80892cd451f39023de449189f8c4647",
+      "sha256": "136f1f0e62980af4a508ac648f3f7e85d4b8599ede47b1dd1da6c60fecddc516",
       "criteria": [
         "purpose",
         "given input",
@@ -238,7 +238,7 @@
       "note": "Combine earlier skills — Combine importing with a schema check; do not narrow the table first."
     },
     "IR1-1": {
-      "sha256": "70b543c875dcc8434866eb186555e34074b868ab6ffdf558f7d7954b65b2decc",
+      "sha256": "400a8bcaa01c2819d9e71a44b5684816e1ce239e8ff59d6f8c3204459d797ee9",
       "criteria": [
         "purpose",
         "given input",
@@ -251,7 +251,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR1-2": {
-      "sha256": "9dd247100c77810242a94f82409c063c5d34f26135a3034cf1c1c24bc4b4d658",
+      "sha256": "dd2206bcafa59f5af2aaa70fe566b04c0897948311341d58ff9fd610ceb32452",
       "criteria": [
         "purpose",
         "given input",
@@ -264,7 +264,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR1-3": {
-      "sha256": "1a62c0b66fd66cb890c710881bb682eae89b0a836a2642c3dd6ac62b2e2d64ca",
+      "sha256": "77faf1fd337c4fb4a2abc28ee69b13d9fd7ea4f9657d8f32ba0474c207d637bd",
       "criteria": [
         "purpose",
         "given input",
@@ -277,7 +277,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR1-4": {
-      "sha256": "62dd15bb72ec65798cba03b836165681e80892cd451f39023de449189f8c4647",
+      "sha256": "136f1f0e62980af4a508ac648f3f7e85d4b8599ede47b1dd1da6c60fecddc516",
       "criteria": [
         "purpose",
         "given input",
@@ -290,7 +290,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "I06-1": {
-      "sha256": "b9f58dcefeabfd12385b266d20c44f4ecdfde8fa817e786bf6e6b93f8f89001a",
+      "sha256": "a6fa67b1b710cfb2119a27dee8cd996b0fbb3c506cf6f8b62eb5018046ff781b",
       "criteria": [
         "purpose",
         "given input",
@@ -303,7 +303,7 @@
       "note": "Follow the technique — One quoted column name selects a Series; a list of names selects a DataFrame."
     },
     "I06-2": {
-      "sha256": "cd540a4f5a2afff079a588bec964511f70c02eb5fa5fe83e7e3ccec0eb4a8d05",
+      "sha256": "25084fbe4810cdc345d3cba999b17395d220477baaa6dcb0f75d87cd9f021ed9",
       "criteria": [
         "purpose",
         "given input",
@@ -316,7 +316,7 @@
       "note": "Adapt a requirement — Take a preview, then select one column."
     },
     "I06-3": {
-      "sha256": "715e6c676d6b2f47f372d8ad662d65edcea7f25cc04e109bd541a5684a641735",
+      "sha256": "fbaea2ce3a53ecdad103bc7b747270f726607a12102b33bfb863465508812495",
       "criteria": [
         "purpose",
         "given input",
@@ -329,7 +329,7 @@
       "note": "Choose and combine — Choose the end of the table, then the required measurement."
     },
     "I07-1": {
-      "sha256": "a47c55f734ef205e4ea168daf7dbb10fd2c356e2351d4a740d231597d2a0f3c7",
+      "sha256": "8fa6c449a1e09b6baccddc2a9986877e467f084ce7432d894e82cc7dc6e9bd6d",
       "criteria": [
         "purpose",
         "given input",
@@ -342,7 +342,7 @@
       "note": "Follow the technique — The inner brackets make a list; its order controls the output columns."
     },
     "I07-2": {
-      "sha256": "1629adb7cfe08fc819fd45bb4b0e8799b886cd31dde41d2c829b0cac4abbff54",
+      "sha256": "7f8ae074ad38d80be7e9c825f78f57f8090c11863cb37bc5dacffd675f3180ad",
       "criteria": [
         "purpose",
         "given input",
@@ -355,7 +355,7 @@
       "note": "Adapt a requirement — Even one name inside a list keeps a two-dimensional table."
     },
     "I07-3": {
-      "sha256": "2093e0ce8a8c769cd4f92283f5dd1e02918a9faad3367e6258ed29405d1e8799",
+      "sha256": "9517a2fdc8727c0ca88f8a47ceb1fc314b027b14d83b7159870eb9efb1909b5e",
       "criteria": [
         "purpose",
         "given input",
@@ -368,7 +368,7 @@
       "note": "Choose and combine — Combine a row preview with a deliberate column order."
     },
     "I08-1": {
-      "sha256": "c3b402935db34140c86a8b7572deafef9f3631f528c782fafa0190415fac8ffb",
+      "sha256": "82ecf13b7e14cfeec7fd1eabcb176db63f2492b19fcfc6931a662de3be124167",
       "criteria": [
         "purpose",
         "given input",
@@ -381,7 +381,7 @@
       "note": "Follow the technique — A positional slice excludes the stop. A second slice after the comma selects columns."
     },
     "I08-2": {
-      "sha256": "49325d6c83f03865bdc9c16fbdcd2388e11fb7092fc6689a9b10527d94021eb4",
+      "sha256": "936d6d854547922f64f34d0f3b5acd0e50b3d1dddce6375a73520f28af46c71d",
       "criteria": [
         "purpose",
         "given input",
@@ -394,7 +394,7 @@
       "note": "Adapt a requirement — Position 1 is the second row; the stop is excluded."
     },
     "I08-3": {
-      "sha256": "912daa1b09341923d19d76e6c15598d2e86dad0277e522feb1172f3441cd8f01",
+      "sha256": "b7bdd87297763ffe0842740912f54dd9b89cd2c4880a147485cc8196dee0d55c",
       "criteria": [
         "purpose",
         "given input",
@@ -407,7 +407,7 @@
       "note": "Choose and combine — Negative positions count from the end; a column slice preserves a DataFrame."
     },
     "I09-1": {
-      "sha256": "b4ae3d1c22d094c10cf7bd3566dcb8406afbfc1901b137ab6fb58259e5822bfe",
+      "sha256": "8dd18af9f79951f4a8222ee75819c9f0d9e1eb8183072e476e0a39fd6477c809",
       "criteria": [
         "purpose",
         "given input",
@@ -420,7 +420,7 @@
       "note": "Follow the technique — A label slice includes its ending label. Keep the column name in a list for a DataFrame."
     },
     "I09-2": {
-      "sha256": "03234efcb60f18826c03fe497ac967a524c14db07675d44aac986f488d9efb21",
+      "sha256": "bf94fe3bbb3311886002d475de7bca292f6d9e5564eddaa033133773195be070",
       "criteria": [
         "purpose",
         "given input",
@@ -433,7 +433,7 @@
       "note": "Adapt a requirement — A list chooses separate labels; a slice includes the labels in between."
     },
     "I09-3": {
-      "sha256": "620a36b81e08351c44b8fdd1774e13896d126a4fa7d9c9a04b64984bc32d9b1f",
+      "sha256": "eb959474699ec88a39562b02a1c8ecda5c54cee4e5eea35390cd40b553f8123a",
       "criteria": [
         "purpose",
         "given input",
@@ -446,7 +446,7 @@
       "note": "Choose and combine — Both the row list and column list specify their output order."
     },
     "I10-1": {
-      "sha256": "5d414bb132adaf1f2564753df7bf36b71443d90f2646d6672608ea37a7a1708b",
+      "sha256": "916470783339a4e06eea25282bd964fb557b90f84c5e862e98b1ff960c23972f",
       "criteria": [
         "purpose",
         "given input",
@@ -459,7 +459,7 @@
       "note": "Follow the technique — The comparison makes a mask; df[mask] selects the rows where it is True."
     },
     "I10-2": {
-      "sha256": "0a9484e96ceada0414f3249d91fe0c3475c1f30afeb90addb50c7ac31d5e36d3",
+      "sha256": "87de8fd4566ff443e96db9dcba0e8107bfcc94fe7f12831e16d6c720e3b2eec8",
       "criteria": [
         "purpose",
         "given input",
@@ -472,7 +472,7 @@
       "note": "Use category membership — isin([\"Latte\", \"Tea\"]) creates a membership mask."
     },
     "I10-3": {
-      "sha256": "7a556829c7aa1b42bb8c33cceb5b69fe6526c545b263e0fd56e64653ccdb5413",
+      "sha256": "3ea7d48ae50fc062e8d9606389b0c775d7b02c8ba299c466101001524c25226f",
       "criteria": [
         "purpose",
         "given input",
@@ -485,7 +485,7 @@
       "note": "Use an inclusive interval — between(2, 5) includes both endpoints; two comparisons combined with & also work."
     },
     "I11-1": {
-      "sha256": "4d5e2f7db3a5bda06a31c33b8171034f14e13b49fb41c2d2f5d1fbf2f939673c",
+      "sha256": "2667fb490ac9c898efddb45b640a2cefdeaa3d0f8258aeaa4202c990023e4ae2",
       "criteria": [
         "purpose",
         "given input",
@@ -498,7 +498,7 @@
       "note": "Follow the technique — Parenthesize each comparison before combining them with &."
     },
     "I11-2": {
-      "sha256": "c22f49d2615d82eea6119c4a2141a209c62715f7f0275bb9cf0b83af0042a52f",
+      "sha256": "e55a7960e081c044f9e45442581098872e30dacf90dd4486b9eb642a8a25da03",
       "criteria": [
         "purpose",
         "given input",
@@ -511,7 +511,7 @@
       "note": "Adapt a requirement — OR keeps a row when either comparison is true."
     },
     "I11-3": {
-      "sha256": "c00e64a17dcb123b9dd2df1a7f5fddf4bfa539f24177e001c6d918a501bebdf7",
+      "sha256": "0d3c73e2e159f6aa156385a526959ca380463bcde03c0fae30e4698e89b78310",
       "criteria": [
         "purpose",
         "given input",
@@ -524,7 +524,7 @@
       "note": "Choose and combine — Use an exclusion and two inclusive boundaries; all must hold."
     },
     "IR2-1": {
-      "sha256": "2093e0ce8a8c769cd4f92283f5dd1e02918a9faad3367e6258ed29405d1e8799",
+      "sha256": "9517a2fdc8727c0ca88f8a47ceb1fc314b027b14d83b7159870eb9efb1909b5e",
       "criteria": [
         "purpose",
         "given input",
@@ -537,7 +537,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR2-2": {
-      "sha256": "620a36b81e08351c44b8fdd1774e13896d126a4fa7d9c9a04b64984bc32d9b1f",
+      "sha256": "eb959474699ec88a39562b02a1c8ecda5c54cee4e5eea35390cd40b553f8123a",
       "criteria": [
         "purpose",
         "given input",
@@ -550,7 +550,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR2-3": {
-      "sha256": "c00e64a17dcb123b9dd2df1a7f5fddf4bfa539f24177e001c6d918a501bebdf7",
+      "sha256": "0d3c73e2e159f6aa156385a526959ca380463bcde03c0fae30e4698e89b78310",
       "criteria": [
         "purpose",
         "given input",
@@ -563,7 +563,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "I12-1": {
-      "sha256": "2cb195c0aede91c07fcd9fd1fc8e11b0011f5edffca0c442497a5a697c73eea3",
+      "sha256": "87603e4db4d8742f35d8450b273de97df63bbab72e8ea4aa415f673d1db4c418",
       "criteria": [
         "purpose",
         "given input",
@@ -576,7 +576,7 @@
       "note": "Follow the technique — Filter first, then sort the remaining whole rows; ascending=False puts the highest first."
     },
     "I12-2": {
-      "sha256": "afa1c217df4637e2431449badd34f800f008184b05f68cc17defc76c86047796",
+      "sha256": "6881e365c4451b5dd256b446b1a1934c54cfec70c87a3d67f0a7690fc1049670",
       "criteria": [
         "purpose",
         "given input",
@@ -589,7 +589,7 @@
       "note": "Change sort direction — sort_values(\"rating\"), ascending=False, filtered = are the tools to try."
     },
     "I12-3": {
-      "sha256": "86171171bf04f9e52ae3efed1f3441153dd61727c928505dc914a7a26a54a08d",
+      "sha256": "406682076e2869eba704bf69fee13c98a5e19581d26de26c7f0e67496880037c",
       "criteria": [
         "purpose",
         "given input",
@@ -602,7 +602,7 @@
       "note": "Sort with two keys — Pass a list of columns and a matching list of ascending flags."
     },
     "I13-1": {
-      "sha256": "9b944ac68724a30a54e8065e7da8e8111aa4b1369d78fc2a427763f3a983d033",
+      "sha256": "7b885ed86f751e05fda0c2648bfe621286c6acb60f1f5b4d8448d25675635499",
       "criteria": [
         "purpose",
         "given input",
@@ -615,7 +615,7 @@
       "note": "Follow the technique — The count and ranking column are separate arguments; rank whole rows rather than sorting one Series."
     },
     "I13-2": {
-      "sha256": "df360f858e463ae99161287f7c8563923316933627897004d4082372bdff17cc",
+      "sha256": "17bf3cfc7ac29f2ce6ca56ac4562ac5104d8e17f8ef4abd5086ef9fb8fd437a3",
       "criteria": [
         "purpose",
         "given input",
@@ -628,7 +628,7 @@
       "note": "Adapt a requirement — The smallest extreme uses the opposite direction from nlargest."
     },
     "I13-3": {
-      "sha256": "bd6dcbd3f15d24df54e066ab6835140e49c4a4ec519ca0dffc63a774e745a297",
+      "sha256": "080359b6776acf95e824848f4188e33d46aeeb77cd6b635b59e9ba0bf47088a3",
       "criteria": [
         "purpose",
         "given input",
@@ -641,7 +641,7 @@
       "note": "Choose and combine — First define the eligible group, then find its extreme."
     },
     "I14-1": {
-      "sha256": "fdb69c5a299528875266c1ceffadec7797ced6f439f7cdd97aa320f1eca70150",
+      "sha256": "160880845d05b46ffdb68cfb2e085fe02a057a598db64cbdc9a535a0b36c26c8",
       "criteria": [
         "purpose",
         "given input",
@@ -654,7 +654,7 @@
       "note": "Follow the technique — nunique counts labels; unique returns the labels themselves."
     },
     "I14-2": {
-      "sha256": "6f08679fc393817c07cc29753f757539af443c21e0105233c89fe37ec8e1ea32",
+      "sha256": "04625c325d3300a7800a5804c65482b39cc40b1ec5d3e8f1d05afee964663403",
       "criteria": [
         "purpose",
         "given input",
@@ -667,7 +667,7 @@
       "note": "Adapt a requirement — The labels themselves require unique, not their count."
     },
     "I14-3": {
-      "sha256": "8e7767570d9b354c6b594e7d93b84e0f3f8fe7fd5d1c2a6431926012f446a905",
+      "sha256": "a51d021985797048e98954ec67c0384c97a9f1c8cae0be4b0ca420715f2da219",
       "criteria": [
         "purpose",
         "given input",
@@ -680,7 +680,7 @@
       "note": "Combine earlier skills — Choose the report population before listing its categories."
     },
     "I15-1": {
-      "sha256": "5f395c12c2e0e46657d2f40a796e5e16b4bf085ebc22b74c96448cccf8100ecc",
+      "sha256": "ac6cb5c4f46875bfcfc50f28d24598826965a7e4aef22062a9103b04fbd34793",
       "criteria": [
         "purpose",
         "given input",
@@ -693,7 +693,7 @@
       "note": "Follow the technique — normalize=True changes counts to proportions; missing values are excluded by default."
     },
     "I15-2": {
-      "sha256": "bb107662f1eee6ab4e259e1e4acc708a777e988ac6363dc0fe60a14460b2ca75",
+      "sha256": "95796ce2ade19ff45c55c9b19e431cefc89daacf6b40906689478a682e88d1d1",
       "criteria": [
         "purpose",
         "given input",
@@ -706,7 +706,7 @@
       "note": "Adapt a requirement — Leave normalize off when the question asks how many."
     },
     "I15-3": {
-      "sha256": "8e088af94a1c60da2b39dedde05120bd9ccf6102aff381fafd84570fcba51008",
+      "sha256": "88b501a433ec78f3553eb410d3fd9833abbc2ac3ed381a7c5ea468de29a88856",
       "criteria": [
         "purpose",
         "given input",
@@ -719,7 +719,7 @@
       "note": "Choose and combine — Define the report population before calculating its denominator."
     },
     "I16-1": {
-      "sha256": "bd3a7a347c3ca3d11773ee33700f892deab5d54e592366fb854c09ace26447e1",
+      "sha256": "a519666d4cc71a9d0cd6be0c19bac21f1d737947e177be45bdfb83e787f00015",
       "criteria": [
         "purpose",
         "given input",
@@ -732,7 +732,7 @@
       "note": "Follow the technique — isna makes the missing mask; sum counts True values down each column."
     },
     "I16-2": {
-      "sha256": "37b5698a544c7affbcd3e1d7502fd4ef09ae1184abf86946d770f09f65c87a9c",
+      "sha256": "ab9128e82011ec36add4567bdf5c816b191d2111b7c62bdc1fb6c71b3f4870ef",
       "criteria": [
         "purpose",
         "given input",
@@ -745,7 +745,7 @@
       "note": "Adapt a requirement — The mean of a Boolean mask is its fraction of True values."
     },
     "I16-3": {
-      "sha256": "82b1e632ab0e0263e25cfcee526b5588398c1f6c216aad3e35be5432badb52e4",
+      "sha256": "bc8586404cb59deb746e31e8114da9ed198851f4fbf169143e1bf9c7de1c6c98",
       "criteria": [
         "purpose",
         "given input",
@@ -758,7 +758,7 @@
       "note": "Choose and combine — Inspect the price mask only; present text may still need later validation."
     },
     "I17-1": {
-      "sha256": "e6f68200945acd63367f4643e9c438ca84b545a24be1ba451ebbb7cbfb826758",
+      "sha256": "d814ef60d67b54820da89a99b8fd73a3688337c03dd34744ede8fcac252d0ef2",
       "criteria": [
         "purpose",
         "given input",
@@ -771,7 +771,7 @@
       "note": "Follow the technique — duplicated marks the extra copies only by default, not the first occurrence."
     },
     "I17-2": {
-      "sha256": "a0adfbaf906d57b818d70837d27b35096bdd2fddafcfdca2c52a6748a00a5037",
+      "sha256": "814e20d83bc7fd5392f1e98739d930801c3dc708127f34bf303e5092d52b0cec",
       "criteria": [
         "purpose",
         "given input",
@@ -784,7 +784,7 @@
       "note": "Adapt a requirement — Use the duplicate mask to select the records, not just count them."
     },
     "I17-3": {
-      "sha256": "28f2ccce7186577db7e6229691f6a66228bb1101bcfa89cb6081565663add480",
+      "sha256": "72d7c5c7b04269e506917f19a2b79da40395534c53c42e17021aae0c2b2eeb31",
       "criteria": [
         "purpose",
         "given input",
@@ -797,7 +797,7 @@
       "note": "Choose and combine — keep=False marks every member of each duplicate set."
     },
     "IR3-1": {
-      "sha256": "86171171bf04f9e52ae3efed1f3441153dd61727c928505dc914a7a26a54a08d",
+      "sha256": "406682076e2869eba704bf69fee13c98a5e19581d26de26c7f0e67496880037c",
       "criteria": [
         "purpose",
         "given input",
@@ -810,7 +810,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR3-2": {
-      "sha256": "8e088af94a1c60da2b39dedde05120bd9ccf6102aff381fafd84570fcba51008",
+      "sha256": "88b501a433ec78f3553eb410d3fd9833abbc2ac3ed381a7c5ea468de29a88856",
       "criteria": [
         "purpose",
         "given input",
@@ -823,7 +823,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR3-3": {
-      "sha256": "82b1e632ab0e0263e25cfcee526b5588398c1f6c216aad3e35be5432badb52e4",
+      "sha256": "bc8586404cb59deb746e31e8114da9ed198851f4fbf169143e1bf9c7de1c6c98",
       "criteria": [
         "purpose",
         "given input",
@@ -836,7 +836,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "IR3-4": {
-      "sha256": "28f2ccce7186577db7e6229691f6a66228bb1101bcfa89cb6081565663add480",
+      "sha256": "72d7c5c7b04269e506917f19a2b79da40395534c53c42e17021aae0c2b2eeb31",
       "criteria": [
         "purpose",
         "given input",
@@ -849,7 +849,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "I18-1": {
-      "sha256": "f2cfa9a99a7ea7f532cd57e797779be315eaacbdc09e34b8764a9a9c60e4abef",
+      "sha256": "dc4952576bf78bb4ef775d0657ab30401327bed0cf797d0fb80e35128df74c36",
       "criteria": [
         "purpose",
         "given input",
@@ -862,7 +862,7 @@
       "note": "Follow the technique — Select the requested numeric columns in the requested order before summarizing."
     },
     "I18-2": {
-      "sha256": "d117c54a99fb6e674c1b1375406f8ef01b6ea47de3e492ffbf063f55315360b2",
+      "sha256": "04fa94c21fd5c9b63fd5287d30b250e0e54b4ff88b47c3e2cd8fed008e59b6a9",
       "criteria": [
         "purpose",
         "given input",
@@ -875,7 +875,7 @@
       "note": "Adapt a requirement — Selecting one column first produces a Series summary."
     },
     "I18-3": {
-      "sha256": "7531e77314f2e7ec4d81ca11c249ad6cb8682cf54342565ca44070adf0feaf2d",
+      "sha256": "7f1a77c88d9bfd68cfcecb1b4262fef3d58a862e73f2f3b1f4eac1c6549d127d",
       "criteria": [
         "purpose",
         "given input",
@@ -888,7 +888,7 @@
       "note": "Choose and combine — Filter the population before summarizing its measurements."
     },
     "I18S-1": {
-      "sha256": "12864e0d9994a060dc20fd268bd6e0a572841c29e2a32b540a95bc8c7f92fe9c",
+      "sha256": "b9e6000e02e4f093f6bf233008bd486ed57d7a5a49d0789536e34323f0e2f3c5",
       "criteria": [
         "purpose",
         "given input",
@@ -901,7 +901,7 @@
       "note": "Follow an average calculation — mean answers an average question, whereas sum answers a total question."
     },
     "I18S-2": {
-      "sha256": "bcaf1a25992fb6d67ac4b9d4343c81c60e5cba23da0e4a966b7a9b4511177f12",
+      "sha256": "8a6cb546eba219e9a35733d706768ddf4510e589b8d1f8db5e04f186a66bf5a2",
       "criteria": [
         "purpose",
         "given input",
@@ -914,7 +914,7 @@
       "note": "Choose a total — Use the isolated syntax and the given table to plan your answer."
     },
     "I18S-3": {
-      "sha256": "c51d6fba833754418d041095d53336025e6e8a677f15edc8013e17616da99a2f",
+      "sha256": "aff5d53eaca721bf1493d5c44a7e3e7cb923112996682ff6b92a7a7880d6e388",
       "criteria": [
         "purpose",
         "given input",
@@ -927,7 +927,7 @@
       "note": "Choose a robust middle — Use the isolated syntax and the given table to plan your answer."
     },
     "I19-1": {
-      "sha256": "5e2b5eba94f71f5a60c1f1ec862dfbbdfcbd6c8ad5979b1c4ae03e6ae2bb1e20",
+      "sha256": "98b2e925b9b3474e6175d43168f87664b9fa7fd2cd38ba414e035882902695fc",
       "criteria": [
         "purpose",
         "given input",
@@ -940,7 +940,7 @@
       "note": "Follow the technique — Group by the category, select the measurement, then aggregate it."
     },
     "I19-2": {
-      "sha256": "11b1391a73afdf22864e47f17b2123bc1ee11f519320247c9cc99f0768fa62a9",
+      "sha256": "9382f7d1dbed8991320bbd4e2ea3b95db0a572b97e1cfd96238854261c823258",
       "criteria": [
         "purpose",
         "given input",
@@ -953,7 +953,7 @@
       "note": "Adapt a requirement — An average and a total answer different questions."
     },
     "I19-3": {
-      "sha256": "6941985e242b8e42f64e03e18d52ddaaa458e5b3dd9be83c0a1ccd2551ffef32",
+      "sha256": "3a5631f11a07236d356a3c7d394171f36033bea0850be9d480be6d613448a5c5",
       "criteria": [
         "purpose",
         "given input",
@@ -966,7 +966,7 @@
       "note": "Choose and combine — Choose the eligible records, grouping field and measured field separately."
     },
     "I20-1": {
-      "sha256": "c5e957c8c3ce6f0f8221c8dbb0467d073482f71d6119fd742edaae35e12794d2",
+      "sha256": "e95d2a142ee74ae1de55951e6b4d29d789455f34f59fdb5d9303a645f6947c93",
       "criteria": [
         "purpose",
         "given input",
@@ -979,7 +979,7 @@
       "note": "Follow the technique — The first crosstab argument labels rows; the second labels columns."
     },
     "I20-2": {
-      "sha256": "fdc8e8e4e82f5f3ac7d33bcc844b9e384e46d9da49b3ce14dfd1effe285b62fb",
+      "sha256": "7bcf84181a5e9ffec6975e3e44b0c3a0e6f293ecdf6019aecc1bde1ab4107b40",
       "criteria": [
         "purpose",
         "given input",
@@ -992,7 +992,7 @@
       "note": "Adapt a requirement — The first argument sets rows, the second columns."
     },
     "I20-3": {
-      "sha256": "c992981d8d48f02314b45d9e28214123ffe4509905f1c41dc1cc49ce78a4cf66",
+      "sha256": "888e6dcf224840c7768b945c5420ea38722f77195c8aa5c4dbf8410d6728d831",
       "criteria": [
         "purpose",
         "given input",
@@ -1005,7 +1005,7 @@
       "note": "Choose and combine — Both category Series must come from the same selected records."
     },
     "I21-1": {
-      "sha256": "92ec2cc28599e73eb13f1feca004b2d287d14712a5ff5afbc2dbbff9fe6628c0",
+      "sha256": "98eb124d86c6759aca3a6bd30d2f74e5648a9b58e8bba001b8fbd4f13dfdedcc",
       "criteria": [
         "purpose",
         "given input",
@@ -1018,7 +1018,7 @@
       "note": "Follow the technique — Select numeric measurements and remember that a matrix reports pairwise linear associations."
     },
     "I21-2": {
-      "sha256": "91062b857fd236010fb9cba828af1aac570a4b5853fa0df03cddc59ac1546487",
+      "sha256": "6433504b51b5dc4b4341df56bad955f41d225eb3b2804f0b927592e2172f8073",
       "criteria": [
         "purpose",
         "given input",
@@ -1031,7 +1031,7 @@
       "note": "Adapt a requirement — Select the two measurements before calculating the matrix."
     },
     "I21-3": {
-      "sha256": "a3ac05c602505860127cba742eb0d07e55cd43b5a7d00ea193fdf7bec896e6ee",
+      "sha256": "64f6278592d2b01f47cec140171205fb248f8df0be07cac2b70cccd8811f9331",
       "criteria": [
         "purpose",
         "given input",
@@ -1044,7 +1044,7 @@
       "note": "Combine earlier skills — Filter whole records so each pair stays together."
     },
     "I22-1": {
-      "sha256": "1ade0f4d99a1656a9a29649265935b6c8a02dbe635c5dbb968b8b89e5f06b981",
+      "sha256": "c3f96d33f77168c76036c161b72cf97061246c66844595acac80dbb0d8f33f3e",
       "criteria": [
         "purpose",
         "given input",
@@ -1057,7 +1057,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "I22-2": {
-      "sha256": "33d3b061f60d28917e06600ef158cab7eb52142d25484db0e1f77d82bde53779",
+      "sha256": "c4ff32b00f62d74b2ebab1ad6c1cf2bef8b2a2c4d213a922227b15dc39e03542",
       "criteria": [
         "purpose",
         "given input",
@@ -1070,7 +1070,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "I22-3": {
-      "sha256": "3769020e95291218f23b87b6f7adef3b01ac546d8e39a5a09f67301882bd4fd4",
+      "sha256": "e7f5ed3377ea00ac42b3d608981cc70229c7ce2ab8559a20b13eb0f20b6aaa81",
       "criteria": [
         "purpose",
         "given input",
@@ -1083,7 +1083,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W01-1": {
-      "sha256": "12038557bd6b32474e32a97ef28a9858383a1f4540edb87af7b4d736c6986b03",
+      "sha256": "e4e9473828dbc2a259a102ce3cbd93f2c38998c79ac08ccd84fc06a5de23ac6a",
       "criteria": [
         "purpose",
         "given input",
@@ -1096,7 +1096,7 @@
       "note": "Follow the technique — Make the copy before preparing the handoff."
     },
     "W01-2": {
-      "sha256": "516fa0646822c39f83a039749c7c0fe35442288695d340a5ef319712c71b23ae",
+      "sha256": "93944db716deeff16fdb63ee1b15f68a66504998c3a5dd67091ac1c687af6333",
       "criteria": [
         "purpose",
         "given input",
@@ -1109,7 +1109,7 @@
       "note": "Adapt the workflow — Sorting the copy must not reorder the original."
     },
     "W01-3": {
-      "sha256": "f045014a665e38d0a00175eb71980a88ff878a476b978bde5cf88ef7925259ce",
+      "sha256": "cbbfaa37a3747be07f3e91e710b71e7a094e357d59b60c2edad39e2b8543dc30",
       "criteria": [
         "purpose",
         "given input",
@@ -1122,7 +1122,7 @@
       "note": "Choose and combine — Combine copying, filtering and sorting without assigning back to df."
     },
     "W02-1": {
-      "sha256": "3af4318b65fe397f8ed451633c4e000fb7b0160b18d5b00182894c287fd7f576",
+      "sha256": "07c164b7e142a4c2380b70fe209213fc17bf888404bf018b31d36e7d57ec9af3",
       "criteria": [
         "purpose",
         "given input",
@@ -1135,7 +1135,7 @@
       "note": "Follow the technique — rename returns a table; assign it back to df to retain the new labels."
     },
     "W02-2": {
-      "sha256": "4a0fbc55fc5a2bd5a30cf4a69c4107a458cf3e3de39f9dfacd75008c53663aed",
+      "sha256": "36c8ae6bdc7018ebc1b33f0ed1dd5c08c618c6d605e61f75d718277289709cb1",
       "criteria": [
         "purpose",
         "given input",
@@ -1148,7 +1148,7 @@
       "note": "Adapt the workflow — Map existing names to the export schema."
     },
     "W02-3": {
-      "sha256": "b5c6b85e8621c2eb91bdc73d482544e33a29a398b27fbd2a86f0f818590c0e27",
+      "sha256": "ddb49485922499027ccc0726696d4b40c2b8d10b62d39b1149920c54cae5afd1",
       "criteria": [
         "purpose",
         "given input",
@@ -1161,7 +1161,7 @@
       "note": "Combine earlier skills — Use a label that communicates the measurement and unit."
     },
     "W03-1": {
-      "sha256": "c86668b7b6bde838ab44cabd4b6d7983bcb968225822b052ff83019a1c338b02",
+      "sha256": "755cf7c0351c3685573e8fa656a4f3f48587b904f279a0d989d08ae47cb49404",
       "criteria": [
         "purpose",
         "given input",
@@ -1174,7 +1174,7 @@
       "note": "Follow the technique — Selecting columns also changes their order; keep all fields requested by the handoff."
     },
     "W03-2": {
-      "sha256": "fdd6ba24a15ae9ee90f6f18ef198c08036cea92288ca3ba64522e3065d476175",
+      "sha256": "4f4791061aad0ea1d7207e30ef11d65b6765c3977fa1d1c3b1e2e73a749fd0fa",
       "criteria": [
         "purpose",
         "given input",
@@ -1187,7 +1187,7 @@
       "note": "Adapt a requirement — List the complete desired order, not just the field to move."
     },
     "W03-3": {
-      "sha256": "888e2d02c2dd13dee0724a8e1f813fe54fc7fa97c3e810b385baedf5c4a55c85",
+      "sha256": "84b3758776de62af9c7cc299dac62cf2fbddfd78dfb84fb6f9c1371871041dfb",
       "criteria": [
         "purpose",
         "given input",
@@ -1200,7 +1200,7 @@
       "note": "Choose and combine — Filter while the category column is still available."
     },
     "W04-1": {
-      "sha256": "88276dfb098d2f69a3c7f0bfef895f2f23af969a8787dadc48b5dbd8bb2a99c8",
+      "sha256": "677c18fe26e542cc4f938993917401f2c6d55d4abe473a3e02ef6aec49401e4b",
       "criteria": [
         "purpose",
         "given input",
@@ -1213,7 +1213,7 @@
       "note": "Follow the technique — Use columns= so drop does not interpret the names as row labels."
     },
     "W04-2": {
-      "sha256": "ef108d17507109456e7bee8e139a8c9afc251fb737a1b74956595bee26e07820",
+      "sha256": "2b9a747744b65176bb757e041c4a17ddf179bfe79c828bb749b14bda6dcfd90e",
       "criteria": [
         "purpose",
         "given input",
@@ -1226,7 +1226,7 @@
       "note": "Adapt a requirement — columns accepts a list of fields to remove."
     },
     "W04-3": {
-      "sha256": "0a9f9287ada22f7b6f0e916112cb0f455973a9aded6cfa970da6da30389b2663",
+      "sha256": "6d06a5e7b68577b3ebfe07119e2811c4cd658176a139dc2ecb8766d432362b23",
       "criteria": [
         "purpose",
         "given input",
@@ -1239,7 +1239,7 @@
       "note": "Choose and combine — Decide which object should lose the columns before assigning."
     },
     "W05-1": {
-      "sha256": "7c98cfe46234057f171fd96c0074fe2ba9323a0cce1d701618b5e58d7911c819",
+      "sha256": "cee0eeb05415155cd4e8ca9c8804171ea111fce35f755aa94cb460fdad3a9804",
       "criteria": [
         "purpose",
         "given input",
@@ -1252,7 +1252,7 @@
       "note": "Follow the technique — Build a row mask and assign the selected table back to df."
     },
     "W05-2": {
-      "sha256": "bb4de597f7380eef511cc07cbbfd425a884ece55af4faa8a035be56e87f45dec",
+      "sha256": "89bbb1d55ed0c8613fce4fb35a9d0111ab945b370387ea1216add525f9c6eec5",
       "criteria": [
         "purpose",
         "given input",
@@ -1265,7 +1265,7 @@
       "note": "Adapt a requirement — Both inclusive boundaries must hold."
     },
     "W05-3": {
-      "sha256": "6085d23f9b2d145e7c33d3d7d495e14bd9c6a0641b3a5bac88733833a194454f",
+      "sha256": "db9fb53840f3f22a09fcafd0f84bc6d61709a41ea56a6c57efdb0cbf83ccb45b",
       "criteria": [
         "purpose",
         "given input",
@@ -1278,7 +1278,7 @@
       "note": "Choose and combine — Exclusion and presentation order are separate steps."
     },
     "W06-1": {
-      "sha256": "b05c65a2802ebaa2a7933c17c4888ceddcc780b35d1696fd5546a08c8d6694c2",
+      "sha256": "5e9025996d34bfd589966375e27634073a40f8bc4cec4215ecc3efbe639984ff",
       "criteria": [
         "purpose",
         "given input",
@@ -1291,7 +1291,7 @@
       "note": "Follow the technique — Sort whole rows before resetting their index; drop=True avoids adding the old labels as a column."
     },
     "W06-2": {
-      "sha256": "b62406411980594e4fab0eab662ceef6a7f4ad14a5183f05300923a6b95c5494",
+      "sha256": "35974d1578e4ee5d61e8f0c3b3a9bfbdb08501602556d10da63141b5d9f22a6a",
       "criteria": [
         "purpose",
         "given input",
@@ -1304,7 +1304,7 @@
       "note": "Adapt a requirement — Omit drop=True when the old row labels are evidence worth keeping."
     },
     "W06-3": {
-      "sha256": "19bd71ffda17f036ab4575d7ac1262fcbf9536762651a8d0422c96d9dfb8cb22",
+      "sha256": "34bd74f775796320acb7fb0da06f2b49263557f12b2086bfabb382154a8f74bd",
       "criteria": [
         "purpose",
         "given input",
@@ -1317,7 +1317,7 @@
       "note": "Choose and combine — Reset after filtering and sorting, not before."
     },
     "WR1-1": {
-      "sha256": "f045014a665e38d0a00175eb71980a88ff878a476b978bde5cf88ef7925259ce",
+      "sha256": "cbbfaa37a3747be07f3e91e710b71e7a094e357d59b60c2edad39e2b8543dc30",
       "criteria": [
         "purpose",
         "given input",
@@ -1330,7 +1330,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR1-2": {
-      "sha256": "888e2d02c2dd13dee0724a8e1f813fe54fc7fa97c3e810b385baedf5c4a55c85",
+      "sha256": "84b3758776de62af9c7cc299dac62cf2fbddfd78dfb84fb6f9c1371871041dfb",
       "criteria": [
         "purpose",
         "given input",
@@ -1343,7 +1343,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR1-3": {
-      "sha256": "19bd71ffda17f036ab4575d7ac1262fcbf9536762651a8d0422c96d9dfb8cb22",
+      "sha256": "34bd74f775796320acb7fb0da06f2b49263557f12b2086bfabb382154a8f74bd",
       "criteria": [
         "purpose",
         "given input",
@@ -1356,7 +1356,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W07-1": {
-      "sha256": "5f321f3e5b4f4597a88233417b4214e33868643a06096e076187205d0eab179c",
+      "sha256": "9f1eca230de0580810014b554aa861be5b700a9146536d0fad1426e91315a452",
       "criteria": [
         "purpose",
         "given input",
@@ -1369,7 +1369,7 @@
       "note": "Follow the technique — A two-item pack costs two unit prices under this offer."
     },
     "W07-2": {
-      "sha256": "6ccc59b0db7a99821df611b4ec7e3bf1e5a51ee7a37ff438533d5c8eab8d5f74",
+      "sha256": "177cad41463694a1e72c5754fca58681fc0b70191d3eb47a46f46268a5323fbb",
       "criteria": [
         "purpose",
         "given input",
@@ -1382,7 +1382,7 @@
       "note": "Adapt a requirement — Column arithmetic aligns measurements row by row."
     },
     "W07-3": {
-      "sha256": "fce3a22f4e05eef4a5d02f84ecfcf76cf88bd39d710232ad1870aa3c337dee14",
+      "sha256": "e5ca40cecb87b34b0701be3729dc02debcd3d0a7da4fcaf24eea77123229aa48",
       "criteria": [
         "purpose",
         "given input",
@@ -1395,7 +1395,7 @@
       "note": "Choose and combine — A unit conversion belongs in a new, clearly named column."
     },
     "W08-1": {
-      "sha256": "c7db732ee6336f397c9af41061d90ae5d326928e2d5c0e9b4d84642b7d15be7e",
+      "sha256": "919ee8ccecc9c40d1a133545f18deecef9e31d962e1da26a46d56a03fef55d01",
       "criteria": [
         "purpose",
         "given input",
@@ -1408,7 +1408,7 @@
       "note": "Follow the technique — The first np.where result belongs to True rows; equality does not satisfy a strict > test."
     },
     "W08-2": {
-      "sha256": "c697d4dc63aace5ac765c52078675c6ed636e537bd256de80ed8e3cd66bf7d60",
+      "sha256": "2c4baa97903cd42c2c483a6366f9c8b0dc3491c027197eeb8325f9b0487126c0",
       "criteria": [
         "purpose",
         "given input",
@@ -1421,7 +1421,7 @@
       "note": "Adapt a requirement — np.select uses the first matching condition; put high before middle."
     },
     "W08-3": {
-      "sha256": "c6debb9d28e616058497f81d67ae3786e0e881dc430ffd95bf656a16410fefcd",
+      "sha256": "ae2b8bb6538748a97740f7b345fb33ae36954ec8ccaee275e9d2f599370ca00f",
       "criteria": [
         "purpose",
         "given input",
@@ -1434,7 +1434,7 @@
       "note": "Choose and combine — A Boolean condition can itself become the new column."
     },
     "W09-1": {
-      "sha256": "6d450e20006c78458d76f0ccb6aa5431b9291d8f34c280ce0c2391cba1779de6",
+      "sha256": "4d7c9662f2e2722c00a02744376f5d4544a18b69e34ccadf9e707b1c0942db38",
       "criteria": [
         "purpose",
         "given input",
@@ -1447,7 +1447,7 @@
       "note": "Follow the technique — replace updates the named category without erasing the others."
     },
     "W09-2": {
-      "sha256": "9636b700a4259e6394f464255872a8858c87521485cdc6298298ed178ca62886",
+      "sha256": "d7a176436133efb82650b50c67731f298f0a7dc46190294aba79c1de2387d761",
       "criteria": [
         "purpose",
         "given input",
@@ -1460,7 +1460,7 @@
       "note": "Adapt a requirement — map makes unmatched labels missing; replace would keep them."
     },
     "W09-3": {
-      "sha256": "49d49662174a21b782da2050edfdb5e9254174e85b9529ae583f0ca6b6d503cb",
+      "sha256": "ba538c794d747ab6267ce407ab9644797f3e6fee822494c0c129c443e1cd36f7",
       "criteria": [
         "purpose",
         "given input",
@@ -1473,7 +1473,7 @@
       "note": "Combine earlier skills — Use a recoding method that preserves labels absent from the mapping."
     },
     "W10-1": {
-      "sha256": "ba8509ebf0c7e6d8f277bfe7d1c10adf428eb0f7ddb231affc96adc81ba65718",
+      "sha256": "2c11d74004bb166c84737734de8366a9727578ad79dd91864899d40f58eaa6a8",
       "criteria": [
         "purpose",
         "given input",
@@ -1486,7 +1486,7 @@
       "note": "Follow the technique — strip removes edge spaces; changing case alone leaves those spaces intact."
     },
     "W10-2": {
-      "sha256": "c38c8e727151d348544e8b1d6e2d17a4c0c75c9b181841783bfd5a6540a92797",
+      "sha256": "fbdc7ce1836394319d423482a19a865632ce8024b1dd91a416f81a59c6dab9e9",
       "criteria": [
         "purpose",
         "given input",
@@ -1499,7 +1499,7 @@
       "note": "Replace literal punctuation — str.replace(\"-\", \" \", regex=False) replaces literal hyphens; missing text remains missing."
     },
     "W10-3": {
-      "sha256": "c2db02930ca5bd66922edecc8517e5cd08507053201d4f2901f1290348f721d8",
+      "sha256": "f205a834b59107d8e9e49c1b002405a9afcef78f9bef71a626867d55d2bc4fca",
       "criteria": [
         "purpose",
         "given input",
@@ -1512,7 +1512,7 @@
       "note": "Choose and combine — Normalize the text before comparing it with a category label."
     },
     "W11-1": {
-      "sha256": "87d12276e4cfa980fa6ebf57ddeba805e201ad42e88273aaa727f3b9e9a081cf",
+      "sha256": "cf3bc70e0b32589517990b55956613272f94f95b43e14a9e4732899b13af0dd9",
       "criteria": [
         "purpose",
         "given input",
@@ -1525,7 +1525,7 @@
       "note": "Follow the technique — regex=False makes the pattern literal; na=False keeps missing text out of the matches."
     },
     "W11-2": {
-      "sha256": "f0a8fc949e8659f79b8c40697cf2384ceb6bd5d4ff9567014f9c08d8b2d76146",
+      "sha256": "a3f60933116df13783369e1193a28cd455770070e829a5684a6e3f69ac8c570f",
       "criteria": [
         "purpose",
         "given input",
@@ -1538,7 +1538,7 @@
       "note": "Adapt a requirement — Invert the match mask with ~; do not invert the text."
     },
     "W11-3": {
-      "sha256": "00a07146c6cf9ca23f192569eb35b8cc848184074ebc3b230b755de6039ec67d",
+      "sha256": "dc0a6da3a97935598759c17c6e8b46355a1343f31a21e667638fda947d3e42d6",
       "criteria": [
         "purpose",
         "given input",
@@ -1551,7 +1551,7 @@
       "note": "Choose and combine — Match records first, then choose the handoff columns."
     },
     "W12-1": {
-      "sha256": "3bd8ec57b035d265d05e5dd52a20297422f27468df3b96724545452366a496f3",
+      "sha256": "238a6eab1e82999dfbfdb1e12eecf69f5b08d9ed4d5512ddb177f007dcf3eee5",
       "criteria": [
         "purpose",
         "given input",
@@ -1564,7 +1564,7 @@
       "note": "Follow the technique — errors=\"coerce\" creates missing values for invalid strings; it does not repair the original text."
     },
     "W12-2": {
-      "sha256": "3a9745856c6aa4a4913ffa46a3bd365acefbaeae3090ad6ceada02bc3e9893d3",
+      "sha256": "18d5c07ca2562454c0a206c79214dbe223e5862315d5c7136bb92e754bf10149",
       "criteria": [
         "purpose",
         "given input",
@@ -1577,7 +1577,7 @@
       "note": "Adapt a requirement — Compare the parsed missing mask with the original missing mask."
     },
     "W12-3": {
-      "sha256": "9b2004d4229d9dfe5babdfdf87cfc727089dc8d5592c57d410a1a92315b7e70c",
+      "sha256": "ce8c4876155f12a628b440d8ce082ae84caba7c224815ebcd3ca59b4054a6e91",
       "criteria": [
         "purpose",
         "given input",
@@ -1590,7 +1590,7 @@
       "note": "Choose and combine — Parse into a separate column so the original text remains inspectable."
     },
     "WR2-1": {
-      "sha256": "fce3a22f4e05eef4a5d02f84ecfcf76cf88bd39d710232ad1870aa3c337dee14",
+      "sha256": "e5ca40cecb87b34b0701be3729dc02debcd3d0a7da4fcaf24eea77123229aa48",
       "criteria": [
         "purpose",
         "given input",
@@ -1603,7 +1603,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR2-2": {
-      "sha256": "c2db02930ca5bd66922edecc8517e5cd08507053201d4f2901f1290348f721d8",
+      "sha256": "f205a834b59107d8e9e49c1b002405a9afcef78f9bef71a626867d55d2bc4fca",
       "criteria": [
         "purpose",
         "given input",
@@ -1616,7 +1616,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR2-3": {
-      "sha256": "9b2004d4229d9dfe5babdfdf87cfc727089dc8d5592c57d410a1a92315b7e70c",
+      "sha256": "ce8c4876155f12a628b440d8ce082ae84caba7c224815ebcd3ca59b4054a6e91",
       "criteria": [
         "purpose",
         "given input",
@@ -1629,7 +1629,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W13-1": {
-      "sha256": "464ab4ebfc19368082c7ed7d161fda333a64cf11bae0a543c232c9521696649e",
+      "sha256": "ed11ffc75fce444d4216ae12606fb62e43ff30ed432010de395e0582f6c5defa",
       "criteria": [
         "purpose",
         "given input",
@@ -1642,7 +1642,7 @@
       "note": "Follow the technique — category is a dtype, not a command to rename the values."
     },
     "W13-2": {
-      "sha256": "e50f9ca665e35d2f7cb3a74223efa565c7ec8f16995d4fb1819023e6e519d0a3",
+      "sha256": "c550f84ecd6cd370dcfc0cda2e8599a41e435ff7e66235dd589fc386bc2e7320",
       "criteria": [
         "purpose",
         "given input",
@@ -1655,7 +1655,7 @@
       "note": "Adapt a requirement — Choose the explicit text dtype rather than a categorical type."
     },
     "W13-3": {
-      "sha256": "fc8f7db4cb6fb9fdb1bd9f6aaf61db4f22ee70948ae4c5f2077d0f8a8737f819",
+      "sha256": "b52ccc0dcb4266d05ab4cdf6648f9526fd0ffdcafc0bbf839f99e38293df2410",
       "criteria": [
         "purpose",
         "given input",
@@ -1668,7 +1668,7 @@
       "note": "Choose and combine — Capital I distinguishes nullable Int64 from ordinary int64."
     },
     "W14-1": {
-      "sha256": "099eae89624e660827217fc096ec857fab741554457ba4ab64f527b392117457",
+      "sha256": "601ba561c6179c873ae78cd36029ac77a8e5b8410a90ee504c7bc9d483b12995",
       "criteria": [
         "purpose",
         "given input",
@@ -1681,7 +1681,7 @@
       "note": "Follow the technique — Parse with the explicit year-month-day format; invalid dates should remain missing."
     },
     "W14-2": {
-      "sha256": "2a3b69c26e3b66e1df9e7de65431b22cd7add8748b8d11d3ce8ad2e409bb577c",
+      "sha256": "4b19443991cdb87421c53634d993be93a1eee2ce4bd4e2e9652a7f55df2802d2",
       "criteria": [
         "purpose",
         "given input",
@@ -1694,7 +1694,7 @@
       "note": "Adapt a requirement — Use the parsed missing mask to retrieve the original evidence."
     },
     "W14-3": {
-      "sha256": "c877b8d06d5211d655e0e6a1765369616f3bb725982cf877f5ec444b4cb8c918",
+      "sha256": "bd97a429783d86b057a2a00ca635c646455962a53b7e49e90e2a06df6af4d0a0",
       "criteria": [
         "purpose",
         "given input",
@@ -1707,7 +1707,7 @@
       "note": "Choose and combine — Parse before chronological comparison; invalid dates will not pass."
     },
     "W15-1": {
-      "sha256": "4ae8a06a02f4d458191839980f1d37e6633dc47b05d159170ced0c0433eff4d3",
+      "sha256": "b681e357573b92e6d552e41435d8c82460997a460d05efdaaec4efac299d0a6e",
       "criteria": [
         "purpose",
         "given input",
@@ -1720,7 +1720,7 @@
       "note": "Follow the technique — Parse dates before using .dt; year and month have no parentheses, but day_name does."
     },
     "W15-2": {
-      "sha256": "1c54877af3c12c09396c66164a67757f3572ca6550aaeeefe8342d6a9a680091",
+      "sha256": "b5dc633e5478fb2da83f41fab3ceb096560c2dad6079279e39ad3f5d8ea1c791",
       "criteria": [
         "purpose",
         "given input",
@@ -1733,7 +1733,7 @@
       "note": "Adapt a requirement — Extract weekday names before counting them; missing dates are excluded."
     },
     "W15-3": {
-      "sha256": "00e3c3148e71c843a1c6912f3b220945549d8c3dc5615c3097b308e13467630c",
+      "sha256": "5b2a573b9fac35c089526c4b66ec32ea36de672fe54cb9f6dc6adf4dd53a65f9",
       "criteria": [
         "purpose",
         "given input",
@@ -1746,7 +1746,7 @@
       "note": "Choose and combine — Count month numbers; sorting the index puts the calendar in order."
     },
     "W16-1": {
-      "sha256": "25c41f78f2a60739afe72e803c72ee4637427b6f47ae88ff959ba94474568567",
+      "sha256": "a2600b738ffe181779e24e0143e24f0c6a557dbfcbd2929264a486d07895ceaa",
       "criteria": [
         "purpose",
         "given input",
@@ -1759,7 +1759,7 @@
       "note": "Follow the technique — subset names the fields required by this report; unrelated missing fields must not remove a row."
     },
     "W16-2": {
-      "sha256": "bc8fbb7078b460e9803dfc9290c7085e3d3a0a0155f25eabb654dbc4d790894a",
+      "sha256": "4dfdfdae4e5bf86fcb8ee124d7af55605998f295b60e4e02c2fe02810bd0988e",
       "criteria": [
         "purpose",
         "given input",
@@ -1772,7 +1772,7 @@
       "note": "Adapt a requirement — subset can name both fields required for this report."
     },
     "W16-3": {
-      "sha256": "c6119c0606fcae0300c466bcd6667654ec84a3fd0dd11a8b7629ef55c986e4ef",
+      "sha256": "f3448e4f2761dd4ff085d038e1498bda5e5528485956e4066994bfc0386b6025",
       "criteria": [
         "purpose",
         "given input",
@@ -1785,7 +1785,7 @@
       "note": "Choose and combine — Parse price in a copy and keep eligible rows, including rows with unrelated gaps."
     },
     "W17-1": {
-      "sha256": "485dafa943dbcbb879edfde580b229a892e296b20d2b3ab68640fb571bf0a6b4",
+      "sha256": "d3c1ba9612d538f641abcd62d6d4def35ba03a9036b1eafdb979d409ffb159d3",
       "criteria": [
         "purpose",
         "given input",
@@ -1798,7 +1798,7 @@
       "note": "Follow the technique — Calculate the observed median before filling; do not replace known values."
     },
     "W17-2": {
-      "sha256": "126a58d569d5f8b1951ee044a00c50a6af9f8d273c0e1a42bf5379fd1f383344",
+      "sha256": "d59b2c1b183f549ce64e9cad235db76a835ffe54bfb759401a5d94e1f974e82d",
       "criteria": [
         "purpose",
         "given input",
@@ -1811,7 +1811,7 @@
       "note": "Adapt a requirement — Use the supplied meaning of missingness, not a habitual default."
     },
     "W17-3": {
-      "sha256": "bf2c06dc800b4f4d547a9d4c0c0f9f437652327a91a73a388e1fc34fb74f7196",
+      "sha256": "71e4b5e8f16cdabb9e7efe676d3e6096440bf88fe70ba79aed1f977d59a4be71",
       "criteria": [
         "purpose",
         "given input",
@@ -1824,7 +1824,7 @@
       "note": "Choose and combine — Record the missing mask before replacing the unknown values."
     },
     "W18-1": {
-      "sha256": "8e48a03890c26d6319e9085626678db42992ddc70b92799a6ef165de39408eab",
+      "sha256": "02385bceccd88fac75ea67aeb1cf6729a7cf68a41c66fa98ca97b7930f8a2788",
       "criteria": [
         "purpose",
         "given input",
@@ -1837,7 +1837,7 @@
       "note": "Follow the technique — These identical rows are confirmed copies; the default keeps the first one."
     },
     "W18-2": {
-      "sha256": "d5f7b3ae9e7a2d1f8bd420ab07960d784a766a667045165c2fccb6e484e2422a",
+      "sha256": "e8c9806f823124ccf3ed27a9269669d416edc36ecafee74b21e60a12f3d6f00c",
       "criteria": [
         "purpose",
         "given input",
@@ -1850,7 +1850,7 @@
       "note": "Adapt a requirement — keep chooses which copy survives, and therefore which original index remains."
     },
     "W18-3": {
-      "sha256": "30eb8fcb75d45b0d18287292fa0fe83401626f01363c644f3ad8ae15476b9a36",
+      "sha256": "a21609a54a32cb6d0bbc4f53f03010371c27dc77282931bb0f4c10bb2d0c9834",
       "criteria": [
         "purpose",
         "given input",
@@ -1863,7 +1863,7 @@
       "note": "Choose and combine — Deduplicate before assigning new row labels."
     },
     "WR3-1": {
-      "sha256": "c877b8d06d5211d655e0e6a1765369616f3bb725982cf877f5ec444b4cb8c918",
+      "sha256": "bd97a429783d86b057a2a00ca635c646455962a53b7e49e90e2a06df6af4d0a0",
       "criteria": [
         "purpose",
         "given input",
@@ -1876,7 +1876,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR3-2": {
-      "sha256": "c6119c0606fcae0300c466bcd6667654ec84a3fd0dd11a8b7629ef55c986e4ef",
+      "sha256": "f3448e4f2761dd4ff085d038e1498bda5e5528485956e4066994bfc0386b6025",
       "criteria": [
         "purpose",
         "given input",
@@ -1889,7 +1889,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR3-3": {
-      "sha256": "bf2c06dc800b4f4d547a9d4c0c0f9f437652327a91a73a388e1fc34fb74f7196",
+      "sha256": "71e4b5e8f16cdabb9e7efe676d3e6096440bf88fe70ba79aed1f977d59a4be71",
       "criteria": [
         "purpose",
         "given input",
@@ -1902,7 +1902,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR3-4": {
-      "sha256": "30eb8fcb75d45b0d18287292fa0fe83401626f01363c644f3ad8ae15476b9a36",
+      "sha256": "a21609a54a32cb6d0bbc4f53f03010371c27dc77282931bb0f4c10bb2d0c9834",
       "criteria": [
         "purpose",
         "given input",
@@ -1915,7 +1915,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W19-1": {
-      "sha256": "37a566c86fdd3942e13ef59076798556ee784d839826e2447971f3d03197a381",
+      "sha256": "aaeadc27e5db9be395d58155e921cb2c5f8d95532d5f55f98b0eaf191938e9b4",
       "criteria": [
         "purpose",
         "given input",
@@ -1928,7 +1928,7 @@
       "note": "Follow the technique — A named aggregation pairs an input column with an aggregation function; as_index=False keeps group labels as a column."
     },
     "W19-2": {
-      "sha256": "b439efed17b9d9e096a3d11dd3cffc2fdb1519c35a0eeacaf1417ec42d7554f0",
+      "sha256": "0cbaabe26e2e69c7f18af02aec9d32160aecb3eea67b090a1e1b54376078b225",
       "criteria": [
         "purpose",
         "given input",
@@ -1941,7 +1941,7 @@
       "note": "Adapt a requirement — Each named aggregation pairs an input field with a summary operation."
     },
     "W19-3": {
-      "sha256": "412760bb1a9cd8be5efaef74af549ff12ee48187d6ca929bb70e16338a24ab6e",
+      "sha256": "de8d39d81caffc6b2ebf530ccc99644f0381e2b2fb73f03aa5b66264fb535ca0",
       "criteria": [
         "purpose",
         "given input",
@@ -1954,7 +1954,7 @@
       "note": "Choose and combine — size counts records; count counts known measurements."
     },
     "W20-1": {
-      "sha256": "3e95e44b509b15ea5f019e3264e3e020877c46f340743751b4fa2365269b6a94",
+      "sha256": "63370c2e27b6f64c881b7021c6a80519efe9d18c4e833becc23c91f066cc66f7",
       "criteria": [
         "purpose",
         "given input",
@@ -1967,7 +1967,7 @@
       "note": "Follow the technique — transform keeps one result per original row; agg would reduce each group."
     },
     "W20-2": {
-      "sha256": "0fe8044d159fa200682b4787595abc3330ce23cad3ff6c403b60b0d574ea43f3",
+      "sha256": "46f8763750745efcc9024f7d1f692ffee9b0eda60e9beae51b09a0765a30fd5b",
       "criteria": [
         "purpose",
         "given input",
@@ -1980,7 +1980,7 @@
       "note": "Adapt a requirement — transform repeats each group mean onto its original rows."
     },
     "W20-3": {
-      "sha256": "d9c2c479efb1025a9f4fe3fab04ce1ff23c6b010ef6b733515ad1f79e825e293",
+      "sha256": "3632a200701ae0c3c6530937710572fe71bef7444cb29a9f520ad710f5ed2a51",
       "criteria": [
         "purpose",
         "given input",
@@ -1993,7 +1993,7 @@
       "note": "Choose and combine — Compare each record with its own group benchmark, not the overall mean."
     },
     "W21-1": {
-      "sha256": "791443962cb5755ae04835700caf4863f8fff744749c54114e8a9d08d4bd3742",
+      "sha256": "09871c07e110575ebacf4c92fd55154fe36cd574161e75d80c05aa3885bf21ff",
       "criteria": [
         "purpose",
         "given input",
@@ -2006,7 +2006,7 @@
       "note": "Follow the technique — Choose the row categories, column categories, measured field and aggregation separately."
     },
     "W21-2": {
-      "sha256": "898135793df5870b18c1544768ed70be9bf07d8e09e6f3ab5f863841569ff828",
+      "sha256": "1a92a15eac0fed3633b18166363dad4077cee2fd8c7ed24f7195bbdacfcc7982",
       "criteria": [
         "purpose",
         "given input",
@@ -2019,7 +2019,7 @@
       "note": "Adapt a requirement — Change the aggregation to match a total rather than a mean."
     },
     "W21-3": {
-      "sha256": "a10d0049df9d3338bd9b4c0bb72f02460019815fb533c69d5076002e94e7495a",
+      "sha256": "dfb49415584b4a5f05bf57eb5b54e530d45c26314431a823c115b1039fbcfb41",
       "criteria": [
         "purpose",
         "given input",
@@ -2032,7 +2032,7 @@
       "note": "Choose and combine — Define the subset and measurement before choosing the table layout."
     },
     "W22-1": {
-      "sha256": "ccdcb2873140e00c3453956b9a22c9807c3fe141388bc83a182c02fd6f7a2237",
+      "sha256": "f6569130b2ef33464b24354defd050f487b9e23ada36634826cfd944a4d65bdc",
       "criteria": [
         "purpose",
         "given input",
@@ -2045,7 +2045,7 @@
       "note": "Follow the technique — Identifiers repeat; selected measurement columns become measure/value rows."
     },
     "W22-2": {
-      "sha256": "696fbe91d24e273a2e4b0783afd15bc09bcbeed5f1594d179d00eb6c557f1fbd",
+      "sha256": "92b75a18cf959f41970b0c58c5d095902081f68a987fc2e819c81357d09ac24c",
       "criteria": [
         "purpose",
         "given input",
@@ -2058,7 +2058,7 @@
       "note": "Adapt a requirement — Multiple identifier fields repeat beside each stacked measurement."
     },
     "W22-3": {
-      "sha256": "f5c7ce3606e3a11ff9ae908be51de87e6524b6dbad9ff677d1d40e27054ef578",
+      "sha256": "a1a48a95ad5aa5a209cd91d028f23f12a236006bf71755a3c765e74aa71e3146",
       "criteria": [
         "purpose",
         "given input",
@@ -2071,7 +2071,7 @@
       "note": "Combine earlier skills — Keep the measure column so values with different units remain distinguishable."
     },
     "W23-1": {
-      "sha256": "8573716d3403429bab98ba6fbc418e37d041cae62fb0a41340a2b539334e2b2b",
+      "sha256": "ae555392367396d36b8fc462181b4e10042e6702350d71b2900b1a383e278847",
       "criteria": [
         "purpose",
         "given input",
@@ -2084,7 +2084,7 @@
       "note": "Follow the technique — pivot needs one value per identifier/measure pair and does not aggregate repeats."
     },
     "W23-2": {
-      "sha256": "0f517ed43bd750a270c0c9d86835b42c65ce66a05ae5b41dae6ef3b88f922a5b",
+      "sha256": "0a8a605cd08e9bdcab06b44d3364a8e661365ffedfa009cc50f7ab834c724b7d",
       "criteria": [
         "purpose",
         "given input",
@@ -2097,7 +2097,7 @@
       "note": "Adapt a requirement — Swapping index and columns changes orientation without aggregation."
     },
     "W23-3": {
-      "sha256": "be5ef800aff7fff05fc428490e53cc9a6b1f304809b7aeef41c27f1e284fbe43",
+      "sha256": "af3511dd38478bbbde55da755621d307946168f26c10d96cbfd6c6a8a983c972",
       "criteria": [
         "purpose",
         "given input",
@@ -2110,7 +2110,7 @@
       "note": "Choose and combine — Filter long-form records before reshaping."
     },
     "W24-1": {
-      "sha256": "1e461dc98945fb08408e020c5e14d96f5c17d50e9548a33c59a524a4017bb433",
+      "sha256": "7516612773d8bd0961b09fa672983e30adc9fb3c58c994735e4e4234f44943f1",
       "criteria": [
         "purpose",
         "given input",
@@ -2123,7 +2123,7 @@
       "note": "Follow the technique — A left join retains unmatched observations; validate checks that the lookup key is unique."
     },
     "W24-2": {
-      "sha256": "55e298473e79632421c95d5b428f1da5b1d7fdfbf71d72ef8b00c5c6077a635c",
+      "sha256": "91c90bb78a7101cf12fce5e1f2373ff45079665cfced5bc8cac9df2d1b0f79f5",
       "criteria": [
         "purpose",
         "given input",
@@ -2136,7 +2136,7 @@
       "note": "Keep matches only — on=\"size\", how=\"left\", validate=\"many_to_one\" are the tools to try."
     },
     "W24-3": {
-      "sha256": "ab3fe095bc97ef9ac5498c50bef2189b14af6076f62c5bf3947f263b1266f44a",
+      "sha256": "2786cbd4e4cffda88e4284e61e30b717509ce889d6b83f96c717752384666360",
       "criteria": [
         "purpose",
         "given input",
@@ -2149,7 +2149,7 @@
       "note": "Choose and combine — An inner join would discard the unmatched evidence you need."
     },
     "WR4-1": {
-      "sha256": "412760bb1a9cd8be5efaef74af549ff12ee48187d6ca929bb70e16338a24ab6e",
+      "sha256": "de8d39d81caffc6b2ebf530ccc99644f0381e2b2fb73f03aa5b66264fb535ca0",
       "criteria": [
         "purpose",
         "given input",
@@ -2162,7 +2162,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR4-2": {
-      "sha256": "d9c2c479efb1025a9f4fe3fab04ce1ff23c6b010ef6b733515ad1f79e825e293",
+      "sha256": "3632a200701ae0c3c6530937710572fe71bef7444cb29a9f520ad710f5ed2a51",
       "criteria": [
         "purpose",
         "given input",
@@ -2175,7 +2175,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR4-3": {
-      "sha256": "f5c7ce3606e3a11ff9ae908be51de87e6524b6dbad9ff677d1d40e27054ef578",
+      "sha256": "a1a48a95ad5aa5a209cd91d028f23f12a236006bf71755a3c765e74aa71e3146",
       "criteria": [
         "purpose",
         "given input",
@@ -2188,7 +2188,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR4-4": {
-      "sha256": "ab3fe095bc97ef9ac5498c50bef2189b14af6076f62c5bf3947f263b1266f44a",
+      "sha256": "2786cbd4e4cffda88e4284e61e30b717509ce889d6b83f96c717752384666360",
       "criteria": [
         "purpose",
         "given input",
@@ -2201,7 +2201,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W25-1": {
-      "sha256": "bf9af01776dd5c16d1161e0880dc8836c71afb846a9ae0cf8a57db58db99dfd5",
+      "sha256": "7cf9cb854a5e0401072d1fcb636be788804ac87939a6688e620551a5740b890b",
       "criteria": [
         "purpose",
         "given input",
@@ -2214,7 +2214,7 @@
       "note": "Follow the technique — concat takes a list of tables; ignore_index makes fresh row labels."
     },
     "W25-2": {
-      "sha256": "3fb33aab94302d64dc0d2fc922f826f77d4d94346d5779195b3e84df89513f75",
+      "sha256": "68541b1cebad4f074edd6718360b10e1379c9b5b69708694ca4eabbe344a921e",
       "criteria": [
         "purpose",
         "given input",
@@ -2227,7 +2227,7 @@
       "note": "Adapt the workflow — ignore_index discards source labels; omit it when those labels are needed."
     },
     "W25-3": {
-      "sha256": "7aa9e490b89d1fbb82eb974b9437f59983df72576a62eb6d00d2eef0558eac43",
+      "sha256": "34987689831f4d3340b612a5480896e572485f2af9fc3f8b9d247ad4c7d6600e",
       "criteria": [
         "purpose",
         "given input",
@@ -2240,7 +2240,7 @@
       "note": "Choose and combine — Finish filtering and sorting before assigning presentation indices."
     },
     "W26-1": {
-      "sha256": "2fea577e828e45a41a43bc8aeae8d2de61bc1cce694cf150aadf46cc22f474f6",
+      "sha256": "e77125be8bbe6239a00bd8424fcf2e3b8374f6609893aa3045c17c3882c8fa96",
       "criteria": [
         "purpose",
         "given input",
@@ -2253,7 +2253,7 @@
       "note": "Follow the technique — Fixed boundaries and sample quantiles answer different questions; include the lowest boundary explicitly."
     },
     "W26-2": {
-      "sha256": "e616967d8dda10677e667b17d823a6697e0d5cf6b86e934c04edec50b87c6e93",
+      "sha256": "a5c538ffb9d4b780e4e6f3462b51c4ddcb7910362a0bb8c9d0a799109b7e9a35",
       "criteria": [
         "purpose",
         "given input",
@@ -2266,7 +2266,7 @@
       "note": "Adapt a requirement — Quantile groups target similar counts, unlike fixed value boundaries."
     },
     "W26-3": {
-      "sha256": "09db2ae672fe2121c8e0750c0fa2bd9ff1a4d9bcbae193ecba9a230d0c825591",
+      "sha256": "4f27056b9560cc43c4d9e6d3d47bbf41c431a31400ef504b1131f4f99eb7915c",
       "criteria": [
         "purpose",
         "given input",
@@ -2279,7 +2279,7 @@
       "note": "Choose and combine — Policy boundaries call for fixed edges rather than sample quantiles."
     },
     "W27-1": {
-      "sha256": "f3226ec4e196e040c0e5b9b930c3937dce189c3a349da330e4c704d9d60427d9",
+      "sha256": "2b1a195aae1de8aa317c6c19815e815e466a3f7a01d00ebc8288d95b83c15296",
       "criteria": [
         "purpose",
         "given input",
@@ -2292,7 +2292,7 @@
       "note": "Follow the technique — Specify dtype=int for 0/1 indicators rather than Boolean values."
     },
     "W27-2": {
-      "sha256": "b1a69d7e773cd6d538c11e23edfb352d7c3f1eb40a5da5a2ca0eb675d48a16f6",
+      "sha256": "ee5edae801dcbfaddd42b4cc3fe164f03533daf30585c4c8f5b7c31b3707a17b",
       "criteria": [
         "purpose",
         "given input",
@@ -2305,7 +2305,7 @@
       "note": "Adapt a requirement — columns can identify more than one categorical field."
     },
     "W27-3": {
-      "sha256": "af85db1088074b714c8ec35598813fcd12d44a0e7ec435e054ce02d0d95fd2ae",
+      "sha256": "61121764f8a8b9515954bbb7e0e338afeca03b48deca9664e0e2c3748ae34aeb",
       "criteria": [
         "purpose",
         "given input",
@@ -2318,7 +2318,7 @@
       "note": "Choose and combine — Define the population and fields before encoding; this is representation practice, not model fitting."
     },
     "W28-1": {
-      "sha256": "5a07163d9617d292def463852fd1e6ed16b1120c967c0ab636f6e29b5fdb247d",
+      "sha256": "158b43a1157d8d66d8e1486f6be990d4c19f4f5c592baf357941f3a52acc2514",
       "criteria": [
         "purpose",
         "given input",
@@ -2331,7 +2331,7 @@
       "note": "Follow the technique — The scaler needs a two-dimensional selection, even for a single measurement."
     },
     "W28-2": {
-      "sha256": "ff529cb2013636ac122d2808c8b880858bbbb50c5d08438344b972ad43fef20a",
+      "sha256": "2dae972546e1801a1c81dc461f5de4dd9641623a8ef56e332c6b52d15165fd7e",
       "criteria": [
         "purpose",
         "given input",
@@ -2344,7 +2344,7 @@
       "note": "Choose a different scaling rule — from sklearn.preprocessing import StandardScaler, fit_transform(table), df[[\"price\"]] are the tools to try."
     },
     "W28-3": {
-      "sha256": "fcd4220bb9228407cf41cc21fb04371362f16b63fd0c4aa0332c54d8cd7da8e1",
+      "sha256": "d17421f46b109286110fc3863027e0a72140168d8b95364cb2df63c226f973fc",
       "criteria": [
         "purpose",
         "given input",
@@ -2357,7 +2357,7 @@
       "note": "Choose and combine — Held-out rows must not influence the fitted mean or scale."
     },
     "W29-1": {
-      "sha256": "0ac6f8202a73c9fe01229246f7e7a50bd535634ca7eca2acf0ca9909c6f5c98e",
+      "sha256": "f136ff2bbc73f5c7e50b6725e138602b541df15d9c9f8501fd6b9df3db89f00c",
       "criteria": [
         "purpose",
         "given input",
@@ -2370,7 +2370,7 @@
       "note": "Follow the technique — The distance extends beyond both quartiles; do not mistake Q3 itself for the upper fence."
     },
     "W29-2": {
-      "sha256": "5c45e63b534ea06c52caf97635edb5e33cfce136b733def397e632f31f3a219e",
+      "sha256": "743520583eff2bed3a9b7488d6909287f2f5e141d5b379290692f9540bc542b3",
       "criteria": [
         "purpose",
         "given input",
@@ -2383,7 +2383,7 @@
       "note": "Adapt a requirement — The mask identifies records to inspect, not records known to be wrong."
     },
     "W29-3": {
-      "sha256": "5bf1033112dabd16f6b0d12ce4f52a6d20e104056a60e0bac728791063acf43b",
+      "sha256": "f6ec039199a9cf9c91473ac572b09fa399bc010cbc5d496f555bf0aa3b9e984d",
       "criteria": [
         "purpose",
         "given input",
@@ -2396,7 +2396,7 @@
       "note": "Combine earlier skills — Separate detection, record selection and presentation."
     },
     "W30-1": {
-      "sha256": "35d8698ba39290746134251c68b47211f5fb039632a4e1b7b872450ae98f9344",
+      "sha256": "7ff8f24dfc3ff7d5e8bd432c4ab5bad4891b9f61ee14965d008444f241c46601",
       "criteria": [
         "purpose",
         "given input",
@@ -2409,7 +2409,7 @@
       "note": "Follow the technique — Keep raw and revised prices side by side."
     },
     "W30-2": {
-      "sha256": "aab006cb9ef9c4a821350f76f7d37c57a4ae51f7162de64ddaf6deb07264c55b",
+      "sha256": "79f00bf1320b0d56f951d08d051e5f6d55222a5d673b0cff6683f94d74458b51",
       "criteria": [
         "purpose",
         "given input",
@@ -2422,7 +2422,7 @@
       "note": "Adapt a requirement — A scalar mean broadcasts across the Series; no row function is needed."
     },
     "W30-3": {
-      "sha256": "26564acef202486670fd6fd9c24657d6d4aba08f8cb95f267baa28ddff4dc8b4",
+      "sha256": "cc235376a1262e7730d0645503ad97d0f6bfd0b36da7b1300a5689af3d301c52",
       "criteria": [
         "purpose",
         "given input",
@@ -2435,7 +2435,7 @@
       "note": "Choose and combine — Combine a direct unit conversion with filtering and selection."
     },
     "WR5-1": {
-      "sha256": "7aa9e490b89d1fbb82eb974b9437f59983df72576a62eb6d00d2eef0558eac43",
+      "sha256": "34987689831f4d3340b612a5480896e572485f2af9fc3f8b9d247ad4c7d6600e",
       "criteria": [
         "purpose",
         "given input",
@@ -2448,7 +2448,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR5-2": {
-      "sha256": "09db2ae672fe2121c8e0750c0fa2bd9ff1a4d9bcbae193ecba9a230d0c825591",
+      "sha256": "4f27056b9560cc43c4d9e6d3d47bbf41c431a31400ef504b1131f4f99eb7915c",
       "criteria": [
         "purpose",
         "given input",
@@ -2461,7 +2461,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR5-3": {
-      "sha256": "fcd4220bb9228407cf41cc21fb04371362f16b63fd0c4aa0332c54d8cd7da8e1",
+      "sha256": "d17421f46b109286110fc3863027e0a72140168d8b95364cb2df63c226f973fc",
       "criteria": [
         "purpose",
         "given input",
@@ -2474,7 +2474,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "WR5-4": {
-      "sha256": "5bf1033112dabd16f6b0d12ce4f52a6d20e104056a60e0bac728791063acf43b",
+      "sha256": "f6ec039199a9cf9c91473ac572b09fa399bc010cbc5d496f555bf0aa3b9e984d",
       "criteria": [
         "purpose",
         "given input",
@@ -2487,7 +2487,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W31-1": {
-      "sha256": "ad29657622cc96892610ebb1aff0bd1bacf7d4149a5eb362f591d1b175e544d6",
+      "sha256": "597d1d8b70ad845fdca8884c5252ecb799862c8a719f48dd2b5656822f7ca8d4",
       "criteria": [
         "purpose",
         "given input",
@@ -2500,7 +2500,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W31-2": {
-      "sha256": "f5efa36a8ea5b79f3613953dfd9a37369f0091196b5cc076b7f431b76071996b",
+      "sha256": "3b3dd12989ff65321343285c2f2a9692a942ce1f62fe8c9ff618094f566249ad",
       "criteria": [
         "purpose",
         "given input",
@@ -2513,7 +2513,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "W31-3": {
-      "sha256": "0b441b1be36e08e8315b6c735f245055cdfcb7d0814df07c511c7614143137e6",
+      "sha256": "e865bd7709c3d2741310ba91e1ba7f1b9eb7aa78cbc8d934095a7ed64b4d2be7",
       "criteria": [
         "purpose",
         "given input",
@@ -2526,7 +2526,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V35-1": {
-      "sha256": "7b47fd0ecaa14786f1ce3e587550dd19fd80991d40e1e60d9df3b1bf7b9e7d5c",
+      "sha256": "f679c7388f0c4e36fcd69ffcd6d79289857b76ed405f2505d5cc76da4285a1cc",
       "criteria": [
         "purpose",
         "given input",
@@ -2539,7 +2539,7 @@
       "note": "Follow a chart choice — Identify the two numeric variables."
     },
     "V35-2": {
-      "sha256": "51d70af40f17e35e0482fafa1a86a0d827c201381c273ceefc0f5be9ccb4619e",
+      "sha256": "a78fb32ba0fbd4a9e18d63edfe88aa66f2e3473ab721cd9c12ceed9308bedf5a",
       "criteria": [
         "purpose",
         "given input",
@@ -2552,7 +2552,7 @@
       "note": "Distinguish a distribution question — One numeric variable calls for a distribution view."
     },
     "V35-3": {
-      "sha256": "5c3e247c8e8b7e4e14525eddcc4ec6209baf4ea7667a1c9c3f51252a4d6dadad",
+      "sha256": "bef7a33c3ec6b495a670f9b1848ddb051fa441b5c1cf837159ec5d86e37a1039",
       "criteria": [
         "purpose",
         "given input",
@@ -2565,7 +2565,7 @@
       "note": "Select a chart for a new question — Genres are categories; the question asks about their frequencies."
     },
     "V01-1": {
-      "sha256": "b09a8d5963204334133c3b0e3017a38a1225e51b9d9e7d5669eeeca0ed4d8c69",
+      "sha256": "f4328b4b39c7c70b3fe79574b42064831f886b12c2bb24d8e9bb814751d96055",
       "criteria": [
         "purpose",
         "given input",
@@ -2578,7 +2578,7 @@
       "note": "Follow the technique — subplots returns the whole Figure and its Axes; unpack both names."
     },
     "V16-1": {
-      "sha256": "fcb62ade75096128d65f0e5d030c952523073ca175691acd0618b14e7dda2442",
+      "sha256": "1a2cedcdfdc06d0b915cca01d910e1759496a7ffb4f55d6c87f71725ccc58628",
       "criteria": [
         "purpose",
         "given input",
@@ -2591,7 +2591,7 @@
       "note": "Follow the technique — Keep x and y from the same row; one point represents one paired observation."
     },
     "V16-2": {
-      "sha256": "08f148788b2187ddab0e074a5caa0e908fc828d6e372fe75d17702d0a71d3406",
+      "sha256": "5523b815c985cf7eb9e5502382ed4a1fe2e612f48bd45868bdcffd05910c935e",
       "criteria": [
         "purpose",
         "given input",
@@ -2604,7 +2604,7 @@
       "note": "Adapt a requirement — Changing the question changes both the data mapping and axis labels."
     },
     "V16-3": {
-      "sha256": "9ae82db24af1a4eba913e9541569c0883630d4542bd0671fac3ab5ac4173a7dd",
+      "sha256": "8828d363becbadebe180cb36643cedd33b3b6249786c72655625745ab0c4adcf",
       "criteria": [
         "purpose",
         "given input",
@@ -2617,7 +2617,7 @@
       "note": "Choose and combine — Filter the records first; each displayed point must retain its original x/y pair."
     },
     "V02-1": {
-      "sha256": "414d1818d1683d141c5112d2873c46bb8dd8369ac0f978df06b3813a93f07621",
+      "sha256": "c269fb9651585cfec4cfe484ff0f44cb1fa7984926a5c1b70acf39b0b3900a99",
       "criteria": [
         "purpose",
         "given input",
@@ -2630,7 +2630,7 @@
       "note": "Follow the technique — Axis labels describe the mapped measurements, while the title describes the question."
     },
     "V02-2": {
-      "sha256": "0c14de682130a19213ce9a894cf5405e3b4127471316c8eeb3e1e7d7c4172872",
+      "sha256": "9c023a940d377bf12a4035171f6deab0a595ae1001d04f4b64adf998b87486d9",
       "criteria": [
         "purpose",
         "given input",
@@ -2643,7 +2643,7 @@
       "note": "Adapt a requirement — Units belong in axis labels; title describes the question."
     },
     "V02-3": {
-      "sha256": "6b58cca08f543dd20e9041b88aeb4e8762f220d37d1cb54a82798d8127842b56",
+      "sha256": "3242ac17c9730da2915e1f62adf2cf582e0a76a70ca438948ba22780dfed2450",
       "criteria": [
         "purpose",
         "given input",
@@ -2656,7 +2656,7 @@
       "note": "Choose and combine — Translate the question into the selected observations and the quantity on each axis."
     },
     "V04-1": {
-      "sha256": "1acba8f7e71cb43ab8fd7e4d3ecab3b44d779b9adf1ae7c63da5ef3b5e2b022d",
+      "sha256": "8e1d89cbaea74d7c33ca4f04db4e4b39a87db8a7dbe05910501b093809170234",
       "criteria": [
         "purpose",
         "given input",
@@ -2669,7 +2669,7 @@
       "note": "Follow the technique — Bins group a numeric measurement; the vertical height here is a count."
     },
     "V04-2": {
-      "sha256": "93ff9f387e20dfd315aea2200b105a8bc02f5b033616b4b347c5e4b9f60eae2f",
+      "sha256": "eaef9176d01bc4cc183691f3445844c8195bbad455939b703cc72a6b1afac216",
       "criteria": [
         "purpose",
         "given input",
@@ -2682,7 +2682,7 @@
       "note": "Adapt a requirement — Bins change how observations are grouped; filtering changes which observations enter the chart."
     },
     "V04-3": {
-      "sha256": "9fd6cc159dba7f0c1c5a35277f1656426adf956adeb82d5e0096bcdf7d1e1cfd",
+      "sha256": "09f8b6e5887e3a9be700d20e0815b3021bb3695ade3f72a1561c6c321b10fb0d",
       "criteria": [
         "purpose",
         "given input",
@@ -2695,7 +2695,7 @@
       "note": "Choose and combine — Bins change how observations are grouped; filtering changes which observations enter the chart."
     },
     "V08-1": {
-      "sha256": "ebbd94cf5e5d7ac87db77934ef658fe47a7281afa4179a8046a847f59ab8e9a7",
+      "sha256": "62900704570609ccf91ebe6124bb9d52072bfc5197f94e4bd1a5a61e42e5af59",
       "criteria": [
         "purpose",
         "given input",
@@ -2708,7 +2708,7 @@
       "note": "Follow the technique — Category counts use x alone; supplying a numeric y changes the question."
     },
     "V08-2": {
-      "sha256": "f11253e22b1a54c1af8a06e0024a324811674a65a453ffa502bdc817ce28f94a",
+      "sha256": "b318f9c05520b17f5cf4e76fb3a965c8b930409355b06f04c712187f9d4c9a05",
       "criteria": [
         "purpose",
         "given input",
@@ -2721,7 +2721,7 @@
       "note": "Adapt a requirement — A missing category must appear in the count index before plotting."
     },
     "V08-3": {
-      "sha256": "222460879e42a52567e52f59ae3b7af16906b7250543679de4670f3e48605da1",
+      "sha256": "4370ec509b54206dcd81bfcb2f84b72d612b92ec841aa1b120654306c6e5b1db",
       "criteria": [
         "purpose",
         "given input",
@@ -2734,7 +2734,7 @@
       "note": "Choose and combine — The denominator is the selected games, not all games."
     },
     "VR1-1": {
-      "sha256": "5c3e247c8e8b7e4e14525eddcc4ec6209baf4ea7667a1c9c3f51252a4d6dadad",
+      "sha256": "bef7a33c3ec6b495a670f9b1848ddb051fa441b5c1cf837159ec5d86e37a1039",
       "criteria": [
         "purpose",
         "given input",
@@ -2747,7 +2747,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR1-2": {
-      "sha256": "9ae82db24af1a4eba913e9541569c0883630d4542bd0671fac3ab5ac4173a7dd",
+      "sha256": "8828d363becbadebe180cb36643cedd33b3b6249786c72655625745ab0c4adcf",
       "criteria": [
         "purpose",
         "given input",
@@ -2760,7 +2760,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR1-3": {
-      "sha256": "9fd6cc159dba7f0c1c5a35277f1656426adf956adeb82d5e0096bcdf7d1e1cfd",
+      "sha256": "09f8b6e5887e3a9be700d20e0815b3021bb3695ade3f72a1561c6c321b10fb0d",
       "criteria": [
         "purpose",
         "given input",
@@ -2773,7 +2773,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V18-1": {
-      "sha256": "ed49cfb94b74fd304346615e9f2ddbb740e4c8cf03a7688b9dfc3be382eae4e2",
+      "sha256": "f0d6e698aa0356db64472b9b48e4b98f394ba99c4bc7d15ce13835837fadc25b",
       "criteria": [
         "purpose",
         "given input",
@@ -2786,7 +2786,7 @@
       "note": "Follow the technique — A line implies order; estimator=None preserves observations instead of averaging repeated times."
     },
     "V18-2": {
-      "sha256": "d556c6ba7a16b404b5c126f10b214b62a9e381a344ee4c862f58444a7a4bde0c",
+      "sha256": "d2392ab753a8cee2a1c604f6dc0051e92cd98b606182b41ea3e45d3434d9ddf4",
       "criteria": [
         "purpose",
         "given input",
@@ -2799,7 +2799,7 @@
       "note": "Adapt a requirement — Restrict the time window before connecting observations."
     },
     "V18-3": {
-      "sha256": "db81fdedb67fc5774c3e25a7f1f133d976f0ff672794dfe7b1a3692bc7c98f2e",
+      "sha256": "faa4b992e749f5eab1834fa30e287dfe9f8ccce4df4fe76e9f2482bb4ca2a376",
       "criteria": [
         "purpose",
         "given input",
@@ -2812,7 +2812,7 @@
       "note": "Choose and combine — An ordered time question supports connecting neighboring observations."
     },
     "V09-1": {
-      "sha256": "ee0b3ba7113bd841c0451707476a348701590d3bd0854ef3e9798079afcc5a68",
+      "sha256": "810dae8edfd187661ab06c35aae0472390b44539afff4661f3047518dae4e500",
       "criteria": [
         "purpose",
         "given input",
@@ -2825,7 +2825,7 @@
       "note": "Follow the technique — The default bar height is a mean, not the number of records."
     },
     "V09-2": {
-      "sha256": "e593848cb4f2ec73836d72e7799b28bb3ee85730995f4a8e266c5786c653839a",
+      "sha256": "c28b18066feadd6ec9e481348517e976d257348a059dfc54b0cf9c65faa1b84b",
       "criteria": [
         "purpose",
         "given input",
@@ -2838,7 +2838,7 @@
       "note": "Adapt a requirement — The center of interest changed from mean to median."
     },
     "V09-3": {
-      "sha256": "0159879d9cec2b69abb52d1c54a020c4b48ef0693bb8480176285a6f85c82c55",
+      "sha256": "2ebd5238746c442eb62372c41f62fb6925c9475db81dd3f6970ae8fa19ad1197",
       "criteria": [
         "purpose",
         "given input",
@@ -2851,7 +2851,7 @@
       "note": "Choose and combine — Calculate the requested group mean before drawing exact bars."
     },
     "V13-1": {
-      "sha256": "59e8115bf277ff9f71640767f951db5027221697cbfd2f223c81cecbfe84ef9e",
+      "sha256": "ed7654da0f531b9f7d37c8978d526c6f881b41491f21559cd4e5561747fd0858",
       "criteria": [
         "purpose",
         "given input",
@@ -2864,7 +2864,7 @@
       "note": "Follow the technique — Jitter changes sideways placement, not the measured value."
     },
     "V13-2": {
-      "sha256": "3b8538c10938a48a6b3ffaae338059f3edc12de6a94eb028cde74122364ad031",
+      "sha256": "882ec0f8c5b8c44125a303ab19e3eafc04eab456f77ac25b08a8c39cf348d233",
       "criteria": [
         "purpose",
         "given input",
@@ -2877,7 +2877,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V13-3": {
-      "sha256": "246186b4e4902aa418a44f718d5147fa5d4c5c4363e1c340e63706488341c13e",
+      "sha256": "12fed6fa5493c0bb9f40e7cec5055f7cf504555a18a4c3baee498d2dc261acea",
       "criteria": [
         "purpose",
         "given input",
@@ -2890,7 +2890,7 @@
       "note": "Choose and combine — Retain individual records instead of aggregating their mean."
     },
     "V11-1": {
-      "sha256": "6fae56302ed245f8ad7cced180538e8d714ebc72dfd4312a37a544a1df82e0ea",
+      "sha256": "9e057d37a6e1de8238b9551cd19cd553bf0728caeecca065bd001bda1ff04193",
       "criteria": [
         "purpose",
         "given input",
@@ -2903,7 +2903,7 @@
       "note": "Follow the technique — Whiskers stop at observed values within the fences; flagged points are not automatically errors."
     },
     "V11-2": {
-      "sha256": "9342747333528af520bd8e364400b3dc841c0b404319d3ddbc7f83353a14dc0f",
+      "sha256": "198627ba0cce9bb789762271b8f53b02a5f56fa97c373cada173bfdb54b01df5",
       "criteria": [
         "purpose",
         "given input",
@@ -2916,7 +2916,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V11-3": {
-      "sha256": "11643acf4d5c56d2fb95e05b3b6c9898fc3bb18e799eb243965abfd35eab8668",
+      "sha256": "942e15fb3f3b2ed828fd1e0bc7a120c31aa819467694c61512b48b62f0e34c72",
       "criteria": [
         "purpose",
         "given input",
@@ -2929,7 +2929,7 @@
       "note": "Choose and combine — A distribution by category differs from one overall rating distribution."
     },
     "V03-1": {
-      "sha256": "27e8d5423d36af85e683011925c73aaf1d81820d27705f1e406eef7e7e578076",
+      "sha256": "b7da4e1d93aca24bdd388a7fa0e82f79a142b4f20f9f190c82c274c2daefad86",
       "criteria": [
         "purpose",
         "given input",
@@ -2942,7 +2942,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V03-2": {
-      "sha256": "a310762d9da698cc8f49a254b29eaeda5126f20a16ef851b5cceff2e855229f9",
+      "sha256": "9906814ccb1743e0a9478d4c43b4e7bab0d220b4165aee5a707c05b9c7d126fd",
       "criteria": [
         "purpose",
         "given input",
@@ -2955,7 +2955,7 @@
       "note": "Adapt a requirement — Map only the channel needed by this question."
     },
     "V03-3": {
-      "sha256": "1e08aa63ba151d33228d90128d00a18e41810a0dff0948fd6860f800db966961",
+      "sha256": "ed38b939d5b9d4af22cd6b07bcceca7c42d4d50720419dc2ee348ca18a25d74f",
       "criteria": [
         "purpose",
         "given input",
@@ -2968,7 +2968,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V17-1": {
-      "sha256": "affc121eb7bf0df9741f7578b12707b897fd00088247d94b53d878982cd6d312",
+      "sha256": "7046484af9412f1fb00df95ebb2f4b812310683a3a76c69872566d1a9c7a33d6",
       "criteria": [
         "purpose",
         "given input",
@@ -2981,7 +2981,7 @@
       "note": "Follow the technique — Use the same category for hue and style so colour is not the only cue."
     },
     "V17-2": {
-      "sha256": "eec6513c0c267c0a4db9f3754dcb737c983610be49b1be6dab9af0c0511dc7e9",
+      "sha256": "33367486f05819c7bab7f94a156fe3166ca72f7b76d814b17765f48be91c6015",
       "criteria": [
         "purpose",
         "given input",
@@ -2994,7 +2994,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V17-3": {
-      "sha256": "96aad764f5f21959d2f71cd760cbe614b31ad0ed5bc14dd393cb71196d86ad4d",
+      "sha256": "7d9eb475b6d908de99277488279d18c57869751c0aeaf720263ddb3bbc0cc227",
       "criteria": [
         "purpose",
         "given input",
@@ -3007,7 +3007,7 @@
       "note": "Choose and combine — Redundant mappings let shape carry information when colour is hard to distinguish."
     },
     "VR2-1": {
-      "sha256": "db81fdedb67fc5774c3e25a7f1f133d976f0ff672794dfe7b1a3692bc7c98f2e",
+      "sha256": "faa4b992e749f5eab1834fa30e287dfe9f8ccce4df4fe76e9f2482bb4ca2a376",
       "criteria": [
         "purpose",
         "given input",
@@ -3020,7 +3020,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR2-2": {
-      "sha256": "0159879d9cec2b69abb52d1c54a020c4b48ef0693bb8480176285a6f85c82c55",
+      "sha256": "2ebd5238746c442eb62372c41f62fb6925c9475db81dd3f6970ae8fa19ad1197",
       "criteria": [
         "purpose",
         "given input",
@@ -3033,7 +3033,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR2-3": {
-      "sha256": "246186b4e4902aa418a44f718d5147fa5d4c5c4363e1c340e63706488341c13e",
+      "sha256": "12fed6fa5493c0bb9f40e7cec5055f7cf504555a18a4c3baee498d2dc261acea",
       "criteria": [
         "purpose",
         "given input",
@@ -3046,7 +3046,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V22-1": {
-      "sha256": "494df225e7acf6e299d3189de90abac602c98460d75afb114430c2ebe7c5967d",
+      "sha256": "430d0bcf8eafc0e09fa8eb135a2b6663b0bbf13fc4143f83d99cb4d3a1489b63",
       "criteria": [
         "purpose",
         "given input",
@@ -3059,7 +3059,7 @@
       "note": "Follow the technique — Build a correlation matrix first, then keep the colour scale fixed from -1 to 1."
     },
     "V22-2": {
-      "sha256": "ebcc9abdb133950a11a6bcf286f0cc8dd57a7d5f8b718ad3d665b9ccc090644f",
+      "sha256": "677509f51beadce8dac122032087799d18fd11c1614a28d6159877307637397c",
       "criteria": [
         "purpose",
         "given input",
@@ -3072,7 +3072,7 @@
       "note": "Adapt a requirement — Select the variables before correlating; keep the signed scale fixed."
     },
     "V22-3": {
-      "sha256": "ff79aef56f74229d318914482a91235192fecd57bd70199f768e5847d2f15107",
+      "sha256": "851506b143c52ee046239170f99f94eff1d7fc3d66c28d6d68737563c1f1d99c",
       "criteria": [
         "purpose",
         "given input",
@@ -3085,7 +3085,7 @@
       "note": "Choose and combine — Correlations must describe the selected population, with a consistent colour scale."
     },
     "V24-1": {
-      "sha256": "a53798e447733d6f744498d88b27e1a1192263796f058d5b855a928b6978aea1",
+      "sha256": "6be97dbc795fc6912ad9e107c6b7b210b2860aeac0a12b2ea23a07b2a13724b4",
       "criteria": [
         "purpose",
         "given input",
@@ -3098,7 +3098,7 @@
       "note": "Follow the technique — Pass each chart its own axes[0] or axes[1]; finish the whole Figure once."
     },
     "V24-2": {
-      "sha256": "0bc6af31af9b7c6d3d03f63a9e438d3e2e1e8591bf5345a29a6b73c8d68146f0",
+      "sha256": "78aa78508ea0646f07d59bfd65d60167910f1a6379b8c162df04b11619538615",
       "criteria": [
         "purpose",
         "given input",
@@ -3111,7 +3111,7 @@
       "note": "Adapt a requirement — The grid shape changes where the two Axes appear; each still needs its own labels."
     },
     "V24-3": {
-      "sha256": "246d635fe9c5c395b6e479cf5f3eb7a7fd3841670de5f87f5ce798d4aeeb0112",
+      "sha256": "4b49d0eb379fd023deeb9fc59057af592df5eff201addc5eb2731ccf6dd044b0",
       "criteria": [
         "purpose",
         "given input",
@@ -3124,7 +3124,7 @@
       "note": "Choose and combine — Both panels must describe the same selected records."
     },
     "V25-1": {
-      "sha256": "9fc56ff6edafc2eea978d7de757ca4bf4dfe4f0ec0a7a9402a62f1c5a578ffa9",
+      "sha256": "ed24e97d0ce714b38efd00393147708ef63b19e836bc8d4ae257002e53224314",
       "criteria": [
         "purpose",
         "given input",
@@ -3137,7 +3137,7 @@
       "note": "Follow the technique — A legend describes the mapped category; redundant shapes help when colour is insufficient."
     },
     "V25-2": {
-      "sha256": "f78a913fa41753fb7d8683cd7234e144c172d897bd45cf702a75ef3e16a6aaa0",
+      "sha256": "e7535ff2fbbba8f8c49a1ac443d01624302a253ec682c3acca7a28b4b5e66877",
       "criteria": [
         "purpose",
         "given input",
@@ -3150,7 +3150,7 @@
       "note": "Make overlap and category order explicit — palette=\"colorblind\", ax.legend(title=...), style= are the tools to try."
     },
     "V25-3": {
-      "sha256": "c2ab09b2a91ddb83bf55bf03206cdc913a084b7c76c36d657389b3e876f7f44f",
+      "sha256": "5d29a70327b12a5350ce3917a5e62f9e78511193189c99291cb4e690badc3909",
       "criteria": [
         "purpose",
         "given input",
@@ -3163,7 +3163,7 @@
       "note": "Choose and combine — The legend must describe the mapped field, not a leftover label from another chart."
     },
     "V26-1": {
-      "sha256": "e27643b5a510426abe6289e2885239ae154e8269cbc661abd09066bccf9d0aab",
+      "sha256": "302f5dc82c787a88d2b9a8e67ab6535d914109f0bc57072ce8b5a2958dbc3299",
       "criteria": [
         "purpose",
         "given input",
@@ -3176,7 +3176,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V26-2": {
-      "sha256": "4f154c3d79adb1cc6f82212e46b991275c81a4c7e08aa4074d54a7d03f0f6672",
+      "sha256": "b327ffe3271e40a8b72a1d1f05f8b660d44083348d1a6ea4bc62ca8be6a57b8a",
       "criteria": [
         "purpose",
         "given input",
@@ -3189,7 +3189,7 @@
       "note": "Adapt the workflow — Choose the observations first, then map the requested measurements to the chart."
     },
     "V26-3": {
-      "sha256": "27388c95b71e973e2a9851f951784dbb5988d712be4c6e49a3a447ce6af724a3",
+      "sha256": "6a06a93238c7cbe72c69a49d224d28bd910f9efb6c496b234ec75ffd24b281cc",
       "criteria": [
         "purpose",
         "given input",
@@ -3202,7 +3202,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V27-1": {
-      "sha256": "0d55d633bf855966ec2904adfd9324c895ca58c7452cffb901163f5a96c50223",
+      "sha256": "ab7c44d9d0ea084b87dc0033cee0b6ead18ccc13a92a109b887e4ed2da823efd",
       "criteria": [
         "purpose",
         "given input",
@@ -3215,7 +3215,7 @@
       "note": "Follow the technique — Horizontal benchmarks use y units and vertical benchmarks use x units."
     },
     "V27-2": {
-      "sha256": "e2fe1bc8165baf26257dfacaaa759e13870612a5b2447c858002ae10e242e351",
+      "sha256": "4f9975f4dd9f518ae8422579deb97eb1640af228dd28c8b200ef081375cdc919",
       "criteria": [
         "purpose",
         "given input",
@@ -3228,7 +3228,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V27-3": {
-      "sha256": "4449b5d2a6b6e46a5e60593c064bd880a84cbce148c1e9ae86f2c71b0d654df7",
+      "sha256": "a8488a1737a2e3cc1af5e5dd0243cdfd2209bd6f4f1039bf6997114758b95d4c",
       "criteria": [
         "purpose",
         "given input",
@@ -3241,7 +3241,7 @@
       "note": "Choose and combine — A y-value benchmark requires a horizontal line."
     },
     "VR3-1": {
-      "sha256": "ff79aef56f74229d318914482a91235192fecd57bd70199f768e5847d2f15107",
+      "sha256": "851506b143c52ee046239170f99f94eff1d7fc3d66c28d6d68737563c1f1d99c",
       "criteria": [
         "purpose",
         "given input",
@@ -3254,7 +3254,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR3-2": {
-      "sha256": "246d635fe9c5c395b6e479cf5f3eb7a7fd3841670de5f87f5ce798d4aeeb0112",
+      "sha256": "4b49d0eb379fd023deeb9fc59057af592df5eff201addc5eb2731ccf6dd044b0",
       "criteria": [
         "purpose",
         "given input",
@@ -3267,7 +3267,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR3-3": {
-      "sha256": "4449b5d2a6b6e46a5e60593c064bd880a84cbce148c1e9ae86f2c71b0d654df7",
+      "sha256": "a8488a1737a2e3cc1af5e5dd0243cdfd2209bd6f4f1039bf6997114758b95d4c",
       "criteria": [
         "purpose",
         "given input",
@@ -3280,7 +3280,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V29-1": {
-      "sha256": "8eab2bb5e56eaf8c44373ebcfeee586032fe5365a4bef7175ae925e198d8baca",
+      "sha256": "9f76ead43474a7e41197085f60b1234b1859aaa25a474e59711bd4c6ba5ab7e1",
       "criteria": [
         "purpose",
         "given input",
@@ -3293,7 +3293,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V29-2": {
-      "sha256": "41f57b87bb6fe8f5b2b29a60bd49eef3f96dff819b99673c2d7364de238b5a5c",
+      "sha256": "9ef5f50d805103a76c2f44602e8e2cf465b41922f9dde513bedcebf56c161bae",
       "criteria": [
         "purpose",
         "given input",
@@ -3306,7 +3306,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V29-3": {
-      "sha256": "cc030fa37dc6889adfaf84b824687723dcec05d3a8016317f0703c44c9401626",
+      "sha256": "cab2ff0a9f5ad85b91f9e7a12fac21ba30ce2f3649f62e0fc9cf525e6c31850e",
       "criteria": [
         "purpose",
         "given input",
@@ -3319,7 +3319,7 @@
       "note": "Choose and combine — Body weights describe individuals; the question asks for a group average."
     },
     "V34-1": {
-      "sha256": "a9d7163e2428f483a75408a1efc1e2b75fc285b61dbe35b0ce43c73d891efabc",
+      "sha256": "a0125d44fee9b09849d6f4af59e64ac5ad7c2444c571a9ee79e058d0a318165f",
       "criteria": [
         "purpose",
         "given input",
@@ -3332,7 +3332,7 @@
       "note": "Follow the technique — Save the explicit finished Figure before display, with the requested resolution."
     },
     "V34-2": {
-      "sha256": "15cdbdbdc942e294befee48bbae790607a11e228284b165ec472beb5ca658c51",
+      "sha256": "468ba0645e3ffaed49a9fad1d8de5b2cc212c31d45bc17f2f09df89c73793344",
       "criteria": [
         "purpose",
         "given input",
@@ -3345,7 +3345,7 @@
       "note": "Adapt a requirement — Export the finished Figure, including its labels."
     },
     "V34-3": {
-      "sha256": "a22836c58cfa4da2774fb7629baffecb64844c358a867d0505d2cce2b7f5e29f",
+      "sha256": "701b07a705a12c3abf9c975ff79ec2a30531d2766f58e957dc1d645912410337",
       "criteria": [
         "purpose",
         "given input",
@@ -3358,7 +3358,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V36-1": {
-      "sha256": "abd7fa863c3efbcf6dbe16f92eb1e0ff283e818aa059694f0bebd8eb11262eaa",
+      "sha256": "d2314c1cc4d906e2b6570e88fc791bf4721fd09188b6073baaa26a6f7ed51c84",
       "criteria": [
         "purpose",
         "given input",
@@ -3371,7 +3371,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V36-2": {
-      "sha256": "6f946b301fbeefefc4174e26ac775e5b113ed679b999c871ef55e2039ec22659",
+      "sha256": "dccb7840006c8d6c7ea5087f8afa3f5437c6b159a789279494b7bd0e62c7388b",
       "criteria": [
         "purpose",
         "given input",
@@ -3384,7 +3384,7 @@
       "note": "Adapt a requirement — Bar lengths need a zero baseline; the height must represent the requested mean."
     },
     "V36-3": {
-      "sha256": "f8556e4ffcabf8e6c421e964f0c714a4bcc7f5d8e7e6e738aefa8e1434e21a8c",
+      "sha256": "f610badd230f03b4a9d27bf4c9fd1ac867849261d855c098ce8f0bf66a0a1215",
       "criteria": [
         "purpose",
         "given input",
@@ -3397,7 +3397,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V37-1": {
-      "sha256": "b98310d7f46e1317154402f32c729c9ef5efaad527c7d0f1a97b70964d001bd2",
+      "sha256": "d68e6c02d732e808bcb5ddee18e12342ba51de7578a4dc0e90a55828551a8336",
       "criteria": [
         "purpose",
         "given input",
@@ -3410,7 +3410,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V37-2": {
-      "sha256": "ceab604f9d6c5fb2144342145af541e606ccbc7c7730f1331010ec89221ab412",
+      "sha256": "58aa79a9d478d4aefd9b2793b78c72ab36759f386ce296151d3a2a802ca80a68",
       "criteria": [
         "purpose",
         "given input",
@@ -3423,7 +3423,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V37-3": {
-      "sha256": "31a16cd3cbf921cfc450d8b6cc9f4387b3c890756ff91a5b9cb0889a3fe0e4ec",
+      "sha256": "55f376868e52bc5178a89657a19e1800281f61ea487aef84e15820d974d01fa0",
       "criteria": [
         "purpose",
         "given input",
@@ -3436,7 +3436,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V05-1": {
-      "sha256": "4d4e75b5faeb36cfddd3c44712ff6ef5e186774c10d2a9679229d224ac9d781f",
+      "sha256": "4c26350dd544c35bfba7d7e3b17af461cb08fabc80e2b54f78f7a295b43d62ae",
       "criteria": [
         "purpose",
         "given input",
@@ -3449,7 +3449,7 @@
       "note": "Follow the technique — Density is not a count. cut=0 prevents the curve extending beyond observed values."
     },
     "V05-2": {
-      "sha256": "3ba9a8ee97ecc91739e3606d06ffbfcc476bd07c2dd18b2063d8f536f2030e80",
+      "sha256": "3d5d691a0f2728b102b42adc55aaf207974038a66ef8184d0ca5c7600b4e999c",
       "criteria": [
         "purpose",
         "given input",
@@ -3462,7 +3462,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V05-3": {
-      "sha256": "13a5adff558ebcf15b413507dd1d855a8c62f0b618640b82005fa59f6c40ec0d",
+      "sha256": "995cca748231722ebfeae7a49e290ebabd567bcb8ec18563f448b8bd9936cb0f",
       "criteria": [
         "purpose",
         "given input",
@@ -3475,7 +3475,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V06-1": {
-      "sha256": "d91ac46fbd8ea6d546192487a99e142d01fb560e527d4938c948d97c3f066c5f",
+      "sha256": "5002cb864d1e3190d23e1a562924cd31647527f443ae092bc4839e8506ac8b3e",
       "criteria": [
         "purpose",
         "given input",
@@ -3488,7 +3488,7 @@
       "note": "Follow the technique — The ECDF height is the fraction at or below the horizontal value."
     },
     "V06-2": {
-      "sha256": "fabb224bd52ab292976cee963c75ca506a7e690863426ceda130161df58386cc",
+      "sha256": "c5402f8a26235ba0fa9d27fe3fd49e3eae60822c1192bc40a5fb9a976c216c6e",
       "criteria": [
         "purpose",
         "given input",
@@ -3501,7 +3501,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V06-3": {
-      "sha256": "9e6a66a848be361aac7ddef43ef5e6fbb3ba8697eee8367cd00d438739aaea64",
+      "sha256": "631e8611dde16c77feb33705fd4f88819cc7c06a22913dc28c894a3681536664",
       "criteria": [
         "purpose",
         "given input",
@@ -3514,7 +3514,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V07-1": {
-      "sha256": "9386333f01bc30344f38c34f4d4d45cdc6491466e463c01657fdb80b6848bad4",
+      "sha256": "d4bb11359e0e2f898db956ff43e3d8eb6e7e6bd89164bb228cdd3a6e95bef13e",
       "criteria": [
         "purpose",
         "given input",
@@ -3527,7 +3527,7 @@
       "note": "Follow the technique — Pass the same ax to both calls so the rug marks and distribution share a scale."
     },
     "V07-2": {
-      "sha256": "7ac0bea03d676d96d04a44ff79e04c1ec392c3affeec76b794d495b9da993422",
+      "sha256": "0f0789fe38e5c24a6f9f739ae058ce3a8e1a981b3a2f3e2d2a309fd8aa4100f9",
       "criteria": [
         "purpose",
         "given input",
@@ -3540,7 +3540,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V07-3": {
-      "sha256": "a7c7277c0db0d0ca1b73a81133d2ab5b08320b42440c35ca8c738a72a658166d",
+      "sha256": "cee15371d107ccf9f0406d6a2981028a05743f7e9102f376fa1d29cec964f88d",
       "criteria": [
         "purpose",
         "given input",
@@ -3553,7 +3553,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V10-1": {
-      "sha256": "e64e8f2e2e7a7af1122a191b5736cf93a49fa7c6476a757a421809bc8a0c6c7f",
+      "sha256": "036cc20ac18c2f447b76d14df3cd2c837d941307c7c54510a01ca63b14ef3214",
       "criteria": [
         "purpose",
         "given input",
@@ -3566,7 +3566,7 @@
       "note": "Follow the technique — One SD describes spread of observations, not a confidence interval for the mean."
     },
     "V10-2": {
-      "sha256": "2d3b6e10ba0c384effa352def973f2fe651e31f4c0fa7001cd6f24f7e8d4842c",
+      "sha256": "37fb40557196a152f96ded99f022e4f2cacdeac2cda861c0ecbbcd6ba0864c6b",
       "criteria": [
         "purpose",
         "given input",
@@ -3579,7 +3579,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V10-3": {
-      "sha256": "07c3cfc1fd6c18f36b3e1d19d92e7c7d4cd150eb6d214b85e88fedaeaed81d4b",
+      "sha256": "2fd7e72dccf47a28361fde655a1b307a8c9821fd9fffbc4b6c6332a518c02ba2",
       "criteria": [
         "purpose",
         "given input",
@@ -3592,7 +3592,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V12-1": {
-      "sha256": "8769c27ac926a9dc5c812b05ff582969c3f0c178418f51e4d2cc4bb6bca4a461",
+      "sha256": "378d15d8785af502e401a370419c3e0705bc9c15c00d6d5d8ce36659a142a835",
       "criteria": [
         "purpose",
         "given input",
@@ -3605,7 +3605,7 @@
       "note": "Follow the technique — The smooth shape depends on a density estimate; tiny groups do not support strong tail claims."
     },
     "V12-2": {
-      "sha256": "f6ae7eb4bd167c21a558f453cafa231741f61610af64fe2a28a732b3473fd16b",
+      "sha256": "b500319d7dfaa8458438d216715cc6b768c5335e98c824989ee84ee6f2caceb8",
       "criteria": [
         "purpose",
         "given input",
@@ -3618,7 +3618,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V12-3": {
-      "sha256": "54180c8392425f3f3c4f2df71c27cff7c58b726ac9b7c24341f6c14ffed52c0d",
+      "sha256": "8de8ced3a3aff6ff9d29818a261e5a083b21999563acebb2b7fa0da2a89decf3",
       "criteria": [
         "purpose",
         "given input",
@@ -3631,7 +3631,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V14-1": {
-      "sha256": "eb9a9716c05f6c81f27c60695ad6788a9303c2ecc71a7d0d4013a8ddebe5bfc1",
+      "sha256": "e53c7909ddb0f41a6fa8f741d5113b5628469b74bb82f9a94ca80f60ecf1b484",
       "criteria": [
         "purpose",
         "given input",
@@ -3644,7 +3644,7 @@
       "note": "Follow the technique — Swarm packing moves points along the category direction while retaining their measurements."
     },
     "V14-2": {
-      "sha256": "33ad387e6037abed8654ac5f5ed007070d8a9fa4b703b1ae05a7a0ef792f8b93",
+      "sha256": "1feda2ed2eabc97d56a456d2376ad2224761212fa77dac34354dbd89e3e1b018",
       "criteria": [
         "purpose",
         "given input",
@@ -3657,7 +3657,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V14-3": {
-      "sha256": "32b8aa0ea379dbd0745e83fb1afd2bff87310dc9e56c23b741edba00bab05d60",
+      "sha256": "406a57c034d9135804bbca8464660be39bd6a5f07de255911f2fbe2e6b332a13",
       "criteria": [
         "purpose",
         "given input",
@@ -3670,7 +3670,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V15-1": {
-      "sha256": "66eee775b61f1e30454334cd116da9326cc4f11b9a6f94dea0066cd9973a1d22",
+      "sha256": "cd395b115e73faa2760270da09820dfb050b140508885d8d70564ab792111433",
       "criteria": [
         "purpose",
         "given input",
@@ -3683,7 +3683,7 @@
       "note": "Follow the technique — Choose the observations first, then map the requested measurements to the chart."
     },
     "V15-2": {
-      "sha256": "dee8cc14ff8cfc22e85f60f55f8c37ad8110125201f9783a4779d18cfdbc9c0b",
+      "sha256": "c30ad91d2fc9dd84da8f52e2b970b88a1c31d29c986bf735cd23bbbb4b30bb46",
       "criteria": [
         "purpose",
         "given input",
@@ -3696,7 +3696,7 @@
       "note": "Adapt the workflow — Choose the observations first, then map the requested measurements to the chart."
     },
     "V15-3": {
-      "sha256": "923d4f8b18f108b91e52112681034410d95ee0d03ba8769138508365a7538911",
+      "sha256": "5dbbbb0a44a7c8855a81891639e7e8d76826dfac37416370fa13e83d1329e5ea",
       "criteria": [
         "purpose",
         "given input",
@@ -3709,7 +3709,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "VR4-1": {
-      "sha256": "13a5adff558ebcf15b413507dd1d855a8c62f0b618640b82005fa59f6c40ec0d",
+      "sha256": "995cca748231722ebfeae7a49e290ebabd567bcb8ec18563f448b8bd9936cb0f",
       "criteria": [
         "purpose",
         "given input",
@@ -3722,7 +3722,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR4-2": {
-      "sha256": "9e6a66a848be361aac7ddef43ef5e6fbb3ba8697eee8367cd00d438739aaea64",
+      "sha256": "631e8611dde16c77feb33705fd4f88819cc7c06a22913dc28c894a3681536664",
       "criteria": [
         "purpose",
         "given input",
@@ -3735,7 +3735,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR4-3": {
-      "sha256": "07c3cfc1fd6c18f36b3e1d19d92e7c7d4cd150eb6d214b85e88fedaeaed81d4b",
+      "sha256": "2fd7e72dccf47a28361fde655a1b307a8c9821fd9fffbc4b6c6332a518c02ba2",
       "criteria": [
         "purpose",
         "given input",
@@ -3748,7 +3748,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR4-4": {
-      "sha256": "923d4f8b18f108b91e52112681034410d95ee0d03ba8769138508365a7538911",
+      "sha256": "5dbbbb0a44a7c8855a81891639e7e8d76826dfac37416370fa13e83d1329e5ea",
       "criteria": [
         "purpose",
         "given input",
@@ -3761,7 +3761,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V19-1": {
-      "sha256": "f239577d6d410a19c7f513591b453832d3dd7f1e15a1f606a487af061b1fcb74",
+      "sha256": "130b1cec8eba02ef31b01ded64f4535ba477b042f4273f56150d2642523cc197",
       "criteria": [
         "purpose",
         "given input",
@@ -3774,7 +3774,7 @@
       "note": "Follow the technique — Repeated times are aggregated when estimator is mean; the SD band shows within-time spread."
     },
     "V19-2": {
-      "sha256": "738fd78ffb6d74303165016d3af149c32569f0cb99bcf4e23c3dde18bef109c0",
+      "sha256": "a468e9b37a6540f5f436ab7a187275cc1a7843d62827ce0a24edbe7f0177edbf",
       "criteria": [
         "purpose",
         "given input",
@@ -3787,7 +3787,7 @@
       "note": "Adapt a requirement — Selecting a replicate changes the unit represented by each point."
     },
     "V19-3": {
-      "sha256": "de769a29949f09bd13776756b459c83f56778ec293f46a216167bc7518772377",
+      "sha256": "b38a49cd6ffc948b7c60aca02fb3c2f87a86134c1edc2b592a078362b4936772",
       "criteria": [
         "purpose",
         "given input",
@@ -3800,7 +3800,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V20-1": {
-      "sha256": "12d351e1deaef5d365643f166594e80b0525854d43e65e6cb0bfd63029e862a7",
+      "sha256": "de832a65c6c5f6b485d86b19efa816425fd716459b1617ac69ddd3400d89baa7",
       "criteria": [
         "purpose",
         "given input",
@@ -3813,7 +3813,7 @@
       "note": "Follow the technique — ci=None removes the displayed confidence band; it does not make the fit certain."
     },
     "V20-2": {
-      "sha256": "1c914a0e82362884f00f3215d83600bbe90a828e71787dc1d1762f285b65e5ab",
+      "sha256": "4dcee9d055902fa0d73a94356438860059bcb269ce572ac3f79c31dce4646ea5",
       "criteria": [
         "purpose",
         "given input",
@@ -3826,7 +3826,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V20-3": {
-      "sha256": "e82e552e0ceae2840b430fc0eef238f1649036de951377fa509e85d5ab5c7aa2",
+      "sha256": "1d4fa3d8e95a9ddba523f096c482427606b1123db496026710ce92d88886e5fc",
       "criteria": [
         "purpose",
         "given input",
@@ -3839,7 +3839,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V21-1": {
-      "sha256": "3b2c09df0813157f7ed3097efe6b96ee0e503acc481aaffe134d9dadc66603a9",
+      "sha256": "ab6de0cb95300231bbd30fc0eacb9782d091548c35a1e42474618e5a32713dd5",
       "criteria": [
         "purpose",
         "given input",
@@ -3852,7 +3852,7 @@
       "note": "Follow the technique — Residuals are observed minus predicted, not the original measured y values."
     },
     "V21-2": {
-      "sha256": "125b213786859a3a23a1ddf45c14f791f3fbc966c2139dc36b98743d32eb8432",
+      "sha256": "b7b518a657c223a62c5e8e5dda9b518f556ffcdaf7d09c86caa0163ae0e01b79",
       "criteria": [
         "purpose",
         "given input",
@@ -3865,7 +3865,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V21-3": {
-      "sha256": "acf10dc142619ce74e3f03f1ccce765f4af4e67b4b7bd562ba36680210773c2b",
+      "sha256": "813d151fd3b5db6025c0780a9daad656bea088d95f93965a4b83357652b993ea",
       "criteria": [
         "purpose",
         "given input",
@@ -3878,7 +3878,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V23-1": {
-      "sha256": "f2d0e016e7550ce9985a80318f5723bdf4c97b68fd3b24dd7a4b103199dcb263",
+      "sha256": "0eaaf3fc9c75485edc1c54ac7eddb1c3261a18452a0938e70e73b03472798b32",
       "criteria": [
         "purpose",
         "given input",
@@ -3891,7 +3891,7 @@
       "note": "Follow the technique — A category-count matrix and a measurement-average matrix answer different questions."
     },
     "V23-2": {
-      "sha256": "544b31a41c52842e5c5d296b3b85357f517fc8ea45534e0f272fe6889494cc05",
+      "sha256": "42958920be6e40f28bf139bf418595ef6e8f3e118d4b38db16f590f5a053429b",
       "criteria": [
         "purpose",
         "given input",
@@ -3904,7 +3904,7 @@
       "note": "Adapt a requirement — Identify what changed from Follow: the measurement, summary or visual encoding. Update the data mapping and matching labels."
     },
     "V23-3": {
-      "sha256": "c5ca72c26f4f8ecd591f9f11db38e6a0e479be106c1ae8cae05173c5a231fcc1",
+      "sha256": "092eb424ee216e814e3916aea59affbb0053d8bf586287ab7d485496bf4d74d8",
       "criteria": [
         "purpose",
         "given input",
@@ -3917,7 +3917,7 @@
       "note": "Choose and combine — A crosstab counts; a pivot table with a mean summarizes ratings."
     },
     "VR5-1": {
-      "sha256": "de769a29949f09bd13776756b459c83f56778ec293f46a216167bc7518772377",
+      "sha256": "b38a49cd6ffc948b7c60aca02fb3c2f87a86134c1edc2b592a078362b4936772",
       "criteria": [
         "purpose",
         "given input",
@@ -3930,7 +3930,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR5-2": {
-      "sha256": "e82e552e0ceae2840b430fc0eef238f1649036de951377fa509e85d5ab5c7aa2",
+      "sha256": "1d4fa3d8e95a9ddba523f096c482427606b1123db496026710ce92d88886e5fc",
       "criteria": [
         "purpose",
         "given input",
@@ -3943,7 +3943,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR5-3": {
-      "sha256": "acf10dc142619ce74e3f03f1ccce765f4af4e67b4b7bd562ba36680210773c2b",
+      "sha256": "813d151fd3b5db6025c0780a9daad656bea088d95f93965a4b83357652b993ea",
       "criteria": [
         "purpose",
         "given input",
@@ -3956,7 +3956,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR5-4": {
-      "sha256": "c5ca72c26f4f8ecd591f9f11db38e6a0e479be106c1ae8cae05173c5a231fcc1",
+      "sha256": "092eb424ee216e814e3916aea59affbb0053d8bf586287ab7d485496bf4d74d8",
       "criteria": [
         "purpose",
         "given input",
@@ -3969,7 +3969,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "V28-1": {
-      "sha256": "b437a482836d3c668b8a9de836f2bdeaa324f96019818c90201d2e0f6a207f3b",
+      "sha256": "cc2e37b9bae965a5468903a126e1a3429af032a5f30f7d2f579bbe9f618f8d21",
       "criteria": [
         "purpose",
         "given input",
@@ -3982,7 +3982,7 @@
       "note": "Follow the technique — Find the target row, then use both coordinates from that same row for the annotation."
     },
     "V28-2": {
-      "sha256": "974bfb004fa6d582e4eba25f5f8714d4516446bf09fc602f55f17271a76ecc82",
+      "sha256": "1cf9a35e14e30a7a5814692fa4d868a2b7a893b279f18c0431c0c4694f30eed2",
       "criteria": [
         "purpose",
         "given input",
@@ -3995,7 +3995,7 @@
       "note": "Adapt a requirement — Find the minimum of the measured field, then label its paired coordinates."
     },
     "V28-3": {
-      "sha256": "64d6b68b8dbaccc9169abb62d567823cb60f8454e7b4c58e3a9000e849a1443b",
+      "sha256": "3f76e7b53982eb407939fdb5d230bf0e577b7e06dfa861a1769a3d9019af78b0",
       "criteria": [
         "purpose",
         "given input",
@@ -4008,7 +4008,7 @@
       "note": "Choose and combine — Find the peak inside the report population, not in the original table."
     },
     "V30-1": {
-      "sha256": "aec1697cf57dca814dd2ace4c673d7e5d59b84f50c07d112520012bc59012f47",
+      "sha256": "c0ce93bc2f8505eaea9832f95cbd3c3cca0e781f236c1562ac10fd8848b737c3",
       "criteria": [
         "purpose",
         "given input",
@@ -4021,7 +4021,7 @@
       "note": "Follow the technique — The upper bars need bottom equal to the lower component, not zero."
     },
     "V30-2": {
-      "sha256": "6a72cc003381fd5fce12281cfd93f7e2d5d6b70814b6992a24c1639a936a601b",
+      "sha256": "e500bccc1feecce7c6fb3537169cd4a34cf0e3c977288530b90afcd70274ef1d",
       "criteria": [
         "purpose",
         "given input",
@@ -4034,7 +4034,7 @@
       "note": "Adapt a requirement — The upper component needs the lower component as its bottom."
     },
     "V30-3": {
-      "sha256": "c00faf67e3820508bb6a65aba93285da13490486f3bc5270a07be7716d5a40fd",
+      "sha256": "f4a289175c356d8a20c7a8e683ae7ba08d606c93580714b1c130bba1f9a114aa",
       "criteria": [
         "purpose",
         "given input",
@@ -4047,7 +4047,7 @@
       "note": "Combine earlier skills — Choose the observations first, then map the requested measurements to the chart."
     },
     "V31-1": {
-      "sha256": "eecfc6d644cffd8fc96308dab0c4e763e6235598ba0a5b6f0b77c83ebde903a4",
+      "sha256": "d0750f8766e057b19010ac36f4a8211e23c722a9fa48d47cdd441c9f2ac05f9e",
       "criteria": [
         "purpose",
         "given input",
@@ -4060,7 +4060,7 @@
       "note": "Follow the technique — pairplot owns its Figure; do not create an extra empty Figure first."
     },
     "V31-2": {
-      "sha256": "98e42bc1da610ff9c9500e2a2210544e8d2cb74d1ca98ee312b961ada876e812",
+      "sha256": "2f25f6ddef6affbb36056da9d348ee56a5d482d59f08e9180ac10201b9fc58d9",
       "criteria": [
         "purpose",
         "given input",
@@ -4073,7 +4073,7 @@
       "note": "Adapt a requirement — The upper and lower panels repeat the same variable pairs with swapped axes."
     },
     "V31-3": {
-      "sha256": "1566e6f967750f1548e4e1d3563a5bf4b8c1b6718c05d96a4f9aeee53797c32e",
+      "sha256": "38c4e50280da20c6fb3fe1a20168bf34975e323b05a50b259ecb0d5a9ff13a8f",
       "criteria": [
         "purpose",
         "given input",
@@ -4086,7 +4086,7 @@
       "note": "Combine earlier skills — Select the population and variables before creating the grid."
     },
     "V32-1": {
-      "sha256": "b8750cce61273396a85b3b37a8bb3268311712f5f71b29064adc7cad0b480339",
+      "sha256": "3eb2443fd414a9fa8e13be9144e994ae70dd9ce7758515367bae5ab32c38b177",
       "criteria": [
         "purpose",
         "given input",
@@ -4099,7 +4099,7 @@
       "note": "Follow the technique — jointplot owns a Figure with a central Axes and marginal Axes."
     },
     "V32-2": {
-      "sha256": "7d13f0bdb8179bad74265e891f2a49719bdc3803bd6cdd0ed5527f39323bc1e0",
+      "sha256": "2c92523979cc24286d7dbca96d357cbede5ef84d372274cfb3f4a66ef9b046a1",
       "criteria": [
         "purpose",
         "given input",
@@ -4112,7 +4112,7 @@
       "note": "Adapt a requirement — Use g.ax_joint to target the relationship panel without altering the margins."
     },
     "V32-3": {
-      "sha256": "bfae96c6be15f4990a6dee1de3b1cd1afaf90994ef5eddd445777c7b8cd2d36a",
+      "sha256": "c3f2786ddd7360aabee01b9d7dbe1645e8d29604fcf98d042ecb6cf3cb05b709",
       "criteria": [
         "purpose",
         "given input",
@@ -4125,7 +4125,7 @@
       "note": "Combine earlier skills — The reference belongs to the relationship panel, not either marginal distribution."
     },
     "V33-1": {
-      "sha256": "32c975d4199490546a2a69930ad8466ab20551f14686be0fe627dcbbb67a9df6",
+      "sha256": "2d3fb0f65f4202c6dc0625ce8df44c118f7b48487a0fcc108abf77a9547552a1",
       "criteria": [
         "purpose",
         "given input",
@@ -4138,7 +4138,7 @@
       "note": "Follow the technique — Figure-level functions create their own panels; height describes each panel."
     },
     "V33-2": {
-      "sha256": "fb510f1a4ed1f6a59d36769ed6de2e49c58296cf7a84c0247a445bf2d87a58fd",
+      "sha256": "53ee02099d67ea2d3de05d05707f7b9dc2f2df8f00a6c8418764b7e36ac6dcf4",
       "criteria": [
         "purpose",
         "given input",
@@ -4151,7 +4151,7 @@
       "note": "Compare category distributions across panels — relplot(kind=\"scatter\"), catplot(kind=\"box\"), displot(kind=\"hist\"), col= are the tools to try."
     },
     "V33-3": {
-      "sha256": "cda891c0da8b48e58f70beb141f672ae5e06d9c912ea8ec77d1530f2ada6dcc6",
+      "sha256": "70616fb9ef9c62bc728aa62e20647b43341f7537c509a312d1f4185f57461f8e",
       "criteria": [
         "purpose",
         "given input",
@@ -4164,7 +4164,7 @@
       "note": "Choose distribution panels for a new context — relplot(kind=\"scatter\"), catplot(kind=\"box\"), displot(kind=\"hist\"), col= are the tools to try."
     },
     "VR6-1": {
-      "sha256": "64d6b68b8dbaccc9169abb62d567823cb60f8454e7b4c58e3a9000e849a1443b",
+      "sha256": "3f76e7b53982eb407939fdb5d230bf0e577b7e06dfa861a1769a3d9019af78b0",
       "criteria": [
         "purpose",
         "given input",
@@ -4177,7 +4177,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR6-2": {
-      "sha256": "c00faf67e3820508bb6a65aba93285da13490486f3bc5270a07be7716d5a40fd",
+      "sha256": "f4a289175c356d8a20c7a8e683ae7ba08d606c93580714b1c130bba1f9a114aa",
       "criteria": [
         "purpose",
         "given input",
@@ -4190,7 +4190,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR6-3": {
-      "sha256": "1566e6f967750f1548e4e1d3563a5bf4b8c1b6718c05d96a4f9aeee53797c32e",
+      "sha256": "38c4e50280da20c6fb3fe1a20168bf34975e323b05a50b259ecb0d5a9ff13a8f",
       "criteria": [
         "purpose",
         "given input",
@@ -4203,7 +4203,7 @@
       "note": "Retrieval of taught skills; output checked semantically."
     },
     "VR6-4": {
-      "sha256": "cda891c0da8b48e58f70beb141f672ae5e06d9c912ea8ec77d1530f2ada6dcc6",
+      "sha256": "70616fb9ef9c62bc728aa62e20647b43341f7537c509a312d1f4185f57461f8e",
       "criteria": [
         "purpose",
         "given input",
@@ -4217,5 +4217,5 @@
     }
   },
   "teachingReview": "Every Follow concept has an authored idea, miniature example, comparison of relevant options, and interpretation note. Review tasks inherit corrected Transfer briefs.",
-  "orderReview": "Category counts, category means/totals and weekday counts accept any category order; tasks teaching sorting or a specified layout still check order."
+  "orderReview": "Labelled category summaries, crosstabs, pivot tables and category bars accept any category order while keeping each value with its label. Time, rank, original record and explicitly requested column order remain strict."
 }

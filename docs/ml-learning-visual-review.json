@@ -321,7 +321,7 @@
       "theme": "light",
       "width": 1440,
       "file": "ML-R02-light-1440.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R03",
@@ -1209,7 +1209,7 @@
       "theme": "dark",
       "width": 1440,
       "file": "ML-R02-dark-1440.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1217,7 +1217,7 @@
       "theme": "light",
       "width": 320,
       "file": "ML-R02-light-320.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1225,7 +1225,7 @@
       "theme": "light",
       "width": 390,
       "file": "ML-R02-light-390.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R04",
@@ -2253,9 +2253,9 @@
   },
   "sourceHashes": {
     "ml-learning/visuals.js": "99b55ff265a9f3dca30ffe3c4d3cff62e8df23dba84e31c843c353dbb8e19531",
-    "ml-learning/learning.css": "641293c5c4d26b1200b3a0060a07b8cd50830ca75b34cef49f777fa4db5a3c45",
-    "ml-learning/app.js": "350b53ceb8414c9ff33559f3fb96ff87ccc65e673849a039f6d51a522e1cbb48",
-    "foundations/foundations.css": "a157bc8b38524bd443b30d823402e10128ef5bb8ec66ae69c9828a95b2acaa7d",
+    "ml-learning/learning.css": "6724c9a896fa9907218585853a20dc2e84f277c599c98de1fb7058eb7c5b21e5",
+    "ml-learning/app.js": "46766b239eb31eb28c4c4bc2a8a4e08d92281182726b6ac7e55cce70e8062ba7",
+    "foundations/foundations.css": "dc6c4cfee41d84f41c042b6a26c9a6832c99a54ed17c8cc360caad507918a694",
     "foundations/learning-ui.js": "30b672d129be5ecc3c30097dcff3843a12f2efdc0ecf5d4d6d77c8c685958b0b"
   }
 }

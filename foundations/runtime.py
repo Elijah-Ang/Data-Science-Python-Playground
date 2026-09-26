@@ -78,11 +78,24 @@ def _intent(code, exercise):
         assert not present(requirement), 'Use the requested column operation instead of ' + requirement + '().'
 
 
-def _equal(actual, expected, strict=False, unordered_index=False):
+def _equal(actual, expected, strict=False, unordered_index=False, unordered_columns=False, unordered_rows_by=None):
     if expected is None:
         assert actual is None, 'Use the Python value None, not text or an omitted answer.'
     elif isinstance(expected, pd.DataFrame):
         assert isinstance(actual, pd.DataFrame), 'Return a DataFrame, keeping the requested rows and columns.'
+        if unordered_rows_by:
+            assert list(actual.columns) == list(expected.columns), 'Keep the requested output columns and their order.'
+            assert actual[unordered_rows_by].is_unique and expected[unordered_rows_by].is_unique, 'Return one row per category.'
+            actual = actual.set_index(unordered_rows_by).sort_index()
+            expected = expected.set_index(unordered_rows_by).sort_index()
+        elif unordered_index:
+            assert actual.index.is_unique and expected.index.is_unique, 'Return one row per category.'
+            assert_index_equal(actual.index.sort_values(), expected.index.sort_values(), exact=False, check_names=False)
+            actual = actual.reindex(expected.index)
+        if unordered_columns:
+            assert actual.columns.is_unique and expected.columns.is_unique, 'Return one column per category.'
+            assert_index_equal(actual.columns.sort_values(), expected.columns.sort_values(), exact=False, check_names=False)
+            actual = actual.reindex(columns=expected.columns)
         assert_frame_equal(actual, expected, check_dtype=strict, check_names=False, check_exact=False, rtol=1e-6, atol=1e-7, check_categorical=strict)
     elif isinstance(expected, pd.Series):
         assert isinstance(actual, pd.Series), 'Return a Series (one labelled column).'
@@ -122,7 +135,7 @@ def _numeric(values):
 
 def _plot_state(figures, rules):
     result = []
-    for fig in figures:
+    for figure_number, fig in enumerate(figures):
         fig.canvas.draw()
         state = {'axes': []}
         if rules.get('size'):
@@ -148,6 +161,29 @@ def _plot_state(figures, rules):
                         item['patches'].append(_numeric([patch.get_x(), patch.get_y(), patch.get_width(), patch.get_height()]))
                 else:
                     item['patches'].append(_numeric(patch.get_path().vertices))
+            # A categorical bar chart answers with label-height pairs. A
+            # different category order is equivalent unless the brief asks
+            # learners to rank or sequence the bars. Leave all other chart
+            # geometry under the usual exact comparison.
+            unordered_bars = rules.get('unorderedBars') and figure_number == rules.get('unorderedBarsFigure', 0)
+            if unordered_bars:
+                ticks = list(ax.get_xticks())
+                labels = [tick.get_text() for tick in ax.get_xticklabels()]
+                rectangles = [patch for patch in ax.patches if isinstance(patch, Rectangle)
+                              and (patch.get_width() or patch.get_height())]
+                if len(ticks) == len(labels) == len(rectangles) and labels and len(set(labels)) == len(labels):
+                    pairs = []
+                    for patch in rectangles:
+                        centre = patch.get_x() + patch.get_width() / 2
+                        nearest = min(range(len(ticks)), key=lambda i: abs(ticks[i] - centre))
+                        if abs(ticks[nearest] - centre) > 0.35:
+                            break
+                        pairs.append((labels[nearest], _numeric([patch.get_y(), patch.get_height()])))
+                    if len(pairs) == len(labels) and len(set(label for label, _ in pairs)) == len(labels):
+                        item['bars_by_category'] = sorted(pairs)
+                        item['patches'] = []
+                        if 'categories' in item:
+                            item['categories'] = sorted(item['categories'])
             for collection in ax.collections:
                 part = {}
                 if isinstance(collection, PathCollection):
@@ -311,7 +347,8 @@ def run_foundation(request):
                     got = actual['env'].get('result')
                 if target == 'value':
                     assert actual['has_result'] or 'result' in actual['env'], 'Write your answer as the final expression, or assign it to result.'
-                _equal(got, wanted, exercise.get('strictDtype', False), exercise.get('unorderedIndex', False))
+                _equal(got, wanted, exercise.get('strictDtype', False), exercise.get('unorderedIndex', False),
+                       exercise.get('unorderedColumns', False), exercise.get('unorderedRowsBy'))
             if exercise.get('preserveData'):
                 _equal(actual['env'].get('df'), pd.DataFrame(columns), True)
             passed = True

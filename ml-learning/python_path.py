@@ -9,8 +9,8 @@ from packages import required
 
 INTRODUCTIONS = {}
 
-def introduce(card, task, solution, test, skill, parts, why, *, dataset='LINE24', setup=''):
-    exercise = py(task, solution, test, dataset=dataset, setup=setup)
+def introduce(card, task, solution, test, skill, parts, why, *, dataset='LINE24', setup='', outputs=None):
+    exercise = py(task, solution, test, dataset=dataset, setup=setup, outputs=outputs)
     exercise['explanation'] = why
     exercise['hints'] = dict(
         think=skill,
@@ -30,7 +30,7 @@ introduce('F01',
     'The question is to predict delivery duration. target_name stores the column label, not the values. Selecting df[target_name] returns the observed outcomes. Duration is a quantity, so this is regression. A species label would instead make it classification. Clustering and PCA do not use a prediction target.')
 
 introduce('F06',
-    'Using the supplied illustrative errors, store each model’s validation-minus-training gap in answer.',
+    'Model A has training/validation RMSE 1/8; model B has 4/5. Store validation minus training RMSE for each model in a Series named answer, indexed A then B.',
     "errors = pd.DataFrame({'train_rmse': [1, 4], 'validation_rmse': [8, 5]}, index=['A', 'B'])\nanswer = errors['validation_rmse'] - errors['train_rmse']",
     "isinstance(answer,pd.Series) and answer.to_dict()=={'A':7,'B':1}",
     'Subtract aligned pandas columns and distinguish training error from validation error.',
@@ -39,15 +39,16 @@ introduce('F06',
     'A has a gap of 7 and B a gap of 1. B also has the lower validation RMSE in this example. Training rows taught the model; validation rows ask about new examples. A gap alone does not select a model: compare the validation error itself on the same rows.')
 
 introduce('W10',
-    'Inspect the supplied fitted line. Store its fit_intercept setting and learned distance coefficient in answer.',
-    "answer = {'fit_intercept': model.get_params()['fit_intercept'], 'distance_coefficient': float(model.coef_[0])}",
-    "answer['fit_intercept'] is True and np.isclose(answer['distance_coefficient'], model.coef_[0])",
+    'From the supplied fitted line, store the fit_intercept setting in fit_intercept and the learned distance coefficient in distance_coefficient.',
+    "fit_intercept = model.get_params()['fit_intercept']\ndistance_coefficient = float(model.coef_[0])",
+    "fit_intercept is True and np.isclose(distance_coefficient, model.coef_[0])",
     'Read a dictionary setting with get_params() and a learned attribute with a trailing underscore.',
     [('model.get_params()', 'Returns constructor settings chosen before fitting; these are not learned coefficients.'),
      ("['fit_intercept']", 'Looks up the named setting in that dictionary.'),
      ('model.coef_[0]', 'Reads the first learned coefficient. The trailing underscore identifies fitted state.')],
     'fit_intercept is a setting, while coef_ is estimated from training examples. Choosing a setting, learning coefficients and evaluating fit quality are separate actions. A fitted attribute proves a fit happened, not that predictions generalise.',
-    setup="from sklearn.linear_model import LinearRegression\nmodel = LinearRegression().fit(df[['distance']], df['duration'])")
+    setup="from sklearn.linear_model import LinearRegression\nmodel = LinearRegression().fit(df[['distance']], df['duration'])",
+    outputs=['fit_intercept','distance_coefficient'])
 
 introduce('W11',
     'Compare fitting a line with and without an intercept using five training folds. Store the candidate parameters and mean validation scores in answer.',
@@ -62,14 +63,15 @@ introduce('W11',
     setup="from sklearn.model_selection import train_test_split\nX_train, X_test, y_train, y_test = train_test_split(df[['distance']], df['duration'], test_size=0.2, random_state=42)")
 
 introduce('R11',
-    'Summarise the fitted slope for distance and training R² in answer. Explain why neither establishes a causal effect.',
-    "answer = pd.Series({'slope': model.coef_[0], 'training_r2': model.score(X, y)})",
-    "np.isclose(answer['slope'],model.coef_[0]) and np.isclose(answer['training_r2'],model.score(X,y))",
-    'Name fitted summaries in a Series and distinguish a model coefficient from a causal claim.',
+    'Store the fitted distance coefficient in slope and R² on the training rows in training_r2. Explain why neither establishes a causal effect.',
+    "slope = float(model.coef_[0])\ntraining_r2 = float(model.score(X, y))",
+    "np.isclose(slope,model.coef_[0]) and np.isclose(training_r2,model.score(X,y))",
+    'Read two fitted summaries and distinguish a model coefficient from a causal claim.',
     [('model.coef_[0]', 'The fitted change in prediction per one-unit increase in distance for this line.'),
      ('model.score(X, y)', 'For LinearRegression this returns R² on the supplied rows; these are training rows here.')],
     'A coefficient describes the fitted line for this dataset. Training R² describes how that line fits these seen rows. Neither controls confounders or shows what an intervention would do. Report the population and validation evidence separately from causal claims.',
-    setup="from sklearn.linear_model import LinearRegression\nX = df[['distance']]\ny = df['duration']\nmodel = LinearRegression().fit(X, y)")
+    setup="from sklearn.linear_model import LinearRegression\nX = df[['distance']]\ny = df['duration']\nmodel = LinearRegression().fit(X, y)",
+    outputs=['slope','training_r2'])
 
 introduce('C19',
     'Count observations in each class and calculate the covariance of the two input measurements within class A. Store the covariance in answer.',
@@ -109,24 +111,26 @@ introduce('N02',
     'Each loss value describes the training objective at one iteration. Reducing this objective guides weight updates. Falling training loss does not prove good predictions on new rows; validation evidence answers that separate question.', dataset='CLASS180', setup=NETWORK_SETUP)
 
 introduce('N05',
-    'Read the fitted iteration count and the configured iteration limit into answer.',
-    "answer = {'iterations_used': network.n_iter_, 'iteration_limit': network.max_iter, 'early_stopping': network.early_stopping}",
-    "answer=={'iterations_used':network.n_iter_,'iteration_limit':network.max_iter,'early_stopping':network.early_stopping}",
+    'Store the fitted iteration count in iterations_used and the configured upper limit in iteration_limit.',
+    "iterations_used = network.n_iter_\niteration_limit = network.max_iter",
+    "iterations_used==network.n_iter_ and iteration_limit==network.max_iter",
     'Distinguish n_iter_ (observed iterations) from max_iter (the configured upper limit).',
     [('network.n_iter_', 'The number of iterations actually performed during this fit.'),
      ('network.max_iter', 'The configured ceiling, not a guarantee that optimisation converged.'),
      ('network.early_stopping', 'Whether fitting can stop using an internal validation subset of its training rows.')],
-    'Reaching the iteration limit calls for inspecting warnings and loss. Stopping earlier may reflect the stopping rule; it does not establish useful performance. Internal early stopping remains inside each training fit and cannot replace the outer validation comparison.', dataset='CLASS180', setup=NETWORK_SETUP)
+    'Reaching the iteration limit calls for inspecting warnings and loss. Stopping earlier may reflect the stopping rule; it does not establish useful performance. Internal early stopping remains inside each training fit and cannot replace the outer validation comparison.', dataset='CLASS180', setup=NETWORK_SETUP,
+    outputs=['iterations_used','iteration_limit'])
 
 introduce('N06',
-    'Read the original network settings, change its hidden layers to (16, 8) and alpha to 0.01, then store the changed settings in answer.',
-    "from sklearn.neural_network import MLPClassifier\nmodel = MLPClassifier(hidden_layer_sizes=(24,), alpha=0.0001, random_state=42)\nmodel.set_params(hidden_layer_sizes=(16, 8), alpha=0.01)\nanswer = {'layers': model.hidden_layer_sizes, 'alpha': model.alpha}",
-    "answer=={'layers':(16,8),'alpha':0.01}",
+    'Create a network with one 24-unit hidden layer and alpha=0.0001. Change its hidden layers to (16, 8) and alpha to 0.01. Store the resulting settings in layers and alpha.',
+    "from sklearn.neural_network import MLPClassifier\nmodel = MLPClassifier(hidden_layer_sizes=(24,), alpha=0.0001, random_state=42)\nmodel.set_params(hidden_layer_sizes=(16, 8), alpha=0.01)\nlayers = model.hidden_layer_sizes\nalpha = model.alpha",
+    "layers==(16,8) and alpha==0.01",
     'Use set_params(), tuples and a float to describe capacity and regularisation before fitting.',
     [('hidden_layer_sizes=(16, 8)', 'Requests two hidden layers, with 16 units and then 8 units.'),
      ('alpha=0.01', 'Sets the L2 weight penalty; its useful value needs validation evidence.'),
      ('model.set_params', 'Changes estimator settings. Refit before evaluating the changed model.')],
-    'The new tuple changes the network capacity and alpha changes the penalty on large weights. These are candidate settings, not automatic improvements. Compare candidates on the same training folds and consider convergence and cost.')
+    'The new tuple changes the network capacity and alpha changes the penalty on large weights. These are candidate settings, not automatic improvements. Compare candidates on the same training folds and consider convergence and cost.',
+    outputs=['layers','alpha'])
 
 introduce('U10',
     'Join the supplied fitted group assignments back to the original measurements and store the group means in answer.',
@@ -150,7 +154,7 @@ introduce('P01',
     'The output has one row per observation and two new coordinate columns. Each coordinate combines original measurements. This first two-axis picture introduces the API; later lessons use explained variance to decide how many components to retain.', dataset='PCA48')
 
 introduce('M01',
-    'Create a dictionary of candidate estimators for a numeric target: a line and a regression tree. Store their class names in answer.',
+    'Create candidate estimators for a numeric target: a line under key line and a regression tree under key tree. Store their class names in a dictionary named answer with those same keys.',
     "from sklearn.linear_model import LinearRegression\nfrom sklearn.tree import DecisionTreeRegressor\ncandidates = {'line': LinearRegression(), 'tree': DecisionTreeRegressor(random_state=42)}\nanswer = {name: type(model).__name__ for name, model in candidates.items()}",
     "answer=={'line':'LinearRegression','tree':'DecisionTreeRegressor'}",
     'Use a dictionary and comprehension to organise estimators that answer the same prediction question.',
@@ -159,7 +163,7 @@ introduce('M01',
     'Both candidates predict a numeric outcome. The dictionary keeps their names attached to their estimator objects. Neither has been fitted or judged. Frame the task first, then compare plausible candidates using common folds and a suitable metric.')
 
 introduce('M02',
-    'Using the supplied illustrative paired fold errors, calculate tree-minus-line RMSE in each fold and store it in answer.',
+    'Across five matching folds, line RMSE is [4.0, 5.0, 4.5, 5.5, 4.0] and tree RMSE is [3.5, 4.8, 5.0, 4.9, 3.8]. Store tree minus line RMSE for each fold in answer.',
     "fold_errors = pd.DataFrame({'line': [4.0, 5.0, 4.5, 5.5, 4.0], 'tree': [3.5, 4.8, 5.0, 4.9, 3.8]})\nanswer = fold_errors['tree'] - fold_errors['line']",
     "np.allclose(answer,[-.5,-.2,.5,-.6,-.2])",
     'Compare aligned fold-score columns before summarising candidate performance.',
@@ -167,13 +171,13 @@ introduce('M02',
     'The tree has smaller RMSE in four of these illustrative folds but larger error in one. Pairing the evidence preserves the common evaluation population. The mean difference alone is not a universal ranking or proof of statistical significance.')
 
 introduce('M04',
-    'Compare the required feature names with a proposed incoming dataframe. Store the missing feature names in answer.',
-    "required = {'distance', 'weight'}\nincoming = pd.DataFrame({'distance': [4, 7]})\nanswer = sorted(required - set(incoming.columns))",
-    "answer==['weight']",
+    'A fitted workflow needs distance and weight. The incoming table has distance only. Store the missing feature names in a list named answer.',
+    "required = {'distance', 'weight'}\nincoming = pd.DataFrame({'distance': [4, 7]})\nanswer = list(required - set(incoming.columns))",
+    "set(answer)=={'weight'} and len(answer)==1",
     'Use sets to check an incoming schema before calling predict().',
     [('set(incoming.columns)', 'Collects the available feature names into a set.'),
      ('required - set(incoming.columns)', 'Finds required names missing from the incoming table.'),
-     ('sorted', 'Returns a reproducibly ordered list of the missing names.')],
+     ('list', 'Turns the missing-name set into a list; its order does not affect this check.')],
     'The incoming table is missing weight, so it cannot support this two-feature workflow as specified. Matching names is only the first check: units, availability at prediction time and the population must also match the intended use.')
 
 def apply(registry):

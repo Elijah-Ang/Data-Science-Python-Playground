@@ -188,6 +188,11 @@ def py(task,solution,test,*,dataset=None,setup='',outputs=None,message=None):
     tree=ast.parse(solution)
     for node in tree.body:
         if not isinstance(node,ast.Assign) or not any(isinstance(t,ast.Name) and t.id in outputs for t in node.targets):continue
+        if ast.unparse(node.value) in ("search.cv_results_['mean_test_score']", "-search.cv_results_['mean_test_score']"):
+            name=next(t.id for t in node.targets if isinstance(t,ast.Name) and t.id in outputs)
+            tests.append(dict(name='Reported validation scores',
+                test='np.allclose('+name+','+ast.unparse(node.value)+')',
+                message='Return the mean validation scores from the fitted search, in its candidate order.'))
         if not isinstance(node.value,ast.Call) or not isinstance(node.value.func,ast.Attribute):continue
         if node.value.func.attr not in ('predict','predict_proba','decision_function'):continue
         if any(isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr in ('fit','fit_transform') for n in ast.walk(node.value)):continue
