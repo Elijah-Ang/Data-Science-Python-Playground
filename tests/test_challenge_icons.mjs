@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 const require=createRequire(import.meta.url);
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const data=require('../challenges/registry.js').challenges;
-const ml=JSON.parse(fs.readFileSync(path.join(root,'dist/ml-learning/curriculum.json'),'utf8')).challenges;
+const ml=JSON.parse(fs.readFileSync(path.join(root,'ml-learning/manifest.json'),'utf8')).challenges.map(challenge=>({id:'ML-'+challenge.id}));
 const prompts=JSON.parse(fs.readFileSync(path.join(root,'challenges/icon-prompts.json'),'utf8'));
 const challenges=[...data,...ml],folder=path.join(root,'assets/workflow-icons-generated');
 assert.equal(data.length,30);
