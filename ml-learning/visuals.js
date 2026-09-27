@@ -374,17 +374,5 @@
     const kind=visual?.type||'tasks',id='ml-arrow-'+(++diagramId),content=(variant(visual)||(types[kind]||types.tasks)()).replaceAll('url(#ml-arrow)','url(#'+id+')');
     return '<figure class="teaching-illustration ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="'+id+'" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>Schematic · '+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
   }
-  function illustration(family){
-    const scenes={
-      regression:'<path d="M10 51V12M10 51H55M16 43L49 20"/><circle cx="22" cy="39" r="3"/><circle cx="39" cy="26" r="3"/>',
-      classification:'<circle cx="18" cy="20" r="6"/><circle cx="23" cy="42" r="6"/><rect x="40" y="14" width="12" height="12"/><rect x="37" y="37" width="12" height="12"/><path d="M32 8V56" stroke-dasharray="3 3"/>',
-      neural:'<path d="M13 20L32 13L51 32L32 51L13 44L32 13M13 20L32 51M13 44L32 32L51 32M13 20L32 32"/><circle cx="13" cy="20" r="4"/><circle cx="13" cy="44" r="4"/><circle cx="32" cy="13" r="4"/><circle cx="32" cy="32" r="4"/><circle cx="32" cy="51" r="4"/><circle cx="51" cy="32" r="4"/>',
-      time:'<path d="M8 52H55M49 47L55 52L49 57"/><rect x="9" y="12" width="20" height="10"/><rect x="9" y="28" width="32" height="10"/><path d="M33 12H43V22H33M45 28H55V38H45"/>',
-      clustering:'<circle cx="20" cy="21" r="14" stroke-dasharray="3 3"/><circle cx="43" cy="43" r="14" stroke-dasharray="3 3"/><circle cx="16" cy="18" r="3"/><circle cx="25" cy="25" r="3"/><rect x="36" y="37" width="6" height="6"/><rect x="45" y="44" width="6" height="6"/>',
-      pca:'<path d="M8 53H54M8 53V10M14 45L49 16M25 21L44 45M45 16H49V20M40 45H44V41"/><circle cx="23" cy="38" r="3"/><circle cx="39" cy="28" r="3"/>'
-    };
-    const names={regression:'Regression',classification:'Classification',neural:'Neural networks',time:'Time-ordered prediction',clustering:'Clustering',pca:'PCA representation'};
-    return '<svg class="case-illustration ml-case-illustration" viewBox="0 0 64 64" role="img" aria-label="'+esc(names[family]||family)+' workflow illustration"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">'+(scenes[family]||scenes.classification)+'</g></svg>';
-  }
-  root.MLLearningVisuals={render,thumbnail,illustration,types:Object.keys(types),family:v=>variant(v)?v.id:v.type};
+  root.MLLearningVisuals={render,thumbnail,types:Object.keys(types),family:v=>variant(v)?v.id:v.type};
 })(window);

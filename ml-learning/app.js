@@ -104,7 +104,6 @@
   }
   const collectionRegistry={collection:{id:'workflow',title:'Workflow Challenges',rootTitle:'Machine Learning',omitDeckCrumb:true,rootHref:'#',lessonsHref:'#',lessonsLabel:'Learning decks',contractNote:'These conditions describe a complete workflow. Use the declared Python variables beside the editor; Check inspects evidence from your Run.',briefLabel:'Independent ML briefs',introduction:'Assemble a complete workflow from a realistic question and inspectable evidence.',inputNote:'Choose any brief. Each runs independently with its supplied inputs. Prerequisites and time estimates are guidance.'},families:{regression:'Regression',classification:'Classification',neural:'Neural networks',time:'Time-ordered prediction',clustering:'Clustering',pca:'PCA'},challenges:C.challenges};
   const challengeExperience=createChallengeExperience(collectionRegistry,{
-    illustration:family=>MLLearningVisuals.illustration(family),
     deliverables:ch=>`<ol class="ml-deliverable-groups">${ch.deliverableGroups.map(g=>`<li><h4>${esc(g.title)}</h4><p>${esc(g.summary)}</p></li>`).join('')}</ol>${workflowMap(ch)}${evidenceContract(ch.exercise)}`,
     inputPreview:input=>{
     const ch=view?.challenge;return datasetPreview(ch?.exercise.dataset,input);
