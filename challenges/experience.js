@@ -8,50 +8,8 @@
     function tabs(deck, active) {
       return `<nav class="challenge-mode-tabs" aria-label="Learning mode"><a href="${esc(collectionInfo.lessonsHref ?? ("#"+deck.id))}" ${active === "lessons" ? 'aria-current="page"' : ""}>${esc(collectionInfo.lessonsLabel || "Lessons & Reviews")}</a><a href="#${deck.id}/challenges" ${active === "challenges" ? 'aria-current="page"' : ""}>${esc(collectionInfo.title)}</a></nav>`;
     }
-    // Finer 64-unit grid: two-unit outlines and short stair steps retain the pixel character.
-    // Each illustration is a single unobstructed scenario silhouette.
-    function illustration({ family }) {
-      if(adapters.illustration)return adapters.illustration(family);
-      const scenes = {
-        delivery: `
-          <path class="pixel-shadow" d="M8 54h48v2H8z"/>
-          <path class="pixel-outline" d="M7 20h32v8h10v2h2v2h2v2h2v2h2v3h3v11H7z"/>
-          <path class="pixel-face" d="M9 22h28v24H9zM39 30h9v2h2v2h2v2h2v4h4v8H39z"/>
-          <path class="pixel-light" d="M11 24h24v14H11zM41 31h6v2h2v2h2v3H41z"/>
-          <path class="pixel-accent" d="M11 40h24v4H11zM41 40h5v2h-5zM55 43h3v3h-3z"/>
-          <path class="pixel-outline" d="M15 44h8v2h2v2h2v5h-2v2h-2v2h-8v-2h-2v-2h-2v-5h2v-2h2zM45 44h8v2h2v2h2v5h-2v2h-2v2h-8v-2h-2v-2h-2v-5h2v-2h2z"/>
-          <path class="pixel-light" d="M16 48h6v5h-6zM46 48h6v5h-6z"/>
-          <path class="pixel-accent" d="M5 12h15v2H5zM2 16h10v2H2z"/>`,
-        cafe: `
-          <path class="pixel-shadow" d="M10 54h43v2H10z"/>
-          <path class="pixel-outline" d="M12 23h34v3h8v2h3v3h2v10h-2v3h-3v2H43v4h-3v3H21v-2h-4v-3h-3v-7h-2z"/>
-          <path class="pixel-face" d="M14 25h30v16h-2v6h-3v3H22v-2h-4v-3h-2v-6h-2z"/>
-          <path class="pixel-light" d="M16 27h26v4H16zM46 29h7v2h3v10h-3v2H44v-3h2z"/>
-          <path class="pixel-accent" d="M19 35h19v2H19zM22 39h13v2H22zM8 54h48v2H8z"/>
-          <path class="pixel-outline" d="M22 7h2v4h-2v2h-2v3h2v3h-2v-2h-2v-5h2v-2h2zM35 7h2v4h-2v2h-2v3h2v3h-2v-2h-2v-5h2v-2h2z"/>`,
-        study: `
-          <path class="pixel-shadow" d="M6 51h52v3H6z"/>
-          <path class="pixel-outline" d="M5 17h15v1h6v2h4v2h4v-2h4v-2h6v-1h15v35H42v1h-5v2H27v-2h-5v-1H5z"/>
-          <path class="pixel-face" d="M7 19h13v1h6v2h4v29h-3v-1h-5v-1H7zM34 22h4v-2h6v-1h13v30H42v1h-5v1h-3z"/>
-          <path class="pixel-light" d="M9 21h11v1h6v2h2v21h-7v-1H9zM36 24h2v-2h6v-1h11v23H43v1h-7z"/>
-          <path class="pixel-outline" d="M31 24h2v28h-2z"/>
-          <path class="pixel-accent" d="M11 28h12v2H11zM11 34h13v2H11zM11 40h9v2h-9zM40 28h12v2H40zM40 34h12v2H40zM40 40h8v2h-8zM45 13h6v15h-2v-2h-2v-2h-2z"/>`,
-        sales: `
-          <path class="pixel-shadow" d="M9 54h46v2H9z"/>
-          <path class="pixel-outline" d="M16 13h31v2h3v3h2v3h2v4h2v29H8V25h2v-4h2v-3h2v-3h2z"/>
-          <path class="pixel-face" d="M17 15h29v2h3v3h2v4h2v3H11v-3h2v-4h2v-3h2zM10 30h44v22H10z"/>
-          <path class="pixel-light" d="M18 17h27v2H18zM12 32h40v4H12z"/>
-          <path class="pixel-accent" d="M28 15h7v12h-7zM28 30h7v12h-2v-2h-3v2h-2z"/>
-          <path class="pixel-outline" d="M14 41h9v2h-9zM14 45h6v2h-6zM44 43h2v5h-2zM48 41h2v7h-2z"/>`,
-        activity: `
-          <path class="pixel-shadow" d="M12 55h40v2H12z"/>
-          <path class="pixel-outline" d="M14 12h36v2h3v3h2v38H9V17h2v-3h3z"/>
-          <path class="pixel-face" d="M14 15h36v3h2v34H12V18h2z"/>
-          <path class="pixel-light" d="M16 22h32v26H16z"/>
-          <path class="pixel-outline" d="M25 7h14v3h5v10H20V10h5z"/>
-          <path class="pixel-accent" d="M27 9h10v3h5v6H22v-6h5zM17 34h7v-4h2v-4h2v15h2v4h2v-8h2v-7h2v4h2v2h9v2H36v-1h-1v10h-7v-4h-2v-6h-9zM17 50h11v1H17zM34 50h13v1H34z"/>`
-      };
-      return `<svg class="case-illustration" viewBox="0 0 64 64" role="img" aria-label="${esc(registry.families[family])} scenario" shape-rendering="crispEdges">${scenes[family] || scenes.activity}</svg>`;
+    function illustration(challenge) {
+      return `<img class="case-illustration" data-challenge-icon="${esc(challenge.id)}" src="assets/workflow-icons-generated/${esc(challenge.id)}.png" alt="" width="112" height="112" loading="lazy" decoding="async">`;
     }
     function collection(deck) {
       const entries = all.filter((c) => c.deck === deck.id);
@@ -64,7 +22,18 @@
       return `<section class="case-input"><h4>${esc(name)}</h4><p>${esc(input.description)}</p><details class="case-fields"><summary>Field meanings and units</summary><dl>${Object.entries(input.fields).map(([name2, meaning]) => `<dt>${esc(name2)}</dt><dd>${esc(meaning)}</dd>`).join("")}</dl></details>${table(keys, rows.slice(0, 5), `${name} \xB7 first ${Math.min(5, rows.length)} of ${rows.length} rows`)}${rows.length > 5 ? `<details><summary>View all ${rows.length} rows</summary>${table(keys, rows, `${name} \xB7 complete input`)}</details>` : ""}</section>`;
     }
     function solutionPanel(c) {
-      return `<p class="case-solution-intro">Add these lines below <code># Your work</code> in the editor. The supplied input setup is already there.</p><pre class="case-solution-code"><code>${esc(c.solution)}</code></pre><details class="case-solution-setup"><summary>View supplied setup</summary><p>This code is already at the top of the editor.</p><pre><code>${esc(c.setup)}</code></pre></details><h4>Why these steps exist</h4><ul>${c.explanationSteps.map((step) => `<li>${esc(step)}</li>`).join("")}</ul><h4>Another valid approach</h4><p>${esc(c.alternative)}</p>`;
+      const standalone = Boolean(c.exercise);
+      const script = standalone ? c.reference || c.exercise.solution : c.solution;
+      if(!script?.trim())throw new Error('Missing explained solution for '+c.id);
+      const setup = standalone ? script.split("\n").slice(0, 3).join("\n") : c.setup;
+      const intro = standalone
+        ? 'This complete script replaces the editor contents. It includes the input setup and the workflow.'
+        : 'Add these lines below <code># Your work</code> in the editor. The supplied input setup is already there.';
+      const setupTitle = standalone ? 'View input setup in this script' : 'View supplied setup';
+      const setupNote = standalone
+        ? 'These opening lines are included in the complete script above. They load the challenge input.'
+        : 'This code is already at the top of the editor.';
+      return `<p class="case-solution-intro">${intro}</p><pre class="case-solution-code"><code>${esc(script)}</code></pre><details class="case-solution-setup"><summary>${setupTitle}</summary><p>${setupNote}</p><pre><code>${esc(setup)}</code></pre></details><h4>Why these steps exist</h4><ul>${c.explanationSteps.map((step) => `<li>${esc(step)}</li>`).join("")}</ul><h4>Another valid approach</h4><p>${esc(c.alternative)}</p>`;
     }
     function page(c, deck, { table, pythonPane, curriculum }) {
       const entries = all.filter((x) => x.deck === c.deck), index = entries.indexOf(c);

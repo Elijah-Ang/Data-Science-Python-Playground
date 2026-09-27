@@ -10,6 +10,12 @@ with sync_playwright() as p:
  page.goto(base+'#inspect/challenges');page.wait_for_selector('.case-file');assert page.locator('.case-file').count()==10
  assert page.locator('.lesson-card').count()==0
  data=page.evaluate('DataWorkflowChallenges.challenges')
+ for deck in ('inspect','wrangle','visualise'):
+  page.evaluate('(deck)=>location.hash=`#${deck}/challenges`',deck)
+  page.wait_for_selector('.case-file')
+  icons=page.locator('.case-file img[data-challenge-icon]')
+  assert icons.count()==10
+  assert len(set(icons.evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("src"))')))==10
  def open_challenge(c):
   page.evaluate('(c)=>location.hash=`#${c.deck}/challenges/${c.id}`',c)
   page.wait_for_function('(id)=>document.querySelector(".foundation-breadcrumb")?.textContent.endsWith(id)',arg=c['id'])

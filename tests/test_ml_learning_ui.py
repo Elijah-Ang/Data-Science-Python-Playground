@@ -91,12 +91,20 @@ with sync_playwright() as p:
         page.evaluate('(hash)=>location.hash=hash','#workflows/challenges/'+challenge['id'])
         page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=challenge['id'])
         assert page.get_by_role('heading',name=challenge['title'],exact=True).is_visible()
+        assert page.locator('.case-input-flow img[data-challenge-icon]').get_attribute('data-challenge-icon')==challenge['id']
         assert page.locator('#case-help').get_attribute('open') is None
         assert page.locator('.foundation-breadcrumb').inner_text().split()==['Machine','Learning','/','Workflow','Challenges','/',challenge['id']]
         assert page.locator('.ml-deliverable-groups > li').count()==4
         assert page.get_by_role('link',name='Download challenge input CSV',exact=True).get_attribute('href')==challenge['exercise']['inputFile']
         assert page.get_by_role('link',name='Original source dataset',exact=True).count()==1
         assert 'fit(' not in page.locator('#mlEditor').input_value()
+        page.locator('#case-help > summary').click()
+        page.locator('#case-help > details').last.locator(':scope > summary').click()
+        assert page.locator('.case-solution-code').inner_text().strip()==challenge['reference'].strip(),challenge['id']
+        assert 'complete script replaces the editor contents' in page.locator('.case-solution-intro').inner_text().lower()
+        page.locator('.case-solution-setup > summary').click()
+        assert page.locator('.case-solution-setup pre').inner_text().strip()=="\n".join(challenge['reference'].splitlines()[:3]),challenge['id']
+        assert challenge['exercise']['inputFile'] in page.locator('.case-solution-setup pre').inner_text()
         if challenge['exercise'].get('protect'):
             design=page.locator('.ml-validation-design').inner_text()
             assert '20%' in design and 'five' in design

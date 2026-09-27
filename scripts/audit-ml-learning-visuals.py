@@ -67,7 +67,9 @@ with sync_playwright() as pw:
   page.locator('.lesson-card').first.screenshot(path=str(out/('thumbnail-dark-390-'+deck+'.png')))
  page.set_viewport_size({'width':1440,'height':1000});page.evaluate("AppAppearance.apply('light');location.hash='#workflows/challenges'");page.wait_for_selector('.case-file')
  assert page.locator('.case-file').count()==19
- assert len(set(page.locator('.case-illustration').evaluate_all('(nodes)=>nodes.map(n=>n.innerHTML)')))==6
+ assert len(set(page.locator('.case-illustration').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("src"))')))==19
+ page.locator('.case-illustration').evaluate_all('(nodes)=>Promise.all(nodes.map(n=>{n.loading="eager";return n.decode()}))')
+ assert page.locator('.case-illustration').evaluate_all('(nodes)=>nodes.every(n=>n.complete&&n.naturalWidth>0)')
  page.screenshot(path=str(contact/'challenge-collection.png'),full_page=True)
  for width in [390,320]:
   page.set_viewport_size({'width':width,'height':960});page.screenshot(path=str(out/f'challenges-{width}.png'),full_page=True)
@@ -99,6 +101,6 @@ for label,selected in [('teaching',[r for r in records if r['theme']=='light' an
    if r['width']<500:
     right=Image.open(out/('right-'+r['file'])).convert('RGB');right.thumbnail((280,335));sheet.paste(right,(x+305,y+42))
   sheet.save(contact/f'{label}-{start//9+1:02}.jpg',quality=88)
-record=dict(teachingCount=len(cards),primitiveVariantCount=len(groups),thumbnailCount=len(thumbnail_signatures),thumbnailSignatures=thumbnail_signatures,captures=records,cardHashes={c['id']:hashlib.sha256(json.dumps({k:c[k] for k in ['title','goal','explanation','visual']},sort_keys=True).encode()).hexdigest() for c in cards},sourceHashes={f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in ['ml-learning/visuals.js','ml-learning/learning.css','ml-learning/app.js','foundations/foundations.css','foundations/learning-ui.js']})
-(ROOT/'docs/ml-learning-visual-review.json').write_text(json.dumps(record,indent=2)+'\n')
+record=dict(teachingCount=len(cards),primitiveVariantCount=len(groups),thumbnailCount=len(thumbnail_signatures),thumbnailSignatures=thumbnail_signatures,captures=records,cardHashes={c['id']:hashlib.sha256(json.dumps({k:c[k] for k in ['title','goal','explanation','visual']},sort_keys=True).encode()).hexdigest() for c in cards},sourceHashes={f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in ['ml-learning/visuals.js','ml-learning/learning.css','ml-learning/app.js','foundations/foundations.css','foundations/learning-ui.js','challenges/icon-prompts.json','challenges/experience.js','challenges/challenges.css']})
+(ROOT/'docs/ml-learning-visual-review.json').write_text(json.dumps(record,indent=2,ensure_ascii=False)+'\n')
 print(len(cards),'teaching concepts;',len(groups),'primitive/variant families in dark, 320 and 390;',len(thumbnail_signatures),'unique card thumbnails;',len(records),'captures; four real fitted figures; all 19 collection tiles.')

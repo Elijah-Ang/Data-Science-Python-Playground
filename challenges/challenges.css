@@ -134,13 +134,8 @@
  .case-brief-nav button{min-height:44px}
 }
 
-/* Purpose-drawn pixel illustrations: solid silhouettes, stepped edges and finer detail. */
-.case-illustration{--pixel-outline:var(--ink);--pixel-face:color-mix(in srgb,var(--lesson-accent) 28%,var(--panel));--pixel-light:var(--panel);overflow:visible;shape-rendering:crispEdges}
-.case-illustration .pixel-outline{fill:var(--pixel-outline)}
-.case-illustration .pixel-face{fill:var(--pixel-face)}
-.case-illustration .pixel-light{fill:var(--pixel-light)}
-.case-illustration .pixel-accent{fill:var(--lesson-accent)}
-.case-illustration .pixel-shadow{fill:var(--lesson-accent);opacity:.16}
+/* Generated retro pixel art shares one transparent canvas and scales without blur. */
+.case-illustration{display:block;object-fit:contain;image-rendering:pixelated}
 .case-file .case-illustration{width:112px;height:112px;margin-top:20px;padding:8px;border:0;border-radius:0;background:none}
 .case-file{grid-template-columns:112px minmax(0,1fr)}
 .case-input-flow .case-illustration{width:48px;height:48px}
