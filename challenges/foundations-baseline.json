@@ -1,6 +1,6 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "d37bba5bc28c8aeb5ff2915b76847b89711972d84eb0c3f97cb48c78d47607c5",
+  "sha256": "2cb3efdd1bd80e97841f5be059796877707938dcfb7cee60a4661ad53941dc61",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
@@ -875,6 +875,6 @@
       ]
     }
   ],
-  "reviewed": "2026-09-26",
-  "reason": "Reviewed all Foundations Learn and Refresh tasks and checks. Clarified shape and dtype prompts, removed incidental category ordering, and checked labelled summaries and bar charts by meaning while keeping all 106 cards and 324 exercise identities. Workflow challenge audit is documented separately. The commit field records the original curriculum provenance."
+  "reviewed": "2026-09-28",
+  "reason": "Reviewed the Foundations teaching flow, the WR2 bridge label, W19 aggregation guidance, visual sizing, and syntax explanations across 89 concept lessons. All 106 cards and 324 exercise identities remain the same. The commit field records the original curriculum provenance."
 }

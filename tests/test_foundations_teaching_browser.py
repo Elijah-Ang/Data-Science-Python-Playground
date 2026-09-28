@@ -21,17 +21,22 @@ with sync_playwright() as p:
             page.wait_for_function('(r)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(r.id)&&Array.from(document.querySelectorAll(".foundation-practices li")).findIndex(e=>e.hasAttribute("aria-current"))===r.index', arg=item)
             panel = page.locator('.teaching-overview' if item['follow'] else '.foundation-practice-brief')
             if item['follow']:
-                assert panel.locator('.teaching-comparison').is_visible(), item
+                assert panel.locator('.teaching-comparison').count() == 0, item
                 assert panel.locator('.teaching-example').is_visible(), item
                 assert panel.locator('.teaching-route, .teaching-tools').count() == 0, item
                 assert panel.locator('details').count() == 0, item
                 assert panel.locator('svg[role="img"]').count() >= 1, item
                 assert panel.locator('.teaching-summary').is_visible(), item
                 assert page.locator('.teaching-syntax-parts code span').evaluate_all('(nodes)=>nodes.every(e=>getComputedStyle(e).display!=="none")'), item
+                assert page.locator('.teaching-worked pre').count() == 1, item
+                assert page.locator('.teaching-worked > .teaching-syntax-parts').count() == 1, item
+                assert page.locator('.teaching-worked > .syntax-choice-callout').count() == 1, item
             else:
                 assert page.locator('.foundation-content>.foundation-practice-brief').count() == 1, item
                 assert page.locator('.teaching-overview, .foundation-syntax').count() == 0, item
                 assert panel.locator('.practice-question').is_visible(), item
+                assert page.locator('.teaching-reference .teaching-comparison').is_visible(), item
+                assert page.locator('.teaching-reference .syntax-choice-callout').is_visible(), item
             assert page.locator('summary', has_text='View setup code').count() == 0, item
             expected = page.evaluate('(r)=>FoundationWorkspace.code(FoundationsCurriculum,FoundationsCurriculum.lessons.find(l=>l.id===r.id).rounds[r.index])', item)
             assert page.locator('#foundationEditor').input_value() == expected, item
