@@ -19,12 +19,19 @@
   function comparison(guide, id) {
     return '<table class="teaching-comparison"><caption>What each choice does</caption><thead><tr><th scope="col">Code or choice</th><th scope="col">Meaning</th></tr></thead><tbody>' + guide.choices.map(([code,meaning]) => '<tr><th scope="row"><code>' + esc(code) + '</code></th><td>' + esc(id==='I17' ? meaning.replace(/ Flags:.*$/, '') : meaning) + '</td></tr>').join('') + '</tbody></table>';
   }
+  function callout(guide,id,follow=false) {
+    const title=id==='W19'?(follow?'Why <code>size</code> here?':'<code>size</code> or <code>count</code>?'):esc(guide.noteTitle);
+    const note=follow&&guide.followNote?guide.followNote:guide.note;
+    return '<aside class="syntax-choice-callout'+(id==='W19'&&follow?' is-linked':'')+'"><strong>'+title+'</strong><p>'+esc(note)+'</p></aside>';
+  }
   function reference(curriculum, lesson, round) {
     const {source}=model(curriculum,lesson,round), g=source.guide;
-    return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+'<p>'+esc(g.note)+'</p></div>';
+    return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+callout(g,source.id)+'</div>';
   }
   function example(guide, id) {
-    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+(id==='I17'?duplicateExample():'')+'</div>';
+    const output=guide.exampleOutput;
+    const result=output?'<table class="teaching-example-output"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+esc(header)+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table>':'';
+    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+result+(id==='I17'?duplicateExample():'')+'</div>';
   }
   function intro(curriculum, lesson, round) {
     const m = model(curriculum, lesson, round), g=m.source.guide;
@@ -35,10 +42,18 @@
     const diagram = m.source.id === 'V35'
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
       : '<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>';
-    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'"><h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+comparison(g,m.source.id)+'<p class="teaching-note">'+esc(g.note)+'</p></section>';
+    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'"><h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+'</section>';
   }
   function syntax(lesson) {
-    return '<pre class="isolated-syntax"><code>' + esc(lesson.syntaxCode) + '</code></pre><dl class="foundation-syntax teaching-syntax-parts">' + lesson.syntax.map(([code,meaning],i) => '<div><dt><span aria-hidden="true">' + (i+1) + '</span><code>' + esc(code) + '</code></dt><dd>' + esc(meaning) + '</dd></div>').join('') + '</dl>';
+    const row=([code,meaning],i) => {
+      const size=lesson.id==='W19'&&code==='("price", "size")';
+      return '<div'+(size?' class="syntax-size-row"':'')+'><dt><span aria-hidden="true">' + (i+1) + '</span><code'+(size?' data-focus="size"':'')+'>' + esc(code) + '</code></dt><dd>' + esc(meaning) + '</dd></div>';
+    };
+    const later=new Set(lesson.syntaxLater||[]);
+    const worked=lesson.syntax.filter(([code])=>!later.has(code));
+    const alternatives=lesson.syntax.filter(([code])=>later.has(code));
+    const related=alternatives.length?'<details class="teaching-more"><summary>Other choices for later exercises</summary><dl class="foundation-syntax teaching-syntax-parts">'+alternatives.map(row).join('')+'</dl></details>':'';
+    return '<dl class="foundation-syntax teaching-syntax-parts">'+worked.map(row).join('')+'</dl>'+related+callout(lesson.guide,lesson.id,true);
   }
   const api = {model, intro, syntax, reference};
   root.FoundationTeaching = api;
