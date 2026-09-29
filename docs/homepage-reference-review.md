@@ -125,3 +125,23 @@ Local preview only; release and AdSense resubmission await approval.
 WebKit desktop, 1100px breakpoint and phone visual checks also pass. Both desktop
 tour entry snapshots load with their spotlight and enlarged preview. App-shell,
 public-page, ad-mode, tour-content and whitespace checks pass.
+
+## Banner reference and collision correction
+
+Reference: `ChatGPT Image Sep 29, 2026 at 08_35_14 PM.png`.
+
+- Moved the blimp right and attached both suspension ropes beneath its cabin.
+- Matched the banner reference with blue, cream and green panels, large existing
+  pixel-art icons, coloured number badges, cream heading plaques, gold sparkles,
+  coloured gem bullets, dotted dividers and bold navy keywords. Text remains live
+  HTML. The banner is slightly taller so all content fits within the cloth.
+- Moved the cat onto the rear sand, with its body clear of both the bucket and
+  castle. Sampled 39 frames across its full motion cycle: zero overlap with the
+  bucket and at least 12px vertical clearance at the reference 1525px width.
+- Kept the slide robot size, golden gate pulse and existing treehouse robot
+  controller. Updated the two desktop tour snapshots only.
+
+Verification: Chromium six-width landing regression and WebKit desktop,
+1100px-breakpoint and phone layout checks pass. Evidence:
+`tests/evidence/desktop-banner-v5/`. These desktop revisions remain local for
+review; deployment and AdSense resubmission require approval.
