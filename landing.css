@@ -33,6 +33,36 @@ body {
 a { color: inherit; }
 .landing-footer { padding: 16px; text-align: center; font: 14px/1.6 var(--landing-body); }
 .landing-footer a { display: inline-block; padding: 10px 4px; }
+.welcome-value {
+  max-width: 1120px;
+  margin: clamp(36px, 5vw, 72px) auto 0;
+  padding: clamp(24px, 3.5vw, 42px);
+  border: 2px solid var(--landing-ink);
+  background: var(--landing-paper);
+  box-shadow: 7px 7px 0 var(--landing-gold);
+  text-align: left;
+}
+.welcome-value-kicker {
+  margin: 0 0 12px;
+  color: var(--landing-orange);
+  font: 700 12px/1.5 var(--landing-mono);
+  letter-spacing: .09em;
+}
+.welcome-value h2 {
+  margin: 0 0 14px;
+  font: clamp(19px, 2.1vw, 28px)/1.4 var(--landing-display);
+}
+.welcome-value-lede { max-width: 74ch; margin: 0; font-size: 17px; }
+.welcome-value-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin: 28px 0; }
+.welcome-value-grid article { min-width: 0; padding-top: 16px; border-top: 3px solid var(--landing-cyan); }
+.welcome-value-grid h3 { margin: 0 0 8px; font: 700 16px/1.4 var(--landing-mono); }
+.welcome-value-grid p { margin: 0; color: var(--landing-muted); }
+.welcome-value-foot { margin: 0; padding-top: 18px; border-top: 1px solid #d8c9aa; color: var(--landing-muted); }
+@media (max-width: 700px) {
+  .welcome-value-grid { grid-template-columns: 1fr; gap: 18px; }
+  .welcome-value { box-shadow: 4px 4px 0 var(--landing-gold); }
+  .welcome-value-lede { font-size: 16px; }
+}
 button, a { -webkit-tap-highlight-color: transparent; }
 .sr-only {
   position: absolute;

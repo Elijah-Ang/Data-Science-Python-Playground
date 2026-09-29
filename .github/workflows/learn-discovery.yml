@@ -27,6 +27,7 @@ jobs:
       - name: Serve built site
         run: nohup python -m http.server 8000 -d dist > /tmp/discovery-http.log 2>&1 &
       - run: python tests/test_learn_discovery_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+      - run: python tests/test_learning_entry_content_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_landing_refresh_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - uses: actions/upload-artifact@v4
         if: always()

@@ -55,7 +55,23 @@
     </div>
   </header>
   <div class="foundation-strip"><a href="playground.html" class="back-playground">← Data Playground</a><span>TINY TABLES · REAL PYTHON · YOUR PACE</span></div>
-  <main id="foundationsMain" class="foundations-main" tabindex="-1"><h2>Data Foundations</h2><p>Learn to inspect, clean and visualise small datasets with pandas, Matplotlib and seaborn.</p><p>Enable JavaScript to choose a deck and practise with interactive Python exercises.</p></main>
+  <main id="foundationsMain" class="foundations-main" tabindex="-1">
+    <h2>Data Foundations</h2>
+    <p>Learn to inspect, clean and visualise small datasets with pandas, Matplotlib and seaborn. Enable JavaScript to choose a deck and practise with interactive Python exercises.</p>
+    <section id="dataOverview" class="learning-overview" aria-labelledby="dataOverviewTitle">
+      <div class="learning-overview-intro">
+        <span class="foundation-eyebrow">What you will practise</span>
+        <h3 id="dataOverviewTitle">From a row of data to a defensible chart</h3>
+        <p>Data work starts before the chart. These short lessons give you editable Python and a small table so that you can see what each operation changes. You can run code, inspect its output, check an answer and try again. The lesson tables are synthetic examples built for practice, not evidence about a real population.</p>
+      </div>
+      <div class="learning-overview-grid">
+        <div><h4>1 · Inspect</h4><p>Read column names, types and sample rows before making assumptions. Look for missing values, unexpected categories and duplicate records. A count of rows is only useful when you know what one row represents.</p></div>
+        <div><h4>2 · Wrangle</h4><p>Make an explicit cleaning choice and compare the result with the source. Joining tables can duplicate observations when a lookup key is not unique; checking the row count before and after a join helps catch that mistake.</p></div>
+        <div><h4>3 · Visualise</h4><p>Choose a chart for the question, label its axes and units, and read the pattern alongside the data quality caveats. A polished plot cannot repair a misleading denominator or an unexplained missing value.</p></div>
+      </div>
+      <div class="learning-overview-example"><h4>A small decision with a large effect</h4><p>Suppose a synthetic table records 12 rides, 0 rides and one unknown count. The mean of the two known counts is 6. Replacing “unknown” with 0 makes the mean 4 and silently claims that a measurement was taken. The lessons ask you to keep that distinction visible before interpreting a summary.</p></div>
+    </section>
+  </main>
   <footer class="foundation-footer"><nav aria-label="Site information"><a href="about.html">About</a><a href="help.html">Help</a><a href="privacy.html">Privacy</a><a href="acknowledgements.html">Credits</a></nav></footer>
   <noscript><p>Enable JavaScript to open the decks and run Python exercises.</p></noscript>
 </body>
