@@ -64,22 +64,8 @@ const dataHtml = await fs.readFile(path.join(root, "playground.html"), "utf8");
 const mlHtml = await fs.readFile(path.join(root, "ml.html"), "utf8");
 const mlApp = await fs.readFile(path.join(root, "ml-app.js"), "utf8");
 const playgroundCss = await fs.readFile(path.join(root, "playground-shared.css"), "utf8");
-const portraitMedia = "(max-width: 720px), (orientation: portrait)";
-assert.equal(
-  [...landingHtml.matchAll(/<source media="([^"]+)" srcset="assets\/landing\/(?:data-playground-mobile-source|gate-glow-mobile)\.(?:png|webp)">/g)]
-    .filter(match => match[1] === portraitMedia).length,
-  2,
-  "The landing scene and gate glow must use portrait artwork at every portrait viewport width, including a 1024px iPad."
-);
-assert.ok(
-  landingCss.includes(`@media ${portraitMedia} {`),
-  "The portrait scene hitbox must follow the same orientation contract as its artwork."
-);
-assert.doesNotMatch(
-  `${landingHtml}\n${landingCss}`,
-  /\(orientation:\s*portrait\)\s+and\s+\(max-width:\s*900px\)/,
-  "Do not restore the 900px portrait cap; 13-inch iPads are 1024 CSS pixels wide in portrait."
-);
+// Responsive garden geometry is exercised at phone, tablet and desktop sizes
+// by test_landing_refresh_browser.py; the reference design uses one scene plate.
 
 for (const [name, html] of [["Data Playground", dataHtml], ["Machine Learning", mlHtml], ["Statistics Playground", await fs.readFile(path.join(root,"statistics.html"),"utf8")]]) {
   for (const label of ["Home", "Data Playground", "Statistics Playground", "Machine Learning"]) {

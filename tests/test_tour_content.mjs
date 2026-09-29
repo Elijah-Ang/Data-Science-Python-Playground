@@ -18,7 +18,7 @@ assert.doesNotMatch(controller,/camera\.style\.visibility='hidden'/);
 assert.match(controller,/incoming\.contentDocument\.readyState==='complete'/);
 assert.match(controller,/img\.decode\(\)/);
 assert.match(controller,/if\(frame!==incoming\)incoming\.remove\(\)/);
-assert.equal(locations.home.targets.gate,'.gate-glow');
+assert.equal(locations.home.targets.gate,'.gate-hitbox');
 for(const [scene,focus] of [['data-guide','guide'],['ml-guide','guide'],['stats-study','study']])assert.ok(sandbox.window.TOUR_PAGES.opening({scene,focus}));
 assert.match(controller,/page===url\?frame.contentDocument/,'Scroll context is retained between same-page stops');
 assert.match(html,/sandbox="allow-same-origin"/);

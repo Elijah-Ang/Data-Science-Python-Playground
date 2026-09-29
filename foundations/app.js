@@ -2,6 +2,7 @@
 'use strict';
 const C=window.FoundationsCurriculum;
 const main=document.getElementById('foundationsMain');
+const landingOverview=document.getElementById('dataOverview')?.outerHTML || '';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const highlightPython=FoundationLearning.highlightPython;
 let shownControlHelp=false;
@@ -20,7 +21,7 @@ function landing(){
  return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div></section>
 
  <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews · ${ChallengeExperience.all.filter(c=>c.deck===d.id).length} challenges</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
- 
+ ${landingOverview}
  `;
 }
 function deckPage(deck){

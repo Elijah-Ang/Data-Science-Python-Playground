@@ -12,7 +12,9 @@ with sync_playwright() as pw:
  cta=page.get_by_role('link',name='Open Learn and Refresh');assert cta.count()==1
  assert 'Learn / Refresh' in cta.inner_text();assert page.locator('.mascot-layer').count()==2
  page.wait_for_function('document.querySelector("[data-scene]").dataset.motion==="ready"',timeout=60000)
- assert page.locator('.scene-motion').is_visible()
+ assert page.locator('.scene-art').is_visible()
+ assert page.locator('.garden-cat').is_visible()
+ assert page.locator('.garden-slider').is_visible()
  page.evaluate('document.fonts.ready')
  def document_bounds():
   return page.locator('.mascot-viewport').evaluate('(e)=>{const r=e.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height}}')
@@ -54,22 +56,16 @@ with sync_playwright() as pw:
  page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
  report['checks'].append('Real overlapping layers, transform/opacity-only motion, fixed viewport, focus and queued hover reactions')
- # The original WebGL scene is already verified above and by its own regression.
- # Use its supported static fallback during the accelerated mascot-only sequence,
- # avoiding thousands of unrelated software-rendered GPU frames on CI.
- page.evaluate("document.querySelector('.scene-motion').getContext('webgl').getExtension('WEBGL_lose_context').loseContext()")
- page.wait_for_function('document.querySelector("[data-scene]").dataset.motion==="fallback"')
- # Accelerate dwell timers, while retaining browser animation assertions above.
- page.clock.install();seen=set();assets=set()
+ # Observe one real cycle: WAAPI completion and image decoding run on the
+ # browser's real timeline, independently of Playwright's virtual timers.
+ seen=set();assets=set()
  page.evaluate('''()=>{window.observedPoses=new Set(['book']);window.observedAssets=new Set();new MutationObserver(()=>{observedPoses.add(document.querySelector('[data-mascot]').dataset.pose);document.querySelectorAll('.mascot-layer').forEach(e=>observedAssets.add(e.src));}).observe(document.querySelector('[data-mascot]'),{attributes:true,subtree:true});}''')
- for _ in range(21):
-  page.clock.run_for(5200);page.wait_for_timeout(30)
-  seen.add(page.locator('[data-mascot]').get_attribute('data-pose'))
-  assets.update(page.locator('.mascot-layer').evaluate_all('els=>els.map(e=>e.src)'))
+ page.wait_for_function('observedPoses.size===6',timeout=40000)
  seen.update(page.evaluate('[...observedPoses]'));assets.update(page.evaluate('[...observedAssets]'))
  assert {'book','wave','think','teach','code','celebrate'}<=seen,seen
  assert len(set(assets))==6,assets
  for url in set(assets):assert page.request.get(url).status==200
+ page.clock.install()
  # Simulate the browser lifecycle event and hidden state, then inspect stopped timers/motion.
  page.evaluate('Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});document.dispatchEvent(new Event("visibilitychange"))')
  old=page.locator('[data-mascot]').get_attribute('data-pose');page.clock.run_for(15000)
@@ -80,7 +76,9 @@ with sync_playwright() as pw:
  page.evaluate('dispatchEvent(new PageTransitionEvent("pagehide"))');page.clock.run_for(10000)
  assert page.locator('[data-mascot]').get_attribute('data-paused')=='true'
  page.evaluate('dispatchEvent(new PageTransitionEvent("pageshow"))')
- page.emulate_media(reduced_motion='reduce');page.clock.run_for(30000)
+ page.emulate_media(reduced_motion='reduce')
+ page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book"',polling=100)
+ page.clock.run_for(30000)
  assert page.locator('[data-mascot]').get_attribute('data-pose')=='book'
  assert page.locator('.mascot-idle').evaluate('(e)=>getComputedStyle(e).animationName')=='none'
  cta.focus();page.clock.run_for(6000);assert page.locator('[data-mascot]').get_attribute('data-pose')=='book'
@@ -124,7 +122,7 @@ with sync_playwright() as pw:
  # Freeze motion for reproducible responsive captures. Real motion was tested above
  # and remains covered by the dedicated landing regression.
  page.emulate_media(reduced_motion='reduce')
- # Screenshot both appearance settings. Landing intentionally retains production beige.
+ # Screenshot both appearance settings. Landing retains its reference sky palette.
  for width,height in [(1600,1000),(1280,800),(834,1112),(390,844),(320,740)]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:
@@ -133,8 +131,7 @@ with sync_playwright() as pw:
     page.goto(base+'/'+route+'.html');page.wait_for_timeout(250)
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),(width,theme,route)
     if route=='index':
-     assert page.locator('.mascot-bubble').is_visible()
-     for part in ['.mascot-bubble','.mascot-viewport']:
+     for part in ['.mascot-viewport']:
       box=page.locator(part).bounding_box();assert box['x']>=0 and box['x']+box['width']<=width+1,(width,part,box)
      a=page.locator('.welcome-title-copy').bounding_box();b=page.locator('.mascot-cta').bounding_box()
      # The current garden landing places desktop copy beside the scene;

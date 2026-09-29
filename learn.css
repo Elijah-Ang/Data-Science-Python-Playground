@@ -20,6 +20,14 @@
 .is-planned .path-visual{opacity:.7}.is-planned .path-action{color:var(--muted)}
 .learn-path:hover{outline:2px solid var(--path-accent);outline-offset:2px}.learn-path:focus-visible{outline:3px solid var(--path-accent);outline-offset:5px}
 .path-announcement{min-height:26px;margin:25px 0 0;font-size:15px;color:var(--muted)}
+.learn-method{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:32px;margin:24px 0 10px;padding:30px 0;border-top:1px solid var(--border)}
+.learn-method h2{font:clamp(21px,2.5vw,30px)/1.4 var(--display);margin:9px 0 12px}
+.learn-method p{color:var(--muted);margin:0;line-height:1.7}
+.learn-method ol{display:grid;gap:15px;list-style:none;counter-reset:learn-step;margin:0;padding:0}
+.learn-method li{counter-increment:learn-step;position:relative;padding-left:48px}
+.learn-method li::before{content:counter(learn-step,decimal-leading-zero);position:absolute;left:0;top:0;color:var(--cyan);font:13px/1.5 var(--display)}
+.learn-method h3{font:700 16px/1.5 var(--body);margin:0 0 3px}
+@media(max-width:800px){.learn-method{grid-template-columns:1fr;gap:20px}}
 @media(max-width:900px){.learn-main{padding:28px 22px}.learn-pathways{gap:18px}.learn-path{padding:18px 16px 24px}.learn-path h3{font-size:18px}}
 @media(max-width:680px){.learn-main{padding:25px 18px}.learn-hero{gap:10px;margin-bottom:25px}.learn-hero h2{font-size:28px}.learn-hero p{font-size:16px}.learn-pathways{grid-template-columns:1fr;gap:25px}.learn-path{padding:22px}.path-visual{height:80px;margin-top:15px}.learn-path h3{font-size:22px;margin:15px 0 10px}.learn-path p{margin-bottom:20px}}
 

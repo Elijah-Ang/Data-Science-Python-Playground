@@ -1,10 +1,10 @@
 <!doctype html><html lang="en" data-ad-mode="standard"><head><base href="../../">
   <meta charset="utf-8">
   <meta name="google-adsense-account" content="ca-pub-8878519828847261">
-  
+
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Welcome to Data Playground — a playful home for exploring, visualising, and modelling data with Python.">
-  <meta name="theme-color" content="#efe8d7">
+  <meta name="description" content="Explore real datasets with editable Python, visualise evidence, test statistical questions and compare models in a browser-based learning lab.">
+  <meta name="theme-color" content="#c9ecfc">
   <meta name="application-name" content="Data Science Python Playground">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -14,52 +14,119 @@
   <link rel="icon" type="image/png" href="assets/icons/data-playground-slide.png" sizes="1254x1254">
   <link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="landing.css?v=landing-tour4">
-  <link rel="stylesheet" href="mascot.css">
-  
-  
-<link rel="canonical" href="https://dataplayground.science/"><meta name="robots" content="noindex"></head>
+  <link rel="stylesheet" href="landing.css?v=garden-desktop7">
+  <link rel="stylesheet" href="mascot.css?v=garden-reference1">
+
+
+<meta name="robots" content="noindex"></head>
 <body class="landing-page">
-  <a class="tour-button" href="tutorial.html" inert="">Take a short tour</a>
+  <svg class="symbol-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><symbol id="paw" viewBox="0 0 32 32"><ellipse cx="6" cy="12" rx="3.5" ry="5" transform="rotate(-24 6 12)"></ellipse><ellipse cx="13" cy="6" rx="3.5" ry="5" transform="rotate(-8 13 6)"></ellipse><ellipse cx="22" cy="7" rx="3.5" ry="5" transform="rotate(16 22 7)"></ellipse><ellipse cx="28" cy="15" rx="3.2" ry="4.5" transform="rotate(30 28 15)"></ellipse><path d="M8 23c0-4 4-10 8-10s10 7 10 11c0 6-6 3-9 3s-9 3-9-4Z"></path></symbol></svg>
+  <header class="landing-header">
+    <span class="landing-brand"><svg class="paw" aria-hidden="true"><use href="#paw"></use></svg><span>Data Science Python Playground</span></span>
+    <nav aria-label="Main navigation">
+      <a class="about-link" href="about.html" inert="">About</a>
+      <a class="tour-button" href="tutorial.html" inert="">Take a short tour</a>
+    </nav>
+  </header>
+
   <main class="welcome-shell">
-    <section class="welcome-intro" aria-labelledby="welcome-title">
-      <div class="welcome-title-copy"><h1 id="welcome-title"><em><span class="welcome-title-line">Data Science</span> <span class="welcome-title-line">Python</span> <span class="welcome-title-line">Playground</span></em></h1>
-      <p class="welcome-subtitle">Learn Python by exploring real datasets and evaluating models.</p></div>
-      <a class="mascot-cta" href="learn.html" aria-label="Open Learn and Refresh" inert="">
-        <span class="mascot-bubble"><strong>New here or rusty?</strong>Learn or refresh Python with me.<small>Optional. Explore whenever you like.</small></span>
-        <span class="mascot-viewport" data-mascot="" data-pose="book" aria-hidden="true" data-transition="idle" data-paused="false"><span class="mascot-idle"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" decoding="async" data-pose="book" style="--pose-x: 8%; --pose-y: 0%; --pose-scale: 1; opacity: 1; transform: none;"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" decoding="async" data-pose="book" style="--pose-x: 8%; --pose-y: 0%; --pose-scale: 1; opacity: 0; transform: none;"></span></span>
-      </a>
-    </section>
-
-    <section class="scene-section" aria-labelledby="scene-title">
-      <h2 id="scene-title" class="sr-only">Enter Data Playground</h2>
-      <div class="scene-frame" data-scene="" data-layout="landscape" data-motion="loading">
-        <picture class="scene-picture">
-          <source media="(max-width: 720px), (orientation: portrait)" srcset="assets/landing/data-playground-mobile-source.webp">
-          <source media="(min-width: 721px)" srcset="assets/landing/data-playground-desktop-source.webp">
-          <img class="scene-art" src="assets/landing/data-playground-desktop-source.webp" alt="A static pixel-art garden playground with friendly robots, a treehouse, a pond, and a gate marked Enter Data Playground" fetchpriority="high" decoding="async">
-        </picture>
-        <img class="scene-motion" aria-hidden="true" src="data:image/png;base64,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" width="300" height="150">
-        <img class="scene-actors" aria-hidden="true" src="data:image/png;base64,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" width="300" height="150">
-
-        <a class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground" inert="">
-          <picture class="gate-glow" aria-hidden="true">
-            <source media="(max-width: 720px), (orientation: portrait)" srcset="assets/landing/gate-glow-mobile.png">
-            <source media="(min-width: 721px)" srcset="assets/landing/gate-glow-desktop.png">
-            <img src="assets/landing/gate-glow-desktop.png" alt="" decoding="async">
+    <section class="scene-frame" data-scene="" aria-labelledby="welcome-title" data-paused="true" data-motion="static" data-water="static">
+      <div class="garden-window">
+        <div class="garden-canvas">
+          <picture>
+            <source media="(min-width: 1100px)" srcset="assets/landing/garden-desktop-clean-v2.webp">
+            <img class="scene-art" src="assets/landing/garden-reference-v1.webp" width="1525" height="1031" alt="A pixel-art garden with a treehouse, sandpit, slide, snack stand and a bridge over a duck pond." fetchpriority="high">
           </picture>
-        </a>
+
+          <img class="desktop-scene-part garden-tire" src="assets/landing/garden-tire-v2.webp" width="1086" height="1448" alt="" aria-hidden="true">
+          <img class="desktop-scene-part garden-balloons" src="assets/landing/garden-balloons-v2.webp" width="1254" height="1254" alt="" aria-hidden="true">
+          <img class="desktop-scene-part garden-flag" src="assets/landing/garden-flag-v2.webp" width="1610" height="977" alt="" aria-hidden="true">
+          <div class="scene-actors">
+            <a id="learning-robot" class="mascot-cta treehouse-guide" href="learn.html" aria-label="Open Learn and Refresh" inert="">
+              <span class="mascot-bubble">Learn / Refresh <span aria-hidden="true">→</span></span>
+              <span class="mascot-viewport" data-mascot="" data-pose="book" aria-hidden="true" data-transition="idle" data-paused="true"><span class="mascot-idle"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" data-pose="book" style="--pose-x: 8%; --pose-y: 0%; --pose-scale: 1; opacity: 1; transform: none;"><img class="mascot-layer" src="assets/mascot/robot-book.png" width="1254" height="1254" alt="" data-pose="book" style="--pose-x: 8%; --pose-y: 0%; --pose-scale: 1; opacity: 0; transform: none;"></span></span>
+            </a>
+            <img class="garden-slider garden-actor" src="assets/landing/robot-slide-clean.png" width="1128" height="1394" alt="A happy robot riding the slide.">
+            <img class="garden-cat garden-actor" src="assets/landing/robot-cat-clean-v3.png" width="1313" height="1198" alt="A robot cat playing with a blue shovel in the sandpit.">
+          </div>
+          <img class="desktop-scene-part garden-sandcastle" src="assets/landing/garden-desktop-clean-v2.webp" width="1525" height="1031" alt="" aria-hidden="true">
+          <a id="playground-gate" class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground" inert=""><span class="gate-glow" aria-hidden="true"></span><span class="sr-only">Enter Data Playground</span></a>
+        </div>
       </div>
-      <p class="scene-hint">Tap the gate to enter</p>
+
+      <div class="airship-rig">
+      <svg class="banner-rigging" viewBox="0 0 1525 1031" aria-hidden="true" focusable="false">
+        <path class="rigging-outline" d="M990 330 L542 369 M1082 330 L1016 369"></path>
+        <path class="rigging-rope" d="M990 330 L542 369 M1082 330 L1016 369"></path>
+        <path class="rigging-highlight" d="M989 330 L541 369 M1081 330 L1015 369"></path>
+      </svg>
+      <aside class="welcome-blimp" aria-label="Choose where to begin">
+        <img class="blimp-art" src="assets/landing/garden-blimp-v1.webp" alt="" width="1774" height="887">
+        <div class="blimp-copy">
+          <h2 class="blimp-heading">Where to begin?</h2>
+          <div class="blimp-directions">
+            <a class="blimp-choice" href="#learning-robot" inert="">
+              <img class="blimp-robot" src="assets/mascot/robot-wave.png" alt="" width="1254" height="1254">
+              <span><strong>Learn or refresh Python</strong><span>Click the robot ↓</span></span>
+            </a>
+            <a class="blimp-choice" href="#playground-gate" inert="">
+              <img class="blimp-gate" src="assets/landing/garden-gate-v1.webp" alt="" width="1683" height="935">
+              <span><strong>Jump into real datasets</strong><span>Click the gate →</span></span>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <section class="welcome-value" aria-labelledby="welcome-value-title">
+        <img class="board-art" src="assets/landing/garden-board-v1.webp" alt="" width="1586" height="992">
+        <img class="banner-art" src="assets/landing/garden-banner-v7.webp" alt="" width="1484" height="1060">
+        <h2 id="welcome-value-title">What happens inside the playground?</h2>
+        <div class="board-copy">
+          <p class="welcome-value-kicker">A question, a table, an answer you can check</p>
+          <div class="welcome-value-grid">
+            <article data-step="1">
+              <div class="column-heading"><img src="assets/landing/garden-inspect-v1.webp" width="1402" height="1122" alt=""><h3 aria-label="1. Inspect and prepare"><span class="column-number">1<span class="number-period">. </span></span>Inspect<br> and prepare</h3></div>
+              <ul>
+                <li>Explore <strong>real datasets</strong><span class="dataset-examples">: Seoul Bike, Palmer Penguins and Wine Quality</span>.</li>
+                <li>Understand <strong>rows, columns and units</strong>.</li>
+                <li>Check <strong>missing values</strong> and cleaning choices.</li>
+              </ul>
+            </article>
+            <article data-step="2">
+              <div class="column-heading"><img src="assets/landing/garden-python-v1.webp" width="1402" height="1122" alt=""><h3 aria-label="2. Run the Python yourself"><span class="column-number">2<span class="number-period">. </span></span><span class="column-label">Run the<br> Python yourself</span></h3></div>
+              <ul>
+                <li><strong>Edit a cell</strong> and run Python in your browser.</li>
+                <li>Read the resulting <strong>table or figure</strong>.</li>
+                <li>Practise on <strong>small tables</strong>, then apply the idea to bigger datasets.</li>
+              </ul>
+            </article>
+            <article data-step="3">
+              <div class="column-heading"><img src="assets/landing/garden-evidence-v1.webp" width="1254" height="1254" alt=""><h3 aria-label="3. Judge the evidence"><span class="column-number">3<span class="number-period">. </span></span>Judge<br> the evidence</h3></div>
+              <ul>
+                <li>Turn summaries and charts into <strong>statistical questions</strong>.</li>
+                <li><strong>Compare models</strong> with a simple baseline.</li>
+                <li>Check <strong>assumptions</strong> and draw <strong>honest conclusions</strong>.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+      </div>
+
+      <div class="welcome-title-copy">
+        <h1 id="welcome-title"><img class="title-art" src="assets/landing/garden-title-v1.webp" width="2098" height="749" alt=""><span class="sr-only">Data Science Python Playground</span></h1>
+        <p class="welcome-subtitle">Learn Python by exploring real datasets<br class="desktop-break"> and evaluating models.</p>
+      </div>
     </section>
   </main>
 
-  <footer class="landing-footer">
-    <a href="about.html" inert="">About</a> · <a href="help.html" inert="">Help &amp; contact</a> · <a href="privacy.html" inert="">Privacy</a> · <a href="acknowledgements.html" inert="">Credits</a>
+  <footer class="landing-footer" aria-label="Support and policies">
+    <svg class="paw" aria-hidden="true"><use href="#paw"></use></svg>
+    <a href="help.html" inert="">Help &amp; contact</a><span aria-hidden="true">•</span><a href="privacy.html" inert="">Privacy</a><span aria-hidden="true">•</span><a href="acknowledgements.html" inert="">Credits</a>
+    <svg class="paw" aria-hidden="true"><use href="#paw"></use></svg>
   </footer>
 
-  
-  
+
 
 
 </body></html>
