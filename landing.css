@@ -126,8 +126,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .welcome-value-grid li::before { content: ""; position: absolute; left: -1cqw; top: .34cqw; width: .48cqw; height: .48cqw; border: 1px solid var(--gem-dark); border-radius: 35%; background: radial-gradient(circle at 35% 30%, #fff 0 12%, var(--gem) 25% 48%, var(--gem-dark) 85%); box-shadow: 1px 1px #ffffffc9; }
   .welcome-value-grid li + li { margin-top: .5cqw; padding-top: .5cqw; border-top: 1px dashed var(--panel-edge); }
   .welcome-value-grid li + li::before { top: .84cqw; }
-  .welcome-value-grid article:nth-child(3) li + li { margin-top: .25cqw; padding-top: .25cqw; }
-  .welcome-value-grid article:nth-child(3) li + li::before { top: .59cqw; }
+  .welcome-value-grid article:nth-child(3) li + li { margin-top: .14cqw; padding-top: .14cqw; }
+  .welcome-value-grid article:nth-child(3) li + li::before { top: .48cqw; }
   .welcome-value-grid article:nth-child(1) li + li { margin-top: .75cqw; padding-top: .75cqw; }
   .welcome-value-grid article:nth-child(1) li + li::before { top: 1.09cqw; }
   .welcome-value-grid article:nth-child(2) li + li { margin-top: .5cqw; padding-top: .5cqw; }
