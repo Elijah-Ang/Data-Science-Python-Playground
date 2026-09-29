@@ -261,7 +261,9 @@ with sync_playwright() as p:
  # Narrow-phone boundary and fading scaffold stay usable.
  page.set_viewport_size({'width':320,'height':740});open_lesson('I02',2)
  assert page.locator('.foundation-practice-brief').is_visible()
- assert page.locator('.teaching-overview, .foundation-syntax').count()==0
+ assert page.locator('.teaching-overview').count()==0
+ assert page.locator('.teaching-transition').is_visible()
+ assert page.locator('.teaching-transition .foundation-syntax').count()==1
  assert page.locator('.foundation-revisit a').is_visible()
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
  page.locator('.foundation-skip').focus();page.locator('.foundation-skip').click()
