@@ -1,6 +1,6 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "2cb3efdd1bd80e97841f5be059796877707938dcfb7cee60a4661ad53941dc61",
+  "sha256": "59e0fb726be448573c61bb63656d3788239cd41b247aef04d9e4a2f2356f45eb",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
@@ -875,6 +875,6 @@
       ]
     }
   ],
-  "reviewed": "2026-09-28",
-  "reason": "Reviewed the Foundations teaching flow, the WR2 bridge label, W19 aggregation guidance, visual sizing, and syntax explanations across 89 concept lessons. All 106 cards and 324 exercise identities remain the same. The commit field records the original curriculum provenance."
+  "reviewed": "2026-09-29",
+  "reason": "Reviewed the new worked introductions at 19 later practices, including qcut, scalers, category mapping, filters, and chart panels. All 106 cards and 324 exercise identities remain the same. The commit field records the original curriculum provenance."
 }
