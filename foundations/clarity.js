@@ -200,9 +200,9 @@ guide('W25', 'concat appends tables in the order listed. It matches column names
  'Batches with indices [0, 1] and [0, 1] produce [0, 1, 0, 1], or [0, 1, 2, 3] with ignore_index=True.',
  [['pd.concat([first, second])','Append second below first and retain existing row labels.'],['ignore_index=True','Number the combined rows consecutively from zero.']],
  'Check that both batches use compatible columns and units. If you filter or sort afterward, reset the final index when requested.');
-guide('W26', 'cut assigns values to fixed intervals; qcut chooses boundaries from the observed distribution to aim for equally sized groups.',
+guide('W26', 'cut assigns values to fixed intervals whose boundaries you choose. Add a label for each interval to make the result readable.',
  'For bins [0, 3, 10], right=True and include_lowest=True: 0 and 3 are in the first bin; values above 3 through 10 are in the second.',
- [['bins=[0, 3, 10]','Three edges define two intervals. labels must supply two names in interval order.'],['right=True (default)','Include the upper edge of each interval. include_lowest=True also includes the first lower edge.'],['pd.qcut(values, q=2)','Split at sample quantiles into two groups; ties can prevent unique boundaries.']],
+ [['bins=[0, 3, 10]','Three edges define two intervals. labels must supply two names in interval order.'],['right=True (default)','Include the upper edge of each interval. include_lowest=True also includes the first lower edge.']],
  'Values outside all bins become missing. The cut boundaries stay fixed even if the sample changes.');
 guide('W27', 'One-hot encoding replaces category labels with an indicator column for each label.',
  'For species Cat and Dog: the Cat row has species_Cat=1 and species_Dog=0; the Dog row has the reverse.',
@@ -426,18 +426,310 @@ function clarify(c) {
  byId.W20.syntax=[['df.groupby("flavour")','Make one group for each flavour.'],['["price"]','Select the price values to summarise inside each group.'],['.transform("mean")','Calculate each group mean and repeat it at every original row in that group.'],['df["group_mean"] =','Store those aligned means in a new column beside the original rows.']];
  byId.W23.syntax=[['long.pivot(...)','Reshape the supplied long table into wider rows.'],['index="candy"','Use each candy name to identify an output row.'],['columns="measure"','Turn each measure label into an output column.'],['values="value"','Put each corresponding value into its new cell.']];
  byId.W24.syntax=[['on="flavour"','Match rows on equal flavour values in both tables.'],['how="left"','Keep every df row; unmatched lookup values become missing.'],['validate="many_to_one"','Allow repeated flavours in df but require each flavour to appear only once in lookup.'],['how="inner"','Keep only rows with matches on both sides instead.']];
- byId.W26.syntax=[['pd.cut(df["price"], bins=[0, 2.1, 100], ...)','Place each price into an interval bounded by the listed edges.'],['labels=["lower", "upper"]','Name the first and second intervals in order.'],['include_lowest=True','Include the lowest edge, 0, in the first interval.'],['pd.qcut(values, q=2)','Use data-based quantile edges instead of fixed policy edges.']];
+ byId.W26.syntax=[['pd.cut(df["price"], bins=[0, 2.1, 100], ...)','Place each price into an interval bounded by the listed edges.'],['labels=["lower", "upper"]','Name the first and second intervals in order.'],['include_lowest=True','Include the lowest edge, 0, in the first interval.']];
+ byId.W26.rounds[1].teaching={
+  title:'Meet pd.qcut',
+  idea:'pd.qcut chooses boundaries from the values in the sample. It aims to put similar numbers of rows in each group, whereas pd.cut uses the fixed boundaries you supply.',
+  example:'With prices 2, 3, 8 and 9, two quantile groups put the two lower prices together and the two higher prices together.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"price": [2, 3, 8, 9]})\nsample["half"] = pd.qcut(\n    sample["price"], q=2, labels=["lower", "upper"]\n)\nsample',
+  output:{caption:'Result of the four-price example',headers:['price','half'],rows:[[2,'lower'],[3,'lower'],[8,'upper'],[9,'upper']]},
+  parts:[
+   ['pd.qcut(...)','Find group boundaries from the sample values instead of supplying fixed edges with bins=[...].'],
+   ['sample["price"]','Use these numeric values to decide where the groups divide.'],
+   ['q=2','Ask for two quantile groups, each aiming to contain half the rows.'],
+   ['labels=["lower", "upper"]','Call the group with lower values lower, and the group with higher values upper.'],
+   ['sample["half"] =','Save each row’s group label in a new half column.']
+  ],
+  noteTitle:'Why use qcut in this practice?',
+  note:'The task asks for two groups based on this sample, without fixed price boundaries. Use qcut with q=2. Tied values at a boundary can make equally sized groups impossible; some tied samples cannot form two distinct quantile bins.'
+ };
+ byId.W08.rounds[1].teaching={
+  title:'Meet np.select',
+  idea:'np.where chooses between two results. np.select handles several conditions: it checks them in order and uses the result for the first True condition.',
+  example:'A price of 6 matches both > 5 and > 3, so the > 5 condition must come first to label it high.',
+  code:'import pandas as pd\nimport numpy as np\n\nsample = pd.DataFrame({"price": [2, 4, 6]})\nsample["band"] = np.select(\n    [sample["price"] > 5, sample["price"] > 3],\n    ["high", "middle"], default="low"\n)\nsample',
+  output:{caption:'Result of the three-price example',headers:['price','band'],rows:[[2,'low'],[4,'middle'],[6,'high']]},
+  parts:[
+   ['np.select(...)','Choose one result for each row from several possible conditions.'],
+   ['[price > 5, price > 3]','Test these conditions in order; the first True one wins.'],
+   ['["high", "middle"]','Pair each condition with its output label in the same position.'],
+   ['default="low"','Use low when neither condition is True.'],
+   ['sample["band"] =','Store the chosen label beside each input price.']
+  ],
+  noteTitle:'Why is the order important?',
+  note:'The price 6 satisfies both tests. If > 3 came first, 6 would be labelled middle before the > 5 test was reached.'
+ };
+ byId.W28.rounds[1].teaching={
+  title:'Meet MinMaxScaler',
+  idea:'StandardScaler measures distance from a mean. MinMaxScaler instead maps the smallest training value to 0 and the largest to 1; values between them follow proportionally.',
+  example:'For scores 10, 20 and 30, the returned values are 0, 0.5 and 1 in the same row order.',
+  code:'import pandas as pd\nfrom sklearn.preprocessing import MinMaxScaler\n\nsample = pd.DataFrame({"score": [10, 20, 30]})\nscaler = MinMaxScaler()\nscaler.fit_transform(sample[["score"]])',
+  output:{caption:'Rows in the returned numeric array',headers:['input score','scaled score'],rows:[[10,0],[20,0.5],[30,1]]},
+  parts:[
+   ['from sklearn.preprocessing import MinMaxScaler','Import the tool that scales each numeric column to the 0–1 range.'],
+   ['scaler = MinMaxScaler()','Create a scaler to hold the learned minimum and maximum.'],
+   ['sample[["score"]]','Pass a two-dimensional table; the inner brackets list its columns.'],
+   ['scaler.fit_transform(...)','Learn the minimum and maximum from this table, then return the scaled values as a numeric array.']
+  ],
+  noteTitle:'When to fit again?',
+  note:'Fit on the training rows. For new rows, call scaler.transform(...) so they use the same minimum and maximum.'
+ };
+ byId.V08.syntax=byId.V08.syntax.filter(([code])=>!['counts.reindex(order, fill_value=0)','ax.bar(counts.index, counts.values)'].includes(code));
+ byId.V08.rounds[1].teaching={
+  title:'Prepare counts before drawing bars',
+  idea:'countplot counts the rows it receives. When a chart must also show a category with no rows, prepare the counts and add the missing category with zero before drawing bars.',
+  example:'Sun appears twice, Rain once, and Snow is absent. The prepared counts still include a zero for Snow.',
+  code:'import pandas as pd\nimport matplotlib.pyplot as plt\n\nsample = pd.DataFrame({"sky": ["Sun", "Rain", "Sun"]})\ncounts = sample["sky"].value_counts().reindex(\n    ["Sun", "Rain", "Snow"], fill_value=0\n)\nfig, ax = plt.subplots()\nax.bar(counts.index, counts.values)\nax.set(xlabel="sky", ylabel="Count")\nfig.tight_layout()\nplt.show()',
+  output:{caption:'Counts used as bar heights',headers:['sky','count'],rows:[['Sun',2],['Rain',1],['Snow',0]]},
+  parts:[
+   ['value_counts()','Count the observed rows for each sky value.'],
+   ['reindex([...], fill_value=0)','Put labels in the requested order and add absent labels with a zero count.'],
+   ['counts.index','Use those labels for the bar positions.'],
+   ['counts.values','Use the matching prepared counts for bar heights.'],
+   ['ax.bar(...)','Draw the prepared counts; bar does not count raw rows for you.']
+  ],
+  noteTitle:'Why prepare the counts?',
+  note:'The task explicitly includes Snow even though no row says Snow. Reindex creates its zero before the bars are drawn.'
+ };
+ byId.V33.rounds[1].teaching={
+  title:'Meet catplot for category panels',
+  idea:'relplot repeats a relationship chart across panels. catplot uses the same figure-level pattern for a categorical chart, such as a box plot of numeric values within categories.',
+  example:'This sample makes one panel per station. Within each panel, Sun and Rain each have a temperature box.',
+  code:'import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nsample = pd.DataFrame({\n    "station": ["A"] * 6 + ["B"] * 6,\n    "sky": ["Sun"] * 3 + ["Rain"] * 3 + ["Sun"] * 3 + ["Rain"] * 3,\n    "temperature": [20, 21, 22, 17, 18, 19, 24, 25, 26, 21, 22, 23]\n})\ng = sns.catplot(\n    data=sample, x="sky", y="temperature", col="station", kind="box", height=3\n)\ng.figure.tight_layout()\nplt.show()',
+  result:'Two panels, A and B, with a Sun and Rain box in each panel.',
+  parts:[
+   ['sns.catplot(...)','Create a figure of categorical charts, one panel for each station.'],
+   ['x="sky", y="temperature"','Place categories along x and their numeric temperatures along y.'],
+   ['col="station"','Split the rows into separate station panels.'],
+   ['kind="box"','Summarise the temperature distribution with boxes.'],
+   ['g.figure.tight_layout(); plt.show()','Arrange and display the Figure owned by the returned grid g.']
+  ],
+  noteTitle:'Where is fig, ax?',
+  note:'catplot creates its own Figure and returns a grid named g. Finish g.figure; do not call plt.subplots() first.'
+ };
+ byId.V33.rounds[2].teaching={
+  title:'Meet displot for distribution panels',
+  idea:'displot makes distribution charts across panels. Give it one numeric x column, then use col to split that distribution by category.',
+  example:'The two genres become separate panels, each showing the distribution of its own game lengths.',
+  code:'import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nsample = pd.DataFrame({\n    "genre": ["Puzzle"] * 4 + ["Race"] * 4,\n    "minutes": [10, 15, 20, 25, 30, 35, 40, 45]\n})\ng = sns.displot(\n    data=sample, x="minutes", col="genre", kind="hist", bins=4, height=3\n)\ng.figure.tight_layout()\nplt.show()',
+  result:'One histogram panel for Puzzle and one for Race; each uses only that genre’s rows.',
+  parts:[
+   ['sns.displot(...)','Create a figure of distribution charts.'],
+   ['x="minutes"','Use this one numeric field to form the distribution.'],
+   ['col="genre"','Make one panel per genre using that genre’s rows.'],
+   ['kind="hist", bins=4','Draw a histogram with four numeric bins.'],
+   ['g.figure.tight_layout(); plt.show()','Arrange and display the Figure owned by g.']
+  ],
+  noteTitle:'Which facet function fits?',
+  note:'Use relplot for a relationship between measurements, catplot for a categorical comparison, and displot for a distribution.'
+ };
+ byId.I02.rounds[2].teaching={
+  title:'Take a repeatable random sample',
+  idea:'head and tail take rows from the ends of a table. sample chooses rows from anywhere; random_state fixes the selection so a later run can reproduce it.',
+  example:'From four named rows, this two-row sample selects D and C. Running it again with the same seed selects the same rows.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"name": ["A", "B", "C", "D"]})\nsample.sample(n=2, random_state=1)',
+  output:{caption:'Sample result with the original row labels',headers:['row','name'],rows:[[3,'D'],[2,'C']]},
+  parts:[
+   ['sample.sample(...)','Choose rows rather than taking only the beginning or end.'],
+   ['n=2','Return two rows.'],
+   ['random_state=1','Use a fixed seed so this same input gives the same selection again.']
+  ],
+  noteTitle:'Why fix the seed?',
+  note:'A fixed seed lets someone repeat the spot check. It does not make the sampled rows representative of every possible pattern.'
+ };
+ byId.I10.rounds[1].teaching={
+  title:'Filter for several named values',
+  idea:'isin makes one True/False value per row. It is True when the row’s value appears in the supplied list; use that mask inside df[...] to keep matching rows.',
+  example:'Tea and Latte are in the allowed list, while Coffee is not.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"drink": ["Tea", "Coffee", "Latte"]})\nsample[sample["drink"].isin(["Tea", "Latte"])]',
+  output:{caption:'Rows kept by the membership test',headers:['drink'],rows:[['Tea'],['Latte']]},
+  parts:[
+   ['sample["drink"]','Read the value to test from every row.'],
+   ['.isin(["Tea", "Latte"])','Mark a row True when its drink matches either listed name.'],
+   ['sample[...]','Keep only the rows whose membership flag is True.']
+  ],
+  noteTitle:'Why use a list?',
+  note:'The list gives all allowed values in one test. The table stays in its original row order.'
+ };
+ byId.I10.rounds[2].teaching={
+  title:'Filter an inclusive range',
+  idea:'between(low, high) makes a True/False mask for values inside a range. By default it includes both endpoints.',
+  example:'Ages 2 and 5 both survive a range from 2 through 5; ages 1 and 6 do not.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"age": [1, 2, 5, 6]})\nsample[sample["age"].between(2, 5)]',
+  output:{caption:'Rows kept by the inclusive range',headers:['age'],rows:[[2],[5]]},
+  parts:[
+   ['sample["age"]','Read the numeric value from every row.'],
+   ['.between(2, 5)','Mark values from 2 through 5 True, including 2 and 5.'],
+   ['sample[...]','Keep only the rows with a True range flag.']
+  ],
+  noteTitle:'What about the boundaries?',
+  note:'Use between here because the task includes both ages 2 and 5. A strict > or < comparison would drop an endpoint.'
+ };
+ byId.I12.rounds[2].teaching={
+  title:'Sort by two keys in different directions',
+  idea:'Give sort_values a list of columns when the first sort key alone can tie. A matching list of ascending values sets the direction for each key.',
+  example:'Sort groups alphabetically, then put the higher score first within group A.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"group": ["B", "A", "A"], "score": [2, 1, 3]})\nsample.sort_values(["group", "score"], ascending=[True, False])',
+  output:{caption:'Result in sorted order',headers:['group','score'],rows:[['A',3],['A',1],['B',2]]},
+  parts:[
+   ['["group", "score"]','Sort by group first; use score to order rows within the same group.'],
+   ['ascending=[True, False]','Sort group A to Z, then score high to low. Each Boolean matches the column in the same position.'],
+   ['sample.sort_values(...)','Return the sorted whole rows, keeping each score with its group.']
+  ],
+  noteTitle:'Why two direction values?',
+  note:'One ascending value would apply to both keys. This task asks for opposite directions, so the lists must align.'
+ };
+ byId.I14.rounds[1].teaching={
+  title:'Get the labels, not just their count',
+  idea:'nunique counts distinct known values. unique returns the distinct values themselves, in first-appearance order; list(...) turns that array into a Python list.',
+  example:'The labels S, M, S contain two distinct names, S then M.',
+  code:'import pandas as pd\n\nsample = pd.Series(["S", "M", "S"])\nlist(sample.unique())',
+  result:'["S", "M"], a list of the labels rather than the number 2.',
+  parts:[
+   ['sample.unique()','Return each distinct value once, ordered by its first appearance.'],
+   ['list(...)','Convert the returned array to the list requested by the task.'],
+   ['sample.nunique()','Use this different method when the question asks how many distinct values there are.']
+  ],
+  noteTitle:'Which result is needed?',
+  note:'Choose unique when the report needs the labels. Choose nunique when it needs their count.'
+ };
+ byId.I16.rounds[1].teaching={
+  title:'Turn missing flags into percentages',
+  idea:'isna makes True for missing cells and False for known cells. The mean of those Boolean values is the fraction missing in each column; multiply by 100 for a percentage.',
+  example:'Two of four prices are missing, so the missing fraction is 0.5 and the percentage is 50.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"price": [2, None, 4, None]})\nsample.isna().mean() * 100',
+  output:{caption:'Missing percentage by column',headers:['column','percent missing'],rows:[['price','50.0']]},
+  parts:[
+   ['sample.isna()','Mark each missing cell True and each known cell False.'],
+   ['.mean()','Average those flags down each column: True counts as 1 and False as 0.'],
+   ['* 100','Convert the fraction, such as 0.5, to a percentage, such as 50.']
+  ],
+  noteTitle:'Count or percentage?',
+  note:'The Follow example uses sum to count missing cells. This task uses mean times 100 to compare completeness across columns.'
+ };
+ byId.I16.rounds[2].teaching={
+  title:'Keep rows with a known value',
+  idea:'isna marks missing prices. The ~ operator reverses each True/False flag, so df[~mask] keeps rows with a present price.',
+  example:'Of prices 2, missing and 4, only the rows with 2 and 4 remain.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"price": [2, None, 4]})\nsample[~sample["price"].isna()]',
+  output:{caption:'Rows with a known price',headers:['price'],rows:[['2.0'],['4.0']]},
+  parts:[
+   ['sample["price"].isna()','Mark missing prices True.'],
+   ['~','Reverse the mask: known prices become True.'],
+   ['sample[...]','Keep only the rows whose reversed mask is True.']
+  ],
+  noteTitle:'What counts as known?',
+  note:'This checks whether a cell is missing. It does not check whether present text is a valid number.'
+ };
+ byId.W09.rounds[1].teaching={
+  title:'Map labels to new values',
+  idea:'replace changes labels found in a lookup and keeps the rest. map returns a lookup result for every row, leaving unmatched labels missing.',
+  example:'Large maps to 1. Small has no match, so its new code is missing while the original size stays visible.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"size": ["Large", "Small", "Large"]})\nsample["code"] = sample["size"].map({"Large": 1})\nsample',
+  output:{caption:'Mapped code beside the original label',headers:['size','code'],rows:[['Large','1.0'],['Small','NaN'],['Large','1.0']]},
+  parts:[
+   ['sample["size"]','Read each original size label without changing that column.'],
+   ['.map({"Large": 1})','Look up each label; values missing from the dictionary become missing.'],
+   ['sample["code"] =','Store the looked-up result in a new column.']
+  ],
+  noteTitle:'Why map here?',
+  note:'The task wants unmatched labels to become missing codes. Use replace instead when unmatched original labels should stay as they are. Pandas may display the known code as 1.0 because this column also contains a missing value.'
+ };
+ byId.W10.rounds[1].teaching={
+  title:'Replace literal text inside a column',
+  idea:'String operations can be chained. After trimming and lowercasing each value, str.replace swaps a literal hyphen for a space inside every non-missing string.',
+  example:'The text "  Sky-Run  " becomes "sky run" after all three steps.',
+  code:'import pandas as pd\n\nsample = pd.DataFrame({"game": ["  Sky-Run  ", "Tea"]})\nsample["game"] = (sample["game"].str.strip().str.lower()\n                  .str.replace("-", " ", regex=False))\nsample',
+  output:{caption:'Cleaned game text',headers:['game'],rows:[['sky run'],['tea']]},
+  parts:[
+   ['.str.strip()','Remove spaces at the start and end of each value.'],
+   ['.str.lower()','Make letters lowercase.'],
+   ['.str.replace("-", " ", regex=False)','Replace each literal hyphen with a space; do not interpret the hyphen as a pattern.'],
+   ['sample["game"] =','Store the complete cleaned result back in the column.']
+  ],
+  noteTitle:'Why use .str again?',
+  note:'Each step returns a text Series. Use .str before another text method; the chained steps run from left to right.'
+ };
+ byId.W15.rounds[2].teaching={
+  title:'Order counts by their labels',
+  idea:'value_counts counts each month but usually orders by frequency. sort_index reorders the resulting Series by month label, so the calendar runs from earlier to later months.',
+  example:'Month 3 appears twice and month 1 once. Sorting by index displays month 1 before month 3.',
+  code:'import pandas as pd\n\nsample = pd.Series([3, 1, 3], name="month")\nsample.value_counts().sort_index()',
+  output:{caption:'Counts in month order',headers:['month','count'],rows:[[1,1],[3,2]]},
+  parts:[
+   ['sample.value_counts()','Count how many rows have each month number.'],
+   ['.sort_index()','Sort the month labels on the left, not the count values on the right.']
+  ],
+  noteTitle:'Which sort answers the question?',
+  note:'sort_values would rank months by how often they occurred. The report asks for calendar order, so sort the month index.'
+ };
+ byId.W28.rounds[2].teaching={
+  title:'Fit on training rows, then transform new rows',
+  idea:'fit learns a scaler’s reference values from the training rows. transform applies those same values to other rows without learning from them again.',
+  example:'Training scores 10 and 20 have mean 15 and population standard deviation 5. The new score 30 transforms to 3.',
+  code:'import pandas as pd\nfrom sklearn.preprocessing import StandardScaler\n\nsample = pd.DataFrame({"score": [10, 20, 30]})\nscaler = StandardScaler()\nscaler.fit(sample.iloc[:2][["score"]])\nscaler.transform(sample.iloc[2:][["score"]])',
+  output:{caption:'One new row transformed using the training scale',headers:['new score','scaled value'],rows:[[30,'3.0']]},
+  parts:[
+   ['sample.iloc[:2][["score"]]','Use only the first two rows to learn the training scale.'],
+   ['scaler.fit(...)','Store their mean and spread inside scaler; this does not return the scaled rows.'],
+   ['sample.iloc[2:][["score"]]','Select the held-out row, still as a two-dimensional table.'],
+   ['scaler.transform(...)','Scale the held-out row using the already fitted reference values.']
+  ],
+  noteTitle:'Why not fit_transform on all rows?',
+  note:'The held-out row must not change the learned mean or spread. Fit once on training rows, then transform the rest.'
+ };
+ byId.V18.rounds[2].teaching={
+  title:'Connect ordered points with ax.plot',
+  idea:'Seaborn lineplot can summarise repeated x values. Matplotlib ax.plot draws the supplied x and y points and connects them in the order given, without calculating a summary.',
+  example:'Three daily visit counts become three connected markers in day order.',
+  code:'import pandas as pd\nimport matplotlib.pyplot as plt\n\nsample = pd.DataFrame({"day": [1, 2, 3], "visits": [5, 7, 6]})\nfig, ax = plt.subplots()\nax.plot(sample["day"], sample["visits"], marker="o")\nax.set(xlabel="day", ylabel="visits")\nfig.tight_layout()\nplt.show()',
+  result:'Markers at (1, 5), (2, 7) and (3, 6), joined in that supplied order.',
+  parts:[
+   ['sample["day"]','Supply the x positions in the order they should be connected.'],
+   ['sample["visits"]','Supply the matching y measurement from each row.'],
+   ['ax.plot(..., marker="o")','Draw the line and show each observation with a marker.']
+  ],
+  noteTitle:'When should you sort first?',
+  note:'ax.plot does not reorder dates or average repeats. Select and order the rows first when the task needs a time sequence.'
+ };
+ byId.V32.rounds[1].teaching={
+  title:'Add a line to the central joint panel',
+  idea:'jointplot returns a grid with a central relationship chart and marginal distributions. g.ax_joint is the central Axes; add the reference line there to leave the margins untouched.',
+  example:'A horizontal line at score 70 crosses the central scatter only.',
+  code:'import pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nsample = pd.DataFrame({"hours": [1, 2, 3], "score": [60, 70, 80]})\ng = sns.jointplot(data=sample, x="hours", y="score", kind="scatter")\ng.ax_joint.axhline(70, linestyle="--")\ng.figure.tight_layout()\nplt.show()',
+  result:'A dashed horizontal reference at score 70 on the central scatter; the two marginal distributions remain unchanged.',
+  parts:[
+   ['g = sns.jointplot(...)','Create and keep the whole joint figure and its panels.'],
+   ['g.ax_joint','Choose the central relationship Axes, not either margin.'],
+   ['.axhline(70, linestyle="--")','Draw a dashed horizontal line at y=70 on that Axes.'],
+   ['g.figure.tight_layout(); plt.show()','Finish and display the grid’s Figure.']
+  ],
+  noteTitle:'Why not use ax?',
+  note:'jointplot creates its own Axes. Use g.ax_joint to target its central chart directly.'
+ };
+ byId.W28.rounds[1].hint='Import MinMaxScaler from sklearn.preprocessing, create scaler = MinMaxScaler(), then call scaler.fit_transform() on the two requested columns.';
+ // Teach new operations at the practice that needs them, not as unexplained
+ // alternate syntax beside the Follow code.
+ for(const [id,codes] of Object.entries({
+  I10:['series.isin([...])','series.between(low, high)'],
+  I12:['ascending=[True, False]'],
+  I16:['isna().mean() * 100'],
+  W09:['map({"old": "new"})'],
+  W10:['str.replace("-", " ", regex=False)'],
+  V32:['g.ax_joint']
+ }))byId[id].syntax=byId[id].syntax.filter(([code])=>!codes.includes(code));
+ byId.I14.syntax=[['df["flavour"]','Choose the column whose category values you want to count.'],['.nunique()','Count its distinct known values.']];
  byId.W28.syntax=[['from sklearn.preprocessing import StandardScaler','Import the standardisation tool.'],['scaler = StandardScaler()','Create that tool and store it as scaler.'],['df[["price", "rating"]]','Pass a two-column table in the requested order.'],['scaler.fit_transform(...)','Learn each column’s mean and spread from this table, then return the scaled numbers.']];
  byId.V29.syntax=[['df.groupby("flavour")["price"].mean()','Compute one average price per flavour before drawing bars.'],['means.index','Use the flavour labels as bar positions.'],['means.values','Use the already computed averages as bar heights.'],['ax.bar(means.index, means.values)','Draw those exact heights; bar does not calculate an average for you.'],['.sum()','Compute group totals instead when the question asks for totals.']];
  byId.V16.syntax=[['sns.scatterplot(...)','Draw one point for each record.'],['data=df','Read the values from df.'],['x="hours"','Use hours for each point’s horizontal position.'],['y="score"','Use score from the same row for its vertical position.'],['ax=ax','Draw on the Axes created earlier in the code.']];
  byId.V23.syntax=[['matrix = pd.crosstab(...)','Count each club-and-group combination into a matrix.'],['sns.heatmap(matrix, ...)','Colour the counts in that matrix; it does not count the raw rows itself.'],['annot=True, fmt="d"','Print each integer count inside its cell.'],['cmap="Blues"','Use a light-to-dark blue colour scale.']];
- byId.V33.syntax=[['g = sns.relplot(...)','Create a whole grid of relationship charts and store it as g.'],['x="hours", y="score"','Plot those two measurements within each panel.'],['col="club"','Make one panel for each club, using only its rows.'],['kind="scatter"','Draw points rather than lines.'],['height=3','Make each panel 3 inches high.'],['g.figure.tight_layout()','Arrange the complete grid before display.'],['catplot(kind="box")','Choose categorical box-plot panels in a later task.'],['displot(kind="hist")','Choose distribution panels in a later task.']];
+ byId.V33.syntax=[['g = sns.relplot(...)','Create a whole grid of relationship charts and store it as g.'],['x="hours", y="score"','Plot those two measurements within each panel.'],['col="club"','Make one panel for each club, using only its rows.'],['kind="scatter"','Draw points rather than lines.'],['height=3','Make each panel 3 inches high.'],['g.figure.tight_layout()','Arrange the complete grid before display.']];
  byId.I01CSV.syntax.push(['sep=";"','Use semicolons rather than the default commas to separate fields.']);
  const laterSyntax={
   I01CSV:['sep=";"'],I03:['len(df)','[0]'],I04:['df.index'],I08:['df.iloc[0]'],I09:['df.iloc[1:4, [2]]'],
-  I10:['==','series.isin([...])','series.between(low, high)'],I11:['|','~'],I12:['ascending=[True, False]'],I13:['df.nsmallest(2, "price")'],I14:['df["flavour"].unique()'],I15:['dropna=False'],I16:['isna().mean() * 100'],I17:['keep="last"','keep=False','df[mask]'],I18S:['.median()','.sum() / .count()','.min() / .max()','.quantile(0.75)'],
-  W01:['clean["price"] ='],W09:['map({"old": "new"})'],W10:['str.replace("-", " ", regex=False)'],W11:['~mask'],W13:['astype("string")','astype("Int64")'],W17:['mode().iloc[0]'],W18:['subset=["order"]'],W24:['how="inner"'],W26:['pd.qcut(values, q=2)'],W30:['map(dictionary)','apply(lambda x: ...)'],
-  V08:['counts.reindex(order, fill_value=0)','ax.bar(counts.index, counts.values)'],V03:['style="club"','size="hours"'],V25:['hue_order=[...]','alpha=0.6'],V26:['ax.tick_params(axis="x", labelrotation=30)'],V29:['.sum()'],V36:['alpha=','order=[...]'],V19:['estimator=None'],V32:['g.ax_joint'],V33:['catplot(kind="box")','displot(kind="hist")']
+  I10:['=='],I11:['|','~'],I13:['df.nsmallest(2, "price")'],I15:['dropna=False'],I17:['keep="last"','keep=False','df[mask]'],I18S:['.median()','.sum() / .count()','.min() / .max()','.quantile(0.75)'],
+  W01:['clean["price"] ='],W11:['~mask'],W13:['astype("string")','astype("Int64")'],W17:['mode().iloc[0]'],W18:['subset=["order"]'],W24:['how="inner"'],W30:['map(dictionary)','apply(lambda x: ...)'],
+  V03:['style="club"','size="hours"'],V25:['hue_order=[...]','alpha=0.6'],V26:['ax.tick_params(axis="x", labelrotation=30)'],V29:['.sum()'],V36:['alpha=','order=[...]'],V19:['estimator=None']
  };
  for(const [id,parts] of Object.entries(laterSyntax)){
   const available=new Set(byId[id].syntax.map(([code])=>code));
@@ -510,7 +802,9 @@ function clarify(c) {
  for(const l of c.lessons)for(let i=0;i<l.rounds.length;i++){
   const r=l.rounds[i];if(!r.retrieves)continue;
   const source=byId[r.retrieves].rounds[2];
-  l.rounds[i]={...JSON.parse(JSON.stringify(source)),id:r.id,label:r.label,retrieves:r.retrieves,starter:r.starter,demand:r.demand};
+  const retrieval=JSON.parse(JSON.stringify(source));
+  delete retrieval.teaching;
+  l.rounds[i]={...retrieval,id:r.id,label:r.label,retrieves:r.retrieves,starter:r.starter,demand:r.demand};
  }
  byId.WR2.rounds.forEach((r,i)=>{r.demand=['Section 02 · W07: create a numeric column','Section 02 · W10: clean text','Section 03 · W12: convert numeric text'][i];});
  return c;

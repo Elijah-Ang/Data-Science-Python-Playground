@@ -28,10 +28,17 @@
     const {source}=model(curriculum,lesson,round), g=source.guide;
     return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+callout(g,source.id)+'</div>';
   }
+  function exampleOutput(output) {
+    return output?'<table class="teaching-example-output"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+esc(header)+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table>':'';
+  }
   function example(guide, id) {
-    const output=guide.exampleOutput;
-    const result=output?'<table class="teaching-example-output"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+esc(header)+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table>':'';
-    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+result+(id==='I17'?duplicateExample():'')+'</div>';
+    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+exampleOutput(guide.exampleOutput)+(id==='I17'?duplicateExample():'')+'</div>';
+  }
+  function transition(round) {
+    const g=round.teaching;
+    if(!g)return '';
+    const parts=g.parts.map(([code,meaning])=>'<div><dt><code>'+esc(code)+'</code></dt><dd>'+esc(meaning)+'</dd></div>').join('');
+    return '<section class="teaching-transition" aria-label="New method for this practice"><span class="foundation-eyebrow">New in this practice</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.idea)+'</p><div class="teaching-example"><h4>A small example</h4><p>'+esc(g.example)+'</p><pre><code>'+esc(g.code)+'</code></pre>'+exampleOutput(g.output)+(g.result?'<p class="teaching-example-result"><strong>Result:</strong> '+esc(g.result)+'</p>':'')+'</div><h4>What each part does</h4><dl class="foundation-syntax teaching-syntax-parts">'+parts+'</dl><aside class="syntax-choice-callout"><strong>'+esc(g.noteTitle)+'</strong><p>'+esc(g.note)+'</p></aside></section>';
   }
   function intro(curriculum, lesson, round) {
     const m = model(curriculum, lesson, round), g=m.source.guide;
@@ -55,7 +62,7 @@
     const related=alternatives.length?'<details class="teaching-more"><summary>Other choices for later exercises</summary><dl class="foundation-syntax teaching-syntax-parts">'+alternatives.map(row).join('')+'</dl></details>':'';
     return '<dl class="foundation-syntax teaching-syntax-parts">'+worked.map(row).join('')+'</dl>'+related+callout(lesson.guide,lesson.id,true);
   }
-  const api = {model, intro, syntax, reference};
+  const api = {model, intro, syntax, reference, transition};
   root.FoundationTeaching = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
