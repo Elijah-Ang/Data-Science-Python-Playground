@@ -51,3 +51,34 @@ Existing robot artwork and the original specialized pose animation are reused.
   the updated gate and robot views and their enlarged previews.
 
 Visual evidence is under `tests/evidence/learn-discovery/` (ignored test output).
+
+## Desktop follow-up
+
+The follow-up applies at 1100px and wider. Phone/tablet artwork, layout and
+existing animations are retained for the user's separate mobile design review.
+
+- Removed all five requested decorative signs, including the tree sign.
+- Positioned the cat's feet inside the sandpit and centered the slide robot on
+  the chute through both ends of its animation. Robot scale remains consistent.
+- Moved the information board left and slightly up to expose the slide.
+- Added independent tire, balloon and flag motion; the cleaned background has
+  no stationary duplicates. Added flowing waterfall highlights and pond ripples,
+  with a mask that keeps the bridge, duck, rocks and lily pads stationary.
+- Added a golden entrance-plaque pulse and replaced the blue gate focus ring
+  with gold. Kept the Learn / Refresh scroll and nerdy-robot focus behavior.
+- Centered the blimp heading, increased its float/sway, removed the desktop
+  subtitle, and placed About next to the short-tour button.
+- Updated only the two desktop homepage tour snapshots.
+
+Four additional assets used built-in ImageGen. Prompts, original outputs and
+final asset paths are recorded in `docs/homepage-desktop-v2-artwork.json`.
+
+Verification: Chrome and WebKit responsive/interaction checks, actual animated
+water frame changes, stationary pond foreground, gate pulse, reduced motion,
+hidden-page pause, and native navigation. Visual comparisons at 390, 834 and
+1024px confirm that the mobile/tablet layout and artwork are unchanged. The full project check and
+desktop tour entry previews also pass. Additional visual evidence is in
+`tests/evidence/desktop-revisions/`.
+
+These changes are local review work. Deployment and AdSense resubmission still
+require the user's approval of the finished preview.

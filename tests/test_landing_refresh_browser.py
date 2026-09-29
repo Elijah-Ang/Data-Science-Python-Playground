@@ -26,10 +26,15 @@ with sync_playwright() as p:
         for _ in range(2):
             page.reload()
             page.evaluate('document.fonts.ready')
+            page.wait_for_function("[...document.images].every(i=>i.complete && i.naturalWidth>0)")
             assert page.locator('.scene-art').is_visible()
             assert page.locator('.garden-cat').is_visible()
             assert page.locator('.garden-slider').is_visible()
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1'), width
+        plate = page.locator('.scene-art').evaluate('(e)=>e.currentSrc')
+        assert ('garden-desktop-clean-v2' in plate) == (width >= 1100), (width, plate)
+        assert page.locator('.garden-tire').is_visible() == (width >= 1100)
+        assert page.locator('.welcome-subtitle').is_visible() == (width < 1100)
         assert page.locator('.welcome-value-grid li').count() == 9
         assert 'a visible association' not in page.locator('body').inner_text().lower()
         assert page.locator('.landing-header a').evaluate_all('(a)=>a.map(e=>e.getAttribute("href"))') == ['about.html', 'tutorial.html']
@@ -62,24 +67,45 @@ with sync_playwright() as p:
     page.emulate_media(reduced_motion='no-preference')
     page.reload()
     page.wait_for_function("document.querySelector('[data-scene]').dataset.motion==='ready'")
-    for selector in ['.garden-cat', '.garden-slider']:
-        transforms = page.locator(selector).evaluate('''e=>{
-            const a=e.getAnimations()[0];a.pause();a.currentTime=0;
-            const first=getComputedStyle(e).transform;a.currentTime=3000;
-            const next=getComputedStyle(e).transform;a.play();return [first,next];
-        }''')
-        assert transforms[0] != transforms[1], (selector, transforms)
+    # Observe real frames without taking ownership of CSS animations via WAAPI;
+    # programmatically replaying them can detach them from media-query changes.
+    moving = ['.garden-cat', '.garden-slider', '.garden-tire', '.garden-balloons', '.garden-flag', '.welcome-blimp']
+    def motion_frame():
+        return [page.locator(s).evaluate('(e)=>getComputedStyle(e).transform') for s in moving]
+    first_motion = motion_frame()
+    first_pulse = page.locator('.gate-glow').evaluate('(e)=>getComputedStyle(e).opacity')
+    page.wait_for_timeout(1350)  # Includes the slide's short resting interval.
+    for selector, first, next_frame in zip(moving, first_motion, motion_frame()):
+        assert first != next_frame, (selector, first, next_frame)
+    assert first_pulse != page.locator('.gate-glow').evaluate('(e)=>getComputedStyle(e).opacity')
+    page.wait_for_function("document.querySelector('[data-scene]').dataset.water==='ready'")
+    def water_frame():
+        return page.locator('.garden-water').evaluate('(c)=>c.toDataURL()')
+    first_water = water_frame()
+    page.wait_for_timeout(250)
+    assert water_frame() != first_water, 'Pond canvas must actually change between frames'
+    # The overlay must not animate the bridge, duck or lily pad.
+    foreground = page.locator('.garden-water').evaluate('''c=>{
+        const ctx=c.getContext('2d');return [[170,126],[346,134],[245,169]].map(([x,y])=>ctx.getImageData(x,y,1,1).data[3]);
+    }''')
+    assert foreground == [0, 0, 0], foreground
     page.evaluate('Object.defineProperty(document,"hidden",{configurable:true,get:()=>true});document.dispatchEvent(new Event("visibilitychange"))')
     assert page.locator('.garden-cat').evaluate('(e)=>getComputedStyle(e).animationPlayState') == 'paused'
     assert page.locator('.garden-slider').evaluate('(e)=>getComputedStyle(e).animationPlayState') == 'paused'
+    for selector in ['.garden-tire', '.garden-balloons', '.garden-flag']:
+        assert page.locator(selector).evaluate('(e)=>getComputedStyle(e).animationPlayState') == 'paused'
+    paused_water = water_frame()
+    page.wait_for_timeout(150)
+    assert water_frame() == paused_water, 'Hidden pages must stop drawing water'
     page.evaluate('Object.defineProperty(document,"hidden",{configurable:true,get:()=>false});document.dispatchEvent(new Event("visibilitychange"))')
     page.evaluate('dispatchEvent(new PageTransitionEvent("pagehide"))')
     assert page.locator('[data-scene]').get_attribute('data-paused') == 'true'
     page.evaluate('dispatchEvent(new PageTransitionEvent("pageshow",{persisted:true}))')
     assert page.locator('[data-scene]').get_attribute('data-paused') == 'false'
     page.emulate_media(reduced_motion='reduce')
-    for selector in ['.garden-cat', '.garden-slider', '.welcome-blimp', '.mascot-idle']:
+    for selector in ['.garden-cat', '.garden-slider', '.welcome-blimp', '.mascot-idle', '.garden-tire', '.garden-balloons', '.garden-flag']:
         assert page.locator(selector).evaluate('(e)=>getComputedStyle(e).animationName') == 'none'
+    assert not page.locator('.garden-water').is_visible()
     for fragment in ['#learning-robot', '#playground-gate']:
         page.locator(f'.blimp-choice[href="{fragment}"]').click()
         assert page.locator(fragment).evaluate('(e)=>e===document.activeElement'), fragment
@@ -111,6 +137,6 @@ with sync_playwright() as p:
     static.close()
     browser.close()
 
-report['checks'] = ['six responsive widths', 'three matching robot sizes', 'refresh', 'all bullets fit', 'cat and slide motion', 'visibility and bfcache lifecycle', 'reduced motion', 'wayfinding focus', 'native routes without scripts', 'decode failure keeps art visible']
+report['checks'] = ['six responsive widths', 'desktop-only art and layers', 'three matching robot sizes', 'refresh', 'all bullets fit', 'robot, tire, balloon, flag and blimp motion', 'golden gate pulse', 'flowing water with stationary foreground', 'visibility and bfcache lifecycle', 'reduced motion', 'wayfinding focus', 'native routes without scripts', 'decode failure keeps art visible']
 (out / f'{args.engine}-garden-report.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

@@ -1,0 +1,31 @@
+{
+  "mode": "Built-in image generation",
+  "created": "2026-09-29",
+  "scope": "Desktop homepage only; mobile uses garden-reference-v1.webp unchanged",
+  "assets": [
+    {
+      "key": "desktopCleanV2",
+      "path": "assets/landing/garden-desktop-clean-v2.webp",
+      "prompt": "Use case: precise-object-edit. Asset type: desktop-only clean background plate for an existing pixel-art website. Input image is the EDIT TARGET. Preserve the full canvas, exact composition, scale, positions, texture, lighting and all unchanged pixels as closely as possible. Keep exactly the same landscape framing and aspect ratio (1525 by 1031). This is selective object removal, not a redesign.\nREMOVE these FIVE signs completely, including supports where present, and reconstruct the scenery behind each: (1) upper-right tall wooden post/sign reading REAL DATA PRACTICAL SKILLS BIGGER QUESTIONS, including its blue bird and horizontal arm; (2) the long ivory/gold horizontal A MORE CURIOUS WORLD THROUGH DATA plaque at upper center-right; (3) lower-left EXPLORE LEARN ANALYZE GROW sign and its post; (4) angled yellow SAME DATA BRIGHTER THINKING sign beside the slide and its post; (5) GOOD DATA BRIGHTER MINDS sign attached to the tree trunk, restoring bare bark below it.\nAlso remove ONLY these moving foreground objects so separate animated cutouts can be overlaid: the three blue/yellow/red balloons AND their strings above the snack stand; the hanging tire AND its thin yellow rope below the left side of the treehouse platform; ONLY the little yellow triangular code flag cloth at the slide roof, preserving its entire gold pole and finial.\nKeep everything else unchanged: sky, clouds, sun, treehouse with laptop/books/string lights, tree trunk and ladder, sandbox and all toys, blue slide and red tower roof and flagpole, snacks kiosk, umbrella table, tunnel, bridge, waterfall, pond, duck, lily pads, foreground white fence, flowers, WELCOME arch and ENTER DATA PLAYGROUND gate with all its text. No new objects, no additional text, no robots, no airship, no central information board. All removed object areas must become coherent original-style scenery, with no remnants, smudges, silhouettes, floating signs or duplicate items. Opaque background.",
+      "source": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-efeb0091-ff8b-4d4b-83ae-080fa21276af.png"
+    },
+    {
+      "key": "desktopTireV2",
+      "path": "assets/landing/garden-tire-v2.webp",
+      "prompt": "Use case: background-extraction. Asset type: transparent animation sprite. Input image is the exact visual reference. Extract/recreate ONLY the hanging black tire swing with its short slender golden rope from below the LEFT edge of the treehouse platform. Keep the same slightly oblique oval dark rubber tire, gray pixel highlights, navy outline, open transparent center, gold rope passing down from a single top attachment and looping at the tire top. Whole rope and tire in one rigid assembly. Make the rope straight vertical with attachment at top center; the tire hangs below it. Match the source proportions: rope above tire about 70 pixels long, tire about 80 pixels wide and 80 pixels high. Crisp original 16-bit pixel-art style, not a smooth cartoon. Entire object centered, minimal transparent margin, no scenery, no tree, no platform, no ground shadow. Actual transparent alpha outside the tire and inside its hole.",
+      "source": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-a367f8f9-c958-46a5-a25e-7c6e380434f6.png"
+    },
+    {
+      "key": "desktopBalloonsV2",
+      "path": "assets/landing/garden-balloons-v2.webp",
+      "prompt": "Use case: background-extraction. Asset type: transparent animation sprite. Input image is the exact visual reference. Extract/recreate ONLY the cluster of THREE party balloons immediately above the snack stand: shiny cyan-blue balloon left, yellow balloon higher in the middle, red balloon right, with their short thin strings converging near the bottom to a single attachment point on the stand's roof. Match the exact balloon shapes, scale relative to one another, colors, navy outlines, little knots and white pixel highlights. Entire cluster including strings centered with minimal transparent margin, approximately square overall silhouette. Crisp original 16-bit pixel-art style, no lettering, no extra balloons, no kiosk or roof, no greenery, no ground shadow. Actual transparent background, transparent gaps between strings.",
+      "source": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-f329e7c4-5cff-4ed3-8cbc-7c5f9c9130a5.png"
+    },
+    {
+      "key": "desktopFlagV2",
+      "path": "assets/landing/garden-flag-v2.webp",
+      "prompt": "Use case: background-extraction. Asset type: transparent animation sprite. Input image is the exact visual reference. Extract/recreate ONLY the small yellow triangular pennant cloth with the dark navy </> coding symbol at the top of the slide tower. Keep the exact original yellow/gold shading and dark pixel outline. Flag points RIGHT, its straight left edge is the attachment edge; gently curved cloth. Width about 1.65 times height. Do not include the gold pole or finial, red roof, sky, greenery, or any other object. One isolated crisp 16-bit pixel-art cloth flag centered with minimal transparent margin. Actual transparent alpha background.",
+      "source": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-74140813-6463-4217-925a-9080379d8c78.png"
+    }
+  ]
+}

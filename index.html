@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" href="assets/icons/data-playground-slide.png" sizes="1254x1254">
   <link rel="apple-touch-icon" href="assets/icons/data-playground-slide.png">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
-  <link rel="stylesheet" href="landing.css?v=garden-reference1">
+  <link rel="stylesheet" href="landing.css?v=garden-desktop2">
   <link rel="stylesheet" href="mascot.css?v=garden-reference1">
   <script defer src="mascot.js"></script>
   <script src="app-platform.js?v=platform2"></script>
@@ -35,7 +35,14 @@
     <section class="scene-frame" data-scene aria-labelledby="welcome-title">
       <div class="garden-window">
         <div class="garden-canvas">
-          <img class="scene-art" src="assets/landing/garden-reference-v1.webp" width="1525" height="1031" alt="A pixel-art garden with a treehouse, sandpit, slide, snack stand and a bridge over a duck pond." fetchpriority="high">
+          <picture>
+            <source media="(min-width: 1100px)" srcset="assets/landing/garden-desktop-clean-v2.webp">
+            <img class="scene-art" src="assets/landing/garden-reference-v1.webp" width="1525" height="1031" alt="A pixel-art garden with a treehouse, sandpit, slide, snack stand and a bridge over a duck pond." fetchpriority="high">
+          </picture>
+          <canvas class="desktop-scene-part garden-water" aria-hidden="true"></canvas>
+          <img class="desktop-scene-part garden-tire" src="assets/landing/garden-tire-v2.webp" width="1086" height="1448" alt="" aria-hidden="true">
+          <img class="desktop-scene-part garden-balloons" src="assets/landing/garden-balloons-v2.webp" width="1254" height="1254" alt="" aria-hidden="true">
+          <img class="desktop-scene-part garden-flag" src="assets/landing/garden-flag-v2.webp" width="1610" height="977" alt="" aria-hidden="true">
           <div class="scene-actors">
             <a id="learning-robot" class="mascot-cta treehouse-guide" href="learn.html" aria-label="Open Learn and Refresh">
               <span class="mascot-bubble">Learn / Refresh <span aria-hidden="true">→</span></span>
@@ -44,7 +51,7 @@
             <img class="garden-slider garden-actor" src="assets/landing/robot-slide-clean.png" width="1128" height="1394" alt="A happy robot riding the slide.">
             <img class="garden-cat garden-actor" src="assets/landing/robot-cat-clean-v3.png" width="1313" height="1198" alt="A robot cat playing with a blue shovel in the sandpit.">
           </div>
-          <a id="playground-gate" class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground"><span class="sr-only">Enter Data Playground</span></a>
+          <a id="playground-gate" class="gate-hitbox" href="playground.html" aria-label="Enter Data Playground"><span class="gate-glow" aria-hidden="true"></span><span class="sr-only">Enter Data Playground</span></a>
         </div>
       </div>
 
@@ -112,6 +119,6 @@
     <svg class="paw" aria-hidden="true"><use href="#paw"/></svg>
   </footer>
   <script src="landing.js?v=garden-reference1"></script>
-  <script src="landing-motion.js?v=garden-reference1"></script>
+  <script src="landing-motion.js?v=garden-desktop2"></script>
 </body>
 </html>

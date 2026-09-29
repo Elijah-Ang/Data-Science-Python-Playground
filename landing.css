@@ -31,6 +31,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .garden-window { position: absolute; inset: 0; }
 .garden-canvas { position: relative; width: 100%; aspect-ratio: 1525 / 1031; }
 .scene-art { display: block; width: 100%; height: auto; user-select: none; }
+.desktop-scene-part, .gate-glow { display: none; }
 .scene-actors { position: absolute; inset: 0; pointer-events: none; }
 .garden-actor { position: absolute; object-fit: contain; height: auto; transform-origin: 50% 90%; }
 .garden-slider { left: 70.1%; top: 66%; width: 7.8%; animation: slide-ride 6.4s ease-in-out infinite; }
@@ -81,6 +82,36 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .landing-footer a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .landing-footer a:focus-visible { outline-color: #ffe3a3; }
 [data-scene][data-paused="true"] .welcome-blimp, [data-scene][data-paused="true"] .garden-actor { animation-play-state: paused; }
+/* The revised garden and its moving pieces are desktop-only. The original
+   picture, positions and motion remain in use below this breakpoint. */
+@media (min-width: 1100px) {
+  .landing-header nav { gap: 26px; }
+  .welcome-subtitle { display: none; }
+  .welcome-value { left: 25%; top: 33.5%; }
+  .garden-slider { left: 68.7%; top: 65.8%; animation-name: desktop-slide-ride; }
+  .garden-cat { left: 20.8%; top: 75.9%; }
+  .welcome-blimp { top: -.5%; animation: desktop-blimp-float 7.5s ease-in-out infinite; }
+  .blimp-copy { top: 14%; }
+  .blimp-heading { position: relative; left: -6.5%; font-size: 1.3cqw; letter-spacing: .07em; }
+  .blimp-choice[href="#playground-gate"]:focus-visible { outline-color: #bd7b0b; }
+  .desktop-scene-part { display: block; position: absolute; pointer-events: none; user-select: none; }
+  .garden-tire { left: 2.5%; top: 62.05%; width: 9.8%; height: auto; transform-origin: 50% 6.3%; animation: tire-sway 4.2s ease-in-out infinite; }
+  .garden-balloons { left: 87.4%; top: 49.1%; width: 10.2%; height: auto; transform-origin: 51.5% 89.7%; animation: balloons-sway 5.6s ease-in-out infinite; }
+  .garden-flag { left: 73.6%; top: 49.8%; width: 7.1%; height: 4.6%; transform-origin: 24.85% 50%; animation: flag-wave 1.7s ease-in-out infinite; }
+  .garden-water { left: 64.918%; top: 79.0495%; width: 31.8033%; height: 20.9505%; visibility: hidden; }
+  [data-water="ready"] .garden-water { visibility: visible; }
+  .gate-hitbox { left: 45.75%; top: 87.7%; width: 8.5%; height: 6.6%; border-radius: 5px; }
+  .gate-glow { display: block; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; box-shadow: 0 0 8px 2px #ffe96b, 0 0 21px 7px #ffbf3680, inset 0 0 12px #fffac580; animation: gate-golden-pulse 2.4s ease-in-out infinite; }
+  .gate-hitbox:focus-visible { outline: 2px solid #fff0a2; outline-offset: 4px; box-shadow: 0 0 16px 6px #ffcd54; }
+  [data-scene][data-paused="true"] .desktop-scene-part,
+  [data-scene][data-paused="true"] .gate-glow { animation-play-state: paused; }
+}
+@keyframes desktop-slide-ride { 0%, 15%, 100% { transform: translate(2%, -7%) rotate(-2deg); } 55%, 70% { transform: translate(-5%, 3%) rotate(0); } }
+@keyframes desktop-blimp-float { 0%, 100% { transform: translate(-.5%, 1%) rotate(-.8deg); } 50% { transform: translate(.5%, -2%) rotate(.8deg); } }
+@keyframes tire-sway { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@keyframes balloons-sway { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-1.5%); } }
+@keyframes flag-wave { 0%, 100% { transform: skewY(-4deg) scaleX(.96); } 50% { transform: skewY(5deg) scaleX(1.03); } }
+@keyframes gate-golden-pulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
 /* On smaller screens content flows above the garden, keeping instructions
    readable and the scene's links attached to their artwork. */
 @media (max-width: 1099px) {
@@ -147,6 +178,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .landing-footer .paw { width: 12px; height: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .welcome-blimp, .garden-actor { animation: none; }
+  .welcome-blimp, .garden-actor, .desktop-scene-part, .gate-glow { animation: none; }
   .gate-hitbox { transition: none; }
 }
