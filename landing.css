@@ -31,7 +31,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .garden-window { position: absolute; inset: 0; }
 .garden-canvas { position: relative; width: 100%; aspect-ratio: 1525 / 1031; }
 .scene-art { display: block; width: 100%; height: auto; user-select: none; }
-.desktop-scene-part, .gate-glow { display: none; }
+.desktop-scene-part, .gate-glow, .banner-art, .banner-rigging { display: none; }
+.airship-rig { display: contents; }
 .scene-actors { position: absolute; inset: 0; pointer-events: none; }
 .garden-actor { position: absolute; object-fit: contain; height: auto; transform-origin: 50% 90%; }
 .garden-slider { left: 70.1%; top: 66%; width: 7.8%; animation: slide-ride 6.4s ease-in-out infinite; }
@@ -87,15 +88,30 @@ button, a { -webkit-tap-highlight-color: transparent; }
 @media (min-width: 1100px) {
   .landing-header nav { gap: 26px; }
   .welcome-subtitle, .welcome-value-kicker, .dataset-examples { display: none; }
-  .welcome-title-copy { left: 8%; top: 4%; }
-  .welcome-value { left: 25%; top: 33.5%; width: 43.5%; height: 45%; }
-  .welcome-value h2 { font-size: 1.14cqw; }
-  .column-heading h3 { font-size: .8cqw; }
-  .board-copy { bottom: 20.6%; }
-  .garden-slider { left: 68.7%; top: 65.8%; animation-name: desktop-slide-ride; }
-  .garden-cat { left: 18.3%; top: 75.1%; }
-  .scene-actors::before { content: ""; position: absolute; left: 21.3%; top: 85.8%; width: 4.6%; height: 1.3%; background: radial-gradient(ellipse, #74401345, #74401300 70%); }
-  .welcome-blimp { left: 49.05%; top: .5%; width: 39.6%; height: 32.85%; animation: desktop-blimp-float 7.5s ease-in-out infinite; }
+  .welcome-title-copy { left: 4%; top: 4%; }
+  .airship-rig { display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none; transform-origin: 60% 20%; animation: airship-carry 7.5s ease-in-out infinite; }
+  .airship-rig .blimp-choice, .airship-rig .welcome-value { pointer-events: auto; }
+  .banner-rigging { display: block; position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke-linecap: round; }
+  .rigging-outline { stroke: #243243; stroke-width: 7; }
+  .rigging-rope { stroke: #c78a2f; stroke-width: 4; }
+  .rigging-highlight { stroke: #ffe3a1; stroke-width: 1.4; }
+  .welcome-value { left: 32.5%; top: 31%; width: 36.8%; height: 44%; }
+  .board-art { display: none; }
+  .banner-art { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
+  .welcome-value h2 { left: 8%; right: 8%; top: 16%; height: 8%; font-size: 1.05cqw; letter-spacing: -.065em; }
+  .board-copy { inset: 27% 8.5% 14%; }
+  .welcome-value-grid { gap: .35cqw; }
+  .welcome-value-grid article { padding: .3cqw .35cqw; border: 0; border-radius: 0; background: none; box-shadow: none; }
+  .welcome-value-grid article + article { border-left: 1px solid #d6b87e; }
+  .column-heading { min-height: 2.7cqw; gap: .3cqw; margin: 0 0 .5cqw; }
+  .column-heading img { flex-basis: 2.4cqw; width: 2.4cqw; height: 2.4cqw; transform: scale(1.55); }
+  .column-heading h3 { font-size: .74cqw; }
+  .welcome-value-grid ul { font-size: .88cqw; line-height: 1.35; padding-left: .85cqw; }
+  .welcome-value-grid li + li { margin-top: .5cqw; }
+  .garden-slider { left: 69.5%; top: 67.6%; width: 6.5%; animation-name: desktop-slide-ride; }
+  .garden-cat { left: 14.5%; top: 77.1%; }
+  .scene-actors::before { content: ""; position: absolute; left: 17.2%; top: 88.3%; width: 4.6%; height: 1.3%; background: radial-gradient(ellipse, #74401345, #74401300 70%); }
+  .welcome-blimp { left: 40.5%; top: .5%; width: 39.6%; height: 32.85%; animation: none; }
   .blimp-copy { top: 14%; }
   .blimp-heading { position: relative; left: -6.5%; font-size: 1.17cqw; letter-spacing: .07em; }
   .blimp-choice strong { font-size: 1.28cqw; }
@@ -112,17 +128,18 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .garden-water { left: 64.918%; top: 79.0495%; width: 31.8033%; height: 20.9505%; visibility: hidden; }
   [data-water="ready"] .garden-water { visibility: visible; }
   .gate-hitbox { left: 45.75%; top: 87.7%; width: 8.5%; height: 6.6%; border-radius: 5px; }
-  .gate-glow { display: block; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; box-shadow: 0 0 10px 4px #fff2a4, 0 0 28px 13px #ffce55c7, 0 0 54px 22px #ffb32680, inset 0 0 14px 4px #fff4a4bf; animation: gate-golden-pulse 2.4s ease-in-out infinite; }
+  .gate-glow { display: block; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; box-shadow: 0 0 12px 5px #fff7c5, 0 0 34px 16px #ffd15cdb, 0 0 66px 29px #ffb32699, inset 0 0 15px 4px #fff4a4bf; animation: gate-golden-pulse 2.4s ease-in-out infinite; }
   .gate-hitbox:focus-visible { outline: 2px solid #fff0a2; outline-offset: 4px; box-shadow: 0 0 16px 6px #ffcd54; }
+  [data-scene][data-paused="true"] .airship-rig,
   [data-scene][data-paused="true"] .desktop-scene-part,
   [data-scene][data-paused="true"] .gate-glow { animation-play-state: paused; }
 }
 @keyframes desktop-slide-ride { 0%, 15%, 100% { transform: translate(2%, -7%) rotate(-2deg); } 55%, 70% { transform: translate(-5%, 3%) rotate(0); } }
-@keyframes desktop-blimp-float { 0%, 100% { transform: translate(-.5%, 1%) rotate(-.8deg); } 50% { transform: translate(.5%, -2%) rotate(.8deg); } }
+@keyframes airship-carry { 0%, 100% { transform: translate(-.12%, .3%) rotate(-.3deg); } 50% { transform: translate(.12%, -.55%) rotate(.3deg); } }
 @keyframes tire-sway { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
 @keyframes balloons-sway { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-1.5%); } }
 @keyframes flag-wave { 0%, 100% { transform: skewY(-4deg) scaleX(.96); } 50% { transform: skewY(5deg) scaleX(1.03); } }
-@keyframes gate-golden-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes gate-golden-pulse { 0%, 100% { opacity: .65; } 50% { opacity: 1; } }
 /* On smaller screens content flows above the garden, keeping instructions
    readable and the scene's links attached to their artwork. */
 @media (max-width: 1099px) {
@@ -189,6 +206,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .landing-footer .paw { width: 12px; height: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .welcome-blimp, .garden-actor, .desktop-scene-part, .gate-glow { animation: none; }
+  .welcome-blimp, .airship-rig, .garden-actor, .desktop-scene-part, .gate-glow { animation: none; }
   .gate-hitbox { transition: none; }
 }

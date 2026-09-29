@@ -97,3 +97,31 @@ require the user's approval of the finished preview.
   app-shell checks and whitespace validation pass.
 
 Preview evidence: `tests/evidence/desktop-refinement-v3/`.
+
+## Hanging banner desktop revision
+
+- Replaced the desktop wooden board with a smaller cream fabric banner, hanging
+  from two ropes attached to the blimp. Blimp, ropes and banner share one gentle
+  float/sway, with reduced-motion and hidden-page pause support.
+- Moved the banner right to show the treehouse while keeping the slide clear.
+- Moved the cat left beside the blue bucket, revealing its body while retaining
+  the sandcastle foreground layer and contact shadow.
+- Reduced the sliding robot by about 17% and kept it on the slide.
+- Increased the golden entrance glow and its minimum pulse brightness again.
+- Updated only the two desktop tour snapshots. Mobile/tablet styles and content
+  remain unchanged.
+
+The banner was created with built-in ImageGen, then losslessly packaged as
+`assets/landing/garden-banner-v4.webp`. Its exact prompt and original output are
+recorded in `docs/homepage-banner-v4-artwork.json`.
+
+Verification: the Chromium landing regression passes at six widths, including
+reloads, text fit, robot proportions, motions, water, reduced motion, hidden-page
+lifecycle, focus/navigation and no-script routes. Visual evidence is in
+`tests/evidence/desktop-banner-v4/` and `tests/evidence/learn-discovery/`.
+
+Local preview only; release and AdSense resubmission await approval.
+
+WebKit desktop, 1100px breakpoint and phone visual checks also pass. Both desktop
+tour entry snapshots load with their spotlight and enlarged preview. App-shell,
+public-page, ad-mode, tour-content and whitespace checks pass.

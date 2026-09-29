@@ -53,7 +53,12 @@ with sync_playwright() as p:
             for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++)if(data[(y*c.width+x)*4+3]>200){top=Math.min(top,y);bottom=Math.max(bottom,y);}
             return (bottom-top+1)/c.height*image.getBoundingClientRect().height;
         })''')
-        assert max(sizes) / min(sizes) < 1.2, (width, sizes)
+        if width >= 1100:
+            guide, slider, cat = sizes
+            assert .78 * guide < slider < .95 * guide, (width, sizes)
+            assert max(guide, cat) / min(guide, cat) < 1.2, (width, sizes)
+        else:
+            assert max(sizes) / min(sizes) < 1.2, (width, sizes)
         for target in ['#learning-robot', '#playground-gate']:
             link = page.locator(target)
             link.scroll_into_view_if_needed()
@@ -69,7 +74,7 @@ with sync_playwright() as p:
     page.wait_for_function("document.querySelector('[data-scene]').dataset.motion==='ready'")
     # Observe real frames without taking ownership of CSS animations via WAAPI;
     # programmatically replaying them can detach them from media-query changes.
-    moving = ['.garden-cat', '.garden-slider', '.garden-tire', '.garden-balloons', '.garden-flag', '.welcome-blimp']
+    moving = ['.garden-cat', '.garden-slider', '.garden-tire', '.garden-balloons', '.garden-flag', '.airship-rig']
     def motion_frame():
         return [page.locator(s).evaluate('(e)=>getComputedStyle(e).transform') for s in moving]
     first_motion = motion_frame()
@@ -103,7 +108,7 @@ with sync_playwright() as p:
     page.evaluate('dispatchEvent(new PageTransitionEvent("pageshow",{persisted:true}))')
     assert page.locator('[data-scene]').get_attribute('data-paused') == 'false'
     page.emulate_media(reduced_motion='reduce')
-    for selector in ['.garden-cat', '.garden-slider', '.welcome-blimp', '.mascot-idle', '.garden-tire', '.garden-balloons', '.garden-flag']:
+    for selector in ['.garden-cat', '.garden-slider', '.welcome-blimp', '.airship-rig', '.mascot-idle', '.garden-tire', '.garden-balloons', '.garden-flag']:
         assert page.locator(selector).evaluate('(e)=>getComputedStyle(e).animationName') == 'none'
     assert not page.locator('.garden-water').is_visible()
     for fragment in ['#learning-robot', '#playground-gate']:
@@ -137,6 +142,6 @@ with sync_playwright() as p:
     static.close()
     browser.close()
 
-report['checks'] = ['six responsive widths', 'desktop-only art and layers', 'three matching robot sizes', 'refresh', 'all bullets fit', 'robot, tire, balloon, flag and blimp motion', 'golden gate pulse', 'flowing water with stationary foreground', 'visibility and bfcache lifecycle', 'reduced motion', 'wayfinding focus', 'native routes without scripts', 'decode failure keeps art visible']
+report['checks'] = ['six responsive widths', 'desktop-only art and layers', 'smaller desktop slide robot', 'refresh', 'all bullets fit', 'robot, tire, balloon, flag and suspended airship motion', 'golden gate pulse', 'flowing water with stationary foreground', 'visibility and bfcache lifecycle', 'reduced motion', 'wayfinding focus', 'native routes without scripts', 'decode failure keeps art visible']
 (out / f'{args.engine}-garden-report.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

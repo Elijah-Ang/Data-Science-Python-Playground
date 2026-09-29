@@ -1,0 +1,8 @@
+{
+  "tool": "Built-in image_gen.imagegen",
+  "date": "2026-09-29",
+  "path": "assets/landing/garden-banner-v4.webp",
+  "generatedSource": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-b2c3f24d-ad6e-4ffc-9221-66f5886e1e94.png",
+  "packaging": "Lossless WebP encoding; generated pixels and alpha retained",
+  "prompt": "Use case: precise-object-edit. Asset type: transparent pixel-art fabric banner for the existing Data Science Python Playground website. Image 1 is the old wooden information board to REPLACE with a hanging banner; image 2 is the supporting airship STYLE reference. Create ONLY a blank hanging cream canvas banner, matching the exact crisp dark navy pixel outlines, ivory/gold palette and 16-bit shading of the airship. Wide landscape rectangle, overall width to height about 1.45:1. A very slim honey-gold suspension rod across the top, with two tiny brass attachment loops near the upper left and upper right, roughly 6% in from each end. Soft ivory canvas hangs from the rod, with a fine gold stitched border, subtle folds confined to the outer edges and a gently curved weighted lower hem. No heavy wood frame, no corner planks, no legs or posts, no ropes extending upward (ropes will be attached in code). The banner must feel light enough to hang below the airship. Keep the entire large central 88% of the surface flat, blank and uniformly pale cream for three columns of dark HTML text. No text, no symbols, no icons, no lines or panels inside, no airship, no garden, no objects outside the banner. Front-facing, centered, minimal transparent margin (about 2-3% on each edge), no shadows outside the object. Actual transparent alpha background."
+}
