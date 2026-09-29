@@ -1,0 +1,48 @@
+{
+  "tool": "Built-in image_gen.imagegen",
+  "reference": "ChatGPT Image Sep 29, 2026 at 05_26_56 PM.png",
+  "date": "2026-09-29",
+  "packaging": "WebP encoding only; generated alpha, pixels and framing retained.",
+  "assets": [
+    {
+      "path": "assets/landing/garden-reference-v1.webp",
+      "generatedSource": "exec-76fbcaff-4da7-4cc4-96af-e79ae5325ffb.png",
+      "prompt": "Use case: precise-object-edit.\nAsset type: production background plate for a responsive website, not a screenshot mockup.\nInput image: exact layout and artwork reference.\nCreate the clean garden scenery from the supplied image, keeping its rich crisp pixel-art style, colors, perspective, and all scenery positions with very high fidelity. Crop away only the top navigation strip and bottom navy footer, leaving the complete garden/sky region between them. Landscape ratio approximately 1.48:1 (the 1448 by 979 central scene).\nRemove these foreground elements completely and reconstruct appropriate sky or scenery behind them: the large cream airship at upper left (including gondola); the entire large central wooden information board and its posts; all three white humanoid robots including the tiny airship icon and the one on the tree platform and the one on the blue slide; the large DATA SCIENCE PYTHON PLAYGROUND heading and its subtitle in the sky.\nPreserve exactly the left treehouse, string lights, laptop and books, ladder, tire swing, sandbox, toys, flowers, white picket fence, center WELCOME gate and golden entrance path, right blue slide and play tower, snack kiosk, balloons, right bridge/pond/waterfall/duck, clouds, sunlight and distant skyline. The treehouse platform and slide must be empty, ready for animated robot sprites to be composited later. The sandbox is empty of characters, ready for a cat robot later.\nPreserve the small signs and their exact text: GOOD DATA BRIGHTER MINDS on the tree sign; EXPLORE LEARN ANALYZE GROW on the left small sign; REAL DATA PRACTICAL SKILLS BIGGER QUESTIONS on the upper right sign; SAME DATA BRIGHTER THINKING on the angled yellow sign beside the slide; SNACKS on the kiosk; WELCOME over the gate; ENTER DATA PLAYGROUND on the gate. Preserve the thin ivory and gold plaque beneath the title area with the exact text A MORE CURIOUS WORLD THROUGH DATA and navy paw prints.\nNo central board, no airship, no large title, no humanoid robots, no cat robot, no top navigation, no footer. Keep the scene framing and ground line like the supplied reference. Avoid reimagining the design, adding new objects or changing scenery scale."
+    },
+    {
+      "path": "assets/landing/garden-blimp-v1.webp",
+      "generatedSource": "exec-c45e0aaa-8f98-4299-b13c-415d21ebf42b.png",
+      "prompt": "Use case: background-extraction. Asset type: transparent production website illustration.\nUse the supplied image as an exact visual reference. Isolate just the large cream-and-gold airship from the upper left, including its cyan tail fins and gold gondola, in the same crisp pixel-art style. Keep the original airship shape, navy outline, ivory fabric, gold edging and metallic details. Remove every word, robot icon, yellow gate icon and divider inside the balloon, leaving one clean uninterrupted ivory balloon face for HTML text. No scenery, no shadow outside the object, no top bar, no other objects. Horizontal full airship centered with minimal transparent margin and the entire fins and gondola visible. Real transparent alpha background."
+    },
+    {
+      "path": "assets/landing/garden-board-v1.webp",
+      "generatedSource": "exec-1374a41f-0f25-4595-8da2-7d3cf33354e4.png",
+      "prompt": "Use case: background-extraction. Asset type: transparent wooden information-board frame for a website.\nExtract/recreate exactly the large central wooden information board from the supplied reference, with the same pixel-art wooden planks, golden bolts, dark navy outline, ivory paper interior, and raised pale orange title plank across the top. Keep its wide landscape shape with roughly 1.6:1 width-to-height. Remove ALL text, icons, inner cards, divider lines and the bottom quote box. The title plank is completely blank. The ivory interior is one clean blank uninterrupted rectangle so three tall HTML columns can occupy it. Keep the two short wooden supports below the board near its left/right edges. Do not include robots, garden, airship, gate, yellow angled sign or any other objects. Isolated whole board, front-facing, minimal transparent margin, crisp matching pixel art, actual transparent alpha background."
+    },
+    {
+      "path": "assets/landing/garden-inspect-v1.webp",
+      "generatedSource": "exec-2f856ac5-a38e-416d-b6c1-a665883369ed.png",
+      "prompt": "Use case: stylized-concept. Asset type: tiny pixel-art website icon with transparent background. Using the supplied reference screenshot's three central-column icons as the style and size reference, generate only a small magnifying glass, cyan glass with a pale highlight and a navy blue handle, tilted diagonally. Crisp pixel steps, warm playful game art, readable at 40 pixels high, same dark outline and shaded 16-bit aesthetic. Single isolated icon centered with modest transparent padding; no words, letters, numbers, border, background or extra objects. Actual transparent alpha background."
+    },
+    {
+      "path": "assets/landing/garden-python-v1.webp",
+      "generatedSource": "exec-d7f5b8f8-0eba-4581-a59d-f01e5d20a2c2.png",
+      "prompt": "Use case: stylized-concept. Asset type: tiny pixel-art website icon with transparent background. Using the supplied reference screenshot's three central-column icons as the style and size reference, generate only a small open laptop computer, silver body, dark navy outline, bright cyan blue screen with one simple light reflection, black keyboard. Crisp pixel steps, warm playful game art, readable at 40 pixels high, same dark outline and shaded 16-bit aesthetic. Single isolated icon centered with modest transparent padding; no words, letters, numbers, border, background or extra objects. Actual transparent alpha background."
+    },
+    {
+      "path": "assets/landing/garden-evidence-v1.webp",
+      "generatedSource": "exec-ff7fa113-61c0-4ed8-b299-a7538062390e.png",
+      "prompt": "Use case: stylized-concept. Asset type: tiny pixel-art website icon with transparent background. Using the supplied reference screenshot's three central-column icons as the style and size reference, generate only a small bar chart with three rising bars in red, yellow and teal, dark navy outlines, a small gold magnifying glass at the upper right. Crisp pixel steps, warm playful game art, readable at 40 pixels high, same dark outline and shaded 16-bit aesthetic. Single isolated icon centered with modest transparent padding; no words, letters, numbers, border, background or extra objects. Actual transparent alpha background."
+    },
+    {
+      "path": "assets/landing/garden-title-v1.webp",
+      "generatedSource": "exec-b75384f8-6906-4e08-81d1-022f440a2424.png",
+      "prompt": "Use case: background-extraction. Asset type: transparent pixel-art website title. Isolate/recreate ONLY the three-line large title from the supplied exact reference, reading DATA SCIENCE on line 1, PYTHON on line 2, PLAYGROUND on line 3. Match the exact reference lettering style: tall squared 16-bit game letters, dark teal front faces with lighter cyan bevel highlights, dark navy thin pixel outline, ivory offset bottom/right shadow, clear open letter counters. Same relative text sizes, centered line alignment and close line spacing as the reference. The whole title occupies a wide block roughly 2.8:1 width-to-height with minimal transparent margin. Preserve exact spelling. No other text, no sky, no sun, no surrounding plaque, no border. Actual transparent background, crisp clean pixel steps."
+    },
+    {
+      "path": "assets/landing/garden-gate-v1.webp",
+      "generatedSource": "exec-629c21ec-44e0-4dd2-b1aa-018073d111a3.png",
+      "prompt": "Use case: background-extraction. Asset type: transparent tiny gate-sign icon for website airship. Recreate only the small golden rectangular ENTER DATA PLAYGROUND plaque shown INSIDE the reference airship (not the large gate in the garden). Exact warm yellow face, amber pixel bevels, thin navy outline, four gold corner bolts. Three centered lines ENTER / DATA PLAYGROUND / a small navy right-pointing triangular play symbol. Crisp dark navy condensed pixel lettering. Landscape rectangle approximately 1.8:1. Isolated complete plaque only, straight-on, no scenery and no fence. Very little transparent margin. Match the exact screenshot's pixel art. Actual transparent background."
+    }
+  ]
+}

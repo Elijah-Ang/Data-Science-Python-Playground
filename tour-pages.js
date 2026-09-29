@@ -12,7 +12,7 @@ window.TOUR_PAGES = (() => {
     'ml-validate': {page:'ml.html', targets:{guide:'#workflow-step-5 .workflow-step-concepts'}},
     'ml-tune': {page:'ml.html', targets:{guide:'#workflow-step-7 .workflow-step-concepts'}},
     'ml-results': {page:'ml.html', targets:{result:'.output-panel'}},
-    home: {page:'index.html', targets:{robot:'.mascot-cta',gate:'.gate-glow'}},
+    home: {page:'index.html', targets:{robot:'.mascot-cta',gate:'.gate-hitbox'}},
     learn: {page:'learn.html', targets:{pathways:'.learn-pathways'}},
     decks: {page:'data-foundations.html', hash:'', targets:{decks:'.foundation-decks'}},
     chapters: {page:'data-foundations.html', hash:'#inspect', targets:{chapters:'.chapter-jumps'}},
