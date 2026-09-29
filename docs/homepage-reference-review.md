@@ -82,3 +82,18 @@ desktop tour entry previews also pass. Additional visual evidence is in
 
 These changes are local review work. Deployment and AdSense resubmission still
 require the user's approval of the finished preview.
+
+## Further desktop refinements
+
+- Swapped the title and blimp, reducing the blimp and its contents by about 10%.
+- Made the information board shorter and its heading smaller. Removed the
+  dataset names and the "A question, a table..." line from the desktop view.
+- Moved the cat behind the sandcastle. A clipped foreground copy of the
+  original artwork covers its lower body throughout the animation; a soft
+  contact shadow grounds it in the sand. No new raster artwork was needed.
+- Strengthened the entrance plaque's golden halo and minimum pulse brightness.
+- Refreshed the two desktop tour snapshots. Mobile styles and content remain
+  as before. Chromium responsive/navigation regression, Safari visual checks,
+  app-shell checks and whitespace validation pass.
+
+Preview evidence: `tests/evidence/desktop-refinement-v3/`.
