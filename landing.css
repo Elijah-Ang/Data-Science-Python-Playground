@@ -95,31 +95,43 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .rigging-outline { stroke: #243243; stroke-width: 7; }
   .rigging-rope { stroke: #c78a2f; stroke-width: 4; }
   .rigging-highlight { stroke: #ffe3a1; stroke-width: 1.4; }
-  .welcome-value { left: 32.5%; top: 31%; width: 36.8%; height: 48%; }
+  .welcome-value { left: 31%; top: 34.5%; width: 40%; height: 43.2%; }
   .board-art { display: none; }
-  .banner-art { display: block; position: absolute; inset: 0; width: 100%; height: 100%; }
-  .welcome-value h2 { left: 8%; right: 8%; top: 15%; height: 7%; gap: .6cqw; font-size: 1cqw; letter-spacing: -.065em; }
-  .welcome-value h2::before, .welcome-value h2::after { content: "✦"; color: #ffbd09; font: 900 1.3cqw/1 var(--landing-body); text-shadow: 1px 1px #d57b04; }
-  .board-copy { inset: 23% 8.3% 13%; }
-  .welcome-value-grid { gap: 1cqw; }
-  .welcome-value-grid article { --panel-edge: #a8def6; --gem: #08b8ff; --gem-dark: #0854c1; position: relative; padding: .35cqw .3cqw .55cqw; border: 2px solid var(--panel-edge); border-radius: .7cqw .7cqw .8cqw 1.6cqw; background: linear-gradient(120deg, #edfaff, #e2f4fd); box-shadow: inset 0 0 0 1px #ffffff9c; }
-  .welcome-value-grid article:nth-child(2) { --panel-edge: #ffe3a1; --gem: #ffb323; --gem-dark: #d46a00; background: linear-gradient(120deg, #fff9e7, #fff4d9); border-radius: .7cqw; }
-  .welcome-value-grid article:nth-child(3) { --panel-edge: #c7ebbc; --gem: #21c34b; --gem-dark: #08732c; background: linear-gradient(120deg, #f3fbe9, #eaf6dc); border-radius: .7cqw .7cqw 1.6cqw .8cqw; }
-  .welcome-value-grid article + article::before { content: ""; position: absolute; left: -.65cqw; top: .8cqw; bottom: .2cqw; width: 1px; background: #e8b350; }
-  .welcome-value-grid article + article::after { content: "✦"; position: absolute; z-index: 1; left: -1.02cqw; top: 46%; color: #ffc21a; font: 900 1.3cqw/1 var(--landing-body); text-shadow: 1px 1px #d57b04; }
-  .column-heading { position: relative; display: flex; flex-direction: column; min-height: 0; gap: .15cqw; margin: 0 -.05cqw .5cqw; }
-  .column-heading::before, .column-heading::after { content: "✦"; position: absolute; top: 1.7cqw; color: #ffc21a; font: 900 1.15cqw/1 var(--landing-body); text-shadow: 1px 1px #d57b04; }
-  .column-heading::before { left: 1.1cqw; }
-  .column-heading::after { right: .7cqw; }
-  .column-heading img { flex: 0 0 3.8cqw; width: 3.8cqw; height: 3.8cqw; transform: scale(1.85); }
-  .column-heading h3 { position: relative; display: block; width: 100%; min-height: 2.75cqw; padding: .3cqw .1cqw .3cqw 1.05cqw; border: 2px solid #e6bd76; border-radius: .45cqw; box-shadow: inset 0 0 0 2px #fff0cd, 1px 1px #c28c39; background: linear-gradient(#fffaf0, #fff2d8); font: 900 .75cqw/1.2 var(--landing-body); letter-spacing: -.03em; text-align: center; }
-  .column-number { position: absolute; left: -1.25cqw; top: -.15cqw; display: grid; place-items: center; width: 2.2cqw; height: 2.2cqw; border: .18cqw solid var(--gem-dark); border-radius: 50%; background: linear-gradient(140deg, var(--gem), var(--gem-dark)); box-shadow: inset 0 0 0 .16cqw #ffffff80, 1px 2px 0 #ad762e; color: #fff; font: 900 1.35cqw/1 var(--landing-body); text-shadow: 1px 1px var(--gem-dark); }
+  .banner-art { display: block; position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+  .welcome-value h2 { left: 8%; right: 8%; top: calc(10.4% + .35cqw); height: 7.5%; gap: .5cqw; font-size: 1cqw; letter-spacing: -.065em; }
+  .welcome-value h2::before, .welcome-value h2::after { content: ""; flex: 0 0 2cqw; width: 2cqw; height: 2cqw; background: url("assets/landing/garden-sparkle-v6.webp") center / contain no-repeat; image-rendering: pixelated; }
+  .board-copy { inset: calc(19% + .35cqw) 9.2% calc(11% - .35cqw); }
+  .welcome-value-grid { gap: 1.15cqw; }
+  .welcome-value-grid article { --panel-edge: #b1e5fa; --gem: #08b8ff; --gem-dark: #0854c1; position: relative; padding: .1cqw .3cqw .5cqw; border: 1.5px solid var(--panel-edge); border-radius: .8cqw .8cqw 1.2cqw 1.2cqw; background: linear-gradient(120deg, #eefaff, #e4f5fd); box-shadow: inset 0 0 0 1px #ffffff80; }
+  .welcome-value-grid article:nth-child(2) { --panel-edge: #f8dfa6; --gem: #ffb323; --gem-dark: #d46a00; background: linear-gradient(120deg, #fff9e8, #fff5dc); }
+  .welcome-value-grid article:nth-child(3) { --panel-edge: #c8edc3; --gem: #21c34b; --gem-dark: #08732c; background: linear-gradient(120deg, #f4fbea, #eaf6df); }
+  .welcome-value-grid article + article::before { content: ""; position: absolute; left: -.68cqw; top: 2%; bottom: 2%; width: 1px; background: #e8b350; }
+  .welcome-value-grid article + article::after { content: ""; position: absolute; z-index: 1; left: -1.58cqw; top: 40.5%; width: 2cqw; height: 2cqw; background: url("assets/landing/garden-sparkle-v6.webp") center / contain no-repeat; image-rendering: pixelated; }
+  .column-heading { position: relative; display: flex; flex-direction: column; min-height: 0; gap: .12cqw; margin: 0 -.05cqw .5cqw; }
+  .column-heading::before, .column-heading::after { content: ""; position: absolute; top: 1cqw; width: 2cqw; height: 2cqw; background: url("assets/landing/garden-sparkle-v6.webp") center / contain no-repeat; image-rendering: pixelated; }
+  .column-heading::before { left: 1.7cqw; }
+  .column-heading::after { right: 1.7cqw; }
+  .column-heading img { flex: 0 0 4cqw; width: 4cqw; height: 4cqw; transform: scale(1.85); image-rendering: pixelated; }
+  .column-heading h3 { position: relative; display: block; width: 100%; min-height: 2.75cqw; padding: .3cqw .1cqw .3cqw 1.5cqw; border: 0; border-radius: 0; box-shadow: none; background: url("assets/landing/garden-heading-plaque-v7.webp") center / 106% 145% no-repeat; image-rendering: pixelated; font: 900 .8cqw/1.2 var(--landing-body); letter-spacing: -.045em; text-align: center; }
+  .column-number { position: absolute; left: -1.58cqw; top: -.42cqw; display: block; width: 3.5cqw; height: 3.5cqw; overflow: hidden; color: transparent; font-size: 0; background-image: url("assets/landing/garden-number-badges-v6.webp"); background-repeat: no-repeat; background-size: 300% 100%; image-rendering: pixelated; }
+  .welcome-value-grid article:nth-child(1) .column-number { background-position: 0% 50%; }
+  .welcome-value-grid article:nth-child(2) .column-number { background-position: 50% 50%; }
+  .welcome-value-grid article:nth-child(3) .column-number { background-position: 100% 50%; left: -.66cqw; }
+  .welcome-value-grid article:nth-child(1) .column-number { left: -.98cqw; }
+  .welcome-value-grid article:nth-child(2) .column-number { left: -1.18cqw; }
+  .welcome-value-grid article:nth-child(2) .column-heading h3 { font-size: .76cqw; }
   .number-period { display: none; }
-  .welcome-value-grid ul { margin: 0 .15cqw; padding-left: 1.05cqw; list-style: none; font-size: .79cqw; line-height: 1.3; color: #152c4b; }
+  .welcome-value-grid ul { margin: 0 .15cqw; padding-left: 1.05cqw; list-style: none; font-size: .86cqw; line-height: 1.24; letter-spacing: -.02em; color: #152c4b; }
   .welcome-value-grid li { position: relative; padding: 0; }
   .welcome-value-grid li::before { content: ""; position: absolute; left: -1cqw; top: .34cqw; width: .48cqw; height: .48cqw; border: 1px solid var(--gem-dark); border-radius: 35%; background: radial-gradient(circle at 35% 30%, #fff 0 12%, var(--gem) 25% 48%, var(--gem-dark) 85%); box-shadow: 1px 1px #ffffffc9; }
   .welcome-value-grid li + li { margin-top: .5cqw; padding-top: .5cqw; border-top: 1px dashed var(--panel-edge); }
   .welcome-value-grid li + li::before { top: .84cqw; }
+  .welcome-value-grid article:nth-child(3) li + li { margin-top: .25cqw; padding-top: .25cqw; }
+  .welcome-value-grid article:nth-child(3) li + li::before { top: .59cqw; }
+  .welcome-value-grid article:nth-child(1) li + li { margin-top: .75cqw; padding-top: .75cqw; }
+  .welcome-value-grid article:nth-child(1) li + li::before { top: 1.09cqw; }
+  .welcome-value-grid article:nth-child(2) li + li { margin-top: .5cqw; padding-top: .5cqw; }
+  .welcome-value-grid article:nth-child(2) li + li::before { top: .84cqw; }
   .welcome-value-grid strong { color: #102b4c; background: none; }
   .garden-slider { left: 69.5%; top: 67.6%; width: 6.5%; animation-name: desktop-slide-ride; }
   .garden-cat { left: 14.1%; top: 74%; }

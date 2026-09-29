@@ -1,0 +1,33 @@
+{
+  "tool": "Built-in image_gen.imagegen",
+  "mode": "transparent raster generation and reference-guided edit",
+  "referenceImage": "/Users/elijahang/.codex/attachments/d96b25f3-a07d-43e9-8968-a7ee73f4a746/image-1.png",
+  "assets": [
+    {
+      "path": "assets/landing/garden-number-badges-v6.webp",
+      "generatedSource": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-642115dd-4e4a-4e01-9b9a-fab0d14b4ea2.png",
+      "prompt": "Recreate only the three numbered pixel-art circular badges in the supplied screenshot as an evenly spaced transparent sprite sheet. Match the blue 1, orange 2 and green 3, white pixel numerals, stepped navy outline, bright rim, inner highlight, identical size and crisp 8-bit edges. No surrounding banner or other decoration."
+    },
+    {
+      "path": "assets/landing/garden-sparkle-v6.webp",
+      "generatedSource": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-7cfc8f24-b446-4a95-9d7b-9b7c3e4f4f65.png",
+      "prompt": "Recreate one tiny golden four-point pixel-art sparkle from the banner reference on transparent alpha: bright yellow-white central highlight, amber cross arms, warm orange pixel outline, crisp stepped square edges, no panel, number, text or soft glow."
+    },
+    {
+      "path": "assets/landing/garden-banner-v7.webp",
+      "generatedSource": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-32facd05-f484-4e70-b7d5-0504cfb8861a.png",
+      "initialGeneratedSource": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-817c8b65-a2bd-48d0-88d5-a36a7def1f57.png",
+      "promptStages": [
+        "Isolate the reference banner: gold rod and finials, two loops, blank ivory cloth with dashed orange stitches and a curved hem. Match the 1.40:1 proportions and pixel-art outline; remove all text, panels, badges, icons, ropes and garden; transparent alpha outside.",
+        "Edit only the lower hem of the generated blank banner so its left and right content-panel areas remain opaque through about 95% of the height; preserve the rod, texture, stitches and blank interior.",
+        "Make the opaque cream inner rectangle span x=8\u201392%, y=10\u201394%; continue the outer cloth edge at x=9% and x=91% to at least y=97%, with a gentle curve only at the far corners. Preserve the center hem near y=99%, rod, finials, loops, pixel texture, stitches, colors and transparent alpha; add no content."
+      ]
+    },
+    {
+      "path": "assets/landing/garden-heading-plaque-v7.webp",
+      "generatedSource": "/Users/elijahang/.codex/generated_images/01a0d278-e78f-7f32-8e5c-df3b3526a0a6/exec-972bab98-08e7-4dec-a693-e206dde2fb38.png",
+      "prompt": "Recreate only the blank pixel-art cream heading plaque behind the numbered banner labels from the supplied screenshot: a wide shallow rectangle with stepped 8-bit cream and honey-gold bevel, warm lower shadow and transparent alpha outside. Keep central area blank for live HTML text; no numeral badge, words, star, icon, panel or banner."
+    }
+  ],
+  "packaging": "Lossless WebP; alpha and generated pixels preserved."
+}

@@ -18,7 +18,7 @@ with sync_playwright() as p:
     page = browser.new_page(reduced_motion='reduce')
     errors = []
     page.on('pageerror', lambda e: errors.append(str(e)))
-    for width, height in [(1448, 1086), (1280, 900), (1024, 1366), (834, 1112), (390, 844), (320, 740)]:
+    for width, height in [(1920, 1200), (1448, 1086), (1280, 900), (1024, 1366), (834, 1112), (390, 844), (320, 740)]:
         page.set_viewport_size({'width': width, 'height': height})
         page.goto(base + '/index.html')
         page.evaluate('document.fonts.ready')
@@ -57,6 +57,28 @@ with sync_playwright() as p:
             guide, slider, cat = sizes
             assert .78 * guide < slider < .95 * guide, (width, sizes)
             assert max(guide, cat) / min(guide, cat) < 1.2, (width, sizes)
+            # The long middle heading must stay inset from its art plaque edge.
+            heading_inset = page.locator('.welcome-value-grid article:nth-child(2) .column-label').evaluate('''e=>{
+                const label=e.getBoundingClientRect(),plaque=e.closest('h3').getBoundingClientRect();
+                return plaque.right-label.right;
+            }''')
+            assert heading_inset >= width * .005, (width, heading_inset)
+            # Each panel's curved lower edge must still have opaque light cloth
+            # or its gold stitching below it; text fit alone misses overspill.
+            cloth_below = page.evaluate('''()=>{
+                const img=document.querySelector('.banner-art'),bounds=img.getBoundingClientRect();
+                const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+                const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0);
+                return [...document.querySelectorAll('.welcome-value-grid article')].flatMap(article=>{
+                    const r=article.getBoundingClientRect(),y=r.bottom+6;
+                    return [r.left+24,(r.left+r.right)/2,r.right-24].map(x=>{
+                        const sx=Math.round((x-bounds.left)/bounds.width*canvas.width);
+                        const sy=Math.round((y-bounds.top)/bounds.height*canvas.height);
+                        return [...ctx.getImageData(sx,sy,1,1).data];
+                    });
+                });
+            }''')
+            assert all(r > 235 and a > 240 for r,g,b,a in cloth_below), (width, cloth_below)
         else:
             assert max(sizes) / min(sizes) < 1.2, (width, sizes)
         for target in ['#learning-robot', '#playground-gate']:
@@ -142,6 +164,6 @@ with sync_playwright() as p:
     static.close()
     browser.close()
 
-report['checks'] = ['six responsive widths', 'desktop-only art and layers', 'smaller desktop slide robot', 'refresh', 'all bullets fit', 'robot, tire, balloon, flag and suspended airship motion', 'golden gate pulse', 'flowing water with stationary foreground', 'visibility and bfcache lifecycle', 'reduced motion', 'wayfinding focus', 'native routes without scripts', 'decode failure keeps art visible']
+report['checks'] = ['seven responsive widths', 'desktop-only art and layers', 'smaller desktop slide robot', 'refresh', 'all bullets and panels fit within cloth', 'robot, tire, balloon, flag and suspended airship motion', 'golden gate pulse', 'flowing water with stationary foreground', 'visibility and bfcache lifecycle', 'reduced motion', 'wayfinding focus', 'native routes without scripts', 'decode failure keeps art visible']
 (out / f'{args.engine}-garden-report.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))

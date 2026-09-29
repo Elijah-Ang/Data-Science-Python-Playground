@@ -145,3 +145,26 @@ Verification: Chromium six-width landing regression and WebKit desktop,
 1100px-breakpoint and phone layout checks pass. Evidence:
 `tests/evidence/desktop-banner-v5/`. These desktop revisions remain local for
 review; deployment and AdSense resubmission require approval.
+
+## Pixel banner fidelity pass — 30 September 2026
+
+Reference: the supplied close-up of the banner (`image-1.png`). The desktop
+banner now uses four built-in ImageGen assets: a corrected blank fabric and rod,
+a sheet of blue/orange/green numbered pixel badges, a golden pixel sparkle,
+and a cream pixel-art heading plaque.
+Exact source files, prompt stages and final workspace paths are recorded in
+`docs/homepage-banner-v7-artwork.json`. The body text stays selectable HTML.
+
+The three panel widths, insets, icon positions, heading plaques, badge overlap,
+gem bullets and dividers were compared with the reference. The lower cloth
+silhouette was regenerated until all panel borders sat within opaque fabric
+and a visible stitched margin remained below them. The middle heading was sized
+to stay inside its plaque. The suspension ropes now end at the new banner
+loops. These are desktop-only changes; the phone screenshot is pixel-identical
+to the previous mobile layout.
+
+Regression checks cover seven widths from 320 to 1920px in Chromium and WebKit.
+They verify text fit, opaque cream below each panel, motion, water, click
+navigation, reduced motion and the no-script routes. The two desktop tour entry
+snapshots were refreshed. Deployment and AdSense resubmission still await the
+user's approval of the finished preview.
