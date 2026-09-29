@@ -120,6 +120,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .welcome-value-grid article:nth-child(1) .column-number { left: -.98cqw; }
   .welcome-value-grid article:nth-child(2) .column-number { left: -1.18cqw; }
   .welcome-value-grid article:nth-child(2) .column-heading h3 { font-size: .69cqw; }
+  .welcome-value-grid article:nth-child(2) .column-label { position: relative; left: -.2cqw; }
   .number-period { display: none; }
   .welcome-value-grid ul { margin: 0 .15cqw; padding-left: 1.05cqw; list-style: none; font-size: .86cqw; line-height: 1.24; letter-spacing: -.02em; color: #152c4b; }
   .welcome-value-grid li { position: relative; padding: 0; }
