@@ -112,7 +112,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .column-heading::before { left: 1.7cqw; }
   .column-heading::after { right: 1.7cqw; }
   .column-heading img { flex: 0 0 4cqw; width: 4cqw; height: 4cqw; transform: scale(1.85); image-rendering: pixelated; }
-  .column-heading h3 { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 2.75cqw; padding: .3cqw .75cqw .3cqw 2.2cqw; border: 0; border-radius: 0; box-shadow: none; background: url("assets/landing/garden-heading-plaque-v7.webp") center / 106% 145% no-repeat; image-rendering: pixelated; font: 900 .7cqw/1.15 var(--landing-body); letter-spacing: -.025em; text-align: center; }
+  .column-heading h3 { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 2.75cqw; padding: .3cqw .75cqw .3cqw 2.05cqw; border: 0; border-radius: 0; box-shadow: none; background: url("assets/landing/garden-heading-plaque-v7.webp") center / 106% 145% no-repeat; image-rendering: pixelated; font: 900 .7cqw/1.15 var(--landing-body); letter-spacing: -.025em; text-align: center; }
   .column-heading .column-label { display: block; width: 100%; white-space: nowrap; }
   .column-number { position: absolute; left: -1.58cqw; top: -.42cqw; display: block; width: 3.5cqw; height: 3.5cqw; overflow: hidden; color: transparent; font-size: 0; background-image: url("assets/landing/garden-number-badges-v6.webp"); background-repeat: no-repeat; background-size: 300% 100%; image-rendering: pixelated; }
   .welcome-value-grid article:nth-child(1) .column-number { background-position: 0% 50%; }
