@@ -32,7 +32,7 @@
     function clear(){clearTimeout(timer);timer=null;}
     function settle(){
       token++;transition?.forEach(a=>a.cancel());transition=null;
-      layers.forEach((layer,i)=>{layer.style.opacity=i===active?'1':'0';layer.style.transform='none';});
+      layers.forEach((layer,i)=>{layer.style.opacity=i===active?'1':'0';layer.style.zIndex=i===active?'1':'0';layer.style.transform='none';});
       host.dataset.transition='idle';
     }
     function schedule(){clear();if(!stopped()&&!engaged)timer=setTimeout(()=>{index=(index+1)%sequence.length;show(sequence[index][0]);},sequence[index][1]);}
@@ -43,10 +43,16 @@
       settle();const request=token;const image=await load(name);
       if(!image||request!==token||stopped()){schedule();return;}
       const outgoing=layers[active],incoming=layers[1-active],pose=poses[name];apply(incoming,name);
+      // Decoding a preload does not guarantee that the displayed layer is ready.
+      // Keep the current pose intact if decoding is delayed or fails.
+      try { await incoming.decode(); } catch { schedule();return; }
+      if(request!==token||stopped()){schedule();return;}
+      outgoing.style.zIndex='0';incoming.style.zIndex='1';
       // The image inside each layer carries its alignment; the layer itself only moves a few pixels.
       const options={duration:300,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'};
       host.dataset.transition='blending';host.dataset.pose=name;
-      const fadeOut=outgoing.animate([{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'},{opacity:0,transform:`translate(0,${-pose.lift*.5}px) rotate(${-pose.lean*.5}deg) scale(.996)`}],options);
+      // Retain the outgoing image underneath until the replacement is visible.
+      const fadeOut=outgoing.animate([{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'},{opacity:1,transform:`translate(0,${-pose.lift*.5}px) rotate(${-pose.lean*.5}deg) scale(.996)`}],options);
       const fadeIn=incoming.animate([{opacity:0,transform:`translate(.5px,${pose.lift*.5}px) rotate(${pose.lean*.5}deg) scale(.996)`},{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'}],options);
       transition=[fadeOut,fadeIn];
       await Promise.all(transition.map(a=>a.finished.catch(()=>{})));

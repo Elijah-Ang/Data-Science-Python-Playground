@@ -43,3 +43,17 @@ window.DatasetDictionary = {
   assumptions:'Acceptability is derived from the source decision model. Performance reproduces that rating system and does not establish real-world safety or consumer preference.'
  }
 };
+
+// Units below follow the synthetic fixture: MIX60 assigns no physical units.
+for (const name of ['MIX60','MISSING60']) window.DatasetDictionary[name] = {
+ row:'One synthetic delivery observation generated for practice.',
+ units:'Distance, weight and duration use the fixture’s numeric units; no kilometres, kilograms, minutes or other physical units are specified. RMSE is reported in the same synthetic duration units as the target.',
+ assumptions:'These deterministic teaching observations do not describe real deliveries. Service effects and the alternating weekend flag are built into the generated response; they do not establish real-world causal effects.',
+ columns:{
+  distance:['Numeric delivery-distance input','Synthetic distance units; physical unit unspecified'],
+  weight:['Numeric parcel-weight input','Synthetic weight units; physical unit unspecified'],
+  service:['Delivery-service category','standard / express / economy'],
+  weekend:['Binary weekend input, alternating in the fixture','0 / 1 indicator'],
+  duration:['Numeric delivery-duration target','Synthetic duration units; physical unit unspecified']
+ }
+};

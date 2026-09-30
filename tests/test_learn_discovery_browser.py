@@ -40,7 +40,7 @@ with sync_playwright() as pw:
   opacity:layers.map(e=>+getComputedStyle(e).opacity),
   keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))
  })""")
- assert all(.15<x<.85 for x in evidence['opacity']),evidence
+ assert sorted(evidence['opacity'])[1] == 1 and .15 < sorted(evidence['opacity'])[0] < .85, evidence
  actual_bounds=document_bounds()
  assert all(abs(actual_bounds[k]-bounds[k])<1 for k in bounds),(bounds,actual_bounds)
  assert evidence['keys'] and all(not any(k in ['top','left','width','height'] for k in keys) for keys in evidence['keys'])

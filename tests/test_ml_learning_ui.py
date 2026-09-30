@@ -203,7 +203,7 @@ with sync_playwright() as p:
     page.evaluate("document.documentElement.style.zoom=''")
     page.evaluate("location.hash='#networks/ML-N-R1/2'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-N-R1-3'")
-    assert page.locator('.foundation-navigation a').last.get_attribute('href')=='#networks'
+    assert page.locator('.foundation-navigation a').last.get_attribute('href')=='ml-learn-networks.html'
     page.evaluate("location.hash='#networks/ML-N04/3'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-N04-4'")
     assert 'ML-N-K1' in page.locator('.foundation-navigation a').last.get_attribute('href')

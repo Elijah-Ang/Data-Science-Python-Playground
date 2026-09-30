@@ -57,12 +57,29 @@ with sync_playwright() as p:
             guide, slider, cat = sizes
             assert .78 * guide < slider < .95 * guide, (width, sizes)
             assert max(guide, cat) / min(guide, cat) < 1.2, (width, sizes)
-            # The long middle heading must stay inset from its art plaque edge.
-            heading_inset = page.locator('.welcome-value-grid article:nth-child(2) .column-label').evaluate('''e=>{
-                const label=e.getBoundingClientRect(),plaque=e.closest('h3').getBoundingClientRect();
-                return plaque.right-label.right;
+            # The cat's opaque feet must touch sand inside the pit, below its
+            # rear wooden rim. PNG padding must not determine ground contact.
+            feet = page.locator('.garden-cat').evaluate('''image=>{
+                const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+                const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);
+                const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;let bottom=0;
+                for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++)if(data[(y*canvas.width+x)*4+3]>200)bottom=Math.max(bottom,y);
+                const r=image.getBoundingClientRect(),scene=document.querySelector('.scene-actors').getBoundingClientRect();
+                return (r.top+(bottom+1)/canvas.height*r.height-scene.top)/scene.height;
             }''')
-            assert heading_inset >= width * .005, (width, heading_inset)
+            assert .87 < feet < .94, (width, feet, 'Cat must sit inside the sandpit')
+            # All phrases use equal type and centre in the plaque's usable
+            # area, allowing the same left-hand space for each number badge.
+            headings = page.locator('.column-label').evaluate_all('''nodes=>nodes.map(e=>{
+                const r=e.getBoundingClientRect(),h=e.closest('h3'),p=h.getBoundingClientRect(),s=getComputedStyle(h);
+                const left=p.left+parseFloat(s.paddingLeft),right=p.right-parseFloat(s.paddingRight);
+                return {font:getComputedStyle(e).fontSize,center:(r.left+r.right-left-right)/2,
+                    vertical:(r.top+r.bottom-p.top-p.bottom)/2,inset:p.right-r.right,
+                    fits:e.scrollWidth<=e.clientWidth+1};
+            })''')
+            assert len(headings) == 3 and len({h['font'] for h in headings}) == 1, (width, headings)
+            assert all(abs(h['center'])<1 and abs(h['vertical'])<1 and h['fits'] for h in headings), (width, headings)
+            assert all(h['inset'] >= width * .003 for h in headings), (width, headings)
             # Each panel's curved lower edge must still have opaque light cloth
             # or its gold stitching below it; text fit alone misses overspill.
             cloth_below = page.evaluate('''()=>{
@@ -105,6 +122,20 @@ with sync_playwright() as p:
     for selector, first, next_frame in zip(moving, first_motion, motion_frame()):
         assert first != next_frame, (selector, first, next_frame)
     assert first_pulse != page.locator('.gate-glow').evaluate('(e)=>getComputedStyle(e).opacity')
+    # Observe the whole ride in real time. A tiny bob at the slide's middle
+    # must not pass as sliding down the chute.
+    for width in [1448, 390]:
+        page.set_viewport_size({'width': width, 'height': 1086})
+        positions = []
+        for _ in range(15):
+            positions.append(page.locator('.garden-slider').evaluate('''e=>{
+                const matrix=new DOMMatrix(getComputedStyle(e).transform);
+                return {y:matrix.m42,height:e.clientHeight};
+            }'''))
+            page.wait_for_timeout(450)
+        travel = max(p['y'] for p in positions) - min(p['y'] for p in positions)
+        assert travel > positions[0]['height'] * .3, (width, positions, 'Slide must have substantial travel')
+    page.set_viewport_size({'width': 1448, 'height': 1086})
     page.wait_for_function("document.querySelector('[data-scene]').dataset.water==='ready'")
     def water_frame():
         return page.locator('.garden-water').evaluate('(c)=>c.toDataURL()')

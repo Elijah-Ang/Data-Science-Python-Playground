@@ -128,3 +128,11 @@
 .ml-supplied-setup>p { max-width:66ch; color:var(--muted); font-size:13px; line-height:1.6; }
 .ml-supplied-setup pre { max-height:340px; }
 .ml-output-names code { border:1px solid var(--border-soft); padding:5px 8px; background:var(--panel-2); }
+
+/* A readable dictionary beside narrow lesson panes and on phones. */
+.ml-column-definitions { margin:12px 0; border:1px solid var(--border); border-radius:5px; background:var(--paper); color:var(--paper-ink); }
+.ml-column-definitions > div { display:grid; grid-template-columns:minmax(85px,1fr) minmax(0,4fr); gap:12px; padding:12px; border-bottom:1px solid var(--border); }
+.ml-column-definitions > div:last-child { border-bottom:0; }
+.ml-column-definitions dt { font-weight:700; }
+.ml-column-definitions dd { margin:0; line-height:1.6; }
+.ml-column-definitions small { display:block; margin-top:4px; font-size:12px; line-height:1.6; }

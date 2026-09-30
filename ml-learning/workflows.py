@@ -365,6 +365,7 @@ answer=root_mean_squared_error(y_test,predictions)
         e.setdefault('explanation',task+' Keep interpretation proportional to the evidence.')
         lesson(id,title,task,'This checkpoint combines previously taught skills. Assemble the workflow; help remains available when needed.','Complete workflow','pipeline',[e],dataset=e['dataset'],chapter=2,example='')
         CARDS[id]['example']=None
+    CARDS['W-K1']['visual']['caption']='Mixed inputs → matching training folds → final RMSE after diagnosis.'
     lesson('M-K1','Choose and Explain Models checkpoint','Audit task-family choice and evidence across the complete curriculum.',
         'Use the supplied briefs to distinguish predictive comparison, grouping and representation. Judge evidence within each task rather than ranking incompatible metrics.','Task and evidence audit','tasks',[
         reflect('Audit these five cases and write a concise report: (1) Wine candidate A/B CV RMSE 0.8/0.81 with fold variation 0.1; (2) Penguin classifier accuracy .95 but minority recall .2; (3) K-Means k=3/4 silhouettes .51/.52 with very different sizes; (4) Ward profiles computed on a 500-row sample but claimed for 569 rows; (5) PCA retains 90% in seven axes but displays only two. For each, state the task, defensible conclusion and a limitation.',

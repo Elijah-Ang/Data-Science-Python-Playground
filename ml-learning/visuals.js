@@ -28,6 +28,7 @@
   // Variants share geometry but teach the particular card's concept.
   function variant(v){
     const id=v.id||'';
+    if(id==='W-K1')return box(12,65,145,60,'Mixed inputs')+arrow(161,95,194,95)+box(199,65,155,60,'Shared folds','accent')+arrow(358,95,391,95)+box(396,65,151,60,'Final RMSE')+text(280,189,'Compare the mean reference; diagnose training-only residuals.','text-anchor="middle"')+text(280,220,'Evaluate the fixed linear recipe on reserved rows once.','text-anchor="middle"');
     if(id==='F03'){
       const observations=[[12,85],[34,76],[57,53],[82,43],[108,18]];
       const plot=(x,fitted)=>line(x,172,x+132,172)+line(x,172,x,55)+
@@ -157,7 +158,7 @@
     W14:'time|Earlier fit|Later validate|Latest test',
     'W-R1':'choice|Impute and scale|Encode categories|Fit within folds',
     'W-R2':'choice|Compare CV|Diagnose errors|Open test once',
-    'W-K1':'pipeline|Mixed inputs|Shared folds|Final MAE',
+    'W-K1':'pipeline|Mixed inputs|Shared folds|Final RMSE',
     W15:'guard|Spot the leak|Repair boundary|Rerun folds',
     W16:'bars|Training fit|Validation fit|Hidden errors',
     'W-K2':'flow|Frame question|Validate recipe|Report result',

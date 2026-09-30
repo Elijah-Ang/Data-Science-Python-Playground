@@ -34,7 +34,7 @@
     "ML-W13": "244e1cc583131348c30022bc8af51c577a9a78ca91667795007165416f35d1b6",
     "ML-W14": "3a69b87102fd99d09ff7763b9623f1a8fc5a991297695d3ca59797ce65eb7fb7",
     "ML-W-R2": "5af58910d6ec6bba58566eb02f772b26b45dbfadabf70d73d0ff427363acbbbc",
-    "ML-W-K1": "593e0fc388cf0db7da2e753d523534c7770b7af5c5dae7b2195efe77c6c4bcfb",
+    "ML-W-K1": "c96e200dc760bbc8b531c5c28b5d15deab936a14bc690bf80867ff8aea560633",
     "ML-W15": "b02f19331dd6168d1dc61fb99ed18d56b58a21773595d2443fdd2980ea5e7f19",
     "ML-W16": "7b889a0b4f92f523ad864ad3900537edc53c49d0fda7d35226d330c0009cba8e",
     "ML-W-K2": "3fd8ab0b5017bcdbd4b100df6498335df3f06ae89a4710303b02491af9178ce5",
@@ -2252,9 +2252,9 @@
     "ML-W16": "c35792e1340e250807c1882937254a15dbafcaa5cf1ac7c219006d60450d45f6"
   },
   "sourceHashes": {
-    "ml-learning/visuals.js": "00775617ccf8e2a76b04558e8781d4bf5514b2fb37bfc4292fb50070e5400302",
-    "ml-learning/learning.css": "6724c9a896fa9907218585853a20dc2e84f277c599c98de1fb7058eb7c5b21e5",
-    "ml-learning/app.js": "b2465c4f6a1567474422b1af96c8ac90a23a96b51ca1be09420e7a9363e8c5e4",
+    "ml-learning/visuals.js": "20e1cd40c82f18a0a27a4fdbc97746f35beb5aaa4cbab9c1ff4b04901cf02385",
+    "ml-learning/learning.css": "7e960ec9dbbd349a773345d68ee2903f2ff46bef0d9d8e96cab581cd698e3128",
+    "ml-learning/app.js": "5fb29d57976ad06e2e41011e86886b90a6cdc1594d3628a0d309596bd5f3bcfe",
     "foundations/foundations.css": "993e7985c4386c4b017bc99a34276f4bdd30406e2363eee3f28fc03b71a303df",
     "foundations/learning-ui.js": "69bf00ba073bd169dd52d37491706e5768e397898e45335d13b40ea3ab94263c",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",

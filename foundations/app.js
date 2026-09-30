@@ -2,7 +2,6 @@
 'use strict';
 const C=window.FoundationsCurriculum;
 const main=document.getElementById('foundationsMain');
-const landingOverview=document.getElementById('dataOverview')?.outerHTML || '';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const highlightPython=FoundationLearning.highlightPython;
 let shownControlHelp=false;
@@ -21,7 +20,7 @@ function landing(){
  return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div></section>
 
  <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews · ${ChallengeExperience.all.filter(c=>c.deck===d.id).length} challenges</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
- ${landingOverview}
+
  `;
 }
 function deckPage(deck){
@@ -82,7 +81,8 @@ function nextLesson(lesson){const list=pathLessons(lesson),i=list.indexOf(lesson
 function render(){
  generation++; if(busy&&bridge){bridge.restart();busy=false;runtimeStatus='Python will restart for this exercise.';}
  view=null;
- const [deckId,id,roundValue]=location.hash.slice(1).split('/');
+ const currentRoute=LearningRoutes.route('data',location,document.body);
+ const [deckId,id,roundValue]=currentRoute.split('/');
  const deck=C.decks.find(d=>d.id===deckId),lesson=C.lessons.find(l=>l.id===id&&l.deck===deckId);
  if(deck&&id==='challenges'){document.body.dataset.deck=deck.id;const challenge=ChallengeExperience.all.find(c=>c.deck===deck.id&&c.id===roundValue);if(challenge){view={challenge,lesson:{id:challenge.id,title:challenge.title,deck:deck.id},round:{...challenge,target:challenge.chart?'plot':'value'}};main.innerHTML=ChallengeExperience.page(challenge,deck,{table,pythonPane,curriculum:C});bindEditor();ChallengeExperience.bind();ensureRuntime();}else main.innerHTML=ChallengeExperience.collection(deck);}
  else if(lesson){const index=/^\d+$/.test(roundValue||'0')?Number(roundValue||0):0;main.innerHTML=lessonPage(lesson,Math.min(index,lesson.rounds.length-1));bindEditor();ensureRuntime();}
@@ -90,6 +90,7 @@ function render(){
  // A URL-only entry hint survives deck/lesson hashes and reloads, without stored learning state.
  const fromHub=new URLSearchParams(location.search).get('from')==='learn';
  const exit=document.querySelector('.back-playground');exit.href=view?.challenge?'#'+view.lesson.deck+'/challenges':view?'#'+view.lesson.deck:deck?'#':fromHub?'learn.html':'playground.html';exit.textContent=view?.challenge?'← All challenges':view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':fromHub?'← Learn / Refresh':'← Data Playground';
+ LearningRoutes.enhance('data',main);LearningRoutes.canonical('data',currentRoute);
  FoundationLearning.highlightContent(main);
  document.title=view?`${view.lesson.id} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
@@ -157,8 +158,9 @@ function renderOutput(result){
  if(result.error)output.innerHTML+=`<pre class="error">${esc(result.error)}</pre>`;
  if(!result.stdout&&!result.error&&!result.outputs?.length)output.innerHTML+='<p class="empty-output">Python finished with no displayed value. Put the value on the last line, use print(...), or use plt.show() for a figure.</p>';
 }
+// Build-time rendering uses the same authored lessons and presentation as the app.
+if(window.DataPlaygroundPrerender){window.DataPlaygroundPrerender={curriculum:C,landing,deckPage,lessonPage};return;}
 document.getElementById('themeButton').onclick=()=>AppAppearance.apply(document.body.dataset.theme==='light'?'dark':'light');
 document.querySelector('.foundation-skip').addEventListener('click',event=>{event.preventDefault();main.focus();main.scrollIntoView();});
-window.addEventListener('hashchange',render);
-render();
+LearningRoutes.installRouter('data',C,render);
 })();
