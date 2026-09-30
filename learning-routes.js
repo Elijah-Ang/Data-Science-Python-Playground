@@ -50,7 +50,10 @@
       // Ordinary anchor URLs work without JS; enhancement keeps the Python worker
       // and existing interaction model alive across lessons and browser history.
       if(target.href===root.location.href)return;
-      event.preventDefault();root.history.pushState(null,'',target.href);changed();
+      // Browsers can throttle very rapid history mutations. The ordinary
+      // link remains a working fallback if enhancement cannot update history.
+      try { root.history.pushState(null,'',target.href); } catch { return; }
+      event.preventDefault();changed();
     });
     root.addEventListener('popstate',changed);root.addEventListener('hashchange',changed);
     sync();render();

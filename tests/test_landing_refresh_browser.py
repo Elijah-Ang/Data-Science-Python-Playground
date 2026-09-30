@@ -13,6 +13,13 @@ out = Path('tests/evidence/learn-discovery')
 out.mkdir(parents=True, exist_ok=True)
 report = {'engine': args.engine, 'viewports': []}
 
+def wait_images(page):
+    try:
+        page.wait_for_function("[...document.images].every(i=>i.complete && i.naturalWidth>0)")
+    except Exception:
+        print('Image readiness:', page.locator('img').evaluate_all('images=>images.filter(i=>!i.complete||!i.naturalWidth).map(i=>({src:i.currentSrc||i.src,complete:i.complete,naturalWidth:i.naturalWidth}))'), flush=True)
+        raise
+
 with sync_playwright() as p:
     browser = getattr(p, args.engine).launch()
     page = browser.new_page(reduced_motion='reduce')
@@ -22,11 +29,11 @@ with sync_playwright() as p:
         page.set_viewport_size({'width': width, 'height': height})
         page.goto(base + '/index.html')
         page.evaluate('document.fonts.ready')
-        page.wait_for_function("[...document.images].every(i=>i.complete && i.naturalWidth>0)")
+        wait_images(page)
         for _ in range(2):
             page.reload()
             page.evaluate('document.fonts.ready')
-            page.wait_for_function("[...document.images].every(i=>i.complete && i.naturalWidth>0)")
+            wait_images(page)
             assert page.locator('.scene-art').is_visible()
             assert page.locator('.garden-cat').is_visible()
             assert page.locator('.garden-slider').is_visible()
