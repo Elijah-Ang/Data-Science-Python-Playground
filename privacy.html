@@ -51,9 +51,9 @@
       <div class="privacy-eyebrow">// privacy</div>
       <h1 id="privacy-title">Privacy policy</h1>
       <p class="privacy-lede">This policy explains how the Data Science Python Playground website and the Data Playground iPhone/iPad app handle information.</p>
-      <p class="privacy-meta"><strong>Effective date:</strong> August 31, 2026 · <strong>Last updated:</strong> September 16, 2026</p>
+      <p class="privacy-meta"><strong>Effective date:</strong> August 31, 2026 · <strong>Last updated:</strong> September 30, 2026</p>
 
-    <div class="privacy-callout">The service is designed to be free and usable without an account. Your analysis work is intended to stay on your device unless you deliberately share or export it.</div>
+    <div class="privacy-callout">The service is designed to be free and usable without an account. Python analysis runs on your device. Advertising and analytics SDKs are not enabled in the current build.</div>
 
       <h2>1. Who is responsible</h2>
       <p>Data Science Python Playground is maintained by Elijah Ang.</p>
@@ -64,35 +64,37 @@
         +65 8822 7539</p>
       </div>
 
-      <h2>2. Information the service may process</h2>
-      <p>When you use the playground, it may process or create:</p>
+      <h2>2. Information used by the playground</h2>
+      <p>The playground processes bundled datasets, Python code, notebook inputs, model settings, charts and results to run the examples you choose. Python executes in your browser or the app’s web view. The current application code does not upload your code, dataset values or analysis results to a project-operated analysis server.</p>
+      <p>If you email support, the maintainer receives the message and any contact details or attachments you choose to include. Please share only the information needed to explain your request.</p>
+
+      <h2>3. Accounts, analytics and learning activity</h2>
+      <p>The public playground works without an account. The current build includes no analytics SDK, advertising SDK or cross-app tracking integration. Data Foundations and Machine Learning lessons keep code and results in the active activity only; they do not save learning progress or completion records.</p>
+      <p>The separate private site uses Cloudflare Access for sign-in. This authentication is separate from the public learning tools and does not create cloud notebooks or learning records.</p>
+
+      <h2>4. On-device storage and controls</h2>
       <ul>
-        <li>Bundled CSV files, dataset values, Python code, notebook inputs, model settings, charts, and generated results.</li>
-        <li>Code drafts and bundled dataset text saved locally for the selected setup, plus temporary in-memory working state needed to keep the current screen functioning.</li>
-        <li>Messages and contact details that you voluntarily send to support.</li>
+        <li><strong>Theme:</strong> your light/dark preference is saved in browser local storage.</li>
+        <li><strong>Machine Learning Playground:</strong> notebook code drafts, bundled dataset text and setup selections are saved automatically in local storage for each setup. Saved drafts exclude output and run-status evidence; reopening a draft does not restore Python variables or validated results.</li>
+        <li><strong>Data Playground, Statistics Playground and lessons:</strong> active code, Python variables and results are temporary. Data Playground opens with an empty notebook. Lesson navigation or reload restores the activity’s starter code.</li>
+        <li><strong>Offline pages:</strong> where supported, a service worker caches site pages, scripts and bundled datasets. Python and package resources may also be cached by your browser. Cached pages are replaced as site versions change.</li>
+        <li><strong>Exports:</strong> files are created when you request a download or share. Files you save remain wherever you choose to save them. The native share flow writes an export to the app’s cache and attempts to delete that temporary file after the share sheet closes.</li>
       </ul>
-      <p>The current design processes bundled datasets and in-session analysis locally in the browser or app web view. They are not sent to a project-operated server by default. This will be re-checked whenever the native app or a third-party SDK changes.</p>
+      <p>Local storage and browser caches have no application-set expiry period. You can remove them using your browser’s controls for this site; doing so also removes saved ML drafts and preferences. Storage is specific to the browser or app and site address, and is not synchronised to a project account. Removing site data does not delete files you already exported.</p>
 
-      <h2>3. How information is used</h2>
-      <p>Information is used to run data-analysis and machine-learning examples, display tables and charts, provide learning guidance, create CSV or chart exports when you request them, and respond to support messages.</p>
-      <p>The public playground does not require an account and does not include analytics or cross-app tracking. The separate owner-only, ad-free site requires email-code authentication through Cloudflare Access.</p>
+      <h2>5. Network requests, cookies and third parties</h2>
+      <p>The public website is delivered through GitHub Pages; Cloudflare provides domain and private-site services. Hosting and security providers may process technical request information such as IP addresses and browser details under their own policies. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub’s privacy statement</a> and <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare’s privacy policy</a>. This policy does not promise a particular retention period for provider logs.</p>
+      <p>At <a href="https://private.dataplayground.science">private.dataplayground.science</a>, Cloudflare Access handles the authorised email address and email-code sign-in, and may use authentication cookies and access logs. Their lifetime and availability depend on the private site’s configuration and Cloudflare’s policies. A private-site login is not consent to advertising.</p>
+      <p>Fonts and teaching datasets are served with the site. When Python is started on the web, the runtime and packages may be requested from jsDelivr and Python package providers. Those requests disclose ordinary network information to the receiving provider; they are distinct from uploading your analysis work. External dataset-source and documentation links open the linked provider’s site, which follows its own policy.</p>
+      <p>The public application code does not set advertising or analytics cookies. Browser local storage and offline caches described above are separate forms of on-device storage. Hosting, authentication and external sites may have their own cookie practices.</p>
+      <p>Native builds are configured to use bundled Python assets. External source links and files you choose to share still involve the provider or destination you select.</p>
 
-      <h2>4. Storage and retention</h2>
-      <p>Data Playground starts with an empty notebook each time it opens; copy code you want to keep before leaving. Machine Learning code drafts and bundled dataset text save automatically on this device for each setup. Python variables and results are temporary and reset when you reopen the workspace. CSV and chart exports are created only when you choose them through the browser or native share sheet. There is no account, cloud synchronisation, analytics or project-operated storage for analysis work.</p>
-      <p>Please do not enter confidential, regulated, or personally identifying information unless you are authorised to process it.</p>
-
-      <h2>5. Network requests and third parties</h2>
-      <p>The public website is hosted on GitHub Pages. Cloudflare provides domain services and protects the private site. These services may process IP addresses, browser information and request or security logs when delivering or protecting the site. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub’s privacy statement</a> and <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare’s privacy policy</a>.</p>
-      <p>At <a href="https://private.dataplayground.science">private.dataplayground.science</a>, Cloudflare Access processes the authorised email address, sends a one-time sign-in code and uses authentication cookies to maintain the session. Access records may be visible to the site administrator and retained according to the service’s configuration and policies. This login does not create saved notebooks or learning records. Ad-free access still involves hosting, authentication and Python-package network requests.</p>
-      <p>The browser version uses local fonts but may request the Python runtime and package resources from third-party hosts. It may also open external dataset-source links. Those providers may receive ordinary technical request information, such as an IP address and browser or device information, under their own policies.</p>
-      <p>The native app is intended to bundle or reliably cache required runtime assets and should not depend on the live GitHub Pages URL. External websites opened from source links remain subject to their own privacy policies.</p>
-
-      <h2>6. Advertising</h2>
-      <p>The website is being prepared for Google AdSense review. Advertising remains disabled while approval, consent and placements are being configured. AdMob is for a separate future native-app release; its signup alone does not enable website ads.</p>
-      <p>Owner-only ad-free access is provided at the protected private address above. Public <code>?ads=off</code> and <code>?ads=on</code> links no longer select an advertising preference. Old tab preferences are removed. Neither a query parameter nor signing in grants consent to advertising.</p>
-      <p>Before public advertising is enabled, applicable consent choices must be connected and tested. Google’s European consent message is configured, but no advertising SDK is currently loaded by this site. This policy will be updated to describe the live configuration before advertising is enabled. See <a href="https://policies.google.com/technologies/partner-sites">how Google uses information from sites using its services</a>.</p>
-      <p>Advertising is not enabled on the current website or native build. Google AdMob has been selected for a possible future app release, initially limited to non-blocking banner placements. The SDK will not be added until the account, test ad units, consent flow, and final data disclosures are configured.</p>
-      <p>Curated dataset contents, Python code, model inputs, and learning activity should not be used to target advertisements. If an ad SDK later introduces identifiers or personalised advertising, the app will add the required permission and consent choices before enabling that behaviour.</p>
+      <h2>6. Advertising now and possible future changes</h2>
+      <p><strong>Advertising is disabled in the current website and native build.</strong> No Google AdSense or AdMob ad SDK, consent-management platform (CMP), or live consent message is loaded by the application. A publisher listing in <code>ads.txt</code> and any visual placement preview do not enable ads, collect advertising consent or establish site approval.</p>
+      <p>Google advertising may be considered for a future release. If enabled, Google and participating providers may use cookies, local storage, identifiers and technical information to serve or measure ads; the actual data uses will depend on the chosen configuration. The policy and user choices must describe that configuration before it is enabled. No advertising identifier or cookie retention period is asserted for a future integration here.</p>
+      <p>For users in the European Economic Area, UK and Switzerland, any future integration must meet <a href="https://www.google.com/about/company/user-consent-policy/">Google’s EU user consent policy</a>, including legally required consent, disclosures of the parties using personal data and instructions for withdrawing consent. Google requires a <a href="https://support.google.com/adsense/answer/13554116">Google-certified CMP integrated with the IAB Transparency and Consent Framework</a> for personalised ads in those regions. These are conditions for a possible future integration, not a description of controls available today.</p>
+      <p>See <a href="https://policies.google.com/technologies/partner-sites">how Google uses information from sites or apps using its services</a> and <a href="https://policies.google.com/technologies/ads">Google’s advertising information and controls</a>. The maintainer will review applicable regional requirements, provider disclosures and consent choices before enabling any advertising. Analysis code, dataset values, model inputs and learning activity are not sent to an advertising service by the current build.</p>
+      <p>The protected private address is excluded by the current advertising gate. Public <code>?ads=off</code> or <code>?ads=on</code> parameters do not change the gate or express a consent choice.</p>
 
       <h2>7. Sharing and sale</h2>
       <p>We do not intentionally sell or rent analysis data. You may choose to share an exported file or chart through the browser, Files app, or system share sheet. That sharing is controlled by you and the destination you select.</p>
@@ -108,7 +110,7 @@
 
       <h2>11. Changes to this policy</h2>
       <p>We will update this page when the service’s data flows, native dependencies, advertising setup, persistence model, or support process changes. The effective date above will be updated when a revised policy is published.</p>
-      <p class="privacy-small">This page is the initial public policy copy for the GitHub Pages site. It will be reviewed again before the native app is submitted to the App Store and whenever advertising is enabled.</p>
+      <p class="privacy-small">This policy describes the current application build. It will be reviewed before any native-store submission or change to advertising, analytics or storage practices.</p>
     </article>
   </main>
 

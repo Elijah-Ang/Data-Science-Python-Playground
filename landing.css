@@ -37,7 +37,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .garden-actor { position: absolute; object-fit: contain; height: auto; transform-origin: 50% 90%; }
 .garden-slider { left: 70.1%; top: 66%; width: 7.8%; animation: slide-ride 6.4s ease-in-out infinite; }
 .garden-cat { left: 24.6%; top: 80%; width: 9%; animation: sandpit-play 3.8s ease-in-out infinite; }
-@keyframes slide-ride { 0%, 15%, 100% { transform: translate(0, 0) rotate(-4deg); } 55%, 70% { transform: translate(-17%, 25%) rotate(3deg); } }
+@keyframes slide-ride { 0%, 15%, 100% { transform: translate(0, 0) rotate(-4deg); } 55%, 70% { transform: translate(-30%, 40%) rotate(3deg); } }
 @keyframes sandpit-play { 0%, 100% { transform: translateY(0) rotate(-2deg); } 45% { transform: translateY(-3%) rotate(2deg); } 65% { transform: translateY(-1%) rotate(0); } }
 .gate-hitbox { position: absolute; z-index: 5; left: 43.3%; top: 85.8%; width: 13.2%; height: 9.2%; min-height: 44px; border: 2px solid transparent; border-radius: 7px; cursor: pointer; transition: box-shadow .2s, background .2s; }
 .gate-hitbox:hover, .gate-hitbox.is-wayfinding { box-shadow: 0 0 16px 4px #fff49c; background: #ffe96826; }
@@ -112,15 +112,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .column-heading::before { left: 1.7cqw; }
   .column-heading::after { right: 1.7cqw; }
   .column-heading img { flex: 0 0 4cqw; width: 4cqw; height: 4cqw; transform: scale(1.85); image-rendering: pixelated; }
-  .column-heading h3 { position: relative; display: block; width: 100%; min-height: 2.75cqw; padding: .3cqw .1cqw .3cqw 1.5cqw; border: 0; border-radius: 0; box-shadow: none; background: url("assets/landing/garden-heading-plaque-v7.webp") center / 106% 145% no-repeat; image-rendering: pixelated; font: 900 .8cqw/1.2 var(--landing-body); letter-spacing: -.045em; text-align: center; }
+  .column-heading h3 { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 2.75cqw; padding: .3cqw .75cqw .3cqw 2.05cqw; border: 0; border-radius: 0; box-shadow: none; background: url("assets/landing/garden-heading-plaque-v7.webp") center / 106% 145% no-repeat; image-rendering: pixelated; font: 900 .7cqw/1.15 var(--landing-body); letter-spacing: -.025em; text-align: center; }
+  .column-heading .column-label { display: block; width: 100%; white-space: nowrap; }
   .column-number { position: absolute; left: -1.58cqw; top: -.42cqw; display: block; width: 3.5cqw; height: 3.5cqw; overflow: hidden; color: transparent; font-size: 0; background-image: url("assets/landing/garden-number-badges-v6.webp"); background-repeat: no-repeat; background-size: 300% 100%; image-rendering: pixelated; }
   .welcome-value-grid article:nth-child(1) .column-number { background-position: 0% 50%; }
   .welcome-value-grid article:nth-child(2) .column-number { background-position: 50% 50%; }
-  .welcome-value-grid article:nth-child(3) .column-number { background-position: 100% 50%; left: -.66cqw; }
-  .welcome-value-grid article:nth-child(1) .column-number { left: -.98cqw; }
-  .welcome-value-grid article:nth-child(2) .column-number { left: -1.18cqw; }
-  .welcome-value-grid article:nth-child(2) .column-heading h3 { font-size: .69cqw; }
-  .welcome-value-grid article:nth-child(2) .column-label { position: relative; left: -.2cqw; }
+  .welcome-value-grid article:nth-child(3) .column-number { background-position: 100% 50%; }
+  .column-heading .column-number { left: -.98cqw; }
   .number-period { display: none; }
   .welcome-value-grid ul { margin: 0 .15cqw; padding-left: 1.05cqw; list-style: none; font-size: .86cqw; line-height: 1.24; letter-spacing: -.02em; color: #152c4b; }
   .welcome-value-grid li { position: relative; padding: 0; }
@@ -135,8 +133,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .welcome-value-grid article:nth-child(2) li + li::before { top: .84cqw; }
   .welcome-value-grid strong { color: #102b4c; background: none; }
   .garden-slider { left: 69.5%; top: 67.6%; width: 6.5%; animation-name: desktop-slide-ride; }
-  .garden-cat { left: 14.1%; top: 74%; }
-  .scene-actors::before { content: ""; position: absolute; left: 16.8%; top: 85.2%; width: 4.6%; height: 1.3%; background: radial-gradient(ellipse, #74401345, #74401300 70%); }
+  .garden-cat { left: 15.4%; top: 76%; }
+  .scene-actors::before { content: ""; position: absolute; left: 18.1%; top: 87.2%; width: 4.6%; height: 1.3%; background: radial-gradient(ellipse, #74401345, #74401300 70%); }
   .welcome-blimp { left: 47%; top: .5%; width: 39.6%; height: 32.85%; animation: none; }
   .blimp-copy { top: 14%; }
   .blimp-heading { position: relative; left: -6.5%; font-size: 1.17cqw; letter-spacing: .07em; }
@@ -160,7 +158,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   [data-scene][data-paused="true"] .desktop-scene-part,
   [data-scene][data-paused="true"] .gate-glow { animation-play-state: paused; }
 }
-@keyframes desktop-slide-ride { 0%, 15%, 100% { transform: translate(2%, -7%) rotate(-2deg); } 55%, 70% { transform: translate(-5%, 3%) rotate(0); } }
+@keyframes desktop-slide-ride { 0%, 15%, 100% { transform: translate(5%, -20%) rotate(-2deg); } 55%, 70% { transform: translate(-24%, 23%) rotate(0); } }
 @keyframes airship-carry { 0%, 100% { transform: translate(-.12%, .3%) rotate(-.3deg); } 50% { transform: translate(.12%, -.55%) rotate(.3deg); } }
 @keyframes tire-sway { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
 @keyframes balloons-sway { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-1.5%); } }

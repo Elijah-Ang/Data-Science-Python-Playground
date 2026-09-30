@@ -12,8 +12,8 @@ args = parser.parse_args()
 pages = {
     'index.html': ('.welcome-value', 'missing'),
     'learn.html': ('.learn-method', 'synthetic'),
-    'data-foundations.html': ('#dataOverview', 'unknown'),
-    'ml-learn.html': ('#mlOverview', 'baseline'),
+    'data-foundations.html': ('.foundation-decks', 'inspect'),
+    'ml-learn.html': ('.foundation-decks', 'workflow'),
 }
 
 with sync_playwright() as playwright:
@@ -25,6 +25,13 @@ with sync_playwright() as playwright:
         assert page.locator('main').is_visible(), path
         assert page.locator(selector).is_visible(), path
         assert idea in page.locator(selector).inner_text().lower(), path
+        assert page.locator('#dataOverview,#mlOverview').count() == 0, path
+        if path in ['data-foundations.html', 'ml-learn.html']:
+            page.locator('.foundation-deck').first.click()
+            page.locator('.lesson-card').first.click()
+            article = page.locator('article[aria-label="Lesson content"]')
+            assert len(article.inner_text()) > 700, path
+            assert article.locator('pre').count() > 0, path
         assert not page.evaluate('document.documentElement.scrollWidth > innerWidth + 1'), path
         page.close()
     static.close()
@@ -37,16 +44,16 @@ with sync_playwright() as playwright:
         page = dynamic.new_page()
         page.goto(f'{args.base_url}/{path}')
         page.locator('.foundation-deck').first.wait_for()
-        assert page.locator(selector).is_visible(), path
+        assert page.locator(selector).count() == 0, path
         assert not page.evaluate('document.documentElement.scrollWidth > innerWidth + 1'), path
         page.goto(f'{args.base_url}/{path}{route}')
         page.locator('.lesson-card').first.wait_for()
         assert page.locator(selector).count() == 0, path
         page.goto(f'{args.base_url}/{path}')
         page.locator('.foundation-deck').first.wait_for()
-        assert page.locator(selector).is_visible(), path
+        assert page.locator(selector).count() == 0, path
         page.close()
     dynamic.close()
     browser.close()
 
-print('Public learning content is readable without scripts and stays visible on both interactive landing pages.')
+print('Lesson libraries and full articles remain readable without scripts; removed overview panels stay absent after navigation.')

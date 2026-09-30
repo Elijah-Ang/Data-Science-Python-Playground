@@ -25,6 +25,7 @@
   <script src="ml-learning/runtime-source.js"></script>
   <link rel="stylesheet" href="challenges/challenges.css">
   <link rel="stylesheet" href="ml-learning/learning.css">
+  <script src="learning-routes.js"></script>
   <script defer src="ml-learning/app.js"></script>
 </head>
 <body data-playground="ml" data-foundations data-ml-learning data-theme="light" data-dataset="seoul">
@@ -52,19 +53,6 @@
   <main id="foundationsMain" class="foundations-main" tabindex="-1">
     <h2>Machine Learning — Learn / Refresh</h2>
     <p>Start with a question, learn the Python and build a model. Enable JavaScript to choose a deck and practise with interactive Python exercises.</p>
-    <section id="mlOverview" class="learning-overview" aria-labelledby="mlOverviewTitle">
-      <div class="learning-overview-intro">
-        <span class="foundation-eyebrow">How the lessons work</span>
-        <h3 id="mlOverviewTitle">Learn what a model result can actually support</h3>
-        <p>Each route connects an idea to editable code and asks you to interpret the evidence it produces. Begin with features, targets and a careful train/test split. Learn a supervised workflow before choosing regression or classification; then explore networks, clustering, PCA and comparison. The small practice tables let you check one decision at a time.</p>
-      </div>
-      <div class="learning-overview-grid">
-        <div><h4>Compare fairly</h4><p>A model earns its place by improving on a simple reference under the same validation setup. Fit preprocessing on training folds only, compare candidates on matching folds and keep the final test rows aside until selection is finished.</p></div>
-        <div><h4>Read the right evidence</h4><p>For regression, read errors in the target’s original units. For classification, inspect a confusion table as well as an aggregate score such as macro F1: one number can hide which class the model misses.</p></div>
-        <div><h4>Respect the limits</h4><p>Cluster numbers are assigned group names, not known labels. PCA shows retained variation, not predictive accuracy. A result on a small teaching table is practice in reasoning, not a claim that a model will generalise to every new setting.</p></div>
-      </div>
-      <div class="learning-overview-example"><h4>Why the baseline matters</h4><p>If a delivery-time model has a mean absolute error of 7 minutes and a simple training-mean predictor makes 6-minute errors on the same validation folds, the more complex model has not earned an improvement claim. Try changing the features or model, then check the comparison again.</p></div>
-    </section>
   </main>
   <footer class="foundation-footer"><nav aria-label="Site information"><a href="about.html">About</a><a href="help.html">Help</a><a href="privacy.html">Privacy</a><a href="acknowledgements.html">Credits</a></nav></footer>
   <noscript><p>Enable JavaScript to open the decks and run Python exercises.</p></noscript>

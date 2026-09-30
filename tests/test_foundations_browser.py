@@ -36,7 +36,7 @@ with sync_playwright() as p:
  assert page.locator('.lesson-card svg').count()==27
  page.locator('.back-playground').click();assert page.locator('.foundation-deck').count()==3
  page.locator('.foundation-deck[data-deck="inspect"]').click()
- page.locator('.lesson-card[href="#inspect/I01/0"]').click()
+ page.locator('.lesson-card[href="data-foundations-I01.html"]').click()
  page.wait_for_function("document.querySelector('#foundationRuntime').textContent.includes('Python ready')",timeout=120000)
  def open_lesson(id,index=0):
   deck={'I':'inspect','W':'wrangle','V':'visualise'}[id[0]]
@@ -46,14 +46,14 @@ with sync_playwright() as p:
  def solution(id,index=0):return page.evaluate('([id,i])=>FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[i].solution',[id,index])
  def run(code,check=True):
   if '# Supplied setup' not in code:
-   code=page.evaluate('(code)=>{const [deck,id,index]=location.hash.slice(1).split("/");const r=FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[Number(index)||0];return FoundationWorkspace.code(FoundationsCurriculum,r,code)}',code)
+   code=page.evaluate('(code)=>{const [deck,id,index]=LearningRoutes.route("data",location,document.body).split("/");const r=FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[Number(index)||0];return FoundationWorkspace.code(FoundationsCurriculum,r,code)}',code)
   page.locator('#foundationEditor').fill(code)
   page.locator('#checkExercise' if check else '#runExercise').click()
   page.wait_for_function('!document.querySelector("#runExercise").disabled',timeout=120000)
   return page.locator('#foundationFeedback').inner_text()
  assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
  assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
- assert page.locator('.back-playground').get_attribute('href')=='#inspect'
+ assert page.locator('.back-playground').get_attribute('href')=='data-foundations-inspect.html'
  assert not page.locator('#foundationSolution').get_attribute('open')
  page.locator('#foundationHint summary').click();assert page.locator('#foundationHint').get_attribute('open') is not None
  page.locator('#foundationSolution summary').click();assert 'pd.DataFrame' in page.locator('#foundationSolution pre').inner_text()
@@ -62,7 +62,7 @@ with sync_playwright() as p:
  assert page.locator('#foundationHighlight .py-string').count()>0
  assert page.locator('#foundationHighlight .py-number').count()>0
  assert page.locator('#foundationOutput table tbody tr').count()==4
- page.locator('.foundation-navigation a').last.click();assert page.url.endswith('/1')
+ page.locator('.foundation-navigation a').last.click();assert page.evaluate('LearningRoutes.route("data",location,document.body)')=='inspect/I01/1'
  page.wait_for_function('document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id==="I01").rounds[1].label')
  starter=page.locator('#foundationEditor').input_value()
  page.locator('#foundationEditor').fill('# unsaved edit\ndf')
@@ -192,7 +192,7 @@ with sync_playwright() as p:
   report['pyodide_solutions']=result;assert not result['failures'],result
  # Content, output and controls stay within their columns in both themes.
  for id,deck in [('I22','inspect'),('W31','wrangle'),('V37','visualise')]:
-  open_lesson(id,2);assert page.locator(f'a[href="#{deck}"]').count()==1
+  open_lesson(id,2);assert page.locator(f'a[href="data-foundations-{deck}.html"]').count()==1
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:
@@ -231,11 +231,12 @@ with sync_playwright() as p:
   page.evaluate('(deck)=>{location.hash="#"+deck}',deck);page.wait_for_timeout(50)
   hrefs=page.locator('.lesson-card').evaluate_all('(els)=>els.map(e=>e.getAttribute("href"))')
   for href in hrefs:
-   page.evaluate('(href)=>{location.hash=href}',href)
-   page.wait_for_function('(id)=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id)',arg=href.split('/')[1])
+   page.locator(f'.lesson-card[href="{href}"]').click()
+   page.wait_for_function('(id)=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id)',arg=href.removeprefix('data-foundations-').split('.html')[0])
    assert page.locator('.foundation-task-reminder').inner_text().startswith('Your task')
-   assert page.locator('.back-playground').get_attribute('href')=='#'+deck
-   assert page.locator(f'a[href="#{deck}"]').count()==1
+   assert page.locator('.back-playground').get_attribute('href')=='data-foundations-'+deck+'.html'
+   assert page.locator(f'a[href="data-foundations-{deck}.html"]').count()==1
+   page.locator('.back-playground').click();page.wait_for_selector('.lesson-card')
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:
@@ -243,7 +244,7 @@ with sync_playwright() as p:
    for deck,ids in [('inspect',['I03','I10']),('wrangle',['W10','W24','W22']),('visualise',['V04','V11','V18','V22','V30','V31'])]:
     page.evaluate('(deck)=>{location.hash="#"+deck}',deck);page.wait_for_timeout(50)
     for id in ids:
-     card=page.locator(f'.lesson-card[href="#{deck}/{id}/0"]')
+     card=page.locator(f'.lesson-card[href="data-foundations-{id}.html"]')
      card.scroll_into_view_if_needed()
      path=evidence/f'{args.engine}-{label}-{theme}-visual-{id}.png';card.screenshot(path=str(path));report['screenshots'].append(str(path.relative_to(ROOT)))
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
@@ -267,7 +268,7 @@ with sync_playwright() as p:
  assert page.locator('.foundation-revisit a').is_visible()
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
  page.locator('.foundation-skip').focus();page.locator('.foundation-skip').click()
- assert page.url.endswith('/2')
+ assert page.evaluate('LearningRoutes.route("data",location,document.body)')=='inspect/I02/2'
  report['checks'].append('Desktop/tablet/mobile layouts, 320px boundary, fading scaffold, skip link and light/dark themes; 24 screenshots')
  page.goto(base);assert page.locator('.foundation-continue').count()==0
  assert page.locator('#forgetProgress, #resetLearningDialog, #storageStatus, progress, [role="progressbar"]').count()==0

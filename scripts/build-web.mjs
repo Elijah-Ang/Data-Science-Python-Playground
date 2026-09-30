@@ -4,6 +4,7 @@ import {createHash} from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { build } from "esbuild";
 import { buildMLLearning } from "./build-ml-learning.mjs";
+import { buildLearningPages } from "./build-learning-pages.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const output = path.join(root, "dist");
@@ -18,6 +19,7 @@ const files = [
   "learn.html",
   "learn.css",
   "learn.js",
+  "learning-routes.js",
   "ml-learn.html",
   "ml-learning/app.js",
   "ml-learning/learning.css",
@@ -105,6 +107,7 @@ for (const directory of directories) {
   await fs.cp(path.join(root, directory), path.join(output, directory), { recursive: true });
 }
 await buildMLLearning(root,output);
+const learningRoutes=await buildLearningPages(root,output);
 
 await fs.writeFile(path.join(output,'foundations/runtime-source.js'), 'window.FoundationsRuntimeSource = '+JSON.stringify((await fs.readFile(path.join(root,'table-serialization.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'foundations/runtime.py'),'utf8'))+'\n'+(await fs.readFile(path.join(root,'challenges/runtime.py'),'utf8')))+';\n');
 
@@ -168,7 +171,7 @@ try {
 
 const hash = content => createHash('sha256').update(content).digest('hex');
 // Keep canonical URLs and sitemap for the maintained public entry points.
-const publicRoutes = files.filter(file => file.endsWith('.html') && file !== 'offline.html');
+const publicRoutes = [...new Set([...files.filter(file => file.endsWith('.html') && file !== 'offline.html'),...learningRoutes])];
 for (const route of publicRoutes) {
   const filename = path.join(output, route);
   const canonical = 'https://dataplayground.science/' + (route === 'index.html' ? '' : route);
