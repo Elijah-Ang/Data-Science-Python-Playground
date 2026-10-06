@@ -472,6 +472,7 @@ __stdout, __stderr = BoundedOutputStream(), BoundedOutputStream()
 __result, __error, __last_display = None, None, None
 __primary_result = None
 __caught_warnings = []
+__practice_observation = begin_practice_observation(__json_from_worker.loads(__practice_validation_spec)) if __practice_validation_spec else None
 if __plt_from_worker is not None:
     __plt_from_worker.close("all")
 try:
@@ -496,6 +497,9 @@ try:
             __result = __primary_result
 except Exception:
     __error = __traceback_from_worker.format_exc()
+finally:
+    if __practice_observation is not None:
+        __practice_observation.finish()
 __warnings = [{"category":__warning.category.__name__, "message":str(__warning.message)} for __warning in __caught_warnings]
 __table = None
 if __error is None and __pd_from_worker is not None and isinstance(__result, __pd_from_worker.Series):
@@ -560,6 +564,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
   let cellSequence = 0;
   let workspaceToken = 0;
   let runtimeReady = false;
+  let routeBatchRunning = false;
   let testSetOpened = false;
   let latestChart = null;
   const playgroundMode = "guided"; // One current workflow; no selectable mode state.
@@ -653,7 +658,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         : "pipeline = Pipeline([\n    (\"prepare\", preprocessor),\n    (\"model\", model)\n])";
       const pipelineHint = modelId === "polynomial"
         ? "Keep the expansion, scaling, and estimator as the three named Pipeline steps."
-        : "Keep the fitted estimator in a \"model\" step and the existing preprocessor in a \"prepare\" step.";
+        : "Keep the unfitted estimator in a \"model\" step and the existing preprocessor in a \"prepare\" step.";
       return {
         id:"model-estimator-lines",
         type:"partial_code",
@@ -661,7 +666,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
         prompt:"Complete the real sklearn Pipeline that connects preparation to the estimator.",
         goal:"Connect the prepared inputs and the selected estimator into one Pipeline so validation can repeat the same workflow on each fold.",
         hint:pipelineHint,
-        expectedOutput:"A pipeline with preparation and a fitted-model step.",
+        expectedOutput:"An unfitted Pipeline containing preparation and the selected estimator.",
         required:modelId === "polynomial" ? ["model", "Pipeline", "polynomial → scale → model"] : ["model", "Pipeline", "prepare → model"],
         modelId,
         taskId,
@@ -751,8 +756,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       compact ? "from sklearn.model_selection import cross_validate" : "# Use training rows only: build a compact workflow and inspect validation evidence.",
       compact ? "" : "from sklearn.model_selection import cross_validate",
       "checkpoint_pipeline = Pipeline([",
-      '    ("prepare", preprocessor),',
-      '    ("model", model)',
+      ...(modelId === "polynomial" ? ['    ("polynomial", polynomial),', '    ("scale", scale),', '    ("model", model)'] : ['    ("prepare", preprocessor),', '    ("model", model)']),
       "])" ,
       `# ${classification ? "Macro F1 is higher when better" : "RMSE is shown as a positive error in original target units; lower is better"}`,
       scoreLine,
@@ -774,8 +778,7 @@ self.onmessage = event => { queue = queue.then(() => handle(event.data)); };
       "from sklearn.model_selection import cross_validate",
       `cv = ${splitter}`,
       "pipeline = Pipeline([",
-      '    ("prepare", preprocessor),',
-      '    ("model", model)',
+      ...(modelId === "polynomial" ? ['    ("polynomial", polynomial),', '    ("scale", scale),', '    ("model", model)'] : ['    ("prepare", preprocessor),', '    ("model", model)']),
       "])" ,
       `validation_raw = cross_validate(pipeline, X_train, y_train, cv=cv, scoring=${py(scoring)})`,
       `validation_scores = pd.DataFrame({"validation_score":${scoreExpression}})`,
@@ -833,11 +836,11 @@ checkpoint_loadings.head(12)`;
       id:"independent-checkpoint",
       title:"Independent Checkpoint",
       availableVariables:unsupervised
-        ? modelId === "hierarchical" ? ["X_sample_scaled", "X_sample", "feature_names", "selected_k"] : ["X_scaled", "X", "feature_names", "selected_k"]
-        : ["X_train", "y_train", "preprocessor", "model", "pipeline", "cv"],
+        ? modelId === "hierarchical" ? ["X_sample_scaled", "X_sample", "feature_names", "selected_k"] : modelId === "pca" ? ["X_scaled", "X", "feature_names"] : ["X_scaled", "X", "feature_names", "selected_k"]
+        : modelId === "polynomial" ? ["X_train", "y_train", "polynomial", "scale", "model", "pipeline", "cv"] : ["X_train", "y_train", "preprocessor", "model", "pipeline", "cv"],
       hint:unsupervised
-        ? "Use only the prepared feature matrix and the selected cut. Keep the profile in original feature units; the reference target is not part of discovery."
-        : `Use X_train and y_train only. Connect preparation and model in a Pipeline, then use ${folds}-fold CV; keep the final holdout out of this checkpoint.`,
+        ? modelId === "pca" ? "Fit PCA on X_scaled, choose a visible variance target, and keep coordinates and feature-labelled loadings consistent; the reference target stays excluded." : "Use only the prepared feature matrix and the selected cut. Keep the profile in original feature units; the reference target is not part of discovery."
+        : `Use the existing cv with the supplied X_train and y_train. ${modelId === "polynomial" ? "Connect polynomial → scale → model" : "Connect the supplied preprocessor and model"} in checkpoint_pipeline. Store the unrounded fold scores in checkpoint_scores; display checkpoint_scores.round(3). Keep the final holdout out of this checkpoint.`,
       starterCode:unsupervised
         ? "# Independent checkpoint\n# TODO: fit the selected unsupervised method and create a compact profile.\n"
         : "# Independent checkpoint · training rows only\n# TODO: build a compact preparation + model workflow, run CV, and inspect validation_score.\n",
@@ -846,26 +849,29 @@ checkpoint_loadings.head(12)`;
     };
     if (!unsupervised) {
       common.goal = classification
-        ? "Build a compact training-only classification workflow and produce fold validation scores without opening the holdout."
-        : "Build a compact training-only regression workflow and produce positive RMSE validation scores in the target's original units without opening the holdout.";
-      common.checklist = ["Use X_train and y_train only", "Keep preparation and model in one Pipeline", "Produce one validation_score per fold", "Explain what the validation evidence suggests"];
+        ? `Build a compact classification Pipeline from the supplied preparation and model; store it in checkpoint_pipeline. Validate only X_train and y_train using the existing ${folds}-fold cv. Store checkpoint_scores as a DataFrame with one validation_score per fold, using macro F1. Display the table without opening the final holdout; successful scores come from real training-fold fits.`
+        : `Build a compact regression Pipeline from the supplied preparation and model; store it in checkpoint_pipeline. Validate only X_train and y_train using the existing ${folds}-fold cv. Store checkpoint_scores as a DataFrame with one positive RMSE validation_score per fold, in the target's original units. Display the table without opening the final holdout; successful scores come from real training-fold fits.`;
+      common.checklist = ["Use the supplied X_train, y_train and existing cv", "Store the preparation + model Pipeline in checkpoint_pipeline", "Store checkpoint_scores with one unrounded validation_score per fold", "Explain what the validation evidence suggests"];
       common.referenceSolution = supervisedCheckpointCode(config, value, modelId, folds);
-      common.validation = {kind:"checkpoint_supervised", task:config.task, folds};
+      common.validation = {kind:"checkpoint_supervised", task:config.task, modelId, split:config.split, folds};
       return common;
     }
     if (modelId === "kmeans") {
-      common.goal = "Fit a target-free K-Means solution and describe its discovered groups in original feature units.";
-      common.checklist = ["Fit K-Means on X_scaled", "Give each row one cluster label", "Compare original-unit profiles", "Do not use the hidden reference target"];
+      common.goal = "Choose 2 to 8 groups, fit K-Means on X_scaled, and store the fitted estimator in checkpoint_model. Store one matching label per row in checkpoint_labels. Copy the original-unit features from X into checkpoint_profile and add those labels in a cluster column. Display a group summary; success keeps the original feature values and row-to-cluster assignments aligned without using the reference target.";
+      common.hint += " Outputs: checkpoint_model, checkpoint_labels and checkpoint_profile. The profile keeps every original-unit feature row and adds a cluster column.";
+      common.checklist = ["Fit K-Means on X_scaled", "Store checkpoint_model and checkpoint_labels", "Store original rows + cluster in checkpoint_profile", "Do not use the hidden reference target"];
       common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
       common.validation = {kind:"checkpoint_kmeans", target:config.target};
     } else if (modelId === "hierarchical") {
-      common.goal = "Fit a target-free Ward hierarchy on the prepared sample and describe its cut in original feature units.";
-      common.checklist = ["Use X_sample_scaled and X_sample", "Keep sampled rows and labels aligned", "Compare original-unit profiles", "Do not use the hidden reference target"];
+      common.goal = "Fit a Ward hierarchy on X_sample_scaled and store it in checkpoint_hierarchy. Choose 2 to 8 groups, cut the hierarchy, and store checkpoint_labels. Copy the original-unit features from X_sample into checkpoint_profile and add a cluster column. Display a group summary; success keeps the sampled rows, original values and cut labels aligned without using the reference target.";
+      common.hint += " Outputs: checkpoint_hierarchy, checkpoint_labels and checkpoint_profile. The profile keeps every original-unit sampled row and adds a cluster column.";
+      common.checklist = ["Use X_sample_scaled and X_sample", "Store checkpoint_hierarchy and checkpoint_labels", "Store sampled rows + cluster in checkpoint_profile", "Do not use the hidden reference target"];
       common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
       common.validation = {kind:"checkpoint_hierarchical", target:config.target};
     } else {
-      common.goal = "Fit PCA on the prepared inputs, choose a variance criterion, and inspect row coordinates and feature loadings without using the reference target.";
-      common.checklist = ["Fit PCA on X_scaled", "Choose a visible variance target", "Create projected row coordinates", "Label feature loadings"];
+      common.goal = "Fit PCA on X_scaled and store it in checkpoint_pca. Set checkpoint_variance_target and choose the smallest checkpoint_components count that reaches it. Store the retained row coordinates in checkpoint_projection and feature-labelled weights in checkpoint_loadings. Display the loadings; success uses the fitted PCA evidence and keeps the supplied feature names and rows aligned without using the reference target.";
+      common.hint += " Outputs: checkpoint_pca, checkpoint_variance_target, checkpoint_components, checkpoint_projection and checkpoint_loadings.";
+      common.checklist = ["Fit checkpoint_pca on X_scaled", "Set checkpoint_variance_target and checkpoint_components", "Store checkpoint_projection row coordinates", "Store feature-labelled checkpoint_loadings"];
       common.referenceSolution = cleanWorkflowReference(config, value, modelId, folds);
       common.validation = {kind:"checkpoint_pca", target:config.target};
     }
@@ -926,7 +932,7 @@ checkpoint_loadings.head(12)`;
       return {
         id:"mlp-supported-architecture",
         title:"Try one smaller supported MLP search",
-        instruction:"In the tuning cell, keep the existing 16/24-unit architecture comparison so the search stays small and valid.",
+        instruction:"In the tuning cell, restrict the width grid to the starting 24-unit architecture, then compare its training-fold score and runtime with the original 16/24-unit search. This smaller search does not compare widths.",
         find:originalGrid,
         replace:`'${parameterName}': [(24,)]`,
         change:"search (16,) and (24,) → use the starting (24,) architecture",
@@ -1280,7 +1286,7 @@ checkpoint_loadings.head(12)`;
 
   function renderBatchControls() {
     const button = $('#runAllButton');
-    if (button) {button.disabled=!runtimeReady; button.textContent='▶ Run suggested route';}
+    if (button) {button.disabled=!runtimeReady||routeBatchRunning||bridge.busy; button.textContent='▶ Run suggested route';}
   }
 
   function invalidateCellsFrom(routeItems, cellList, taskId) {
@@ -1309,7 +1315,10 @@ checkpoint_loadings.head(12)`;
   function routeButtonState(routeItems, cellList, index, {runtimeReady = true, testSetOpened = false} = {}) {
     const item = routeItems[index];
     const existing = cellList.find(cell => cell.taskId === item.id);
-    const previousIncomplete = routeItems.slice(0, index).some(previous => cellList.find(cell => cell.taskId === previous.id)?.status !== "done");
+    const previousIncomplete = routeItems.slice(0, index).some(previous => {
+      const cell = cellList.find(cell => cell.taskId === previous.id);
+      return cell?.status !== "done" || Boolean(cell.exercise || cell.checkpoint) && cell.output?.validation?.ok === false;
+    });
     const staleEarlier = routeItems.slice(0, index).some(previous => cellList.find(cell => cell.taskId === previous.id)?.status === "stale");
     const finalAlreadyUsed = item.id === "final" && testSetOpened;
     const blocked = !runtimeReady || previousIncomplete || finalAlreadyUsed;
@@ -1324,7 +1333,7 @@ checkpoint_loadings.head(12)`;
           : existing?.status === "stale"
             ? "Workflow changed — rerun from this step."
           : `${item.title} — ${item.caption}`;
-    return {status:existing?.status || "ready", previousIncomplete, finalAlreadyUsed, blocked, message};
+    return {status:existing?.status || "ready", previousIncomplete, finalAlreadyUsed, permanent:finalAlreadyUsed, blocked, message};
   }
 
   function pureNaiveBayesInput(value) {
@@ -1459,9 +1468,7 @@ checkpoint_loadings.head(12)`;
       line.children[0].textContent = `+ ${typed.length - 12} more`; list.append(line);
     }
     $(".route-tools-label").textContent = "SUGGESTED ROUTE";
-    $("#routeDescription").textContent = unsupervised
-      ? "Discovery workflow · run in order; reference labels stay out of fitting and appear only for interpretation."
-      : "Prediction workflow · each step answers one question; the saved test set is used only at the end.";
+    $("#routeDescription").textContent = "Move the slider below";
     $("#foldSelect").disabled = unsupervised;
     $("#foldLabel").textContent = unsupervised ? "Cross-validation · not used" : "Cross-validation";
     renderDatasetPreview();
@@ -4450,34 +4457,43 @@ plot_df_with_reference.head(12)`
     }
   }
 
+  let modelRouteSlider = null;
+  function shortRouteLabel(item) {
+    const discovery=selectedModel().task === 'unsupervised';
+    return ({frame:discovery?'Choose the inputs':'Choose the target',split:'Save the test set',explore:discovery?item.title:'Explore training data',prepare:'Prepare the inputs',model:'Build the pipeline',baseline:'Validate on training folds',reference:'Compare a simple reference',tune:'Tune on training folds',diagnose:discovery?item.title:'Inspect validation errors',final:'Use the final test',compare:item.title,fit:item.title,dendrogram:'Inspect the dendrogram',profile:item.title,visualise:item.title,variance:'Inspect explained variance',select:'Choose component count',loadings:'Read component loadings',project:'Project the rows'})[item.id] || item.title;
+  }
   function renderRoute() {
-    const strip = $("#routeStrip"); strip.replaceChildren();
-    routeTasks.forEach((item, index) => {
-      const state = routeButtonState(routeTasks, cells, index, {runtimeReady, testSetOpened});
-      const button = document.createElement("button"); button.type = "button"; button.className = "route-card";
-      button.dataset.taskId = item.id;
-      button.style.setProperty("--stage-color", colorFor(index));
-      button.dataset.state = state.status;
-      button.disabled = state.blocked;
-      button.title = state.message;
-      button.innerHTML = `<span class="route-number">${String(index + 1).padStart(2,"0")}</span><span><span class="route-title"></span><span class="route-caption"></span></span><span class="route-arrow">${state.status === "done" ? "✓" : state.status === "stale" ? "↻" : "→"}</span>`;
-      $(".route-title", button).textContent = item.title;
-      $(".route-caption", button).textContent = item.caption;
-      button.addEventListener("click", async () => {
-        let cell = cells.find(value => value.taskId === item.id);
-        let inserted = false;
-        if (!cell) {
-          cell = addRouteCell(item, false);
-          inserted = true;
-          renderNotebookView();
-          renderRoute();
-        }
-        // A route tap should insert/run the cell in place.  In particular,
-        // do not restore focus into a newly rendered editor on iOS: focusing
-        // this compact textarea can zoom the viewport before the run begins.
-        await runCell(cell, {preserveFocus: !inserted});
-      });
-      strip.append(button);
+    const strip = $('#routeStrip');
+    modelRouteSlider ||= RouteSlider.mount(strip, {
+      name:'Choose a machine learning route step', label:shortRouteLabel,
+      emptyState:() => $('#runtimeDot').classList.contains('error') ? 'error' : 'loading',
+      state:(item,index) => {
+        const policy=routeButtonState(routeTasks,cells,index,{runtimeReady,testSetOpened});
+        const fatal=$('#runtimeDot').classList.contains('error');
+        const cell=cells.find(cell=>cell.taskId===item.id);
+        const failedCheck=policy.status==='done'&&Boolean(cell?.exercise||cell?.checkpoint)&&cell.output?.validation?.ok===false;
+        return {...policy,status:failedCheck?'error':policy.status,fatal,blocked:policy.blocked||bridge.busy||routeBatchRunning,short:!runtimeReady?'loading':bridge.busy||routeBatchRunning?'waiting':policy.previousIncomplete?'run earlier steps':'waiting',message:fatal?'Python is unavailable. Read the error, then Stop / restart Python.':bridge.busy||routeBatchRunning?'A route or cell is running. Only the latest waiting choice will run next.':policy.blocked?policy.message:failedCheck?'The exercise check did not pass. Read its feedback and fix the code.':policy.status==='done'?'Ran successfully. The unchanged cell is reused.':policy.status==='error'?'Fix the code, then select this step or use its Run control.':'The selected editable cell runs automatically.'};
+      },
+      insert:item => {
+        if (cells.some(cell => cell.taskId === item.id)) return;
+        addRouteCell(item,false); renderNotebookView(); renderRoute();
+      },
+      key:item=>{const cell=cells.find(cell=>cell.taskId===item.id);return JSON.stringify([workspaceToken,cell?.id,cell?.routeRestoreRevision||0,cell?.code,routeTasks.slice(0,routeTasks.findIndex(step=>step.id===item.id)).map(step=>cells.find(cell=>cell.taskId===step.id)?.output?.executionId)]);},
+      run:item=>{const cell=cells.find(cell=>cell.taskId===item.id);if(cell)return runCell(cell);}
+    });
+    modelRouteSlider.update(routeTasks);
+    refreshCellRunButtons();
+  }
+
+  function refreshCellRunButtons() {
+    $$('article.cell', $('#notebookPanel')).forEach(article => {
+      const cell = cells.find(item => item.id === article.dataset.cellId);
+      const run = $('.cell-action.run', article);
+      if (!cell || !run) return;
+      const index = routeTasks.findIndex(item => item.id === cell.taskId);
+      const finalLocked = cell.stage === 'final' && testSetOpened;
+      run.disabled = !runtimeReady || bridge.busy || cell.status === 'running' || finalLocked || (index >= 0 && routeButtonState(routeTasks,cells,index,{runtimeReady,testSetOpened}).blocked);
+      run.textContent = cell.status === 'running' ? 'running…' : finalLocked ? 'used once' : '▶ run';
     });
   }
 
@@ -4511,6 +4527,12 @@ plot_df_with_reference.head(12)`
     const exercise = playgroundMode === "practice" ? item.practice?.exercise : null;
     const scaffold = exercise ? applyPracticeScaffold(item.code, exercise) : {code:item.code};
     const cell = addCell(scaffold.code, item.title, item.id, false);
+    // A prerequisite-blocked stop may be inserted ahead of its predecessors.
+    // Put later-added route cells before that stop so the exported notebook
+    // follows the teaching sequence. Existing cells, custom code and IDs stay.
+    const rank = routeTasks.findIndex(task => task.id === item.id);
+    const next = cells.findIndex(existing => routeTasks.findIndex(task => task.id === existing.taskId) > rank);
+    if (rank >= 0 && next >= 0) { cells.pop(); cells.splice(next, 0, cell); }
     cell.routeReferenceCode = item.code;
     cell.setupCode = item.setupCode || "";
     cell.evidenceCode = item.evidenceCode || "";
@@ -4622,7 +4644,7 @@ plot_df_with_reference.head(12)`
     marker.className = "teaching-label";
     marker.textContent = `${label}:`;
     const copy = document.createElement("span");
-    copy.textContent = text;
+    copy.innerHTML = CodeIdentifiers.format(text);
     line.append(marker, copy);
     return line;
   }
@@ -4704,11 +4726,11 @@ plot_df_with_reference.head(12)`
     const actions = {
       frame:discovery
         ? "Define X from the selected inputs and keep the reference target out of discovery."
-        : "Define the selected inputs and target so every later step shares one modelling frame.",
-      split:"Create the training rows and save the final test rows before fitting anything.",
+        : "Use the selected feature columns to define X and the named target column to define y. Read their previews to confirm what the model receives and what it predicts.",
+      split:"Split X and y into training and saved test rows before fitting. Later exploration and validation use X_train and y_train; X_test and y_test remain untouched until Final test. Read the split counts to confirm both groups were created.",
       explore:discovery
         ? "Inspect the selected rows for structure that can guide the next discovery step."
-        : "Inspect the available training data for a pattern that can guide the next step.",
+        : "Use only X_train and y_train to inspect the training summaries and plots. Look for missing values, distributions and relationships that can guide preparation; the saved test rows stay sealed.",
       prepare:discovery
         ? "Define the named preparation object that the discovery method will use."
         : "Define the preparation recipe that later fitting will learn inside each fold.",
@@ -5399,7 +5421,7 @@ plot_df_with_reference.head(12)`
     const panel = $("#notebookPanel"); panel.replaceChildren();
     if (!cells.length) {
       const empty = document.createElement("div"); empty.className = "empty-notebook";
-      empty.innerHTML = "<div><strong>CLICK STEP 01 TO BEGIN</strong><p>Each route block inserts an editable Python cell and immediately runs it. Follow the single route in step order, then delete cells and take over.</p></div>";
+      empty.innerHTML = "<div><strong>CHOOSE STEP 1 TO BEGIN</strong><p>Select a step to add its editable cell. Drag, then release. Use Run in the cell and follow the route in order. Step 0 keeps your cells; the final test stays protected.</p></div>";
       panel.append(empty); return;
     }
     cells.forEach(cell => {
@@ -5498,12 +5520,16 @@ plot_df_with_reference.head(12)`
       setRuntimeFailure(error, error?.stage ? undefined : "Python worker request failed");
       showToast(error.message, true);
     }
+    modelRouteSlider?.recordFailure(cell.taskId);
     renderNotebookView(focusTarget); renderRoute(); updateSeal(); restoreFocusTarget(focusTarget);
   }
 
   async function runAll() {
     if (!runtimeReady) { showToast("Wait for the Python workspace to finish loading.", true); return; }
     if (playgroundMode === "practice") { showToast("Run Complete is unavailable in Practice mode. Work through the route one step at a time."); return; }
+    if (routeBatchRunning || bridge.busy) return;
+    routeBatchRunning = true; renderBatchControls(); renderRoute();
+    try {
     const token = workspaceToken;
     const firstIncomplete = firstIncompleteRouteIndex(routeTasks, cells);
     if (firstIncomplete < 0) return;
@@ -5515,6 +5541,7 @@ plot_df_with_reference.head(12)`
       if (token !== workspaceToken) return;
       if (cell.status !== "done") break;
     }
+    } finally { routeBatchRunning = false; renderBatchControls(); renderRoute(); }
   }
 
   function outputTitle(label, meta) {
@@ -5711,6 +5738,7 @@ plot_df_with_reference.head(12)`
 
   function clearNotebook(message = "Notebook cleared; the test set is sealed again.") {
     window.NotebookSession?.beginTransition();
+    modelRouteSlider?.reset();
     cells = []; cellSequence = 0; latestChart = null; testSetOpened = false;
     clearPracticeSession();
     $("#outputStatus").textContent = "No cell run yet";
@@ -5723,6 +5751,7 @@ plot_df_with_reference.head(12)`
   }
 
   async function restartPython() {
+    modelRouteSlider?.reset();
     const token=++workspaceToken;
     const config=selectedConfig();
     bridge.restart();
@@ -5743,6 +5772,7 @@ plot_df_with_reference.head(12)`
   }
 
   async function resetNotebook() {
+    modelRouteSlider?.reset();
     const token = ++workspaceToken;
     cells.forEach(cell => {cell.output = null; cell.status = "ready"; cell.lastRunCode = null;});
     latestChart = null; testSetOpened = false; renderNotebookView(); renderRoute(); updateSeal();
@@ -6175,7 +6205,7 @@ plot_df_with_reference.head(12)`
     key:() => ['ml',currentDatasetId,$('#scenarioSelect').value,selectedModelId(), $('#foldSelect').value].join(':'),
     get:() => ({cells, csv: notebookCsv, sep:selectedConfig().sep, pythonHelpers:selectedModelId()==="one_r" ? ONE_R_HELPER_SOURCE : "", dictionary:window.DatasetDictionary?.[selectedConfig().file]}),
     set:draft => {cells=draft.cells; cellSequence=Math.max(0,...cells.map(cell => cell.number)); renderNotebookView(); renderRoute();},
-    insert:(cell,index) => {cell.output=null; cell.status='ready'; cells.splice(index,0,cell); renderNotebookView(); renderRoute();}
+    insert:(cell,index) => {cell.output=null; cell.status='ready';cell.routeRestoreRevision=(cell.routeRestoreRevision||0)+1; cells.splice(index,0,cell); renderNotebookView(); renderRoute();}
   });
   populateDatasets(); populateScenarios(); populateModels(); staticSetup(); buildRoute(); renderNotebookView(); updateSeal();
   const restoredSetup=window.NotebookSession?.last('ml');

@@ -27,15 +27,11 @@ with sync_playwright() as pw:
     })''')
     failures.extend([{'width':width,'theme':theme,'deck':deck,**b} for b in bad])
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
- # Previously taught methods keep their stage-specific concept visual; new
- # methods use the worked transition panel before the practice question.
- for route,variant in [('#inspect/I10/1',None),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2',None),('#inspect/IR2/1','loc')]:
+ # Practice rounds keep a visible, stage-specific concept visual beside their reference.
+ for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facet-hist'),('#inspect/IR2/1','loc')]:
   page.evaluate('(route)=>{location.hash=route}',route)
   page.wait_for_function('(route)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(route.split("/")[1])&&!!document.querySelector(".foundation-practice-brief")',arg=route)
-  if variant:
-   assert page.locator(".teaching-reference .concept-visual").get_attribute("data-visual")==variant
-  else:
-   assert page.locator(".teaching-transition pre code").is_visible()
+  assert page.locator(".teaching-reference .concept-visual").get_attribute("data-visual")==variant
  # Contact sheets contain every card at a consistent readable size in both themes.
  page.set_viewport_size({'width':1280,'height':1000})
  for theme in ['light','dark']:

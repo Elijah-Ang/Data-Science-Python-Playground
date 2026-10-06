@@ -25,7 +25,8 @@ with sync_playwright() as p:
     """)
     page.goto(args.base_url+'/learn.html')
     assert page.locator('a[data-path="ml"]').get_attribute('href')=='ml-learn.html?from=learn'
-    assert page.locator('button[data-path="statistics"]').count()==1
+    assert page.locator('a[data-path="statistics"]').get_attribute('href')=='statistics.html'
+    assert 'Guided Statistics lessons are planned.' in page.locator('a[data-path="statistics"]').inner_text()
     page.goto(args.base_url+'/ml-learn.html'+('?runtime=local' if args.runtime=='local' else ''))
     page.wait_for_function('!!window.MLLearning')
     assert page.locator('.foundation-decks .foundation-deck').count()==9

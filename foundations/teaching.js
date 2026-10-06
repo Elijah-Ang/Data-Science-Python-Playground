@@ -49,7 +49,8 @@
     const diagram = m.source.id === 'V35'
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
       : '<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>';
-    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'"><h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+'</section>';
+    const plottingIntro=m.source.id==='V02'?'<aside class="syntax-choice-callout"><strong>Two plotting tools, one Figure</strong><p>Matplotlib creates the Figure and Axes and controls labels and layout. These examples use Seaborn for a short, consistent way to read named columns and draw many chart types. Seaborn draws on Matplotlib Axes. Equivalent Matplotlib or other Python code is welcome when it shows the requested data and chart features.</p></aside>':'';
+    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+'</section>';
   }
   function syntax(lesson) {
     const row=([code,meaning],i) => {

@@ -9,10 +9,10 @@ window.TOUR_PAGES = (() => {
     'stats-results': {page:'statistics.html', targets:{output:'.output-panel'}},
     ml: {page:'ml.html', targets:{dataset:'.control.dataset',model:'.control-group',route:'#routeStrip'}},
     'ml-guide': {page:'ml.html', targets:{guide:'#guideWindow'}},
-    'ml-validate': {page:'ml.html', targets:{guide:'#workflow-step-5 .workflow-step-concepts'}},
-    'ml-tune': {page:'ml.html', targets:{guide:'#workflow-step-7 .workflow-step-concepts'}},
+    'ml-validate': {page:'ml.html', targets:{guide:'.workflow-step[data-task-id="baseline"] .workflow-step-concepts'}},
+    'ml-tune': {page:'ml.html', targets:{guide:'.workflow-step[data-task-id="tune"] .workflow-step-concepts'}},
     'ml-results': {page:'ml.html', targets:{result:'.output-panel'}},
-    home: {page:'index.html', targets:{robot:'.mascot-cta',gate:'.gate-hitbox'}},
+    home: {page:'index.html', targets:{robot:'#learning-robot',gate:'#playground-gate'}},
     learn: {page:'learn.html', targets:{pathways:'.learn-pathways'}},
     decks: {page:'data-foundations.html', hash:'', targets:{decks:'.foundation-decks'}},
     chapters: {page:'data-foundations.html', hash:'#inspect', targets:{chapters:'.chapter-jumps'}},
@@ -42,16 +42,17 @@ window.TOUR_PAGES = (() => {
       if(loc.page==='statistics.html') {const open=scene==='stats-study' && chapter.focus==='study';if(q('#studyPanel').hidden===open)q('#studyButton').click();}
     }
     if(scene==='data-run' && !q('#notebookPanel .cell')) {
-      q('#suggestedRoute button').click();await until(()=>q('#notebookPanel .cell'),alive);
+      const rail=q('#suggestedRoute .step-route-range');rail.value='1';rail.dispatchEvent(new Event('input'));rail.dispatchEvent(new Event('change'));
+      await until(()=>q('#notebookPanel .cell'),alive);
     }
     if(scene==='data-run')await until(()=>q('#notebookPanel .cell')?.dataset.status==='done',alive);
     if(['data-guide','ml-guide','ml-validate','ml-tune'].includes(scene)) {
       if(q('#guideWindow').hidden)q('#guideButton').click();
-      const step=scene==='ml-validate'?5:scene==='ml-tune'?7:0,article=q(`#workflow-step-${step}`);
+      const task=scene==='ml-validate'?'baseline':scene==='ml-tune'?'tune':'frame',article=q(`.workflow-step[data-task-id="${task}"]`);
       if(article){const body=q('#guideBody');await scroll(body,article.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-85,alive);}
     }
     if(scene==='stats-results' || scene==='ml-results') {
-      const done=()=>scene==='stats-results'?q('#routeStrip button:last-child')?.dataset.state==='done':/open|used/i.test(q('#holdoutState')?.textContent||'');
+      const done=()=>scene==='stats-results'?w.StatisticsPlayground.cells.filter(c=>c.status==='done').length===w.StatisticsPlayground.activeRouteLength:/open|used/i.test(q('#holdoutState')?.textContent||'');
       if(!done()) {status('Running the demonstration’s suggested route…');q('#runAllButton').click();await until(done,alive,120000);}
       const output=q('#outputBody');if(output)await scroll(output,output.scrollHeight,alive);
     }

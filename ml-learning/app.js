@@ -252,7 +252,7 @@
       }
       const d=exercise.inputFile?{file:exercise.inputFile}:datasets[exercise.dataset],files={};
       if(d?.file){const response=await fetch(d.file);if(!response.ok)throw Error('Input file could not load.');files[d.file]=await response.text();}
-      const response=await bridge.send('run',{config:{indexURL:AppPlatform.pyodideIndexUrl,...MLLearningRuntime},files,request:{exercise,code:submitted}});
+      const response=await bridge.send('run',{config:{indexURL:AppPlatform.pyodideIndexUrl,seaborn:AppPlatform.seabornRequirement,...MLLearningRuntime},files,request:{exercise,code:submitted}});
       if(screen!==generation)return;
       if(receipts.accept(token,editor.value,response.result)){
         renderOutput(response.result);

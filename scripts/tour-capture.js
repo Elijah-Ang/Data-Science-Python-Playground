@@ -9,7 +9,7 @@ document.querySelector('#start').onclick=async()=>{
       for(const [index,chapter] of window.TOUR_CONTENT.chapters.entries()) {
         const loc=window.TOUR_PAGES.locations[chapter.scene];
         status.textContent=`${profile} ${index+1}: ${chapter.title}`;
-        if(page!==loc.page){page=loc.page;frame.src=page+'?tour=1';await window.TOUR_PAGES.until(()=>frame.contentDocument?.URL.includes(page+'?tour=1')&&frame.contentDocument.readyState==='complete',()=>true);}
+        if(page!==loc.page){page=loc.page;frame.src=page+'?tour=1&runtime=local';await window.TOUR_PAGES.until(()=>frame.contentDocument?.URL.includes(page+'?tour=1')&&frame.contentDocument.readyState==='complete',()=>true);}
         await window.TOUR_PAGES.prepare(frame,chapter,()=>true,()=>{});
         const d=frame.contentDocument,clone=d.documentElement.cloneNode(true);
         // Freeze values and canvas output using actual rendered application nodes.

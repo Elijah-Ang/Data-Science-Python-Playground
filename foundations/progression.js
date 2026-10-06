@@ -341,7 +341,7 @@ function progress(c){
  }
  // Paths are navigation only: no saved learning, completion records or tracking.
  const chapters=[
-  ['Choose and build','V35 V01 V16 V02 V04 V08 VR1'],
+  ['Choose and build','V35 V01 V02 V16 V04 V08 VR1'],
   ['Compare observations','V18 V09 V13 V11 V03 V17 VR2'],
   ['Explain the evidence','V22 V24 V25 V26 V27 VR3'],
   ['Make a useful report','V29 V34 V36 V37'],

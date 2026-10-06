@@ -31,6 +31,13 @@ for(const [family,curriculum,lessons] of [['data',data,data.lessons],['ml',ml,ml
     assert.ok(main.includes('aria-label="Lesson content"'),file+' must render the real article');
     assert.ok(main.replace(/<[^>]+>/g,'').length>700,file+' must contain substantive teaching and practice');
     assert.ok(main.includes('Hint')&&main.includes('solution'),file+' must retain authored help');
+    if(family==='data'){
+      const breadcrumb=main.match(/<nav class="foundation-breadcrumb"[\s\S]*?<\/nav>/)?.[0]||'';
+      const sequence=lesson.review?(lesson.rounds.some(r=>r.retrieves)?'Spaced practice':'Checkpoint'):'Lesson '+String(lessons.filter(l=>l.deck===lesson.deck&&!l.review).indexOf(lesson)+1).padStart(2,'0');
+      assert.ok(breadcrumb.endsWith('<span>'+sequence+'</span></nav>'),file+' must show its displayed lesson sequence');
+      assert.ok(!main.includes('Reference '+lesson.id),file+' must not display the internal progress ID');
+    }
+
     assert.equal((html.match(/rel="canonical"/g)||[]).length,1,file);
     assert.ok(html.includes('href="https://dataplayground.science/'+file+'"'),file+' canonical');
     assert.ok(sitemap.includes('https://dataplayground.science/'+file),file+' sitemap');

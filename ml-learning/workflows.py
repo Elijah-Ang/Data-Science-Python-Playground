@@ -57,7 +57,7 @@ def supervised(key,models,id='temporary'):
     s=DATA[key];classification=s['task']=='classification'
     metric='f1_macro' if classification else 'neg_root_mean_squared_error'
     columns=s['numeric']+s['binary']+s['category']
-    code=supervised_imports(classification,bool(s.get('time')))+"\nimport matplotlib.pyplot as plt\nX=df["+repr(columns)+"]\ny=df["+repr(s['target'])+"]\n"
+    code=supervised_imports(classification,bool(s.get('time')))+"\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nX=df["+repr(columns)+"]\ny=df["+repr(s['target'])+"]\n"
     if s.get('time'):
         code+="cut=int(len(df)*.8)\nX_train,X_test=X.iloc[:cut],X.iloc[cut:]\ny_train,y_test=y.iloc[:cut],y.iloc[cut:]\nfolds=TimeSeriesSplit(n_splits=5)\n"
     else:
@@ -105,10 +105,8 @@ oof_predictions=diagnostic_model.predict(diagnostic_X)
         code+="""class_labels=sorted(y_train.unique())
 matrix=confusion_matrix(diagnostic_y,oof_predictions,labels=class_labels)
 fig,ax=plt.subplots(figsize=(6,4))
-ax.imshow(matrix,cmap='Blues')
-ax.set(xticks=range(len(class_labels)),yticks=range(len(class_labels)),xticklabels=class_labels,yticklabels=class_labels,xlabel='Predicted class',ylabel='Actual class',title='Training-only confusion matrix')
-for (i,j),value in np.ndenumerate(matrix):
-    ax.text(j,i,str(value),ha='center',va='center',color='black')
+sns.heatmap(matrix,annot=True,fmt='d',cmap='Blues',ax=ax,xticklabels=class_labels,yticklabels=class_labels)
+ax.set(xlabel='Predicted class',ylabel='Actual class',title='Training-only confusion matrix')
 fig.tight_layout()
 fig.savefig('diagnostic.png',dpi=150,bbox_inches='tight')
 final_model=clone(chosen).fit(X_train,y_train)
@@ -120,7 +118,7 @@ print('Final macro F1:',final_f1,'; accuracy:',final_accuracy)
     else:
         code+="""residuals=pd.DataFrame({'actual':diagnostic_y,'predicted':oof_predictions,'residual':diagnostic_y-oof_predictions})
 fig,ax=plt.subplots(figsize=(6,4))
-ax.scatter(residuals.predicted,residuals.residual,s=12)
+sns.scatterplot(x=residuals.predicted,y=residuals.residual,s=12,ax=ax)
 ax.axhline(0,color='black')
 ax.set(xlabel='Training-validation prediction',ylabel='Residual',title='Training-only residuals')
 fig.tight_layout()
@@ -160,13 +158,14 @@ for name,candidate in selected.items():
     outputs=['cv_results','reference_results','chosen_name']
     if any(model.startswith('mlp_') for model in models):outputs.append('loss_curves')
     outputs+=['matrix','final_f1','final_accuracy'] if classification else ['residuals','final_rmse']
-    return dict(id=id,kind='python',dataset=s.get('dataset',key),solution=code,setup='',outputs=outputs,checks=checks,protect=dict(target=s['target'],stratified=classification,time=bool(s.get('time'))))
+    return dict(id=id,kind='python',dataset=s.get('dataset',key),solution=code,setup='',outputs=outputs,checks=checks,workflowReports=True,protect=dict(target=s['target'],stratified=classification,time=bool(s.get('time'))))
 
 KMEANS=dict(id='ML-X17',kind='python',dataset='penguins',outputs=['evidence','sizes','profiles','labels'],
  solution="""from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
+import seaborn as sns
 X=df[['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]
 scaler=StandardScaler()
 scaled=scaler.fit_transform(X)
@@ -182,19 +181,17 @@ labels=model.labels_
 sizes=pd.Series(labels).value_counts().sort_index()
 profiles=X.groupby(labels).mean()
 fig,ax=plt.subplots(figsize=(6,4))
-for label in np.unique(labels):
-    group=X.loc[labels==label]
-    ax.scatter(group.bill_length_mm,group.bill_depth_mm,label='Group '+str(label),marker=['o','s','^'][int(label)%3])
+sns.scatterplot(data=X,x='bill_length_mm',y='bill_depth_mm',hue=labels,style=labels,ax=ax)
 ax.set(xlabel='Bill length (mm)',ylabel='Bill depth (mm)',title='Exploratory Penguin groups')
 ax.legend()
 fig.savefig('clusters.png',dpi=150,bbox_inches='tight')
 print(evidence)
 """,
  checks=[
- check('Reference-free inputs',"list(X.columns)==['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']",'Fit using the four measurement columns only.'),
+ check('Reference-free inputs',"X.equals(df[['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]) and np.allclose(scaled,_prepared_values(X,numeric=tuple(X.columns)))",'Fit using the original four measurement columns and their standardized values only.'),
  check('k evidence','list(evidence.k)==list(range(2,9)) and np.isfinite(evidence[["inertia","silhouette"]]).all().all() and trace.cluster_scores(evidence,scaled)','Compare k=2–8 using finite inertia and silhouette evidence.'),
  check('Assignments','len(labels)==len(X) and _same_partition(labels,model.predict(scaled))','Assign each input row using the fitted geometry; cluster IDs may be renamed consistently.'),
- check('Original-unit profiles','sizes.sum()==len(X) and np.allclose(profiles.values,X.groupby(labels).mean().values)','Profile original-unit measurements with aligned labels.'),
+ check('Original-unit profiles','sizes.equals(pd.Series(labels).value_counts().sort_index()) and profiles.index.equals(X.groupby(labels).mean().index) and profiles.columns.equals(X.columns) and np.allclose(profiles.values,X.groupby(labels).mean().values)','Return actual group counts and original-unit means with aligned cluster labels, feature columns and indices.'),
  dict(name='Choice and interpretation',selfReview=True,message='Defend k using scores, geometry, sizes and useful profiles. No single k or real-world class claim is automatically correct.')])
 
 BRIEFS=[
@@ -337,14 +334,14 @@ X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=.2,random_state=42)
 model=LinearRegression().fit(X_train,y_train)
 predictions=model.predict(X_test)
 answer=root_mean_squared_error(y_test,predictions)
-""",checks=[check('X and y',"X.equals(df[['distance']]) and y.equals(df.duration)",'Select distance as X and duration as y.'),check('Split integrity','set(X_train.index).isdisjoint(X_test.index) and len(X_test)==5 and trace.no_test_fit()','Keep test rows separate from fitting.'),check('RMSE','np.isclose(answer,np.sqrt(np.mean((y_test-predictions)**2)))','Use RMSE in duration units.')],outputs=['answer','predictions'],protect=dict(target='duration'))
+""",checks=[check('X and y',"X.equals(df[['distance']]) and y.equals(df.duration)",'Select distance as X and duration as y.'),check('Split integrity','_split_matches(X,y,X_train,X_test,y_train,y_test) and trace.no_test_fit() and trace.fit_matches(X_train,y_train,"LinearRegression")','Use the declared 80/20 seeded split and fit the line only on training rows.'),check('RMSE','trace.prediction_matches(predictions,X_test) and np.isclose(answer,np.sqrt(np.mean((y_test-predictions)**2)))','Use actual fitted test predictions and report RMSE in duration units.')],outputs=['answer','predictions'],protect=dict(target='duration'))
     nclass=supervised('penguins',['mlp_cls'],'ML-N-K2-1')
     regression=supervised('candy',['multiple_linear','regression_tree'],'ML-R-K1-1')
     classification=supervised('penguins_mixed',['logistic'],'ML-C-K1-1')
     discovery=copy.deepcopy(KMEANS)
     discovery['dataset']='CLUSTER36B'
-    discovery['solution']=discovery['solution'].replace("X=df[['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]","X=df.copy()").replace('group.bill_length_mm,group.bill_depth_mm','group.length_mm,group.width_cm').replace('Bill length (mm)','Length (mm)').replace('Bill depth (mm)','Width (cm)').replace('Exploratory Penguin groups','Exploratory measurement groups')
-    discovery['checks'][0]=check('X-only inputs','X.equals(df)','Use the supplied measurements only.')
+    discovery['solution']=discovery['solution'].replace("X=df[['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]","X=df.copy()").replace("x='bill_length_mm',y='bill_depth_mm'","x='length_mm',y='width_cm'").replace('Bill length (mm)','Length (mm)').replace('Bill depth (mm)','Width (cm)').replace('Exploratory Penguin groups','Exploratory measurement groups')
+    discovery['checks'][0]=check('X-only inputs','X.equals(df) and np.allclose(scaled,_prepared_values(X,numeric=tuple(X.columns)))','Use the supplied measurements and their actual standardized values only.')
     pca=copy.deepcopy(PCA);pca['dataset']='penguins'
     pca['solution']=pca['solution'].replace("X = df[[c for c in df.columns if c.endswith(('_mean','_se','_worst'))]]","X = df[['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]")
     pca['checks'][0]=check('Target-free inputs','X.shape[1]==4 and "species" not in X.columns','Use the four measurement columns only.')

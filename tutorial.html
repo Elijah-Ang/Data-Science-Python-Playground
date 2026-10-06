@@ -18,9 +18,9 @@
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="tutorial.css?v=tour10">
   <script src="app-platform.js?v=platform2"></script>
-</head>
+<script src="code-identifiers.js"></script><link rel="stylesheet" href="route-slider.css"></head>
 <body data-theme="light">
-  <a class="home-link" href="index.html" aria-label="Back to home">← Home</a>
+  <a class="home-link" href="index.html" aria-label="Close tour and return home">← Close tour</a>
   <nav class="tour-sections" aria-label="Tour sections"></nav>
 
   <main id="journey" aria-describedby="tour-description">
@@ -51,8 +51,8 @@
         <div class="steps" aria-label="Tour chapters"></div>
         <div class="transport">
           <button id="back" type="button" aria-label="Previous feature">←</button>
-          <span id="pageCount" aria-live="polite">1 / 25</span>
-          <button id="next" type="button">Next →</button>
+          <span id="pageCount" aria-live="polite">1 / 25</span><a id="skipTour" href="index.html">Skip tour</a>
+          <button id="next" type="button">Next →</button><button id="replayTour" type="button" hidden>Replay ↺</button>
         </div>
       </footer>
       <div class="progress" aria-hidden="true"><div id="progress"></div></div>

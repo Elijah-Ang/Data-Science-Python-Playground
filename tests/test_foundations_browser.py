@@ -36,14 +36,21 @@ with sync_playwright() as p:
  assert page.locator('.lesson-card svg').count()==27
  page.locator('.back-playground').click();assert page.locator('.foundation-deck').count()==3
  page.locator('.foundation-deck[data-deck="inspect"]').click()
- page.locator('.lesson-card[href="data-foundations-I01.html"]').click()
+ page.locator('.lesson-card[href="#inspect/I01/0"], .lesson-card[href="data-foundations-I01.html"]').click()
  page.wait_for_function("document.querySelector('#foundationRuntime').textContent.includes('Python ready')",timeout=120000)
  def open_lesson(id,index=0):
   deck={'I':'inspect','W':'wrangle','V':'visualise'}[id[0]]
   page.evaluate('(hash)=>{location.hash=hash}',f'#{deck}/{id}/{index}')
-  page.wait_for_function('([id,index])=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id) && document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[index].label',arg=[id,index])
+  page.wait_for_function('([id,index])=>LearningRoutes.route("data",location,document.body).split("/")[1] === id && document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[index].label',arg=[id,index])
   page.wait_for_function('!document.querySelector("#runExercise").disabled')
  def solution(id,index=0):return page.evaluate('([id,i])=>FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[i].solution',[id,index])
+ def current_route():return page.evaluate('LearningRoutes.route("data",location,document.body)')
+ def route_link(deck,id=None):
+  fragment=f'#{deck}/{id}/0' if id else '#'+deck
+  file=f'data-foundations-{id or deck}.html'
+  return f'a[href="{fragment}"], a[href="{file}"]'
+ def go_route(route):
+  page.evaluate('''(route)=>{if(window.LearningRoutes){history.pushState(null,'',LearningRoutes.url('data',route));dispatchEvent(new PopStateEvent('popstate'));}else location.hash=route;}''',route)
  def run(code,check=True):
   if '# Supplied setup' not in code:
    code=page.evaluate('(code)=>{const [deck,id,index]=LearningRoutes.route("data",location,document.body).split("/");const r=FoundationsCurriculum.lessons.find(l=>l.id===id).rounds[Number(index)||0];return FoundationWorkspace.code(FoundationsCurriculum,r,code)}',code)
@@ -53,7 +60,7 @@ with sync_playwright() as p:
   return page.locator('#foundationFeedback').inner_text()
  assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
  assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
- assert page.locator('.back-playground').get_attribute('href')=='data-foundations-inspect.html'
+ assert page.locator('.back-playground').get_attribute('href') in ('#inspect','data-foundations-inspect.html')
  assert not page.locator('#foundationSolution').get_attribute('open')
  page.locator('#foundationHint summary').click();assert page.locator('#foundationHint').get_attribute('open') is not None
  page.locator('#foundationSolution summary').click();assert 'pd.DataFrame' in page.locator('#foundationSolution pre').inner_text()
@@ -62,7 +69,7 @@ with sync_playwright() as p:
  assert page.locator('#foundationHighlight .py-string').count()>0
  assert page.locator('#foundationHighlight .py-number').count()>0
  assert page.locator('#foundationOutput table tbody tr').count()==4
- page.locator('.foundation-navigation a').last.click();assert page.evaluate('LearningRoutes.route("data",location,document.body)')=='inspect/I01/1'
+ page.locator('.foundation-navigation a').last.click();assert current_route()=='inspect/I01/1'
  page.wait_for_function('document.querySelector(".foundation-practices [aria-current=step] strong")?.textContent === FoundationsCurriculum.lessons.find(l=>l.id==="I01").rounds[1].label')
  starter=page.locator('#foundationEditor').input_value()
  page.locator('#foundationEditor').fill('# unsaved edit\ndf')
@@ -151,6 +158,41 @@ with sync_playwright() as p:
  open_lesson('V37');assert 'matches' in run(solution('V37'))
  assert page.locator('#foundationOutput img').count()==3
  report['checks'].append('End-to-end cleaning, chart data validation, figure zoom, actual savefig export and three-chart report')
+ report['visibility_cases']=[]
+ for id in ['V02','V04','V16']:
+  open_lesson(id)
+  model=solution(id)
+  for name,fragment,expected in [
+   ('invisible axes','for _axis in plt.gcf().axes:\n    _axis.set_visible(False)',False),
+   ('transparent data','for _axis in plt.gcf().axes:\n    for _mark in [*_axis.lines, *_axis.patches, *_axis.collections]:\n        _mark.set_alpha(0)',False),
+   ('off-viewport data','for _axis in plt.gcf().axes:\n    _axis.set_xlim(10000, 20000)',False),
+   ('visible styling','for _axis in plt.gcf().axes:\n    for _mark in [*_axis.lines, *_axis.patches, *_axis.collections]:\n        _mark.set_alpha(0.5)\n    for _spine in _axis.spines.values():\n        _spine.set_visible(False)',True),
+  ]:
+   code=model.replace('plt.show()',fragment+'\nplt.show()')
+   feedback=run(code)
+   assert ('matches' in feedback)==expected,(id,name,feedback)
+   report['visibility_cases'].append({'id':id+'-1','case':name,'expected':expected,'feedback':feedback,'code':code,'status':'passed'})
+ report['checks'].append('Real Pyodide hidden/transparent/off-viewport rejection and visible opacity/frame alternatives')
+ report['annotation_cases']=[]
+ for index in range(3):
+  open_lesson('V22',index)
+  model=solution('V22',index)
+  for name,code,expected in [
+   ('equivalent decimal precision',model.replace('annot=True,','annot=True, fmt=".3f",'),True),
+   ('wrong numeric annotation',model.replace('plt.show()','for _axis in plt.gcf().axes:\n    for _text in _axis.texts:\n        _text.set_text("999.000")\nplt.show()'),False),
+   ('nonnumeric annotation',model.replace('plt.show()','for _axis in plt.gcf().axes:\n    for _text in _axis.texts:\n        _text.set_text("unknown")\nplt.show()'),False),
+  ]:
+   feedback=run(code)
+   assert ('matches' in feedback)==expected,(index,name,feedback)
+   report['annotation_cases'].append({'id':f'V22-{index+1}','case':name,'expected':expected,'feedback':feedback,'code':code,'status':'passed'})
+ for index in range(3):
+  open_lesson('V23',index)
+  model=solution('V23',index)
+  code=model.replace('fmt="d"','fmt=".1f"') if index<2 else model.replace('fmt=".1f"','fmt=".3f"')
+  feedback=run(code)
+  assert 'Not yet' in feedback,(index,feedback)
+  report['annotation_cases'].append({'id':f'V23-{index+1}','case':'wrong explicitly requested cell format','expected':False,'feedback':feedback,'code':code,'status':'passed'})
+ report['checks'].append('Real Pyodide flexible numeric annotation precision, wrong-cell rejection and explicit integer/.1f formatting')
  # Core/extension routes remain separate, and chart-choice and inspection tasks run in real Python.
  open_lesson('V35');assert 'matches' in run('"scatter"')
  open_lesson('I05',1);assert 'Not yet' in run('# no answer');assert 'Not yet' in run('None');assert 'matches' in run('df.head(3).dtypes')
@@ -189,16 +231,18 @@ with sync_playwright() as p:
    }
    return {count,failures};
   }''')
-  report['pyodide_solutions']=result;assert not result['failures'],result
+  report['pyodide_solutions']=result
+  (evidence/f'{args.engine}-pyodide-solutions.json').write_text(json.dumps(result,indent=2))
+  assert not result['failures'],result
  # Content, output and controls stay within their columns in both themes.
  for id,deck in [('I22','inspect'),('W31','wrangle'),('V37','visualise')]:
-  open_lesson(id,2);assert page.locator(f'a[href="data-foundations-{deck}.html"]').count()==1
+  open_lesson(id,2);assert page.locator(route_link(deck)).count()==1
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:
    page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
    for route,view in [('#','decks'),('#wrangle','library'),('#inspect/I02/0','lesson')]:
-    page.evaluate('(route)=>{location.hash=route}',route);page.wait_for_timeout(100)
+    go_route(route);page.wait_for_timeout(100)
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),(label,theme,view)
     assert page.evaluate('Array.from(document.querySelectorAll(".foundation-deck,.lesson-card,.foundation-code-pane,.foundation-content,.foundation-actions")).every(e=>{const b=e.getBoundingClientRect();return b.left>=-1&&b.right<=innerWidth+1})'),(label,theme,view)
     if view=='lesson':
@@ -211,7 +255,11 @@ with sync_playwright() as p:
      assert editor_height>=expected_editor_height-1,(label,editor_height)
      if width>800:
       assert geometry['typesRight'],geometry
-      assert geometry['workspace']>=height-400,geometry
+      # Account for the explicit secondary stable-ID reference added to the
+      # lesson header while retaining the existing workspace height allowance.
+      reference=page.locator('.foundation-reference')
+      reference_space=reference.evaluate('(e)=>e.getBoundingClientRect().height+parseFloat(getComputedStyle(e).marginTop)')
+      assert geometry['workspace']>=height-400-reference_space,geometry
       before=page.locator('.foundation-code-pane').bounding_box()
       moved=page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')
       assert moved>0
@@ -229,14 +277,13 @@ with sync_playwright() as p:
  # Every card link resolves, and representative concept visuals have evidence at all widths.
  for deck in ['inspect','wrangle','visualise']:
   page.evaluate('(deck)=>{location.hash="#"+deck}',deck);page.wait_for_timeout(50)
-  hrefs=page.locator('.lesson-card').evaluate_all('(els)=>els.map(e=>e.getAttribute("href"))')
-  for href in hrefs:
-   page.locator(f'.lesson-card[href="{href}"]').click()
-   page.wait_for_function('(id)=>document.querySelector(".foundation-lesson-heading")?.textContent.includes(id)',arg=href.removeprefix('data-foundations-').split('.html')[0])
+  ids=page.evaluate('(deck)=>FoundationsCurriculum.lessons.filter(l=>l.deck===deck).map(l=>l.id)',deck)
+  for id in ids:
+   go_route(f'{deck}/{id}/0')
+   page.wait_for_function('(id)=>LearningRoutes.route("data",location,document.body).split("/")[1] === id',arg=id)
    assert page.locator('.foundation-task-reminder').inner_text().startswith('Your task')
-   assert page.locator('.back-playground').get_attribute('href')=='data-foundations-'+deck+'.html'
-   assert page.locator(f'a[href="data-foundations-{deck}.html"]').count()==1
-   page.locator('.back-playground').click();page.wait_for_selector('.lesson-card')
+   assert page.locator('.back-playground').get_attribute('href') in ('#'+deck,'data-foundations-'+deck+'.html')
+   assert page.locator(route_link(deck)).count()==1
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
   for theme in ['light','dark']:
@@ -244,7 +291,7 @@ with sync_playwright() as p:
    for deck,ids in [('inspect',['I03','I10']),('wrangle',['W10','W24','W22']),('visualise',['V04','V11','V18','V22','V30','V31'])]:
     page.evaluate('(deck)=>{location.hash="#"+deck}',deck);page.wait_for_timeout(50)
     for id in ids:
-     card=page.locator(f'.lesson-card[href="data-foundations-{id}.html"]')
+     card=page.locator(route_link(deck,id))
      card.scroll_into_view_if_needed()
      path=evidence/f'{args.engine}-{label}-{theme}-visual-{id}.png';card.screenshot(path=str(path));report['screenshots'].append(str(path.relative_to(ROOT)))
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
@@ -263,12 +310,14 @@ with sync_playwright() as p:
  page.set_viewport_size({'width':320,'height':740});open_lesson('I02',2)
  assert page.locator('.foundation-practice-brief').is_visible()
  assert page.locator('.teaching-overview').count()==0
+ # This Transfer introduces reproducible sample syntax. The Follow overview
+ # fades, while the authored transition remains available beside the task.
  assert page.locator('.teaching-transition').is_visible()
  assert page.locator('.teaching-transition .foundation-syntax').count()==1
  assert page.locator('.foundation-revisit a').is_visible()
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
  page.locator('.foundation-skip').focus();page.locator('.foundation-skip').click()
- assert page.evaluate('LearningRoutes.route("data",location,document.body)')=='inspect/I02/2'
+ assert current_route()=='inspect/I02/2'
  report['checks'].append('Desktop/tablet/mobile layouts, 320px boundary, fading scaffold, skip link and light/dark themes; 24 screenshots')
  page.goto(base);assert page.locator('.foundation-continue').count()==0
  assert page.locator('#forgetProgress, #resetLearningDialog, #storageStatus, progress, [role="progressbar"]').count()==0

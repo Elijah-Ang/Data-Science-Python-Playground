@@ -44,6 +44,8 @@ with sync_playwright() as playwright:
         page = dynamic.new_page()
         page.goto(f'{args.base_url}/{path}')
         page.locator('.foundation-deck').first.wait_for()
+        if path == 'ml-learn.html':
+            page.wait_for_function('!!window.MLLearning')
         assert page.locator(selector).count() == 0, path
         assert not page.evaluate('document.documentElement.scrollWidth > innerWidth + 1'), path
         page.goto(f'{args.base_url}/{path}{route}')

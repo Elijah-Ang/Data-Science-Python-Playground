@@ -31,4 +31,4 @@ for(const c of all){
   assert.deepEqual(Object.keys(input.fields),Object.keys(input.columns),c.id);
  }
 }
-console.log(JSON.stringify({existingFoundationsExercises:curriculum.lessons.flatMap(l=>l.rounds).length,existingCards:curriculum.lessons.length,newWorkflowChallenges:all.length,byDeck:Object.fromEntries(curriculum.decks.map(d=>[d.id,all.filter(c=>c.deck===d.id).length])),totalExecutableActivities:curriculum.lessons.flatMap(l=>l.rounds).length+all.length,baselineMatchesReviewedCurriculum:true},null,2));
+console.log(JSON.stringify({existingFoundationsExercises:curriculum.lessons.flatMap(l=>l.rounds).length,existingCards:curriculum.lessons.length,workflowChallenges:all.length,byDeck:Object.fromEntries(curriculum.decks.map(d=>[d.id,all.filter(c=>c.deck===d.id).length])),totalExecutableActivities:curriculum.lessons.flatMap(l=>l.rounds).length+all.length,reviewedFoundationsBaselineMatch:true},null,2));

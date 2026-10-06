@@ -2355,7 +2355,7 @@ const registry = {
           "label": "Final labels",
           "requirement": "Store each distinct cleaned product label once in a list named labels.",
           "kind": "value",
-          "feedback": "Check normalised spellings, uniqueness and alphabetical order.",
+          "feedback": "Check normalised spellings and uniqueness; each cleaned label should appear once.",
           "checkIndex": true,
           "format": "list",
           "unorderedItems": true
@@ -3887,9 +3887,9 @@ const registry = {
           "id": "combined",
           "name": "combined",
           "label": "Combined deliveries",
-          "requirement": "Create combined from df and second. Rename duration in second to minutes and parse it numerically. Keep the same columns and column order as df, with every row from both batches.",
+          "requirement": "Use df and `second` as your inputs. In a separate copy of `second`, rename `duration` to `minutes` and convert its numeric text to numbers. Append the two batches and keep every row, using the same columns in the same order as df. Store the finished table in combined. Keep both inputs unchanged.",
           "kind": "frame",
-          "feedback": "Check aligned names, numeric duration values, included batches and final row/column order.",
+          "feedback": "Check aligned names, numeric duration values, every source record and df column order.",
           "checkIndex": false,
           "format": "DataFrame",
           "unorderedRowsBy": [
@@ -3900,7 +3900,7 @@ const registry = {
           "id": "record_count",
           "name": "record_count",
           "label": "Combined record count",
-          "requirement": "Store the number of combined rows in record_count.",
+          "requirement": "Count all rows in combined and store that number in record_count.",
           "kind": "value",
           "feedback": "Count records in the requested output, rather than non-missing cells or source rows.",
           "checkIndex": true,
@@ -3910,8 +3910,8 @@ const registry = {
       "solution": "batch = second.rename(columns={'duration': 'minutes'}).copy()\nbatch['minutes'] = pd.to_numeric(batch.minutes)\ncombined = pd.concat([df, batch[df.columns]], ignore_index=True)\nrecord_count = len(combined)\ncombined",
       "hints": {
         "think": "Are similarly named fields expressing the same quantity in the same unit?",
-        "tools": "rename(), to_numeric(), concat(), sort_values() and reset_index()",
-        "approach": "Align the second batch’s name and numeric type, append all rows, then order the handoff."
+        "tools": "rename(), to_numeric() and concat()",
+        "approach": "Align the second batch’s name and numeric type, append all rows using df column order, then count the combined records."
       },
       "prerequisites": [
         "W02",
@@ -3930,7 +3930,7 @@ const registry = {
       ],
       "deliverableType": "Combined handoff",
       "chart": null,
-      "explanation": "Align the second batch’s name and numeric type, append all rows, then order the handoff.",
+      "explanation": "Align the second batch’s name and numeric type, append all rows using df column order, then count the combined records.",
       "alternative": "Align names and types in separate copies before concatenation; the order of those independent preparations may differ.",
       "setup": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Pending', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Returned', 61, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Pending', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Returned', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 33, 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Pending', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Returned', 62, 1.9, '2026-04-06'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Supplied input: second (12 rows)\nsecond = pd.DataFrame(\n    [\n        ('D112', 'North', 'Returned', 1.9, '2026-04-06', '62'),\n        ('D111', 'West', 'Pending', 1.2, '2026-04-06', '26'),\n        ('D110', 'East', 'Delivered', 4, '2026-04-05', '49'),\n        ('D109', 'North', 'Delivered', 3.3, '2026-04-05', '33'),\n        ('D108', 'West', 'Returned', 2.6, '2026-04-04', '29'),\n        ('D107', 'East', 'Pending', 1.9, '2026-04-04', '72'),\n        ('D106', 'North', 'Delivered', 1.2, '2026-04-03', '37'),\n        ('D105', 'West', 'Delivered', 4, '2026-04-03', '45'),\n        ('D104', 'East', 'Returned', 3.3, '2026-04-02', '61'),\n        ('D103', 'North', 'Pending', 2.6, '2026-04-02', '25'),\n        ('D102', 'West', 'Delivered', 1.9, '2026-04-01', '48'),\n        ('D101', 'East', 'Delivered', 1.2, '2026-04-01', '32'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'weight_kg', 'date', 'duration'],\n)",
       "starter": "import pandas as pd\n\n# Supplied input: df (12 rows)\ndf = pd.DataFrame(\n    [\n        ('D001', 'East', 'Delivered', 32, 1.2, '2026-04-01'),\n        ('D002', 'West', 'Delivered', 48, 1.9, '2026-04-01'),\n        ('D003', 'North', 'Pending', 25, 2.6, '2026-04-02'),\n        ('D004', 'East', 'Returned', 61, 3.3, '2026-04-02'),\n        ('D005', 'West', 'Delivered', 45, 4, '2026-04-03'),\n        ('D006', 'North', 'Delivered', 37, 1.2, '2026-04-03'),\n        ('D007', 'East', 'Pending', 72, 1.9, '2026-04-04'),\n        ('D008', 'West', 'Returned', 29, 2.6, '2026-04-04'),\n        ('D009', 'North', 'Delivered', 33, 3.3, '2026-04-05'),\n        ('D010', 'East', 'Delivered', 49, 4, '2026-04-05'),\n        ('D011', 'West', 'Pending', 26, 1.2, '2026-04-06'),\n        ('D012', 'North', 'Returned', 62, 1.9, '2026-04-06'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'minutes', 'weight_kg', 'date'],\n)\n\n# Supplied input: second (12 rows)\nsecond = pd.DataFrame(\n    [\n        ('D112', 'North', 'Returned', 1.9, '2026-04-06', '62'),\n        ('D111', 'West', 'Pending', 1.2, '2026-04-06', '26'),\n        ('D110', 'East', 'Delivered', 4, '2026-04-05', '49'),\n        ('D109', 'North', 'Delivered', 3.3, '2026-04-05', '33'),\n        ('D108', 'West', 'Returned', 2.6, '2026-04-04', '29'),\n        ('D107', 'East', 'Pending', 1.9, '2026-04-04', '72'),\n        ('D106', 'North', 'Delivered', 1.2, '2026-04-03', '37'),\n        ('D105', 'West', 'Delivered', 4, '2026-04-03', '45'),\n        ('D104', 'East', 'Returned', 3.3, '2026-04-02', '61'),\n        ('D103', 'North', 'Pending', 2.6, '2026-04-02', '25'),\n        ('D102', 'West', 'Delivered', 1.9, '2026-04-01', '48'),\n        ('D101', 'East', 'Delivered', 1.2, '2026-04-01', '32'),\n    ],\n    columns=['delivery_id', 'depot', 'status', 'weight_kg', 'date', 'duration'],\n)\n\n# Your work\n\n",
@@ -4058,7 +4058,7 @@ const registry = {
           "label": "One row per measurement",
           "requirement": "Create long with record_id, measure and value, using steps and minutes only. Include both measurements for every source record, including unknown values.",
           "kind": "frame",
-          "feedback": "Keep each record connected to both requested measurements, with the stated labels and ordering.",
+          "feedback": "Keep each record connected to both requested measurements and their stated labels, including unknown values.",
           "checkIndex": false,
           "format": "DataFrame",
           "unorderedRowsBy": [
@@ -4271,7 +4271,7 @@ const registry = {
           "label": "Billing handoff",
           "requirement": "Create clean after keeping the first row per order_id. Trim and lowercase drink; parse price as numeric and exclude unknown prices. Keep only order_id, drink and price.",
           "kind": "frame",
-          "feedback": "Check duplicate IDs, normalised drink labels, valid prices, requested columns and reset ordering.",
+          "feedback": "Check first occurrences of duplicate IDs, normalised drink labels, valid prices and the requested columns.",
           "checkIndex": false,
           "format": "DataFrame",
           "unorderedRowsBy": [
@@ -4292,7 +4292,7 @@ const registry = {
       "solution": "clean = df.drop_duplicates(subset=['order_id'], keep='first').copy()\nclean['drink'] = clean.drink.str.strip().str.lower()\nclean['price'] = pd.to_numeric(clean.price, errors='coerce')\nclean = clean.dropna(subset=['price'])[['order_id', 'drink', 'price']]\nremoved_count = len(df) - len(clean)\nclean",
       "hints": {
         "think": "Which losses are intentional policy decisions rather than accidental data loss?",
-        "tools": "drop_duplicates(), str.strip(), str.lower(), to_numeric(), dropna() and sort_values()",
+        "tools": "drop_duplicates(), str.strip(), str.lower(), to_numeric() and dropna()",
         "approach": "Remove confirmed extra copies, standardise labels, validate prices and prepare only the requested handoff fields."
       },
       "prerequisites": [
@@ -4740,7 +4740,7 @@ const registry = {
           "id": "fig",
           "name": "fig",
           "label": "Figure",
-          "requirement": "Create fig showing delivery frequencies across at least two contiguous numeric duration intervals. Include every eligible duration. Add a meaningful title and measure labels, and display the figure.",
+          "requirement": "Create fig showing delivery frequencies across at least two contiguous numeric duration intervals. Include every eligible duration and start the frequency axis at zero. Add a meaningful title and measure labels, and display the figure.",
           "kind": "figure",
           "feedback": "Check the plotted population, quantities, labels and scale.",
           "checkIndex": false,
@@ -6295,7 +6295,7 @@ const registry = {
           "id": "fig",
           "name": "fig",
           "label": "Figure",
-          "requirement": "Create fig with two panels: bars comparing drink counts, then price frequencies across at least two contiguous numeric intervals. Bar heights must start at zero. Both panels must use population. Title and label both views, and display the figure.",
+          "requirement": "Create fig with two panels: bars comparing drink counts, then price frequencies across at least two contiguous numeric intervals. Both frequency axes must start at zero. Both panels must use population. Title and label both views, and display the figure.",
           "kind": "figure",
           "feedback": "Check the plotted population, quantities, labels and scale.",
           "checkIndex": false,

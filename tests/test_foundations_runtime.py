@@ -12,14 +12,15 @@ C=json.loads(subprocess.check_output(['node','-e','console.log(JSON.stringify(re
 namespace={}
 exec((ROOT/'table-serialization.py').read_text()+'\n'+(ROOT/'foundations/runtime.py').read_text(),namespace)
 run=namespace['run_foundation']
-def request(lesson,round_index=0,code=None,check=True):
+W=json.loads(subprocess.check_output(['node','-e','const C=require("./foundations/curriculum.js"), W=require("./foundations/workspace.js");console.log(JSON.stringify(Object.fromEntries(C.lessons.flatMap(l=>l.rounds.map(r=>[r.id,W.code(C,r,r.solution)])))))'],cwd=ROOT))
+def request(lesson,round_index=0,code=None,check=True,explicit_setup=False):
     lesson=next(l for l in C['lessons'] if l['id']==lesson)
     ex=lesson['rounds'][round_index]
     previous=os.getcwd()
     with tempfile.TemporaryDirectory() as directory:
         try:
             os.chdir(directory)
-            return run(dict(exercise=ex,columns=C['datasets'][ex['dataset']]['columns'],code=ex['solution'] if code is None else code,check=check))
+            return run(dict(exercise=ex,columns=C['datasets'][ex['dataset']]['columns'],code=ex['solution'] if code is None else code,check=check,explicitSetup=explicit_setup))
         finally:
             os.chdir(previous)
 start=time.time();failures=[];count=0
@@ -92,13 +93,13 @@ assert not request('V16',code='fig, ax = plt.subplots()\nax.set(title="Study clu
 plot=next(l for l in C['lessons'] if l['id']=='V16')['rounds'][0]['solution']
 assert not request('V16',code=plot.replace('data=df,','data=df.head(2),'))['passed']
 assert not request('V16',code=plot.replace('x="hours", y="score"','x="score", y="hours"'))['passed']
-assert not request('V16',code=plot.replace('title="Study club"','title="Incorrect"'))['passed']
+assert not request('V16',code=plot.replace('plt.show()', 'ax.set_title("Incorrect")\nplt.show()'))['passed']
 assert not request('V30',code=next(l for l in C['lessons'] if l['id']=='V30')['rounds'][0]['solution'].replace('bottom=first','bottom=0'))['passed']
 for id,old,new in [('V16','sns.scatterplot(data=df, x="hours", y="score", ax=ax)','ax.scatter(df["hours"], df["score"])'),('V04','sns.histplot(data=df, x="hours", bins=4, ax=ax)','ax.hist(df["hours"], bins=4)')]:
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][0]
- assert not request(id,code=ex['solution'].replace(old,new))['passed']
+ assert request(id,code=ex['solution'].replace(old,new))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V16')['rounds'][2]
-assert request('V16',2,code=ex['solution'].replace('ax.scatter(selected["minutes"], selected["rating"])','sns.scatterplot(data=selected, x="minutes", y="rating", ax=ax)'))['passed']
+assert request('V16',2,code=ex['solution'].replace('sns.scatterplot(data=selected, x="minutes", y="rating", ax=ax)','sns.scatterplot(x=selected["minutes"], y=selected["rating"], ax=ax)'))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='W24')['rounds'][0]
 assert request('W24',code='relationship = "many_to_one"\n'+ex['solution'].replace('validate="many_to_one"','validate=relationship'))['passed']
 # Syntax/runtime errors remain recoverable, and mutations never leak into a new run.
@@ -132,9 +133,9 @@ for id in ['V16','V18','V08','V09','V29']:
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][2]
  assert request(id,2)['passed']
  if id=='V16':
-  alternate=ex['solution'].replace('ax.scatter(selected["minutes"], selected["rating"])','sns.scatterplot(data=selected.sort_values("rating"), x="minutes", y="rating", ax=ax)')
+  alternate=ex['solution'].replace('sns.scatterplot(data=selected, x="minutes", y="rating", ax=ax)','ax.scatter(selected.sort_values("rating")["minutes"], selected.sort_values("rating")["rating"])')
  elif id=='V18':
-  alternate=ex['solution'].replace('ax.plot(selected["day"], selected["visits"], marker="o")','sns.lineplot(data=selected, x="day", y="visits", estimator=None, marker="o", ax=ax)')
+  alternate=ex['solution'].replace('sns.lineplot(data=selected, x="day", y="visits", estimator=None, marker="o", ax=ax)','ax.plot(selected["day"], selected["visits"], marker="o")')
  else:
   series='counts' if id=='V08' else 'means'
   alternate=ex['solution'].replace(f'ax.bar({series}.index, {series}.values)',f'sns.barplot(x={series}.index, y={series}.values, errorbar=None, ax=ax)')
@@ -153,12 +154,14 @@ for id,round_index,series in [('V08',2,'counts'),('V09',2,'means'),('V29',0,'mea
                               ('V36',2,'means'),('V37',1,'totals')]:
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][round_index]
  original=f'ax.bar({series}.index, {series}.values)'
- assert original in ex['solution'],(id,round_index)
- reordered=ex['solution'].replace(original,f'ax.bar({series}.index[::-1], {series}.values[::-1])')
- assert request(id,round_index,code=reordered)['passed'],(id,round_index,'reordered')
+ explicit_setup=original not in ex['solution']
+ source=W[ex['id']] if explicit_setup else ex['solution']
+ assert original in source,(id,round_index)
+ reordered=source.replace(original,f'ax.bar({series}.index[::-1], {series}.values[::-1])')
+ assert request(id,round_index,code=reordered,explicit_setup=explicit_setup)['passed'],(id,round_index,'reordered')
  if id!='V08':  # Its two included genres happen to have equal counts.
-  wrong=ex['solution'].replace(original,f'ax.bar({series}.index, {series}.values[::-1])')
-  assert not request(id,round_index,code=wrong)['passed'],(id,round_index,'swapped values')
+  wrong=source.replace(original,f'ax.bar({series}.index, {series}.values[::-1])')
+  assert not request(id,round_index,code=wrong,explicit_setup=explicit_setup)['passed'],(id,round_index,'swapped values')
 ex=next(l for l in C['lessons'] if l['id']=='V08')['rounds'][0]
 assert request('V08',code=ex['solution'].replace('x="flavour", ax=ax','x="flavour", order=["mint", "fruity", "chocolate"], ax=ax'))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V09')['rounds'][1]

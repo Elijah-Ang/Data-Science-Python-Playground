@@ -798,6 +798,310 @@ function clarify(c) {
   if(/preserve df|df unchanged|without (?:modifying|overwriting).*df|keep df unchanged/i.test(r.task))r.preserveData=true;
   if(l.id!=='V37')r.steps=r.task.split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean);
  }
+ // Reviewed clarity examples: retain the existing outputs and grader requirements.
+ const reviewedTasks = {
+  I02:[
+   ['Use the supplied df. Call head() to display its first two rows, keeping every column.','Leave the resulting DataFrame on the final line so it appears in Output. Success means the two beginning rows of the Candy shop table are shown.'],
+   ['An import may have been cut short. Use tail() on df to inspect its last two rows.','Display that table on the final line. Success means you can read the ending records and all their columns.'],
+   ['Take a spot check from anywhere in df: use sample() for three rows with random_state=1.','Display the sampled table on the final line. The same seed should give the same three records each time.']
+  ],
+  W25:[
+   ['Use the supplied `first` and `second` tables. Call pd.concat() to append `second` below `first`, including every row.','Use `ignore_index=True` for consecutive row labels starting at zero. Display the finished DataFrame on the final line. Its name is your choice; Check answer reads the displayed value.'],
+   ['The two supplied café batches use the same columns. Append `second` below `first`, keeping their original row labels.','Each batch starts at zero, so repeated row labels are expected and let an audit trace the batch positions. Display the finished table on the final line; its variable name is your choice.'],
+   ['Append the supplied `first` and `second` tables, then keep records whose `age` is above 2.','Sort those records by `age`, largest first, and reset to consecutive row labels. Display the finished table on the final line; its variable name is your choice.']
+  ],
+  V03:[
+   ['Use df to create a scatter plot with `hours` on x and `score` on y. Use scatterplot() and map `club` to colour only.','Keep point sizes and marker shapes constant. Set title "Study club", x label "hours" and y label "score".','Finish the Figure and display it with plt.show(). Success means the points and colour groups use those columns and the labels match.'],
+   ['Use df to create a scatter plot of `temperature` on x against `humidity` on y. Map `sky` to colour only.','Keep identical marker shapes and sizes. Set title "Weather diary", x label "temperature" and y label "humidity".','Finish the Figure and display it with plt.show(). The colours should distinguish sky categories without changing the marker shape or size.'],
+   ['First select df games with `minutes` at least 20. Plot `minutes` on x against `rating` on y and map `genre` to colour only.','Keep point sizes and shapes constant. Set title "Board games", x label "minutes" and y label "rating".','Finish the Figure and display it with plt.show(). The chart should show only the selected games, with those labels.']
+  ]
+ };
+ for(const [id,rounds] of Object.entries(reviewedTasks))rounds.forEach((steps,i)=>{const r=byId[id].rounds[i];r.steps=steps;r.task=steps.join(' ');});
+ const existingBriefs=new Map(c.lessons.flatMap(l=>l.rounds.map(r=>[r.id,{task:r.task,steps:r.steps}])));
+ // Canvas, labels and data mapping are separate prerequisite skills. The
+ // labels lesson supplies its plotting scaffold before scatter mapping is taught.
+ byId.V01.rounds[0].task='Create one empty Figure with one Axes at 6 by 4 inches. Finish with fig.tight_layout() and display it with plt.show().';
+ byId.V01.rounds[0].solution='import matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nfig.tight_layout()\nplt.show()';
+ byId.V01.rounds[0].starter=byId.V01.rounds[0].solution.replace('plt.subplots','plt.____');
+ byId.V01.syntax=[['fig, ax =','Store the whole canvas and its plotting area separately.'],['plt.subplots(...)','Create the Figure and Axes.'],['figsize=(6, 4)','Make the canvas 6 inches wide and 4 inches high.'],['fig.tight_layout()','Adjust spacing within the Figure.'],['plt.show()','Display the Figure in Output.']];
+ byId.V01.syntaxCode='fig, ax = plt.subplots(figsize=(6, 4))';
+ byId.V01.guide.choices=[['fig, ax = plt.subplots(...)','Create and store the canvas and its plotting area.'],['figsize=(6, 4)','Set width and height in inches.'],['fig.tight_layout(); plt.show()','Adjust spacing and display the Figure.']];
+ byId.V01.guide.note='This first exercise creates an empty canvas. The next lesson names a prepared chart; the scatter lesson then adds and maps observations.';
+ byId.V02.rounds[0].solution=byId.V02.rounds[0].solution.replace('title="Study club", xlabel="hours", ylabel="score"','title="Study hours and scores", xlabel="Hours studied", ylabel="Score"');
+ byId.V02.rounds[0].task='The starter has already drawn df hours against score. Finish that prepared chart: title "Study hours and scores", x label "Hours studied" and y label "Score". Keep its paired observations. Finish the Figure and display it with plt.show().';
+ byId.V02.rounds[0].starter=byId.V02.rounds[0].solution.replace('ax.set(title="Study hours and scores", xlabel="Hours studied", ylabel="Score")','ax.set(____)');
+ byId.V02.rounds[1].task='The starter draws df temperature against humidity. Finish its labels so they communicate the question and units: title "Does humidity vary with temperature?", x label "Temperature (°C)" and y label "Humidity (%)". Keep every observation, finish the Figure and display it with plt.show().';
+ byId.V02.rounds[2].task='The starter selects df games lasting at least 20 minutes and plots minutes against rating. Finish its labels so the restricted population is clear: title "Games lasting at least 20 minutes", x label "Minutes" and y label "Rating". Keep those paired observations, finish the Figure and display it with plt.show().';
+ for(const r of byId.V02.rounds.slice(1))r.starter=r.solution.replace(/ax\.set\([\s\S]*?\)\nfig\.tight_layout\(\)/,'# Add the requested title and axis labels here\n\nfig.tight_layout()');
+ byId.V02.guide.note='The starter supplies the plotted observations. Labels name the question, units and selected population; changing a label does not rename a data column.';
+ byId.V02.guide.choices=[['ax.set(title=..., xlabel=..., ylabel=...)','Set the title and both labels on the prepared plotting area.'],['ax.set_title(...); ax.set_xlabel(...); ax.set_ylabel(...)','Set the same text one label at a time.'],['fig.tight_layout(); plt.show()','Arrange the labels and display the finished Figure.']];
+ byId.V02.syntaxCode='ax.set(title="Study hours and scores", xlabel="Hours studied", ylabel="Score")';
+ // The introductory examples consistently use Seaborn for data-aware charts.
+ for(const id of ['V16','V34'])byId[id].rounds[2].solution=byId[id].rounds[2].solution.replace('ax.scatter(selected["minutes"], selected["rating"])','sns.scatterplot(data=selected, x="minutes", y="rating", ax=ax)');
+ byId.V18.rounds[2].solution=byId.V18.rounds[2].solution.replace('ax.plot(selected["day"], selected["visits"], marker="o")','sns.lineplot(data=selected, x="day", y="visits", estimator=None, marker="o", ax=ax)');
+ byId.I12.rounds[1].hint='sort_values("tip", ascending=True) orders whole rows from the smallest tip to the largest.';
+ byId.W24.rounds[1].hint='Use how="inner" to keep matching size keys only; validate="many_to_one" checks that each lookup key is unique.';
+ for(const r of byId.V33.rounds)r.hint=r.label==='Follow'?'relplot creates its own Figure; col splits records by the named category and height sets each panel height.':r.label==='Change'?'catplot(kind="box") compares distributions within each station panel; x names the category and y the measurement.':'displot(kind="hist", bins=4) draws four-bin distributions separately for each genre; height=3 sets each panel height.';
+ // Plot answers are checked by what they draw. Library names in a task identify
+ // the demonstrated route; equivalent Matplotlib and other Python routes work.
+ const descriptions={scatterplot:'draw a scatter plot',histplot:'draw a histogram',kdeplot:'draw a density curve',ecdfplot:'draw an ECDF',countplot:'draw category counts',barplot:'draw summary bars',pointplot:'draw point estimates',boxplot:'draw a box plot',violinplot:'draw a violin plot',stripplot:'draw raw points',swarmplot:'draw a swarm plot',regplot:'draw a regression plot',residplot:'draw a residual plot'};
+ for(const l of c.lessons)for(const r of l.rounds){
+  if(r.retrieves)continue;
+  if(r.target==='plot'){
+   r.requiredCalls=[];r.requiredKeywords=[];
+   r.task=r.task.replace(/ Use: [^.]+\(\)(?:, [^.]+\(\))*\./g,'');
+   for(const [method,description] of Object.entries(descriptions))r.task=r.task.replace(new RegExp('call sns\\.'+method,'g'),description).replace(new RegExp('call a ([^.]*)sns\\.'+method,'g'),'draw a $1'+method.replace(/plot$/,''));
+   r.task=r.task.replace(/with sns\.scatterplot/g,'as a scatter plot').replace(/Use scatterplot\(\) and /g,'');
+   r.task=r.task.replace(/call a 4-bin sns\.histplot/g,'draw a four-bin histogram').replace(/plot sns\.heatmap of/g,'draw a heatmap of').replace(/call heatmap/g,'draw a heatmap');
+   const rules=r.plot={...r.plot};
+   rules.textCaseInsensitive=true;
+   if(!/figsize|\d+ by \d+ inches/.test(r.task))delete rules.size;
+   if(/scatter|sns\.scatterplot|ax\.scatter/.test(r.solution)&&!rules.colors)rules.semantic='scatter';
+   if(/stripplot|swarmplot/.test(r.solution))rules.semantic='scatter';
+   if(/ax\.bar\(|countplot\(|barplot\(/.test(r.solution)){rules.categorical=true;rules.barGeometry=true;}
+   if(/jitter=False/.test(r.solution))delete rules.jitter;
+   if(/swarmplot/.test(r.solution))rules.swarm=true;
+   if(/x="humidity", y="sky"/.test(r.solution))rules.categoryAxis='y';
+   if(/marker="o"/.test(r.solution))rules.markers=true;
+   if(/markers \("o"\)|"o" markers/.test(r.task))rules.markerShape='o';
+   if(rules.colors){
+    rules.semantic='encodedScatter';rules.legendOrder=/Order hue and style/.test(r.task);rules.fixedPalette=/palette="colorblind"/.test(r.task);
+    rules.legendTitle=/legend title/.test(r.task);
+    rules.legendFields=[...new Set([...r.solution.matchAll(/(?:hue|style|size)="([^"]+)"/g)].map(match=>match[1]))];
+    if(!r.task.includes('legend'))r.task+=' Include a legend explaining every mapped variable.';
+   }
+   if(/linestyle="--"/.test(r.solution))rules.lineStyles=true;
+   if(/ecdfplot\(/.test(r.solution))rules.lineDrawstyle=true;
+   if(/annotate\(/.test(r.solution))rules.annotationDetails=true;
+   if(/heatmap\(/.test(r.solution)){rules.annotations=true;rules.matrixLabels=true;rules.palette=true;}
+   if(l.id==='V22')rules.numericAnnotations=true;
+   if(/boxplot\(|kind="box"/.test(r.solution))rules.boxSummary=true;
+   if(/regplot\(/.test(r.solution))rules.fitLine=true;
+   if(l.id==='V24')rules.layout=true;
+   if(l.id==='V33')rules.panelHeight=3;
+   if(l.id==='V26'&&r.label==='Follow'){delete rules.limits;rules.zeroBaseline=true;}
+  }
+  if(l.id==='V35')r.textCaseInsensitive=true;
+  if(['I05','I18'].includes(l.id)||(l.id==='I16'&&r.label!=='Transfer')||(l.id==='I22'&&r.label!=='Transfer'))r.unorderedIndex=true;
+  if(l.id==='I21'&&r.label==='Follow'){r.unorderedIndex=true;r.unorderedColumns=true;}
+  if(l.id==='W27')r.unorderedColumnsAfter=r.label==='Follow'?4:r.label==='Change'?3:2;
+  if(['W12','W14','W26','W31'].includes(l.id))r.strictDtype=false;
+  if(l.id==='W13'){r.strictDtype=false;r.dtypeRules={column:r.label==='Follow'?'flavour':r.label==='Change'?'drink':'age',dtype:r.label==='Follow'?'category':r.label==='Change'?'string':'Int64'};}
+  if(l.id==='W30'&&r.label==='Transfer')r.compareWorkingDf=true;
+  r.steps=existingBriefs.get(r.id)?.task===r.task?existingBriefs.get(r.id).steps:r.task.split(/(?<=[.!?])\s+(?=[A-Z])/).filter(Boolean);
+ }
+ // Author the learner's layer after semantic rules have read the complete chart.
+ // Setup is shown in the same editable Python cell; solutions belong only under
+ // Your work. Prepared marks retain their data, labels and original plot rules.
+ const finishFocusedPlot='fig.tight_layout()\nplt.show()';
+ function chartLayers(r){
+  const code=r.solution.replace(/^import (?:matplotlib\.pyplot as plt|seaborn as sns)\n/gm,'').trim();
+  const canvasEnd=code.indexOf('\n');
+  const labelsStart=code.indexOf('\nax.set(')+1;
+  const labelsEnd=code.indexOf('\nfig.tight_layout()',labelsStart);
+  if(canvasEnd<0||labelsStart<=0||labelsEnd<0)throw new Error('Missing prepared chart layers: '+r.id);
+  return {canvas:code.slice(0,canvasEnd),chart:code.slice(0,labelsStart).trim(),marks:code.slice(canvasEnd+1,labelsStart).trim(),labels:code.slice(labelsStart,labelsEnd)};
+ }
+ function focusedRound(id,index,setup,work,steps,hint,setupDescription,starter='# Write your answer here\n'){
+  const r=byId[id].rounds[index];
+  Object.assign(r,{setup,solution:work,starter,steps,task:steps.join(' '),hint,setupDescription});
+ }
+ const labelBriefs=[
+  ['The supplied setup creates fig and ax and draws every df hours/score pair.','Set title "Study hours and scores", x label "Hours studied" and y label "Score".','Keep the prepared observations; arrange the labels with fig.tight_layout() and display with plt.show().'],
+  ['The supplied setup draws every df temperature/humidity pair on ax.','Set title "Does humidity vary with temperature?", x label "Temperature (°C)" and y label "Humidity (%)".','Keep the prepared observations; arrange the labels and display the finished Figure.'],
+  ['The supplied setup selects games lasting at least 20 minutes and draws their minutes/rating pairs on ax.','Make that population clear: title "Games lasting at least 20 minutes", x label "Minutes" and y label "Rating".','Keep the selected observations; arrange the labels and display the finished Figure.']
+ ];
+ byId.V02.rounds.forEach((r,i)=>{
+  const p=chartLayers(r);
+  focusedRound('V02',i,p.chart,p.labels+'\n'+finishFocusedPlot,labelBriefs[i],[
+   'Use ax.set to name the prepared chart and both measurements, then arrange and display fig.',
+   'The setup already supplies the points. Put °C and % in the displayed axis labels, then arrange and display fig.',
+   'The setup already supplies the filtered points. Name that population in the title and label its measurements.'
+  ][i],[
+   'A prepared hours/score scatter with fig and ax.',
+   'A prepared temperature/humidity scatter with fig and ax.',
+   'A prepared minutes/rating scatter for games lasting at least 20 minutes.'
+  ][i],i===0?'ax.set(____)\n'+finishFocusedPlot:'# Set the requested title and axis labels, then arrange and display fig\n');
+ });
+ byId.V02.explanation='The supplied setup creates the Figure, Axes and plotted observations. Your work finishes that chart with a meaningful title and labels that name the measurements, units and selected population. Use ax methods for the labels, fig.tight_layout() for spacing and plt.show() for display.';
+ byId.V02.guide.note='The supplied setup draws the observations. Labels name the question, units and selected population; changing a label does not rename a data column.';
+ byId.V02.syntax=[['ax.set(title=..., xlabel=..., ylabel=...)','Name the prepared chart and both axes.'],['ax.set_title(...); ax.set_xlabel(...); ax.set_ylabel(...)','Set the same labels one at a time.'],['fig.tight_layout()','Arrange the labels on the supplied Figure.'],['plt.show()','Display the finished Figure.']];
+ byId.V02.syntaxCode='ax.set(title="Study hours and scores", xlabel="Hours studied", ylabel="Score")';
+ const scatterBriefs=[
+  ['The supplied setup creates fig and an empty ax with title "Study club", x label "hours" and y label "score".','Add one point for every df record: hours horizontally and score vertically, keeping each row’s pair together.','Arrange and display the completed Figure.'],
+  ['The supplied setup creates fig and an empty ax with title "Weather diary", x label "humidity" and y label "temperature".','Add one point for every df record: humidity horizontally and temperature vertically.','Keep each row’s pair together; arrange and display the completed Figure.'],
+  ['The supplied setup creates fig and an empty ax with title "Board games", x label "minutes" and y label "rating".','Select df games lasting at least 20 minutes, then show minutes horizontally and rating vertically for those records only.','Keep both coordinates from the same selected row; arrange and display the completed Figure.']
+ ];
+ byId.V16.rounds.forEach((r,i)=>{
+  const p=chartLayers(r);
+  focusedRound('V16',i,p.canvas+'\n'+p.labels,p.marks+'\n'+finishFocusedPlot,scatterBriefs[i],[
+   'Map hours to x and score to y from the same df; draw on the supplied ax.',
+   'The supplied labels identify the new orientation: humidity is x and temperature is y.',
+   'Create selected with minutes >= 20, then read both coordinates from selected when drawing on ax.'
+  ][i],[
+   'An empty Figure and Axes, labelled for hours against score.',
+   'An empty Figure and Axes, labelled for humidity against temperature.',
+   'An empty Figure and Axes, labelled for selected games’ minutes against rating.'
+  ][i],i===0?'sns.scatterplot(data=df, x=____, y=____, ax=ax)\n'+finishFocusedPlot:'# Map the requested paired observations onto the supplied ax\n');
+ });
+ byId.V16.explanation='The supplied setup creates and labels an empty Figure and Axes. Your work maps the two numeric measurements to point positions; each point must pair x and y from one row. Filter first when the requested population is restricted. Scatter plots show association, clusters and unusual observations; they do not establish causation, and a tiny cloud does not establish a dependable relationship.';
+ byId.V16.guide.choices=[['data=df, x="hours", y="score"','Read both coordinates from the same supplied table.'],['ax=ax','Draw the points on the supplied, already labelled Axes.'],['Filter, then plot','Use the selected table for both coordinates so the population stays consistent.'],['fig.tight_layout(); plt.show()','Arrange and display the completed Figure.']];
+ byId.V16.guide.note='The setup supplies the canvas and finished labels; your work supplies the paired observations. A scatter plot can suggest association, clusters or unusual points, but cannot establish causation.';
+ byId.V16.syntax[4]=['ax=ax','Draw on the supplied, already labelled Axes.'];
+ const scaleBriefs=[
+  ['The supplied setup draws every load-test request/response pair and labels the chart "Service load test", "Requests" and "Response time (ms)".','Use a logarithmic x-axis, a linear y-axis beginning at zero and x tick labels rotated by 30 degrees.','Retain every observation; arrange and display fig.'],
+  ['The supplied setup draws every weather temperature/humidity pair and labels the chart "Weather diary", "Temperature (°C)" and "Humidity (%)".','Give this dashboard panel linear limits of 20 to 35 °C on x and 0 to 100% on y.','Keep all observations visible; arrange and display fig.'],
+  ['The supplied setup draws every game’s minutes/rating pair and labels the chart "Board games", "minutes" and "Rating (0–5)".','Keep linear axes and set the rating axis from 0 to 5, its stated scale.','Retain the full dataset and keep every observation visible; arrange and display fig.']
+ ];
+ byId.V26.rounds.forEach((r,i)=>{
+  const p=chartLayers(r),start=p.marks.search(/^ax\.set_(?:xscale|yscale|xlim|ylim)\(/m);
+  if(start<0)throw new Error('Missing axis work: '+r.id);
+  const work=p.marks.slice(start)+'\n'+finishFocusedPlot;
+  focusedRound('V26',i,p.canvas+'\n'+p.marks.slice(0,start).trim()+'\n'+p.labels,work,scaleBriefs[i],[
+   'Set xscale to "log"; set only the lower y bound to 0 and rotate x tick labels by 30 degrees.',
+   'Use ax.set_xlim(20, 35) and ax.set_ylim(0, 100) on the prepared chart.',
+   'Use ax.set_ylim(0, 5); retain the supplied points and their linear scales.'
+  ][i],[
+   'A labelled load-test scatter with automatic linear axes.',
+   'A labelled weather scatter with automatic linear axes.',
+   'A labelled game scatter containing every record, with automatic linear axes.'
+  ][i],i===0?work.replace('ax.set_xscale("log")','ax.set_xscale(____)'):'# Set the requested axis scale or limits, then arrange and display fig\n');
+ });
+ byId.V26.explanation='The supplied chart already contains and labels the paired observations. Your work changes the axis scale, visible limits or tick rotation. A log scale represents multiplicative ratios and requires positive values; limits can hide evidence. Retain the requested population and keep all observations visible.';
+ byId.V26.guide.note='The supplied charts start with automatic linear axes. Change their scale or range for the stated purpose while retaining the observations, labels and units. Common panel limits support fair comparison.';
+ byId.V26.syntax=[['ax.set_xscale("log")','Use multiplicative spacing for the positive request counts.'],['ax.set_ylim(bottom=0)','Start y at zero while keeping its upper bound automatic.'],['ax.tick_params(axis="x", labelrotation=30)','Rotate x tick labels by 30 degrees.'],['ax.set_xlim(20, 35) / ax.set_ylim(0, 100)','Use explicit, common panel ranges.'],['fig.tight_layout(); plt.show()','Arrange and display the adjusted Figure.']];
+ byId.V26.syntaxLater=['ax.set_xlim(20, 35) / ax.set_ylim(0, 100)'];
+ byId.V26.syntaxCode='ax.set_xscale("log")\nax.set_ylim(bottom=0)\nax.tick_params(axis="x", labelrotation=30)';
+ const referenceBriefs=[
+  ['The supplied setup draws every hours/score pair and supplies title "Study club", x label "hours" and y label "score".','Add dashed reference lines at median hours vertically and median score horizontally.','Keep the supplied observations and labels; arrange and display fig.'],
+  ['The supplied setup draws every temperature/humidity pair and supplies title "Weather diary", x label "temperature" and y label "humidity".','Add just one dashed horizontal line at the mean humidity.','Keep the supplied observations and labels; arrange and display fig.'],
+  ['The supplied setup draws every minutes/rating pair and supplies title "Board games", x label "minutes" and y label "rating".','Add one dashed horizontal line at the review threshold rating=4.','This chosen benchmark is not an estimated mean or an automatic decision rule. Keep every observation and the supplied labels; arrange and display fig.']
+ ];
+ byId.V27.rounds.forEach((r,i)=>{
+  const p=chartLayers(r),start=p.marks.search(/^ax\.ax(?:h|v)line\(/m);
+  if(start<0)throw new Error('Missing reference-line work: '+r.id);
+  const work=p.marks.slice(start)+'\n'+finishFocusedPlot;
+  focusedRound('V27',i,p.canvas+'\n'+p.marks.slice(0,start).trim()+'\n'+p.labels,work,referenceBriefs[i],[
+   'Compute each median from its own measurement; x values need axvline and y values need axhline.',
+   'Mean humidity is a y-axis benchmark: add only ax.axhline(df["humidity"].mean(), linestyle="--").',
+   'The chosen threshold is the y value 4, so add ax.axhline(4, linestyle="--") without estimating it from df.'
+  ][i],'A labelled scatter with every record and no reference lines.',i===0?work.replace('df["hours"].median()','df["hours"].____()'):'# Add the requested benchmark to the prepared ax, then arrange and display fig\n');
+ });
+ byId.V27.explanation='The supplied setup draws and labels the scatter plot. Your work adds the specified benchmark. axhline draws in y data units; axvline draws in x data units. An observed mean, an observed median and a chosen threshold have different meanings; a reference line is not automatically a decision boundary.';
+ byId.V27.guide.note='The supplied chart has no benchmarks. Add only those requested: means and medians come from the relevant measurement; a documented threshold is supplied directly and is not an automatic decision rule.';
+ byId.V27.syntax=[['ax.axvline(df["hours"].median(), linestyle="--")','Add the median hours as a vertical benchmark.'],['ax.axhline(df["score"].median(), linestyle="--")','Add the median score as a horizontal benchmark.'],['linestyle="--"','Draw a dashed line.'],['mean() / median() / supplied value','Use the benchmark with the meaning stated in the task.'],['fig.tight_layout(); plt.show()','Arrange and display the chart with its benchmarks.']];
+ const annotationBriefs=[
+  ['The supplied setup draws every hours/score pair and supplies title "Study club", x label "hours" and y label "score".','Find the row with the highest score and label its paired coordinates "Peak", offset by (8, 8) points with an arrow.','Keep the prepared chart; arrange and display fig.'],
+  ['The supplied setup draws every temperature/humidity pair and supplies title "Weather diary", x label "temperature" and y label "humidity".','Find the row with the lowest humidity and label its paired coordinates "Driest", offset by (8, 8) points with an arrow.','Keep the prepared chart; arrange and display fig.'],
+  ['The supplied setup creates selected from games lasting at least 20 minutes, draws their minutes/rating pairs and supplies title "Board games", x label "minutes" and y label "rating".','Find the highest-rated game within selected and label its paired coordinates "Peak", offset by (8, 8) points with an arrow.','Keep those selected observations; arrange and display fig.']
+ ];
+ byId.V28.rounds.forEach((r,i)=>{
+  const p=chartLayers(r),start=p.marks.search(/^(?:peak|point) = /m);
+  if(start<0)throw new Error('Missing annotation work: '+r.id);
+  const work=p.marks.slice(start)+'\n'+finishFocusedPlot;
+  focusedRound('V28',i,p.canvas+'\n'+p.marks.slice(0,start).trim()+'\n'+p.labels,work,annotationBriefs[i],[
+   'Use idxmax to find the highest-score row; both annotation coordinates must come from that row.',
+   'Use idxmin on humidity, retrieve that row with loc and annotate its temperature/humidity pair.',
+   'Use selected.loc[selected["rating"].idxmax()] so the peak is found inside the supplied report population.'
+  ][i],i===2?'A labelled scatter of games lasting at least 20 minutes, plus selected; no annotation.':'A labelled scatter with every record and no annotation.',i===0?work.replace('xy=(peak["hours"], peak["score"])','xy=(____, ____)'):'# Find the requested row and annotate its paired coordinates on ax\n');
+ });
+ byId.V28.explanation='The supplied setup draws and labels the observations. Your work selects the relevant row and annotates its paired coordinates. xy is the observation in data units; xytext=(8, 8) with textcoords="offset points" positions the label right and above it. An arrow connects the label to the point. Find an extreme within selected when the chart shows a restricted population.';
+ byId.V28.guide.note='The setup supplies the plotted population; your work finds the extreme within that same table. Use selected for the filtered-game practice so the annotation cannot identify an excluded row.';
+ byId.V28.syntax=[['peak = df.loc[df["score"].idxmax()]','Retrieve the whole row with the highest score.'],['ax.annotate("Peak", xy=(x, y), ...)','Label the chosen row’s paired coordinates on the prepared Axes.'],['xytext=(8, 8), textcoords="offset points"','Place the text 8 points right and 8 points above the observation.'],['arrowprops={"arrowstyle": "->"}','Point an arrow at that observation.'],['idxmin()','Find the row label of a minimum in the later practice.'],['fig.tight_layout(); plt.show()','Arrange and display the annotated chart.']];
+ byId.V28.syntaxLater=['idxmin()'];
+ byId.V28.syntaxCode=byId.V28.rounds[0].solution.replace('\n'+finishFocusedPlot,'');
+ // Different export handoffs keep the same strict PNG contract: export a
+ // finished chart, repair its spacing, then complete a report chart's labels.
+ const exportWork='fig.savefig("chart.png", dpi=150, bbox_inches="tight")\nplt.show()';
+ byId.V34.rounds.forEach((r,i)=>{
+  const p=chartLayers(r);
+  if(i===0)focusedRound('V34',i,p.chart+'\n'+p.labels+'\nfig.tight_layout()',exportWork,[
+   'The supplied setup prepares a fully labelled and arranged hours/score scatter: title "Study club", x "hours", y "score".',
+   'Export that same Figure as chart.png at 150 dpi with bbox_inches="tight", then display it with plt.show().'
+  ],'The supplied fig is finished: save it with the requested filename, dpi and tight bounding box before display.','A fully labelled and arranged hours/score scatter, ready to export.',exportWork.replace('fig.savefig','fig.____'));
+  if(i===1)focusedRound('V34',i,p.chart+'\n'+p.labels+'\nfig.subplots_adjust(left=0.02, bottom=0.02)', 'fig.tight_layout()\n'+exportWork,[
+   'The supplied setup prepares a four-bin temperature histogram with title "Weather diary", x "temperature" and y "Count", but leaves cramped margins.',
+   'Keep the title, axis labels and tick labels inside the Figure canvas without clipping; adjust its margins as needed. Export chart.png at 150 dpi with bbox_inches="tight" before displaying it with plt.show().'
+  ],'fig.tight_layout() is one way to fit the title and all labels inside the canvas; manual margin adjustments also work. Save the same Figure before display.','A labelled four-bin temperature histogram with cramped margins.','# Arrange the supplied Figure, export it and then display it\n');
+  if(i===2)focusedRound('V34',i,p.chart+'\nax.set(title="Board games", xlabel="", ylabel="")','ax.set(xlabel="minutes", ylabel="rating")\nfig.tight_layout()\n'+exportWork,[
+   'The supplied setup selects games lasting at least 20 minutes and draws their paired scatter with title "Board games"; both axis labels are blank.',
+   'Complete the report handoff: set x label "minutes" and y label "rating", then arrange the Figure.',
+   'Export that same Figure as chart.png at 150 dpi with bbox_inches="tight" before displaying it with plt.show(). Keep every selected pair.'
+  ],'Finish the missing axis labels and layout before saving the same fig at 150 dpi with a tight bounding box.','A selected-game scatter with its title supplied and both axis labels blank.','# Finish the missing report labels, arrange fig, export it and display it\n');
+ });
+ byId.V34.rounds[1].plot.figureTextFits=true;
+ byId.V34.explanation='Export the specific Figure supplied in the editor. A finished handoff needs only saving and display; an unfinished handoff needs its stated label or spacing repairs first. fig.savefig writes chart.png at the requested 150 dpi, and bbox_inches="tight" includes surrounding labels. Save before plt.show(); the PNG appears as a download beneath Output.';
+ byId.V34.guide.idea='Export a specific Figure after completing the handoff’s labels and layout. Save that Figure before displaying it.';
+ byId.V34.guide.note='Every practice keeps the same PNG contract: chart.png, 150 dpi, a tight bounding box and export before display. Change repairs cramped margins; Transfer finishes missing report labels before export.';
+ byId.V34.syntax=[['fig.savefig("chart.png", dpi=150, bbox_inches="tight")','Export the supplied, finished Figure with the requested file and resolution.'],['dpi=150','Save at 150 pixels per inch.'],['bbox_inches="tight"','Include surrounding labels in the saved image.'],['plt.show()','Display the same Figure after exporting it.'],['fig.tight_layout()','Repair spacing before exporting an unfinished handoff.'],['ax.set(xlabel=..., ylabel=...)','Complete missing report axis labels before export.']];
+ byId.V34.syntaxLater=['fig.tight_layout()','ax.set(xlabel=..., ylabel=...)'];
+ // Repair drafts without recalculating or selecting away their evidence.
+ byId.V36.rounds.forEach((r,i)=>{
+  const p=chartLayers(r),marks=p.marks.replace(/^ax\.set_ylim\(bottom=0\)\n?/m,'').trim();
+  const draft=[
+   'ax.set_ylim(bottom=float(means.min()) * 0.8)',
+   'ax.set_yscale("log")',
+   'ax.set_ylim(1, 25)'
+  ][i];
+  const work=[
+   'ax.set_ylim(bottom=0)',
+   'ax.set_yscale("linear")\nax.set_ylim(bottom=0)',
+   'ax.set_ylim(0, 25)'
+  ][i]+'\n'+finishFocusedPlot;
+  focusedRound('V36',i,p.canvas+'\n'+marks+'\n'+p.labels+'\n'+draft,work,[
+   ['The supplied draft calculates mean price by flavour from every candy record, ranks the means highest first and draws exact bars labelled "Candy shop", "flavour" and "Mean price".','Its y-axis is truncated above zero. Repair the lower bound to zero so bar lengths represent the comparison fairly.','Keep every mean and the ranked order; arrange and display fig.'],
+   ['The supplied draft calculates mean price by size from every café record and draws exact bars labelled "Café orders", "size" and "Mean price".','Its y-axis is logarithmic. Restore a linear y-axis beginning at zero so bar lengths compare those actual means fairly.','Keep every group and its original mean; arrange and display fig.'],
+   ['The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled "Pet adoption", "species" and "Mean weight".','Its y-axis starts at 1. Use the report’s common linear range from 0 to 25; every group mean fits inside that range.','Keep every group and its actual mean weight; arrange and display fig.']
+  ][i],[
+   'The means and ranking are supplied. Set only the lower y bound to zero, keeping the upper bound automatic.',
+   'Use ax.set_yscale("linear") before ax.set_ylim(bottom=0); keep the supplied mean-price bars.',
+   'Use ax.set_ylim(0, 25) to match the report range. Dog mean weight is 20.25, so this upper bound keeps it visible.'
+  ][i],[
+   'A misleading draft of ranked mean-price bars with a truncated y baseline.',
+   'A misleading draft of mean-price bars on a logarithmic y-axis.',
+   'A misleading draft of mean-weight bars with y limits from 1 to 25.'
+  ][i],i===0?work.replace('bottom=0','bottom=____'):'# Repair the draft’s y-axis, then arrange and display fig\n');
+  if(i===2)r.plot={...r.plot,limits:true};
+ });
+ byId.V36.goal='Repair a misleading bar axis while preserving the evidence.';
+ byId.V36.explanation='The supplied drafts already compute the requested group means from the full populations and draw exact bars. Your work repairs their axes while preserving those means and groups. A truncated baseline exaggerates differences in bar length; a logarithmic bar axis changes that length comparison. Use linear axes beginning at zero, and an explicit common range when the report requires one.';
+ byId.V36.guide.idea='Bar length represents magnitude. Repair misleading baselines or scales without changing the values or dropping groups.';
+ byId.V36.guide.choices=[['ax.set_ylim(bottom=0)','Restore a zero baseline while leaving the upper limit automatic.'],['ax.set_yscale("linear")','Restore equal spacing for equal changes before comparing bar lengths.'],['ax.set_ylim(0, 25)','Use a stated common range that starts at zero and contains every group mean.']];
+ byId.V36.guide.note='The setup calculates the means from every supplied record; Follow also ranks them highest first. Preserve those values, groups and requested order while repairing the draft’s axis. Hiding a group or changing a height does not fix a misleading comparison.';
+ byId.V36.syntax=[['ax.set_ylim(bottom=0)','Restore the baseline of the supplied mean-price bars.'],['fig.tight_layout(); plt.show()','Arrange and display the repaired Figure.'],['ax.set_yscale("linear")','Repair a draft that uses a logarithmic bar axis.'],['ax.set_ylim(0, 25)','Use the common zero-based report range.']];
+ byId.V36.syntaxLater=['ax.set_yscale("linear")','ax.set_ylim(0, 25)'];
+ byId.V36.syntaxCode='ax.set_ylim(bottom=0)';
+ // This intentionally unsuitable draft is an illustration to repair, not a
+ // recommended density estimate. Replacing it is a different responsibility
+ // from V13's first construction of a raw-point chart.
+ byId.V15.rounds.forEach((r,i)=>{
+  const p=chartLayers(r);
+  const draft=p.marks.replace('sns.stripplot','sns.violinplot').replace('jitter=False','inner=None, cut=0');
+  const work='ax.clear()\n'+p.marks+'\n'+p.labels+'\n'+finishFocusedPlot;
+  focusedRound('V15',i,'# Illustration to repair: these tiny groups do not support detailed density shapes\n'+p.canvas+'\n'+draft+'\n'+p.labels,work,[
+   ['The supplied setup contains a violin draft for price by flavour, an illustration to repair rather than a recommended density estimate. Each group has only one to three observations.','Clear the draft Axes and replace its density shapes with every observed price as raw points at flavour positions, using jitter=False.','ax.clear() also removes labels: restore title "Candy shop", x "flavour" and y "price", then arrange and display fig.'],
+   ['The supplied setup contains a horizontal violin draft for humidity by sky, an illustration to repair rather than a recommended density estimate. Each group has only two to four observations.','Clear the draft Axes and replace its density shapes with every observed humidity as horizontal raw points, using jitter=False; map humidity to x and sky to y.','Restore title "Weather diary", x "humidity" and y "sky" after clearing, then arrange and display fig.'],
+   ['The supplied setup contains a violin draft for shelter weights, an illustration to repair rather than a recommended density estimate. There are only two pets per species.','Clear the draft Axes and replace its density shapes with every observed weight as raw points at species positions, using jitter=False.','Restore title "Pet adoption", x "species" and y "weight" after clearing. Keep every pet; arrange and display fig.']
+  ][i],[
+   'ax.clear() removes the unsuitable density marks and their labels. Draw the supplied records as raw points, then restore the labels.',
+   'Clear first so no density remains. Draw humidity on x and sky on y, then restore the horizontal labels.',
+   'Clear the density draft, draw all weights by species without estimating a shape, and restore the labels.'
+  ][i],'An intentionally unsuitable violin draft for tiny groups, supplied only as an illustration to repair.',i===0?work.replace('ax.clear()','ax.____()'):'# Replace the unsuitable draft with the observations and restore its labels\n');
+ });
+ byId.V15.goal='Replace an over-detailed draft with the observed values.';
+ byId.V15.explanation='The supplied violin draft is an intentionally unsuitable illustration to repair. With only a few observations in each group, a detailed density shape can imply more evidence than the sample contains. Clear the draft Axes and show every observed value as a raw point instead. ax.clear() removes the marks, title and labels, so restore the stated labels as part of the repair.';
+ byId.V15.guide.idea='A draft can imply more detail than a tiny sample supports. Replace its density shape with the actual observations, preserving every record.';
+ byId.V15.guide.choices=[['ax.clear()','Remove the draft marks, title and axis labels before drawing the replacement.'],['stripplot(..., jitter=False)','Show every measured value at its category position.'],['ax.set(title=..., xlabel=..., ylabel=...)','Restore the labels removed by clear.'],['x="value", y="group"','Use horizontal raw points when the measurement belongs on x.']];
+ byId.V15.guide.note='The supplied violin is an illustration to repair, not a recommended density estimate or evidence for detailed tails. Clearing removes its labels too. Restore them; overlapping raw points can still hide repeated values.';
+ byId.V15.syntax=[['ax.clear()','Remove the unsuitable draft and its labels from the supplied Axes.'],['sns.stripplot(..., jitter=False)','Replace the density shapes with every observed value.'],['ax.set(title=..., xlabel=..., ylabel=...)','Restore the title and axis labels after clearing.'],['fig.tight_layout(); plt.show()','Arrange and display the repaired Figure.']];
+ byId.V15.syntaxCode='ax.clear()\nsns.stripplot(data=df, x="flavour", y="price", jitter=False, ax=ax)';
+ // These Transfer rounds apply an already introduced technique to new data.
+ // Their outputs remain distinct; the demand does not claim another new skill.
+ byId.V10.rounds[2].demand='Apply the same technique independently';
+ byId.V19.rounds[2].demand='Apply the same technique independently';
+ for(const l of c.lessons.filter(l=>!l.review))l.example=l.rounds[0].solution;
+ byId.V18.rounds[2].teaching.title='Another route: connect observations with ax.plot';
+ byId.V18.rounds[2].teaching.idea='The model uses Seaborn with estimator=None. Matplotlib ax.plot is an equivalent way to connect the supplied observations in order, without calculating a summary.';
  // Retrieval retains its identity and starter, but uses the corrected source brief/checker.
  for(const l of c.lessons)for(let i=0;i<l.rounds.length;i++){
   const r=l.rounds[i];if(!r.retrieves)continue;

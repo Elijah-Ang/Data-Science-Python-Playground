@@ -160,7 +160,7 @@ The 16 reusable fixtures include seven clean contexts, three deliberately messy 
 | W10 | Clean text | Remove accidental spaces and inconsistent letter case. | 3 |
 | W11 | Search / extract text | Select text matches and split structured names. | 3 |
 | W12 | Convert numeric text | Turn numeric-looking strings into usable numbers. | 3 |
-| WR2 | Review · Values with meaning | Retrieve earlier skills on a fresh table. | 3 |
+| WR2 | Bridge review · Sections 02 + 03 | Revisit new columns (W07) and clean text (W10) from Section 02, then numeric conversion (W12) from Section 03. | 3 |
 | W13 | Convert data types | Choose a type that fits the values. | 3 |
 | W14 | Parse dates | Convert date text and handle invalid dates visibly. | 3 |
 | W15 | Work with dates | Extract useful calendar features from parsed dates. | 3 |

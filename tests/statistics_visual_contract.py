@@ -15,7 +15,7 @@ SELECTORS={
     'output heading':'.output-head h3','output header':'[data-visual-probe] .output-item-head strong',
     'console':'[data-visual-probe] .console-output',
     'table heading':'[data-visual-probe] th','table value':'[data-visual-probe] td',
-    'route':'.route-card, .route-task'}
+    'route':'.step-route-range'}
 # Data's established typography/layout differences are not a license for Stats drift.
 LEGACY=set()
 

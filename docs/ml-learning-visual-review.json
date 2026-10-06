@@ -321,7 +321,7 @@
       "theme": "light",
       "width": 1440,
       "file": "ML-R02-light-1440.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R03",
@@ -1209,7 +1209,7 @@
       "theme": "dark",
       "width": 1440,
       "file": "ML-R02-dark-1440.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1217,7 +1217,7 @@
       "theme": "light",
       "width": 320,
       "file": "ML-R02-light-320.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1225,7 +1225,7 @@
       "theme": "light",
       "width": 390,
       "file": "ML-R02-light-390.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R04",
@@ -2175,7 +2175,7 @@
     "ML-F08": "e949e767853534caf8e1eda3a6676f22831166e7102d4b8aca524d25e98ee942",
     "ML-F09": "ad1431a91b1b83085b39ee0af51220ca07a1f0e73b57b3025650b04276d4241d",
     "ML-F10": "3ead1d8221664b9aa6429bac803385240bb8e3c437ecd049195beb6a059446ef",
-    "ML-W01": "98ce338dcbcdb78c1649808a5b67ba15218eece1c67eb0210d17e1e237e6da2a",
+    "ML-W01": "cde15d0e9d8e83619c7634b73a5f495e5bac8cea4bbb1c17d657856f0749e2de",
     "ML-W02": "b715350d3d28a58a889f5c250fa540b7ce276680cbdbc9a37337c95fdad2c9f5",
     "ML-W03": "bfcea0a85b963c51321ec742a93751f2d74ea247e3c7551f034f365ffc6ac606",
     "ML-W04": "446d8bd9dd7ddc00c6a308bcde1d7787ef7cdc7e9f4009de8a9331860b1a63fe",
@@ -2252,13 +2252,25 @@
     "ML-W16": "c35792e1340e250807c1882937254a15dbafcaa5cf1ac7c219006d60450d45f6"
   },
   "sourceHashes": {
+    "code-identifiers.js": "3b869bf5d01df077b23a5aeb30cfcb1fa846c1d61656d39e694c2732e5296cfd",
+    "route-slider.css": "28f96d75040ab03c3e18c879114dc413bb2ba99a179b91c83dd9c015f7e3a14a",
     "ml-learning/visuals.js": "20e1cd40c82f18a0a27a4fdbc97746f35beb5aaa4cbab9c1ff4b04901cf02385",
     "ml-learning/learning.css": "7e960ec9dbbd349a773345d68ee2903f2ff46bef0d9d8e96cab581cd698e3128",
-    "ml-learning/app.js": "5fb29d57976ad06e2e41011e86886b90a6cdc1594d3628a0d309596bd5f3bcfe",
-    "foundations/foundations.css": "993e7985c4386c4b017bc99a34276f4bdd30406e2363eee3f28fc03b71a303df",
-    "foundations/learning-ui.js": "69bf00ba073bd169dd52d37491706e5768e397898e45335d13b40ea3ab94263c",
+    "ml-learning/app.js": "053d90c12724dbff0c331dfe021356a695c1e56aa946cc2fda6397a91a6f1b56",
+    "foundations/foundations.css": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
+    "foundations/learning-ui.js": "5efccabc8776f223eee2199e2018f08cdbcf8ef5fa388a9193deca32deacd30a",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
-    "challenges/experience.js": "9ba42e866aa9ac460aeb21708994f95e4f755a6b8bd8bbfd202c9c92463abc24",
+    "challenges/experience.js": "0935919843d2e535e09a133d7d7c8b3b487b3effdfe1288e82e4885fa3b43b59",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
-  }
+  },
+  "scopedSourceRevisions": [
+    {
+      "date": "2026-10-05",
+      "source": "foundations/foundations.css",
+      "beforeSHA256": "e7c952b60d03289703512871d8729040b6bd8f66569c5f86b64a777745cc3da1",
+      "afterSHA256": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
+      "scope": "Lesson heading/task prose wraps exact code identifiers within narrow panels at measured200% text. Primitive SVG, concept content, thumbnail signatures and existing color/focus/editor styling remain byte-identical.",
+      "validation": "Repository checks plus fresh independent 320px light/dark measured-text review of Foundations and representative actual ML lessons; final source-bound review evidence in lesson-responsibilities/reviews/fresh/."
+    }
+  ]
 }

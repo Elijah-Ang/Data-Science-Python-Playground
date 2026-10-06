@@ -8,7 +8,7 @@
   const escape=value=>String(value).replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
   const fmt=value=>value==null?'Undefined':typeof value==='number'?(value===0?'0':Math.abs(value)<.001?value.toExponential(4):Number(value.toPrecision(6)).toLocaleString('en-US',{maximumFractionDigits:6})):Array.isArray(value)?value.map(fmt).join(' to '):String(value);
   const highlight=code=>code.split('\n').map(line=>(line.match(/#[^\n]*|"[^"\n]*"|'[^'\n]*'|\b(?:import|from|as|if|else|for|in|def|return|True|False|None|and|or)\b|[^#"'\w]+|\w+|./g)||[]).map(t=>`<span class="${t[0]==='#'?'py-comment':/^['"]/.test(t)?'py-string':/^(import|from|as|if|else|for|in|def|return|True|False|None|and|or)$/.test(t)?'py-keyword':''}">${escape(t)}</span>`).join('')).join('\n');
-  let domain,meta,bridge,plan=null,csv='',cells=[],config={family:'independent',dataset:'penguins'},revision=0,busy=false,configuring=true,timer;
+  let domain,meta,bridge,plan=null,csv='',cells=[],config={family:'independent',dataset:'penguins'},revision=0,busy=false,routeBatchRunning=false,configuring=true,timer;
   const cache=new Map();
   const table=rows=>{
     if(!rows?.length)return '';
@@ -94,14 +94,14 @@
     }));
   }
   function updateActions(){
-    $('runAllButton').disabled=!plan||busy||configuring;
+    $('runAllButton').disabled=!plan||busy||routeBatchRunning||configuring||$('runtimeDot').classList.contains('error');
     $('downloadNotebook').disabled=!plan||busy;
     $('downloadData').disabled=!plan;
     $('taskProgress').textContent=`${cells.filter(c=>c.status==='done').length} / ${plan?plan.route.filter((_,i)=>!isSkipped(i)).length:0} steps run`;
   }
-  function invalidStudy(){revision++;plan=null;cells=[];configuring=true;$('error').hidden=true;$('routeStrip').replaceChildren();$('preview').replaceChildren();$('methodName').textContent='Updating study…';$('methodNote').textContent='';renderNotebook();updateActions();return revision;}
+  function invalidStudy(){revision++;plan=null;cells=[];configuring=true;$('error').hidden=true;renderRoute();$('preview').replaceChildren();$('methodName').textContent='Updating study…';$('methodNote').textContent='';renderNotebook();updateActions();return revision;}
   function errorText(error){const s=String(error.message||error);return s.match(/(?:ValueError|NameError|SyntaxError|TypeError): ([^\n]+)/)?.[0]||s;}
-  function showError(error){$('error').textContent=errorText(error);$('error').hidden=false;}
+  function showError(error){$('error').textContent=errorText(error);$('error').hidden=false;renderRoute();refreshRunButtons();}
   function schedule(){const token=invalidStudy();clearTimeout(timer);timer=setTimeout(()=>configure(token),90);}
   async function configure(token=revision){
     try{
@@ -110,7 +110,7 @@
       const data=cache.get(c.dataset);if(token!==revision)return;
       const response=await bridge.send('configure',{csv:data,config:c});if(token!==revision)return;
       csv=data;plan=response.plan;configuring=false;renderInspector();renderRoute();renderNotebook();updateActions();
-    }catch(error){if(token===revision){configuring=false;showError(error);$('methodName').textContent='Review this design';updateActions();}}
+    }catch(error){if(token===revision){configuring=false;showError(error);$('methodName').textContent='Review this design';renderRoute();updateActions();}}
   }
   function renderInspector(){
     const c=plan.config,d=window.DatasetDictionary['data/'+plan.source.file];
@@ -129,17 +129,30 @@
     return analysis?.output?.scalars.p_value>=plan.config.alpha;
   }
   const stepNumber=i=>plan.route.slice(0,i+1).filter((_,j)=>!isSkipped(j)).length;
-  function allowed(i){return Boolean(plan)&&!configuring&&plan.route.slice(0,i).every((_,j)=>isSkipped(j)||cells.find(c=>c.index===j)?.status==='done');}
+  function allowed(i){return Boolean(plan)&&!configuring&&!$('runtimeDot').classList.contains('error')&&plan.route.slice(0,i).every((_,j)=>isSkipped(j)||cells.find(c=>c.index===j)?.status==='done');}
+  let statisticsRouteSlider=null;
   function renderRoute(){
-    if(!plan)return;
-    $('routeStrip').innerHTML=plan.route.map((s,i)=>{if(isSkipped(i))return '';const c=cells.find(c=>c.index===i),state=c?.status||'ready';return `<button class="route-card" data-index="${i}" data-task-id="${s.id}" data-state="${state}" ${!allowed(i)||busy?'disabled':''} title="${escape(allowed(i)?'Add and run this step':'Complete the preceding step first')}"><span class="route-number">${String(stepNumber(i)).padStart(2,'0')}</span><span><span class="route-title">${escape(s.label)}</span><span class="route-caption">${short[s.id]}</span></span><span class="route-arrow">${state==='done'?'✓':state==='stale'?'↻':'→'}</span></button>`;}).join('');
-    $('routeStrip').querySelectorAll('button').forEach(button=>button.onclick=async()=>{const cell=insertCell(Number(button.dataset.index),true);if(cell)await runCell(cell);});updateActions();
+    statisticsRouteSlider ||= RouteSlider.mount($('routeStrip'),{
+      name:'Choose a statistics route step', label:s=>short[s.id]||s.label,
+      emptyState:()=>$('runtimeDot').classList.contains('error')||!$('error').hidden?'error':'loading',
+      emptyText:()=>$('error').hidden?'Wait for Python and the study to finish loading.':'The study is unavailable. Read the error and review your setup or restart Python.',
+      state:s=>{
+        const status=cells.find(c=>c.index===s.index)?.status||'ready';
+        const fatal=$('runtimeDot').classList.contains('error');
+        return {status,fatal,blocked:busy||routeBatchRunning||!allowed(s.index),short:configuring?'loading':busy||routeBatchRunning?'waiting':!allowed(s.index)?'run earlier steps':'waiting',message:fatal?'Python is unavailable. Read the error, then Stop / restart Python.':configuring?'The selected cell waits for the study to load.':busy||routeBatchRunning?'A route or cell is running. Only the latest waiting choice will run next.':!allowed(s.index)?'Run earlier steps first.':status==='done'?'Ran successfully. The unchanged cell is reused.':status==='error'?'Fix the code, then select this step or use its Run control.':'The selected editable cell runs automatically.'};
+      },
+      insert:s=>insertCell(s.index,false,true),
+      key:s=>JSON.stringify([cells.find(c=>c.index===s.index)?.code,cells.find(c=>c.index===s.index)?.advanced,cells.filter(c=>c.index<s.index).map(c=>c.runRevision)]),
+      run:s=>{const cell=cells.find(c=>c.index===s.index);if(cell)return runCell(cell);}
+    });
+    statisticsRouteSlider.update(plan?plan.route.map((s,index)=>({...s,index})).filter(s=>!isSkipped(s.index)):[]);
+    updateActions();
   }
-  function insertCell(index,scroll=false){
-    if(!allowed(index)||busy)return null;
+  function insertCell(index,scroll=false,preview=false){
+    if(!plan||(!preview&&(!allowed(index)||busy)))return null;
     let cell=cells.find(c=>c.index===index);
     if(!cell){const s=plan.route[index];cell={index,code:s.code,advanced:s.advanced||'',status:'ready',output:null,error:null};cells.push(cell);cells.sort((a,b)=>a.index-b.index);renderNotebook();renderRoute();}
-    if(scroll)document.querySelector(`[data-cell-index="${index}"]`)?.scrollIntoView({block:'nearest',behavior:'smooth'});
+    if(scroll)document.querySelector(`[data-cell-index="${index}"]`)?.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
     return cell;
   }
   function invalidateFrom(index){
@@ -160,12 +173,12 @@
     function sync(){rail.textContent=text.value.split('\n').map((_,i)=>i+1).join('\n');pre.innerHTML=highlight(text.value);text.style.height=Math.min(430,Math.max(76,text.value.split('\n').length*19+24))+'px';pre.style.height=text.style.height;host.classList.toggle('has-highlight',document.activeElement!==text);}
     text.onfocus=()=>host.classList.remove('has-highlight');text.onblur=sync;text.onscroll=()=>{pre.style.transform=`translate(${-text.scrollLeft}px, ${-text.scrollTop}px)`;rail.style.transform=`translateY(${-text.scrollTop}px)`;};
     text.oninput=()=>{if(advanced)cell.advanced=text.value;else cell.code=text.value;invalidateFrom(cell.index);sync();};
-    text.onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCell(cell);}if(e.key==='Tab'){e.preventDefault();text.setRangeText('    ',text.selectionStart,text.selectionEnd,'end');text.dispatchEvent(new Event('input'));}};
+    text.onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runCell(cell);}if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();text.setRangeText('    ',text.selectionStart,text.selectionEnd,'end');text.dispatchEvent(new Event('input'));}};
     host.append(rail,pre,text);sync();return host;
   }
   function renderNotebook(){
     const panel=$('notebookPanel'),scrollTop=panel.scrollTop;panel.replaceChildren();
-    if(!cells.length){panel.innerHTML='<div class="empty-notebook"><div><strong>Start with your question.</strong><p>Click <b>01 Frame</b> in Suggested Route to insert one editable cell. It runs automatically and unlocks the next step. On desktop, results appear in the Output panel; on smaller screens, below each cell.</p></div></div>';renderOutputs();return;}
+    if(!cells.length){panel.innerHTML='<div class="empty-notebook"><div><strong>Start with your question.</strong><p>Select step 1 to add its editable cell. Drag, then release. Use Run in the cell and read each result before continuing. Step 0 keeps your cells. Results appear in Output on desktop and below each cell on smaller screens.</p></div></div>';renderOutputs();return;}
     for(const c of cells){
       if(isSkipped(c.index))continue;
       const s=plan.route[c.index],stack=document.createElement('div');stack.className='cell-stack';stack.dataset.cellIndex=c.index;
@@ -225,18 +238,21 @@
     try{
       const response=await bridge.send('cell',{index:cell.index,code:cell.code,advanced:cell.advanced});
       if(token!==revision)return false;
-      cell.output=response.output;cell.status='done';cell.error=null;return true;
+      cell.output=response.output;cell.status='done';cell.error=null;cell.runRevision=token;return true;
     }catch(error){if(token===revision){cell.error=errorText(error);cell.status='error';}return false;}
-    finally{busy=false;if(token===revision){renderNotebook();renderRoute();if(!mobileLayoutQuery.matches)$('outputBody').scrollTop=$('outputBody').scrollHeight;}updateActions();}
+    finally{busy=false;if(token===revision){statisticsRouteSlider?.recordFailure(plan.route[cell.index].id);renderNotebook();renderRoute();if(!mobileLayoutQuery.matches)$('outputBody').scrollTop=$('outputBody').scrollHeight;}updateActions();}
   }
   async function runAll(){
-    if(busy||!plan)return;const originalPlan=plan;
-    for(let i=0;i<originalPlan.route.length;i++){
-      if(plan!==originalPlan)return;
-      if(isSkipped(i))continue;
-      let c=cells.find(c=>c.index===i);if(c?.status==='done')continue;
-      c=insertCell(i);if(!c||!await runCell(c))return;
-    }
+    if(busy||routeBatchRunning||!plan)return;const originalPlan=plan;
+    routeBatchRunning=true;renderRoute();
+    try{
+      for(let i=0;i<originalPlan.route.length;i++){
+        if(plan!==originalPlan)return;
+        if(isSkipped(i))continue;
+        let c=cells.find(c=>c.index===i);if(c?.status==='done')continue;
+        c=insertCell(i);if(!c||!await runCell(c))return;
+      }
+    }finally{routeBatchRunning=false;renderRoute();}
   }
   function download(name,text,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   function exportNotebook(){
@@ -279,5 +295,5 @@
     event.returnValue = '';
   });
   window.StatisticsPlayground={get plan(){return structuredClone(plan);},get activeRouteLength(){return plan?plan.route.filter((_,i)=>!isSkipped(i)).length:0;},get cells(){return structuredClone(cells);},get config(){return structuredClone(config);},get ready(){return !!plan&&!busy&&!configuring;}};
-  renderNotebook();start();
+  renderRoute();renderNotebook();start();
 })();

@@ -9,17 +9,17 @@ window.TOUR_PAGES = (() => {
     'stats-results': {page:'statistics.html', targets:{output:'.output-panel'}},
     ml: {page:'ml.html', targets:{dataset:'.control.dataset',model:'.control-group',route:'#routeStrip'}},
     'ml-guide': {page:'ml.html', targets:{guide:'#guideWindow'}},
-    'ml-validate': {page:'ml.html', targets:{guide:'#workflow-step-5 .workflow-step-concepts'}},
-    'ml-tune': {page:'ml.html', targets:{guide:'#workflow-step-7 .workflow-step-concepts'}},
+    'ml-validate': {page:'ml.html', targets:{guide:'.workflow-step[data-task-id="baseline"] .workflow-step-concepts'}},
+    'ml-tune': {page:'ml.html', targets:{guide:'.workflow-step[data-task-id="tune"] .workflow-step-concepts'}},
     'ml-results': {page:'ml.html', targets:{result:'.output-panel'}},
-    home: {page:'index.html', targets:{robot:'.mascot-cta',gate:'.gate-hitbox'}},
+    home: {page:'index.html', targets:{robot:'#learning-robot',gate:'#playground-gate'}},
     learn: {page:'learn.html', targets:{pathways:'.learn-pathways'}},
     decks: {page:'data-foundations.html', hash:'', targets:{decks:'.foundation-decks'}},
     chapters: {page:'data-foundations.html', hash:'#inspect', targets:{chapters:'.chapter-jumps'}},
     lesson: {page:'data-foundations.html', hash:'#inspect/I01/0', targets:{exercise:'.foundation-practices',practice:'.foundation-code-pane'}},
     'lesson-result': {page:'data-foundations.html', hash:'#inspect/I01/0', targets:{progression:'.foundation-navigation'}},
   };
-  const pause = ms => new Promise(resolve => setTimeout(resolve,ms));
+  const pause = (ms,alive=()=>true) => new Promise(resolve => {const began=performance.now();function tick(now){if(!alive()||alive.fast||now-began>=ms)return resolve();requestAnimationFrame(tick);}requestAnimationFrame(tick);});
   function opening(chapter) {
     if(chapter.scene==='data-guide')return {button:'#guideButton',panel:'#guideWindow',label:'Challenges'};
     if(chapter.scene==='ml-guide')return {button:'#guideButton',panel:'#guideWindow',label:'Workflow'};
@@ -40,7 +40,7 @@ window.TOUR_PAGES = (() => {
     const scene=chapter.scene, loc=locations[scene];
     // Script-free copies retain the application's own markup and styles.
     if(['ml-guide','ml-validate','ml-tune'].includes(scene)) {
-      const step=scene==='ml-validate'?5:scene==='ml-tune'?7:0,article=q(`#workflow-step-${step}`),body=q('#guideBody');
+      const task=scene==='ml-validate'?'baseline':scene==='ml-tune'?'tune':'frame',article=q(`.workflow-step[data-task-id="${task}"]`),body=q('#guideBody');
       if(article&&body)await scroll(body,article.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-85,alive);
     }
     if(scene==='stats-results'||scene==='ml-results') {
@@ -52,14 +52,16 @@ window.TOUR_PAGES = (() => {
     if(w.innerWidth<=1120 && scene==='ml-results')selector='#notebookPanel .cell-stack:last-child .cell-inline-output .result-table-wrap';
     return until(()=>q(selector),alive,5000);
   }
+  const scrollOwners=new WeakMap();
   async function scroll(element,to,alive) {
+    const owner={};scrollOwners.set(element,owner);
     const start=element.scrollTop,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,began=performance.now();
     // The app may set scroll-behavior:smooth. Our timed pan must not start a new
     // browser smooth-scroll on every animation frame or measure before it settles.
     const behavior=element.style.scrollBehavior;
     element.style.scrollBehavior='auto';
-    await new Promise(resolve=>{function tick(now){if(!alive())return resolve();const t=reduced?1:Math.min(1,(now-began)/1050),e=t*t*(3-2*t);element.scrollTop=start+(to-start)*e;if(t<1)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});
-    element.style.scrollBehavior=behavior;
+    await new Promise(resolve=>{function tick(now){if(!alive())return resolve();const t=reduced||alive.fast?1:Math.min(1,(now-began)/1050),e=t*t*(3-2*t);element.scrollTop=start+(to-start)*e;if(t<1)requestAnimationFrame(tick);else resolve();}requestAnimationFrame(tick);});
+    if(scrollOwners.get(element)===owner){element.style.scrollBehavior=behavior;scrollOwners.delete(element);}
   }
   return {locations,opening,prepare,scroll,until,pause};
 })();

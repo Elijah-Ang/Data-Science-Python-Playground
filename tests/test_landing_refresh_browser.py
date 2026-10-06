@@ -171,11 +171,11 @@ with sync_playwright() as p:
     for selector in ['.garden-cat', '.garden-slider', '.welcome-blimp', '.airship-rig', '.mascot-idle', '.garden-tire', '.garden-balloons', '.garden-flag']:
         assert page.locator(selector).evaluate('(e)=>getComputedStyle(e).animationName') == 'none'
     assert not page.locator('.garden-water').is_visible()
-    for fragment in ['#learning-robot', '#playground-gate']:
-        page.locator(f'.blimp-choice[href="{fragment}"]').click()
-        assert page.locator(fragment).evaluate('(e)=>e===document.activeElement'), fragment
+    # Text choices enter the destinations directly; the art hotspots remain.
+    assert page.locator('.blimp-choice').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("href"))') == ['learn.html','playground.html']
+    page.locator('.blimp-choice').first.click();page.wait_for_url('**/learn.html');page.go_back()
     page.locator('#playground-gate').click()
-    page.wait_for_url('**/playground.html')
+    page.wait_for_url('**/playground.html*')
     page.go_back()
     assert not page.locator('#playground-gate').get_attribute('aria-busy')
     assert page.locator('.scene-art').is_visible()
@@ -198,7 +198,7 @@ with sync_playwright() as p:
     nojs.wait_for_url('**/learn.html')
     nojs.go_back()
     nojs.locator('#playground-gate').click()
-    nojs.wait_for_url('**/playground.html')
+    nojs.wait_for_url('**/playground.html*')
     static.close()
     browser.close()
 

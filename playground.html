@@ -23,6 +23,10 @@
   <link rel="stylesheet" href="foundations/playground-base.css">
   <!-- Shared visual contract: cross-playground visual changes belong in playground-shared.css. -->
   <link rel="stylesheet" href="playground-shared.css?v=mobile-layout5">
+<script src="code-identifiers.js"></script>
+<link rel="stylesheet" href="route-slider.css">
+<script src="route-slider.js"></script>
+<script src="data-task-briefs.js"></script>
 </head>
   <body data-playground="data" data-theme="light" data-dataset="seoul">
   <header class="topbar">
@@ -71,7 +75,7 @@
         <h2 id="inspectorTitle">Inspector</h2>
       </div>
       <div class="runtime-line inspector-runtime" aria-live="polite" aria-label="Python runtime status"><span class="runtime-dot" id="runtimeDot"></span><span class="runtime-copy"><strong>Python runtime</strong><span id="runtimeStatus">Starting Python in a worker…</span><details class="runtime-details" id="runtimeDetails" hidden><summary id="runtimeDetailsSummary">Show technical details</summary><pre id="runtimeDetailsText" class="console-output error"></pre></details></span></div>
-      <section class="dataframe-note" aria-label="DataFrame setup"><strong><code>df</code> is ready to use</strong><p>The selected file is loaded for you. Start with <code>df.head()</code> or <code>df.dtypes</code> — no CSV loading needed.</p><details><summary>How df works</summary><p>Route and custom cells share your working <code>df</code>. Each extra question starts with a fresh <code>df</code>; its changes stay in that question. Use <code>sample = df.copy()</code> to make your own separate copy.</p><p>Leaving this page clears results. Choose Stay in the browser prompt to keep working.</p></details></section>
+      <section class="dataframe-note" aria-label="DataFrame setup"><strong id="dataframeNoteStatus">Preparing <code>df</code>…</strong><p id="dataframeNoteCopy">The selected file loads automatically. Wait for Python and the table to finish loading before running a cell.</p><details><summary>How df works</summary><p>Route and custom cells share your working <code>df</code>. Each extra question starts with a fresh <code>df</code>; its changes stay in that question. Use <code>sample = df.copy()</code> to make your own separate copy.</p><p>Leaving this page clears results. Choose Stay in the browser prompt to keep working.</p></details></section>
       <div class="inspector-body">
         <div>
           <section class="data-card" id="datasetCard">
@@ -103,15 +107,15 @@
       <h2 class="sr-only" id="tryTitle">Try data tasks</h2>
 
       <div class="route-tools">
-        <div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span></div>
+        <div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">Move the slider below</span></div>
         <div class="data-route-actions"><a class="toolbar-button learn-refresh" href="data-foundations.html"><span class="learn-refresh-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5Zm3.25 2.9L12 14.35l6.25-2.95v4.25c-1.75 1.55-3.84 2.35-6.25 2.35s-4.5-.8-6.25-2.35V11.4Zm14.5-1.35h1.5v6.25h-1.5v-6.25Z"/></svg></span><span class="learn-refresh-label">Learn / Refresh</span><span class="learn-refresh-rays" aria-hidden="true"><svg viewBox="0 0 16 32"><path d="M2 9 6 3M6 16h8M2 24l6 4"/></svg></span></a>
-        <button class="toolbar-button" id="moreTasksToggle" type="button" aria-expanded="false" aria-controls="moreTasksPanel" aria-pressed="false">＋ More tasks</button></div>
+        <button class="toolbar-button" id="moreTasksToggle" type="button" aria-expanded="false" aria-controls="moreTasksPanel" aria-pressed="false">Browse data tasks</button></div>
       </div>
 
       <div class="route-strip" id="suggestedRoute" aria-label="Suggested analysis route"></div>
 
       <div class="more-tasks-panel" id="moreTasksPanel" aria-label="Optional data questions" hidden>
-        <div class="more-tasks-panel-head"><span>MORE QUESTIONS</span><span>scroll down + sideways · click to insert</span></div>
+        <div class="more-tasks-panel-head"><span>BROWSE DATA TASKS</span><span>Inspect · Wrangle · Visualise. Each question uses a fresh copy of df.</span></div>
         <div class="more-tasks-scroll">
           <section class="task-category" data-stage="inspect">
             <div class="task-category-heading"><span class="task-category-number">01</span><div><strong>Inspect</strong><small>See what arrived.</small></div></div>
@@ -255,6 +259,10 @@
         const dot = document.getElementById("runtimeDot");
         if (status) status.textContent = message;
         if (dot) dot.className = "runtime-dot error";
+        const note = document.getElementById("dataframeNoteStatus");
+        if (note) note.innerHTML = '<code class="code-identifier">df</code> is unavailable';
+        const copy = document.getElementById("dataframeNoteCopy");
+        if (copy) copy.textContent = 'Python could not load. Read the runtime message, then reload to try again.';
         console.error(`[Data Playground] ${message}`);
         const error = new Error(message);
         error.stage = "runtime loading";
@@ -381,16 +389,28 @@
     });
 
     async function restartPython() {
+      analysisRouteSlider?.reset();
       const token=++datasetLoadToken;
       bridge.restart();
+      datasetLoading = true; runtimeDot.className = "runtime-dot"; setDataframeState("loading");
       cells.forEach(cell => { cell.output = null; cell.status = "ready"; });
       renderNotebookView();
       runtimeStatus.textContent = "Restarting Python — code retained…";
       try {
-        const response = await sendWorker("init", {csv: currentDataset.csv, sep: currentDataset.sep});
+        const dataset = currentDataset;
+        const csv = dataset.csv || await fetchDatasetText(dataset.config);
+        if (token!==datasetLoadToken) return;
+        dataset.csv = csv;
+        const response = await sendWorker("init", {csv, sep: dataset.sep});
         if (token!==datasetLoadToken) return;
         renderInspector(response.profile);
+        // A failed first initialization has no task route yet. Rebuild its
+        // metadata after recovery, while retaining every existing editable cell.
+        currentTasks = buildTasks(response.profile, dataset.id);
+        renderTasks(); renderGuide(); renderOutputHistory();
+        $("#downloadCsvButton").disabled = false;
         runtimeStatus.textContent="Python ready";
+        datasetLoading = false; runtimeDot.className = "runtime-dot ready"; setDataframeState("ready");
         showToast("Python restarted; variables reset and code retained.");
       } catch (error) {
         const stage = error?.stage ? `Python ${error.stage} failed` : "Python restart failed";
@@ -469,6 +489,8 @@
     function setRuntimeError(message, error = null) {
       runtimeStatus.textContent = message;
       runtimeDot.className = "runtime-dot error";
+      datasetLoading = false;
+      setDataframeState("error");
       const details = document.getElementById("runtimeDetails");
       if (!details) return;
       const detailText = String(error?.detail || error?.message || "").trim();
@@ -635,19 +657,19 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           extraInspect: [
             { id: "seoul-missing", title: "Find missing values", caption: "where is the data thin?", question: "Which columns need attention before you trust a comparison?", hint: "Sort the missing-value counts so the largest gaps rise to the top.", code: `df.isna().sum().sort_values(ascending=False)`, guides: ["isna() marks missing entries; sum() counts them down each column."] },
             { id: "seoul-hour-profile", title: "Profile the hours", caption: "mean, median, peak", question: "How different are a typical hour and the busiest hour?", hint: "Compare several aggregations of Rented Bike Count for each Hour.", code: `df.groupby("Hour")["Rented Bike Count"].agg(["mean", "median", "max"])`, guides: ["Named aggregations let you keep multiple summaries in one small table."] },
-            { id: "seoul-calendar", title: "Read the calendar", caption: "rows by year", question: "Does the dataset cover each calendar year evenly?", hint: "Turn Date into a year and count the observations.", code: `dates = pd.to_datetime(df["Date"], dayfirst=True)\ndates.dt.year.value_counts().sort_index()`, guides: ["assign() creates a temporary view without changing the working dataframe."] },
+            { id: "seoul-calendar", title: "Read the calendar", caption: "rows by year", question: "Does the dataset cover each calendar year evenly?", hint: "Turn Date into a year and count the observations.", code: `dates = pd.to_datetime(df["Date"], dayfirst=True)\ndates.dt.year.value_counts().sort_index()`, guides: ["to_datetime() parses Date; .dt.year extracts each year, and value_counts() counts the hourly records. The source table stays unchanged."] },
             { id: "seoul-peak-hours", title: "Find peak hours", caption: "busiest averages", question: "Which hours have the strongest average demand?", hint: "Rank hourly averages rather than looking at one unusually busy row.", code: `df.groupby("Hour")["Rented Bike Count"].mean().round(0).sort_values(ascending=False).head(10)`, guides: ["Grouping by Hour turns thousands of readings into a small schedule of typical demand."] },
             { id: "seoul-weather-range", title: "Measure weather range", caption: "min · max · mean", question: "How wide are the main weather measurements?", hint: "Compare minimum, maximum, and average for temperature, humidity, rain, and snow.", code: `df[["Temperature(°C)", "Humidity(%)", "Rainfall(mm)", "Snowfall (cm)"]].agg(["min", "max", "mean"]).round(2)`, guides: ["agg() keeps several useful summaries together so the weather scale is visible before plotting."] }
           ],
           extraWrangle: [
-            { id: "seoul-working-days", title: "Keep working days", caption: "remove closed days", question: "Does the story change when the city is actually operating?", hint: "Filter Functioning Day to Yes and keep a copy for the next cell.", code: `df = df[df["Functioning Day"] == "Yes"].copy()`, guides: ["Boolean filtering keeps only rows that satisfy the condition."] },
+            { id: "seoul-working-days", title: "Keep working days", caption: "remove closed days", question: "Does the story change when the city is actually operating?", hint: "Filter Functioning Day to Yes and inspect the operating-day records in this cell. This optional question uses a fresh copy of the source.", code: `df = df[df["Functioning Day"] == "Yes"].copy()`, guides: ["Boolean filtering keeps only rows that satisfy the condition."] },
             { id: "seoul-demand-band", title: "Band the demand", caption: "low · mid · high", question: "Can you turn a continuous rental count into three readable groups?", hint: "qcut() creates groups with roughly similar numbers of rows.", code: `df["demand_band"] = pd.qcut(df["Rented Bike Count"], q=3, labels=["low", "mid", "high"], duplicates="drop")`, guides: ["qcut() cuts by rank, so each band contains a similar share of observations."] },
             { id: "seoul-date-parts", title: "Make date parts", caption: "month · weekday", question: "Does demand follow a calendar rhythm beyond the hour?", hint: "Create reusable month and weekday columns from Date.", code: `df["date"] = pd.to_datetime(df["Date"], dayfirst=True)\ndf["month"] = df["date"].dt.month\ndf["day_name"] = df["date"].dt.day_name()`, guides: ["Datetime accessors make calendar questions easier to repeat."] },
             { id: "seoul-peak-flag", title: "Flag peak hours", caption: "commute windows", question: "Can you mark morning and evening commute windows?", hint: "Combine two Hour ranges into one readable boolean feature.", code: `df["peak_hour"] = df["Hour"].between(7, 10) | df["Hour"].between(17, 20)`, guides: ["between() keeps the boundary logic readable when you create a question-specific flag."] },
             { id: "seoul-weather-band", title: "Band the temperature", caption: "freezing · mild · hot", question: "Can temperature become a category for comparison?", hint: "Cut the temperature into four named weather bands.", code: `df["temperature_band"] = pd.cut(df["Temperature(°C)"], bins=[-30, 0, 15, 30, 50], labels=["freezing", "cool", "mild", "hot"])`, guides: ["pd.cut() turns a continuous weather measure into categories with clear boundaries."] }
           ],
           extraVisualise: [
-            { id: "seoul-season-box", title: "Compare seasons", caption: "shape, not just mean", question: "Which season has the widest spread of bike demand?", hint: "A box plot makes median, spread, and unusual days visible together.", code: `plot = df[["Seasons", "Rented Bike Count"]].dropna()\nsns.boxplot(data=plot, x="Seasons", y="Rented Bike Count")\nplt.xlabel("")\nplt.ylabel("rented bikes")\nplt.title("Demand spread by season")\nplt.show()`, guides: ["boxplot() compares distributions across a categorical x variable."] },
+            { id: "seoul-season-box", title: "Compare seasons", caption: "shape, not just mean", question: "Which season has the widest spread of bike demand?", hint: "A box plot makes median, spread, and unusual hourly readings visible together.", code: `plot = df[["Seasons", "Rented Bike Count"]].dropna()\nsns.boxplot(data=plot, x="Seasons", y="Rented Bike Count")\nplt.xlabel("")\nplt.ylabel("rented bikes")\nplt.title("Demand spread by season")\nplt.show()`, guides: ["boxplot() compares distributions across a categorical x variable."] },
             { id: "seoul-demand-hist", title: "See demand shape", caption: "distribution + KDE", question: "Is bike demand concentrated or lopsided?", hint: "Use a histogram with KDE to see both bins and a smoothed outline.", code: `plot = df[["Rented Bike Count"]].dropna()\nsns.histplot(data=plot, x="Rented Bike Count", bins=24, kde=True)\nplt.title("The shape of bike demand")\nplt.show()`, guides: ["histplot() shows counts; kde=True adds a smooth estimate of the distribution."] },
             { id: "seoul-temp-reg", title: "Fit a trend", caption: "temperature → demand", question: "Does the relationship with temperature look roughly linear?", hint: "regplot() adds a fitted line while keeping the individual observations visible.", code: `plot = df[["Temperature(°C)", "Rented Bike Count"]].dropna().sample(min(700, len(df)), random_state=7)\nsns.regplot(data=plot, x="Temperature(°C)", y="Rented Bike Count")\nplt.title("A fitted temperature trend")\nplt.show()`, guides: ["regplot() is useful when you want a visual trend line without hiding the raw points."] },
             { id: "seoul-correlation", title: "Map correlations", caption: "weather + demand", question: "Which numeric measures move together?", hint: "Read the strongest positive and negative cells, not just the colours.", code: `plot = df[["Hour", "Temperature(°C)", "Humidity(%)", "Wind speed (m/s)", "Rented Bike Count"]].corr()\nsns.heatmap(plot, annot=True, fmt=".2f", cmap="coolwarm", center=0)\nplt.title("Numeric correlation map")\nplt.show()`, guides: ["heatmap() turns a correlation table into a compact visual matrix."] },
@@ -676,7 +698,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           ],
           extraWrangle: [
             { id: "candy-chocolate-slice", title: "Slice chocolate", caption: "focus the question", question: "How does the chocolate subset compare with the full survey?", hint: "Use the chocolate flag as a boolean filter, then copy the slice.", code: `df = df[df["chocolate"] == 1].copy()`, guides: ["The 1/0 flag behaves like a yes/no category for filtering."] },
-            { id: "candy-value-score", title: "Explore a percentile heuristic", caption: "arbitrary percentile heuristic", question: "How does an arbitrary win-rate / price-percentile heuristic rank candies? This is not economic value.", hint: "Divide winpercent by pricepercent, protecting against zero prices.", code: `df["win_per_price"] = (df["winpercent"] / df["pricepercent"].clip(lower=0.01)).round(2)`, guides: ["Clipping the denominator keeps the ratio finite while preserving the ranking question."] },
+            { id: "candy-value-score", title: "Explore a percentile heuristic", caption: "arbitrary percentile heuristic", question: "How does an arbitrary win-rate / price-percentile heuristic rank candies? This is not economic value.", hint: "Divide winpercent by pricepercent, protecting against zero price-percentile values.", code: `df["win_per_price"] = (df["winpercent"] / df["pricepercent"].clip(lower=0.01)).round(2)`, guides: ["Clipping the denominator keeps the ratio finite while preserving the ranking question."] },
             { id: "candy-ingredient-count", title: "Count ingredients", caption: "how busy is each bar?", question: "Do more ingredient attributes make a candy more appealing?", hint: "Add the binary ingredient flags into one simple count.", code: `df["ingredient_count"] = df[["chocolate", "fruity", "caramel", "peanutyalmondy", "nougat", "crispedricewafer"]].sum(axis=1)`, guides: ["Summing the 0/1 flags creates a transparent feature you can compare with winpercent."] },
             { id: "candy-sugar-band", title: "Band sweetness", caption: "low · mid · high", question: "Can you compare candies by broad sugar level?", hint: "Cut sugarpercent into three named ranges.", code: `df["sugar_band"] = pd.cut(df["sugarpercent"], bins=[-0.01, 0.33, 0.66, 1.01], labels=["low", "mid", "high"])`, guides: ["Named bins turn a decimal feature into a label that is easier to group."] },
             { id: "candy-family", title: "Name a candy family", caption: "chocolate · fruit · other", question: "Can one readable label describe the main candy family?", hint: "Use the chocolate and fruity flags in a deliberate order.", code: `df["candy_family"] = "other"\ndf.loc[df["fruity"] == 1, "candy_family"] = "fruit"\ndf.loc[df["chocolate"] == 1, "candy_family"] = "chocolate"`, guides: ["np.select() lets you express a small set of mutually exclusive category rules."] }
@@ -706,7 +728,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           extraInspect: [
             { id: "gapminder-missing", title: "Find missing values", caption: "complete or patchy?", question: "Are any country-year measurements incomplete?", hint: "Count and sort nulls before deciding that a comparison is fair.", code: `df.isna().sum().sort_values(ascending=False)`, guides: ["Missingness is a property of the data, not automatically a zero."] },
             { id: "gapminder-years", title: "Check the years", caption: "time coverage", question: "Which years and how many countries are represented?", hint: "Count unique countries within each year.", code: `df.groupby("year")["country"].nunique()`, guides: ["nunique() counts distinct labels without counting repeated rows twice."] },
-            { id: "gapminder-continent-profile", title: "Profile continents", caption: "countries · life · GDP", question: "How do the continents differ before you draw a chart?", hint: "Compare country counts, average life expectancy, and average GDP per person.", code: `df.groupby("continent").agg(countries=("country", "nunique"), mean_life=("lifeExp", "mean"), mean_gdp=("gdpPercap", "mean")).round(1).reset_index()`, guides: ["Named aggregations keep several continent-level questions in one readable table."] },
+            { id: "gapminder-continent-profile", title: "Profile continents", caption: "countries · life · GDP", question: "How do the continents differ before you draw a chart?", hint: "Compare distinct country counts and mean life expectancy/GDP per person across all country-year records.", code: `df.groupby("continent").agg(countries=("country", "nunique"), mean_life=("lifeExp", "mean"), mean_gdp=("gdpPercap", "mean")).round(1).reset_index()`, guides: ["nunique counts distinct countries; each mean weights the available country-year records equally rather than weighting countries by population."] },
             { id: "gapminder-life-records", title: "Read the life records", caption: "highest lifeExp", question: "Which country-year rows sit at the top of life expectancy?", hint: "Sort the evidence table without throwing away continent or GDP context.", code: `df.nlargest(10, "lifeExp")[["country", "year", "continent", "lifeExp", "gdpPercap"]]`, guides: ["nlargest() is a direct way to inspect the most extreme observations."] },
             { id: "gapminder-population-range", title: "Measure population range", caption: "min · median · max", question: "How wide is the population scale across years?", hint: "Summarise the smallest, middle, and largest populations in each year.", code: `df.groupby("year")["pop"].agg(["min", "median", "max"]).round(0).reset_index()`, guides: ["A range table helps you notice why population often needs a transformed axis."] }
           ],
@@ -719,14 +741,14 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           ],
           extraVisualise: [
             { id: "gapminder-country-lines", title: "Follow countries", caption: "life over time", question: "Do selected countries move along the same life-expectancy path?", hint: "A line per country turns repeated year snapshots into a story.", code: `plot = df[df["country"].isin(["China", "India", "United States", "Germany", "Brazil"])]\nsns.lineplot(data=plot, x="year", y="lifeExp", hue="country", marker="o")\nplt.title("Life expectancy over time")\nplt.show()`, guides: ["lineplot() connects observations in time and hue creates one line per country."] },
-            { id: "gapminder-life-hist", title: "See the life spread", caption: "distribution + KDE", question: "Is life expectancy evenly spread across countries?", hint: "Use the density curve to notice clusters or long tails.", code: `plot = df[["lifeExp"]].dropna()\nsns.histplot(data=plot, x="lifeExp", bins=18, kde=True)\nplt.title("Distribution of life expectancy")\nplt.show()`, guides: ["A histogram answers how common each range of values is."] },
+            { id: "gapminder-life-hist", title: "See the life spread", caption: "distribution + KDE", question: "Is life expectancy evenly spread across all country-year records?", hint: "Use the density curve to notice clusters or long tails.", code: `plot = df[["lifeExp"]].dropna()\nsns.histplot(data=plot, x="lifeExp", bins=18, kde=True)\nplt.title("Life expectancy across country-year records")\nplt.show()`, guides: ["A histogram answers how common each range of values is."] },
             { id: "gapminder-continent-box", title: "Compare continents", caption: "spread by group", question: "Which continent has the most varied life expectancy?", hint: "Compare the full distribution rather than only the mean.", code: `plot = df[["continent", "lifeExp"]].dropna()\nsns.boxplot(data=plot, x="continent", y="lifeExp")\nplt.xlabel("")\nplt.title("Life expectancy by continent")\nplt.show()`, guides: ["boxplot() highlights medians, spread, and unusual observations for each continent."] },
-            { id: "gapminder-correlation", title: "Map the measures", caption: "population + wealth", question: "Which numeric measures move together in the selected slice?", hint: "Look for strong relationships and remember the scale of GDP.", code: `plot = df[["lifeExp", "pop", "gdpPercap"]].corr()\nsns.heatmap(plot, annot=True, fmt=".2f", cmap="mako", center=0)\nplt.title("Gapminder correlation map")\nplt.show()`, guides: ["heatmap() makes a small correlation matrix readable at a glance."] },
-            { id: "gapminder-gdp-reg", title: "Fit the wealth trend", caption: "GDP → life", question: "Does greater GDP per person align with longer lives?", hint: "Use the log GDP column when the raw x-axis is too stretched.", code: `plot = df[["gdpPercap", "lifeExp"]].dropna().copy()\nplot["gdpPercap_log"] = np.log10(plot["gdpPercap"].clip(lower=1))\nsns.regplot(data=plot, x="gdpPercap_log", y="lifeExp")\nplt.xlabel("log10 GDP per person")\nplt.title("A fitted wealth trend")\nplt.show()`, guides: ["regplot() is a compact way to compare a fitted trend with country-level variation."] },
+            { id: "gapminder-correlation", title: "Map the measures", caption: "population + wealth", question: "Which numeric measures move together across all country-year records?", hint: "Look for strong relationships and remember the scale of GDP.", code: `plot = df[["lifeExp", "pop", "gdpPercap"]].corr()\nsns.heatmap(plot, annot=True, fmt=".2f", cmap="mako", center=0)\nplt.title("Correlation across country-year records")\nplt.show()`, guides: ["heatmap() makes a small correlation matrix readable at a glance."] },
+            { id: "gapminder-gdp-reg", title: "Fit the wealth trend", caption: "GDP → life", question: "Does greater GDP per person align with longer lives?", hint: "Use the log GDP column when the raw x-axis is too stretched.", code: `plot = df[["gdpPercap", "lifeExp"]].dropna().copy()\nplot["gdpPercap_log"] = np.log10(plot["gdpPercap"].clip(lower=1))\nsns.regplot(data=plot, x="gdpPercap_log", y="lifeExp")\nplt.xlabel("log10 GDP per person")\nplt.title("A fitted wealth trend")\nplt.show()`, guides: ["regplot() is a compact way to compare a fitted trend with country-year variation across the available years."] },
             { id: "gapminder-gdp-bar", title: "Compare GDP by continent", caption: "barplot means", question: "Which continents have the highest average GDP per person?", hint: "Compare the mean without losing the continent labels.", code: `plot = df.groupby("continent", as_index=False)["gdpPercap"].mean().sort_values("gdpPercap")\nsns.barplot(data=plot, x="gdpPercap", y="continent")\nplt.xlabel("average GDP per person")\nplt.ylabel("")\nplt.title("Average GDP per person by continent")\nplt.show()`, guides: ["barplot() turns a continent-level summary into a direct comparison."] },
             { id: "gapminder-continent-count", title: "Count continents", caption: "country frequency", question: "How many country rows belong to each continent?", hint: "Count the continent labels before comparing their averages.", code: `plot = df[["continent"]]\nsns.countplot(data=plot, x="continent", order=plot["continent"].value_counts().index)\nplt.xlabel("")\nplt.ylabel("rows")\nplt.title("Country rows by continent")\nplt.show()`, guides: ["countplot() shows whether a group comparison is balanced or lopsided."] },
-            { id: "gapminder-life-strip", title: "Show every life value", caption: "stripplot detail", question: "How much do country life-expectancy values overlap?", hint: "Keep the country-level observations visible inside each continent.", code: `plot = df[["continent", "lifeExp"]].sample(min(260, len(df)), random_state=14)\nsns.stripplot(data=plot, x="continent", y="lifeExp", jitter=0.22, alpha=0.35)\nplt.xlabel("")\nplt.title("Country life expectancy by continent")\nplt.show()`, guides: ["stripplot() reveals how much variation sits behind each continent summary."] },
-            { id: "gapminder-life-swarm", title: "Spread life values", caption: "swarmplot detail", question: "Where do country life values cluster most tightly?", hint: "Use a sample so nearby country points remain legible.", code: `plot = df[["continent", "lifeExp"]].sample(min(220, len(df)), random_state=15)\nsns.swarmplot(data=plot, x="continent", y="lifeExp", size=3)\nplt.xlabel("")\nplt.title("Life expectancy density by continent")\nplt.show()`, guides: ["swarmplot() spaces observations so local clusters are easier to see."] },
+            { id: "gapminder-life-strip", title: "Show every life value", caption: "stripplot detail", question: "How much do country-year life-expectancy values overlap across continents?", hint: "Keep the sampled country-year observations visible inside each continent.", code: `plot = df[["continent", "lifeExp"]].sample(min(260, len(df)), random_state=14)\nsns.stripplot(data=plot, x="continent", y="lifeExp", jitter=0.22, alpha=0.35)\nplt.xlabel("")\nplt.title("Country-year life expectancy by continent")\nplt.show()`, guides: ["stripplot() reveals how much variation sits behind each continent summary."] },
+            { id: "gapminder-life-swarm", title: "Spread life values", caption: "swarmplot detail", question: "Where do sampled country-year life values cluster most tightly?", hint: "Use a sample so nearby country-year points remain legible.", code: `plot = df[["continent", "lifeExp"]].sample(min(220, len(df)), random_state=15)\nsns.swarmplot(data=plot, x="continent", y="lifeExp", size=3)\nplt.xlabel("")\nplt.title("Life expectancy density by continent")\nplt.show()`, guides: ["swarmplot() spaces observations so local clusters are easier to see."] },
             { id: "gapminder-life-kde", title: "Smooth life density", caption: "KDE by continent", question: "Do continents have distinct life-expectancy shapes?", hint: "Compare the smooth curves rather than only their central values.", code: `plot = df[["continent", "lifeExp"]]\nsns.kdeplot(data=plot, x="lifeExp", hue="continent", common_norm=False, fill=False)\nplt.title("Life expectancy density by continent")\nplt.show()`, guides: ["kdeplot() compares distribution shape while keeping the axes numeric."] },
             { id: "gapminder-continent-year-stack", title: "Stack the years", caption: "crosstab + stacked bars", question: "How many country rows does each continent contribute in each year?", hint: "Count continent-by-year combinations and stack the timeline.", code: `plot = pd.crosstab(df["continent"], df["year"])\nplot.plot(kind="bar", stacked=True, colormap="Set2")\nplt.xlabel("")\nplt.ylabel("country rows")\nplt.title("Continent coverage across years")\nplt.show()`, guides: ["crosstab() turns the repeated country-year structure into a stacked coverage view."] },
             { id: "gapminder-pop-line", title: "Trace population", caption: "lineplot over time", question: "How does the average population change across the snapshots?", hint: "Group by year first, then connect the summary points.", code: `plot = df.groupby("year", as_index=False)["pop"].mean()\nsns.lineplot(data=plot, x="year", y="pop", marker="o")\nplt.ylabel("average population")\nplt.title("Average population over time")\nplt.show()`, guides: ["lineplot() makes repeated year snapshots read as a time story."] }
@@ -747,7 +769,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
             { id: "wine-high-sulphates", title: "Read high sulphates", caption: "top chemistry rows", question: "What do the wines with the highest sulphates look like?", hint: "Keep quality, alcohol, and wine_type beside the extreme sulphates.", code: `df.nlargest(10, "sulphates")[["wine_type", "quality", "sulphates", "alcohol"]]`, guides: ["Extreme rows can suggest a follow-up question without pretending they are typical."] }
           ],
           extraWrangle: [
-            { id: "wine-type-slice", title: "Choose a wine type", caption: "red or white", question: "Does the pattern hold inside one wine type?", hint: "Filter wine_type to one category before you rerun a visual.", code: `df = df[df["wine_type"].isin(["red", "white"])].copy()`, guides: ["Keeping both labels lets you change the filter without losing the original copy."] },
+            { id: "wine-type-slice", title: "Choose a wine type", caption: "red or white", question: "Does the pattern hold inside one wine type?", hint: "Filter wine_type to red and inspect that category in this cell. Optional questions each start from a fresh source copy.", code: `df = df[df["wine_type"] == "red"].copy()`, guides: ["This cell selects red wines. Change red to white to compare the other type; the route table and source stay unchanged."] },
             { id: "wine-acidity-balance", title: "Make an acidity signal", caption: "fixed + volatile", question: "Can two chemistry readings become one balance measure?", hint: "Subtract volatile acidity from fixed acidity and round the result.", code: `df["acidity_balance"] = (df["fixed acidity"] - df["volatile acidity"]).round(2)`, guides: ["A derived signal is useful only when you can explain what its units mean."] },
             { id: "wine-quality-band", title: "Band quality", caption: "low · mid · high", question: "Can quality scores become three readable groups?", hint: "Use the score boundaries to create low, mid, and high labels.", code: `df["quality_band"] = pd.cut(df["quality"], bins=[0, 4, 6, 10], labels=["low", "mid", "high"])`, guides: ["pd.cut() makes the score thresholds visible and editable."] },
             { id: "wine-sugar-band", title: "Band residual sugar", caption: "dry · balanced · sweet", question: "Does the residual sugar level change the question?", hint: "Create three named sugar ranges for later grouping.", code: `df["sugar_band"] = pd.cut(df["residual sugar"], bins=[0, 3, 9, 100], labels=["dry", "balanced", "sweet"])`, guides: ["A named category can make a chemistry measure easier to compare in a table."] },
@@ -760,7 +782,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
             { id: "wine-correlation", title: "Map the chemistry", caption: "measures + score", question: "Which chemistry measures travel most with quality?", hint: "Read the quality row and column first, then inspect other pairs.", code: `plot = df.select_dtypes(include="number").corr()\nsns.heatmap(plot, cmap="rocket", center=0)\nplt.title("Wine chemistry correlations")\nplt.show()`, guides: ["A heatmap is a compact visual table for many numeric pairwise relationships."] },
             { id: "wine-alcohol-reg", title: "Fit the quality trend", caption: "alcohol → score", question: "Does alcohol align with higher quality scores?", hint: "The fitted line is a guide to direction, not proof of causation.", code: `plot = df[["alcohol", "quality"]].dropna()\nsns.regplot(data=plot, x="alcohol", y="quality")\nplt.title("Alcohol and quality")\nplt.show()`, guides: ["regplot() puts a simple fitted trend over the observations."] },
             { id: "wine-quality-bar", title: "Compare quality means", caption: "barplot by type", question: "Which wine type has the higher average quality?", hint: "Summarise quality by wine_type, then compare the bars.", code: `plot = df.groupby("wine_type", as_index=False)["quality"].mean()\nsns.barplot(data=plot, x="wine_type", y="quality")\nplt.xlabel("")\nplt.title("Average quality by wine type")\nplt.show()`, guides: ["barplot() makes a category-level mean easy to compare."] },
-            { id: "wine-quality-count", title: "Count quality scores", caption: "countplot distribution", question: "Which quality scores appear most often?", hint: "Count each score and preserve the natural score order.", code: `plot = df[["quality"]]\nsns.countplot(data=plot, x="quality", order=sorted(plot["quality"].unique()))\nplt.xlabel("quality score")\nplt.ylabel("wines")\nplt.title("Quality score frequency")\nplt.show()`, guides: ["countplot() shows the shape of a discrete score distribution."] },
+            { id: "wine-quality-count", title: "Plot quality score counts", caption: "countplot distribution", question: "How do quality-score frequencies look in a count plot?", hint: "Count each score and preserve the natural score order.", code: `plot = df[["quality"]]\nsns.countplot(data=plot, x="quality", order=sorted(plot["quality"].unique()))\nplt.xlabel("quality score")\nplt.ylabel("wines")\nplt.title("Quality score frequency")\nplt.show()`, guides: ["countplot() shows the shape of a discrete score distribution."] },
             { id: "wine-quality-strip", title: "Show every quality", caption: "stripplot detail", question: "How much do red and white quality scores overlap?", hint: "Keep individual scores visible within each wine type.", code: `plot = df[["wine_type", "quality"]]\nsns.stripplot(data=plot, x="wine_type", y="quality", jitter=0.18, alpha=0.3)\nplt.xlabel("")\nplt.title("Individual quality scores by type")\nplt.show()`, guides: ["stripplot() displays the observations that a box or mean can hide."] },
             { id: "wine-quality-swarm", title: "Spread quality scores", caption: "swarmplot detail", question: "Where do quality scores cluster within each type?", hint: "Use a sample so the nearby score points remain readable.", code: `plot = df[["wine_type", "quality"]].sample(min(260, len(df)), random_state=16)\nsns.swarmplot(data=plot, x="wine_type", y="quality", size=3)\nplt.xlabel("")\nplt.title("Quality score density by wine type")\nplt.show()`, guides: ["swarmplot() separates overlapping scores to show local density."] },
             { id: "wine-alcohol-kde", title: "Smooth alcohol density", caption: "KDE by type", question: "Do red and white wines have different alcohol shapes?", hint: "Compare the smooth alcohol curves by wine_type.", code: `plot = df[["wine_type", "alcohol"]]\nsns.kdeplot(data=plot, x="alcohol", hue="wine_type", common_norm=False, fill=False)\nplt.title("Alcohol density by wine type")\nplt.show()`, guides: ["kdeplot() shows where each wine type concentrates along the alcohol scale."] },
@@ -783,7 +805,12 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         question: meta.question || caption,
         hint: meta.hint || guide?.[0] || "Read the result, then change the code and run it again."
       });
-      const makeOptionalTasks = (stage, items) => (items || []).map((item) => makeTask(item.id, item.title, item.caption, stage, item.code, item.guides, { ...item, optional: true }));
+      const makeOptionalTasks = (stage, items) => (items || []).map((item) => {
+        // Optional transformations use an isolated table; show their result in
+        // this same cell before that private working table is discarded.
+        const code = stage === 'wrangle' ? item.code + '\n\ndf.head(10)' : item.code;
+        return makeTask(item.id, item.title, item.caption, stage, code, item.guides, { ...item, optional: true });
+      });
       const route = [
         makeTask("preview", "Preview rows", "meet the columns", "inspect", "df.head(10)", ["Ask pandas for the first ten rows so the shape of the data is visible before you change it."]),
         makeTask("summary", "Summary stats", "find scale + spread", "inspect", "df.describe(include=\"all\").transpose().round(2)", ["describe() collects useful summaries for numeric columns; transpose() makes one row per column."]),
@@ -800,8 +827,8 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       return [
         ...route,
         ...routeExtras,
-        makeTask("quality-missing", "Decide how to handle missing data", "dirty teaching copy", "wrangle", `dirty = df.head(20).copy()\ncolumn = dirty.columns[0]\ndirty.loc[dirty.index[:2], column] = np.nan\nbefore = len(dirty)\ncleaned = dirty.dropna(subset=[column])\nprint("Before:", before)\nprint("After:", len(cleaned))\nprint("Removed:", before - len(cleaned))`, ["This deliberately dirty copy has two missing labels. Dropping these rows suits a label-based question but may bias the result if missingness is systematic. The source data is unchanged."], {optional:true, question:"Would excluding rows with a missing label change the population you describe?"}),
-        makeTask("quality-duplicates", "Investigate duplicate records", "dirty teaching copy", "wrangle", `dirty = pd.concat([df.head(20), df.head(2)], ignore_index=True)\ncleaned = dirty.drop_duplicates()\nprint("Before:", len(dirty))\nprint("Duplicates:", dirty.duplicated().sum())\nprint("After:", len(cleaned))`, ["The two copied rows are known duplicates in this teaching copy. In real data, identical measurements may be separate valid observations; check row identity before deleting."], {optional:true, question:"Which repeated records are duplicates, and which might be genuine observations?"}),
+        makeTask("quality-missing", "Decide how to handle missing data", "dirty teaching copy", "wrangle", `dirty = df.head(20).copy()\ncolumn = dirty.columns[0]\ndirty.loc[dirty.index[:2], column] = np.nan\nbefore = len(dirty)\ncleaned = dirty.dropna(subset=[column])\nprint("Before:", before)\nprint("After:", len(cleaned))\nprint("Removed:", before - len(cleaned))`, ["This deliberately dirty copy sets two values missing in the first column. Dropping those rows suits a question that requires that field, but may bias the result if missingness is systematic. The source data is unchanged."], {optional:true, question:"Would excluding rows with a missing value in the selected field change the population you describe?"}),
+        makeTask("quality-duplicates", "Investigate duplicate records", "dirty teaching copy", "wrangle", `sample = df.head(20).copy()\nsample["teaching_record_id"] = range(len(sample))\ndirty = pd.concat([sample, sample.head(2)], ignore_index=True)\ncleaned = dirty.drop_duplicates(subset=["teaching_record_id"], keep="first")\nprint("Before:", len(dirty))\nprint("Known copies:", dirty.duplicated(subset=["teaching_record_id"]).sum())\nprint("After:", len(cleaned))\ncleaned.head(10)`, ["The synthetic teaching_record_id identifies each original row in this 20-row sample. Append two known copies, then keep the first row for each ID: 22 rows become 20. Equal measurements with different IDs remain separate observations. The source data is unchanged."], {optional:true, question:"Use row identity to remove only the two known copies while keeping every original sample record. What changes if identical measurements belong to different observations?"}),
         ...makeOptionalTasks("inspect", chosen.extraInspect || genericExtraInspect),
         ...makeOptionalTasks("wrangle", chosen.extraWrangle || genericExtraWrangle),
         ...makeOptionalTasks("visualise", chosen.extraVisualise || genericExtraVisualise)
@@ -925,13 +952,42 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       return button;
     }
 
+    const dataTaskBrief = (dataset,id) => DataTaskBriefs.get(dataset,id);
+    let analysisRouteSlider = null;
+    let routeBatchRunning = false;
+    function dataRouteState(task) {
+      const cell = cells.find(item => item.taskId === task.id);
+      const missing = (task.prerequisites || []).filter(id => !cells.some(item => item.taskId === id && item.status === 'done' && item.output?.status === 'ok' && item.output.executedCode === item.code));
+      const fatal = runtimeDot.classList.contains('error');
+      const unavailable = datasetLoading || fatal || !runtimeDot.classList.contains('ready');
+      const status = cell?.status || 'ready';
+      const message = fatal ? 'Python is unavailable. Read the error, then Stop / restart Python.' : unavailable ? 'The selected cell waits for Python and the dataset.' : bridge.busy || routeBatchRunning || status === 'running' ? 'A route or cell is running. Only the latest waiting choice will run next.' : missing.length ? 'Run earlier steps first: ' + missing.map(id => currentTasks.find(item => item.id === id)?.title || id).join(', ') + '.' : status === 'done' ? 'Ran successfully. The unchanged cell is reused.' : status === 'error' ? 'Fix the code, then select this step or use its Run control.' : 'The selected editable cell runs automatically.';
+      return {status, fatal, blocked:unavailable || bridge.busy || routeBatchRunning || status === 'running' || Boolean(missing.length), short:unavailable?'loading':bridge.busy||routeBatchRunning?'waiting':missing.length?'run earlier steps':'waiting', message};
+    }
+    function setDataframeState(state) {
+      // A delayed CSV response must not replace an already failed worker's
+      // message with "Preparing". Restart explicitly clears the error first.
+      if (state === 'loading' && runtimeDot.classList.contains('error')) state = 'error';
+      $('#dataframeNoteStatus').innerHTML = state === 'ready' ? '<code class="code-identifier">df</code> is ready to use' : state === 'error' ? '<code class="code-identifier">df</code> is unavailable' : 'Preparing <code class="code-identifier">df</code>…';
+      $('#dataframeNoteCopy').innerHTML = state === 'ready' ? 'The selected file is loaded for you. Start with <code class="code-identifier">df.head()</code> or <code class="code-identifier">df.dtypes</code> — no CSV loading needed.' : state === 'error' ? 'Python or the dataset could not load. Read the runtime message, then use Stop / restart Python or reload to try again.' : 'The selected file loads automatically. Wait for Python and the table to finish loading before running a cell.';
+      analysisRouteSlider?.refresh();
+      $$('.cell .run').forEach(button => {
+        const cell = cells.find(item => item.id === button.closest('.cell').dataset.cellId);
+        button.disabled = state !== 'ready' || bridge.busy || cell?.status === 'running';
+      });
+    }
     function renderTasks() {
       const routeContainer = $("#suggestedRoute");
-      routeContainer.replaceChildren();
       const routeTasks = currentTasks.filter((task) => !task.optional);
-      routeTasks.forEach((task, index) => {
-        routeContainer.append(makeTaskButton(task, String(index + 1).padStart(2, "0"), "route"));
+      analysisRouteSlider ||= RouteSlider.mount(routeContainer, {
+        name:'Choose an analysis route step', state:dataRouteState,
+        emptyState:() => runtimeDot.classList.contains('error') ? 'error' : 'loading',
+        emptyText:() => runtimeDot.classList.contains('error') ? 'The route is unavailable because loading failed. Read the runtime message.' : 'Wait for Python and the dataset to load.',
+        insert:task => insertTask(task, {run:false}),
+        key:task => {const cell=cells.find(cell=>cell.taskId===task.id);return JSON.stringify([datasetLoadToken,cell?.id,cell?.routeRestoreRevision||0,cell?.code,currentTasks.filter(item=>!item.optional).slice(0,currentTasks.findIndex(item=>item.id===task.id)).map(item=>cells.find(cell=>cell.taskId===item.id)?.output?.executionId)]);},
+        run:task => { const cell=cells.find(cell=>cell.taskId===task.id); if(cell)return runCell(cell); }
       });
+      analysisRouteSlider.update(routeTasks);
       ["inspect", "wrangle", "visualise"].forEach((stage) => {
         const extraContainer = $(`#${stage}MoreTasks`);
         const optionalTasks = currentTasks.filter((task) => task.stage === stage && task.optional);
@@ -973,7 +1029,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       if (!cells.length) {
         const empty = document.createElement("div");
         empty.className = "empty-notebook";
-        empty.innerHTML = "<strong>NO CELLS YET</strong><p>Start with a route task, or add a custom cell when you already know what you want to ask.</p>";
+        empty.innerHTML = "<strong>CHOOSE STEP 1 TO BEGIN</strong><p>Select a step to add its editable cell. Drag, then release. Use Run in the cell, then read the result before continuing. Step 0 keeps your cells. You can also add a custom cell.</p>";
         notebookPanel.append(empty);
       }
       cells.forEach((cell, index) => {
@@ -1010,7 +1066,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         run.type = "button";
         run.className = "cell-action run";
         run.textContent = cell.status === "running" ? "Running…" : "Run";
-        run.disabled = cell.status === "running";
+        run.disabled = cell.status === "running" || datasetLoading || runtimeDot.classList.contains('error') || !runtimeDot.classList.contains('ready');
         run.addEventListener("click", () => runCell(cell));
         const del = document.createElement("button");
         del.type = "button";
@@ -1063,6 +1119,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
           article.dataset.status = cell.status;
           const state = $(".cell-state", article);
           if (state) state.textContent = "edited";
+          updateProgress();
         });
         textarea.addEventListener("scroll", syncCodeHighlight);
         editor.append(rail, highlight, textarea);
@@ -1074,7 +1131,11 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         const outputHint = document.createElement("span");
         outputHint.textContent = cell.output?.status === "ok" ? `${cell.output.state?.rows?.toLocaleString?.() || "—"} working rows` : "Python cell";
         footer.append(state, outputHint);
-        article.append(head, editor, footer);
+        const instructions=document.createElement('div'); instructions.className='data-task-instructions';
+        const task=currentTasks.find(item => item.id === cell.taskId), brief=task&&dataTaskBrief(currentDataset.id,task.id);
+        if (brief) instructions.innerHTML='<p><strong>Do:</strong> '+CodeIdentifiers.format(brief[0])+'</p><p><strong>Look for:</strong> '+CodeIdentifiers.format(brief[1])+'</p>';
+        else if(task) instructions.innerHTML='<p>'+CodeIdentifiers.format(task.hint)+'</p>';
+        article.append(head, instructions, editor, footer);
         const inlineOutput = document.createElement("div");
         inlineOutput.className = "cell-inline-output";
         inlineOutput.dataset.outputFor = cell.id;
@@ -1104,6 +1165,14 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     }
 
     function renderTasksOnlyStates() {
+      analysisRouteSlider?.refresh();
+      $$('article.cell', notebookPanel).forEach(article => {
+        const cell = cells.find(item => item.id === article.dataset.cellId);
+        if (!cell) return;
+        article.dataset.status = cell.status;
+        const state = $('.cell-state', article);
+        if (state) state.textContent = cell.status === 'stale' ? 'previous result — rerun to update' : cell.status === 'done' ? 'ran successfully' : cell.status === 'error' ? 'needs a fix' : cell.status === 'running' ? 'running…' : cell.status === 'edited' ? 'edited' : 'ready to run';
+      });
       $$(".task-block, .task-more-block").forEach((button) => {
         const cell = cells.find((item) => item.taskId === button.dataset.taskId);
         const state = cell?.status === "done" ? "done" : cell?.status === "running" ? "running" : "idle";
@@ -1113,21 +1182,29 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       });
     }
 
-    function insertTask(task) {
+    async function insertTask(task, {run = true} = {}) {
+      if (run && (datasetLoading || bridge.busy || runtimeDot.classList.contains("error"))) {showToast("Wait for Python and the dataset to be ready."); return;}
       const missing = (task.prerequisites || []).filter(id => !cells.some(cell => cell.taskId === id && cell.status === "done" && cell.output?.status === "ok" && cell.output.executedCode === cell.code));
-      if (missing.length) { showToast(`Run prerequisites first: ${missing.join(", ")}. Use Run suggested route.`); return; }
+      if (run && missing.length) { showToast(`Run prerequisites first: ${missing.join(", ")}. Use Run suggested route.`); return; }
       const existing = cells.find((cell) => cell.taskId === task.id);
       if (existing) {
-        showToast(`${task.title} is already in the notebook — edit or rerun it.`);
-        return;
+        if (run) showToast(`${task.title} is already in the notebook — edit or rerun it.`);
+        return existing;
       }
       const cell = { id: `cell-${++cellSequence}`, number: cellSequence, taskId: task.id, independent: task.optional, label: task.title, stage: task.stage, code: task.code, guides: task.guides, status: "ready", output: null };
-      cells.push(cell);
+      // Insertion may jump ahead; keep guided cells in route order so the
+      // existing edit/run/delete invalidation reaches every dependent result.
+      const route = currentTasks.filter(item => !item.optional);
+      const rank = route.findIndex(item => item.id === task.id);
+      const next = rank < 0 ? -1 : cells.findIndex(existing => route.findIndex(item => item.id === existing.taskId) > rank);
+      if (next < 0) cells.push(cell); else cells.splice(next, 0, cell);
       // Do not focus the newly inserted textarea.  On iOS, focusing this
       // compact textarea can invoke Safari's input zoom and scroll the
       // viewport to the cell before its automatic run begins.
       renderNotebookView();
-      setTimeout(() => runCell(cell), reducedMotion ? 0 : 90);
+      if (!run) return cell;
+      await new Promise(resolve => setTimeout(resolve, reducedMotion ? 0 : 90));
+      await runCell(cell);
     }
 
     function addCustomCell() {
@@ -1146,6 +1223,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     }
 
     async function runCell(cell) {
+      if (datasetLoading || runtimeDot.classList.contains('error') || !runtimeDot.classList.contains('ready')) { showToast('Wait for Python and the dataset to be ready.'); return; }
       if (!cell.code.trim() || cell.status === "running") return;
       const task = currentTasks.find(task => task.id === cell.taskId);
       const missing = (task?.prerequisites || []).filter(id => !cells.some(previous => previous.taskId === id && previous.status === "done" && previous.output?.executedCode === previous.code));
@@ -1181,6 +1259,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         setRuntimeError(error?.stage ? `Python ${error.stage} failed` : "Python worker request failed", error);
         showToast(error.message, true);
       }
+      analysisRouteSlider?.recordFailure(task?.id);
       renderNotebookView(null, focusTarget);
       updateProgress();
     }
@@ -1393,6 +1472,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     function prepareWorkspaceForLoad() {
       window.NotebookSession?.beginTransition();
       datasetLoading = true;
+      setDataframeState("loading");
       cells = [];
       cellSequence = 0;
       currentTasks = [];
@@ -1425,6 +1505,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         runtimeStatus.textContent = "Python ready";
         runtimeDot.className = "runtime-dot ready";
         datasetLoading = false;
+        setDataframeState("ready");
         window.NotebookSession?.restore();
       } catch (error) {
         if (token !== datasetLoadToken) return;
@@ -1474,6 +1555,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
 
     async function selectDataset(id) {
       if (!DATASETS[id]) return;
+      analysisRouteSlider?.reset();
       const token = ++datasetLoadToken;
       const config = { ...DATASETS[id], id };
       currentDataset = { id, config, csv: "", sep: config.sep };
@@ -1502,23 +1584,31 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
     }
 
     async function runAllSuggested() {
-      if (datasetLoading || !currentTasks.length) {
-        showToast("Wait for the new dataset to finish loading.");
+      if (routeBatchRunning || bridge.busy || datasetLoading || !currentTasks.length || runtimeDot.classList.contains('error')) {
+        showToast("Wait for Python, the dataset and any running route.");
         return;
       }
-      for (const task of currentTasks.filter((item) => !item.optional)) {
-        let cell = cells.find((item) => item.taskId === task.id);
-        if (!cell) {
-          cell = { id: `cell-${++cellSequence}`, number: cellSequence, taskId: task.id, independent: task.optional, label: task.title, stage: task.stage, code: task.code, guides: task.guides, status: "ready", output: null };
-          cells.push(cell);
+      const token = datasetLoadToken;
+      routeBatchRunning = true; $('#runAllButton').disabled = true; analysisRouteSlider?.refresh();
+      try {
+        for (const task of currentTasks.filter((item) => !item.optional)) {
+          if (token !== datasetLoadToken) return;
+          let cell = cells.find((item) => item.taskId === task.id);
+          if (!cell) cell = await insertTask(task, {run:false});
+          await runCell(cell);
+          if (token !== datasetLoadToken || cell.status !== "done") break;
         }
-        await runCell(cell);
-        if (cell.status !== "done") break;
+      } finally {
+        routeBatchRunning = false;
+        $('#runAllButton').disabled = datasetLoading || bridge.busy || runtimeDot.classList.contains('error');
+        analysisRouteSlider?.refresh();
       }
     }
 
     async function resetData() {
+      analysisRouteSlider?.reset();
       const token=++datasetLoadToken;
+      datasetLoading = true; setDataframeState("loading");
       try {
         const response = await sendWorker("reset");
         if (token!==datasetLoadToken) return;
@@ -1531,6 +1621,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
         $("#downloadCsvButton").disabled = false;
         renderOutputPlaceholder("↺", "Original copy restored.", "Python variables were reset. Editable notebook code was retained. The working dataset is back at its starting point.", true);
         $("#outputStatus").textContent = "Reset complete";
+        datasetLoading = false; runtimeDot.className = "runtime-dot ready"; setDataframeState("ready");
         $("#downloadChartButton").disabled = true;
         showToast("Working data reset; original copy is ready.");
       } catch (error) {
@@ -2012,7 +2103,7 @@ df[[${safe(n1)}, "value_band"]].head(10)` : `df["value_band"] = pd.qcut(np.arang
       key:() => 'data:' + currentDataset.id,
       get:() => ({cells, csv:currentDataset?.csv || '', sep:currentDataset?.sep || ',', dictionary:window.DatasetDictionary?.[currentDataset?.config?.file]}),
       set:draft => {cells=draft.cells; cellSequence=Math.max(0,...cells.map(cell => cell.number)); renderNotebookView(); updateProgress();},
-      insert:(cell,index) => {cell.output=null; cell.status='ready'; cells.splice(index,0,cell); renderNotebookView();}
+      insert:(cell,index) => {cell.output=null; cell.status='ready';cell.routeRestoreRevision=(cell.routeRestoreRevision||0)+1; cells.splice(index,0,cell); renderNotebookView();}
     });
     prepareGuideInteractions();
     renderGuide();

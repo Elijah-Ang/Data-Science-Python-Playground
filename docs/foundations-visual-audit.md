@@ -58,7 +58,7 @@ The per-card fingerprints in `foundations-visual-review.json` cover both library
 | W10 · Clean text | strip whitespace, standardise case | literal replacement inside each string |
 | W11 · Search / extract text | contains “a”: select matching text | Same operation; new dataset/context |
 | W12 · Convert numeric text | numeric text → numbers; invalid → NaN | Same operation; new dataset/context |
-| WR2 · Review · Values with meaning | Create a numeric column; Clean text; Convert numeric text | doubled = price × 2, on each row; literal replacement inside each string; numeric text → numbers; invalid → NaN |
+| WR2 · Bridge review · Sections 02 + 03 | Create a numeric column; Clean text; Convert numeric text | doubled = price × 2, on each row; literal replacement inside each string; numeric text → numbers; invalid → NaN |
 | W13 · Convert data types | same labels, explicit category dtype | Same operation; new dataset/context |
 | W14 · Parse dates | text → datetime; invalid → NaT | Same operation; new dataset/context |
 | W15 · Work with dates | extract calendar fields from dates | Same operation; new dataset/context |

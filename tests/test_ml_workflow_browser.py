@@ -39,14 +39,14 @@ def wait_ready(page, timeout: int = 180_000) -> None:
 
 
 def route_ids(page) -> list[str]:
-    return page.locator("#routeStrip .route-card").evaluate_all(
+    return page.locator("#routeStrip .step-route-stop[data-task-id]:not([data-task-id=''])").evaluate_all(
         "cards => cards.map(card => card.dataset.taskId)"
     )
 
 
 def wait_route(page, expected: list[str], timeout: int = 30_000) -> None:
     page.wait_for_function(
-        "expected => JSON.stringify([...document.querySelectorAll('#routeStrip .route-card')].map(card => card.dataset.taskId)) === JSON.stringify(expected)",
+        "expected => JSON.stringify([...document.querySelectorAll('#routeStrip .step-route-stop[data-task-id]:not([data-task-id=\"\"])')].map(card => card.dataset.taskId)) === JSON.stringify(expected)",
         arg=expected,
         timeout=timeout,
     )
@@ -132,15 +132,18 @@ def wait_new_optional(page, previous_titles: list[str], timeout: int = 180_000):
     return optional_title, wait_cell(page, optional_title, timeout)
 
 
+def choose_stop(page, task_id):
+    index=int(page.locator(f"#routeStrip .step-route-stop[data-task-id='{task_id}']").get_attribute('data-index'))
+    page.locator('.step-route-range').evaluate('(n,v)=>{n.value=v;n.dispatchEvent(new Event("input"));n.dispatchEvent(new Event("change"))}',index)
+
+
 def run_task(page, task_id: str, timeout: int = 180_000):
-    card = page.locator(f"#routeStrip .route-card[data-task-id='{task_id}']")
-    if card.count() != 1:
-        raise AssertionError(f"Expected one route card for task ID {task_id!r}.")
-    title = card.locator(".route-title").inner_text().strip()
-    if card.is_disabled():
-        raise AssertionError(f"Route task {task_id!r} ({title}) was disabled before its turn.")
-    card.click()
-    return wait_cell(page, title, timeout)
+    previous=page.locator("#notebookPanel article.cell").count()
+    choose_stop(page,task_id)
+    page.wait_for_function("n => document.querySelectorAll('#notebookPanel article.cell').length === n+1", arg=previous)
+    article=page.locator('#notebookPanel article.cell').last
+    title=article.locator('.cell-label').inner_text().strip()
+    return wait_cell(page,title,timeout)
 
 
 def run_route(page, expected: list[str], timeout: int = 180_000) -> None:
@@ -170,10 +173,14 @@ def assert_final_latch(page, expected: list[str]) -> None:
         raise AssertionError(f"Expected a final task in a supervised route, got {expected}.")
     if page.locator("#holdoutState").inner_text().strip() != "opened once":
         raise AssertionError("The final supervised task did not open the holdout exactly once.")
-    final_card = page.locator("#routeStrip .route-card[data-task-id='final']")
-    if not final_card.is_disabled() or final_card.get_attribute("data-state") != "done":
-        raise AssertionError("The final route card was not latched after its one-time evaluation.")
-    final_article = article_for_title(page, final_card.locator(".route-title").inner_text().strip())
+    final_card = page.locator("#routeStrip .step-route-stop[data-task-id='final']")
+    if final_card.get_attribute("data-state") != "done":
+        raise AssertionError("The final route stop did not retain its successful status.")
+    previous=page.locator("#notebookPanel article.cell").count()
+    choose_stop(page,'final');choose_stop(page,'final')
+    if page.locator("#notebookPanel article.cell").count()!=previous:
+        raise AssertionError("Revisiting the final stop duplicated its cell.")
+    final_article = article_for_title(page, "Final test")
     run_button = final_article.locator("button.cell-action.run")
     if run_button.count() != 1 or not run_button.is_disabled() or run_button.inner_text().strip() != "used once":
         raise AssertionError("The final cell did not become a one-use disabled editor.")
@@ -181,8 +188,8 @@ def assert_final_latch(page, expected: list[str]) -> None:
 
 def assert_optional_edit_invalidates(page, expected: list[str]) -> None:
     task_id = expected[-1]
-    final_card = page.locator(f"#routeStrip .route-card[data-task-id='{task_id}']")
-    title = final_card.locator(".route-title").inner_text().strip()
+    final_card = page.locator(f"#routeStrip .step-route-stop[data-task-id='{task_id}']")
+    title = page.locator("#notebookPanel article.cell .cell-label").last.inner_text().strip()
     article = article_for_title(page, title)
     optional = article.locator("details.optional-route-code")
     if optional.count() != 1:
@@ -209,7 +216,7 @@ def assert_optional_edit_invalidates(page, expected: list[str]) -> None:
     headers = result.locator(".result-table thead th").all_inner_texts()
     if headers != ["edited_check"]:
         raise AssertionError(f"The edited optional cell did not render its own last-expression table: {headers}")
-    frame_card = page.locator("#routeStrip .route-card[data-task-id='frame']")
+    frame_card = page.locator("#routeStrip .step-route-stop[data-task-id='frame']")
     if frame_card.get_attribute("data-state") == "done":
         raise AssertionError("Editing optional evidence left the suggested route falsely complete.")
     if page.locator("#notebookPanel article.cell[data-status='error']").count():

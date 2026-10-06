@@ -11,7 +11,6 @@ const formatted = {
   "df = df[[\"price\",\"drink\",\"size\",\"tip\",\"shift\"]]\ndf": "df = df[[\"price\", \"drink\", \"size\", \"tip\", \"shift\"]]\ndf",
   "df = df[df[\"species\"] == \"Cat\"].sort_values(\"weight\", ascending=False).reset_index(drop=True)\ndf": "df = (\n    df[df[\"species\"] == \"Cat\"]\n    .sort_values(\"weight\", ascending=False)\n    .reset_index(drop=True)\n)\ndf",
   "df = df[df[\"species\"] == \"Cat\"][[\"name\",\"weight\"]]\ndf": "df = df[df[\"species\"] == \"Cat\"][[\"name\", \"weight\"]]\ndf",
-  "df.groupby(\"flavour\", as_index=False).agg(\n    mean_amount=(\"price\", \"mean\"),\n    records=(\"price\", \"size\")\n)": "df.groupby(\"flavour\", as_index=False).agg(\n    mean_amount=(\"price\", \"mean\"), records=(\"price\", \"size\")\n)",
   "df.groupby(\"flavour\", as_index=False).agg(mean_amount=(\"price\", \"mean\"), records=(\"price\", \"size\"))": "df.groupby(\"flavour\", as_index=False).agg(\n    mean_amount=(\"price\", \"mean\"), records=(\"price\", \"size\")\n)",
   "df.loc[[\"F\", \"B\"], [\"weight\",\"age\"]]": "df.loc[[\"F\", \"B\"], [\"weight\", \"age\"]]",
   "df.melt(id_vars=[\"candy\"], value_vars=[\"price\", \"rating\"], var_name=\"measure\", value_name=\"value\")": "df.melt(\n    id_vars=[\"candy\"],\n    value_vars=[\"price\", \"rating\"],\n    var_name=\"measure\",\n    value_name=\"value\",\n)",

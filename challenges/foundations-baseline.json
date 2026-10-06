@@ -1,6 +1,6 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "59e0fb726be448573c61bb63656d3788239cd41b247aef04d9e4a2f2356f45eb",
+  "sha256": "16b62a923eaaa14ba2ac050c379ed15b02aab105bd4efa263781305ac830ddd3",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
@@ -544,19 +544,19 @@
       ]
     },
     {
-      "id": "V16",
-      "rounds": [
-        "V16-1",
-        "V16-2",
-        "V16-3"
-      ]
-    },
-    {
       "id": "V02",
       "rounds": [
         "V02-1",
         "V02-2",
         "V02-3"
+      ]
+    },
+    {
+      "id": "V16",
+      "rounds": [
+        "V16-1",
+        "V16-2",
+        "V16-3"
       ]
     },
     {
@@ -875,6 +875,23 @@
       ]
     }
   ],
-  "reviewed": "2026-09-29",
-  "reason": "Reviewed the new worked introductions at 19 later practices, including qcut, scalers, category mapping, filters, and chart panels. All 106 cards and 324 exercise identities remain the same. The commit field records the original curriculum provenance."
+  "reviewed": "2026-10-05",
+  "reason": "Authorized isolated full-route content and semantic audit. The reviewed Foundations source preserves all 106 cards and 324 stable exercise identities, makes task/solution contracts explicit, accepts valid Python alternatives, and retains data/scientific requirements. The Visualise start is V35 → V01 → V02 → V16. The integration guard now checks this new reviewed baseline; Foundations content is intentionally updated. The commit field records original provenance. Authorized follow-up: visible supplied plot preparation is separated from focused learner work; all 106 lesson and 324 exercise identities and datasets remain stable. UI shows displayed lesson sequence. V36-3 declares its common 0–25 range explicitly. Separate before/after audit and runtime/browser receipts accompany this baseline.",
+  "previousReview": {
+    "reviewed": "2026-09-26",
+    "sha256": "32b572fa0cc9c0e715cabf9bf064f7ebec4c44d75ed829e37cbebeae4e8aef6a",
+    "reason": "Reviewed all Foundations Learn and Refresh tasks and checks. Clarified shape and dtype prompts, removed incidental category ordering, and checked labelled summaries and bar charts by meaning while keeping all 106 cards and 324 exercise identities. Workflow challenge audit is documented separately. The commit field records the original curriculum provenance.",
+    "previewReview": {
+      "priorSHA256": "d37bba5bc28c8aeb5ff2915b76847b89711972d84eb0c3f97cb48c78d47607c5",
+      "scope": "Only I02, W25, V03 prose and copied retrieval prose changed; runtime, inputs, solutions and grade rules retained."
+    }
+  },
+  "auditRefinement": {
+    "priorSHA256": "2078f9f63a16ebb79f5397f4090d3ced93518c27633461bf6e5e47e6a8eeaa58",
+    "reason": "The final reviewed V22 heatmap contract accepts equivalent numeric annotations when no display precision was requested, while V23 explicitly specified integer and one-decimal formats remain exact.",
+    "previousRefinement": {
+      "priorSHA256": "76d6e1828097a38a8820ddac963d90fe1af3e819ed6222c4290d2882d3f9b91a",
+      "reason": "Final reviewed audit preserves authored grouped checkpoint steps and distinguishes practical checkpoints from spaced retrieval. No card or exercise identity was added or removed."
+    }
+  }
 }

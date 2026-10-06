@@ -94,8 +94,8 @@ for(const [id,names] of Object.entries({
   'ML-U02-2':['raw_distance','scaled_distance'],
   'ML-U03-2':['cluster','distance'],
   'ML-U08-2':['sizes_2','sizes_4'],
-  'ML-P04-2':['retained_80','retained_95'],
-  'ML-P-R1-1':['retained_80','retained_95'],
+  'ML-P04-2':['cumulative','retained_80','retained_95'],
+  'ML-P-R1-1':['cumulative','retained_80','retained_95'],
   'ML-P06-2':['retained_scores','view_2d'],
 })){
   const e=all.find(ex=>ex.id===id);
