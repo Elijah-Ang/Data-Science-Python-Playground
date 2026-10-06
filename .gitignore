@@ -13,3 +13,6 @@ __pycache__/
 # Local test output and duplicate generated Capacitor configuration copies.
 tests/evidence/
 ios/App/App/config [0-9]*.xml
+
+# Cloud audit scratch data, dependency cache and execution evidence.
+work/

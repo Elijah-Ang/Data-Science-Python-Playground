@@ -19,7 +19,7 @@ const decks=[
  {id:'visualise',number:'03',title:'Visualise',tagline:'Give your questions a picture.',description:'Choose a chart, build it with confidence, and make the meaning clear.',chapters:['The chart canvas','Distributions & estimates','Comparing categories','Relationships','Chart craft','Figures & visual judgement']}
 ];
 const lessons=[];
-const py=v=>JSON.stringify(v).replace(/\bnull\b/g,'None');
+const py=v=>v===null?'None':typeof v==='boolean'?(v?'True':'False'):Array.isArray(v)?'['+v.map(py).join(',')+']':JSON.stringify(v);
 function setupCode(key){return 'import pandas as pd\n\ndata = '+Object.entries(datasets[key].columns).map(([k,v],i)=>`${i?'    ':'{\n    '}${py(k)}: ${py(v)}`).join(',\n')+'\n}\n\ndf = pd.DataFrame(data)';}
 function fill(s,d,r){const values={a:d.a,b:d.b,c:d.c,d:d.d,id:d.id,cat:d.columns[d.c][0],n:[2,3,4][r],threshold:d.columns[d.a][1],name:d.name};return s.replace(/\{(a|b|c|d|id|cat|n|threshold|name)\}/g,(_,k)=>values[k]);}
 function add(id,title,chapter,goal,explanation,syntax,task,solution,options={}){

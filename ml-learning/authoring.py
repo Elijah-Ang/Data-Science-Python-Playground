@@ -345,7 +345,18 @@ def assemble():
     challenges=workflows.challenges(manifest['challenges'])
     import editorial, python_path
     registry=model_bridges.extend(transfer_practice.enrich(mastery.extend(python_path.apply(editorial.apply(dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES))))))
+    # Evaluate these repairs against the content learners actually receive,
+    # including the editorial, retrieval, mastery and Apply overlays.
+    import audit_repair_core, audit_repair_classification, audit_repair_discovery, audit_repair_challenges
+    for repair in (audit_repair_core, audit_repair_classification, audit_repair_discovery, audit_repair_challenges):
+        registry=repair.apply(registry)
     for exercise in [e for c in registry['cards'] for e in c['exercises']]+[c['exercise'] for c in registry['challenges']]:
+        if exercise['kind']=='python' and exercise.get('label')=='Follow':
+            exercise['starter']=exercise['solution']
+        if exercise['id'] in ('ML-P02-2','ML-P02-3','ML-P02-4','ML-U07-4','ML-R09-3'):
+            for check in exercise.get('checks',[]):
+                if check['name']=='Requested evidence':
+                    check['message']='Check the requested values, labels, row and feature order, and fitted evidence against this task. Reuse supplied fitted state when the task asks for a transform.'
         if exercise['kind']=='python' and not exercise.get('assessment'):
             if exercise.get('validationDesign'):exercise['task']+=' '+exercise['validationDesign']
             if exercise.get('protect'):

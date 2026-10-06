@@ -19,7 +19,7 @@ function datasetTable(dataset){const columns=Object.keys(dataset.columns);return
 const icon=`<svg class="deck-icon" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h25v5H7zM10 9h25v5H10zM5 14h26v22H5zM10 21h16M10 27h10"/></svg>`;
 function landing(){
  document.body.dataset.deck='';
- return `<section class="foundation-hero"><div><span class="foundation-eyebrow">A learning space for Data Playground</span><h2>Data Foundations</h2><p>New to pandas, a little rusty, or ready for a recap?<br>Pick a deck. Try a tiny table. Make the skill yours.</p></div></section>
+ return `<section class="foundation-hero"><div><h2>Data Foundations</h2><p>Choose Inspect to read tables, Wrangle to prepare data, or Visualise to build and interpret charts.</p></div></section>
 
  <div class="foundation-decks">${C.decks.map(d=>{const items=C.lessons.filter(l=>l.deck===d.id);return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>DECK ${d.number}</span>${icon}</div><h3>${esc(d.title)}</h3><p>${esc(d.tagline)}</p><div class="deck-bottom"><span>${items.filter(l=>!l.review).length} lessons · ${items.filter(l=>l.review).length} reviews · ${ChallengeExperience.all.filter(c=>c.deck===d.id).length} challenges</span><span aria-hidden="true">↗</span></div></a>`;}).join('')}</div>
  

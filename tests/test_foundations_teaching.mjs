@@ -82,7 +82,7 @@ assert(qcut.includes('Tied values at a boundary')&&qcut.includes('qcut chooses b
 assert(bins.rounds[1].solution.includes('pd.qcut')&&bins.rounds[1].task.includes('sample-quantile'));
 assert.equal(teaching.transition(bins.rounds[0]),'');
 const transitions=curriculum.lessons.flatMap(l=>l.rounds.filter(r=>r.teaching));
-assert.deepEqual(transitions.map(r=>r.id),['I02-3','I10-2','I10-3','I12-3','I14-2','I16-2','I16-3','W08-2','W09-2','W10-2','W15-3','W26-2','W28-2','W28-3','V08-2','V18-3','V32-2','V33-2','V33-3']);
+assert.deepEqual(transitions.map(r=>r.id),['I02-3','I10-2','I10-3','I12-3','I14-2','I16-2','I16-3','W08-2','W09-2','W10-2','W15-3','W26-2','W28-2','W28-3','V04-3','V08-2','V25-3','V23-2','V32-2','V33-2','V33-3']);
 for(const round of transitions){
   const panel=teaching.transition(round);
   assert(panel.includes('A small example')&&panel.includes('What each part does'),round.id);
@@ -92,11 +92,11 @@ for(const round of transitions){
 }
 assert(!teaching.syntax(curriculum.lessons.find(l=>l.id==='V08')).includes('Other choices for later exercises'));
 assert(!teaching.syntax(curriculum.lessons.find(l=>l.id==='V33')).includes('Other choices for later exercises'));
-for(const id of ['I10','I12','I14','I16','W09','W10','V08','V32','V33']){
+for(const id of ['I10','I12','I14','I16','W09','W10','V04','V23','V25','V32','V33']){
   const follow=curriculum.lessons.find(l=>l.id===id);
   const stageCode=follow.rounds.slice(1).filter(r=>r.teaching).map(r=>r.teaching.title.toLowerCase());
   assert(stageCode.length,id+' has its new operation taught at the later practice');
-  assert(!teaching.syntax(follow).includes('Other choices for later exercises')||!['I12','I14','I16','W09','W10','V08','V32','V33'].includes(id),id+' Follow is not a duplicate of the later panel');
+  assert(!teaching.syntax(follow).includes('Other choices for later exercises')||!['I12','I14','I16','W09','W10','V04','V23','V32','V33'].includes(id),id+' Follow is not a duplicate of the later panel');
 }
 assert(!teaching.syntax(curriculum.lessons.find(l=>l.id==='V33')).includes('catplot'));
 assert(!teaching.syntax(curriculum.lessons.find(l=>l.id==='V33')).includes('displot'));
@@ -106,11 +106,17 @@ assert(curriculum.lessons.find(l=>l.id==='W28').rounds[1].hint.includes('MinMaxS
 for(const l of curriculum.lessons) for(const r of l.rounds) {
   if(r.retrieves) {
     const source=curriculum.lessons.find(item=>item.id===r.retrieves).rounds[2];
-    assert.equal(r.task,source.task,r.id+' retrieval uses the current brief');
-    assert.equal(r.unorderedIndex,source.unorderedIndex,r.id+' retrieval uses the same checking rules');
-    assert.equal(r.unorderedColumns,source.unorderedColumns,r.id+' retrieval uses the same column rules');
-    assert.equal(r.unorderedRowsBy,source.unorderedRowsBy,r.id+' retrieval uses the same group rules');
-    assert.deepEqual(r.plot,source.plot,r.id+' retrieval uses the same plot rules');
+    if(l.deck==='visualise') {
+      assert.notEqual(r.task,source.task,r.id+' retrieval asks a fresh question');
+      assert(r.fixtureFeature,r.id+' retrieval states the data feature that tests its question');
+      assert(r.demand&&r.steps.length,r.id+' retrieval states the reasoning and actions');
+    } else {
+      assert.equal(r.task,source.task,r.id+' retrieval uses the current brief');
+      assert.equal(r.unorderedIndex,source.unorderedIndex,r.id+' retrieval uses the same checking rules');
+      assert.equal(r.unorderedColumns,source.unorderedColumns,r.id+' retrieval uses the same column rules');
+      assert.equal(r.unorderedRowsBy,source.unorderedRowsBy,r.id+' retrieval uses the same group rules');
+      assert.deepEqual(r.plot,source.plot,r.id+' retrieval uses the same plot rules');
+    }
     assert(!r.teaching,r.id+' review does not repeat a Change or Transfer teaching panel');
   }
   assert(!/largest.*first/.test(r.task)||!r.unorderedIndex,r.id+' no redundant summary sort contract');

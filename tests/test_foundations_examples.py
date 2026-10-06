@@ -1,4 +1,4 @@
-"""Execute the 19 self-contained teaching transitions and verify shown claims."""
+"""Execute the self-contained teaching transitions and verify shown claims."""
 import argparse
 import hashlib
 import json
@@ -50,8 +50,8 @@ for lesson in curriculum['lessons']:
             if isinstance(value, pd.DataFrame):
                 headers = list(value.columns)
                 actual = value.values.tolist()
-                if expected['headers'][0] == 'row':
-                    headers = ['row', *headers]
+                if expected['headers'][0] in ('row', 'group') and expected['headers'][0] not in headers:
+                    headers = [expected['headers'][0], *headers]
                     actual = [[index, *row] for index, row in zip(value.index, actual)]
                 assert headers == expected['headers'], round['id']
             elif isinstance(value, pd.Series):
@@ -66,12 +66,18 @@ for lesson in curriculum['lessons']:
         elif round['id'] == 'V08-2':
             ax = figures[0].axes[0]
             expected = teaching['output']['rows']
-            actual = same_rows([[label.get_text(), patch.get_height()] for label, patch in zip(ax.get_xticklabels(), ax.patches)], expected)
-            assert (ax.get_xlabel(), ax.get_ylabel()) == ('sky', 'Count')
-        elif round['id'] == 'V18-3':
+            pairs = ns['_category_bars'](ax, False, True)
+            actual = same_rows([[label, parts[0][1]] for label, parts in pairs], expected)
+            assert (ax.get_xlabel(), ax.get_ylabel()) == ('channel', 'Count')
+        elif round['id'] == 'V04-3':
             ax = figures[0].axes[0]
-            actual = same_rows(list(zip(ax.lines[0].get_xdata(), ax.lines[0].get_ydata())), [[1, 5], [2, 7], [3, 6]])
-            assert ax.lines[0].get_marker() == 'o'
+            actual = same_rows([["0–4", ax.patches[0].get_height()], ["4–10", ax.patches[1].get_height()]], teaching['output']['rows'])
+            assert [patch.get_width() for patch in ax.patches] == [4, 6]
+        elif round['id'] == 'V25-3':
+            ax = figures[0].axes[0]
+            assert not ax.lines
+            actual = same_rows(ax.collections[0].get_offsets().tolist(), [[1, 3], [2, 1]])
+            assert (ax.get_xlabel(), ax.get_ylabel()) == ('x', 'y')
         elif round['id'] == 'V32-2':
             grid = env['g']
             assert len(figures[0].axes) == 3
@@ -81,22 +87,22 @@ for lesson in curriculum['lessons']:
             assert sum(patch.get_width() for patch in grid.ax_marg_y.patches) == 3
         elif round['id'] == 'V33-2':
             grid = env['g']
-            assert grid.col_names == ['A', 'B']
+            assert grid.col_names == ['East', 'West']
             actual = []
-            for ax, medians in zip(grid.axes.flat, ([21, 18], [25, 22])):
+            for ax, medians in zip(grid.axes.flat, ([3, 2], [6, 5])):
                 boxes = ns['_box_summary'](ax, {})
-                assert [box[0] for box in boxes] == ['Sun', 'Rain']
+                assert [box[0] for box in boxes] == ['Brush', 'Spray']
                 assert [box[3] for box in boxes] == medians
                 actual.append([[box[0], box[3]] for box in boxes])
             assert figures[0].get_size_inches()[1] == 3
         elif round['id'] == 'V33-3':
             grid = env['g']
-            assert grid.col_names == ['Puzzle', 'Race']
+            assert grid.col_names == ['A', 'B']
             actual = []
             for genre, ax in zip(grid.col_names, grid.axes.flat):
                 edges = [patch.get_x() for patch in ax.patches] + [ax.patches[-1].get_x() + ax.patches[-1].get_width()]
                 observed = [float(patch.get_height()) for patch in ax.patches]
-                expected = np.histogram(env['sample'].loc[env['sample']['genre'] == genre, 'minutes'], bins=edges)[0]
+                expected = np.histogram(env['sample'].loc[env['sample']['depot'] == genre, 'mass'], bins=edges)[0]
                 np.testing.assert_array_equal(observed, expected)
                 assert sum(observed) == 4
                 actual.append([genre, observed])
@@ -104,8 +110,8 @@ for lesson in curriculum['lessons']:
         else:
             raise AssertionError('Missing teaching-example semantic check: ' + round['id'])
         records.append({'exercise': round['id'], 'title': teaching['title'], 'code': teaching['code'], 'claimed_output': teaching.get('output') or teaching['result'], 'observed': actual, 'status': 'passed'})
-assert len(records) == 19
+assert len(records) == 21
 evidence = {'count': len(records), 'passed': len(records), 'failed': 0,
             'source_hashes': {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in ('foundations/runtime.py', 'foundations/clarity.js', 'foundations/teaching.js')}, 'examples': records}
 (args.evidence_dir / 'teaching-examples.json').write_text(json.dumps(evidence, ensure_ascii=False, indent=2) + '\n')
-print('All 19 teaching transitions executed and their displayed table/plot claims passed semantic checks.')
+print('All 21 teaching transitions executed and their displayed table/plot claims passed semantic checks.')

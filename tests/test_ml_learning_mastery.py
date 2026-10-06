@@ -57,7 +57,8 @@ for id in ('ML-U07-4','ML-P02-4'):
  assert not result['error'],(id,result['error'])
  assert all(c['status']=='correct' for c in result['checks']),(id,result['checks'])
  print('Accepted:',id,'reference',flush=True)
- wrong=e['solution'].replace('scaled_sample = scaler.fit_transform(sample)','scaled_sample = sample.to_numpy()') if id=='ML-U07-4' else e['solution'].replace('pca.components_[:2].T, index=', 'pca.components_[:2].T * 0, index=')
+ wrong=e['solution'].replace('scaled = StandardScaler().fit_transform(X)', 'scaled = X.to_numpy()') if id=='ML-U07-4' else e['solution'].replace('scaler.transform(incoming)', 'scaler.fit_transform(incoming)')
+ assert wrong != e['solution'], id+' semantic mutation must change the submitted code'
  assert wrong!=e['solution'],id
  result=ns['run_learning']({'exercise':e,'code':wrong})
  assert not result['error'],(id,result['error'])

@@ -59,7 +59,7 @@ hierarchy=activities['ML-X18']['solution']
 rejected('ML-X18',hierarchy.replace('profiles = sample.groupby(labels).mean()','profiles = X.iloc[:len(labels)].groupby(labels).mean()'),'sample label/population misalignment')
 rejected('ML-X18',hierarchy.replace("cut_evidence.append({'k':k, 'silhouette':silhouette_score(scaled_sample, assignments)})","cut_evidence.append({'k':k, 'silhouette':0.0})"),'fabricated hierarchy-cut comparison')
 pca=activities['ML-X19']['solution']
-accepted('ML-X19',pca+"\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1",'paired PCA sign change')
+accepted('ML-X19',pca+"\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1\nplt.close('all')\nfig,ax=plt.subplots()\nax.scatter(scores2[:,0],scores2[:,1])\nax.set(xlabel='PC1',ylabel='PC2')",'paired PCA sign change with its matching plotted coordinates')
 rejected('ML-X19',pca+"\nweights.iloc[:,0]*=-1",'unpaired PCA sign change')
 rejected('ML-X19',pca.replace('retained = int(np.searchsorted(cumulative,0.9)+1)','retained = 2'),'two axes substituted for variance retention')
 # Type-correct but wrong PCA subspace must not pass simply because it is orthogonal.

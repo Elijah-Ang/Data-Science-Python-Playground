@@ -1,10 +1,10 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "739b8a87d4d35086130369da2c1b5014626c75d23c04c6a24ab01b45b11fc3e0",
+  "sha256": "61b85b0d1df536c3ecb531365b217420015be05fe9f70ef1ffdadebd82dc5987",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
-  "exercises": 324,
+  "exercises": 326,
   "decks": {
     "inspect": {
       "cards": 27,
@@ -16,7 +16,7 @@
     },
     "visualise": {
       "cards": 43,
-      "exercises": 130
+      "exercises": 132
     }
   },
   "ids": [
@@ -580,7 +580,8 @@
       "rounds": [
         "VR1-1",
         "VR1-2",
-        "VR1-3"
+        "VR1-3",
+        "VR1-4"
       ]
     },
     {
@@ -636,7 +637,8 @@
       "rounds": [
         "VR2-1",
         "VR2-2",
-        "VR2-3"
+        "VR2-3",
+        "VR2-4"
       ]
     },
     {
@@ -875,8 +877,8 @@
       ]
     }
   ],
-  "reviewed": "2026-10-05",
-  "reason": "Authorized isolated full-route content and semantic audit. The reviewed Foundations source preserves all 106 cards and 324 stable exercise identities, makes task/solution contracts explicit, accepts valid Python alternatives, and retains data/scientific requirements. The Visualise start is V35 → V01 → V02 → V16. The integration guard now checks this new reviewed baseline; Foundations content is intentionally updated. The commit field records original provenance. Authorized follow-up: visible supplied plot preparation is separated from focused learner work; all 106 lesson and 324 exercise identities and datasets remain stable. UI shows displayed lesson sequence. V36-3 declares its common 0–25 range explicitly. Separate before/after audit and runtime/browser receipts accompany this baseline.",
+  "reviewed": "2026-10-06",
+  "reason": "Authorized isolated curriculum repair:106cards and326rounds, including43Visualisecards/132rounds; missingVR1/VR2 retrieval tasks restored, allVisualise rounds and localexamples reviewed against effective content. ExistingInspect/Wrangle and30workflowchallenges retain semantic intent. Native reference, scientific equivalent, negative and real browser evidence accompany the candidate before user release review.",
   "previousReview": {
     "reviewed": "2026-09-26",
     "sha256": "32b572fa0cc9c0e715cabf9bf064f7ebec4c44d75ed829e37cbebeae4e8aef6a",
