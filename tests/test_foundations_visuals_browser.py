@@ -27,11 +27,23 @@ with sync_playwright() as pw:
     })''')
     failures.extend([{'width':width,'theme':theme,'deck':deck,**b} for b in bad])
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
- # Practice rounds keep a visible, stage-specific concept visual beside their reference.
+ # Practice rounds show either the authored new-method worked example or the
+ # stage-specific concept visual beside their retained reference.
  for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facet-hist'),('#inspect/IR2/1','loc')]:
   page.evaluate('(route)=>{location.hash=route}',route)
-  page.wait_for_function('(route)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(route.split("/")[1])&&!!document.querySelector(".foundation-practice-brief")',arg=route)
-  assert page.locator(".teaching-reference .concept-visual").get_attribute("data-visual")==variant
+  page.wait_for_function('''(route)=>LearningRoutes.route('data',location,document.body)===route.replace(/^#/,'')
+   && document.querySelector('.foundation-practices [aria-current=step] strong')?.textContent===FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])].label
+   && !!document.querySelector('.foundation-practice-brief')''',arg=route)
+  round=page.evaluate('''route=>{const r=FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])];return {variant:r.visual.variant,teaching:r.teaching||null}}''',route)
+  assert round['variant']==variant
+  if round['teaching']:
+   assert page.locator('.teaching-reference').count()==0
+   assert page.locator('.teaching-transition').is_visible()
+   assert page.locator('.teaching-transition pre').inner_text()==round['teaching']['code']
+   assert page.locator('.teaching-transition .teaching-example-output' if round['teaching'].get('output') else '.teaching-transition .teaching-example-result').is_visible()
+  else:
+   visual=page.locator('.teaching-reference .concept-visual')
+   assert visual.is_visible() and visual.get_attribute('data-visual')==variant
  # Contact sheets contain every card at a consistent readable size in both themes.
  page.set_viewport_size({'width':1280,'height':1000})
  for theme in ['light','dark']:

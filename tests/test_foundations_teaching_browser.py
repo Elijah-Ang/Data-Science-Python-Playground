@@ -14,11 +14,17 @@ with sync_playwright() as p:
     page.goto(args.base_url + '/data-foundations.html#inspect/I01/0')
     page.wait_for_selector('.teaching-overview')
     rounds = page.evaluate('FoundationsCurriculum.lessons.flatMap(l=>l.rounds.map((r,i)=>({id:l.id,deck:l.deck,index:i,follow:!l.review&&i===0,teaching:!!r.teaching,teachingOutput:!!r.teaching?.output,source:r.retrieves||l.id})))')
+    def wait_for_round(item):
+        # Stable lesson IDs belong to routing; the breadcrumb shows teaching order.
+        page.wait_for_function('''(r)=>LearningRoutes.route('data',location,document.body)===`${r.deck}/${r.id}/${r.index}`
+            && document.querySelector('.foundation-lesson-heading h2')?.textContent===FoundationsCurriculum.lessons.find(l=>l.id===r.id).title
+            && Array.from(document.querySelectorAll('.foundation-practices li')).findIndex(e=>e.hasAttribute('aria-current'))===r.index
+            && document.querySelector('.foundation-practices [aria-current=step] strong')?.textContent===FoundationsCurriculum.lessons.find(l=>l.id===r.id).rounds[r.index].label''', arg=item)
     for width in (1440, 320):
         page.set_viewport_size({'width': width, 'height': 1000})
         for item in rounds:
             page.evaluate('(r)=>location.hash=`#${r.deck}/${r.id}/${r.index}`', item)
-            page.wait_for_function('(r)=>document.querySelector(".foundation-breadcrumb")?.textContent.includes(r.id)&&Array.from(document.querySelectorAll(".foundation-practices li")).findIndex(e=>e.hasAttribute("aria-current"))===r.index', arg=item)
+            wait_for_round(item)
             panel = page.locator('.teaching-overview' if item['follow'] else '.foundation-practice-brief')
             if item['follow']:
                 assert panel.locator('.teaching-comparison').count() == 0, item
@@ -54,7 +60,7 @@ with sync_playwright() as p:
             assert page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth) <= innerWidth + 1'), item
             assert panel.evaluate('(e)=>e.scrollWidth<=e.clientWidth+1'), item
     page.evaluate('location.hash="#inspect/I02/1"')
-    page.wait_for_function('document.querySelector(".foundation-breadcrumb")?.textContent.includes("I02")')
+    wait_for_round({'deck':'inspect','id':'I02','index':1})
     editor = page.locator('#foundationEditor')
     starter = editor.input_value()
     page.locator('#jumpToWork').click()
@@ -65,7 +71,7 @@ with sync_playwright() as p:
     # Transfer keeps the complete concept reference at hand, including the
     # concrete duplicate example; opening it must not replace the active code.
     page.evaluate('location.hash="#inspect/I17/2"')
-    page.wait_for_function('document.querySelector(".foundation-breadcrumb")?.textContent.includes("I17")')
+    wait_for_round({'deck':'inspect','id':'I17','index':2})
     page.locator('#foundationEditor').fill('# Keep this work while checking the concept')
     assert page.locator('.teaching-reference').evaluate('(e)=>e.tagName==="SECTION"')
     assert page.locator('.teaching-reference .teaching-flags').is_visible()
