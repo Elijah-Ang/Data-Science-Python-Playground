@@ -52,6 +52,16 @@ for (const file of [
 }
 
 const serviceWorker = await fs.readFile(path.join(root, "service-worker.js"), "utf8");
+// The hosting marker must be shipped but must never become a required fetch.
+await fs.access(path.join(dist, '.nojekyll'));
+const assetInventory = JSON.parse(await fs.readFile(path.join(dist, 'asset-manifest.json'), 'utf8'));
+assert.ok(!assetInventory.files.some(file => file.path === '.nojekyll'), 'Hosting metadata is not a public asset.');
+const builtWorker = await fs.readFile(path.join(dist, 'service-worker.js'), 'utf8');
+const precache = JSON.parse(builtWorker.match(/const APP_SHELL = (\[[^;]+\]);/)[1]);
+assert.ok(!precache.includes('./.nojekyll'), 'Hosting metadata must not block worker installation.');
+for (const entry of assetInventory.files.filter(file => !file.path.startsWith('pyodide/'))) {
+  assert.ok(precache.includes('./' + entry.path), `Required public asset remains precached: ${entry.path}`);
+}
 for (const match of serviceWorker.matchAll(/"\.\/([^"?]+)"/g)) {
   const relative = match[1];
   if (!relative) continue;

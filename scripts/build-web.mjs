@@ -192,7 +192,10 @@ async function inventory(directory, prefix='') {
   }
   return entries;
 }
-const entries=(await inventory(output)).filter(entry=>entry.path!=='service-worker.js');
+// GitHub Pages consumes this marker but does not serve it as a public URL.
+// Retain it in the deployment artifact without making cache installation fetch it.
+const deploymentOnlyFiles=new Set(['.nojekyll']);
+const entries=(await inventory(output)).filter(entry=>entry.path!=='service-worker.js'&&!deploymentOnlyFiles.has(entry.path));
 const contentId=hash(JSON.stringify(entries));
 let dirty=null;
 try {dirty=Boolean(execFileSync('git',['status','--porcelain','--untracked-files=normal'],{cwd:root,encoding:'utf8'}).trim());} catch {}
