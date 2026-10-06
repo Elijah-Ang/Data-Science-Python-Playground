@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="statistics/playground-base.css">
 <link rel="stylesheet" href="playground-shared.css">
 <link rel="stylesheet" href="statistics/statistics.css">
+<link rel="stylesheet" href="route-slider.css"><script src="code-identifiers.js"></script><script src="route-slider.js"></script>
 <script src="worker-bridge.js"></script><script src="dataset-dictionary.js"></script>
 <script src="statistics/app.js" defer></script></head>
 <body data-playground="statistics" data-theme="light" data-dataset="penguins">
@@ -44,7 +45,7 @@
 <section class="inspector-section"><h3>Recommended method</h3><p class="method-name" id="methodName">Choose a question</p><p class="inspector-note" id="methodNote"></p></section></div>
 <section class="inspector-section inspector-preview-section"><h3>First look <span>selected columns</span></h3><div class="preview inspector-preview" id="preview"></div></section></div>
 <div class="source-block"><span>Source: <a id="sourceLink" target="_blank" rel="noreferrer"></a><br><span id="sourceNote"></span></span></div></aside>
-<section class="lab" aria-label="Statistics notebook"><div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">Click a step to add and run its Python. Each completed step unlocks the next.</span></div></div>
+<section class="lab" aria-label="Statistics notebook"><div class="route-tools"><div class="route-tools-copy"><span class="route-tools-label">SUGGESTED ROUTE</span><span id="routeDescription">Move the slider below</span></div></div>
 <div class="route-strip" id="routeStrip" aria-label="Suggested statistical route"></div>
 <div id="error" class="console-output error global-error" role="alert" hidden></div>
 <div class="notebook-bar"><div class="notebook-title-tools"><h3>Notebook</h3><span id="taskProgress" class="notebook-progress" aria-live="polite">0 steps run</span></div><div class="notebook-actions"><button class="toolbar-button" id="runAllButton" disabled>▶ Run suggested route</button><button class="toolbar-button" id="restartPythonButton">Stop / restart Python</button><button class="toolbar-button" id="resetButton">↺ Reset data</button><button class="toolbar-button" id="downloadNotebook" disabled>↓ Notebook</button><button class="toolbar-button" id="downloadData" disabled>↓ Data</button></div></div>

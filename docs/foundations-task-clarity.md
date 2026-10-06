@@ -1517,9 +1517,9 @@ clean = clean[clean["numeric_price"] > 7]
 clean
 ```
 
-## WR2 — Review · Values with meaning
+## WR2 — Bridge review · Sections 02 + 03
 
-Retrieve earlier skills on a fresh table.
+Revisit new columns (W07) and clean text (W10) from Section 02, then numeric conversion (W12) from Section 03.
 
 ### Task 1 (WR2-1)
 

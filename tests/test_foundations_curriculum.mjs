@@ -37,6 +37,8 @@ for(const l of c.lessons){
  for(const r of l.rounds){
   const review=taskReviews[r.id];
   assert(review&&review.sha256===createHash('sha256').update(JSON.stringify([r.task,r.solution,c.datasets[r.dataset],r.requiredCalls||[],r.requiredKeywords||[],r.forbiddenCalls||[],!!r.unorderedIndex,!!r.unorderedColumns,r.unorderedRowsBy||null,r.plot||null])).digest('hex'),'Task review must be renewed: '+r.id);
+  const source=r.retrieves?c.lessons.find(item=>item.id===r.retrieves):l;
+  assert.equal(review.fullContractSHA256,createHash('sha256').update(JSON.stringify([l.id,source.guide||null,r,c.datasets[r.dataset]])).digest('hex'),'Renew the complete task/hint/example/grader review: '+r.id);
   assert(/df|supplied|long table|empty Figure/.test(r.task),r.id);
   for(const call of r.requiredCalls||[])assert(r.task.includes(call.split(':').pop()),r.id);
  }
@@ -54,6 +56,11 @@ for(const [id,focus] of Object.entries({W15:'.dt.',W16:'.dropna',V02:'ax.set',V2
 const lesson=id=>c.lessons.find(l=>l.id===id);
 const core=c.lessons.filter(l=>l.deck==='visualise'&&l.path==='core');
 assert.equal(core[0].id,'V35');assert.equal(core.at(-1).id,'V37');
+assert.deepEqual(core.slice(0,4).map(l=>l.id),['V35','V01','V02','V16'],'Choose a chart, create the canvas, label prepared marks, then map observations');
+assert(!lesson('V01').rounds[0].solution.includes('ax.set('),'The canvas lesson does not duplicate chart finishing');
+for(const r of lesson('V02').rounds)assert(r.setup.includes('sns.scatterplot('),'Finishing begins with prepared marks: '+r.id);
+for(const id of ['V16','V34'])assert((lesson(id).rounds[2].setup+'\n'+lesson(id).rounds[2].solution).includes('sns.scatterplot('),'Taught transfer examples use a consistent plotting route: '+id);
+assert(lesson('V18').rounds[2].solution.includes('sns.lineplot('));
 assert(core.findIndex(l=>l.id==='V16')<core.findIndex(l=>l.id==='V03'));
 assert(!core.some(l=>l.level==='Go Further'));
 for(const l of c.lessons){
@@ -70,6 +77,19 @@ for(const l of c.lessons){
 }
 assert(lesson('V37').rounds[1].solution.includes('["temperature"].mean()'));
 assert.equal(lesson('V37').rounds[1].steps.length,5);
+
+// Rendering describes the contract. Only intentional canvas dimensions are exact.
+const plotRounds=c.lessons.flatMap(l=>l.rounds).filter(r=>r.target==='plot');
+assert.deepEqual(plotRounds.filter(r=>r.plot?.size).map(r=>r.id),['V01-1','V24-2']);
+for(const r of plotRounds){
+ assert.equal(r.plot.textCaseInsensitive,true,r.id+' presentation text ignores case');
+ assert.equal(r.requiredCalls.length,0,r.id+' accepts equivalent rendered charts');
+ assert.equal(r.requiredKeywords.length,0,r.id+' has no incidental plotting API keyword requirement');
+ if(r.plot.size)assert(/figsize|\d+ by \d+ inches/.test(r.task),r.id+' states exact dimensions');
+ if(r.plot.panelHeight)assert(/height=3/.test(r.task),r.id+' states facet panel height');
+}
+assert.equal(lesson('W30').rounds[2].compareWorkingDf,true,'A displayed subset cannot stand in for adding the requested working column');
+for(const r of lesson('W25').rounds)assert(!(r.requiredKeywords||[]).includes('combined'),'Stacking does not require an invented result variable');
 
 // Visual regression checks target previously misleading concepts, not just SVG presence.
 for(const l of c.lessons)for(const r of l.rounds){

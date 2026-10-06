@@ -19,7 +19,7 @@
       if(adapters.inputPreview)return adapters.inputPreview(input,table);
       const keys = Object.keys(input.columns), rows = input.columns[keys[0]].map((_, i) => keys.map((k) => input.columns[k][i]));
       const name = input.file || input.name;
-      return `<section class="case-input"><h4>${esc(name)}</h4><p>${esc(input.description)}</p><details class="case-fields"><summary>Field meanings and units</summary><dl>${Object.entries(input.fields).map(([name2, meaning]) => `<dt>${esc(name2)}</dt><dd>${esc(meaning)}</dd>`).join("")}</dl></details>${table(keys, rows.slice(0, 5), `${name} \xB7 first ${Math.min(5, rows.length)} of ${rows.length} rows`)}${rows.length > 5 ? `<details><summary>View all ${rows.length} rows</summary>${table(keys, rows, `${name} \xB7 complete input`)}</details>` : ""}</section>`;
+      return `<section class="case-input"><h4><code class="code-identifier">${esc(name)}</code></h4><p>${esc(input.description)}</p><details class="case-fields"><summary>Field meanings and units</summary><dl>${Object.entries(input.fields).map(([name2, meaning]) => `<dt><code class="code-identifier">${esc(name2)}</code></dt><dd>${esc(meaning)}</dd>`).join("")}</dl></details>${table(keys, rows.slice(0, 5), `${name} \xB7 first ${Math.min(5, rows.length)} of ${rows.length} rows`)}${rows.length > 5 ? `<details><summary>View all ${rows.length} rows</summary>${table(keys, rows, `${name} \xB7 complete input`)}</details>` : ""}</section>`;
     }
     function solutionPanel(c) {
       const standalone = Boolean(c.exercise);

@@ -22,13 +22,19 @@ SUPERVISED_CHECKS = [
     check('Final-test discipline','trace.final_after_selection()','Finish selection and diagnosis before predicting final-test rows.'),
     check('Reference evidence','len(reference_results["test_score"]) == 5 and np.isfinite(reference_results["test_score"]).all()','Evaluate a dummy reference on five training folds.'),
     check('Predictions match the chosen fit','np.array_equal(final_predictions,final_model.predict(X_test))','Use predictions from the fitted chosen model without altering their values.'),
+    check('Complete reserved split','workflow_reports["split"]','Use the declared full training/final partition: no omitted, duplicated or substituted rows.'),
+    check('Observed dummy scores','workflow_reports["baseline"]','Report the actual dummy validation scores from this Run on the declared training population and scorer.'),
+    check('Observed candidate scores','workflow_reports["validation"]','Report actual candidate/search validation scores from this Run, keeping candidate IDs and scores together.'),
+    check('Unchanged nominated recipe','workflow_reports["selection"]','Fit the nominated pipeline with its selected settings on all training rows before opening the final test.'),
+    check('Observed diagnostic predictions','workflow_reports["diagnosis"]','Use the recorded training-only predictions for the nominated recipe, with the declared folds or last forward block.'),
+    check('Aligned diagnostic report','workflow_reports["reports"]','Keep actual values, predictions, residuals or class errors aligned. Calculate final accuracy from the saved final predictions.'),
 ]
 REGRESSION_CHECKS = SUPERVISED_CHECKS + [check('Original-unit RMSE','np.isclose(final_rmse, np.sqrt(np.mean((np.asarray(y_test)-final_predictions)**2)))','Compute RMSE from final predictions in the target’s original units.')]
 CLASSIFICATION_CHECKS = SUPERVISED_CHECKS + [
     check('Class predictions','len(final_predictions)==len(y_test) and set(final_predictions).issubset(set(y_train))','Predict one known class label per final-test row.'),
     check('Macro F1','np.isclose(final_f1, __import__("sklearn.metrics",fromlist=["f1_score"]).f1_score(y_test,final_predictions,average="macro"))','Compute macro F1 with equal weight for each class.'),
 ]
-LINEAR = dict(id='ML-W-K1-1', dataset='MIX60', protect=dict(target='duration'),
+LINEAR = dict(id='ML-W-K1-1', dataset='MIX60', protect=dict(target='duration'), workflowReports=True,
     outputs=['cv_results','reference_results','residuals','final_predictions','final_rmse'], checks=REGRESSION_CHECKS+[check('Shared estimator','type(final_model.named_steps["model"]).__name__=="LinearRegression"','Use LinearRegression; no later model-family tuning is required.')],
     solution=IMPORTS+"""
 from sklearn.linear_model import LinearRegression
@@ -81,9 +87,9 @@ final_f1 = f1_score(y_test, final_predictions, average='macro')
 final_accuracy = accuracy_score(y_test, final_predictions)
 print(final_model.named_steps['model'].rules_)
 """
-    return dict(id='ML-X10' if numeric else 'ML-X09',dataset='candy_class' if numeric else 'car',protect=dict(target=target,stratified=True),outputs=['model','cv_results','reference_results','matrix','final_f1','final_accuracy'],checks=CLASSIFICATION_CHECKS+[check('Production One-R','type(final_model.named_steps["model"]).__name__=="OneRClassifier"','Use the production One-R helper.')],solution=solution)
+    return dict(id='ML-X10' if numeric else 'ML-X09',dataset='candy_class' if numeric else 'car',protect=dict(target=target,stratified=True),workflowReports=True,outputs=['model','cv_results','reference_results','matrix','final_f1','final_accuracy'],checks=CLASSIFICATION_CHECKS+[check('Production One-R','type(final_model.named_steps["model"]).__name__=="OneRClassifier"','Use the production One-R helper.')],solution=solution)
 
-NEURAL = dict(id='ML-N-K1-1',dataset='Wine600',protect=dict(target='quality'),
+NEURAL = dict(id='ML-N-K1-1',dataset='Wine600',protect=dict(target='quality'),workflowReports=True,
     outputs=['search','cv_results','reference_results','loss_curve','residuals','final_rmse'],
     checks=REGRESSION_CHECKS+[
         check('Target transformation','type(final_model.named_steps["model"]).__name__=="TransformedTargetRegressor"','Scale y inside TransformedTargetRegressor so predictions are inverse-transformed.'),
@@ -109,12 +115,12 @@ print('Final RMSE in quality-score units:', final_rmse)
 """)
 HIERARCHY = dict(id='ML-X18',dataset='breast',outputs=['sample','linkage_matrix','labels','profiles','cut_evidence'],
     checks=[
-        check('Sampled population','len(sample)==min(500,len(X)) and sample.index.equals(X.sample(min(500,len(X)), random_state=42).index)','Keep the reproducible sample index.'),
+        check('Sampled population','sample.equals(X.sample(min(500,len(X)), random_state=42))','Keep the reproducible seed-42 sample values, columns and indices.'),
         check('Ward hierarchy','linkage_matrix.shape==(len(sample)-1,4) and np.allclose(linkage_matrix, __import__("scipy.cluster.hierarchy",fromlist=["linkage"]).linkage(scaled_sample,method="ward"))','Construct Ward linkage from scaled sampled rows.'),
-        check('Aligned profiles','profiles.index.equals(pd.Index(np.unique(labels))) and np.allclose(profiles.values, sample.groupby(labels).mean().values)','Profile sampled rows with their own cluster assignments.'),
+        check('Aligned profiles','profiles.index.equals(pd.Index(np.unique(labels))) and profiles.columns.equals(sample.columns) and np.allclose(profiles.values, sample.groupby(labels).mean().values)','Profile sampled rows with their own cluster assignments and original feature columns.'),
         check('Hierarchy cut','2<=len(np.unique(labels))<=8 and _same_partition(labels,__import__("scipy.cluster.hierarchy",fromlist=["cut_tree"]).cut_tree(linkage_matrix,n_clusters=len(np.unique(labels))).ravel())','Use a coherent cut of the fitted hierarchy; renamed cluster IDs are welcome.'),
         check('Cut comparison','len(cut_evidence)==7 and [row["k"] for row in cut_evidence]==list(range(2,9)) and np.allclose([row["silhouette"] for row in cut_evidence],[silhouette_score(scaled_sample,cut_tree(linkage_matrix,n_clusters=k).ravel()) for k in range(2,9)])','Compare every cut from two through eight groups using silhouette on the same scaled sample.'),
-        check('Population scaler','np.allclose(scaler.mean_,X.mean())','Fit the exploratory scaler on the declared population before sampling.')],
+        check('Population scaler','X.equals(df[["radius_mean","texture_mean","smoothness_mean","concavity_mean","symmetry_mean"]]) and np.allclose(scaled_sample,((sample-X.mean())/X.std(ddof=0)).values) and trace.fit_matches(X,None,"StandardScaler")','Standardize the declared original measurement population before sampling.')],
     solution="""from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, dendrogram, cut_tree
 from sklearn.metrics import silhouette_score
@@ -139,12 +145,13 @@ PCA = dict(id='ML-X19',dataset='breast',outputs=['ratios','cumulative','retained
     checks=[
         check('Target-free inputs','"diagnosis" not in X.columns and X.shape[1]==30','Use the 30 measurement columns; exclude diagnosis and identifiers.'),
         check('Minimum retained dimension','retained==int(np.searchsorted(cumulative,.9)+1) and reduced.shape==(len(X),retained) and np.allclose(reduced,pca.transform(scaled)[:,:retained])','Choose the smallest component prefix reaching 90%.'),
-        check('Variance evidence','np.allclose(ratios,pca.explained_variance_ratio_) and np.allclose(cumulative,np.cumsum(ratios))','Use PCA explained variance and its cumulative sum.'),
-        check('Weights and scores','weights.shape==(X.shape[1],2) and np.allclose(scores2,scaled @ weights.values) and trace.pca_axes(pca,weights.values)','Keep PCA axes, scores and sign choices consistent.'),
+        check('Variance evidence','np.allclose(scaled,_prepared_values(X,numeric=tuple(X.columns))) and trace.fit_matches(scaled,None,"PCA") and np.allclose(ratios,pca.explained_variance_ratio_) and np.allclose(cumulative,np.cumsum(ratios))','Fit PCA on the actual standardized measurements; report its explained variance and cumulative sum.'),
+        check('Weights and scores','weights.index.equals(X.columns) and list(weights.columns)==["PC1","PC2"] and weights.shape==(X.shape[1],2) and np.allclose(scores2,(scaled-pca.mean_) @ weights.values) and trace.pca_axes(pca,weights.values)','Keep labelled PCA axes, scores and paired sign choices consistent.'),
         check('Two-dimensional view','scores2.shape==(len(X),2)','Return two PCA scores per observation, distinct from the retained representation.')],
     solution="""from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+import seaborn as sns
 X = df[[c for c in df.columns if c.endswith(('_mean','_se','_worst'))]]
 scaler = StandardScaler()
 scaled = scaler.fit_transform(X)
@@ -157,7 +164,7 @@ reduced = scores[:,:retained]
 weights = pd.DataFrame(pca.components_[:2].T.copy(),index=X.columns,columns=['PC1','PC2'])
 scores2 = scores[:,:2].copy()
 fig, ax = plt.subplots(figsize=(6,4))
-ax.scatter(scores2[:,0],scores2[:,1],s=12)
+sns.scatterplot(x=scores2[:,0],y=scores2[:,1],s=12,ax=ax)
 ax.set(title='Two-component view of measurements',xlabel='PC1 score',ylabel='PC2 score')
 print('Retained dimensions:',retained,'; variance visible in 2D:',ratios[:2].sum())
 """)

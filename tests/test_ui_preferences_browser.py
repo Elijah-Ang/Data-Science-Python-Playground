@@ -8,6 +8,7 @@ actual app has reached its ready state.
 """
 
 import argparse
+from collections import Counter
 import json
 import re
 from pathlib import Path
@@ -56,7 +57,7 @@ def wait_for_runtime(page, failures, page_name):
     try:
         page.wait_for_function(
             """() => (document.querySelector('#runtimeStatus')?.textContent || '')
-                .toLowerCase().includes('ready')""",
+                .toLowerCase().includes('ready') && Number(document.querySelector('.step-route-range')?.max)>0""",
             timeout=args.runtime_timeout,
         )
         return True
@@ -85,22 +86,24 @@ def check_landing(page, width, height, failures, evidence_dir):
 
     links = page.locator("a:visible")
     hrefs = [link.get_attribute("href") for link in links.all()]
-    expected_hrefs = {
+    expected_hrefs = [
         "tutorial.html",
-        "#learning-robot",
-        "#playground-gate",
+        "learn.html",
+        "playground.html",
         "learn.html",
         "playground.html",
         "about.html",
         "help.html",
         "privacy.html",
         "acknowledgements.html",
-    }
+    ]
     check(
         failures,
-        len(hrefs) == len(expected_hrefs) and set(hrefs) == expected_hrefs,
+        Counter(hrefs) == Counter(expected_hrefs),
         f"landing {width}: expected blimp wayfinding, learning hub, tour, gate, and four review/support links ({hrefs!r})",
     )
+    check(failures, page.locator('.blimp-choice').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("href"))') == ['learn.html', 'playground.html'], f"landing {width}: text choices must enter their destinations directly")
+    check(failures, page.locator('#learning-robot').get_attribute('href') == 'learn.html' and page.locator('#playground-gate').get_attribute('href') == 'playground.html', f"landing {width}: artwork hotspots must retain their destinations")
 
     tour = page.locator("a.tour-button")
     check(failures, tour.count() == 1 and tour.is_visible(), f"landing {width}: retained tour button missing or duplicated")
@@ -228,17 +231,28 @@ def check_workspace(page, workspace, width, failures, evidence_dir, runtime_read
     check_no_forbidden_controls(page, page_name, failures)
     check_mode_captions(page, page_name, failures)
 
-    route = page.locator("#suggestedRoute .route-task").first if workspace == "data" else page.locator("#routeStrip .route-card").first
+    route = page.locator(".step-route-range")
     route_box = route.bounding_box() if runtime_ready and route.count() == 1 else None
     if runtime_ready:
-        check(failures, route.count() == 1 and route.is_visible(), f"{page_name}: first route button is missing after runtime ready")
+        check(failures, route.count() == 1 and route.is_visible(), f"{page_name}: compact route slider is missing after runtime ready")
         if route_box:
-            check(failures, route_box["height"] <= 72, f"{page_name}: route button is too tall ({route_box['height']:.1f})")
+            check(failures, route_box["height"] <= 72, f"{page_name}: route slider is too tall ({route_box['height']:.1f})")
             check(
                 failures,
                 route_box["width"] >= 120,
-                f"{page_name}: route button is too narrow ({route_box['width']:.1f})",
+                f"{page_name}: route slider is too narrow ({route_box['width']:.1f})",
             )
+            check(failures, bool(route.get_attribute('aria-label')) and int(route.get_attribute('max')) > 0, f"{page_name}: route slider lacks an accessible name or available stops")
+            route.press('Home')
+            check(failures, route.input_value() == '0', f"{page_name}: Home must select step zero")
+            route.press('ArrowRight')
+            check(failures, page.locator('article.cell').count() == 1, f"{page_name}: committing step one must insert exactly one editable cell immediately")
+            page.wait_for_function("document.querySelector('article.cell')?.dataset.status==='done'", timeout=args.runtime_timeout)
+            editor = page.locator('article.cell textarea')
+            before = editor.input_value()
+            check(failures, bool(before.strip()) and page.locator('article.cell .run').is_visible(), f"{page_name}: inserted cell must retain editable code and manual Run")
+            route.press('Home'); route.press('ArrowRight')
+            check(failures, page.locator('article.cell').count() == 1 and editor.input_value() == before, f"{page_name}: revisiting step one must reuse the cell and preserve its code")
 
     page.screenshot(path=str(evidence_dir / f"ui-{args.engine}-{width}-{workspace}.png"), full_page=True)
     return {
@@ -301,6 +315,8 @@ def main():
         page.set_viewport_size({"width": VIEWPORTS[0][0], "height": VIEWPORTS[0][1]})
         page.goto(url(args.base_url, "playground"), wait_until="domcontentloaded")
         data_ready = wait_for_runtime(page, failures, "data")
+        if data_ready:
+            check(failures, page.locator('.step-route-range').input_value() == '0' and page.locator('article.cell').count() == 0, 'data: initial ready workspace must start empty at step zero')
         for width, height in VIEWPORTS:
             page.set_viewport_size({"width": width, "height": height})
             page.wait_for_timeout(200)
@@ -312,6 +328,8 @@ def main():
         page.set_viewport_size({"width": 1440, "height": 1000})
         page.goto(url(args.base_url, "ml"), wait_until="domcontentloaded")
         ml_ready = wait_for_runtime(page, failures, "ml")
+        if ml_ready:
+            check(failures, page.locator('.step-route-range').input_value() == '0' and page.locator('article.cell').count() == 0, 'ml: initial ready workspace must start empty at step zero')
         expected_theme = evidence["theme"].get("after_data_toggle")
         if expected_theme:
             actual_theme = page.locator("body").get_attribute("data-theme")

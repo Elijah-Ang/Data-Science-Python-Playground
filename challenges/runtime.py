@@ -42,6 +42,7 @@ def _challenge_frame_equal(
             check_exact=False,
             rtol=1e-6,
             atol=1e-7,
+            check_categorical=False,
         )
     else:
         if isinstance(expected, pd.Series):
@@ -56,11 +57,14 @@ def _challenge_frame_equal(
 
 
 def _chart_numbers(values):
+    import datetime
     import matplotlib.dates as mdates
 
+    if isinstance(values, pd.PeriodIndex) or (len(values) and isinstance(values[0], pd.Period)):
+        values = pd.PeriodIndex(values).to_timestamp()
     if isinstance(values, pd.DatetimeIndex) or pd.api.types.is_datetime64_any_dtype(
         values
-    ):
+    ) or (len(values) and isinstance(values[0], (datetime.date, datetime.datetime, pd.Timestamp, np.datetime64))):
         return np.asarray(mdates.date2num(values), dtype=float)
     return np.asarray(values, dtype=float)
 
@@ -75,18 +79,95 @@ def _same_points(actual, expected):
     return bool(np.allclose(a, b, rtol=1e-5, atol=1e-6))
 
 
+def _line_stroke_visible(line):
+    from matplotlib.colors import to_rgba
+
+    return (line.get_visible() and line.get_alpha() != 0
+            and line.get_linestyle() not in ("None", "", None)
+            and line.get_linewidth() > 0 and to_rgba(line.get_color())[3] > 0)
+
+
 def _visible_artist(artist):
+    from matplotlib.colors import to_rgba
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+
     if not artist.get_visible() or artist.get_alpha() == 0:
         return False
     # Per-point alpha can be zero even when the collection alpha is unset.
     if isinstance(artist, PathCollection):
+        observations = len(artist.get_offsets())
+        if not observations:
+            return True
+        if not artist.get_paths():
+            return False
         colors = [artist.get_facecolors(), artist.get_edgecolors()]
         present = [a for a in colors if len(a)]
-        if present and all(np.all(a[:, 3] == 0) for a in present):
+        visible_alpha = np.zeros(observations)
+        for color in present:
+            alpha = color[:, 3]
+            if len(alpha) == 1:
+                visible_alpha = np.maximum(visible_alpha, alpha[0])
+            elif len(alpha) == observations:
+                visible_alpha = np.maximum(visible_alpha, alpha)
+        if not np.all(visible_alpha > 0):
             return False
-        if len(artist.get_sizes()) and np.all(artist.get_sizes() == 0):
+        if len(artist.get_sizes()) and np.any(artist.get_sizes() <= 0):
             return False
+    elif isinstance(artist, Line2D) and len(artist.get_xdata()):
+        marker = (artist.get_marker() not in ("None", "", None)
+                  and artist.get_markersize() > 0
+                  and (to_rgba(artist.get_markerfacecolor())[3] > 0
+                       or (artist.get_markeredgewidth() > 0
+                           and to_rgba(artist.get_markeredgecolor())[3] > 0)))
+        return _line_stroke_visible(artist) or marker
+    elif isinstance(artist, Patch):
+        return (artist.get_fill() and to_rgba(artist.get_facecolor())[3] > 0
+                or artist.get_linewidth() > 0 and to_rgba(artist.get_edgecolor())[3] > 0)
     return True
+
+
+def _histogram_intervals(ax, orientation):
+    """Read frequencies from bars, Matplotlib step histograms or stairs.
+
+    A histogram's intervals and counts matter, not which artist API drew them.
+    Keep the same contiguous-bin, population and zero-baseline checks for each.
+    """
+    from matplotlib.patches import Polygon, StepPatch
+
+    horizontal = orientation == "horizontal"
+    rectangles = [patch for patch in ax.patches if hasattr(patch, "get_width")]
+    if rectangles:
+        assert len(rectangles) == len(ax.patches), "Show one frequency distribution for the eligible observations."
+        get_start = lambda patch: patch.get_y() if horizontal else patch.get_x()
+        get_width = lambda patch: patch.get_height() if horizontal else patch.get_width()
+        get_count = lambda patch: patch.get_width() if horizontal else patch.get_height()
+        get_base = lambda patch: patch.get_x() if horizontal else patch.get_y()
+        rectangles.sort(key=get_start)
+        edges = np.array([get_start(patch) for patch in rectangles]
+                         + [get_start(rectangles[-1]) + get_width(rectangles[-1])])
+        assert all(np.isclose(get_start(patch) + get_width(patch), edges[i + 1])
+                   for i, patch in enumerate(rectangles)), "Numeric intervals should be contiguous."
+        assert all(abs(get_base(patch)) < 1e-7 for patch in rectangles), "Keep a zero baseline for frequency counts."
+        return edges, np.array([get_count(patch) for patch in rectangles])
+    assert len(ax.patches) == 1, "Show one frequency distribution for the eligible observations."
+    patch = ax.patches[0]
+    if isinstance(patch, StepPatch):
+        assert patch.orientation == orientation, "Put the interval and frequency axes in the requested orientation."
+        data = patch.get_data()
+        assert data.baseline is None or np.allclose(data.baseline, 0), "Keep a zero baseline for frequency counts."
+        return np.asarray(data.edges, dtype=float), np.asarray(data.values, dtype=float)
+    assert isinstance(patch, Polygon), "Show frequencies across numeric intervals."
+    vertices = np.asarray(patch.get_xy(), dtype=float)
+    if horizontal:
+        vertices = vertices[:, ::-1]
+    intervals = [(start[0], end[0], start[1]) for start, end in zip(vertices, vertices[1:])
+                 if end[0] > start[0] and np.isclose(start[1], end[1])]
+    assert intervals, "Show frequencies across numeric intervals."
+    edges = np.array([interval[0] for interval in intervals] + [intervals[-1][1]])
+    assert all(np.isclose(end, edges[i + 1]) for i, (_, end, _) in enumerate(intervals)), "Numeric intervals should be contiguous."
+    assert np.isclose(vertices[:, 1].min(), 0), "Keep a zero baseline for frequency counts."
+    return edges, np.array([interval[2] for interval in intervals])
 
 
 def _check_axis(ax, rule, evidence):
@@ -101,6 +182,7 @@ def _check_axis(ax, rule, evidence):
     ), "Label both axes with the measures and units."
     source = evidence[rule["source"]]
     kind = rule["type"]
+    orientation = "vertical"
     if kind == "bars":
         labels = [str(x) for x in source.index]
         values = np.asarray(source.values, dtype=float)
@@ -125,7 +207,7 @@ def _check_axis(ax, rule, evidence):
                 and abs(ax.get_ylim()[0]) < 1e-7
             )
         if horizontal and bars:
-            valid = valid or (
+            horizontal_valid = (
                 _same_points(
                     [[p.get_y() + p.get_height() / 2, p.get_width()] for p in bars],
                     np.column_stack([ax.get_yticks(), [by_label[y] for y in y_labels]]),
@@ -133,6 +215,8 @@ def _check_axis(ax, rule, evidence):
                 and all(abs(p.get_x()) < 1e-7 for p in bars)
                 and abs(ax.get_xlim()[0]) < 1e-7
             )
+            if horizontal_valid:
+                valid, orientation = True, "horizontal"
         if not bars and rule.get("allowPoints"):
             points = []
             for collection in ax.collections:
@@ -150,41 +234,34 @@ def _check_axis(ax, rule, evidence):
                 and _same_points(
                     points, np.column_stack([ax.get_xticks(), [by_label[x] for x in x_labels]])
                 )
-            ) or (
+            )
+            horizontal_valid = (
                 horizontal
                 and _same_points(
                     points, np.column_stack([[by_label[y] for y in y_labels], ax.get_yticks()])
                 )
             )
+            if horizontal_valid:
+                valid, orientation = True, "horizontal"
         assert (
             valid
         ), "Check category positions and represented values; bars need a zero baseline."
     elif kind == "hist":
         values = source[rule["column"]] if rule.get("column") else source
-        patches = [p for p in ax.patches if hasattr(p, "get_width")]
-        assert (
-            len(patches) >= 2
-        ), "Show frequencies across multiple contiguous numeric intervals."
-        patches.sort(key=lambda p: p.get_x())
-        edges = np.array(
-            [p.get_x() for p in patches]
-            + [patches[-1].get_x() + patches[-1].get_width()]
-        )
-        assert np.all(np.diff(edges) > 0), "Use increasing bin boundaries."
-        assert all(
-            np.isclose(p.get_x() + p.get_width(), edges[i + 1])
-            for i, p in enumerate(patches)
-        ), "Numeric intervals should be contiguous."
-        counts, _ = np.histogram(np.asarray(values, dtype=float), bins=edges)
-        assert counts.sum() == len(
-            values
-        ), "Include every eligible observation in the distribution."
-        assert _same_points(
-            [p.get_height() for p in patches], counts
-        ), "Check frequencies; plot counts rather than density."
-        assert (
-            all(abs(p.get_y()) < 1e-7 for p in patches) and abs(ax.get_ylim()[0]) < 1e-7
-        ), "Keep a zero baseline for frequency counts."
+        valid = False
+        for candidate in ("vertical", "horizontal"):
+            try:
+                edges, frequencies = _histogram_intervals(ax, candidate)
+                assert len(edges) >= 3 and np.all(np.diff(edges) > 0)
+                counts, _ = np.histogram(np.asarray(values, dtype=float), bins=edges)
+                assert counts.sum() == len(values) and _same_points(frequencies, counts)
+                limits = ax.get_xlim() if candidate == "horizontal" else ax.get_ylim()
+                assert abs(limits[0]) < 1e-7
+                valid, orientation = True, candidate
+                break
+            except (AssertionError, AttributeError, TypeError, ValueError):
+                continue
+        assert valid, "Show all eligible observations as frequencies across at least two contiguous numeric intervals, with a zero frequency baseline."
     elif kind == "scatter":
         points = []
         for collection in ax.collections:
@@ -207,6 +284,9 @@ def _check_axis(ax, rule, evidence):
         for collection in ax.collections:
             if hasattr(collection, "get_offsets"):
                 points.extend(np.asarray(collection.get_offsets()).tolist())
+        for line in ax.lines:
+            if line.get_marker() not in ("None", "", None):
+                points.extend(np.column_stack([line.get_xdata(orig=False), line.get_ydata(orig=False)]).tolist())
         expected = np.array(
             [
                 [labels.index(g), v]
@@ -307,7 +387,7 @@ def _check_axis(ax, rule, evidence):
                 x = _chart_numbers(line.get_xdata())
                 y = np.asarray(line.get_ydata(), dtype=float)
                 if (
-                    line.get_linestyle() not in ("None", "", None)
+                    _line_stroke_visible(line)
                     and len(y) == len(source)
                     and _same_points(np.column_stack([x, y]), expected)
                     and np.all(np.diff(x) >= 0)
@@ -316,7 +396,7 @@ def _check_axis(ax, rule, evidence):
                 if benchmark is not None and len(y) >= 2 and np.allclose(y, benchmark):
                     legend = ax.get_legend()
                     reference = (
-                        line.get_linestyle() not in ("None", "", None)
+                        _line_stroke_visible(line)
                         and min(ax.get_ylim()) <= benchmark <= max(ax.get_ylim())
                         and legend is not None
                         and line.get_label()
@@ -344,6 +424,13 @@ def _check_axis(ax, rule, evidence):
                     ),
                 ]
             )
+        elif hasattr(patch, "get_path"):
+            path = patch.get_path()
+            vertices = path.vertices
+            if path.codes is not None:
+                vertices = vertices[path.codes != 79]
+            visible_points.extend(ax.transData.inverted().transform(
+                patch.get_transform().transform(vertices)).tolist())
     for line in ax.lines:
         if line.get_transform() == ax.transData:
             visible_points.extend(
@@ -366,9 +453,9 @@ def _check_axis(ax, rule, evidence):
     x, y = ax.get_xlabel().lower(), ax.get_ylabel().lower()
     wantx, wanty = rule["xLabel"].lower(), rule["yLabel"].lower()
     normal = wantx in x and wanty in y
-    swapped = kind == "bars" and wantx in y and wanty in x
+    swapped = orientation == "horizontal" and wantx in y and wanty in x
     assert (
-        normal or swapped
+        swapped if orientation == "horizontal" else normal
     ), "Name the requested measures and units on the appropriate axes."
 
 
@@ -376,9 +463,13 @@ def _challenge_figure(fig, rule, evidence, displayed):
     from matplotlib.figure import Figure
 
     assert isinstance(fig, Figure), "Store the finished Figure in fig."
+    assert fig.get_visible(), "Keep the named fig visible so the chart can be displayed."
     assert fig in displayed, "Display the named figure with plt.show()."
     panels = rule.get("panels", [rule])
     assert len(fig.axes) == len(panels), "Check the requested number of panels."
+    # Older Matplotlib initializes categorical tick text on the first draw.
+    # Read the rendered labels even when the learner does not call tight_layout.
+    fig.canvas.draw()
     for ax, panel in zip(fig.axes, panels):
         _check_axis(ax, panel, evidence)
 
@@ -437,10 +528,10 @@ def run_challenge(request):
                 )
             return result
 
-        Figure.savefig = capture_savefig
         try:
             actual = _execute(
-                request["code"], {}, construction=True, files=files, explicit_setup=True
+                request["code"], {}, construction=True, files=files, explicit_setup=True,
+                savefig_capture=capture_savefig,
             )
         finally:
             Figure.savefig = original_savefig
@@ -568,7 +659,7 @@ def run_challenge(request):
                 )
             )
     if checking:
-        supplied = [i for i in challenge["inputs"] if not i.get("file")]
+        supplied = challenge["inputs"]
         if supplied:
             state = "correct"
             message = "Supplied source tables are unchanged."
@@ -580,8 +671,10 @@ def run_challenge(request):
                             "The supplied input " + inp["name"] + " is not available."
                         )
                         break
-                    _challenge_frame_equal(
-                        actual["env"][inp["name"]], pd.DataFrame(inp["columns"]), True
+                    source = expected["env"][inp["name"]] if inp.get("file") else pd.DataFrame(inp["columns"])
+                    assert_frame_equal(
+                        actual["env"][inp["name"]], source,
+                        check_dtype=True, check_names=True, check_exact=True,
                     )
             except (AssertionError, TypeError, ValueError):
                 state = "needs-attention"

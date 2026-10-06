@@ -1,0 +1,481 @@
+{
+  "schema_version": 1,
+  "purpose": "Explicit meaningful alternatives for the 67 historical general-ledger gaps; every code string is executed per ID by test_ml_learning_exercise_audit.py.",
+  "cases": [
+    {
+      "id": "ML-F05-2",
+      "family": "rmse_definition",
+      "label": "root of squared residual average",
+      "rationale": "Computes both RMSEs directly from their actual/predicted rows instead of using the metric helper.",
+      "code": "residual = np.asarray(y_test) - np.asarray(predictions)\noriginal_rmse = float(np.sqrt(np.dot(residual, residual) / len(residual)))\nshifted_residual = np.asarray(y_test) - (np.asarray(predictions) + 10)\nshifted_rmse = float(np.sqrt(np.dot(shifted_residual, shifted_residual) / len(shifted_residual)))\n"
+    },
+    {
+      "id": "ML-W01-1",
+      "family": "visible_scatter_backend",
+      "label": "Matplotlib training scatter",
+      "rationale": "Uses the native Matplotlib scatter API with the same aligned training rows and visible axis labels.",
+      "code": "answer = X_train.describe()\nimport matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nax.scatter(X_train['distance'], y_train)\nax.set_xlabel('Distance')\nax.set_ylabel('Duration')\nax.set_title('Training delivery observations')\n"
+    },
+    {
+      "id": "ML-W01-2",
+      "family": "labelled_group_count",
+      "label": "group sizes ordered by species",
+      "rationale": "Computes species counts by grouping rather than value_counts; sorted presentation keeps each label paired with its count.",
+      "code": "answer = y_train.groupby(y_train, sort=True).size()\n"
+    },
+    {
+      "id": "ML-W02-2",
+      "family": "rmse_definition",
+      "label": "independent model and constant residuals",
+      "rationale": "Uses squared-residual dot products and a broadcast training mean; both calculations retain the same evaluation rows.",
+      "code": "model_residual = np.asarray(y_test) - np.asarray(predictions)\nreference_residual = np.asarray(y_test) - (np.asarray(y_train).sum() / len(y_train))\nmodel_rmse = float(np.sqrt(model_residual @ model_residual / len(y_test)))\nreference_rmse = float(np.sqrt(reference_residual @ reference_residual / len(y_test)))\n"
+    },
+    {
+      "id": "ML-W08-1",
+      "family": "fold_position_construction",
+      "label": "manual seeded fold allocation",
+      "rationale": "Reconstructs KFold positional membership from the seeded permutation, equally sized validation blocks, and sorted complements.",
+      "code": "positions = np.arange(len(X_train))\nshuffled = np.random.RandomState(42).permutation(positions)\nblocks = np.array_split(shuffled, 3)\nanswer = [(np.setdiff1d(positions, block), np.sort(block)) for block in blocks]\n"
+    },
+    {
+      "id": "ML-W09-1",
+      "family": "validation_numpy_containers",
+      "label": "NumPy validation inputs",
+      "rationale": "Uses equivalent numeric containers on the supplied estimator, scoring, training population and folds; the trace must still identify the real cross_validate run.",
+      "code": "answer = cross_validate(model, X_train.to_numpy(), y_train.to_numpy(), cv=folds, scoring='neg_root_mean_squared_error')\n"
+    },
+    {
+      "id": "ML-W09-2",
+      "family": "negative_metric_sign",
+      "label": "elementwise sign inversion",
+      "rationale": "Uses the NumPy negative ufunc to convert signed loss scores while retaining fold order.",
+      "code": "answer = np.negative(cv_results['test_score'])\n"
+    },
+    {
+      "id": "ML-W09-3",
+      "family": "validation_numpy_containers",
+      "label": "NumPy mean-reference validation",
+      "rationale": "Uses a mean DummyRegressor with equivalent numeric containers, preserving the supplied folds and signed RMSE metric.",
+      "code": "from sklearn.dummy import DummyRegressor\nreference = DummyRegressor(strategy='mean')\nanswer = cross_validate(reference, X_train.to_numpy(), y_train.to_numpy(), cv=folds, scoring='neg_root_mean_squared_error')\n"
+    },
+    {
+      "id": "ML-W10-1",
+      "family": "linear_response_difference",
+      "label": "parameter property and unit response difference",
+      "rationale": "Reads the configured intercept property and derives the learned distance coefficient from a one-unit predicted response difference.",
+      "code": "fit_intercept = model.fit_intercept\nprobe = pd.DataFrame({'distance': [0.0, 1.0]})\ndistance_coefficient = float(np.diff(model.predict(probe))[0])\n"
+    },
+    {
+      "id": "ML-W12-1",
+      "family": "oof_numpy_containers",
+      "label": "NumPy out-of-fold prediction inputs",
+      "rationale": "Calls the recorded OOF API with the same training values and fold object in equivalent NumPy containers.",
+      "code": "from sklearn.model_selection import cross_val_predict\nanswer = cross_val_predict(model, X_train.to_numpy(), y_train.to_numpy(), cv=folds)\n"
+    },
+    {
+      "id": "ML-W12-2",
+      "family": "visible_scatter_backend",
+      "label": "Matplotlib aligned residuals",
+      "rationale": "Subtracts aligned OOF predictions using Series.sub and plots that result through the native Matplotlib scatter API.",
+      "code": "answer = y_train.sub(oof_predictions)\nimport matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nax.scatter(oof_predictions, answer)\nax.axhline(0, color='black')\nax.set(xlabel='OOF predicted duration', ylabel='Residual', title='Training-only residuals')\n"
+    },
+    {
+      "id": "ML-W12-3",
+      "family": "misclassification_selection",
+      "label": "query mismatched labels",
+      "rationale": "Selects the same error rows through the pandas query expression API, preserving source row indices and columns.",
+      "code": "answer = df.query('actual != predicted')\n"
+    },
+    {
+      "id": "ML-W14-1",
+      "family": "chronological_position_selection",
+      "label": "take chronological position ranges",
+      "rationale": "Uses DataFrame.take with consecutive position ranges to preserve the first/final chronological populations.",
+      "code": "cut = len(df) * 4 // 5\ntrain = df.take(range(cut))\ntest = df.take(range(cut, len(df)))\n"
+    },
+    {
+      "id": "ML-W14-2",
+      "family": "forward_fold_numpy_containers",
+      "label": "forward folds from numeric container",
+      "rationale": "Uses the required TimeSeriesSplit API on equivalent ordered NumPy rows; fold outputs remain original positional indices.",
+      "code": "from sklearn.model_selection import TimeSeriesSplit\nsplitter = TimeSeriesSplit(n_splits=5)\nanswer = list(splitter.split(train.to_numpy()))\n"
+    },
+    {
+      "id": "ML-R01-1",
+      "family": "linear_response_difference",
+      "label": "derive coefficients from fitted line response",
+      "rationale": "Derives the intercept at zero distance and slope from the one-unit response difference of the supplied fitted line.",
+      "code": "probe = pd.DataFrame({'distance': [0.0, 1.0]})\nresponse = model.predict(probe)\nintercept = response[0].item()\nslope = np.diff(response)[0].item()\n"
+    },
+    {
+      "id": "ML-R01-2",
+      "family": "linear_response_difference",
+      "label": "predict five-unit distance difference",
+      "rationale": "Computes the requested duration change by subtracting predictions at distances zero and five.",
+      "code": "response = model.predict(pd.DataFrame({'distance': [0.0, 5.0]}))\nanswer = np.diff(response)[0]\n"
+    },
+    {
+      "id": "ML-R02-1",
+      "family": "metric_definitions",
+      "label": "direct residual RMSE and R squared",
+      "rationale": "Calculates RMSE and R squared from the residual sum of squares and evaluation-population total sum of squares.",
+      "code": "actual = np.asarray(y_test)\nresidual = actual - np.asarray(predictions)\nresidual_ss = residual @ residual\ncentred = actual - actual.mean()\nrmse = float(np.sqrt(residual_ss / len(actual)))\nr2 = float(1 - residual_ss / (centred @ centred))\n"
+    },
+    {
+      "id": "ML-R02-3",
+      "family": "population_mean_definition",
+      "label": "sum divided by population size",
+      "rationale": "Computes each mean from its own supplied population, keeping evaluation and training outcomes separate.",
+      "code": "evaluation_mean = float(np.asarray(y_test).sum() / len(y_test))\ntraining_mean = float(np.asarray(y_train).sum() / len(y_train))\n"
+    },
+    {
+      "id": "ML-R04-1",
+      "family": "named_coefficient_mapping",
+      "label": "Series from estimator feature-name mapping",
+      "rationale": "Builds the coefficient Series through an ordered dictionary using the fitted estimator feature_names_in_ schema.",
+      "code": "answer = pd.Series(dict(zip(model.feature_names_in_, model.coef_)))\n"
+    },
+    {
+      "id": "ML-R05-1",
+      "family": "fitted_encoder_reference",
+      "label": "take dropped category from fitted encoder",
+      "rationale": "Retrieves the fitted preparation step through Pipeline indexing, then selects its dropped category with numpy.take.",
+      "code": "encoder = model['prepare'].named_transformers_['service']\nanswer = str(np.take(encoder.categories_[0], encoder.drop_idx_[0]))\n"
+    },
+    {
+      "id": "ML-R05-2",
+      "family": "named_coefficient_mapping",
+      "label": "Series from transformed-feature mapping",
+      "rationale": "Builds an ordered dictionary pairing fitted transformed feature names with coefficients using public Pipeline indexing.",
+      "code": "features = model['prepare'].get_feature_names_out()\ncoefficients = model['model'].coef_\nanswer = pd.Series(dict(zip(features, coefficients)))\n"
+    },
+    {
+      "id": "ML-R11-1",
+      "family": "training_r2_from_predictions",
+      "label": "R squared metric from training predictions",
+      "rationale": "Reads the scalar coefficient and computes training R squared from the actual fitted predictions using the metric API.",
+      "code": "from sklearn.metrics import r2_score\nslope = model.coef_.item()\ntraining_r2 = r2_score(y, model.predict(X))\n"
+    },
+    {
+      "id": "ML-C01-1",
+      "family": "confusion_crosstab",
+      "label": "ordered pandas contingency table",
+      "rationale": "Uses an explicitly reindexed contingency table to retain A/B row and column order before conversion to an array.",
+      "code": "answer = pd.crosstab(df.actual, df.predicted).reindex(index=['A', 'B'], columns=['A', 'B'], fill_value=0).to_numpy()\n"
+    },
+    {
+      "id": "ML-C01-2",
+      "family": "confusion_crosstab",
+      "label": "correct position then ordered contingency",
+      "rationale": "Corrects the ninth prediction using a position mask, then independently rebuilds the A/B contingency table.",
+      "code": "changed = pd.Series(np.where(np.arange(len(df)) == 8, 'B', df.predicted), index=df.index)\nanswer = pd.crosstab(df.actual, changed).reindex(index=['A', 'B'], columns=['A', 'B'], fill_value=0).to_numpy()\n"
+    },
+    {
+      "id": "ML-C01-3",
+      "family": "confusion_crosstab",
+      "label": "retain empty class in contingency",
+      "rationale": "Reindexes both contingency dimensions to A/B/C so the missing prediction category remains an explicit zero column.",
+      "code": "classes = ['A', 'B', 'C']\nanswer = pd.crosstab(df.actual, df.predicted).reindex(index=classes, columns=classes, fill_value=0).to_numpy()\n"
+    },
+    {
+      "id": "ML-C02-1",
+      "family": "binary_precision_recall_definitions",
+      "label": "true-positive counts over positive populations",
+      "rationale": "Computes precision and recall from the intersection of actual/predicted B and the two distinct positive denominators.",
+      "code": "actual_b = df.actual.eq('B')\npredicted_b = df.predicted.eq('B')\ntrue_positive = np.count_nonzero(actual_b & predicted_b)\nprecision_b = true_positive / np.count_nonzero(predicted_b)\nrecall_b = true_positive / np.count_nonzero(actual_b)\n"
+    },
+    {
+      "id": "ML-C03-1",
+      "family": "macro_f1_definition",
+      "label": "average classwise contingency F1",
+      "rationale": "Independently calculates each class F1 from membership counts and averages equally over the observed class union.",
+      "code": "classes = np.union1d(df.actual, df.predicted)\nclass_f1 = []\nfor label in classes:\n    actual_class = df.actual.eq(label)\n    predicted_class = df.predicted.eq(label)\n    numerator = 2 * np.count_nonzero(actual_class & predicted_class)\n    denominator = np.count_nonzero(actual_class) + np.count_nonzero(predicted_class)\n    class_f1.append(numerator / denominator)\nanswer = float(np.mean(class_f1))\n"
+    },
+    {
+      "id": "ML-C03-2",
+      "family": "macro_f1_and_accuracy_definitions",
+      "label": "classwise F1 plus correct-label fraction",
+      "rationale": "Uses classwise contingency counts for macro F1 and the fraction of equal actual/predicted labels for accuracy.",
+      "code": "classes = np.union1d(df.actual, df.predicted)\nclass_f1 = []\nfor label in classes:\n    actual_class = df.actual.eq(label)\n    predicted_class = df.predicted.eq(label)\n    numerator = 2 * np.count_nonzero(actual_class & predicted_class)\n    denominator = np.count_nonzero(actual_class) + np.count_nonzero(predicted_class)\n    class_f1.append(numerator / denominator)\nmacro_f1 = float(np.mean(class_f1))\n\naccuracy = np.count_nonzero(df.actual.eq(df.predicted)) / len(df)\n"
+    },
+    {
+      "id": "ML-C04-2",
+      "family": "threshold_label_construction",
+      "label": "labels from threshold comprehension",
+      "rationale": "Builds the class label array through an explicit threshold branch per supplied probability; includes equality at 0.7.",
+      "code": "answer = np.asarray(['B' if probability >= 0.7 else 'A' for probability in probability_b])\n"
+    },
+    {
+      "id": "ML-C05-3",
+      "family": "class_feature_table_mapping",
+      "label": "coefficient table from class-row dictionary",
+      "rationale": "Uses fitted class keys and coefficient row lists with DataFrame.from_dict orient=index, preserving the feature schema.",
+      "code": "rows = {label: values.tolist() for label, values in zip(model.classes_, model['model'].coef_)}\nanswer = pd.DataFrame.from_dict(rows, orient='index', columns=X_train.columns)\n"
+    },
+    {
+      "id": "ML-C06-2",
+      "family": "validation_numpy_containers",
+      "label": "NumPy most-frequent reference validation",
+      "rationale": "Uses the same most-frequent classifier, supplied folds, scoring and training values in equivalent NumPy containers.",
+      "code": "from sklearn.dummy import DummyClassifier\nreference = DummyClassifier(strategy='most_frequent')\nanswer = cross_validate(reference, X_train.to_numpy(), y_train.to_numpy(), cv=folds, scoring='f1_macro')['test_score']\n"
+    },
+    {
+      "id": "ML-C06-3",
+      "family": "measurement_pipeline_api",
+      "label": "make_pipeline numeric-only validation",
+      "rationale": "Builds the equivalent scaling/logistic recipe with make_pipeline and validates explicitly selected numeric values on the supplied folds.",
+      "code": "from sklearn.pipeline import make_pipeline\nmeasurement_model = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, random_state=42))\nanswer = cross_validate(measurement_model, X_train.loc[:, numeric].to_numpy(), y_train.to_numpy(), cv=folds, scoring='f1_macro')['test_score']\n"
+    },
+    {
+      "id": "ML-C07-1",
+      "family": "oof_numpy_containers",
+      "label": "NumPy out-of-fold class probabilities",
+      "rationale": "Requests predict_proba through the OOF API with the same seeded stratified folds and aligned numeric training values.",
+      "code": "from sklearn.model_selection import cross_val_predict, StratifiedKFold\nsplitter = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)\nanswer = cross_val_predict(model, X_train.to_numpy(), y_train.to_numpy(), cv=splitter, method='predict_proba')\n"
+    },
+    {
+      "id": "ML-C10-2",
+      "family": "support_vector_class_counts",
+      "label": "count support rows by fitted class",
+      "rationale": "Counts labels at the fitted SVC support_ positions rather than returning its precomputed count attribute, preserving model.classes_ order.",
+      "code": "svm = model['model']\nsupport_labels = np.asarray(y_train)[svm.support_]\nanswer = np.asarray([np.count_nonzero(support_labels == label) for label in model.classes_])\n"
+    },
+    {
+      "id": "ML-C12-1",
+      "family": "pipeline_fitted_attribute_api",
+      "label": "One-R rules via indexed Pipeline step",
+      "rationale": "The task requests the fitted dictionary itself; public Pipeline integer indexing accesses that same fitted classifier without a step-name lookup or fabricated dictionary.",
+      "code": "answer = model[-1].rules_\n"
+    },
+    {
+      "id": "ML-C17-1",
+      "family": "class_feature_table_mapping",
+      "label": "LDA means from class-row dictionary",
+      "rationale": "Builds an explicitly keyed class-to-mean table with DataFrame.from_dict while preserving fitted class and feature order.",
+      "code": "rows = {label: values.tolist() for label, values in zip(model.classes_, model.means_)}\nanswer = pd.DataFrame.from_dict(rows, orient='index', columns=X_train.columns)\n"
+    },
+    {
+      "id": "ML-N01-1",
+      "family": "estimator_configuration_api",
+      "label": "configure unfitted network with set_params",
+      "rationale": "Uses sklearn set_params to configure the required hidden layer on a new unfitted classifier, then reads the public setting property.",
+      "code": "from sklearn.neural_network import MLPClassifier\nmodel = MLPClassifier(max_iter=500, random_state=42)\nmodel.set_params(hidden_layer_sizes=(24,))\nanswer = model.hidden_layer_sizes\n"
+    },
+    {
+      "id": "ML-N02-1",
+      "family": "loss_history_explicit_index",
+      "label": "zero-based labelled loss Series",
+      "rationale": "Constructs the real fitted loss Series with an explicit conventional zero-based RangeIndex named iteration.",
+      "code": "answer = pd.Series(network.loss_curve_, index=pd.RangeIndex(len(network.loss_curve_), name='iteration'), name='training_loss')\n"
+    },
+    {
+      "id": "ML-N05-1",
+      "family": "convergence_history_and_configuration",
+      "label": "history length and estimator params",
+      "rationale": "Obtains observed iterations from the real loss-history length and the configured limit through the estimator parameter API.",
+      "code": "iterations_used = len(network.loss_curve_)\niteration_limit = network.get_params(deep=False)['max_iter']\n"
+    },
+    {
+      "id": "ML-N06-1",
+      "family": "estimator_configuration_api",
+      "label": "dictionary update and parameter retrieval",
+      "rationale": "Applies both requested configuration changes through a parameter dictionary and retrieves the resulting values through get_params.",
+      "code": "from sklearn.neural_network import MLPClassifier\nmodel = MLPClassifier(hidden_layer_sizes=(24,), alpha=0.0001, random_state=42)\nsettings = {'hidden_layer_sizes': (16, 8), 'alpha': 0.01}\nmodel.set_params(**settings)\nactual_settings = model.get_params(deep=False)\nlayers = actual_settings['hidden_layer_sizes']\nalpha = actual_settings['alpha']\n"
+    },
+    {
+      "id": "ML-U05-1",
+      "family": "original_unit_group_aggregation",
+      "label": "group totals divided by sizes",
+      "rationale": "Computes original-unit cluster means from group totals and counts, and derives sizes from the same grouping.",
+      "code": "grouped = X.groupby(labels, sort=True)\nanswer = grouped.sum().div(grouped.size(), axis='index')\nsizes = grouped.size()\n"
+    },
+    {
+      "id": "ML-U05-2",
+      "family": "cluster_marker_backend",
+      "label": "Matplotlib per-cluster marker scatter",
+      "rationale": "Uses a separate Matplotlib collection and distinct marker for each aligned cluster, then calculates group means using agg.",
+      "code": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nmarkers = ['o', 's', '^']\nfor marker, label in zip(markers, np.unique(labels)):\n    selected = X.loc[np.asarray(labels) == label]\n    ax.scatter(selected.bill_length_mm, selected.bill_depth_mm, marker=marker, label=str(label))\nax.set(xlabel='Bill length (mm)', ylabel='Bill depth (mm)', title='Groups in two measured features')\nax.legend()\nanswer = X.groupby(labels)[['bill_length_mm', 'bill_depth_mm']].agg('mean')\n"
+    },
+    {
+      "id": "ML-U07-1",
+      "family": "ward_linkage_recomputation",
+      "label": "recompute Ward from supplied scaled rows",
+      "rationale": "Independently rebuilds the requested Ward linkage from the immutable supplied scaled population rather than assigning its matrix alias.",
+      "code": "from scipy.cluster.hierarchy import linkage\nanswer = linkage(scaled, method='ward')\n"
+    },
+    {
+      "id": "ML-U07-2",
+      "family": "dendrogram_orientation",
+      "label": "left-oriented last-ten Ward dendrogram",
+      "rationale": "Uses an explicitly horizontal orientation while retaining the same ten terminal groups and visible Ward distance/group labels.",
+      "code": "import matplotlib.pyplot as plt\nfrom scipy.cluster.hierarchy import dendrogram\nfig, ax = plt.subplots()\nanswer = dendrogram(linkage_matrix, truncate_mode='lastp', p=10, orientation='left', ax=ax)\nax.set(xlabel='Ward merge distance', ylabel='Merged observations/groups', title='Ward hierarchy')\n"
+    },
+    {
+      "id": "ML-U08-1",
+      "family": "hierarchy_cut_api",
+      "label": "fcluster three-group partition",
+      "rationale": "Uses SciPy fcluster maxclust instead of cut_tree; the fitted partition is equivalent although arbitrary group IDs differ.",
+      "code": "from scipy.cluster.hierarchy import fcluster\nanswer = fcluster(linkage_matrix, t=3, criterion='maxclust')\n"
+    },
+    {
+      "id": "ML-U08-2",
+      "family": "hierarchy_cut_api",
+      "label": "fcluster cut sizes by unique counts",
+      "rationale": "Uses the alternate cut API and numpy.unique counts, returning size Series with consistently renamed group IDs.",
+      "code": "from scipy.cluster.hierarchy import fcluster\nlabels_2 = fcluster(linkage_matrix, t=2, criterion='maxclust')\nlabels_4 = fcluster(linkage_matrix, t=4, criterion='maxclust')\ngroups_2, counts_2 = np.unique(labels_2, return_counts=True)\ngroups_4, counts_4 = np.unique(labels_4, return_counts=True)\nsizes_2 = pd.Series(counts_2, index=groups_2)\nsizes_4 = pd.Series(counts_4, index=groups_4)\n"
+    },
+    {
+      "id": "ML-U09-1",
+      "family": "seeded_sample_positions",
+      "label": "RandomState sampling and iloc",
+      "rationale": "Recreates the seeded without-replacement sample positions through NumPy and selects them with iloc, preserving exact order and source indices.",
+      "code": "positions = np.random.RandomState(42).choice(len(X), size=100, replace=False)\nanswer = X.iloc[positions]\n"
+    },
+    {
+      "id": "ML-U10-1",
+      "family": "aligned_group_label_join",
+      "label": "explicit indexed label concatenation",
+      "rationale": "Joins a label Series aligned to X.index with concat before aggregating the original measured columns.",
+      "code": "assignments = pd.Series(labels, index=X.index, name='cluster')\nlabelled = pd.concat([X, assignments], axis=1)\nanswer = labelled.groupby('cluster').agg({'length': 'mean', 'width': 'mean'})\n"
+    },
+    {
+      "id": "ML-P02-1",
+      "family": "pca_score_matrix_product",
+      "label": "project centred rows onto fitted axes",
+      "rationale": "Recomputes all PCA coordinates with the fitted centring vector and component matrix, retaining original row order.",
+      "code": "answer = (scaled - pca.mean_) @ pca.components_.T\n"
+    },
+    {
+      "id": "ML-P03-1",
+      "family": "pca_variance_normalization",
+      "label": "normalise fitted component variances",
+      "rationale": "Derives the full fitted PCA variance-ratio vector from component variances and their total.",
+      "code": "answer = pca.explained_variance_ / pca.explained_variance_.sum()\n"
+    },
+    {
+      "id": "ML-P03-2",
+      "family": "variance_bar_backend",
+      "label": "Matplotlib component variance bars",
+      "rationale": "Uses native Matplotlib bars for independently normalized component variances with explicit component positions and visible labels.",
+      "code": "answer = pca.explained_variance_ / pca.explained_variance_.sum()\n\nimport matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nax.bar(np.arange(1, len(answer) + 1), answer)\nax.set(xlabel='Component', ylabel='Explained variance ratio', title='Variance by component')\n"
+    },
+    {
+      "id": "ML-P04-1",
+      "family": "pca_retention_threshold",
+      "label": "count cumulative values below threshold",
+      "rationale": "Uses an accumulate ufunc and monotone threshold count to find the minimum retained dimension, then selects its leading scores with numpy.take.",
+      "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained = int(np.count_nonzero(cumulative < 0.9) + 1)\nanswer = np.take(scores, np.arange(retained), axis=1)\n"
+    },
+    {
+      "id": "ML-P04-2",
+      "family": "pca_retention_threshold",
+      "label": "explicit cumulative threshold counts",
+      "rationale": "Returns the fitted cumulative ratios and computes both minimum component counts using monotone threshold counts instead of searchsorted.",
+      "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained_80 = int(np.count_nonzero(cumulative < 0.8) + 1)\nretained_95 = int(np.count_nonzero(cumulative < 0.95) + 1)\n"
+    },
+    {
+      "id": "ML-P05-1",
+      "family": "pca_axis_sign_and_named_table",
+      "label": "named weights with alternate first-axis sign",
+      "rationale": "Creates a feature-keyed weight table through from_dict and flips the first component sign, an equivalent PCA axis convention.",
+      "code": "rows = {name: [pca.components_[0, index] * -1, pca.components_[1, index]] for index, name in enumerate(X.columns)}\nanswer = pd.DataFrame.from_dict(rows, orient='index', columns=['PC1', 'PC2'])\n"
+    },
+    {
+      "id": "ML-P05-3",
+      "family": "pca_score_matrix_product",
+      "label": "named score table from direct projection",
+      "rationale": "Recomputes the two fitted coordinates by matrix projection and builds explicitly named columns with original row indices.",
+      "code": "coordinates = (scaled - pca.mean_) @ pca.components_[:2].T\nanswer = pd.DataFrame({'PC1': coordinates[:, 0], 'PC2': coordinates[:, 1]}, index=X.index)\n"
+    },
+    {
+      "id": "ML-P06-1",
+      "family": "pca_variance_normalization",
+      "label": "two-axis variance divided by total",
+      "rationale": "Computes visible two-axis variation by dividing their fitted variances by total fitted variance.",
+      "code": "answer = float((pca.explained_variance_[0] + pca.explained_variance_[1]) / pca.explained_variance_.sum())\n"
+    },
+    {
+      "id": "ML-P06-2",
+      "family": "pca_retention_threshold",
+      "label": "retain threshold and take display columns",
+      "rationale": "Calculates the minimum 90% retained dimension independently and uses numpy.take for retained and separate two-axis coordinate arrays.",
+      "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained = int(np.count_nonzero(cumulative < 0.9) + 1)\nretained_scores = np.take(scores, np.arange(retained), axis=1)\nview_2d = np.take(scores, [0, 1], axis=1)\n"
+    },
+    {
+      "id": "ML-P07-1",
+      "family": "pca_axis_sign",
+      "label": "negative ufunc on first fitted axis",
+      "rationale": "Uses the elementwise negative ufunc to implement the requested sign reversal of the fitted first component.",
+      "code": "answer = np.negative(pca.components_[0])\n"
+    },
+    {
+      "id": "ML-P07-2",
+      "family": "pca_rank_one_matrix_product",
+      "label": "paired sign reversal and broadcast reconstruction",
+      "rationale": "Flips both scores and weights consistently and multiplies their column/row matrices instead of using numpy.outer.",
+      "code": "weights = np.negative(pca.components_[0])\nflipped_scores = np.negative(scores[:, 0])\nanswer = flipped_scores[:, None] @ weights[None, :]\n"
+    },
+    {
+      "id": "ML-P07-3",
+      "family": "pca_rank_two_matrix_product",
+      "label": "direct two-component reconstruction",
+      "rationale": "Reconstructs scaled inputs directly from the first two score/weight matrices plus the fitted mean instead of calling inverse_transform on zeroed scores.",
+      "code": "answer = scores[:, :2] @ pca.components_[:2] + pca.mean_\n"
+    },
+    {
+      "id": "ML-M01-1",
+      "family": "estimator_factory_registry",
+      "label": "construct candidate registry from factories",
+      "rationale": "Instantiates each requested estimator through a named factory registry and derives answer from actual constructed class objects.",
+      "code": "from sklearn.linear_model import LinearRegression\nfrom sklearn.tree import DecisionTreeRegressor\nfactories = {'line': LinearRegression, 'tree': DecisionTreeRegressor}\nparameters = {'line': {}, 'tree': {'random_state': 42}}\ncandidates = {name: factory(**parameters[name]) for name, factory in factories.items()}\nanswer = {name: estimator.__class__.__name__ for name, estimator in candidates.items()}\n"
+    },
+    {
+      "id": "ML-R-R1-2",
+      "family": "population_mean_definition",
+      "label": "retrieval-population sum divided by size",
+      "rationale": "Runs the base mean-definition alternative against this distinct retrieval setup and its independent grader.",
+      "code": "evaluation_mean = float(np.asarray(y_test).sum() / len(y_test))\ntraining_mean = float(np.asarray(y_train).sum() / len(y_train))\n",
+      "family_reference": "ML-R02-3"
+    },
+    {
+      "id": "ML-C-R1-1",
+      "family": "macro_f1_definition",
+      "label": "retrieval-population classwise contingency F1",
+      "rationale": "Runs the classwise contingency calculation on the new retrieval population, rather than reusing the original numeric answer.",
+      "code": "classes = np.union1d(df.actual, df.predicted)\nclass_f1 = []\nfor label in classes:\n    actual_class = df.actual.eq(label)\n    predicted_class = df.predicted.eq(label)\n    numerator = 2 * np.count_nonzero(actual_class & predicted_class)\n    denominator = np.count_nonzero(actual_class) + np.count_nonzero(predicted_class)\n    class_f1.append(numerator / denominator)\nanswer = float(np.mean(class_f1))\n",
+      "family_reference": "ML-C03-1"
+    },
+    {
+      "id": "ML-C-R1-3",
+      "family": "validation_numpy_containers",
+      "label": "retrieval most-frequent reference validation",
+      "rationale": "Runs recorded real cross-validation on this retrieval setup using equivalent numeric training containers and its own supplied folds.",
+      "code": "from sklearn.dummy import DummyClassifier\nreference = DummyClassifier(strategy='most_frequent')\nanswer = cross_validate(reference, X_train.to_numpy(), y_train.to_numpy(), cv=folds, scoring='f1_macro')['test_score']\n",
+      "family_reference": "ML-C06-2"
+    },
+    {
+      "id": "ML-U-R1-3",
+      "family": "original_unit_group_aggregation",
+      "label": "retrieval original-unit totals over group sizes",
+      "rationale": "Runs group-total/count aggregation on this distinct retrieval population and its fitted assignments.",
+      "code": "grouped = X.groupby(labels, sort=True)\nanswer = grouped.sum().div(grouped.size(), axis='index')\nsizes = grouped.size()\n",
+      "family_reference": "ML-U05-1"
+    },
+    {
+      "id": "ML-P-R1-1",
+      "family": "pca_retention_threshold",
+      "label": "retrieval cumulative threshold counts",
+      "rationale": "Runs the cumulative/count method using the retrieval setup fitted ratios and independent trusted PCA checks.",
+      "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained_80 = int(np.count_nonzero(cumulative < 0.8) + 1)\nretained_95 = int(np.count_nonzero(cumulative < 0.95) + 1)\n",
+      "family_reference": "ML-P04-2"
+    },
+    {
+      "id": "ML-P-R1-2",
+      "family": "pca_score_matrix_product",
+      "label": "retrieval named scores from fitted projection",
+      "rationale": "Projects the new retrieval population onto its own fitted axes and retains that population row index.",
+      "code": "coordinates = (scaled - pca.mean_) @ pca.components_[:2].T\nanswer = pd.DataFrame({'PC1': coordinates[:, 0], 'PC2': coordinates[:, 1]}, index=X.index)\n",
+      "family_reference": "ML-P05-3"
+    }
+  ]
+}

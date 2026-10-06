@@ -18,7 +18,11 @@ with sync_playwright() as p:
     assert 'Final MAE' not in page.locator('.ml-concept').inner_text()
     assert 'physical unit unspecified' in page.locator('.ml-column-guide').inner_text()
     assert '..' not in page.locator('.teaching-note').inner_text()
-    assert page.locator('.practice-context').count()==0
+    # The approved checkpoint retains its concrete task briefing.
+    briefing=page.locator('.practice-context')
+    assert briefing.count()==1
+    assert 'five-fold CV' in briefing.inner_text() and 'final RMSE' in briefing.inner_text()
+    assert 'No tree tuning is required' in briefing.inner_text()
     assert page.locator('.foundation-revisit a').count()==3
     canonical=page.locator('link[rel="canonical"]').get_attribute('href')
     assert canonical=='https://dataplayground.science/ml-learn-ML-W-K1.html'

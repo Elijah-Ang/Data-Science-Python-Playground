@@ -23,7 +23,8 @@
     if (round.files) return 'Available file'+(Object.keys(round.files).length>1?'s':'')+': '+Object.keys(round.files).join(', ')+'. Load the file in your code; no table is loaded for you.';
     if (round.id.startsWith('I01-')) return round.setup ? 'The editor supplies the lists. Build the table yourself.' : 'Build the table from the values below. No table is created for you.';
     if (round.id === 'V01-1') return 'Start with a new Figure. This exercise needs no dataset.';
-    return 'The editable setup on the right creates df'+(round.setup?' and the additional inputs shown below':'')+'. Run executes the setup and your work from top to bottom.';
+    if (round.setupDescription) return round.setupDescription+' The setup is visible and editable above Your work. Run executes both sections from top to bottom.';
+    return 'The supplied setup in Your Python creates df'+(round.setup?' and the additional inputs shown below':'')+'. Run executes the setup and your work from top to bottom.';
   }
   const api={setup,code,context};
   root.FoundationWorkspace=api;

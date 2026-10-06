@@ -1,6 +1,16 @@
 /* A receipt is JSON only. No PyProxy, fitted model, or learner namespace survives Run. */
 let runtimePromise;
+let seabornPromise;
 const loadedFiles = new Set();
+async function seaborn(py,config) {
+  if(!seabornPromise)seabornPromise=(async()=>{
+    await py.loadPackage(['matplotlib','micropip']);
+    py.globals.set('_learning_seaborn_requirement',config.seaborn || 'seaborn==0.13.2');
+    try { await py.runPythonAsync('import micropip\nawait micropip.install(_learning_seaborn_requirement)'); }
+    finally { py.globals.delete('_learning_seaborn_requirement'); }
+  })().catch(error=>{seabornPromise=null;throw error;});
+  return seabornPromise;
+}
 async function runtime(config) {
   if (!runtimePromise) runtimePromise = (async () => {
     postMessage({type:'status',message:'Loading Python and machine-learning tools…'});
@@ -11,7 +21,7 @@ async function runtime(config) {
     await py.runPythonAsync(config.source);
     await py.runPythonAsync('import os, sys\nsys.path.insert(0, "/")\nos.chdir("/")');
     return py;
-  })().catch(error=>{runtimePromise=null;loadedFiles.clear();throw error;});
+  })().catch(error=>{runtimePromise=null;seabornPromise=null;loadedFiles.clear();throw error;});
   return runtimePromise;
 }
 onmessage = async ({data}) => {
@@ -21,8 +31,12 @@ onmessage = async ({data}) => {
     const baseReady=performance.now();
     if(data.type!=='init'){
       // Metadata covers setup and the reference. Learner imports may ask for more.
-      await py.loadPackage(data.request.exercise.packages || ['scikit-learn','matplotlib']);
-      try { await py.loadPackagesFromImports(data.request.code || ''); }
+      const requested=data.request.exercise.packages || ['scikit-learn','matplotlib'];
+      // Seaborn is supplied as a pure-Python wheel, outside the Pyodide lockfile.
+      await py.loadPackage(requested.filter(name=>name!=='seaborn'));
+      const code=data.request.code || '';
+      if(requested.includes('seaborn') || /\b(?:from\s+seaborn(?:\.|\s)|import\s+[^\n#]*\bseaborn\b|__import__\s*\(\s*['"]seaborn['"])/.test(code))await seaborn(py,data.config);
+      try { await py.loadPackagesFromImports(code); }
       catch(error){if(!String(error).includes('SyntaxError'))throw error;}
       if(py.loadedPackages['scikit-learn'])await py.runPythonAsync('import ml_helpers');
       if(py.loadedPackages.matplotlib)await py.runPythonAsync('import matplotlib\nmatplotlib.use("Agg")');

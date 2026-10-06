@@ -78,6 +78,16 @@ assert source_csv.read_bytes()==original,'A learner export must not overwrite th
 accepted('ML-X12',activities['ML-X12']['solution'],'fresh inputs after an in-run source export')
 print('Semantic alternatives, negatives, recovery and generated-resource cleanup passed.')
 
+supplied_cv=activities['ML-W09-1']['solution']
+rejected('ML-W09-1',"X_train=X.copy()\ny_train=y.copy()\n"+supplied_cv,'rebinding supplied training names to all rows')
+rejected('ML-W09-1',"from sklearn.dummy import DummyRegressor\n"+supplied_cv.replace('cross_validate(model,','cross_validate(DummyRegressor(),'),'wrong estimator family for supplied-model validation')
+rejected('ML-W09-1',supplied_cv.replace('cv=folds','cv=KFold(5,shuffle=True,random_state=43)'),'changed supplied validation folds')
+accepted('ML-W09-1',supplied_cv.replace('X_train,y_train','X_train.to_numpy(),y_train.to_numpy()'),'equivalent numpy containers on supplied validation folds')
+rejected('ML-W09-3',activities['ML-W09-3']['solution'].replace("strategy='mean'","strategy='median'"),'median reference substituted for declared mean reference')
+rejected('ML-C06-2',activities['ML-C06-2']['solution'].replace("strategy='most_frequent'","strategy='stratified',random_state=42"),'random reference substituted for most-frequent class reference')
+supplied_scaling=activities['ML-W03-1']['solution']
+rejected('ML-W03-1',"X_train=X_train*2\n"+supplied_scaling,'mutating supplied feature values before standardization')
+
 knn=activities['ML-X07']['solution']
 assert 'preprocessor = StandardScaler()' in knn
 rejected('ML-X07',knn.replace('preprocessor = StandardScaler()', 'preprocessor = "passthrough"'),'KNN without the playground scaling recipe')

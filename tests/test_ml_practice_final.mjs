@@ -100,10 +100,18 @@ for (const deprecatedCall of [/\.get_cmap\s*\(/, /register_cmap\s*\(/, /matplotl
 assert(!html.includes('id="practiceModeButton"'), "Retired mode controls must not ship.");
 assert(source.includes('const playgroundMode = "guided"'), "Only the current editable workflow may execute.");
 assert(!source.includes('function setPlaygroundMode'), "Retired mode switching must not affect execution.");
-for (const kind of ["model", "cv", "kmeans", "hierarchical", "pca_selection", "checkpoint_supervised", "checkpoint_kmeans", "checkpoint_hierarchical", "checkpoint_pca"]) {
-  assert(api.PRACTICE_VALIDATOR_SOURCE.includes(`kind == "${kind}"`), `Missing semantic validator: ${kind}`);
+const registeredKinds = new Set();
+for (const match of api.PRACTICE_VALIDATOR_SOURCE.matchAll(/\bkind\s*(?:==\s*(["'])(.*?)\1|in\s*\(([^)]*)\))/g)) {
+  if (match[2]) registeredKinds.add(match[2]);
+  for (const value of (match[3] || "").matchAll(/["']([^"']+)["']/g)) registeredKinds.add(value[1]);
 }
-assert(!forbiddenHoldout(api.PRACTICE_VALIDATOR_SOURCE), "Semantic validator source must not contain holdout names.");
+for (const kind of ["model", "cv", "kmeans", "hierarchical", "pca_selection", "checkpoint_supervised", "checkpoint_kmeans", "checkpoint_hierarchical", "checkpoint_pca"]) {
+  assert(registeredKinds.has(kind), `Missing semantic validator: ${kind}`);
+}
+// The guard must name forbidden variables to reject them. It must never fetch
+// their values for scoring a training-only task.
+assert(!/globals\(\)\s*(?:\[|\.get\()\s*["'](?:X_test|y_test|test_prediction|test_predictions|test_result)["']/.test(api.PRACTICE_VALIDATOR_SOURCE), "Semantic validator must not inspect holdout values.");
+assert(api.WORKER_SOURCE.includes("begin_practice_observation") && api.WORKER_SOURCE.includes("__practice_observation.finish()"), "Practice must snapshot inputs and release observation patches for each run.");
 
 const expectedExercises = {
   supervised:["model", "baseline"],

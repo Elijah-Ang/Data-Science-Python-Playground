@@ -1241,3 +1241,27 @@ body[data-playground] .output-panel .teaching-metric-line {font-size:.75rem;line
       stroke-linecap: round;
       stroke-linejoin: round;
     }
+
+/* Cells retain their dark editor surface in either page theme. Give all cell
+   prose, identifier chips, controls and syntax an explicit matching palette. */
+body[data-playground] .cell {
+  --ink:#e7edf7; --muted:#bcc6d6; --faint:#adb8ce;
+  --panel:#202126; --panel-2:#292d36; --accent:#7dd8ff;
+  --gold:#f3d276; --mint:#7ee3bd; --coral:#ffb3bb;
+}
+body[data-playground] .data-task-instructions { color:var(--code-ink); }
+body[data-playground] :is(.code-highlight,.workflow-code,.challenge-answer) .py-comment { color:#adb8ce; }
+body[data-playground] .line-rail { color:#adb8ce; }
+body[data-playground] .cell-footer { color:#bcc6d6; }
+body[data-playground] .cell-head { flex-wrap:wrap; }
+body[data-playground] .cell-label { min-width:0; white-space:normal; overflow-wrap:anywhere; }
+body[data-playground] .cell-head .cell-action { flex:none; }
+body[data-playground][data-theme="light"] { --coral:#982d41; }
+body[data-playground] .console-output { color:var(--ink); }
+body[data-playground] .console-output.error { color:var(--coral); }
+/* Reading cues are also used outside the dark cells. Match their surrounding
+   output/reference surface instead of inheriting the fixed editor palette. */
+body[data-playground] :is(.output-item,.workflow-step) :is(.teaching-line,.teaching-concept-line,.model-teaching-line,.teaching-metric-line) { color:var(--ink); }
+body[data-playground] :is(.output-item,.workflow-step) .teaching-label { color:var(--gold); }
+body[data-playground] :is(.output-item,.workflow-step) .teaching-line code { color:var(--ink); background:var(--panel); border-color:var(--border); }
+body[data-playground] .output-item .output-cue strong { color:var(--ink); }

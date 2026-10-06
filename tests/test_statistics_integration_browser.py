@@ -20,18 +20,23 @@ def main():
         for name,path in [('data','playground.html'),('statistics','statistics.html'),('ml','ml.html')]:
             page=context.new_page();page.goto(args.base_url+'/'+path+('?runtime=local' if args.local else ''));pages[name]=page
             page.wait_for_function('document.querySelector("#runtimeStatus").textContent.toLowerCase().includes("ready")',timeout=180000)
+            page.wait_for_function('Number(document.querySelector(".step-route-range")?.max)>0',timeout=180000)
+            slider=page.locator('.step-route-range')
+            assert slider.input_value()=='0' and page.locator('article.cell').count()==0
+            assert page.locator('.step-route-action').count()==0
+            slider.press('Home');slider.press('ArrowRight')
+            assert slider.input_value()=='1' and page.locator('article.cell').count()==1
             if name=='statistics':
                 page.wait_for_function('StatisticsPlayground.ready',timeout=180000)
-                assert page.locator('.cell').count()==0
-                page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0]?.status==="done"',timeout=60000)
+                page.wait_for_function('StatisticsPlayground.cells[0]?.status==="done"',timeout=60000)
                 assert page.locator('#outputList .output-item').count()==1
                 page.locator('#runAllButton').click();page.wait_for_function('StatisticsPlayground.cells.every(c=>c.status==="done") && StatisticsPlayground.cells.length===StatisticsPlayground.activeRouteLength',timeout=120000)
                 assert 0<page.evaluate('StatisticsPlayground.cells.at(-1).output.scalars.p_value')<1
                 with page.expect_download() as ev:page.locator('#downloadNotebook').click()
                 assert json.loads(Path(ev.value.path()).read_text())['nbformat']==4
             else:
-                page.locator('.route-card, .route-task').first.click(timeout=180000)
                 page.wait_for_selector('.code-input',timeout=60000)
+                page.wait_for_function('document.querySelector("article.cell")?.dataset.status==="done"',timeout=180000)
             print('Ready:',name,flush=True)
             desktop[name]=page.locator('#runAllButton').evaluate('(e)=>{const s=getComputedStyle(e);return [e.getBoundingClientRect().height,s.fontSize,s.paddingTop,s.paddingBottom]}')
         install_probes(pages);visual=[]

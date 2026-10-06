@@ -42,6 +42,11 @@ const choices=curriculum.lessons.find(l=>l.id==='V35');
 for(const round of choices.rounds){
   assert.equal((teaching.intro(curriculum,choices,round).match(/role="img"/g)||[]).length,4);
 }
+const finishing=curriculum.lessons.find(l=>l.id==='V02');
+const plottingIntro=teaching.intro(curriculum,finishing,finishing.rounds[0]);
+assert(plottingIntro.includes('Two plotting tools, one Figure'));
+assert(plottingIntro.includes('short, consistent way to read named columns and draw many chart types'));
+assert(plottingIntro.includes('Equivalent Matplotlib or other Python code is welcome'));
 console.log(`Visual teaching: all ${count} exercises, retrieval links, authored guides, syntax coverage and chart alternatives verified.`);
 
 const duplicates=curriculum.lessons.find(l=>l.id==='I17');

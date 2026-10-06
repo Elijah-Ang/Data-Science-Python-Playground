@@ -54,6 +54,13 @@ CONTRACT_MEANINGS={
  'loss_curve':'Training loss history of the selected neural regressor.',
  'loss_curves':'Dictionary of available neural training-loss histories by model ID.',
  'final_accuracy':'Final-test accuracy, supplementary to macro F1.',
+ 'answer':'The requested result, with the values, labels and row order described by this task.',
+ 'names':'Encoded feature names in the same order as the transformed columns.',
+ 'priors':'Fitted class prior probabilities in the estimator’s class order.',
+ 'sizes_2':'Counts for the two-group hierarchy cut; arbitrary group IDs may be renamed consistently.',
+ 'sizes_4':'Counts for the four-group hierarchy cut; arbitrary group IDs may be renamed consistently.',
+ 'cut_scores':'Dictionary mapping each requested hierarchy cut size to its observed silhouette score.',
+ 'chosen_k':'One of the compared hierarchy cut sizes, chosen for a defensible exploratory purpose.',
 }
 def workflow_contract(exercise):
     reads=set()
@@ -61,8 +68,11 @@ def workflow_contract(exercise):
         tree=ast.parse(check.get('test','True'),mode='eval')
         local={n.id for c in ast.walk(tree) if isinstance(c,ast.comprehension) for n in ast.walk(c.target) if isinstance(n,ast.Name)}
         reads|={n.id for n in ast.walk(tree) if isinstance(n,ast.Name) and isinstance(n.ctx,ast.Load)}-local
-    names=set(exercise['outputs'])|(reads-set(dir(builtins))-{'np','pd','trace','_same_partition','_pca_equivalent'})
+    names=set(exercise['outputs'])|(reads-set(dir(builtins))-{'np','pd','trace','workflow_reports','workflow_evidence','silhouette_score','cut_tree','_labelled_counts_match','_training_loss_matches','_pca_retention_matches','_same_partition','_pca_equivalent','_scatter_matches','_bar_matches','_tree_matches','_dendrogram_matches','_heatmap_matches','_split_matches','_folds_match','_prepared_values'})
     exercise['contract']=[dict(name=n,description=CONTRACT_MEANINGS.get(n,'Requested result described in the task and deliverables.')) for n in sorted(names)]
+    if 'cv_results=pd.DataFrame(rows).set_index' in exercise.get('solution',''):
+        for item in exercise['contract']:
+            if item['name']=='cv_results':item['description']='Dataframe indexed by the requested model IDs, with initial_score, selected_score and settings columns. Scores are observed mean training-fold scores; settings describes the chosen recipe.'
 DECKS=[
  dict(id='foundations',key='F',title='ML Foundations',description='Questions and Python basics, then complete regression and classification workflows.',chapters=['Questions and tables','Learning from examples','Honest evaluation']),
  dict(id='workflow',key='W',title='Supervised Workflow',description='Prepare, validate, debug and demonstrate readiness on unfamiliar data.',chapters=['Prepare','Validate and compare','Select, diagnose and finish']),
@@ -183,25 +193,110 @@ def py(task,solution,test,*,dataset=None,setup='',outputs=None,message=None):
     if isinstance(test,str):
         tests=[dict(name='Requested evidence',test=test,message=message or evidence_feedback(task,test))]
     else:tests=copy.deepcopy(test)
-    # Compare prediction values with the learner's fitted estimator, without fitting again.
-    # This catches arbitrary arrays that merely have the requested shape/classes.
+    # Inspect the actual learner operations rather than requiring incidental
+    # estimator aliases from the model solution. This also catches fitting a
+    # correct estimator to a different population or inventing validation scores.
+    bindings={}
+    overrides={}
+    imports={}
+    for source in (setup,solution):
+        for node in ast.walk(ast.parse(source)):
+            if isinstance(node,ast.ImportFrom):
+                imports.update({a.asname or a.name:a.name for a in node.names})
+    def family(node,seen=()):
+        if isinstance(node,ast.Name):
+            if node.id in overrides:return overrides[node.id]
+            if node.id in seen:return None
+            return family(bindings.get(node.id),seen+(node.id,))
+        if isinstance(node,ast.Call):
+            if isinstance(node.func,ast.Attribute) and node.func.attr in ('fit','fit_transform'):return family(node.func.value,seen)
+            if isinstance(node.func,ast.Name):
+                name=imports.get(node.func.id,node.func.id)
+                if name=='Pipeline' and node.args and isinstance(node.args[0],(ast.List,ast.Tuple)):
+                    return family(node.args[0].elts[-1].elts[-1],seen)
+                if name=='clone' and node.args:return family(node.args[0],seen)
+                return name
+        return None
+    def assign_types(node):
+        if isinstance(node,ast.Assign):
+            for target in node.targets:
+                if isinstance(target,ast.Name) and family(node.value):bindings[target.id]=node.value
+    for node in ast.parse(setup).body:assign_types(node)
+    fit_contracts=set()
+    search_contracts=[]
     tree=ast.parse(solution)
+    for statement in tree.body:
+        for call in ast.walk(statement):
+            if isinstance(call,ast.Call) and isinstance(call.func,ast.Attribute) and call.func.attr=='set_params' and isinstance(call.func.value,ast.Name):
+                for setting in call.keywords:
+                    if setting.arg=='model' and family(setting.value):overrides[call.func.value.id]=family(setting.value)
+        for node in ast.walk(statement):
+            if not isinstance(node,ast.Call) or not isinstance(node.func,ast.Attribute) or node.func.attr not in ('fit','fit_transform','fit_predict'):continue
+            arguments=list(node.args)
+            kwargs={k.arg:k.value for k in node.keywords}
+            x=arguments[0] if arguments else kwargs.get('X')
+            y=arguments[1] if len(arguments)>1 else kwargs.get('y')
+            if x is None:continue
+            if any(isinstance(call,ast.Call) and isinstance(call.func,ast.Attribute) and call.func.attr in ('fit','fit_transform','fit_predict')
+                   for expression in (x,y) if expression is not None for call in ast.walk(expression)):continue
+            # Loop-local variables are checked by the task-specific multi-fit
+            # evidence. Do not leak those implementation names into the brief.
+            loop_names={n.id for loop in ast.walk(statement) if isinstance(loop,ast.For) for n in ast.walk(loop.target) if isinstance(n,ast.Name)}
+            if any(isinstance(n,ast.Name) and n.id in loop_names for expr in (x,y) if expr is not None for n in ast.walk(expr)):continue
+            estimator=family(node.func.value)
+            if estimator=='GridSearchCV':
+                constructor=node.func.value
+                if isinstance(constructor,ast.Name):constructor=bindings.get(constructor.id)
+                if isinstance(constructor,ast.Call):
+                    settings={k.arg:k.value for k in constructor.keywords}
+                    grid=constructor.args[1] if len(constructor.args)>1 else settings.get('param_grid')
+                    scoring=settings.get('scoring')
+                    if grid is not None and scoring is not None and y is not None:
+                        candidate=constructor.args[0] if constructor.args else settings.get('estimator')
+                        cv=settings.get('cv')
+                        if isinstance(cv,ast.Name):cv=bindings.get(cv.id)
+                        design=None
+                        if isinstance(cv,ast.Call) and isinstance(cv.func,ast.Name):
+                            options={k.arg:ast.literal_eval(k.value) for k in cv.keywords}
+                            design=dict(kind=imports.get(cv.func.id,cv.func.id),count=options.get('n_splits',ast.literal_eval(cv.args[0]) if cv.args else 5),shuffle=options.get('shuffle',False),seed=options.get('random_state'))
+                        search_contracts.append((ast.unparse(x),ast.unparse(y),ast.unparse(grid),ast.unparse(scoring),family(candidate),design))
+                continue
+            expression='trace.fit_matches('+ast.unparse(x)+','+(ast.unparse(y) if y is not None else 'None')+','+repr(estimator)+')'
+            if expression not in fit_contracts:
+                fit_contracts.add(expression)
+                tests.append(dict(name='Declared fitting population',test=expression,message='Fit the requested estimator or preparation to the declared input values and aligned target, preserving their feature order.'))
+        assign_types(statement)
+    # Compare prediction values with the observed call, without predicting or
+    # fitting a second time during Check.
     for node in tree.body:
         if not isinstance(node,ast.Assign) or not any(isinstance(t,ast.Name) and t.id in outputs for t in node.targets):continue
         if ast.unparse(node.value) in ("search.cv_results_['mean_test_score']", "-search.cv_results_['mean_test_score']"):
             name=next(t.id for t in node.targets if isinstance(t,ast.Name) and t.id in outputs)
-            tests.append(dict(name='Reported validation scores',
-                test='np.allclose('+name+','+ast.unparse(node.value)+')',
-                message='Return the mean validation scores from the fitted search, in its candidate order.'))
+            positive=isinstance(node.value,ast.UnaryOp)
+            if search_contracts:
+                x,y,grid,scoring,candidate,design=search_contracts[-1]
+                tests.append(dict(name='Reported validation scores',
+                    test='trace.search_matches('+name+','+','.join((x,y,grid,scoring))+',positive='+str(positive)+',family='+repr(candidate)+',cv='+repr(design)+')',
+                    message='Return the observed mean validation scores for the declared settings and scorer, in candidate order; fitting on other rows or substituting scores does not supply this evidence.'))
+            else:
+                tests.append(dict(name='Reported validation scores',test='np.allclose('+name+','+ast.unparse(node.value)+')',message='Return the mean validation scores from the fitted search, in its candidate order.'))
         if not isinstance(node.value,ast.Call) or not isinstance(node.value.func,ast.Attribute):continue
         if node.value.func.attr not in ('predict','predict_proba','decision_function'):continue
         if any(isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr in ('fit','fit_transform') for n in ast.walk(node.value)):continue
         name=next(t.id for t in node.targets if isinstance(t,ast.Name) and t.id in outputs)
-        expression=ast.unparse(node.value)
-        tests.append(dict(name='Fitted prediction evidence',test='np.array_equal('+name+','+expression+')',message='Return the requested predictions from your fitted estimator in the supplied row order.'))
-    return dict(kind='python',task=task,dataset=dataset,setup=setup,solution=solution.strip()+'\n',
+        x=node.value.args[0] if node.value.args else next((k.value for k in node.value.keywords if k.arg=='X'),None)
+        if x is None:continue
+        tests.append(dict(name='Fitted prediction evidence',test='trace.prediction_matches('+name+','+ast.unparse(x)+','+repr(node.value.func.attr)+')',message='Return the requested predictions from the fitted estimator in the supplied row order. Equivalent estimator variable names and value containers are accepted.'))
+    result=dict(kind='python',task=task,dataset=dataset,setup=setup,solution=solution.strip()+'\n',
         starter='# Write your Python here.\n',outputs=outputs,checks=tests,
         hints={},explanation='')
+    if search_contracts:
+        x,y,grid,scoring,candidate,design=search_contracts[-1]
+        if design:
+            folds=str(design['count'])+' '+design['kind']+' folds'
+            if design['shuffle']:folds+=' with shuffle=True and random_state='+str(design['seed'])
+            result['validationDesign']='Validation design: '+folds+' on '+x+' and '+y+', scoring='+scoring+'. Compare settings '+grid+' in candidate order.'
+    return result
 
 def decide(task,options,correct,explanation,evidence=None):
     return dict(kind='decision',task=task,options=options,correct=[correct] if isinstance(correct,int) else correct,
@@ -249,7 +344,18 @@ def assemble():
         cards.append(content)
     challenges=workflows.challenges(manifest['challenges'])
     import editorial, python_path
-    return model_bridges.extend(transfer_practice.enrich(mastery.extend(python_path.apply(editorial.apply(dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES))))))
+    registry=model_bridges.extend(transfer_practice.enrich(mastery.extend(python_path.apply(editorial.apply(dict(version=1,baseline=manifest['baseline'],decks=DECKS,cards=cards,challenges=challenges,sources=SOURCES))))))
+    for exercise in [e for c in registry['cards'] for e in c['exercises']]+[c['exercise'] for c in registry['challenges']]:
+        if exercise['kind']=='python' and not exercise.get('assessment'):
+            if exercise.get('validationDesign'):exercise['task']+=' '+exercise['validationDesign']
+            if exercise.get('protect'):
+                protection=exercise['protect']
+                if protection.get('time'):
+                    exercise['task']+=' Reserve the final 20% in chronological order for the final test.'
+                else:
+                    exercise['task']+=' Reserve 20% for the final test with random_state=42'+(', stratified by '+protection['target'] if protection.get('stratified') else '')+'.'
+            workflow_contract(exercise)
+    return registry
 
 if __name__=='__main__':
     # Imported author modules use this same registry rather than a second __main__.

@@ -59,7 +59,8 @@ for (const folds of [5, 10]) {
           modelId,
           modelName: model.name,
           modelTask: model.task,
-          cells
+          cells,
+          checkpoint: api.independentCheckpointForRoute(config, scenario, modelId, folds)
         });
       }
     }

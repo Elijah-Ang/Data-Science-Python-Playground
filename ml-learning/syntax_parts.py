@@ -12,7 +12,7 @@ PARTS={
 'F08':[('classifier.fit(X, y)','Learns the supplied classification recipe from feature rows and class labels.'),('classifier.predict(new_rows)','Returns one predicted class label for each new feature row.')],
 'F09':[('stratify=y','Uses the target labels to approximately preserve class proportions in each split.'),('random_state=42','Keeps the comparison of split strategies reproducible.')],
 'F10':[('available_predictors','A list of columns that would be known when making the prediction.'),('df[available_predictors]','Selects only those legitimate inputs; a target-derived column must stay out.')],
-'W01':[('X_train.describe()','Summarises numeric training columns without inspecting the reserved test population.'),('X_train.plot(...)','Starts a plot from the training table; choose the variables and labels for the question.')],
+'W01':[('X_train.describe()','Summarises numeric training columns without inspecting the reserved test population.'),('import seaborn as sns','Imports the plotting library under its usual short name.'),('sns.scatterplot(x=X_train.distance, y=y_train)','Plots aligned training distance and duration with the same Seaborn API used in the example.')],
 'W02':[("DummyRegressor(strategy='mean')",'Creates a reference that learns only the training-target mean.'),("DummyClassifier(strategy='most_frequent')",'Creates a reference that always predicts the most common training class.')],
 'W03':[('scaler.fit(X_train)','Learns a mean and scale from each training feature column.'),('scaler.transform(X_new)','Applies the already learned scale; it does not refit on the new rows.')],
 'W04':[("handle_unknown='ignore'",'An unseen category produces zeros in that feature’s learned indicator columns instead of refitting the schema.'),('sparse_output=False','Returns a dense array for these small examples.'),('OneHotEncoder','Learns named category indicators without assigning a numeric ordering.')],
@@ -80,7 +80,7 @@ EXTRA={'F03':'model.coef_',
 # New inspection/diagnostic APIs used by later rounds of the same card.
 ADDITIONAL={
  'F05':[('residual = actual - predicted','Keeps signed row-level errors; positive residuals mean the model predicted too little.')],
- 'W01':[('fig, ax = plt.subplots()','Creates a figure and axes for the training-data view.'),('ax.scatter(x, y)','Plots paired values; supply training inputs and their aligned outcomes.'),('ax.set(xlabel="Feature", ylabel="Outcome")','Labels the plotted quantities so the figure can be interpreted.')],
+ 'W01':[('fig, ax = plt.subplots()','Creates a Matplotlib figure and axes that Seaborn can draw on.'),('sns.scatterplot(x=X_train.distance, y=y_train, ax=ax)','Draws the requested training pairs on those axes. Matplotlib ax.scatter with the same values is also valid.'),('ax.set(xlabel="Distance", ylabel="Duration")','Labels the plotted quantities so the figure can be interpreted.')],
  'W03':[('StandardScaler()','Creates an unfitted scaler; it learns statistics only when fit is called.')],
  'W04':[('encoder.get_feature_names_out()','Reads indicator names in the learned output-column order.')],
  'W05':[("'passthrough'",'Keeps declared binary flags unchanged while other branches transform their columns.')],

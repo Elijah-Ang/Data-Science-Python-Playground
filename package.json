@@ -18,7 +18,7 @@
     "ios:add": "npm run build:web && npx cap add ios",
     "ios:sync": "npm run build:ios-assets && npx cap sync ios && npm run check:ios-runtime",
     "ios:open": "npx cap open ios",
-    "check:foundations": "node tests/test_foundations_curriculum.mjs && python3 tests/test_foundations_runtime.py",
+    "check:foundations": "node tests/test_foundations_curriculum.mjs && python3 tests/test_foundations_runtime.py && python3 tests/test_foundations_responsibilities.py",
     "check:workflows": "node tests/test_workflow_challenges.mjs && python3 tests/test_workflow_challenges_audit.py",
     "check:data": "python3 tests/test_data_runtime.py",
     "check:product": "python3 tests/test_product_browser.py",

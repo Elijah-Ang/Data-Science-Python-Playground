@@ -7,6 +7,7 @@ security. All monkey patches and plotting resources are released in finally.
 import ast
 import base64
 import contextlib
+import copy
 import functools
 import gc
 import hashlib
@@ -14,6 +15,7 @@ import io
 import inspect
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -23,9 +25,236 @@ import weakref
 import numpy as np
 import pandas as pd
 
-RUNTIME_VERSION = 3
+RUNTIME_VERSION = 5
 MAX_TEXT = 24000
 MAX_EVENTS = 5000
+
+def _labelled_counts_match(actual, expected):
+    """Compare the labelled mapping without imposing presentation order."""
+    return (isinstance(actual,pd.Series) and actual.index.is_unique
+            and len(actual)==len(expected)
+            and actual.index.difference(expected.index).empty
+            and expected.index.difference(actual.index).empty
+            and np.array_equal(actual.reindex(expected.index).to_numpy(),expected.to_numpy()))
+
+def _training_loss_matches(actual, expected):
+    if not isinstance(actual,pd.Series) or expected is None:return False
+    values=np.asarray(expected)
+    index=np.asarray(actual.index)
+    return (actual.index.name=='iteration' and actual.shape==values.shape
+            and (np.array_equal(index,np.arange(len(values)))
+                 or np.array_equal(index,np.arange(1,len(values)+1)))
+            and np.allclose(actual.to_numpy(),values))
+
+def _pca_retention_matches(cumulative, retained_80, retained_95, ratios):
+    """Use supplied fitted PCA ratios, never a learner-derived oracle."""
+    if ratios is None:return False
+    expected=np.cumsum(ratios)
+    actual=np.asarray(cumulative)
+    if actual.shape!=expected.shape or not np.allclose(actual,expected,rtol=1e-10,atol=1e-12):return False
+    for count,threshold in ((retained_80,.8),(retained_95,.95)):
+        if isinstance(count,(bool,np.bool_)) or not np.isscalar(count):return False
+        if not np.isfinite(count) or count!=int(count) or not 1<=count<=len(expected):return False
+        if count!=int(np.searchsorted(expected,threshold,side='left')+1):return False
+    return True
+
+def _array_digest(value):
+    """Compare values across equivalent pandas, NumPy and Python containers."""
+    if hasattr(value,'toarray'):value=value.toarray()
+    values=np.asarray(value)
+    if np.issubdtype(values.dtype,np.number) or np.issubdtype(values.dtype,np.bool_):
+        values=values.astype(np.float64)
+        values=np.nan_to_num(values,nan=np.nan)
+        payload=values.tobytes()
+    else:payload=json.dumps(values.tolist(),default=str,ensure_ascii=False).encode()
+    return hashlib.sha256(str(values.shape).encode()+payload).hexdigest()
+
+def _sorted_points(values):
+    values=np.asarray(values,dtype=float)
+    return values[np.lexsort((values[:,1],values[:,0]))] if len(values) else values
+
+def _visible_artist(ax,artist,points=None,transform=None):
+    """Require visible evidence, respecting the artist's real transform."""
+    if not ax.get_visible() or not ax.figure.get_visible() or not artist.get_visible():return False
+    alpha=artist.get_alpha()
+    if alpha is not None and not np.any(np.asarray(alpha)>0):return False
+    from matplotlib.colors import to_rgba
+    colors=[]
+    for getter in ('get_facecolor','get_edgecolor','get_color'):
+        if not hasattr(artist,getter):continue
+        if getter=='get_edgecolor' and hasattr(artist,'get_linewidth') and not np.any(np.asarray(artist.get_linewidth())>0):continue
+        value=getattr(artist,getter)()
+        if isinstance(value,str):value=to_rgba(value)
+        values=np.asarray(value)
+        if values.ndim and values.shape[-1]==4:colors.extend(values.reshape(-1,4)[:,3])
+    if colors and not any(a>0 for a in colors):return False
+    box=ax.get_window_extent()
+    if box.width<2 or box.height<2:return False
+    if points is not None:
+        screen=(transform or ax.transData).transform(np.asarray(points).reshape(-1,2))
+        return bool(len(screen) and np.isfinite(screen).all() and ((screen[:,0]>=box.x0-2)&(screen[:,0]<=box.x1+2)&(screen[:,1]>=box.y0-2)&(screen[:,1]<=box.y1+2)).all())
+    ax.figure.canvas.draw()
+    extent=artist.get_window_extent(ax.figure.canvas.get_renderer())
+    return bool(np.isfinite(extent.extents).all() and extent.overlaps(box))
+
+def _labels_visible(ax):
+    from matplotlib.colors import to_rgba
+    for axis in (ax.xaxis,ax.yaxis):
+        label=axis.label
+        if not axis.get_visible() or not label.get_text() or not label.get_visible():return False
+        alpha=label.get_alpha()
+        if (alpha is not None and alpha<=0) or to_rgba(label.get_color())[3]<=0:return False
+        ax.figure.canvas.draw()
+        if not label.get_window_extent(ax.figure.canvas.get_renderer()).overlaps(ax.figure.bbox):return False
+    return True
+
+def _visible_markers(collection):
+    count=len(collection.get_offsets());sizes=np.asarray(collection.get_sizes())
+    if not len(sizes) or not (np.resize(sizes,count)>0).all():return False
+    def alpha(colors):
+        colors=np.asarray(colors)
+        return np.resize(colors[:,3],count) if colors.ndim==2 and len(colors) else np.zeros(count)
+    widths=np.asarray(collection.get_linewidths())
+    edges=(alpha(collection.get_edgecolors())>0)&(np.resize(widths,count)>0 if len(widths) else False)
+    if not ((alpha(collection.get_facecolors())>0)|edges).all():return False
+    paths=collection.get_paths()
+    return bool(paths) and all(len(paths[i%len(paths)].vertices)>0 for i in range(count))
+
+def _scatter_matches(x,y,groups=None,axis_quantities=None):
+    """Inspect real plotted values, accepting Seaborn and Matplotlib figures."""
+    if 'matplotlib.pyplot' not in sys.modules:return False
+    from matplotlib.collections import PathCollection
+    import matplotlib.pyplot as plt
+    expected=np.column_stack([np.asarray(x),np.asarray(y)])
+    if expected.ndim!=2 or expected.shape[1]!=2:return False
+    for number in plt.get_fignums():
+        for ax in plt.figure(number).axes:
+            if axis_quantities:
+                expected_x,expected_y=axis_quantities
+                x_words=set(re.findall(r'[a-z]+',ax.get_xlabel().casefold()))
+                y_words=set(re.findall(r'[a-z]+',ax.get_ylabel().casefold()))
+                if (expected_x not in x_words or expected_y not in y_words
+                        or expected_y in x_words or expected_x in y_words):continue
+            plots=[c for c in ax.collections if isinstance(c,PathCollection) and len(c.get_offsets())]
+            if not plots or not _labels_visible(ax):continue
+            if not all(_visible_artist(ax,c,c.get_offsets(),c.get_offset_transform()) and _visible_markers(c) for c in plots):continue
+            actual=np.concatenate([np.asarray(c.get_offsets(),dtype=float) for c in plots])
+            if actual.shape!=expected.shape or not np.allclose(_sorted_points(actual),_sorted_points(expected)):continue
+            if groups is not None:
+                # Seaborn may put all groups in one collection and vary marker
+                # paths by row; Matplotlib commonly uses one collection/group.
+                groups=np.asarray(groups);styles={}
+                valid=True
+                for group in np.unique(groups):
+                    points=_sorted_points(expected[groups==group])
+                    paths=[]
+                    for plot in plots:
+                        offsets=np.asarray(plot.get_offsets(),dtype=float)
+                        marker_paths=plot.get_paths()
+                        for i,point in enumerate(offsets):
+                            if np.any(np.all(np.isclose(points,point),axis=1)):
+                                path=marker_paths[i%len(marker_paths)]
+                                paths.append(hashlib.sha256(path.vertices.tobytes()).hexdigest())
+                    if not paths or len(set(paths))!=1:valid=False;break
+                    styles[group]=paths[0]
+                if not valid or len(set(styles.values()))!=len(styles):continue
+            return True
+    return False
+
+def _bar_matches(values):
+    if 'matplotlib.pyplot' not in sys.modules:return False
+    import matplotlib.pyplot as plt
+    values=np.asarray(values)
+    return any(len(ax.patches)==len(values) and _labels_visible(ax)
+               and np.allclose([p.get_height() for p in ax.patches],values)
+               and all(p.get_width()>0 and _visible_artist(ax,p,[[p.get_x()+p.get_width()/2,p.get_y()],[p.get_x()+p.get_width()/2,p.get_y()+p.get_height()]]) for p in ax.patches)
+               for number in plt.get_fignums() for ax in plt.figure(number).axes)
+
+def _heatmap_matches(values):
+    if 'matplotlib.pyplot' not in sys.modules:return False
+    import matplotlib.pyplot as plt
+    from matplotlib.collections import QuadMesh
+    values=np.asarray(values)
+    for number in plt.get_fignums():
+        for ax in plt.figure(number).axes:
+            if not _labels_visible(ax):continue
+            for artist in list(ax.images)+[c for c in ax.collections if isinstance(c,QuadMesh)]:
+                image=np.asarray(artist.get_array())
+                if image.shape!=values.shape or not np.allclose(image,values):continue
+                if isinstance(artist,QuadMesh):
+                    coordinates=artist.get_coordinates();points=[coordinates[0,0],coordinates[-1,-1]]
+                else:
+                    left,right,bottom,top=artist.get_extent();points=[[left,bottom],[right,top]]
+                alpha=artist.get_alpha()
+                if alpha is not None and not (np.asarray(alpha)>0).all():continue
+                if _visible_artist(ax,artist,points) and (artist.get_cmap()(artist.norm(image))[...,3]>0).all():return True
+    return False
+
+def _tree_matches(model):
+    if 'matplotlib.pyplot' not in sys.modules:return False
+    import matplotlib.pyplot as plt
+    import re
+    for number in plt.get_fignums():
+        for ax in plt.figure(number).axes:
+            annotations=[text for text in ax.texts if 'value =' in text.get_text()]
+            if not all(_visible_artist(ax,text) for text in annotations):continue
+            if not all(text.arrow_patch is None or tuple(text.xy)==tuple(text.xyann) or _visible_artist(ax,text.arrow_patch) for text in annotations):continue
+            texts=[text.get_text() for text in annotations]
+            # plot_tree also adds True/False edge captions in newer sklearn.
+            if len(texts)!=model.tree_.node_count:continue
+            samples=[int(re.search(r'samples = (\d+)',text).group(1)) for text in texts]
+            if sorted(samples)!=sorted(model.tree_.n_node_samples.tolist()):continue
+            values=[float(value) for text in texts for value in re.findall(r'-?\d+(?:\.\d+)?(?:e[+-]?\d+)?',text.split('value =',1)[1])]
+            expected=np.asarray(model.tree_.value).ravel()
+            if len(values)==len(expected) and np.allclose(sorted(values),np.sort(expected),atol=.00051,rtol=1e-7):return True
+    return False
+
+def _dendrogram_matches(matrix,last_groups):
+    if 'matplotlib.pyplot' not in sys.modules:return False
+    import matplotlib.pyplot as plt
+    from scipy.cluster.hierarchy import dendrogram
+    from matplotlib.collections import LineCollection
+    expected=dendrogram(matrix,truncate_mode='lastp',p=last_groups,no_plot=True)
+    heights=np.sort(np.asarray(expected['dcoord']).ravel())
+    for number in plt.get_fignums():
+        for ax in plt.figure(number).axes:
+            collections=[c for c in ax.collections if isinstance(c,LineCollection)]
+            if not all(_visible_artist(ax,c,c.get_segments()) for c in collections):continue
+            if not all((np.asarray(c.get_linewidths())>0).all() and (np.asarray(c.get_colors())[:,3]>0).all() for c in collections):continue
+            lines=[segment for collection in collections for segment in collection.get_segments()]
+            if len(lines)!=len(expected['dcoord']) or not _labels_visible(ax):continue
+            points=np.asarray(lines)
+            if any(np.allclose(np.sort(points[:,:,dimension].ravel()),heights) for dimension in (0,1)):return True
+    return False
+
+def _split_matches(x,y,x_train,x_test,y_train,y_test,test_size=.2,seed=42,stratified=False):
+    from sklearn.model_selection import train_test_split
+    expected=train_test_split(x,y,test_size=test_size,random_state=seed,stratify=y if stratified else None)
+    return all(isinstance(actual,type(wanted)) and actual.equals(wanted)
+               for actual,wanted in zip((x_train,x_test,y_train,y_test),expected))
+
+def _folds_match(actual,x,y=None,count=5,seed=42,kind='KFold'):
+    from sklearn import model_selection
+    splitter=getattr(model_selection,kind)(n_splits=count,**({} if kind=='TimeSeriesSplit' else dict(shuffle=True,random_state=seed)))
+    expected=list(splitter.split(x,y))
+    return len(actual)==len(expected) and all(np.array_equal(a,c) and np.array_equal(b,d)
+        for (a,b),(c,d) in zip(actual,expected))
+
+def _prepared_values(x,numeric=(),categorical=(),flags=(),scale=True,drop_first=False):
+    """Expected teaching preparation from original values, without another fit."""
+    blocks=[]
+    if numeric:
+        values=x[list(numeric)].to_numpy(dtype=float)
+        if scale:
+            spread=values.std(axis=0);spread=np.where(spread==0,1,spread)
+            values=(values-values.mean(axis=0))/spread
+        blocks.append(values)
+    for column in categorical:
+        categories=sorted(x[column].unique())
+        if drop_first:categories=categories[1:]
+        blocks.append(np.column_stack([x[column].eq(value).to_numpy(dtype=float) for value in categories]))
+    if flags:blocks.append(x[list(flags)].to_numpy())
+    return np.column_stack(blocks)
 
 def _same_partition(a,b):
     a=np.asarray(a);b=np.asarray(b)
@@ -83,7 +312,7 @@ class LearningTrace:
     def __init__(self,test_ids=(),expected_folds=()):
         self.events=[];self.patches=[];self.stage='user';self.depth=0
         self.test_ids=set(test_ids);self.lineage={};self.models={};self.overflow=False
-        self.validation_runs=[];self.diagnostic_runs=[];self.expected_folds=set(expected_folds);self.pca_evidence={};self.kmeans_evidence=[]
+        self.validation_runs=[];self.diagnostic_runs=[];self.expected_folds=set(expected_folds);self.pca_evidence={};self.kmeans_evidence=[];self.search_runs=[]
     def rows(self,x):
         if isinstance(x,(pd.DataFrame,pd.Series)):
             return [str(i) for i in x.index]
@@ -106,20 +335,40 @@ class LearningTrace:
             def call(estimator,*args,**kwargs):
                 x=args[0] if args else kwargs.get('X')
                 rows=self.rows(x);depth=self.depth
-                if name in ('fit','fit_transform') and len(self.models)<MAX_EVENTS:
+                if name in ('fit','fit_transform','fit_predict') and len(self.models)<MAX_EVENTS:
                     self.models[id(estimator)]=weakref.ref(estimator)
                 self.add(name,type(estimator).__name__,rows,depth)
                 event=self.events[-1] if not self.overflow else None
-                if event is not None:event['modelId']=id(estimator)
+                if event is not None:
+                    event['modelId']=id(estimator)
+                    if name in ('fit','fit_transform','fit_predict') and depth==0:
+                        target=args[1] if len(args)>1 else kwargs.get('y')
+                        event['inputHash']=_array_digest(x)
+                        event['targetHash']=_array_digest(np.asarray(target).ravel()) if target is not None else None
+                        leaf=estimator.steps[-1][1] if hasattr(estimator,'steps') else estimator
+                        event['family']=type(leaf).__name__
                 self.depth+=1
                 try:
                     result=original(estimator,*args,**kwargs)
                     if event is not None and name in ('predict','predict_proba','decision_function') and depth==0:
                         event['predictionHash']=hashlib.sha256(json.dumps(_plain(np.asarray(result)),sort_keys=True).encode()).hexdigest()
+                        event['resultHash']=_array_digest(result)
+                        event['inputHash']=_array_digest(x)
                     if name in ('fit','fit_transform') and type(estimator).__name__=='PCA':
                         self.pca_evidence[id(estimator)]=(weakref.ref(estimator),estimator.components_.tolist(),estimator.explained_variance_.tolist())
                     if name=='fit' and type(estimator).__name__=='KMeans':
-                        self.kmeans_evidence.append((estimator.n_clusters,float(estimator.inertia_),estimator.labels_.tolist()))
+                        self.kmeans_evidence.append(dict(k=estimator.n_clusters,inertia=float(estimator.inertia_),labels=estimator.labels_.tolist(),
+                            centers=estimator.cluster_centers_.tolist(),inputHash=_array_digest(x),seed=estimator.random_state,n_init=estimator.n_init))
+                    if name=='fit' and type(estimator).__name__=='GridSearchCV':
+                        chosen=estimator.best_estimator_
+                        leaf=chosen.steps[-1][1] if hasattr(chosen,'steps') else chosen
+                        self.search_runs.append(dict(modelId=id(estimator),rows=rows,inputHash=_array_digest(x),
+                            targetHash=_array_digest(np.asarray(args[1] if len(args)>1 else kwargs.get('y')).ravel()),
+                            scoring=estimator.scoring,grid=copy.deepcopy(estimator.param_grid),
+                            scores=np.asarray(estimator.cv_results_['mean_test_score']).copy(),
+                            bestScore=float(estimator.best_score_),recipe=repr(chosen),family=type(leaf).__name__,
+                            cv=dict(kind=type(estimator.cv).__name__,count=getattr(estimator.cv,'n_splits',estimator.cv),
+                                    shuffle=getattr(estimator.cv,'shuffle',False),seed=getattr(estimator.cv,'random_state',None))))
                     if name in ('transform','fit_transform'):self.remember(result,rows)
                     return result
                 finally:self.depth-=1
@@ -133,9 +382,11 @@ class LearningTrace:
                 previous=self.stage;self.stage=stage
                 values=signature.bind_partial(*args,**kwargs).arguments
                 row_ids=self.rows(values.get('X'))
-                if row_ids is not None and 'train' in values and 'test' in values and len(self.events)<MAX_EVENTS:
+                if 'train' in values and 'test' in values and len(self.events)<MAX_EVENTS:
                     self.events.append(dict(kind='validationFold',stage=stage,estimator=type(values.get('estimator')).__name__,depth=self.depth,
-                        rows=[row_ids[int(i)] for i in values['train']],validationRows=[row_ids[int(i)] for i in values['test']]))
+                        rows=[row_ids[int(i)] for i in values['train']] if row_ids is not None else None,
+                        validationRows=[row_ids[int(i)] for i in values['test']] if row_ids is not None else None,
+                        trainPositions=list(map(int,values['train'])),validationPositions=list(map(int,values['test']))))
                 try:return original(*args,**kwargs)
                 finally:self.stage=previous
             return call
@@ -148,7 +399,7 @@ class LearningTrace:
         helper=sys.modules.get('ml_helpers')
         if helper:owners.extend([helper.OneRClassifier,helper.OneRPreprocessor])
         for owner in owners:
-            for name in ('fit','transform','fit_transform','predict','predict_proba','decision_function','set_params'):
+            for name in ('fit','transform','fit_transform','fit_predict','predict','predict_proba','decision_function','set_params'):
                 if hasattr(owner,name):self.patch(owner,name,self.method(name))
         import sklearn.model_selection as selection
         self.patch(selection,'cross_validate',self.validation_result)
@@ -159,10 +410,15 @@ class LearningTrace:
     def validation_result(self, original):
         @functools.wraps(original)
         def call(estimator, X, y=None, **kwargs):
+            start=len(self.events)
             result=original(estimator, X, y, **kwargs)
+            leaf=estimator.steps[-1][1] if hasattr(estimator,'steps') else estimator
             self.validation_runs.append(dict(modelId=id(estimator), rows=self.rows(X),
-                estimator=type(estimator).__name__, recipe=repr(estimator),
-                scoring=kwargs.get('scoring'), scores=np.asarray(result['test_score']).copy()))
+                estimator=type(estimator).__name__,family=type(leaf).__name__,recipe=repr(estimator),
+                strategy=getattr(leaf,'strategy',None),
+                folds=[(event['trainPositions'],event['validationPositions']) for event in self.events[start:] if event['kind']=='validationFold'],
+                scoring=kwargs.get('scoring'), scores=np.asarray(result['test_score']).copy(),
+                inputHash=_array_digest(X),targetHash=_array_digest(np.asarray(y).ravel()) if y is not None else None))
             return result
         return call
     def diagnostic_result(self, original):
@@ -170,6 +426,7 @@ class LearningTrace:
         def call(estimator, X, y=None, **kwargs):
             result=original(estimator, X, y, **kwargs)
             self.diagnostic_runs.append(dict(modelId=id(estimator),rows=self.rows(X),predictions=np.asarray(result).copy()))
+            self.diagnostic_runs[-1].update(inputHash=_array_digest(X),targetHash=_array_digest(np.asarray(y).ravel()),method=kwargs.get('method','predict'))
             return result
         return call
     def assessment(self, ns, spec):
@@ -248,6 +505,103 @@ class LearningTrace:
         self.patches.clear();self.lineage.clear()
     def no_test_fit(self):
         return not any(e['kind'] in ('fit','fit_transform') and e['rows'] is not None and set(e['rows'])&self.test_ids for e in self.events)
+    def fit_matches(self,x,y=None,family=None):
+        target=_array_digest(np.asarray(y).ravel()) if y is not None else None
+        return not self.overflow and any(e['kind'] in ('fit','fit_transform','fit_predict') and e['depth']==0
+            and e.get('inputHash')==_array_digest(x) and e.get('targetHash')==target
+            and (family is None or e.get('family')==family) for e in self.events)
+    def prediction_matches(self,values,x,method='predict'):
+        return any(e['kind']==method and e['depth']==0 and e.get('inputHash')==_array_digest(x)
+                   and e.get('resultHash')==_array_digest(values) for e in self.events)
+    def validation_matches(self,values,x,y,scoring=None,family=None,cv=None,strategy=None):
+        scores=values['test_score'] if isinstance(values,dict) else values
+        expected=None
+        if cv is not None:
+            expected=[(list(map(int,train)),list(map(int,validation))) for train,validation in cv.split(x,y)]
+        return any(r['inputHash']==_array_digest(x) and r['targetHash']==_array_digest(np.asarray(y).ravel())
+                   and (scoring is None or r['scoring']==scoring)
+                   and (family is None or r['family']==family) and (strategy is None or r['strategy']==strategy)
+                   and (expected is None or r['folds']==expected)
+                   and np.array_equal(r['scores'],np.asarray(scores)) for r in self.validation_runs)
+    def diagnostic_matches(self,values,x,y,method='predict'):
+        return any(r['inputHash']==_array_digest(x) and r['targetHash']==_array_digest(np.asarray(y).ravel())
+                   and r['method']==method and np.array_equal(r['predictions'],np.asarray(values)) for r in self.diagnostic_runs)
+    def search_matches(self,values,x,y,grid,scoring,positive=False,family=None,cv=None):
+        # Step names are a Python choice; the taught estimator settings and
+        # candidate order determine this task's semantic comparison.
+        def suffixes(g):return {k.rsplit('__',1)[-1]:list(v) for k,v in g.items()}
+        scores=values['mean_test_score'] if isinstance(values,pd.DataFrame) else np.asarray(values)
+        scores=-np.asarray(scores) if positive else np.asarray(scores)
+        return any(r['inputHash']==_array_digest(x) and r['targetHash']==_array_digest(np.asarray(y).ravel())
+                   and r['scoring']==scoring and suffixes(r['grid'])==suffixes(grid)
+                   and (family is None or r['family']==family) and (cv is None or r['cv']==cv)
+                   and np.allclose(r['scores'],scores) for r in self.search_runs)
+    def workflow_reports(self,ns):
+        """Verify legacy complete-workflow evidence against the same Run."""
+        result={}
+        def verify(name,fn):
+            try:result[name]=bool(fn())
+            except (KeyError,NameError,TypeError,ValueError,AttributeError,IndexError):result[name]=False
+        train,test=ns.get('X_train'),ns.get('X_test');yt,yv=ns.get('y_train'),ns.get('y_test')
+        metric='f1_macro' if 'final_f1' in ns else 'neg_root_mean_squared_error'
+        expected_train={i for a,b in self.expected_folds for i in a+b}
+        verify('split',lambda: set(map(str,train.index))==expected_train and set(map(str,test.index))==self.test_ids
+               and train.index.is_unique and test.index.is_unique and set(train.index).isdisjoint(test.index))
+        verify('baseline',lambda:self.validation_matches(ns['reference_results'],train,yt,metric,
+               'DummyClassifier' if metric=='f1_macro' else 'DummyRegressor'))
+        def validation():
+            evidence=ns['cv_results']
+            if isinstance(evidence,dict):return self.validation_matches(evidence,train,yt,metric)
+            if not isinstance(evidence,pd.DataFrame) or not {'initial_score','selected_score','settings'}<=set(evidence.columns):return False
+            for name,row in evidence.iterrows():
+                selected=ns['selected'][name]
+                family=type(selected.steps[-1][1]).__name__
+                runs=[r for r in self.validation_runs if r['inputHash']==_array_digest(train)
+                      and r['targetHash']==_array_digest(np.asarray(yt).ravel()) and r['scoring']==metric
+                      and family in r['recipe']]
+                if not any(np.isclose(row.initial_score,np.mean(r['scores'])) for r in runs):return False
+                means=[np.mean(r['scores']) for r in runs if r['recipe']==repr(selected)]
+                means += [r['bestScore'] for r in self.search_runs if r['inputHash']==_array_digest(train)
+                          and r['targetHash']==_array_digest(np.asarray(yt).ravel()) and r['scoring']==metric
+                          and r['recipe']==repr(selected)]
+                if not any(np.isclose(row.selected_score,mean) for mean in means):return False
+            return bool(len(evidence))
+        verify('validation',validation)
+        def chosen():
+            if 'selected' in ns:return ns['selected'][ns['chosen_name']]
+            if 'search' in ns:return ns['search'].best_estimator_
+            return ns['chosen'] if 'chosen' in ns else ns['model']
+        verify('selection',lambda:repr(ns['final_model'])==repr(chosen())
+               and any(e['kind']=='fit' and e['depth']==0 and e.get('modelId')==id(ns['final_model'])
+                       and e.get('inputHash')==_array_digest(train) and e.get('targetHash')==_array_digest(np.asarray(yt).ravel()) for e in self.events))
+        def diagnosis():
+            if 'diagnostic_model' in ns:
+                from sklearn.model_selection import TimeSeriesSplit
+                a,b=list(TimeSeriesSplit(5).split(train))[-1]
+                return (np.array_equal(ns['train_indices'],a) and np.array_equal(ns['validation_indices'],b)
+                    and ns['diagnostic_y'].equals(yt.iloc[b]) and self.fit_matches(train.iloc[a],yt.iloc[a])
+                    and self.prediction_matches(ns['oof_predictions'],train.iloc[b]))
+            return any(r['modelId']==id(chosen()) and r['rows']==list(map(str,train.index))
+                       and np.array_equal(r['predictions'],ns['oof_predictions']) for r in self.diagnostic_runs)
+        verify('diagnosis',diagnosis)
+        def report():
+            actual=ns.get('diagnostic_y',yt);predicted=ns['oof_predictions']
+            if 'matrix' in ns:
+                from sklearn.metrics import confusion_matrix
+                if not np.array_equal(ns['matrix'],confusion_matrix(actual,predicted,labels=sorted(yt.unique()))):return False
+            if 'residuals' in ns:
+                residuals=ns['residuals']
+                if isinstance(residuals,pd.DataFrame):
+                    if not {'actual','predicted','residual'}<=set(residuals.columns) or not residuals.index.equals(actual.index):return False
+                    if not np.allclose(residuals.actual,actual) or not np.allclose(residuals.predicted,predicted):return False
+                    if not np.allclose(residuals.residual,np.asarray(actual)-predicted):return False
+                elif not np.allclose(residuals,np.asarray(actual)-predicted):return False
+            if 'final_accuracy' in ns:
+                from sklearn.metrics import accuracy_score
+                if not np.isclose(ns['final_accuracy'],accuracy_score(yv,ns['final_predictions'])):return False
+            return True
+        verify('reports',report)
+        return result
     def verified_fits(self):
         fits=[e for e in self.events if e['kind']=='fit' and e['depth']==0]
         return bool(fits) and all(e['rows'] is not None for e in fits) and not self.overflow
@@ -258,9 +612,20 @@ class LearningTrace:
     def cluster_scores(self,evidence,scaled):
         from sklearn.metrics import silhouette_score
         for row in evidence.itertuples():
-            matches=[(inertia,labels) for k,inertia,labels in self.kmeans_evidence if k==row.k and np.isclose(inertia,row.inertia)]
-            if not any(np.isclose(row.silhouette,silhouette_score(scaled,labels,sample_size=min(2000,len(scaled)),random_state=42)) for inertia,labels in matches):return False
+            matches=[r for r in self.kmeans_evidence if r['k']==row.k and r['inputHash']==_array_digest(scaled) and np.isclose(r['inertia'],row.inertia)]
+            if not any(np.isclose(row.silhouette,silhouette_score(scaled,r['labels'],sample_size=min(2000,len(scaled)),random_state=42)) for r in matches):return False
         return True
+    def cluster_stat(self,value,scaled,kind,k=3):
+        from sklearn.metrics import silhouette_score
+        for record in self.kmeans_evidence:
+            if record['k']!=k or record['inputHash']!=_array_digest(scaled):continue
+            expected=silhouette_score(scaled,record['labels']) if kind=='silhouette' else record[kind]
+            if np.allclose(value,expected):return True
+        return False
+    def seed_inertias(self,values,scaled,seeds,k=4,n_init=1):
+        return len(values)==len(seeds) and all(any(r['seed']==seed and r['k']==k and r['n_init']==n_init
+               and r['inputHash']==_array_digest(scaled) and np.isclose(value,r['inertia']) for r in self.kmeans_evidence)
+               for seed,value in zip(seeds,values))
     def matching_folds(self):
         folds=[e for e in self.events if e['kind']=='validationFold']
         return bool(folds) and all((tuple(e['rows']),tuple(e['validationRows'])) in self.expected_folds for e in folds)
@@ -375,6 +740,21 @@ def run_learning(request):
             plt.close('all')
         if exercise.get('dataset') and exercise.get('preload',True):ns['df']=learning_fixture(exercise['dataset'])
         exec(exercise.get('setup',''),ns)
+        supplied_pca=ns.get('pca')
+        supplied_network=ns.get('network')
+        pca_ratios=(np.array(supplied_pca.explained_variance_ratio_,copy=True)
+                    if hasattr(supplied_pca,'explained_variance_ratio_') else None)
+        training_losses=(np.array(supplied_network.loss_curve_,copy=True)
+                         if hasattr(supplied_network,'loss_curve_') else None)
+        del supplied_pca,supplied_network
+        # The supplied population is part of the task contract. Keep read-only
+        # tables/arrays stable for checks even if editable code rebinds a name.
+        # Names assigned by the authored solution are intentional learner
+        # results and remain checked from their live values.
+        declared={node.id for node in ast.walk(ast.parse(exercise.get('solution',''))) if isinstance(node,ast.Name) and isinstance(node.ctx,ast.Store)}
+        trusted_inputs={key:(value.copy(deep=True) if isinstance(value,(pd.DataFrame,pd.Series)) else value.copy())
+                        for key,value in ns.items() if key not in declared and isinstance(value,(pd.DataFrame,pd.Series,np.ndarray))}
+        trusted_inputs.update({key:copy.deepcopy(value) for key,value in ns.items() if key not in declared and hasattr(value,'split') and hasattr(value,'get_n_splits')})
         test_ids=[];expected_folds=[]
         if exercise.get('protect') and not exercise.get('assessment'):
             spec=exercise['protect'];df=ns.get('df')
@@ -391,11 +771,20 @@ def run_learning(request):
                 test_ids=list(map(str,test.index))
                 splitter=(StratifiedKFold if spec.get('stratified') else KFold)(5,shuffle=True,random_state=42)
             expected_folds=[(tuple(map(str,train.index[a])),tuple(map(str,train.index[b]))) for a,b in splitter.split(train,train[spec['target']])]
-        if exercise.get('assessment'):
+        if exercise.get('assessment') or 'scikit-learn' in exercise.get('packages',[]):
             import sklearn
         trace=LearningTrace(test_ids,expected_folds)
         with warnings.catch_warnings(record=True) as caught,contextlib.redirect_stdout(stdout),contextlib.redirect_stderr(stderr),trace:
             warnings.simplefilter('always')
+            # Supplied setup may import a validation function before its module
+            # is instrumented. Rebind every alias of that original function so
+            # equivalent import styles leave the same observable evidence.
+            for key,value in list(ns.items()):
+                for owner,name,original in trace.patches:
+                    if value is original:ns[key]=getattr(owner,name)
+            # The last setup value may itself be a Pipeline. Do not retain it
+            # through this function's locals after the learner namespace clears.
+            if 'value' in locals():del value
             try:
                 tree=ast.parse(code,mode='exec')
                 ns['_learning_selection']=lambda:trace.add('selection','declared workflow choice',None,0)
@@ -406,8 +795,22 @@ def run_learning(request):
                 else:exec(compile(tree,'<learner>','exec'),ns)
             except Exception:receipt['error']=traceback.format_exc(limit=6)[-MAX_TEXT:]
         # Trusted checks inspect current objects without fitting a reference model.
-        check_ns={**ns,'np':np,'pd':pd,'trace':trace,'_same_partition':_same_partition,'_pca_equivalent':_pca_equivalent}
+        check_ns={**ns,**trusted_inputs,'np':np,'pd':pd,'trace':trace,'_same_partition':_same_partition,'_pca_equivalent':_pca_equivalent,
+                  '_scatter_matches':_scatter_matches,'_bar_matches':_bar_matches,
+                  '_split_matches':_split_matches,'_folds_match':_folds_match,'_prepared_values':_prepared_values,
+                  '_tree_matches':_tree_matches,'_dendrogram_matches':_dendrogram_matches,'_heatmap_matches':_heatmap_matches}
+        check_ns['_labelled_counts_match']=_labelled_counts_match
+        check_ns['_training_loss_matches']=lambda answer:_training_loss_matches(answer,training_losses)
+        check_ns['_pca_retention_matches']=lambda cumulative,a,b:_pca_retention_matches(cumulative,a,b,pca_ratios)
+        needed=' '.join(c.get('test','') for c in exercise.get('checks',[]))
+        if 'silhouette_score' in needed:
+            from sklearn.metrics import silhouette_score
+            check_ns['silhouette_score']=silhouette_score
+        if 'cut_tree' in needed:
+            from scipy.cluster.hierarchy import cut_tree
+            check_ns['cut_tree']=cut_tree
         if exercise.get('assessment'):check_ns['workflow_evidence']=trace.assessment(ns,exercise['assessment'])
+        if exercise.get('workflowReports'):check_ns['workflow_reports']=trace.workflow_reports(ns)
         for check in exercise.get('checks',[]):
             status='correct';message=check.get('success','The requested evidence is consistent.')
             try:
@@ -415,8 +818,8 @@ def run_learning(request):
                     status='self-review';message=check['message']
                 elif not bool(eval(check['test'],check_ns)):
                     status='needs-attention';message=check['message']
-            except (NameError,KeyError,AttributeError,TypeError,ValueError,IndexError):
-                status='unavailable';message=check.get('missing','Run the code and create the requested output before checking this deliverable.')
+            except (NameError,KeyError,AttributeError,TypeError,ValueError,IndexError) as error:
+                status='unavailable';message=check.get('missing',check['message']+' The named evidence is missing or has an incompatible shape/type: '+str(error)+'.')
             if check.get('evidenceKey') and 'workflow_evidence' in check_ns:
                 detail=check_ns['workflow_evidence'].get('_details',{}).get(check['evidenceKey'])
                 if detail:message+=' '+detail
@@ -443,6 +846,7 @@ def run_learning(request):
         receipt['stdout']=stdout.getvalue();receipt['stderr']=stderr.getvalue()
         stdout.close();stderr.close()
         ns.clear()
+        if 'trusted_inputs' in locals():trusted_inputs.clear()
         if 'check_ns' in locals():check_ns.clear()
         if trace:trace.lineage.clear()
         if 'matplotlib.pyplot' in sys.modules:sys.modules['matplotlib.pyplot'].close('all')

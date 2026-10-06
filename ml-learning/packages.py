@@ -1,6 +1,6 @@
 """Small activity package manifest derived from reviewed runnable code."""
 import ast
-NAMES={'numpy':'numpy','pandas':'pandas','sklearn':'scikit-learn','scipy':'scipy','matplotlib':'matplotlib','ml_helpers':'scikit-learn'}
+NAMES={'numpy':'numpy','pandas':'pandas','sklearn':'scikit-learn','scipy':'scipy','matplotlib':'matplotlib','seaborn':'seaborn','ml_helpers':'scikit-learn'}
 def required(exercise):
     packages={'numpy','pandas'}
     for source in [exercise.get('setup',''),exercise.get('solution','')]:

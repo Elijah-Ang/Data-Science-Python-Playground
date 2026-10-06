@@ -25,7 +25,14 @@ with sync_playwright() as p:
     """)
     page.goto(args.base_url+'/learn.html')
     assert page.locator('a[data-path="ml"]').get_attribute('href')=='ml-learn.html?from=learn'
-    assert page.locator('button[data-path="statistics"]').count()==1
+    planned=page.locator('button[data-path="statistics"]')
+    assert planned.count()==1 and planned.get_attribute('data-coming-soon')=='Statistics'
+    assert 'coming soon' in planned.inner_text().lower()
+    hub_url=page.url;planned.click()
+    assert page.url==hub_url and page.locator('#pathAnnouncement').inner_text()=='Statistics lessons are coming soon.'
+    # The existing Statistics workspace remains reachable separately from planned lessons.
+    page.goto(args.base_url+'/statistics.html')
+    assert page.locator('.mode-link[aria-current="page"]').get_attribute('aria-label')=='Statistics Playground'
     page.goto(args.base_url+'/ml-learn.html'+('?runtime=local' if args.runtime=='local' else ''))
     page.wait_for_function('!!window.MLLearning')
     assert page.locator('.foundation-decks .foundation-deck').count()==9

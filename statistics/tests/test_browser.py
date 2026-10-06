@@ -90,19 +90,36 @@ def export_and_execute(page):
     return notebook
 
 
+def select_route(page,index,run=True):
+    slider=page.locator('.step-route-range')
+    slider.evaluate('(n,v)=>{n.value=v;n.dispatchEvent(new Event("input",{bubbles:true}));n.dispatchEvent(new Event("change",{bubbles:true}));}',index+1)
+    if run:page.wait_for_function('(i)=>["done","error"].includes(StatisticsPlayground.cells.find(c=>c.index===i)?.status)',arg=index,timeout=180000)
+
+
+def enabled_route_count(page):
+    slider=page.locator('.step-route-range');selected=int(slider.input_value());count=0
+    for stop in page.locator('.step-route-stop[data-task-id]:not([data-task-id=""])').all():
+        task_id=stop.get_attribute('data-task-id')
+        index=next(i for i,s in enumerate(page.evaluate('StatisticsPlayground.plan.route')) if s['id']==task_id)
+        select_route(page,index,False)
+        count+=page.locator(f'[data-run="{index}"]').is_enabled()
+    slider.evaluate('(n,v)=>{n.value=v;n.dispatchEvent(new Event("input",{bubbles:true}));n.dispatchEvent(new Event("change",{bubbles:true}));}',selected)
+    return count
+
+
 def workflow_regressions(page):
     assert page.locator('article.cell').count()==0
-    assert page.locator('.route-card:enabled').count()==1
+    assert page.locator('.step-route-range').input_value()=='0'
     assert page.locator('.output-item').count()==0
-    page.locator('.route-card').first.click()
+    select_route(page,0)
     assert page.locator('article.cell').count()==1
     page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
     assert page.locator('#outputList .output-item').count()==1
     editor=page.locator('.code-input').first
     editor.fill(editor.input_value()+'\nmy_note = "persistent variable"')
     page.locator('[data-run="0"]').click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
-    assert page.locator('.route-card:enabled').count()==2
-    page.locator('.route-card').nth(1).click()
+    assert page.locator('[data-run="0"]').is_enabled()
+    select_route(page,1)
     page.wait_for_function('StatisticsPlayground.cells[1].status==="done"',timeout=60000)
     assert page.locator('article.cell').count()==2
     editor=page.locator('[data-cell-index="1"] .code-input')
@@ -116,7 +133,7 @@ def workflow_regressions(page):
     assert state[0]['status']=='done'
     assert all(c['status']=='stale' and c['output'] is None for c in state[1:])
     assert page.locator('.output-item').count()==1
-    assert page.locator('.route-card:enabled').count()==2
+    assert page.locator('[data-run="1"]').is_enabled()
     run_all(page)
     p=page.evaluate('StatisticsPlayground.cells.at(-1).output.scalars.p_value')
     from scipy import stats
@@ -128,7 +145,8 @@ def workflow_regressions(page):
     editor=page.locator('[data-cell-index="3"] .code-input');old=editor.input_value();editor.fill('raise ValueError("intentional cell error")')
     page.locator('[data-run="3"]').click();page.wait_for_function('StatisticsPlayground.cells[3].status==="error"',timeout=60000)
     assert 'intentional cell error' in page.locator('[data-output-for="analysis"]').inner_text()
-    assert page.locator('.route-card').nth(4).is_disabled()
+    select_route(page,4,False)
+    assert page.locator('[data-run="4"]').is_disabled()
     page.locator('[data-cell-index="3"] .code-input').fill(old);run_all(page)
     # Changing confidence/configuration clears all incompatible code and evidence.
     select(page,'confidence','0.99');assert page.locator('article.cell').count()==0
@@ -194,10 +212,10 @@ def main():
         family(page,'groups');verify(page,'welch_anova');page.locator('#studyButton').click();page.locator('#equalVariance').check();ready(page);verify(page,'anova')
         select(page,'goal','rank');verify(page,'kruskal')
         family(page,'groups')
-        page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
-        page.locator('.route-card').nth(1).click();page.wait_for_function('StatisticsPlayground.cells[1].status==="done"',timeout=60000);ed=page.locator('[data-cell-index="1"] .code-input');ed.fill(ed.input_value()+'\ngroups = [np.array([1.,2.,3.,4.,5.,6.]) for _ in groups]')
+        select_route(page,0);page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000)
+        select_route(page,1);page.wait_for_function('StatisticsPlayground.cells[1].status==="done"',timeout=60000);ed=page.locator('[data-cell-index="1"] .code-input');ed.fill(ed.input_value()+'\ngroups = [np.array([1.,2.,3.,4.,5.,6.]) for _ in groups]')
         run_all(page)
-        assert page.locator('.route-card[data-task-id="followup"]').count()==0
+        assert page.locator('.step-route-stop[data-task-id="followup"]').count()==0
         assert page.locator('[data-output-for="followup"]').count()==0
         assert 'Post-hoc comparisons are not opened' in page.locator('[data-output-for="uncertainty"]').inner_text()
         family(page,'factorial');verify(page,'factorial');select(page,'factorCount','3');verify(page,'factorial');export_and_execute(page)
@@ -217,7 +235,7 @@ def main():
         page.locator('#resetButton').click();ready(page);assert page.locator('article.cell').count()==0
         page.locator('#restartPythonButton').click();ready(page);assert page.locator('article.cell').count()==0
         # Cancel a long-running real Python cell, then recover.
-        page.locator('.route-card').first.click();page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000);page.locator('.code-input').fill('while True:\n    pass');page.locator('[data-run="0"]').click();page.locator('#restartPythonButton').click();ready(page)
+        select_route(page,0);page.wait_for_function('StatisticsPlayground.cells[0].status==="done"',timeout=60000);page.locator('.code-input').fill('while True:\n    pass');page.locator('[data-run="0"]').click();page.locator('#restartPythonButton').click();ready(page)
         assert page.locator('article.cell').count()==0
         family(page,'independent');run_all(page)
         # Responsive and theme checks include real populated cells and their inline outputs.
@@ -228,8 +246,16 @@ def main():
                 page.wait_for_function('document.documentElement.scrollWidth<=innerWidth+1')
                 assert page.locator('.code-input').first.is_editable()
                 verify_layout(page,width)
-                color=page.locator('.output-item .console-output').first.evaluate('e=>getComputedStyle(e).color')
-                assert color==page.locator('.source-block').evaluate('e=>getComputedStyle(e).color'),color
+                # Output now uses the stronger ink role. Compare rendered
+                # contrast, rather than requiring the old source-note colour.
+                contrast=page.locator('.output-item .console-output').first.evaluate('''n=>{
+                    const c=document.createElement('canvas').getContext('2d');
+                    const rgb=v=>{c.fillStyle=v;c.fillRect(0,0,1,1);return [...c.getImageData(0,0,1,1).data].slice(0,3);};
+                    const lum=v=>v.map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4).reduce((s,x,i)=>s+x*[.2126,.7152,.0722][i],0);
+                    let p=n;while(getComputedStyle(p).backgroundColor==='rgba(0, 0, 0, 0)')p=p.parentElement;
+                    const l=[lum(rgb(getComputedStyle(n).color)),lum(rgb(getComputedStyle(p).backgroundColor))].sort((a,b)=>a-b);return (l[1]+.05)/(l[0]+.05);
+                }''')
+                assert contrast>=4.5,contrast
                 page.screenshot(path=str(ARTIFACTS/f'notebook-{args.engine}-{width}-{theme}.png'))
         assert not errors,errors
         if not args.allow_remote:assert not remote,remote
