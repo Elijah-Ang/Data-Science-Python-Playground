@@ -35,6 +35,9 @@ jobs:
       - name: Install app-shell dependencies
         run: npm ci
 
+      - name: Build generated audit inputs
+        run: npm run build:web
+
       - name: Check JavaScript and route state behaviour
         run: |
           npm run check:js
@@ -98,6 +101,9 @@ jobs:
 
       - name: Start local site
         run: nohup python -m http.server 8000 -d dist > /tmp/ml-playground-http.log 2>&1 &
+
+      - name: Check worker installation with nonserved hosting metadata
+        run: python tests/test_service_worker_metadata_browser.py
 
       - name: Run revised browser/Pyodide smoke test
         run: python tests/test_ml_workflow_browser.py --base-url http://127.0.0.1:8000/ml.html
