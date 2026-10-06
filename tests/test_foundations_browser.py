@@ -50,6 +50,9 @@ with sync_playwright() as p:
   file=f'data-foundations-{id or deck}.html'
   return f'a[href="{fragment}"], a[href="{file}"]'
  def go_route(route):
+  # This helper intentionally writes native history directly. Pace scripted
+  # card sweeps below WebKit's 100 history operations per 10-second limit.
+  page.wait_for_timeout(220)
   page.evaluate('''(route)=>{if(window.LearningRoutes){history.pushState(null,'',LearningRoutes.url('data',route));dispatchEvent(new PopStateEvent('popstate'));}else location.hash=route;}''',route)
  def run(code,check=True):
   if '# Supplied setup' not in code:
@@ -255,11 +258,11 @@ with sync_playwright() as p:
      assert editor_height>=expected_editor_height-1,(label,editor_height)
      if width>800:
       assert geometry['typesRight'],geometry
-      # Account for the explicit secondary stable-ID reference added to the
-      # lesson header while retaining the existing workspace height allowance.
-      reference=page.locator('.foundation-reference')
-      reference_space=reference.evaluate('(e)=>e.getBoundingClientRect().height+parseFloat(getComputedStyle(e).marginTop)')
-      assert geometry['workspace']>=height-400-reference_space,geometry
+      # The approved header shows the teaching order; stable IDs remain in routes.
+      assert 'Lesson 02' in page.locator('.foundation-lesson-copy .foundation-eyebrow').inner_text()
+      assert page.locator('.foundation-reference').count()==0
+      assert 'I02' in page.url
+      assert geometry['workspace']>=height-400,geometry
       before=page.locator('.foundation-code-pane').bounding_box()
       moved=page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')
       assert moved>0

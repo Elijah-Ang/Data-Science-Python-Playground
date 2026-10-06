@@ -3474,7 +3474,7 @@
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V02-2": {
-      "sha256": "35c974c7d28b7c1516814ac932adc479d0a38154b28e621a6f6635eccc6e7256",
+      "sha256": "6c6daac81ae0a8bc93bb4a702c8c1081516daa432efbb740becb670065e4f86a",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3487,7 +3487,7 @@
       ],
       "assessment": "reviewed",
       "note": "Finish prepared marks with informative titles, units and population labels. This precedes first learner-authored scatter mapping; starters provide points so no unseen scatter prerequisite is required. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "8ef6755275d3d34e068f082a9812e715ada65b4b72c9bf9a99c6c95ff81a1a1a",
+      "fullContractSHA256": "22c7f57c4c87712eee335d1c190be30b65ce7072cb1f1da7f7739f9e3fbc6b7b",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
@@ -5259,7 +5259,7 @@
       "executionStatus": "passed"
     },
     "V28-1": {
-      "sha256": "da263e392fbeaaed7bf2a1cca2aaa0ba0ca35487ae40682cb831f4a4a42cd461",
+      "sha256": "788e6ec8ee8b37fb2a1659e07721249916c2e402a9a774c2558995ad898c3093",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5272,12 +5272,12 @@
       ],
       "assessment": "reviewed",
       "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "979e4c377872b894dc89f301cba1b1d393f86c153ab6f11dcaa941567baae367",
+      "fullContractSHA256": "f01f8026c391d99471be98b22b4c5d1501660fa47c4cbe0aa10933bdec5814ba",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V28-2": {
-      "sha256": "d76c5180681ec0eda4113a59fe04821794dc6ad46711756f9b7b17cc384888ff",
+      "sha256": "d4edcdf31fe837c243b97ca49e6f3bf683ef75b990c7815790242e7c60127e36",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5290,12 +5290,12 @@
       ],
       "assessment": "reviewed",
       "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "5fc6c20b359e6fe3bc1b4c2557708802521853c09093b450355c60955ad8b922",
+      "fullContractSHA256": "2fb2ba6e3d30d3bbdcab9f88d438b823acfa707fd264c5b6edd66c609a241d70",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V28-3": {
-      "sha256": "f76a25fb051752b71724149d6e78b528642e22591562d34ed32c882f38448378",
+      "sha256": "6dba4ea1773762daf94c11f4bd03250ede667b0fb3abf52e3a68d13565d9973c",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5308,7 +5308,7 @@
       ],
       "assessment": "reviewed",
       "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "ba8cd44faa9741f30c141205c28319c5ac19f7c5bac178aa5a2ba044c80b2949",
+      "fullContractSHA256": "a2cab29f3e268f73e9802ff6ea8e74cb68e7bd5d5f24fbe314eeac90e3bff381",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
@@ -5517,7 +5517,7 @@
       "executionStatus": "passed"
     },
     "VR6-1": {
-      "sha256": "f76a25fb051752b71724149d6e78b528642e22591562d34ed32c882f38448378",
+      "sha256": "6dba4ea1773762daf94c11f4bd03250ede667b0fb3abf52e3a68d13565d9973c",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5530,7 +5530,7 @@
       ],
       "assessment": "reviewed",
       "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "72a823bb8185f3a2031e6d10acabfd5d6d9f3fdef3c36a197f5493062e19a957",
+      "fullContractSHA256": "92760530b691b259fba1297162b8028235a418991b5bb414807bac6571add167",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
@@ -5609,7 +5609,7 @@
   "sourceHashes": {
     "foundations/app.js": "e84ac0039493c026667dcf0c9087d06a1a994573ccc99f38f2686ff2639fd4d3",
     "foundations/clarity.js": "be03dcb54bb8793db9c7bf8513d90159db6f1398aff0c6af816146507c8b1cb3",
-    "foundations/code-style.js": "20d141d955b642773f83d85747dd4fa5089f2a42682fd4d1fcc3ee536473b891",
+    "foundations/code-style.js": "1eb9901aad93ade206df6e2602e62c7dfb9eeb97977989606f507884cbde7f9b",
     "foundations/curriculum.js": "33f873cedaa0227e3991dbc9c66514d916e6152b797babbe5a5a515f865821f6",
     "foundations/editor.js": "1d4b5e4224b9bf6b1221344763979f432f3878b91441c65e103ef1973da0b698",
     "foundations/learning-ui.js": "5efccabc8776f223eee2199e2018f08cdbcf8ef5fa388a9193deca32deacd30a",
