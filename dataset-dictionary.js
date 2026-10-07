@@ -57,3 +57,56 @@ for (const name of ['MIX60','MISSING60']) window.DatasetDictionary[name] = {
   duration:['Numeric delivery-duration target','Synthetic duration units; physical unit unspecified']
  }
 };
+
+// Audit populations vary the analytical properties as well as the scenario.
+const auditedFixtures = {
+ CHANNEL8: ['One synthetic contact-channel observation in a declared training or incoming batch.', {channel:['Named contact channel','email / phone / chat / kiosk'],batch:['Available encoder-fitting boundary','training / incoming']}],
+ INTAKE48: ['One independent synthetic device intake.', {
+  case_id:['Administrative identifier; exclude from prediction inputs','Identifier'],
+  backlog_at_open:['Cases waiting when this case enters','Cases'],
+  device_age_years:['Device age available at intake','Years'],
+  completion_hours:['Later elapsed time to completion; target','Hours'],
+  invoice_hours:['Later invoice derived from completion time; unavailable at intake','Hours']
+ }],
+ LAB90: ['One independent synthetic lab observation; class counts are 63, 18 and 9.', {
+  sample_id:['Administrative identifier','Identifier'],signal:['Signed measured signal','Synthetic signal units'],
+  speed_rpm:['Rotational speed available at measurement','Revolutions per minute'],
+  status:['Later lab class; target','routine / watch / urgent'],
+  confirmed_urgent:['Outcome-derived urgent flag; unavailable before confirmation','0 / 1']
+ }],
+ PROCESS30: ['One process observation in supplied chronological order; the final six rows shift to a new operating range.', {
+  temperature_c:['Observed process temperature','Degrees Celsius'],pressure_bar:['Observed pressure','Bar'],
+  output:['Observed process response','Synthetic output units']
+ }],
+ CUBIC60: ['One independent synthetic observation of a cubic response with noise.', {
+  x:['Signed input coordinate','Synthetic input units'],y:['Observed cubic response; target','Synthetic response units']
+ }],
+ ERROR15: ['One labelled evaluation case; class C has observations but no predicted C cases.', {
+  actual:['Observed class','A / B / C'],predicted:['Classifier output','A / B; C remains in the evaluation schema']
+ }],
+ ERROR12_REVIEW: ['One inspection case with two policy predictions on the same 27 observations.', {
+  actual:['Observed inspection class','clear / inspect / urgent'],predicted:['First policy output','clear / inspect / urgent'],
+  alternative:['Second policy output; compare class errors as well as accuracy','clear / inspect / urgent']
+ }],
+ RULE24_REVIEW: ['One synthetic stock-check case with unequal category frequencies and a continuous input.', {
+  distance:['Continuous distance coordinate','Synthetic distance units'],fragile:['Binary category','0 / 1'],
+  service_code:['Unordered service category encoded as integers','2 / 4 / 7; values are names, not magnitudes'],
+  label:['Confirmed stock-check decision; target','audit / release']
+ }],
+ MATERIAL96: ['One independent synthetic material specimen; class supports are unequal.', {
+  density_g_cm3:['Measured density','Grams per cubic centimetre'],conductivity_ms:['Measured conductivity','Millisiemens'],
+  material:['Known material class','glass / metal / polymer']
+ }],
+ CLUSTER45_ANISO: ['One synthetic measured item; elongated groups have unequal support and overlapping geometry.', {
+  length_mm:['Measured item length','Millimetres'],width_cm:['Measured item width','Centimetres']
+ }],
+ PCA60_MIXED: ['One synthetic sensor observation with several partly independent directions and a noise channel.', {
+  a:['First sensor channel','Synthetic channel-a units'],b:['Mixed sensor channel','Synthetic channel-b units'],
+  c:['Independent sensor channel','Synthetic channel-c units'],d:['Mixed sensor channel','Synthetic channel-d units'],
+  e:['Independent noise channel','Synthetic channel-e units']
+ }]
+};
+for (const [name,[row,columns]] of Object.entries(auditedFixtures)) window.DatasetDictionary[name] = {
+ row,columns,units:'Use the units beside each named column; scale fitting geometry separately from original-unit interpretation.',
+ assumptions:'Deterministic synthetic observations illustrate analytical decisions. They do not support deployment, causal claims or claims about a real population.'
+};

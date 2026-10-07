@@ -15,7 +15,7 @@
     "ML-F09": "fba698e5af80f74d4b0fac82aa734e562331228157659acf9577e9e47752beba",
     "ML-F10": "585ee164201f7949f19ad3be12af526ee714d43fbbcd05d6442f881e590d1b55",
     "ML-F-R2": "e192e849243df869e3a9af1195537793d8e13361b94badbf033cc93c2447dbfa",
-    "ML-F-K1": "a03742a2e54595fa5396b1b4eff55711e53b6065af4b6a17e5778fb18e7418b6",
+    "ML-F-K1": "be696b2887d59634697d52dd945b1d6613e9b4c45f790ad89b23ba76467a2c22",
     "ML-F11": "8e7d72c9a4164fa012481b204f22174348ce83b7cfe59b385d3710d37e097fed",
     "ML-F12": "a265891cdc508e7bdf5fed845fa5514a8f2ca143f5b9b083b9faf0afca684498",
     "ML-W01": "e9cb3fcb75cf846480f33f17852c3d8f15dc7d68d8a559083a8f1067a6be7077",
@@ -321,7 +321,7 @@
       "theme": "light",
       "width": 1440,
       "file": "ML-R02-light-1440.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R03",
@@ -1209,7 +1209,7 @@
       "theme": "dark",
       "width": 1440,
       "file": "ML-R02-dark-1440.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1217,7 +1217,7 @@
       "theme": "light",
       "width": 320,
       "file": "ML-R02-light-320.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1225,7 +1225,7 @@
       "theme": "light",
       "width": 390,
       "file": "ML-R02-light-390.png",
-      "title": "RMSE and R\u00b2 answer different questions"
+      "title": "RMSE and R² answer different questions"
     },
     {
       "id": "ML-R04",
@@ -2166,7 +2166,7 @@
   ],
   "cardHashes": {
     "ML-F01": "887bdb864fd5b88e3a4290339b0cc38b60437f9b0db40a06321b48864395fa7f",
-    "ML-F02": "020c039ec9f289209d2280bc74c7a5e80997e2b38d68dbfbc0df2043bbb2986f",
+    "ML-F02": "79cfc6376b91733e5a01ae1b9cd988e025b86d44fe9eaaa2faf5c4fd48138edc",
     "ML-F03": "9d9444497ef0cc760a9218b50f85f7141e8d679262fe7df9b55501089c377731",
     "ML-F04": "6e23ea20fe4b073603d40cf799c052ff47cbea0aff0be6b8a812536624bb57a7",
     "ML-F05": "397a4934591bfb9a966ba866f292ad27cb52bb7b2bedf1560c4a71414f7c998b",
@@ -2182,7 +2182,7 @@
     "ML-W05": "be8745a2a765edebd4eeaeb00faa396ae2ca8760ace0d46c23dda53f9ee1d454",
     "ML-W06": "e85ada98cc162cb0967397617b9f1496efd4acb0af471d167562aafe1c2a5808",
     "ML-W07": "778144d21f0372fd514f7d7d5ba12a56f93839ddefdb7baa4ed202c4198b0883",
-    "ML-W08": "2e4e8e9f96982f4d495ee80ae29b8732bd35546e72442a3ab236ae5bf50b134f",
+    "ML-W08": "3ece6f08adb1267aab07f861e06895c7a5c89ee6acc833794472fc9d30baa7dd",
     "ML-W09": "a918939b8a53d44019c8a4eb312356fb83a683dd1a2fcb7bc6df4e08d5cba781",
     "ML-W10": "da91f0daa5e35b95d1bb452c187ae1a3b4d703de8da84d0c240091b4451a327d",
     "ML-W11": "f5c8d120f18a2f48f915ba66ab127cae935663faaf5437b41739ef503595bca9",
@@ -2191,12 +2191,12 @@
     "ML-W14": "6d596687e85b105d77476f4d4bae8926f6f77bb9fc2095d8de9948e21c82063a",
     "ML-R01": "785557210e0f5e73abcdb5ec094fdd534c2b39bdba2d48be64a4675fe632bb13",
     "ML-R02": "65ae2b76d353b9d46d2250134e6f67e78b586da2b87859d02dbf0af2790d3f9f",
-    "ML-R03": "6c6d7380d2ef63d7875d15a28ddfd0b8c45857527d660224771eecf7227d6a39",
+    "ML-R03": "75b9c828c943819a76f81d44b345b73fad63441c784283e1e8b3bfcab764c7e8",
     "ML-R04": "d034d9668c491938672031d31093f609c8304c53614c63ab45821fdb328c6e65",
-    "ML-R05": "3e4ac909a4d2443a758bd097369f70cc4ef270501e7692e30d2a74eb3c529181",
-    "ML-R06": "3d734356f06fa01b483204dd4fccc883c52c9e9fceef9065bf11972ce7e85eeb",
+    "ML-R05": "33223d3fd1c41eb5402367bd602a9e40670131675c81102c0e02d8d9a3fc1714",
+    "ML-R06": "3dd1942f5434557158822777a89dc365769a2bf536e73dce904553acd4aa9a89",
     "ML-R07": "635a10135bc43f03e2e89dac14e2becafc46780d04e715a5f50a9f6e3efb60e7",
-    "ML-R08": "e16f9aa050e0f32447bbe088095eb1b47c6d7aefd8be200091d7638e1d8b43a2",
+    "ML-R08": "61bf740dbe786a46bc26a555a1f1b765cb0b949b9e8d00a3b55952bb74e2c069",
     "ML-R09": "4e4b961d8ecd47332afb54b5f4b338802aa4c6377cc2e4c76ef25fad87fe8496",
     "ML-R10": "42ec658f73937bd18f2c75901f7b9aab81070b856ae627ce312d116f11bc36f8",
     "ML-R11": "4713f4069d3f89cff10d4dc675f902227d0b5d297f7f69eb42d45f409e20d593",
@@ -2207,7 +2207,7 @@
     "ML-C05": "170aef26a15645fb9f5d5a0c6fd57acd164e44170e8f24745047c562c610ff4c",
     "ML-C06": "0e6ff9791fbf9cddd7aeab3d1aa27076f79bb446f8e76a9c80220270851adf79",
     "ML-C07": "0915c6d7a696e374a93292b614767c7799f7b32d19f847f4060bc0a3ec21180a",
-    "ML-C08": "2c84e39ada2df8b28507450e318914b2516be5f5072b57e410ed139fad357bd2",
+    "ML-C08": "2fc85421bc9f1dc757ccc626537e22584b7d90336f7f0b25c9ead56ff09804ad",
     "ML-C09": "fd163f7067b84b108054ce4f138dd2bbdc2df11ebc1f9f29d0c995e7380fe1b1",
     "ML-C10": "e0241b3d4d59ea3d2c0dad37edb78e030806f182d592c2ada57e2c9552055f1c",
     "ML-C11": "0288400577c66239d2747bed12b504e073380b5a1f4ec33934f1bba3b9e02955",
@@ -2216,7 +2216,7 @@
     "ML-C14": "c166a65fa1a75a066f647efabe9aedb1c407562183897ee1b7d8e85229ed3a0f",
     "ML-C15": "0e9586abaca604ed32217db9e2c5498b305b1519e43feb23edaec0f64f7161bd",
     "ML-C16": "6b97310f19a80bc448de0d88ccb1444b600ecd1cb053ee7e85e3ef42cbf4a8c8",
-    "ML-C17": "3024b7ce332f252e686209a6b199094af5bad90e405eb3573964f460cebfb5c8",
+    "ML-C17": "2af8134210651415d366df89e3c68c9e492656c3a9ad772aac76527cf37b9523",
     "ML-C18": "cf21356a9ea26e28e4b91e2963a194e81021ec47622ae98ad8fd7ccb9c971484",
     "ML-C19": "4219c8423753fce57fd352a12fe116e5ea8dfac9d9616de579e5f9a086f45f91",
     "ML-N01": "1192b8dadba7f92bd3f404f65bce0112f1f2abb32f7f4e1f2aba91dec9d96b78",
@@ -2252,25 +2252,15 @@
     "ML-W16": "c35792e1340e250807c1882937254a15dbafcaa5cf1ac7c219006d60450d45f6"
   },
   "sourceHashes": {
-    "code-identifiers.js": "3b869bf5d01df077b23a5aeb30cfcb1fa846c1d61656d39e694c2732e5296cfd",
+    "code-identifiers.js": "5ad1b8f1768ee7786c5715c039fe1d796a59e12eb2b6f91d540be0c3a5cee4e4",
     "route-slider.css": "28f96d75040ab03c3e18c879114dc413bb2ba99a179b91c83dd9c015f7e3a14a",
-    "ml-learning/visuals.js": "20e1cd40c82f18a0a27a4fdbc97746f35beb5aaa4cbab9c1ff4b04901cf02385",
+    "ml-learning/visuals.js": "7fa3d6ffc99eb42736e99a7fb74ac1479c9679ea1a12be469d77bfb3a5d9a7b6",
     "ml-learning/learning.css": "7e960ec9dbbd349a773345d68ee2903f2ff46bef0d9d8e96cab581cd698e3128",
-    "ml-learning/app.js": "053d90c12724dbff0c331dfe021356a695c1e56aa946cc2fda6397a91a6f1b56",
+    "ml-learning/app.js": "788c0184382dd1f31a249a5bbb6eb24db83a92dd898aa624c1618b92283d6d00",
     "foundations/foundations.css": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
-    "foundations/learning-ui.js": "5efccabc8776f223eee2199e2018f08cdbcf8ef5fa388a9193deca32deacd30a",
+    "foundations/learning-ui.js": "a16793b166927c3617524741cafbecbca1765f024a9d6fa0464397810b5840cd",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "0935919843d2e535e09a133d7d7c8b3b487b3effdfe1288e82e4885fa3b43b59",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
-  },
-  "scopedSourceRevisions": [
-    {
-      "date": "2026-10-05",
-      "source": "foundations/foundations.css",
-      "beforeSHA256": "e7c952b60d03289703512871d8729040b6bd8f66569c5f86b64a777745cc3da1",
-      "afterSHA256": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
-      "scope": "Lesson heading/task prose wraps exact code identifiers within narrow panels at measured200% text. Primitive SVG, concept content, thumbnail signatures and existing color/focus/editor styling remain byte-identical.",
-      "validation": "Repository checks plus fresh independent 320px light/dark measured-text review of Foundations and representative actual ML lessons; final source-bound review evidence in lesson-responsibilities/reviews/fresh/."
-    }
-  ]
+  }
 }

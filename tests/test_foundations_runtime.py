@@ -1,4 +1,7 @@
 """Execute the entire original curriculum and check equivalent and incorrect answers."""
+import ast
+import io
+import tokenize
 import json
 import subprocess
 import sys
@@ -9,6 +12,32 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 C=json.loads(subprocess.check_output(['node','-e','console.log(JSON.stringify(require("./foundations/curriculum.js")))'],cwd=ROOT))
+def canonical_python(code):
+    """Normalize layout for semantic mutations while retaining string values."""
+    code = ast.unparse(ast.parse(code))
+    lines = code.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    replacements = []
+    for token in tokenize.generate_tokens(io.StringIO(code).readline):
+        if token.type != tokenize.STRING:
+            continue
+        try:
+            value = ast.literal_eval(token.string)
+        except (ValueError, SyntaxError):
+            continue
+        if isinstance(value, str):
+            start = offsets[token.start[0] - 1] + token.start[1]
+            end = offsets[token.end[0] - 1] + token.end[1]
+            replacements.append((start, end, json.dumps(value, ensure_ascii=False)))
+    for start, end, value in reversed(replacements):
+        code = code[:start] + value + code[end:]
+    return code
+
+for lesson in C["lessons"]:
+    for exercise in lesson["rounds"]:
+        exercise["solution"] = canonical_python(exercise["solution"])
 namespace={}
 exec((ROOT/'table-serialization.py').read_text()+'\n'+(ROOT/'foundations/runtime.py').read_text(),namespace)
 run=namespace['run_foundation']
@@ -99,7 +128,7 @@ for id,old,new in [('V16','sns.scatterplot(data=df, x="hours", y="score", ax=ax)
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][0]
  assert request(id,code=ex['solution'].replace(old,new))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V16')['rounds'][2]
-assert request('V16',2,code=ex['solution'].replace('sns.scatterplot(data=selected, x="minutes", y="rating", ax=ax)','sns.scatterplot(x=selected["minutes"], y=selected["rating"], ax=ax)'))['passed']
+assert request('V16',2,code=ex['solution'].replace('sns.scatterplot(data=selected, x="wait_minutes", y="consult_minutes", ax=ax)','sns.scatterplot(x=selected["wait_minutes"], y=selected["consult_minutes"], ax=ax)'))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='W24')['rounds'][0]
 assert request('W24',code='relationship = "many_to_one"\n'+ex['solution'].replace('validate="many_to_one"','validate=relationship'))['passed']
 # Syntax/runtime errors remain recoverable, and mutations never leak into a new run.
@@ -129,29 +158,32 @@ assert not request('I16',2,code='df.dropna()')['passed']
 assert request('W16',2,code='clean=df.copy()\nclean["price"]=pd.to_numeric(clean["price"],errors="coerce")\nclean[clean["price"].notna()]')['passed']
 assert not request('W16',2,code='clean=df.copy()\nclean["price"]=pd.to_numeric(clean["price"],errors="coerce")\nclean.dropna()')['passed']
 assert not request('W28',2,code='from sklearn.preprocessing import StandardScaler\nStandardScaler().fit_transform(df.iloc[4:][["age", "weight"]])')['passed']
-for id in ['V16','V18','V08','V09','V29']:
+alternatives = {
+ 'V16': ('sns.scatterplot(data=selected, x="wait_minutes", y="consult_minutes", ax=ax)', 'ax.scatter(selected["wait_minutes"], selected["consult_minutes"])'),
+ 'V18': ('sns.lineplot(data=ordered, x="hour", y="change", estimator=None, marker="o", ax=ax)', 'ax.plot(ordered["hour"], ordered["change"], marker="o")'),
+ 'V08': ('sns.countplot(data=selected, x="channel", order=order, ax=ax)', 'counts = selected["channel"].value_counts()\nax.bar(counts.index, counts.values)'),
+ 'V09': ('sns.barplot(data=df, x="kind", y="cost", estimator="median", errorbar=None, ax=ax)', 'medians = df.groupby("kind")["cost"].median()\nax.bar(medians.index, medians.values)'),
+ 'V29': ('ax.bar(rates.index, rates.values)', 'sns.barplot(x=rates.index, y=rates.values, errorbar=None, ax=ax)'),
+}
+for id, (original, replacement) in alternatives.items():
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][2]
  assert request(id,2)['passed']
- if id=='V16':
-  alternate=ex['solution'].replace('sns.scatterplot(data=selected, x="minutes", y="rating", ax=ax)','ax.scatter(selected.sort_values("rating")["minutes"], selected.sort_values("rating")["rating"])')
- elif id=='V18':
-  alternate=ex['solution'].replace('sns.lineplot(data=selected, x="day", y="visits", estimator=None, marker="o", ax=ax)','ax.plot(selected["day"], selected["visits"], marker="o")')
- else:
-  series='counts' if id=='V08' else 'means'
-  alternate=ex['solution'].replace(f'ax.bar({series}.index, {series}.values)',f'sns.barplot(x={series}.index, y={series}.values, errorbar=None, ax=ax)')
- assert alternate!=ex['solution']
+ assert original in ex['solution'], id
+ alternate=ex['solution'].replace(original,replacement)
+ if 'sns.' in replacement and 'import seaborn' not in alternate:
+  alternate='import seaborn as sns\n'+alternate
  assert request(id,2,code=alternate)['passed'],id
 ex=next(l for l in C['lessons'] if l['id']=='V37')['rounds'][1]
-assert not request('V37',1,code=ex['solution'].replace('["temperature"].mean()','["temperature"].sum()'))['passed']
+assert not request('V37',1,code=ex['solution'].replace('["consult_minutes"].mean()','["consult_minutes"].sum()'))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V08')['rounds'][1]
 assert not request('V08',1,code=ex['solution'].replace(', "Snow"',''))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V36')['rounds'][1]
 assert not request('V36',1,code=ex['solution'].replace('bottom=0','bottom=3'))['passed']
 # Category charts compare labelled heights, so a different display order is
 # valid while swapped category/height pairs are still incorrect.
-for id,round_index,series in [('V08',2,'counts'),('V09',2,'means'),('V29',0,'means'),
-                              ('V29',1,'totals'),('V29',2,'means'),('V36',1,'means'),
-                              ('V36',2,'means'),('V37',1,'totals')]:
+for id,round_index,series in [('V29',0,'means'),
+                              ('V29',1,'totals'),('V29',2,'rates'),('V36',1,'means'),
+                              ('V36',2,'means'),('V37',1,'means')]:
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][round_index]
  original=f'ax.bar({series}.index, {series}.values)'
  explicit_setup=original not in ex['solution']
@@ -159,9 +191,8 @@ for id,round_index,series in [('V08',2,'counts'),('V09',2,'means'),('V29',0,'mea
  assert original in source,(id,round_index)
  reordered=source.replace(original,f'ax.bar({series}.index[::-1], {series}.values[::-1])')
  assert request(id,round_index,code=reordered,explicit_setup=explicit_setup)['passed'],(id,round_index,'reordered')
- if id!='V08':  # Its two included genres happen to have equal counts.
-  wrong=source.replace(original,f'ax.bar({series}.index, {series}.values[::-1])')
-  assert not request(id,round_index,code=wrong,explicit_setup=explicit_setup)['passed'],(id,round_index,'swapped values')
+ wrong=source.replace(original,f'ax.bar({series}.index, {series}.values[::-1])')
+ assert not request(id,round_index,code=wrong,explicit_setup=explicit_setup)['passed'],(id,round_index,'swapped values')
 ex=next(l for l in C['lessons'] if l['id']=='V08')['rounds'][0]
 assert request('V08',code=ex['solution'].replace('x="flavour", ax=ax','x="flavour", order=["mint", "fruity", "chocolate"], ax=ax'))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V09')['rounds'][1]

@@ -147,7 +147,7 @@ def _plot_text(value, rules):
     return value
 
 
-def _category_bars(ax, unordered=False):
+def _category_bars(ax, unordered=False, empty_counts=False):
     """Compare labelled heights/baselines, independent of bar width or artist order."""
     ticks = list(ax.get_xticks())
     labels = [tick.get_text() for tick in ax.get_xticklabels()]
@@ -163,7 +163,14 @@ def _category_bars(ax, unordered=False):
             return None
         values[labels[nearest]].append(_numeric([patch.get_y(), patch.get_height()]))
     if any(not parts for parts in values.values()):
-        return None
+        if not empty_counts:
+            return None
+        # countplot(order=...) may retain a labelled category tick without
+        # creating a Rectangle for its zero observations. An explicit zero bar
+        # is scientifically equivalent, provided the label/order is retained.
+        for label, parts in values.items():
+            if not parts:
+                values[label] = [[0, 0]]
     pairs = [(label, sorted(values[label])) for label in labels]
     return sorted(pairs) if unordered else pairs
 
@@ -222,7 +229,9 @@ def _box_summary(ax, rules):
     boxes = []
     for patch in ax.patches:
         if not isinstance(patch, Rectangle):
-            boxes.append(np.asarray(patch.get_path().vertices))
+            path = patch.get_path()
+            vertices = path.vertices if path.codes is None else path.vertices[path.codes != 79]
+            boxes.append(np.asarray(vertices))
     for line in ax.lines:
         points = np.column_stack([line.get_xdata(orig=False), line.get_ydata(orig=False)])
         if len(points) >= 4 and np.allclose(points[0], points[-1]):
@@ -345,11 +354,32 @@ def _foundation_numeric_annotation(text, value):
         return text
 
 
+def _swarm_nonoverlap(ax):
+    """Verify packing in displayed coordinates without prescribing offsets."""
+    points = []
+    for collection in ax.collections:
+        if not isinstance(collection, PathCollection):
+            continue
+        offsets = np.asarray(collection.get_offsets())
+        sizes = collection.get_sizes()
+        if not len(offsets) or not len(sizes):
+            continue
+        for index, point in enumerate(ax.transData.transform(offsets)):
+            radius = np.sqrt(sizes[index % len(sizes)]) * ax.figure.dpi / 144
+            points.append((point, radius))
+    return all(np.linalg.norm(first[0] - second[0]) + 0.1 >= first[1] + second[1]
+               for index, first in enumerate(points) for second in points[index + 1:])
+
+
 def _plot_state(figures, rules):
     result = []
     for figure_number, fig in enumerate(figures):
         fig.canvas.draw()
         state = {'axes': []}
+        if rules.get('sharedLimits') and fig.axes:
+            first = fig.axes[0]
+            state['shared_limits'] = [all(np.allclose(ax.get_xlim(), first.get_xlim()) for ax in fig.axes),
+                                      all(np.allclose(ax.get_ylim(), first.get_ylim()) for ax in fig.axes)]
         if rules.get('size'):
             state['size'] = _numeric(fig.get_size_inches())
         if rules.get('panelHeight'):
@@ -416,7 +446,14 @@ def _plot_state(figures, rules):
                 item['layout'] = [len(centres), 'row' if horizontal else 'column', next(index for index, centre in enumerate(ordered) if centre[0] is ax)]
             if rules.get('limits'):
                 item['limits'] = [_numeric(ax.get_xlim()), _numeric(ax.get_ylim())]
+            if rules.get('xLimits'):
+                item['x_limits'] = _numeric(ax.get_xlim())
+            if rules.get('yLimits'):
+                item['y_limits'] = _numeric(ax.get_ylim())
+            if rules.get('swarm'):
+                item['swarm_nonoverlap'] = _swarm_nonoverlap(ax)
             if rules.get('zeroBaseline'):
+
                 item['zero_baseline'] = abs(ax.get_ylim()[0]) < 1e-9
             if rules.get('ticks'):
                 item['rotations'] = [t.get_rotation() for t in ax.get_xticklabels()]
@@ -449,7 +486,7 @@ def _plot_state(figures, rules):
             # geometry under the usual exact comparison.
             unordered_bars = rules.get('unorderedBars') and figure_number == rules.get('unorderedBarsFigure', 0)
             if unordered_bars or rules.get('barGeometry'):
-                pairs = _category_bars(ax, unordered_bars)
+                pairs = _category_bars(ax, unordered_bars, rules.get('categoryCounts', False))
                 if pairs is not None:
                     item['bars_by_category'] = pairs
                     item['patches'] = []
@@ -492,7 +529,13 @@ def _plot_state(figures, rules):
                 legend = ax.get_legend()
                 labels = [] if legend is None else [t.get_text() for t in legend.get_texts()]
                 if rules.get('semantic') == 'encodedScatter':
-                    labels = [label for label in labels if label not in rules.get('legendFields', [])]
+                    # Seaborn's zero-size proxy handles are section headings.
+                    # Their text may name an equivalently derived column; the
+                    # category labels and encoded point memberships carry data.
+                    handles = getattr(legend, 'legend_handles', getattr(legend, 'legendHandles', [])) if legend else []
+                    headings = {label for label, handle in zip(labels, handles)
+                                if hasattr(handle, 'get_markersize') and handle.get_markersize() == 0}
+                    labels = [label for label in labels if label not in headings and label not in rules.get('legendFields', [])]
                 if rules.get('semantic') == 'encodedScatter' and not rules.get('legendOrder'):
                     labels = sorted(labels)
                 title = '' if rules.get('semantic') == 'encodedScatter' and not rules.get('legendTitle') else (legend.get_title().get_text() if legend else '')
@@ -563,7 +606,7 @@ def _plot_requirement(path):
              'zero_baseline': 'zero baseline', 'panel_height': 'panel height', 'xlabel': 'horizontal axis label',
              'ylabel': 'vertical axis label', 'title': 'chart title', 'annotations': 'annotations', 'layout': 'panel arrangement',
              'matrix': 'heatmap values', 'legend': 'legend', 'points': 'paired observations', 'lines': 'lines, markers and reference styles',
-             'patches': 'bins, counts and distribution shapes', 'limits': 'axis limits', 'size': 'Figure dimensions',
+             'patches': 'bins, counts and distribution shapes', 'limits': 'axis limits', 'x_limits': 'horizontal limits', 'y_limits': 'vertical limits', 'shared_limits': 'common panel scales', 'swarm_nonoverlap': 'non-overlapping raw observations', 'size': 'Figure dimensions',
              'clim': 'colour scale range', 'palette': 'palette', 'rotations': 'tick rotation', 'categories': 'category labels',
              'visibility': 'visible observations and axis bounds', 'visible_text': 'visible titles, labels and annotations',
              'figure_text_fits': 'title, axis labels and tick labels inside the Figure canvas (adjust its margins)',
@@ -704,6 +747,13 @@ def run_foundation(request):
             if target == 'plot':
                 _compare_plots(_plot_state(actual['figures'], exercise.get('plot') or {}), expected_plot)
                 assert actual['figures'], 'Display your figure with plt.show().'
+                if exercise.get('checkPlotResponse'):
+                    wanted, got = expected['last'], actual['last']
+                    assert actual['has_result'], 'Finish with the requested interpretation as a Python value.'
+                    if isinstance(wanted, str) and isinstance(got, str):
+                        wanted, got = _plot_text(wanted, exercise.get('plot') or {}), _plot_text(got, exercise.get('plot') or {})
+                    _equal(got, wanted)
+
                 if (exercise.get('plot') or {}).get('export'):
                     assert os.path.isfile('chart.png') and os.path.getsize('chart.png') > 100, 'Save chart.png before displaying the figure.'
                     from PIL import Image

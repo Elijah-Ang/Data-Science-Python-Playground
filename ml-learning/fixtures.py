@@ -2,11 +2,77 @@
 import numpy as np
 import pandas as pd
 
-FIXTURE_VERSION = 2
+FIXTURE_VERSION = 3
 
 def learning_fixture(name):
+    if name == 'CHANNEL8':
+        return pd.DataFrame({'channel':['email','phone','chat','email','chat','phone','kiosk','email'],
+                             'batch':['training']*5+['incoming']*3},
+                            index=['t0','t1','t2','t3','t4','known','new','repeat'])
     if name.startswith('ML-X'):
         return pd.read_csv('data/ml-learning/'+name+'.csv')
+    if name == 'ERROR15':
+        return pd.DataFrame({'actual':['A']*7+['B']*4+['C']*4,
+                             'predicted':['A']*5+['B']*2+['A']+['B']*3+['A']*2+['B']*2},
+                            index=np.arange(501,516))
+    if name == 'ERROR12_REVIEW':
+        return pd.DataFrame({'actual':['clear']*18+['inspect']*6+['urgent']*3,
+            'predicted':['clear']*18+['inspect']*4+['clear']*2+['clear']*3,
+            'alternative':['clear']*15+['inspect']*2+['urgent']+['inspect']*5+['clear']+['urgent']*2+['inspect']},
+            index=np.arange(700,754,2))
+    if name == 'RULE24_REVIEW':
+        position=np.arange(36)
+        code=np.resize([2,2,7,4,2,4],36)
+        fragile=position%2
+        audit=(code==7)|((code==4)&(fragile==1))
+        audit[[5,14,29]]=~audit[[5,14,29]]
+        return pd.DataFrame({'distance':np.resize([3.,11.,6.,15.,9.,21.,5.,17.,13.],36),
+                             'fragile':fragile,'service_code':code,
+                             'label':np.where(audit,'audit','release')},index=900+position*3)
+    if name == 'MATERIAL96':
+        rng=np.random.default_rng(159)
+        counts=[48,30,18]
+        values=np.vstack([rng.multivariate_normal(mean,cov,count)
+            for mean,cov,count in zip([(2.5,.35),(7.1,3.),(1.1,.05)],
+                [[[.16,.02],[.02,.09]],[[.49,.12],[.12,.64]],[[.09,.005],[.005,.01]]],counts)])
+        return pd.DataFrame({'density_g_cm3':values[:,0],'conductivity_ms':(values[:,1]+1)*1000,
+                             'material':np.repeat(['glass','metal','polymer'],counts)},
+                             index=1200+np.arange(96)*7)
+    if name == 'INTAKE48':
+        rng=np.random.default_rng(531)
+        backlog=rng.integers(0,14,48); age=rng.uniform(1,9,48)
+        hours=2+.85*backlog+.55*age+rng.normal(0,1.2,48)
+        return pd.DataFrame({'case_id':np.arange(4100,4148),'backlog_at_open':backlog,'device_age_years':age,'completion_hours':hours,'invoice_hours':hours+.25})
+    if name == 'LAB90':
+        rng=np.random.default_rng(642)
+        n=np.array([63,18,9]); labels=np.repeat(['routine','watch','urgent'],n)
+        signal=np.concatenate([rng.normal(m,.7,k) for m,k in zip([0,1.1,2.2],n)])
+        speed=np.concatenate([rng.normal(m,5,k) for m,k in zip([50,65,75],n)])
+        return pd.DataFrame({'sample_id':np.arange(7000,7090),'signal':signal,'speed_rpm':speed,'status':labels,'confirmed_urgent':(labels=='urgent').astype(int)})
+    if name == 'PROCESS30':
+        rng=np.random.default_rng(753)
+        temperature=np.r_[rng.normal(20,2,24),rng.normal(39,1.5,6)]
+        pressure=np.r_[rng.normal(2.0,.15,24),rng.normal(2.8,.08,6)]
+        output=15+1.5*temperature+8*pressure+rng.normal(0,1,30)
+        return pd.DataFrame({'temperature_c':temperature,'pressure_bar':pressure,'output':output})
+    if name == 'CUBIC60':
+        rng=np.random.default_rng(864)
+        x=np.linspace(-2.5,2.5,60)
+        return pd.DataFrame({'x':x,'y':6+1.4*x-.4*x*x+1.8*x**3+rng.normal(0,.8,60)})
+    if name == 'CUBIC60':
+        rng=np.random.default_rng(864)
+        x=np.linspace(-2.5,2.5,60)
+        return pd.DataFrame({'x':x,'y':6+1.4*x-.4*x*x+1.8*x**3+rng.normal(0,.8,60)})
+    if name == 'CLUSTER45_ANISO':
+        rng=np.random.default_rng(865)
+        groups=[rng.multivariate_normal(center,cov,n) for center,cov,n in
+                [((1,1),[[.45,.18],[.18,.09]],22),((4,1),[[.08,-.12],[-.12,.5]],15),((2.3,4),[[.2,0],[0,.06]],8)]]
+        values=np.vstack(groups)
+        return pd.DataFrame({'length_mm':(values[:,0]+3)*1000,'width_cm':(values[:,1]+3)*10},index=pd.Index(2001+np.arange(45)*3,name='item_id'))
+    if name == 'PCA60_MIXED':
+        rng=np.random.default_rng(976)
+        z1,z2,z3,noise=rng.normal(size=(4,60))
+        return pd.DataFrame({'a':100+10*z1,'b':50+5*z1+3*z3,'c':20+4*z2,'d':40+6*z2+5*z3,'e':noise},index=pd.Index(3101+np.arange(60)*5,name='sensor_id'))
     if name.endswith('_REVIEW'):
         base=name.removesuffix('_REVIEW')
         df=learning_fixture(base).copy()

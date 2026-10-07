@@ -4,9 +4,12 @@
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   function format(value) {
     const text = String(value ?? '');
-    const pattern = /`([^`]+)`|\b(?:[A-Za-z_]\w*\.)*[A-Za-z_]\w*\([^\n()]*\)|\b(?:df|pd|np|sns|plt|fig|ax|combined|record_count|X_train|X_test|y_train|y_test|X|y)\b/g;
+    // Treat both coordinate names alike, including "x and y" explanations.
+    // Numeric dimensions and ordinary hyphenated words remain prose.
+    const pattern = /`([^`]+)`|\b(?:[A-Za-z_]\w*\.)*[A-Za-z_]\w*\([^\n()]*\)|\b(?:df|pd|np|sns|plt|fig|ax|combined|record_count|X_train|X_test|y_train|y_test|X|x|y)\b/g;
     let html = '', start = 0;
     for (const m of text.matchAll(pattern)) {
+      if (m[0] === 'x' && ((/\d\s*$/.test(text.slice(0,m.index)) && /^\s*\d/.test(text.slice(m.index+1))) || /^-(?!axis\b)[a-z]/i.test(text.slice(m.index+1)))) continue;
       html += escape(text.slice(start,m.index)) + '<code class="code-identifier">' + escape(m[1] || m[0]) + '</code>';
       start = m.index + m[0].length;
     }

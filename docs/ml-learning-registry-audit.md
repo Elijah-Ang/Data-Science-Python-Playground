@@ -12,7 +12,7 @@ checkpoint | 11 | 11 | 11
 
 There are 110 cards and 327 card exercises. The 19 independently runnable Workflow Challenges are additional briefs, not included in card-exercise totals. Teaching exercise counts follow the objective (2–4), not a fixed quota.
 
-Card exercise modes: 213 python, 47 decision, 67 reflection. The challenge collection adds 19 Python activities.
+Card exercise modes: 215 python, 44 decision, 68 reflection. The challenge collection adds 19 Python activities.
 
 ## Independent routes and intentional joins
 
@@ -116,7 +116,7 @@ ML-U-R1 | K-Means retrieval | ML-U05
 ML-U-R2 | Hierarchy retrieval | ML-U10
 ML-P-R1 | PCA retrieval | ML-P06
 ML-M-R1 | Model-choice retrieval | ML-M03
-ML-F-K1 | ML Foundations checkpoint | ML-F-R1, ML-F-R2, ML-F12
+ML-F-K1 | Foundations workflow checkpoint | ML-F-R1, ML-F-R2, ML-F12
 ML-W-K1 | Supervised Workflow checkpoint | ML-W-R1, ML-W-R2
 ML-R-K1 | Regression checkpoint | ML-R-R1, ML-R-R2
 ML-C-K1 | Classification checkpoint | ML-C-R1, ML-C-R2, ML-C-R3

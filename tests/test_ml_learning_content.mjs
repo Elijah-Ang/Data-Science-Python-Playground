@@ -82,7 +82,7 @@ for(const [id,names] of Object.entries({
   'ML-R01-1':['slope','intercept'],
   'ML-R02-1':['rmse','r2'],
   'ML-R02-3':['evaluation_mean','training_mean'],
-  'ML-R-R1-2':['evaluation_mean','training_mean'],
+  'ML-R-R1-2':['evaluation_r2','training_constant_r2'],
   'ML-R09-2':['leaf','prediction'],
   'ML-R11-1':['slope','training_r2'],
   'ML-C02-1':['precision_b','recall_b'],

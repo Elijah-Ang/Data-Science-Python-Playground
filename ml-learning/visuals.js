@@ -139,7 +139,7 @@
     F10:'guard|Known at decision|Prediction time|Later outcome',
     'F-R1':'choice|X versus y|fit versus predict|Recall the roles',
     'F-R2':'choice|Training evidence|Final evidence|Keep them apart',
-    'F-K1':'flow|Define X and y|Split, fit, predict|Read the error',
+    'F-K1':'flow|Frame and reserve|Dummy, CV, diagnose|One final error',
     F11:'pipeline|Delivery X|Linear model|Minutes of error',
     F12:'pipeline|Specimen X|Classifier|Class errors',
     W01:'table|Training rows|Types and gaps|Inspect before fit',

@@ -78,8 +78,11 @@ with sync_playwright() as p:
           (readiness,code.replace("['jobs_waiting', 'device_age_years']", "['jobs_waiting']").replace('random_state=42','random_state=91').replace('test_size=.2','test_size=.25').replace('from sklearn.linear_model import LinearRegression','from sklearn.linear_model import LinearRegression, Ridge').replace('LinearRegression()','Ridge(alpha=1)'),True,'readiness legitimate alternative choices'),
         ]
     if pca:
+        paired_sign=pca['solution']+"\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1"
+        matching_view="\nplt.close('all')\nfig,ax=plt.subplots()\nax.scatter(scores2[:,0],scores2[:,1])\nax.set(xlabel='PC1',ylabel='PC2')"
         alternatives+=[
-          (pca,pca['solution']+"\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1",True,'paired PCA sign'),
+          (pca,paired_sign+matching_view,True,'paired PCA sign with matching plotted coordinates'),
+          (pca,paired_sign,False,'paired PCA sign with stale plotted coordinates'),
           (pca,pca['solution']+"\nweights.iloc[:,0]*=-1",False,'unpaired PCA sign'),
           (pca,pca['solution']+"\nweights.iloc[:,:]=np.eye(X.shape[1])[:,:2]\nscores2=scaled@weights.values",False,'incorrect PCA axes'),
         ]

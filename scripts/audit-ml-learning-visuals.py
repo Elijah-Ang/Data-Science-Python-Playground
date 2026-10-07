@@ -3,19 +3,23 @@
 Screenshots retain actual app CSS. Contact sheets are review evidence, not a substitute
 for reviewing lesson meaning against the registry. Requires Playwright and Pillow.
 """
-import argparse,hashlib,json,math,subprocess,sys
+import argparse,hashlib,json,math,os,subprocess,sys
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser();p.add_argument('--base-url',default='http://127.0.0.1:8128');p.add_argument('--runtime',choices=['remote','local'],default='remote');p.add_argument('--reuse-captures',action='store_true',help='Reuse existing concept captures while rerunning fitted evidence');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--base-url',default='http://127.0.0.1:8128');p.add_argument('--runtime',choices=['remote','local'],default='remote');p.add_argument('--executable-path',help='Use an installed Chromium executable in the selected environment.');p.add_argument('--reuse-captures',action='store_true',help='Reuse existing concept captures while rerunning fitted evidence');a=p.parse_args()
 if a.reuse_captures:
  subprocess.run([sys.executable,str(ROOT/'tests/test_ml_learning_visual_audit.py')],check=True)
 out=ROOT/'tests/evidence/ml-learning/visual-audit';out.mkdir(parents=True,exist_ok=True)
 contact=ROOT/'docs/ml-learning-visuals';contact.mkdir(exist_ok=True)
 records=[];groups={}
 with sync_playwright() as pw:
- browser=pw.chromium.launch();page=browser.new_page(viewport={'width':1440,'height':1000});page.goto(a.base_url+'/ml-learn.html?runtime='+a.runtime);page.wait_for_function('!!window.MLLearning')
+ launch={}
+ if a.executable_path:launch['executable_path']=a.executable_path
+ proxy=os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY')
+ if proxy:launch['proxy']={'server':proxy,'bypass':'127.0.0.1,localhost'}
+ browser=pw.chromium.launch(**launch);page=browser.new_page(viewport={'width':1440,'height':1000});page.goto(a.base_url+'/ml-learn.html?runtime='+a.runtime);page.wait_for_function('!!window.MLLearning')
  cards=page.evaluate("MLLearning.curriculum.cards.filter(c=>c.kind==='teaching')")
  for c in cards:
   key=page.evaluate('(v)=>MLLearningVisuals.family(v)',c['visual']);groups.setdefault(key,c)

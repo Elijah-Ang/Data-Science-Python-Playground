@@ -11,28 +11,28 @@ def groups(exercise,index):
           ('Diagnosis',diagnosis),
           ('Final evidence','Fit the nominated model on training rows and evaluate the reserved rows once. Report saved predictions, the requested metrics and labelled evidence; explain limitations without using the final test for further selection.')]
         mapping={
-          0:['Aligned split inputs and targets','Protected final rows','Observable training provenance','Declared features and target','Forward split','Complete reserved split'],
-          1:['Cross-validation','Matching folds','Fold-local preparation','Reference evidence','Candidate coverage','Nomination','Requested model families','Production preparation','Production One-R','Observed dummy scores','Observed candidate scores','Unchanged nominated recipe'],
-          2:['Training-only diagnosis','Last-block diagnosis','Training-only ablation','Observed diagnostic predictions','Aligned diagnostic report'],
+          0:['Aligned split inputs and targets','Protected final rows','Observable training provenance','Declared features and target','Declared One-R inputs','Forward split','Complete reserved split'],
+          1:['Cross-validation','Matching folds','Fold-local preparation','Reference evidence','Candidate coverage','Nomination','Requested model families','Production preparation','Production One-R','Discrete and numeric One-R preparation','Observed dummy scores','Observed candidate scores','Unchanged nominated recipe'],
+          2:['Training-only diagnosis','Last-block diagnosis','Training-only ablation','Observed diagnostic predictions','Aligned diagnostic report','Observed neural loss history'],
           3:['Final-test discipline','Predictions match the chosen fit','Original-unit RMSE','Class predictions','Macro F1','Interpretation','Class-labelled probabilities']}
     elif index==16:
         descriptions=[('Discovery population','Load the four supplied Penguin measurements and fit scaling to this declared population; no species labels enter fitting.'),
           ('Compare groupings','Compare k=2–8 with inertia, silhouette and geometry. Justify a grouping without treating a score as proof of natural classes.'),
           ('Assignments & profiles','Return one assignment per fitted row, group sizes and aligned original-unit profiles.'),
-          ('Interpretation','Explain the grouping and its limits using scores, sizes and original-unit profiles; a labelled plot can help.')]
-        mapping={0:['Reference-free inputs'],1:['k evidence'],2:['Assignments','Original-unit profiles'],3:['Choice and interpretation']}
+          ('Interpretation','Explain the grouping and its limits using scores, sizes, original-unit profiles and a labelled measurement plot showing the discovered groups.')]
+        mapping={0:['Reference-free inputs'],1:['k evidence'],2:['Assignments','Original-unit profiles'],3:['Choice and interpretation','Plotted discovered groups']}
     elif index==17:
         descriptions=[('Population & sample','Scale the supplied five-measurement population; preserve the identities of the seed-42 sample of at most 500 rows.'),
-          ('Hierarchy & cuts','Build Ward linkage on the scaled sample and compare cuts from k=2–8. A labelled dendrogram can help interpret the merges.'),
+          ('Hierarchy & cuts','Build Ward linkage on the scaled sample, draw the labelled hierarchy truncated to 20 last groups and compare cuts from k=2–8.'),
           ('Aligned profiles','Attach the chosen cut labels to exactly the sampled rows and report original-unit group means.'),
           ('Interpretation','Explain a defensible cut, sample scope and distance assumptions; group identifiers are names, not classes.')]
-        mapping={0:['Sampled population','Population scaler'],1:['Ward hierarchy','Hierarchy cut','Cut comparison'],2:['Aligned profiles'],3:['Interpretation']}
+        mapping={0:['Sampled population','Population scaler'],1:['Ward hierarchy','Hierarchy cut','Cut comparison','Visible sampled hierarchy'],2:['Aligned profiles'],3:['Interpretation']}
     else:
         descriptions=[('Measurement population','Load all 30 supplied measurements and standardise them without diagnosis labels.'),
           ('Variance & retention','Fit PCA and find the smallest component count retaining at least 90% variance; report ratios and cumulative variance.'),
-          ('Representation & view','Return the retained scores, consistent feature weights and a separate two-component score array; a labelled plot is optional.'),
+          ('Representation & view','Return the retained scores, consistent feature weights and a separate two-component score array, then plot that separate PC1/PC2 view with labelled axes.'),
           ('Interpretation','Distinguish retained information from the two-axis picture. Explain axis weights without claiming causal effects.')]
-        mapping={0:['Target-free inputs'],1:['Minimum retained dimension','Variance evidence'],2:['Weights and scores','Two-dimensional view'],3:['Interpretation']}
+        mapping={0:['Target-free inputs'],1:['Minimum retained dimension','Variance evidence'],2:['Weights and scores','Two-dimensional view','Plotted PCA coordinates'],3:['Interpretation']}
     names=[c['name'] for c in exercise['checks']]
     result=[dict(title=title,summary=summary,checks=[name for name in mapping[i] if name in names]) for i,(title,summary) in enumerate(descriptions)]
     assert sorted(name for group in result for name in group['checks'])==sorted(names),'Every semantic check needs one workflow group'

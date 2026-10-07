@@ -1,7 +1,7 @@
 {
-  "baseSHA": "bd473733a1edb5d22b73bb24f1156da2df5316f0",
-  "reviewed": "2026-10-05",
-  "scope": "Every assembled lesson/round task, hint, worked/example code, solution and runtime grading contract; full 324-row responsibility audit; stable IDs preserved.",
+  "baseSHA": "5d99a07176562613f2a08f0eca3627800180db04",
+  "reviewed": "2026-10-06",
+  "scope": "326 effective Foundations rounds, with complete43card/132roundVisualise repair, independently reviewed task/setup/example/hint/solution/grader and native/browser evidence recorded in the candidate audit bundle.",
   "exercises": {
     "I01-1": {
       "sha256": "3995ccd0ce31ba2fed3bda85dfc1e1f5007be296ac7690fc0c2edd9dbc028b70",
@@ -3346,9 +3346,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A question and data types determine chart choice before plotting syntax. This is the first displayed lesson; quoted chart names may vary in capitalization but a wrong chart type fails.",
-      "fullContractSHA256": "a583cdc82b5102408c14503626a6e7277373b1437821c357a652a06041507264",
-      "executionStatus": "passed"
+      "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
+      "fullContractSHA256": "f45cddec58757aa6f22d25ec8ecf204e133b04317a6d4a41ed8617ff7e36bfe0",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V35-2": {
       "sha256": "a78fb32ba0fbd4a9e18d63edfe88aa66f2e3473ab721cd9c12ceed9308bedf5a",
@@ -3363,9 +3363,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A question and data types determine chart choice before plotting syntax. This is the first displayed lesson; quoted chart names may vary in capitalization but a wrong chart type fails.",
-      "fullContractSHA256": "94182d6b65813e1896601ae77c14e6cd681ca860668d0d71041b322d569efafb",
-      "executionStatus": "passed"
+      "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
+      "fullContractSHA256": "03cc1231fa2ebee7529ee5da8236d1e1c3fa89cb48999d4a63cacaf02a27f8c7",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V35-3": {
       "sha256": "bef7a33c3ec6b495a670f9b1848ddb051fa441b5c1cf837159ec5d86e37a1039",
@@ -3380,9 +3380,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A question and data types determine chart choice before plotting syntax. This is the first displayed lesson; quoted chart names may vary in capitalization but a wrong chart type fails.",
-      "fullContractSHA256": "301aebd340cc80ba2a9b249382fba5ae1636d906df582c06860d1375b09d187f",
-      "executionStatus": "passed"
+      "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
+      "fullContractSHA256": "3bcfaeeb4142dd117f5ecc4b19ef36b161a32ad9bd5bf85d7e92af33c689922f",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V01-1": {
       "sha256": "fe8cc35803c6b1112cb537b2ad1f31c7d79f857bef2c50f8bf3921dfdcf0cb64",
@@ -3397,9 +3397,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "The single canvas round teaches Figure/Axes creation only. Removed label-setting duplication; its stated 6 by 4 inches is an intentional exact requirement.",
-      "fullContractSHA256": "fff4b054f919a44448d8ec7f969b7eea44de30f81b7f002c50ff69cd0101bb1e",
-      "executionStatus": "passed"
+      "note": "Retain the single canvas task. A canvas is a narrow object-ownership prerequisite; additional noun-swapped canvas practices were already removed.",
+      "fullContractSHA256": "9c7155f2f20f3e2180650ba2d7db2273007b72a80983ccf7c434b01697c7daad",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V16-1": {
       "sha256": "1f1c5963cdc7ca79dfc163315eedfb2c45d23e61d49a09b9860facdcac80b8a2",
@@ -3414,13 +3414,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "One observation creates a paired x/y point, after the stated filter where applicable. Models consistently use Seaborn; Matplotlib/Series equivalents are accepted and omitted/mispaired observations rejected. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "1af8fbdf76238e6f43df87a1b05d19dcedb0c5c1cdb42c525c8740f55a94ae1d",
-      "executionStatus": "passed",
+      "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
+      "fullContractSHA256": "8ecd807f6cbc9c906fb68a94cd548d52abcde9f3e8dd912994b48dd5bfe1b6b5",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V16-2": {
-      "sha256": "6d2ce36f9a035368fe0364ee52ec20569a6c65408555a88cc778acbda35dad81",
+      "sha256": "3554a650c06914272ecfaff906a18b8c02f288b7f9bf4f86c8a273efc9bc145f",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3432,13 +3432,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "One observation creates a paired x/y point, after the stated filter where applicable. Models consistently use Seaborn; Matplotlib/Series equivalents are accepted and omitted/mispaired observations rejected. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "c1e1a234b82f7300481c7eb7764106e38acf0183e8dfb3368de686cf1023e3d5",
-      "executionStatus": "passed",
+      "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
+      "fullContractSHA256": "ee66c51fd18f0b4515b27042c39c251921f811c3cd1ad10328f748e141aca8a7",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V16-3": {
-      "sha256": "9d2a3c6cc86a587e188286ced16b3ea66a3f856fea1645ac7d393d0775c256ba",
+      "sha256": "47166e1dcc4cfe9a70638e97918fa21e8335a002f124febd9d10ca36c7501819",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3450,9 +3450,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "One observation creates a paired x/y point, after the stated filter where applicable. Models consistently use Seaborn; Matplotlib/Series equivalents are accepted and omitted/mispaired observations rejected. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "5f9aeb139436c0d4e8891c5800fcf5ff1e1d5588bcb19563073c4e058d343d18",
-      "executionStatus": "passed",
+      "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
+      "fullContractSHA256": "af4ec5abb774984aba142343613c03dd4b7a55dabfc5f7d3fda7c22ffb87d51c",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V02-1": {
@@ -3468,13 +3468,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Finish prepared marks with informative titles, units and population labels. This precedes first learner-authored scatter mapping; starters provide points so no unseen scatter prerequisite is required. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "0f61df000764b885d8ff0785e19dc177f9d64c98f2341cbcdfb6306c2973cc9d",
-      "executionStatus": "passed",
+      "note": "Repair: prescribed replacement labels did not test another decision. Change now infers the plotted unit from a coordinate conversion; Transfer names the actual prepared population. Their tasks do not disclose the selected answers in a Chart suffix.",
+      "fullContractSHA256": "4717dc85e2b58a9bd1775994a585bf6e8dacd15d834da0d648787c89b3dbe389",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V02-2": {
-      "sha256": "6c6daac81ae0a8bc93bb4a702c8c1081516daa432efbb740becb670065e4f86a",
+      "sha256": "497c4a7b18598aa85dff2fb879da187eb719d08ec72037483bfa4c5921588047",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3486,13 +3486,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Finish prepared marks with informative titles, units and population labels. This precedes first learner-authored scatter mapping; starters provide points so no unseen scatter prerequisite is required. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "22c7f57c4c87712eee335d1c190be30b65ce7072cb1f1da7f7739f9e3fbc6b7b",
-      "executionStatus": "passed",
+      "note": "Repair: prescribed replacement labels did not test another decision. Change now infers the plotted unit from a coordinate conversion; Transfer names the actual prepared population. Their tasks do not disclose the selected answers in a Chart suffix.",
+      "fullContractSHA256": "8708db914fe970fb5ed511358e05ec5df365d7cb44887fbc433ae5dd7afb3831",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V02-3": {
-      "sha256": "213012e09708c010ed6ddc874d090422d02421c92a285b91c02049966a1d20a3",
+      "sha256": "30bd24ec4c7f07fcd8975384d0a9ba3d377f1ff65e9195eb4bbd65f754e78254",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3504,9 +3504,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Finish prepared marks with informative titles, units and population labels. This precedes first learner-authored scatter mapping; starters provide points so no unseen scatter prerequisite is required. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "75de6ad0771feddaaf443c30a1a6f75eaaac642c033b73c318485ba3683219af",
-      "executionStatus": "passed",
+      "note": "Repair: prescribed replacement labels did not test another decision. Change now infers the plotted unit from a coordinate conversion; Transfer names the actual prepared population. Their tasks do not disclose the selected answers in a Chart suffix.",
+      "fullContractSHA256": "68eb0b5fa1d0242d931bc3bb2de9c2feb3749584a287138d8d0fa973a77dcda8",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V04-1": {
@@ -3522,9 +3522,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Histogram counts and bin edges carry meaning. Matplotlib hist is accepted when the rendered distribution matches; default canvas size and bar styling are incidental.",
-      "fullContractSHA256": "506d5636915cfa1aebda8d5ccf08ab3035feb01f9b41afc13c970d368feb5ad6",
-      "executionStatus": "passed"
+      "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
+      "fullContractSHA256": "d283026f9cc34e631a4cf0a2991df0074cdb723cd764c4f3a90a197d3a5471e7",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V04-2": {
       "sha256": "4f9e273151b1617aa02769374072c50ecebc6342b543558eb5eef18a42d7c5d9",
@@ -3539,12 +3539,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Histogram counts and bin edges carry meaning. Matplotlib hist is accepted when the rendered distribution matches; default canvas size and bar styling are incidental.",
-      "fullContractSHA256": "9d4730ab46636aa21537806c5143a82caabfb3323e08d2a5a2c8d10a151c180e",
-      "executionStatus": "passed"
+      "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
+      "fullContractSHA256": "45f3c8b660d28b6ffe8d810b5b9dac95a650ed6d5378e4a17e018f4d13b7bafd",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V04-3": {
-      "sha256": "d05aef212927f366d0ff24534d03e3271c951665473b18cdbb995b148f9321b4",
+      "sha256": "6d50d768b31dead7639520a9bf9a455274e20a38036f32ccda02c589d8773ea6",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3556,9 +3556,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Histogram counts and bin edges carry meaning. Matplotlib hist is accepted when the rendered distribution matches; default canvas size and bar styling are incidental.",
-      "fullContractSHA256": "87fed6991d61838f266c5c00b969bac7aa51e4c770a4f88962838dfc90f74547",
-      "executionStatus": "passed"
+      "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
+      "fullContractSHA256": "4d4a5973637c2c8e03b40d40cd1872a14c3b41880c3f4633ea815807ccb0ba1a",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V08-1": {
       "sha256": "3e66de54d75a75772fc9ce9efaf731cc29f36f316b608d5ea0b0e86a80316063",
@@ -3573,12 +3573,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Category counts differ from numeric estimates. Preserve requested category/rank order and zero baseline; width and rendering API are cosmetic. Sorting syntax is taught in the Change transition.",
-      "fullContractSHA256": "56172e619b18e0e2ef6159e1a1da6b0e1b90aa59695c47451fdde6b93a96a14e",
-      "executionStatus": "passed"
+      "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
+      "fullContractSHA256": "0312a0d48f4c60136ad056eedf7505a5a7c82284e14bc78cd889f0e532fee03d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V08-2": {
-      "sha256": "e84dbc9571b7d12b63307a17a7eb4195bf1e993b603e6dfabbe3f4ffad2ef58c",
+      "sha256": "2770599b497b3848c1fdc93a454560e2668dd7176c5342c1fb13609a28c735bb",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3590,12 +3590,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Category counts differ from numeric estimates. Preserve requested category/rank order and zero baseline; width and rendering API are cosmetic. Sorting syntax is taught in the Change transition.",
-      "fullContractSHA256": "4d9812d5445da429f963aead32324423cb3923d762126f01b74e70c22434f0fc",
-      "executionStatus": "passed"
+      "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
+      "fullContractSHA256": "8da21fb38bfc1b2e7ce18aa00fddf588f40a309382adaf655ccf75958ec6a22a",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V08-3": {
-      "sha256": "2bd3712eb3f231b0ef3877e85a7cb22ff94bd61b344462d228cfa53abb85a908",
+      "sha256": "5bdb89bcd7dce3fb0f47c2ce8e52e06dd651372ef4b55b923b85f737d6ab29df",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3607,12 +3607,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Category counts differ from numeric estimates. Preserve requested category/rank order and zero baseline; width and rendering API are cosmetic. Sorting syntax is taught in the Change transition.",
-      "fullContractSHA256": "fe75a81c62fc6a3dad69e22cf28154d45b1d96c6aa56c9487499b7c3e43c2bd3",
-      "executionStatus": "passed"
+      "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
+      "fullContractSHA256": "578f4e7b52853c2b653d5504fd85e12ac430d29faceff45f22dd2599757fc040",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR1-1": {
-      "sha256": "bef7a33c3ec6b495a670f9b1848ddb051fa441b5c1cf837159ec5d86e37a1039",
+      "sha256": "3f50581d73305ba799e112736311da699d3d595757038aff527105e94945e008",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3624,12 +3624,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A question and data types determine chart choice before plotting syntax. This is the first displayed lesson; quoted chart names may vary in capitalization but a wrong chart type fails.",
-      "fullContractSHA256": "834502b053982ac06f5429edd9fbfd6a523d4ab0092b34ee38c279bf9170820c",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "8cd28da96a06e5f93bd3bda626c59443e820ad62c98acc6169c00f65f00cf28b",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR1-2": {
-      "sha256": "9d2a3c6cc86a587e188286ced16b3ea66a3f856fea1645ac7d393d0775c256ba",
+      "sha256": "67de0eda4a19ceaf8649d896c325b733c5ed1cc068404922e2df346cb5b3f032",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3641,13 +3641,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "One observation creates a paired x/y point, after the stated filter where applicable. Models consistently use Seaborn; Matplotlib/Series equivalents are accepted and omitted/mispaired observations rejected. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "6387d15019c4f3efa2c0f7c4a9d73eee311293d3aff3aa9b2277fda575ef3f13",
-      "executionStatus": "passed",
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "39a31976dfeeae0a9a512d39dc8c76182563f383fc852dd777c867044ce8eaba",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "VR1-3": {
-      "sha256": "d05aef212927f366d0ff24534d03e3271c951665473b18cdbb995b148f9321b4",
+      "sha256": "9f7df902f0c443662e1cb32b445b3cfd589e07944fe06c15cca1457f0603ecf1",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3659,9 +3659,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Histogram counts and bin edges carry meaning. Matplotlib hist is accepted when the rendered distribution matches; default canvas size and bar styling are incidental.",
-      "fullContractSHA256": "5cfe161391b3115460dcda5cfc1fba4d9dd05927318ed8ff4859c87e124a871f",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "c19ad64556633fe140db6fb62a540f41f2974e723c86129fbecd9d6d2c8b4b2f",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V18-1": {
       "sha256": "8d0591491a335d011e947046f50f0a266e90b1d51675de08ed88336da654868f",
@@ -3676,9 +3676,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Raw time-ordered lines preserve all chosen observations and stated markers. Transfer model uses Seaborn while its retained transition explains the equivalent ax.plot route.",
-      "fullContractSHA256": "02e3ca35ec663a1d794399cb792296dbb44ad834b2de4fee5bf12a2157129a49",
-      "executionStatus": "passed"
+      "note": "Retain Follow ordered raw observations and Change time-window eligibility. Transfer now sorts scrambled time, identifies the chronological baseline and derives changes relative to it, instead of another interval filter.",
+      "fullContractSHA256": "a9f0188c7f161b3da34d4d3c8a6162d8de40e870c57ad0bc5ca4fd80b0c15fbd",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V18-2": {
       "sha256": "ce1d55a11dbd26f7b65fd88596115b48682841ce3310bc1794a497761a09714b",
@@ -3693,12 +3693,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Raw time-ordered lines preserve all chosen observations and stated markers. Transfer model uses Seaborn while its retained transition explains the equivalent ax.plot route.",
-      "fullContractSHA256": "7f26fd9f884a4db15c6735155ba136fb0227e59d0f0b75884299538c08cbf0a8",
-      "executionStatus": "passed"
+      "note": "Retain Follow ordered raw observations and Change time-window eligibility. Transfer now sorts scrambled time, identifies the chronological baseline and derives changes relative to it, instead of another interval filter.",
+      "fullContractSHA256": "0217aec6c4f283ee1f5b91a630cc9f8eaa6a4b0fcb90218bfb243d2d129e209e",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V18-3": {
-      "sha256": "4401bb8794ba4e21725f418df0924a0ac23d11d98e724f780a862b3eed8ae74b",
+      "sha256": "3a5c2b4a47cd6e714530c4a1426a634b3e89731484a5f5400be6abec01e02e43",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3710,9 +3710,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Raw time-ordered lines preserve all chosen observations and stated markers. Transfer model uses Seaborn while its retained transition explains the equivalent ax.plot route.",
-      "fullContractSHA256": "26b0e2af0bf1271b21b3bbc03691bb43d6d1ec4992033d40eed60a4a41827881",
-      "executionStatus": "passed"
+      "note": "Retain Follow ordered raw observations and Change time-window eligibility. Transfer now sorts scrambled time, identifies the chronological baseline and derives changes relative to it, instead of another interval filter.",
+      "fullContractSHA256": "602c3e5d278c08bf1fdf1e4c635b1cff2f3216d24ca23c39e2fdededd7188a02",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V09-1": {
       "sha256": "718982d4ac1667d83b347804dac0a818345436d9489b37c30966f52bf792ab1e",
@@ -3727,12 +3727,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Bars summarize the requested mean/median and eligible population without replacing it with a count. Matching prepared Matplotlib bars are accepted; heights, labels and intentional order remain checked.",
-      "fullContractSHA256": "167ab1bc42e9658c291375886ecaf63826b2a060dcdf93fc67671bf13bdd94b2",
-      "executionStatus": "passed"
+      "note": "Repair method mismatch and nondiscriminating medians: the final Transfer uses Seaborn summaries, with median inferred from a typical-cost brief. Asymmetric Change data and a Transfer outlier make means observably wrong. Prepared, reordered equivalent median bars remain valid.",
+      "fullContractSHA256": "35ca5fb8a44a838ddaceeacab8d83260fc359a80e4227479a846219a69cfc7ae",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V09-2": {
-      "sha256": "f738616e13b43563d93ad8536550386d79055e78ddffa98aafc7c9afa97251f6",
+      "sha256": "82a3b9f4b2acbbc5d36d087248acc78a8ef06725c72bb81f99387f4667680f9a",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3744,12 +3744,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Bars summarize the requested mean/median and eligible population without replacing it with a count. Matching prepared Matplotlib bars are accepted; heights, labels and intentional order remain checked.",
-      "fullContractSHA256": "56ea2e71e33b790d69de51ace1132fec18295727d6db9827885e7463124e5ba3",
-      "executionStatus": "passed"
+      "note": "Repair method mismatch and nondiscriminating medians: the final Transfer uses Seaborn summaries, with median inferred from a typical-cost brief. Asymmetric Change data and a Transfer outlier make means observably wrong. Prepared, reordered equivalent median bars remain valid.",
+      "fullContractSHA256": "a27536cb46a426f113ef30fcd906c06e16647f49d21ea9df88627ac5b92cb71d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V09-3": {
-      "sha256": "8efff89dc394d443e2dc94eacd416f81f977ec1e3b8611d5a8e6a1e71859308e",
+      "sha256": "f72e6a991379cdcc4749eeb11cd958f7c78dbc3fa5994c9da95b9e96028e7fa5",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3761,9 +3761,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Bars summarize the requested mean/median and eligible population without replacing it with a count. Matching prepared Matplotlib bars are accepted; heights, labels and intentional order remain checked.",
-      "fullContractSHA256": "b9c260c2b8265826f73d411055e505e1faaaf980470be9c0b39acd19b57286c4",
-      "executionStatus": "passed"
+      "note": "Repair method mismatch and nondiscriminating medians: the final Transfer uses Seaborn summaries, with median inferred from a typical-cost brief. Asymmetric Change data and a Transfer outlier make means observably wrong. Prepared, reordered equivalent median bars remain valid.",
+      "fullContractSHA256": "6a50dcb9f33cc98650df1a4548eb86cc8a47b7c5b18fa7a190ee4615b32555e1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V13-1": {
       "sha256": "556655659d0ee79ef1e86f919307cf2f55ff65d1ae5fa8efb7e84e19d449ca4a",
@@ -3778,12 +3778,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Strip plots keep all raw measurements; jitter affects only the category direction. When jitter=False is stated, displacement is rejected rather than normalized away.",
-      "fullContractSHA256": "841dc69ac643978940291211ee5f4256623a928f80b7d89245588aa8c47a8f9e",
-      "executionStatus": "passed"
+      "note": "Retain raw-value/jitter versus coincident-point Change. Its new fixture actually contains repeated measurements. Transfer derives group order from medians while retaining every raw record, rather than using the common duration population.",
+      "fullContractSHA256": "89f2ee51661f865ed6ba43d7e0b87a42c262aa5246e8859a15515a41b65e7905",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V13-2": {
-      "sha256": "3e3e0ce4dda8d61c30feb60bfd8f30e9ad67381eb6b5c36b6fc3debc7aa7d9fe",
+      "sha256": "c6b835f79ca3d0cc8b07b98c068a16a53d26a9eb08a8007629611155f98c2cc0",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3795,12 +3795,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Strip plots keep all raw measurements; jitter affects only the category direction. When jitter=False is stated, displacement is rejected rather than normalized away.",
-      "fullContractSHA256": "4a3a90153206d8cf922af4198aa3f9b7bf1956494ad2dc7feba39749b40472d0",
-      "executionStatus": "passed"
+      "note": "Retain raw-value/jitter versus coincident-point Change. Its new fixture actually contains repeated measurements. Transfer derives group order from medians while retaining every raw record, rather than using the common duration population.",
+      "fullContractSHA256": "a6ff5435095dac3ac6868764c322586036234a2a560eead5bdb4e834fce4970d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V13-3": {
-      "sha256": "e0266c35bd2f49c7f8887551353940be092acb9c883c7d88d53048be34103a8b",
+      "sha256": "0ec426e6aa4a37d531facc0412aebf2b070bc91e4b4973df1fdd799b284f7025",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3812,9 +3812,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Strip plots keep all raw measurements; jitter affects only the category direction. When jitter=False is stated, displacement is rejected rather than normalized away.",
-      "fullContractSHA256": "ac5c64e8b30faea98950b9a77e10ba582e6ccd2a9c1ca8f77425be5fa1851ffb",
-      "executionStatus": "passed"
+      "note": "Retain raw-value/jitter versus coincident-point Change. Its new fixture actually contains repeated measurements. Transfer derives group order from medians while retaining every raw record, rather than using the common duration population.",
+      "fullContractSHA256": "73616223b7d2ea9a746997b4dda625c80a3becf9dfba12b18bed11cb4b898373",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V11-1": {
       "sha256": "96e64287ee6ed6d194455e6b5503cb7acf449edf594768af835d46ac30419045",
@@ -3829,9 +3829,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Box summaries compare median, quartiles, whiskers and fliers by category. Equivalent Matplotlib boxes pass; incidental box width and artist representation do not determine correctness.",
-      "fullContractSHA256": "d80cb725a42f3fbaf144da29ee9b1d1a2861fea7a3e7b47f1aadb8095eb5b039",
-      "executionStatus": "passed"
+      "note": "Retain the box-summary concept and horizontal category/measurement orientation. Transfer ranks groups by their medians and preserves a legitimate extreme; unlike V13 it displays quartiles/whiskers rather than individual records.",
+      "fullContractSHA256": "61aceae50be342a78c4d19f3158a8fbc311b6f68a0616c46470352c3d99e69b3",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V11-2": {
       "sha256": "7561df994089fff750a7a1e4d865bb97312c7f6a1187716e1ebe5a7286c77ce9",
@@ -3846,12 +3846,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Box summaries compare median, quartiles, whiskers and fliers by category. Equivalent Matplotlib boxes pass; incidental box width and artist representation do not determine correctness.",
-      "fullContractSHA256": "b7e67f3c7f06f27299870fb03878f1ca8b2e3540f2c00df970dfa21ec0a93e81",
-      "executionStatus": "passed"
+      "note": "Retain the box-summary concept and horizontal category/measurement orientation. Transfer ranks groups by their medians and preserves a legitimate extreme; unlike V13 it displays quartiles/whiskers rather than individual records.",
+      "fullContractSHA256": "e6b02366c62d617bcd233d24902cda97c5d30523cdb719d184317d632b9d8986",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V11-3": {
-      "sha256": "35e6a7e65e46012e366dad8b814480c443de14e9619a81f5810ac61b0233330c",
+      "sha256": "e75272054155a68349ef6f16a8ac3f46f0a50890244868713eb88248a012d243",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3863,9 +3863,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Box summaries compare median, quartiles, whiskers and fliers by category. Equivalent Matplotlib boxes pass; incidental box width and artist representation do not determine correctness.",
-      "fullContractSHA256": "80fb0e1ec8ee78bb212df5db5a1d011c14074a3cf8317ca92af6d9c0826f4feb",
-      "executionStatus": "passed"
+      "note": "Retain the box-summary concept and horizontal category/measurement orientation. Transfer ranks groups by their medians and preserves a legitimate extreme; unlike V13 it displays quartiles/whiskers rather than individual records.",
+      "fullContractSHA256": "0fc71020be3d5038e914b1b7207399fbbff45d9b36b87e7c8072f955777105a2",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V03-1": {
       "sha256": "67475089ffcfafc620905aa6759aa34a5ba93c52d8f8f2ec992383b805b864ca",
@@ -3880,16 +3880,16 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Hue encodes semantic group identity while this lesson keeps marker size/shape constant. Legend mappings are checked as data; arbitrary palette choice is accepted unless specified.",
+      "note": "Repair a hue-only noun swap: Change maps a varying numeric magnitude through colour. Transfer deliberately removes mappings for an overall paired relationship; both choices are checked as encoding semantics, not palette styling.",
       "previewReview": {
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "5bed93562d6e87e0775a2d9156c4cf911af0f8784199229e0f35b478dda8cdab",
-      "executionStatus": "passed"
+      "fullContractSHA256": "093efa59858177be8aad51c1d9f6ecd487b626c0ff32f06d392e4166791d8b06",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V03-2": {
-      "sha256": "34643390b113433793fd7ef3ec293b31ffd83bad64e4b5ca3c19a99474a5ef45",
+      "sha256": "b00a63e192eb6558d87897015416a01c82715b8ae111d6564c72e54b48856c6a",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3901,16 +3901,16 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Hue encodes semantic group identity while this lesson keeps marker size/shape constant. Legend mappings are checked as data; arbitrary palette choice is accepted unless specified.",
+      "note": "Repair a hue-only noun swap: Change maps a varying numeric magnitude through colour. Transfer deliberately removes mappings for an overall paired relationship; both choices are checked as encoding semantics, not palette styling.",
       "previewReview": {
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "64c5a4c9c6fdab13f05453bb61b5b43fc348875b2a4827dcda729f5fada6d15d",
-      "executionStatus": "passed"
+      "fullContractSHA256": "21fbaadd8371baeab1a84e4805e443d1dc96d68ab7222a8d1e70ef82d1ed5c9b",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V03-3": {
-      "sha256": "2b63ae54b47bd056ca62758d88442679574036ad817cc44ae6cd679fcb0be3a0",
+      "sha256": "7da78ba32767d556d6c03b20c7141fb62c374499a75d8267ab23b7221ed056dc",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3922,13 +3922,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Hue encodes semantic group identity while this lesson keeps marker size/shape constant. Legend mappings are checked as data; arbitrary palette choice is accepted unless specified.",
+      "note": "Repair a hue-only noun swap: Change maps a varying numeric magnitude through colour. Transfer deliberately removes mappings for an overall paired relationship; both choices are checked as encoding semantics, not palette styling.",
       "previewReview": {
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "0eb826a58e5fdd3f964d27bc2dac94c1d0c5098ed0d42c0a6f6a8d06abc69bdc",
-      "executionStatus": "passed"
+      "fullContractSHA256": "00f6c318e4c123db698467676a0ff04ad2288a87eae70063d74ca6eb6ae79ba3",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V17-1": {
       "sha256": "3415f1631251b92257e456acff40b17b795d77c613fa9d2b5f64e5b712cbff2d",
@@ -3943,9 +3943,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Hue/style/size encode the requested variables consistently. Canonical group partitions and relative magnitude allow equivalent marker symbols/ranges while detecting lost or wrong mappings.",
-      "fullContractSHA256": "0841057789c5b264b9432fad4e2d89d3e1cbe07ff353d882293551befb5e8f89",
-      "executionStatus": "passed"
+      "note": "Retain Follow redundant group identity plus simple numeric size and Change removing magnitude while retaining group cues. Transfer now derives speed in consistent units and encodes that rate rather than raw duration. This requires arithmetic plus meaningful channel selection.",
+      "fullContractSHA256": "13e0452f2a4f50d81368c8f7c6b9c72b3bea4376615835442971c257c4bc25e0",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V17-2": {
       "sha256": "454a28e3412a37006f2b245eb1661baae088f5202a8773b34d010a37a4ae5a7f",
@@ -3960,12 +3960,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Hue/style/size encode the requested variables consistently. Canonical group partitions and relative magnitude allow equivalent marker symbols/ranges while detecting lost or wrong mappings.",
-      "fullContractSHA256": "c35c40871ddb638c5a9001dfb21af04f5b5e921ce3c577f405e5de9e4afc7d20",
-      "executionStatus": "passed"
+      "note": "Retain Follow redundant group identity plus simple numeric size and Change removing magnitude while retaining group cues. Transfer now derives speed in consistent units and encodes that rate rather than raw duration. This requires arithmetic plus meaningful channel selection.",
+      "fullContractSHA256": "c075889959a2e3a26feca1e3edd11f778372873f6ea1701a2d3b6e73d85d3fc0",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V17-3": {
-      "sha256": "045aa8bae31d9cc9fe0067dcb71e1decba5c714bc1deb89cb082fe9f2605c3e7",
+      "sha256": "aa973bcc7ca3a35cd7966990245dee045bf8e10d723a7797928ed66efacf347f",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3977,12 +3977,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Hue/style/size encode the requested variables consistently. Canonical group partitions and relative magnitude allow equivalent marker symbols/ranges while detecting lost or wrong mappings.",
-      "fullContractSHA256": "10914bcd9aa2f1b91d972762393dea32ed2b57a2323d9af34bfc314efd8e9710",
-      "executionStatus": "passed"
+      "note": "Retain Follow redundant group identity plus simple numeric size and Change removing magnitude while retaining group cues. Transfer now derives speed in consistent units and encodes that rate rather than raw duration. This requires arithmetic plus meaningful channel selection.",
+      "fullContractSHA256": "245725657d863fcfdf746f965976c3bf4556155f5f918c44f2d36ff32515a69e",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR2-1": {
-      "sha256": "4401bb8794ba4e21725f418df0924a0ac23d11d98e724f780a862b3eed8ae74b",
+      "sha256": "3d5393a69ab551a3fc732f6bfebf290ed1c2a20f6af072a4f100a17f36df80c6",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -3994,12 +3994,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Raw time-ordered lines preserve all chosen observations and stated markers. Transfer model uses Seaborn while its retained transition explains the equivalent ax.plot route.",
-      "fullContractSHA256": "9153d260824be15d879bdbbf14a367a308f063b38fe060fd74c644fa46322964",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "c45c4a5df2aa9a41db6c78213e14574cd4b0a08f385b42b5f4f9a52ea006c9e7",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR2-2": {
-      "sha256": "8efff89dc394d443e2dc94eacd416f81f977ec1e3b8611d5a8e6a1e71859308e",
+      "sha256": "76cc4ea58d9c651fd08078c8756afd4dc6e9e90d08789a86bc4544c35538d7b2",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4011,12 +4011,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Bars summarize the requested mean/median and eligible population without replacing it with a count. Matching prepared Matplotlib bars are accepted; heights, labels and intentional order remain checked.",
-      "fullContractSHA256": "18bda25310a65eb63d8b39189915d720604e8e289e4a9305114a944182ce87c7",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "97f6c2ae44675ea54b954279299aa04c37b6b2af61c972d1f226e2f8c42e9783",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR2-3": {
-      "sha256": "e0266c35bd2f49c7f8887551353940be092acb9c883c7d88d53048be34103a8b",
+      "sha256": "f71542bd02839ebc4d2426164a4729465b827ab798ac01b9b07c9ba11e35ce3a",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4028,9 +4028,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Strip plots keep all raw measurements; jitter affects only the category direction. When jitter=False is stated, displacement is rejected rather than normalized away.",
-      "fullContractSHA256": "35e840c35e07182ad55fbc27f3e793a91be7cb850c1b903fb654a51ec6bc55ac",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "97344d37a8441faeba0777fe2dbd3f434c9d607a92de3236aab6ea87dbcb4dec",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V22-1": {
       "sha256": "77d034cb97cd1a01633fea6edb255840938f153922658c6dac865227072feb3a",
@@ -4045,9 +4045,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Correlations, matrix labels, cell values/annotations and stated diverging scale must agree. Unspecified annotation precision can vary when its numeric text correctly rounds the actual cell. Equivalent imshow is accepted after label/cell-coordinate normalization; wrong variables, cell annotations and scale are rejected.",
-      "fullContractSHA256": "d5c437be0e34c4bd6dc9395443e8439280a1e54c64efa5c693c23254f07ed9b6",
-      "executionStatus": "passed"
+      "note": "Retain fixed signed correlation meaning. Transfer now selects three measurements and excludes a plausible numeric identifier; dimension/content and the fixed scale discriminate wrong choices.",
+      "fullContractSHA256": "2f87f7eef5f89aeb830e51a64a21da67c2bfea281e44184f7349ea52aa05ad09",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V22-2": {
       "sha256": "6e37fea08e187c317d3a167e7c5f1f25378fe74a0225af25d5a26ad75d1f7497",
@@ -4062,12 +4062,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Correlations, matrix labels, cell values/annotations and stated diverging scale must agree. Unspecified annotation precision can vary when its numeric text correctly rounds the actual cell. Equivalent imshow is accepted after label/cell-coordinate normalization; wrong variables, cell annotations and scale are rejected.",
-      "fullContractSHA256": "665f769975b2f6c6772f7bb57496435db77004581a7342bac429810a83a788de",
-      "executionStatus": "passed"
+      "note": "Retain fixed signed correlation meaning. Transfer now selects three measurements and excludes a plausible numeric identifier; dimension/content and the fixed scale discriminate wrong choices.",
+      "fullContractSHA256": "f5d6771b50735688ed2cc82bd9f005dd857b1c14ce6c4ea8d59d070fc12b1a10",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V22-3": {
-      "sha256": "e9d7fd98cd7bf4bf89b8e2c1019e7878bef9c80814602e5076ece69deccd19ae",
+      "sha256": "d76486ea390c116d313a93f9c6e44d3d2165f36acd1de97e1b5a433f0e9cc4eb",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4079,9 +4079,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Correlations, matrix labels, cell values/annotations and stated diverging scale must agree. Unspecified annotation precision can vary when its numeric text correctly rounds the actual cell. Equivalent imshow is accepted after label/cell-coordinate normalization; wrong variables, cell annotations and scale are rejected.",
-      "fullContractSHA256": "b5bb33ee2b9bba6a01d6e9f93bc88ffbd5ed3e3789a12e3d11d0da222fef06f2",
-      "executionStatus": "passed"
+      "note": "Retain fixed signed correlation meaning. Transfer now selects three measurements and excludes a plausible numeric identifier; dimension/content and the fixed scale discriminate wrong choices.",
+      "fullContractSHA256": "ea23630f17850efffffb7ce23c65443b09db36a6609a768c65a3045fc9190371",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V24-1": {
       "sha256": "cc39b5d3f9fdcca5def1bd5148495b1de37047c3f4868d21df1d5ac97fa6a0db",
@@ -4096,9 +4096,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "The intended left/right or top/bottom panel arrangement carries meaning. Layout is checked independent of subplots API; only the stated 6 by 8 inch Change canvas stays exact.",
-      "fullContractSHA256": "2124e21e0a3ff5786696bd71b4b829190de88db52724065984c2393200a009a0",
-      "executionStatus": "passed"
+      "note": "Retain Axes ownership and Change panel arrangement. Transfer applies a documented quality flag consistently to two views; invalid extremes make a one-panel-only filter observably wrong.",
+      "fullContractSHA256": "85fa82352a55c20e47c3bb20a94ccb613aea801b9203b13feb46be716897e181",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V24-2": {
       "sha256": "cae7178f12ad75e234047e7f726d0eb3524cb30b306f0efaba4298791a59a1cd",
@@ -4113,12 +4113,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "The intended left/right or top/bottom panel arrangement carries meaning. Layout is checked independent of subplots API; only the stated 6 by 8 inch Change canvas stays exact.",
-      "fullContractSHA256": "bf0d2cd6abc478b822cdef50ec7844cf559cb955b54a3adfc37ea426c2ab7d19",
-      "executionStatus": "passed"
+      "note": "Retain Axes ownership and Change panel arrangement. Transfer applies a documented quality flag consistently to two views; invalid extremes make a one-panel-only filter observably wrong.",
+      "fullContractSHA256": "9e8af807ffeacf4f7ee0835ef3ab649dfe0aa811a249e73f337abcc1dd2ed882",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V24-3": {
-      "sha256": "62b5231784385e560be8798f4e3d8b431744632565da9e718d8fbb20aee49f5e",
+      "sha256": "47e1e0d4f412f13ed4cc6e79838699ff602ec9db02f08b9a39fdf0bf2df3aa6a",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4130,9 +4130,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "The intended left/right or top/bottom panel arrangement carries meaning. Layout is checked independent of subplots API; only the stated 6 by 8 inch Change canvas stays exact.",
-      "fullContractSHA256": "17ffc0cd6ae6785fe4409abe829e3946a029d94da6125a37269ad089724adc33",
-      "executionStatus": "passed"
+      "note": "Retain Axes ownership and Change panel arrangement. Transfer applies a documented quality flag consistently to two views; invalid extremes make a one-panel-only filter observably wrong.",
+      "fullContractSHA256": "6070011e379ce073fc696f1980e9914da700db1ca74ae0e38a8409c87f550669",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V25-1": {
       "sha256": "4224ea3ed7f4c32e6b7d734ce3221d07f6f0629d1326b54452bbcf45149346b3",
@@ -4147,9 +4147,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Colourblind palette, explicit group order and legend title are intentional teaching requirements. Ordinary encoding lessons do not inherit those incidental legend-title/order constraints.",
-      "fullContractSHA256": "82d76b7925dcf7e607d3d620342da339468a2b3c9b8174f1ecbdd7bd43953ca9",
-      "executionStatus": "passed"
+      "note": "Retain accessible palette/legend and Change explicit overlap/order. Transfer now diagnoses an incomplete colour-only draft, clears it, redraws all evidence with redundant cues and restores the complete legend. Clear is explained in a neutral transition, before this core-path use.",
+      "fullContractSHA256": "58492a141898595cbffd59118f85721d29d7c83e9255a6788796b7dfef9c52a6",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V25-2": {
       "sha256": "ad84a67994c1cc9b34bf3a440bccc3747a11d2058841105b336d78e76a3fd5dc",
@@ -4164,12 +4164,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Colourblind palette, explicit group order and legend title are intentional teaching requirements. Ordinary encoding lessons do not inherit those incidental legend-title/order constraints.",
-      "fullContractSHA256": "dcd836b34e42558b1d1f03783d089488bf3e47befc4701d87a409f8239b7a2f6",
-      "executionStatus": "passed"
+      "note": "Retain accessible palette/legend and Change explicit overlap/order. Transfer now diagnoses an incomplete colour-only draft, clears it, redraws all evidence with redundant cues and restores the complete legend. Clear is explained in a neutral transition, before this core-path use.",
+      "fullContractSHA256": "c4b57f3467d29406f4ec56de29c14537d0d409710e01e4822f503a1742cf0a49",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V25-3": {
-      "sha256": "f54bd8f76c20ec6b99159d2f9df64f67c371a5bb00776a6cf8cf1040fbe01291",
+      "sha256": "b497fb24a935ec98432308fd29d242655c103556b3eb9466836f521405e7c7a8",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4181,9 +4181,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Colourblind palette, explicit group order and legend title are intentional teaching requirements. Ordinary encoding lessons do not inherit those incidental legend-title/order constraints.",
-      "fullContractSHA256": "6d70eff806ee4825c957e360b25d3737b87d9f6e5cf865c4a9c11eb9b210d865",
-      "executionStatus": "passed"
+      "note": "Retain accessible palette/legend and Change explicit overlap/order. Transfer now diagnoses an incomplete colour-only draft, clears it, redraws all evidence with redundant cues and restores the complete legend. Clear is explained in a neutral transition, before this core-path use.",
+      "fullContractSHA256": "c7b82f75cb605aa2a48636c9567c009291a86bb311059a378bb76daede4620ce",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V26-1": {
       "sha256": "2e5c0cdbfc0700b8d04be9e7f4a7f97a89127d064d4229545bf62cd7c3ec8fcf",
@@ -4198,9 +4198,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Scale, baseline, requested limits and tick rotation affect interpretation. The zero-baseline Follow task does not require a hidden automatic upper limit; all observations remain necessary. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "ef466d4cb04efec0c06c5063ec1d509f0d8fb78210830154a3f703208119ac11",
-      "executionStatus": "passed",
+      "note": "Retain: logarithmic spacing over several orders of magnitude, dashboard limits and a stated outcome scale serve different purposes. All tasks preserve every observation; axes work remains separate from plotting.",
+      "fullContractSHA256": "564a5bb90c9992e75fd8618a388d06bebe9233e275d6407e7adaa128f8d0e5db",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V26-2": {
@@ -4216,13 +4216,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Scale, baseline, requested limits and tick rotation affect interpretation. The zero-baseline Follow task does not require a hidden automatic upper limit; all observations remain necessary. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "36460ad140da76757dd267c158fdd68f8bc857cb8c1e60b0be7127fd2545dcc6",
-      "executionStatus": "passed",
+      "note": "Retain: logarithmic spacing over several orders of magnitude, dashboard limits and a stated outcome scale serve different purposes. All tasks preserve every observation; axes work remains separate from plotting.",
+      "fullContractSHA256": "0e0d9bcbbe45e8ecf9ee2af3d8286b5e9802149bca12a790d976710055c2d4dd",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V26-3": {
-      "sha256": "391993adcc940df8cd6247b4f8fa9652078e43faada687dd04725f1a08324288",
+      "sha256": "992e87ee0858045727561175a17bc6d1d1e09a8ba0526d4c9d5276504515ad4f",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4234,9 +4234,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Scale, baseline, requested limits and tick rotation affect interpretation. The zero-baseline Follow task does not require a hidden automatic upper limit; all observations remain necessary. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "86273833e9484de54cf50f5afb285bcce1c966fc3427b0c3fb639e11012531ea",
-      "executionStatus": "passed",
+      "note": "Retain: logarithmic spacing over several orders of magnitude, dashboard limits and a stated outcome scale serve different purposes. All tasks preserve every observation; axes work remains separate from plotting.",
+      "fullContractSHA256": "16b0b02cbf242e95e3264386732607b977da622089c4702a15f52995cd781549",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V27-1": {
@@ -4252,9 +4252,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Reference orientation/location, dashed styling and explanatory label identify the benchmark. Dropping the reference or moving it to the wrong axis fails. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "abcc68369626a267deaf0669db276377dfab62b2cbc58783352aec585345f5dd",
-      "executionStatus": "passed",
+      "note": "Retain: empirical median, empirical mean and a chosen policy threshold are scientifically different benchmarks. The review changes orientation to an external x-unit design limit that differs from the observed median.",
+      "fullContractSHA256": "8965c6d3a0065ebdb924e4b56880df19d0ba7403f454c72a537fe780cd8bbf0a",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V27-2": {
@@ -4270,9 +4270,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Reference orientation/location, dashed styling and explanatory label identify the benchmark. Dropping the reference or moving it to the wrong axis fails. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "e887d9fddcbd7dc5a60a235e2a6ee847d4ec976d5f00bc81c09ca918f6aa7545",
-      "executionStatus": "passed",
+      "note": "Retain: empirical median, empirical mean and a chosen policy threshold are scientifically different benchmarks. The review changes orientation to an external x-unit design limit that differs from the observed median.",
+      "fullContractSHA256": "6dea5d9cada7135173664deae99af0503d97d515faa3cd368a9753d2b2390880",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V27-3": {
@@ -4288,13 +4288,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Reference orientation/location, dashed styling and explanatory label identify the benchmark. Dropping the reference or moving it to the wrong axis fails. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "e5242e238b5c6ddd64c40e3eb1366a9219af3d282e15bfb8a866b222378390f0",
-      "executionStatus": "passed",
+      "note": "Retain: empirical median, empirical mean and a chosen policy threshold are scientifically different benchmarks. The review changes orientation to an external x-unit design limit that differs from the observed median.",
+      "fullContractSHA256": "4986f97bc55c8951f16d2a102ff4bfbbb13db0092b6f82679648fd6bbffc2df2",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "VR3-1": {
-      "sha256": "e9d7fd98cd7bf4bf89b8e2c1019e7878bef9c80814602e5076ece69deccd19ae",
+      "sha256": "b3337310aa4287705d9a11e4115097df0dff168d91035855f380b3eb0d2ca9bc",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4306,12 +4306,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Correlations, matrix labels, cell values/annotations and stated diverging scale must agree. Unspecified annotation precision can vary when its numeric text correctly rounds the actual cell. Equivalent imshow is accepted after label/cell-coordinate normalization; wrong variables, cell annotations and scale are rejected.",
-      "fullContractSHA256": "27dda9d64c009b81a6db348a12cf0a3ab2440168247477b50debe6fbc716f669",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "d03092de450113ed6a8bc91749af4d525170b01f5319fbba01ac1a451ccdea3e",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR3-2": {
-      "sha256": "62b5231784385e560be8798f4e3d8b431744632565da9e718d8fbb20aee49f5e",
+      "sha256": "3d595d4766e68a168eb28bf9a6fd235a6ae4965d415346cc5a2b84e26409c703",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4323,12 +4323,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "The intended left/right or top/bottom panel arrangement carries meaning. Layout is checked independent of subplots API; only the stated 6 by 8 inch Change canvas stays exact.",
-      "fullContractSHA256": "70c1043851c6bd7cfc6a7293856eaafe79e53bd64cc0b9d7835a21c3eef4ec0b",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "07d8af690d2d4622a7f73bf40d31a9c1715a0da32cab7e1dc6a5af00109098cf",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR3-3": {
-      "sha256": "3412ac3cd95602d63d8f539267f964036a52cbed59b74faae188f1afd09e3282",
+      "sha256": "e3813d22719e80d2c4daaf51f19845c916294816fdd579749b81e715a533f45f",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4340,13 +4340,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Reference orientation/location, dashed styling and explanatory label identify the benchmark. Dropping the reference or moving it to the wrong axis fails. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "b19009329df602949cc2c8e2bb08d7cb39df88c09c7c5953951b9b59014f2416",
-      "executionStatus": "passed",
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "92d859d5b16157d50d43b1f2f8ef98db937951b41bfbc80f56c0da5d6da892f9",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V29-1": {
-      "sha256": "11a09043fe277e0d922d6393daa7b0b2c4dee2e0f33b3eaef993225f1ba13fe1",
+      "sha256": "68ef31ab7c7a1f915dd1c3ef25ab5472bec028f275a0f6fc5bacdd35a755cdd5",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4358,12 +4358,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Precomputed means and sums produce different exact heights. Equivalent summary-bar drawing is accepted while values, selected population, zero baseline and explicit rank order remain required.",
-      "fullContractSHA256": "92713984cd0d7b833f316caaa6465433a9b5fad9490df287ce9c390e456ea1f2",
-      "executionStatus": "passed"
+      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
+      "fullContractSHA256": "8add3116f5ae2311b5592ae52b89c720477ec580c823f6d759700438e55c11a6",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V29-2": {
-      "sha256": "455f323321cfa4750633d5527e8119d87339968699c134690b5ac2c40c948725",
+      "sha256": "c33ad7fc1f077df23e6e497ea917133f007cd787b1fcc4b13fee8e1f691ef10e",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4375,12 +4375,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Precomputed means and sums produce different exact heights. Equivalent summary-bar drawing is accepted while values, selected population, zero baseline and explicit rank order remain required.",
-      "fullContractSHA256": "164ce29abea44a798fd4d35b8d972e3c394ae15822270362678a7ed4ad0f3b93",
-      "executionStatus": "passed"
+      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
+      "fullContractSHA256": "d712c84b6ad368cb0ccc05fd699d4ffdc5c17306afd5b40b664e241a0e83e409",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V29-3": {
-      "sha256": "b194399b2b0e865c29974eab8b416c51c6756aacff5d48993bda8270cd56ebf5",
+      "sha256": "42594c0acdd19882ea8055004a3be7aa7820339a695f0b0ef88ee6c7e54c4ae4",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4392,9 +4392,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Precomputed means and sums produce different exact heights. Equivalent summary-bar drawing is accepted while values, selected population, zero baseline and explicit rank order remain required.",
-      "fullContractSHA256": "72208a1b97566f0da0440fe6515b0c1bad9b25703c43bcc12d189912e591396a",
-      "executionStatus": "passed"
+      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
+      "fullContractSHA256": "29c86829ea0154b59c9c64316f32297e80a7c0a02d049ae94a6745346d40f5aa",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V34-1": {
       "sha256": "93c9179d94a65d5b975214e2312181c92c1169a0bd54cfc95aae5b3bcdfff765",
@@ -4409,9 +4409,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Export the finished same Figure as chart.png at 150 dpi with tight bounds before display. Save-call metadata and actual rendered file are checked; Transfer model consistently uses Seaborn. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "57b69af59765756d4a6910cf36dc18f004e7a97ec6cc43ff012f524be4e51f24",
-      "executionStatus": "passed",
+      "note": "Retain prepared-Figure export and layout repair responsibilities. Transfer repairs units/population labels on complete paired clinic evidence before saving; the saved image must match the displayed final Figure and precede display.",
+      "fullContractSHA256": "fedc261655258ece84e0f510eea5e4ad85716500073f59a5abe6f9730643a1ac",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V34-2": {
@@ -4427,13 +4427,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Export the finished same Figure as chart.png at 150 dpi with tight bounds before display. Save-call metadata and actual rendered file are checked; Transfer model consistently uses Seaborn. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "490a39cb88af68f8ce329658952be8a4d30cd77eed865f6dd446252b2c008600",
-      "executionStatus": "passed",
+      "note": "Retain prepared-Figure export and layout repair responsibilities. Transfer repairs units/population labels on complete paired clinic evidence before saving; the saved image must match the displayed final Figure and precede display.",
+      "fullContractSHA256": "ef99c92b8558f0c9d4eb177d91aeb4382a08b851e6252a12c87f92e799830c39",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V34-3": {
-      "sha256": "65bb6afac6091e38e29ecd7151bffd0e375df1aecbf66ab81372228b92391b0c",
+      "sha256": "7fe00611c4aea99cfe7275fb2ef4d0c1f78d27bc13cfa74cc2fce0598c22dcaf",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4445,9 +4445,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Export the finished same Figure as chart.png at 150 dpi with tight bounds before display. Save-call metadata and actual rendered file are checked; Transfer model consistently uses Seaborn. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "6397b16d66fe38494031d20a7c0771250bbec22c35aa76d2bbe0321da9ba9a9a",
-      "executionStatus": "passed",
+      "note": "Retain prepared-Figure export and layout repair responsibilities. Transfer repairs units/population labels on complete paired clinic evidence before saving; the saved image must match the displayed final Figure and precede display.",
+      "fullContractSHA256": "d49bf7425d9fbf5061f1fa8ca5f6cf9bf12c596c87b3ddf165f8cdfa7c23d676",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V36-1": {
@@ -4463,9 +4463,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Zero baselines, deliberate ordering and transparency improve honest comparison. Grading preserves full eligible data and requested encoding rather than accepting attractive but misleading subsets. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "797d79ad3443448f4f463f4378e67b183a70337210fbe8312ea826d548ba75b8",
-      "executionStatus": "passed",
+      "note": "Retain: restoring a truncated baseline, removing a logarithmic bar scale and applying a shared report range are different repairs. Graders preserve the prepared group quantities, including ranked Follow bars.",
+      "fullContractSHA256": "9042df9af76bae849fdadc8436686936d75bb515ecadb77eb53ad6bdc37a0604",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V36-2": {
@@ -4481,13 +4481,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Zero baselines, deliberate ordering and transparency improve honest comparison. Grading preserves full eligible data and requested encoding rather than accepting attractive but misleading subsets. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "0649d0acf4ff32f9ec882b430d4352a93a2c5ddff387f2dda97bb3991a0b212a",
-      "executionStatus": "passed",
+      "note": "Retain: restoring a truncated baseline, removing a logarithmic bar scale and applying a shared report range are different repairs. Graders preserve the prepared group quantities, including ranked Follow bars.",
+      "fullContractSHA256": "08941911805ffcd4dfd31a0f487b73b6ea37d264b50dcc53c937f971c17a7ec6",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V36-3": {
-      "sha256": "31cd753f594c83f54341d51210c3dd3f03587dc3af2de07004dd317b8c35e90e",
+      "sha256": "bd78f5c7a24c8d9ab0a519683cab47a768ee0c709b1784fa41ef287ff51104b4",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4499,9 +4499,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Zero baselines, deliberate ordering and transparency improve honest comparison. Grading preserves full eligible data and requested encoding rather than accepting attractive but misleading subsets. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "db5c79423451e22fcc58678d5498dd66980b17d1752bfa67821e5f6ea2598ec5",
-      "executionStatus": "passed",
+      "note": "Retain: restoring a truncated baseline, removing a logarithmic bar scale and applying a shared report range are different repairs. Graders preserve the prepared group quantities, including ranked Follow bars.",
+      "fullContractSHA256": "65a7689d7d30ebe91475be79e99e33fa8ee58827580e0b6269c4ff74cca773b7",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V37-1": {
@@ -4517,12 +4517,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Three charts answer distinct questions from the same eligible population. Number of Figures, selected records, summary values and finishing requirements remain semantic checks.",
-      "fullContractSHA256": "72751122b11c1921e75adbcc268e37d968d6f9c095cd5bf5b6d5db983fc756e4",
-      "executionStatus": "passed"
+      "note": "Repair checkpoint repetition: Follow retains a consistent three-view report. Task 2 carries pairwise completeness across every view and a genuine service-group mean. Task 3 derives row revenue and reports sold items; unit prices, counts and revenue totals are distinguishable.",
+      "fullContractSHA256": "e58846f4984f42c6fc6f5628b6321e3a766ff0d4872de624a778429e0cb0f46f",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V37-2": {
-      "sha256": "6e66eb9edaa7aa5daa133612dcf6d97e0786163774811fbdb3e45ebd7c60b813",
+      "sha256": "0f89939b092aa26efe0783cc4ad013a331ba8d0ab520ffbf5feeaa08c76327be",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4534,12 +4534,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Three charts answer distinct questions from the same eligible population. Number of Figures, selected records, summary values and finishing requirements remain semantic checks.",
-      "fullContractSHA256": "0f22753a7064f9a54d3a677ad8997882122f2da96640003e8366255c0dd1b3fc",
-      "executionStatus": "passed"
+      "note": "Repair checkpoint repetition: Follow retains a consistent three-view report. Task 2 carries pairwise completeness across every view and a genuine service-group mean. Task 3 derives row revenue and reports sold items; unit prices, counts and revenue totals are distinguishable.",
+      "fullContractSHA256": "dd82b93825ca791d3b6535d1fef759155dd7d2224ef522204cb6d4e4499e43ca",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V37-3": {
-      "sha256": "da632feccf35bbc2296b3375c33226f0e51e9c6f4fc3c1bbdc9af5698b0cec5f",
+      "sha256": "3322384b9de0317d60e2352b0a564a3c6c7e5717cf50b965dfff17d846e054bb",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4551,9 +4551,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Three charts answer distinct questions from the same eligible population. Number of Figures, selected records, summary values and finishing requirements remain semantic checks.",
-      "fullContractSHA256": "6ced35ac1c3147c95bdf7d3c1bd96feca869bfd2e3aa5b8e8af43f5be4bd7793",
-      "executionStatus": "passed"
+      "note": "Repair checkpoint repetition: Follow retains a consistent three-view report. Task 2 carries pairwise completeness across every view and a genuine service-group mean. Task 3 derives row revenue and reports sold items; unit prices, counts and revenue totals are distinguishable.",
+      "fullContractSHA256": "ceed327c7eb649e3e9be8317df6300410542c6fab39592146e1c031fa1bf77c9",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V05-1": {
       "sha256": "eca04f71066ddf75fef3eaac4985f1a49839326d2bf101cd3cfa816a42847944",
@@ -4568,9 +4568,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "KDE shape is checked against the requested smoothing and observed range. A real SciPy gaussian_kde/Matplotlib curve is tested as an equivalent computation route.",
-      "fullContractSHA256": "e5366178bf0ffb084b88fcf5bfa88ec0beb5f2b83479b735fa8999e7811f5b5a",
-      "executionStatus": "passed"
+      "note": "Retain a focused smoothing adaptation. Transfer now makes a controlled two-panel smoothing comparison with the same rows and common limits, rather than repeatedly filtering games.",
+      "fullContractSHA256": "c523ce191b441ac3b7545b4d2853ac326b3c65d242d87ebe690e09b3022a1129",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V05-2": {
       "sha256": "128b73055926c71699c1d9d4251e9b05b00d6141a86b7b52f7113218617835a7",
@@ -4585,12 +4585,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "KDE shape is checked against the requested smoothing and observed range. A real SciPy gaussian_kde/Matplotlib curve is tested as an equivalent computation route.",
-      "fullContractSHA256": "a357a3417809d7e8e8a353bcd6f09f43b7e45946ba960f5345774cc2ddab5699",
-      "executionStatus": "passed"
+      "note": "Retain a focused smoothing adaptation. Transfer now makes a controlled two-panel smoothing comparison with the same rows and common limits, rather than repeatedly filtering games.",
+      "fullContractSHA256": "acc8c8e6eb45985103273021a08ed02e24150421fc383cbea2ece57e762e5529",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V05-3": {
-      "sha256": "8bf01d2024b720bc7bacb22bf15f7f29e4d566af1ed6dc85bca36f723656a799",
+      "sha256": "e6408dfdc6aeb5aa63eda835b7220953ae4b137921f106361f225a6b0872613b",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4602,9 +4602,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "KDE shape is checked against the requested smoothing and observed range. A real SciPy gaussian_kde/Matplotlib curve is tested as an equivalent computation route.",
-      "fullContractSHA256": "23a4eef3c1155a30eff1f7962fd7fc3528882220a4deaa3a73532a379e437c1d",
-      "executionStatus": "passed"
+      "note": "Retain a focused smoothing adaptation. Transfer now makes a controlled two-panel smoothing comparison with the same rows and common limits, rather than repeatedly filtering games.",
+      "fullContractSHA256": "20db6f57023a75246130039a3ce1e18a805fa72d4ca62c353278dc4933ee4580",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V06-1": {
       "sha256": "2176af47b944203476b94987db4d76081a1c9ae2b281f0693cffb3f53b5cb48a",
@@ -4619,9 +4619,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "ECDF ties and the step convention matter. A Matplotlib steps-post line passes; a smooth/diagonal interpolation of the same vertices fails the intended cumulative chart.",
-      "fullContractSHA256": "0d19778ac5737c9bedae83b5e3ee43e75c340a2896b946a3265d0b9178c0dafb",
-      "executionStatus": "passed"
+      "note": "Retain cumulative/tail probability semantics. Transfer uses strictly-above delays with ties at the boundary and observed zeros; the ordinary ECDF and >= interpretation differ.",
+      "fullContractSHA256": "3961dae16603139cf270a6e009ef664ebb1ccb05279428a25c2c775bb31485b2",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V06-2": {
       "sha256": "c1845218aaf8cb6db3ef7224841f617180b6c16459e4edde343dce03ad226aa2",
@@ -4636,12 +4636,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "ECDF ties and the step convention matter. A Matplotlib steps-post line passes; a smooth/diagonal interpolation of the same vertices fails the intended cumulative chart.",
-      "fullContractSHA256": "c3e34cdafaeb665a718290c1989d164cde5db71440a079be8450c640dd726dad",
-      "executionStatus": "passed"
+      "note": "Retain cumulative/tail probability semantics. Transfer uses strictly-above delays with ties at the boundary and observed zeros; the ordinary ECDF and >= interpretation differ.",
+      "fullContractSHA256": "ab4875072cb4d8caa7bb33f2a691db74c003f8412df8d2bb2e3de09088c9c8d1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V06-3": {
-      "sha256": "1b8a7a0d74bf7c8319813e286773a5d02cbe2d83a68cba05525ac599f0a10611",
+      "sha256": "f34797267e05d01564fe0050fb76f346d676f1dd9a5f03c6627a0ed1afd03046",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4653,9 +4653,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "ECDF ties and the step convention matter. A Matplotlib steps-post line passes; a smooth/diagonal interpolation of the same vertices fails the intended cumulative chart.",
-      "fullContractSHA256": "6f6d348021865659a50c4e29b253ebf7e01dd026ed905b76b38f3858c6cadb21",
-      "executionStatus": "passed"
+      "note": "Retain cumulative/tail probability semantics. Transfer uses strictly-above delays with ties at the boundary and observed zeros; the ordinary ECDF and >= interpretation differ.",
+      "fullContractSHA256": "dc709b8f6e3df95c38e2408c2efdbfd7fdaa4f8d68ba912ef9fc37c204830769",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V07-1": {
       "sha256": "31e0a8a2cbd3196efa699fec27821b80a3e25816ba0e667bca2f5250623ebf2b",
@@ -4670,9 +4670,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Rug marks preserve every observation including repeated positions alongside the distribution. Required additional distribution marks cannot be replaced with the rug alone.",
-      "fullContractSHA256": "ff5ef53e07bc780e4d002758e3c9366cdc6d7bd8062defaef3dd73ec6d2f3763",
-      "executionStatus": "passed"
+      "note": "Retain the raw-evidence overlay responsibility across count and density contexts. Transfer keeps repeated observed dry-day zeros in both histogram and rug; overlapping ticks cannot establish multiplicity by visual appearance alone.",
+      "fullContractSHA256": "7a3e7aaae6d9caabdfe9be8b9eaf8ab4b07eab57b9af08ff0c47d074c1ccdf27",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V07-2": {
       "sha256": "283a1159c1d2ad86f5a66dba4cb9e4be9d4c56ab27097daa8a2c6c55acc2e7bc",
@@ -4687,12 +4687,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Rug marks preserve every observation including repeated positions alongside the distribution. Required additional distribution marks cannot be replaced with the rug alone.",
-      "fullContractSHA256": "822041711b786d5c9dac4d179b9504a9d495716cab6f6228abab632ed8454635",
-      "executionStatus": "passed"
+      "note": "Retain the raw-evidence overlay responsibility across count and density contexts. Transfer keeps repeated observed dry-day zeros in both histogram and rug; overlapping ticks cannot establish multiplicity by visual appearance alone.",
+      "fullContractSHA256": "cdfa3153a9901528b5966b23d3daf56988f1ea46162084b9ac59ee33632f392b",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V07-3": {
-      "sha256": "3e4e2f028cec6641e3600c1789e80a7b9dadf72e1a89195767d7f9fc0d554f75",
+      "sha256": "319e3f9c86ee907dc23948512c504348460011134d2de60b4a45e33667f8893e",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4704,9 +4704,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Rug marks preserve every observation including repeated positions alongside the distribution. Required additional distribution marks cannot be replaced with the rug alone.",
-      "fullContractSHA256": "039c7f3915153fcc69099bb75a2846825449d16084bc2514de3021d68cb74732",
-      "executionStatus": "passed"
+      "note": "Retain the raw-evidence overlay responsibility across count and density contexts. Transfer keeps repeated observed dry-day zeros in both histogram and rug; overlapping ticks cannot establish multiplicity by visual appearance alone.",
+      "fullContractSHA256": "bd0e895f0fb35dcab4710ddddec183c0ae854d95976602b50d9003a85c79fad8",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V10-1": {
       "sha256": "9fbe834b94005bb619725192caf62eedf76a5807b88272555d67412bbf7a5ee4",
@@ -4721,9 +4721,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Point estimates and one-SD intervals represent different components. The model and example correctly distinguish spread from a confidence interval and retain all category summaries.",
-      "fullContractSHA256": "a46d077406b012b2c02106acf1d27bc0236ea7ed4dd8833a78603f9c6bf63393",
-      "executionStatus": "passed"
+      "note": "Retain mean-plus-SD and median-without-interval contrasts. Transfer compares equal centres with different spreads against their raw observations on a shared scale; replacing SD with no interval or a different centre fails.",
+      "fullContractSHA256": "c7470b316dd8d91491a4054680f393efa31a272c5d0d2824f8482faad98a3b5b",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V10-2": {
       "sha256": "b532f09e949261129d5848e9d094c492092dc1696fdca3e2ff581c49f9e95477",
@@ -4738,12 +4738,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Point estimates and one-SD intervals represent different components. The model and example correctly distinguish spread from a confidence interval and retain all category summaries.",
-      "fullContractSHA256": "1d0dcfc272eb177ba0b2326cdc3ceb4ed70a51377edf60e562217c6101a3a523",
-      "executionStatus": "passed"
+      "note": "Retain mean-plus-SD and median-without-interval contrasts. Transfer compares equal centres with different spreads against their raw observations on a shared scale; replacing SD with no interval or a different centre fails.",
+      "fullContractSHA256": "2b9bc28e590b5dfd5cb7949a97620289372e7077888785728736772a15719a3d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V10-3": {
-      "sha256": "cdbe35c4121c6eb7778401911af5c5ff2800bf10e51ab4647261c587df4fc27e",
+      "sha256": "08829b48f48d9fa0e6b684807b11fc2b614a91d57b0abb172f1a4f7903e6d465",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4755,9 +4755,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Point estimates and one-SD intervals represent different components. The model and example correctly distinguish spread from a confidence interval and retain all category summaries. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "79f48fecc0ece09254ccea1cafb58c29e717c7be3cf0b725481b90298e64c719",
-      "executionStatus": "passed",
+      "note": "Retain mean-plus-SD and median-without-interval contrasts. Transfer compares equal centres with different spreads against their raw observations on a shared scale; replacing SD with no interval or a different centre fails.",
+      "fullContractSHA256": "f45966637ae75c47fb1bc7b2eda55c427fb6d776d1e096fb50f7d477b107bc23",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V12-1": {
@@ -4773,9 +4773,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Violin density and added raw points are separate layers. The task retains observed range and raw observations; omitting an observation is wrong even if a smoothed silhouette looks similar.",
-      "fullContractSHA256": "c64538a90a52c1f63678239c416eb69364a398cab4524bbdbfa497184b91fc87",
-      "executionStatus": "passed"
+      "note": "Retain exploratory group density and inner observed points. Transfer supplies a separate raw-point evidence layer after suppressing the built-in inner summary. This keeps tiny-sample density claims cautious and makes deleting evidence observable.",
+      "fullContractSHA256": "9cb93653cc7f225abe0c55f5d20baeb91729846b3569108a70d99f924faecf0e",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V12-2": {
       "sha256": "64455ae213f3f3a5458832a607c5575e2a725e167ac151f781d65b9ca3600e6e",
@@ -4790,12 +4790,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Violin density and added raw points are separate layers. The task retains observed range and raw observations; omitting an observation is wrong even if a smoothed silhouette looks similar.",
-      "fullContractSHA256": "cd744a9d262a36c7a665b4cfb4f379e3166aa726b0af87902975570f8bb8f979",
-      "executionStatus": "passed"
+      "note": "Retain exploratory group density and inner observed points. Transfer supplies a separate raw-point evidence layer after suppressing the built-in inner summary. This keeps tiny-sample density claims cautious and makes deleting evidence observable.",
+      "fullContractSHA256": "f5496c540fa5823b0b278040638f4787e5155b360d59465f620af51d9762afea",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V12-3": {
-      "sha256": "601eb4bb9ad5467fe669b701c573bb5fab898b32588b5f2e2405b6ba2eb584e7",
+      "sha256": "9a882089ca66bd887f3bc0545ea6fc163f38d124fac32b365f2b2cdba5cf2e4c",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4807,9 +4807,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Violin density and added raw points are separate layers. The task retains observed range and raw observations; omitting an observation is wrong even if a smoothed silhouette looks similar.",
-      "fullContractSHA256": "260ca997b8c152a1adeab9a87d682cbf7e8bf2dc1eb8b7e5a2450ade12a422d3",
-      "executionStatus": "passed"
+      "note": "Retain exploratory group density and inner observed points. Transfer supplies a separate raw-point evidence layer after suppressing the built-in inner summary. This keeps tiny-sample density claims cautious and makes deleting evidence observable.",
+      "fullContractSHA256": "88cf555f6cb4f2cf771ee59c883d20d3d953f1e5211bc9fbe536eee1bfc21106",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V14-1": {
       "sha256": "2ad2045f8cad705b5385474914aa1e8b9a07c2375728e86cecd550ab2683523f",
@@ -4824,12 +4824,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Swarm displacement changes only the category direction while preserving each measured value. Equivalent raw grouping is normalized, but missing/mislocated measurements remain wrong.",
-      "fullContractSHA256": "3e6d51cf527c5e988ea2f60d3a289291d0c3b0d45d70bf2fb9aa404ead5372ee",
-      "executionStatus": "passed"
+      "note": "Retain packing versus measurement preservation and horizontal orientation. Transfer combines median-derived group order with genuine repeated measurements; deduplicating coincident readings is wrong.",
+      "fullContractSHA256": "80dbbe8a3ab3c92b77e81f1dab610da63671f1d25733408003970b9415e2cb77",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V14-2": {
-      "sha256": "c34c91fcc9d42a3f1a934b567d556bf2055442c85d9c25936d69ffbc0dba0c30",
+      "sha256": "7eac2a0ca82d6724c2fed4288145350f39c44b4a08a04f16e7dad49dfba554f5",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4841,12 +4841,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Swarm displacement changes only the category direction while preserving each measured value. Equivalent raw grouping is normalized, but missing/mislocated measurements remain wrong.",
-      "fullContractSHA256": "7a1a80f4e843b0c12882e9a99a7fba0cd743e21eeb61c7cc783cc4164e8a33c8",
-      "executionStatus": "passed"
+      "note": "Retain packing versus measurement preservation and horizontal orientation. Transfer combines median-derived group order with genuine repeated measurements; deduplicating coincident readings is wrong.",
+      "fullContractSHA256": "714ad6a4425dd1a234c308e7e27caedd2f529bb9885dda558d9e2abc7e6d9e86",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V14-3": {
-      "sha256": "d3525ebedd0219a1cb5da983b9306cb4b7a22aed08eed018c1f0158e41607826",
+      "sha256": "7f295e59d8a19190e8f1309e8f2ebd618aba16dcb47dd6c4d9ce88113ee8dcee",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4858,9 +4858,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Swarm displacement changes only the category direction while preserving each measured value. Equivalent raw grouping is normalized, but missing/mislocated measurements remain wrong.",
-      "fullContractSHA256": "4839077b026ab1af84470b894c635405135241cf2102c91e8ea0215b9de834cd",
-      "executionStatus": "passed"
+      "note": "Retain packing versus measurement preservation and horizontal orientation. Transfer combines median-derived group order with genuine repeated measurements; deduplicating coincident readings is wrong.",
+      "fullContractSHA256": "1491c131b80091b9d101ec99abf53d58389c4c2e984701a9498ac8d68ebabfe5",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V15-1": {
       "sha256": "2cb2dfa0863bb0b2aa577cc8b71903a342a57824de3698d88eebe201af0d5958",
@@ -4875,9 +4875,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Tiny samples deliberately use raw points instead of elaborate distributions. Horizontal category orientation is handled without rounding measured numeric x values into category indices. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "c1d80deb437d6f6773ea47d711469f646e2a8650fb6b90c4b3db6e73b28d5fdb",
-      "executionStatus": "passed",
+      "note": "Retain the intentionally unsuitable tiny-sample draft repair. Transfer now repairs only one panel while preserving a valid paired chart, rather than repeating a single-Axes replacement under new nouns.",
+      "fullContractSHA256": "2ab5356440e2bd571ca7795e364331f8cb773a89834bbd0a6386e66114c5f07e",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V15-2": {
@@ -4893,13 +4893,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Tiny samples deliberately use raw points instead of elaborate distributions. Horizontal category orientation is handled without rounding measured numeric x values into category indices. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "936a46cf1511f36f30da05923a4e412094c19532375b4988e57d88212133f179",
-      "executionStatus": "passed",
+      "note": "Retain the intentionally unsuitable tiny-sample draft repair. Transfer now repairs only one panel while preserving a valid paired chart, rather than repeating a single-Axes replacement under new nouns.",
+      "fullContractSHA256": "bd99c086860c6891b439337179d1b0dd0e093f25e3e1bad1d79d0483c8cabb75",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V15-3": {
-      "sha256": "1b862a063915eac19dd8a14fd38f030bc2a2c1511ea7cefa285311400748c5ba",
+      "sha256": "607e33692ca05feed03dbff0b3292a86d76a85c3f60c6910901a8056c95057bd",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4911,13 +4911,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Tiny samples deliberately use raw points instead of elaborate distributions. Horizontal category orientation is handled without rounding measured numeric x values into category indices. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "0a434caa4338a5a95e6475c294fb9a81a32830f8d30e24046b9a109c08eb9a30",
-      "executionStatus": "passed",
+      "note": "Retain the intentionally unsuitable tiny-sample draft repair. Transfer now repairs only one panel while preserving a valid paired chart, rather than repeating a single-Axes replacement under new nouns.",
+      "fullContractSHA256": "0fe8e73cb69ac2b9692177262a8053f07beb1d01191038145acd741d577704fb",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "VR4-1": {
-      "sha256": "8bf01d2024b720bc7bacb22bf15f7f29e4d566af1ed6dc85bca36f723656a799",
+      "sha256": "5b737094fa4df399ed71efbba0e9afa067229805761171545e2f347a84c2ec3b",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4929,12 +4929,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "KDE shape is checked against the requested smoothing and observed range. A real SciPy gaussian_kde/Matplotlib curve is tested as an equivalent computation route.",
-      "fullContractSHA256": "a93b93b6ff4accf93b50f28f7570fb79fb79889c960175d8058b8ad52edb0e34",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "a58f9359ee2e5c9745a8482b2977939e9c4aa9abf5e4e8218052d47805c0c7a4",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR4-2": {
-      "sha256": "1b8a7a0d74bf7c8319813e286773a5d02cbe2d83a68cba05525ac599f0a10611",
+      "sha256": "6c57c57eb8f71f0f6d3ffb644f5d7f47f0bc3f0423fc88d1b8243dde5d9fa958",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4946,12 +4946,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "ECDF ties and the step convention matter. A Matplotlib steps-post line passes; a smooth/diagonal interpolation of the same vertices fails the intended cumulative chart.",
-      "fullContractSHA256": "d400fdd941bd87ea9a4971f613d33fef9ad141b634e9292b595e5c31f31c3245",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "c603abf8678ef8ed45d578975de8c97275115bab71d15922404a45a9eaee090b",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR4-3": {
-      "sha256": "cdbe35c4121c6eb7778401911af5c5ff2800bf10e51ab4647261c587df4fc27e",
+      "sha256": "16c55bae985e5ac74f759f105ea0d7b5f85c97694928b17b53f6fe2867395f72",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4963,12 +4963,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Point estimates and one-SD intervals represent different components. The model and example correctly distinguish spread from a confidence interval and retain all category summaries.",
-      "fullContractSHA256": "260ed5e7150d843f7ac8998ba26986ace9ffaa6de0980cfd1ee3c4d11d0687e3",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "8727555e55b62b821bdcfd2e7457270b0f6c53a77facbb522641c511630e0688",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR4-4": {
-      "sha256": "1b862a063915eac19dd8a14fd38f030bc2a2c1511ea7cefa285311400748c5ba",
+      "sha256": "6f723e00e92cd33d1bc54efdf508ff98562a17029b6fd31cc4438e8788b0e859",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -4980,9 +4980,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Tiny samples deliberately use raw points instead of elaborate distributions. Horizontal category orientation is handled without rounding measured numeric x values into category indices. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "fcbb2d1fd871637eb7c9597a815cdece30ed70adb136c1fd3451e4657d414125",
-      "executionStatus": "passed",
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "fe015ca6d312d00174e41eb2d5847651e330ff013894684ef4041093e660904b",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V19-1": {
@@ -4998,9 +4998,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Repeated x values distinguish mean/SD aggregation from raw replicate selection. Equivalent group means and a Matplotlib SD band are accepted; accidental averaging or wrong selection fails.",
-      "fullContractSHA256": "11dd538691607854c5fbf3e82a6984ce18259a3a0f213215ce95301f3038fb97",
-      "executionStatus": "passed"
+      "note": "Retain within-time summaries versus one-replicate trajectories. Transfer explicitly compares both units of analysis in separate panels. Fresh review evidence has unequal daily observation counts and changing spreads.",
+      "fullContractSHA256": "ea9a7b2491d13be82b0f76c3833d188534c4cd19471782443c655727c40e1405",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V19-2": {
       "sha256": "6c8c7292bceb1db507c765030123a251193022d54eecff8961551c3c0f59ec78",
@@ -5015,12 +5015,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Repeated x values distinguish mean/SD aggregation from raw replicate selection. Equivalent group means and a Matplotlib SD band are accepted; accidental averaging or wrong selection fails.",
-      "fullContractSHA256": "272e7f2fdc21bd3b99851b55a726f764a530546ea2d8ebbf02b03232bc5fd483",
-      "executionStatus": "passed"
+      "note": "Retain within-time summaries versus one-replicate trajectories. Transfer explicitly compares both units of analysis in separate panels. Fresh review evidence has unequal daily observation counts and changing spreads.",
+      "fullContractSHA256": "7d16eb9e95101b92f32bcbee2e1425383f3d3c6e2800e8373747985e1945b9f1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V19-3": {
-      "sha256": "76792c84d8b304da9bdb0b99acd6ed4a956f7d536d27d101ba673a41152de6c7",
+      "sha256": "0ec19085d6cc8dfe47ca9910ecfc1aed5d4d5b2defe819fd5e86772eb857a4fb",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5032,9 +5032,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Repeated x values distinguish mean/SD aggregation from raw replicate selection. Equivalent group means and a Matplotlib SD band are accepted; accidental averaging or wrong selection fails. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "857739d849a6f127a61e57b16e40cbcd0b55c406dd599094773f5b1163b48b7e",
-      "executionStatus": "passed",
+      "note": "Retain within-time summaries versus one-replicate trajectories. Transfer explicitly compares both units of analysis in separate panels. Fresh review evidence has unequal daily observation counts and changing spreads.",
+      "fullContractSHA256": "cf26b18e12e366f5102b130b8b3c697b61adcec760e4bea4b9f013aadfd633c1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V20-1": {
@@ -5050,9 +5050,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A fitted straight line accompanies the actual paired observations. Equivalent two-point polynomial-fit rendering is checked by slope/intercept and data coverage rather than sample count.",
-      "fullContractSHA256": "723103d93b789fef57939f1e70d79c38a43f7a3752ed30bf1dbc4971cda1d5d9",
-      "executionStatus": "passed"
+      "note": "Retain association/fitting science; it is distinct from V21 residual diagnostics. Transfer aligns both points and fit with documented failed-calibration eligibility; the excluded outlier changes the full-data trend materially.",
+      "fullContractSHA256": "cfc58c90b030ff0bc418b6e4f34c3203a2a0f890182f1eb05c6476e64cb4cdf8",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V20-2": {
       "sha256": "a1ec497fb8ff18c0ae40405f9d8a2a26f2cf849f14e101b87275c64800e59c3b",
@@ -5067,12 +5067,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A fitted straight line accompanies the actual paired observations. Equivalent two-point polynomial-fit rendering is checked by slope/intercept and data coverage rather than sample count.",
-      "fullContractSHA256": "d697c28fbcdf4d21043386af980d2b6a6f25d98400e2617ea97b9da8e586eda4",
-      "executionStatus": "passed"
+      "note": "Retain association/fitting science; it is distinct from V21 residual diagnostics. Transfer aligns both points and fit with documented failed-calibration eligibility; the excluded outlier changes the full-data trend materially.",
+      "fullContractSHA256": "4ffd26d02b2fceb4c24a97aeaa8229f18d2d7cc2894982eff16185fc0af07e33",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V20-3": {
-      "sha256": "209a1a78460aeb2e79ff9605c15fc964b7bf9f3ccc990d20b309ff4773b4942b",
+      "sha256": "d3cdb50b9481fa052ace0287fab8b30ce69aec9cb8548c261111591e7b3958b5",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5084,9 +5084,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A fitted straight line accompanies the actual paired observations. Equivalent two-point polynomial-fit rendering is checked by slope/intercept and data coverage rather than sample count.",
-      "fullContractSHA256": "1c0f0f675db9aec4de05c81a5d9a4b63506f0768afc79c98d438396978af29a3",
-      "executionStatus": "passed"
+      "note": "Retain association/fitting science; it is distinct from V21 residual diagnostics. Transfer aligns both points and fit with documented failed-calibration eligibility; the excluded outlier changes the full-data trend materially.",
+      "fullContractSHA256": "5533579cd7af87d88953cbcdb2dc1633d29aa1a8a0ef3c4f8af83269dfa75ac3",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V21-1": {
       "sha256": "d5c112bcdd6cf8f7cafc0715a683fc9b4ad4bc1a931b5445f1ad2b336ef03773",
@@ -5101,9 +5101,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Residuals are observed minus fitted predictions with a zero reference. Equivalent polyfit residual computation passes; raw y values or missing observations fail.",
-      "fullContractSHA256": "90ef13ae7077c7da1293276da732a14a077c5823d997c244f295b0be50871dcc",
-      "executionStatus": "passed"
+      "note": "Retain observed-minus-fitted deviations, rather than treating this as a regression duplicate. Transfer uses a nonlinear response and grades a bounded interpretation after plotting; the prompt no longer states the expected pattern. Review reverses the predictor/outcome question.",
+      "fullContractSHA256": "33be1c0cd17c797a3d11dbfb04852ffd03a622132540400e4813243c6954e4eb",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V21-2": {
       "sha256": "c9e416c415173d5c33c9c4e49f2a15e7dc344343c8240a33e195ef65191a4421",
@@ -5118,12 +5118,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Residuals are observed minus fitted predictions with a zero reference. Equivalent polyfit residual computation passes; raw y values or missing observations fail.",
-      "fullContractSHA256": "f21b1ccf9102c54350d118567eccff03784fe4eaec09e677a99b80cb3167c289",
-      "executionStatus": "passed"
+      "note": "Retain observed-minus-fitted deviations, rather than treating this as a regression duplicate. Transfer uses a nonlinear response and grades a bounded interpretation after plotting; the prompt no longer states the expected pattern. Review reverses the predictor/outcome question.",
+      "fullContractSHA256": "fffe38a931e42887421ee1f348b139b0d34ec3def655e4ae3b0dc48a3c96528c",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V21-3": {
-      "sha256": "f9c78f5a82d4b6a93458145b5d09c0d6972e52099946c0e4b674b6c4fbfe1c15",
+      "sha256": "fdbe47558449998e98d5f19fd04c5554e009ab752244cd7c1b2f5d0cde5ed6cb",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5135,9 +5135,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Residuals are observed minus fitted predictions with a zero reference. Equivalent polyfit residual computation passes; raw y values or missing observations fail.",
-      "fullContractSHA256": "30cb00ac54450dab394c5c71384296bd43f0cb8e374b5acd4a7ee8d33b0bdcd2",
-      "executionStatus": "passed"
+      "note": "Retain observed-minus-fitted deviations, rather than treating this as a regression duplicate. Transfer uses a nonlinear response and grades a bounded interpretation after plotting; the prompt no longer states the expected pattern. Review reverses the predictor/outcome question.",
+      "fullContractSHA256": "b8994adca64016800c6119ed3bf544ab870521461e4d0cb57de13702822ad8e7",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V23-1": {
       "sha256": "d0ef85ffb05ceb17d2354fe6a9a88ac162212c318ac60f982f78a2794ebe58dc",
@@ -5152,12 +5152,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Count matrices and measurement-summary matrices use correct category identities and cells. Heatmap annotations and stated palette/range remain intentional; optional colorbar axes are not treated as data panels.",
-      "fullContractSHA256": "18ce012d18fba6f09427dbde157e9404628bee931696afcafca1256331790a31",
-      "executionStatus": "passed"
+      "note": "Repair the Change crosstab noun swap with within-row proportions. Transfer preserves observed zeros versus absent measurement groups. Review calculates zero-occurrence proportions from Boolean flags instead of reusing the same measurement means.",
+      "fullContractSHA256": "18a76984e30aaa4ce18780adc38951f82a7ee96fffacf07297b22aef36da4475",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V23-2": {
-      "sha256": "b260e35558860e682ae31cafdac4519f601590b734630ebaf5286384e916f5a8",
+      "sha256": "222fc1bfb71fa37e49d4ea41425c9c9c4dbeb34ba3940c680a0094589d627bd6",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5169,12 +5169,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Count matrices and measurement-summary matrices use correct category identities and cells. Heatmap annotations and stated palette/range remain intentional; optional colorbar axes are not treated as data panels.",
-      "fullContractSHA256": "428e70d4e4a1aee3bf2c5f2bec7ded8bbd9ea39c1548794a665dd15cf1aa135a",
-      "executionStatus": "passed"
+      "note": "Repair the Change crosstab noun swap with within-row proportions. Transfer preserves observed zeros versus absent measurement groups. Review calculates zero-occurrence proportions from Boolean flags instead of reusing the same measurement means.",
+      "fullContractSHA256": "d0279ac9f086faa2f119ec77f8b719f082df521ebea8205c8a15c3c0b66414a1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V23-3": {
-      "sha256": "e17c6901c5559910b020fde1f0966041a0fb4779edcaef16deb19f324b9ab5aa",
+      "sha256": "742ec90f15ed43b4629ae521dc5479bc940bdbb54439b06f75698b79ec4b2c5b",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5186,12 +5186,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Count matrices and measurement-summary matrices use correct category identities and cells. Heatmap annotations and stated palette/range remain intentional; optional colorbar axes are not treated as data panels.",
-      "fullContractSHA256": "11d3f6392532816d0be42a2bce593d3aee6915f7fe972d78ab504decb8c1a7cc",
-      "executionStatus": "passed"
+      "note": "Repair the Change crosstab noun swap with within-row proportions. Transfer preserves observed zeros versus absent measurement groups. Review calculates zero-occurrence proportions from Boolean flags instead of reusing the same measurement means.",
+      "fullContractSHA256": "ed4f43befcb95565b4f71464b67576970b3192d8776b0b6e691bd1bd062535e1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR5-1": {
-      "sha256": "76792c84d8b304da9bdb0b99acd6ed4a956f7d536d27d101ba673a41152de6c7",
+      "sha256": "244de78580ad27178da514b411556256721d8b81da264ffe975e787f9c872ebc",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5203,12 +5203,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Repeated x values distinguish mean/SD aggregation from raw replicate selection. Equivalent group means and a Matplotlib SD band are accepted; accidental averaging or wrong selection fails.",
-      "fullContractSHA256": "f70e152dd494209b24748b130b21269160295edd322cc86d8081486fde95547d",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "51f976f4d2351ef42d95428252a8140313fcbeb197721df449ab79e504b5ebbf",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR5-2": {
-      "sha256": "209a1a78460aeb2e79ff9605c15fc964b7bf9f3ccc990d20b309ff4773b4942b",
+      "sha256": "076b40883ec0cf732882f9d0c47b8336911d76bf18d2a27ef61a7cd7fcb4cc13",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5220,12 +5220,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "A fitted straight line accompanies the actual paired observations. Equivalent two-point polynomial-fit rendering is checked by slope/intercept and data coverage rather than sample count.",
-      "fullContractSHA256": "d15de074948f7c075b936c021876806ff7783628e9f6abe34900d90c6c2e62fb",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "bf6a4d10f0244e1a88142d8651b34d9e0c1a475bd613aa03cbf2766e952423a6",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR5-3": {
-      "sha256": "f9c78f5a82d4b6a93458145b5d09c0d6972e52099946c0e4b674b6c4fbfe1c15",
+      "sha256": "6f7e9f285a6800e2847870e9e62b93ab234e98cfc82774d1e6f3255f8bc63651",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5237,12 +5237,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Residuals are observed minus fitted predictions with a zero reference. Equivalent polyfit residual computation passes; raw y values or missing observations fail.",
-      "fullContractSHA256": "12dcd649e51e8da4c157b4fabfdc120f3419301e13887e7e6ef0e8c4dece6e66",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "df72912bdda05c29c8caf221093e6367d706b74a8c32f06eee8c0b254a9a49ed",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR5-4": {
-      "sha256": "e17c6901c5559910b020fde1f0966041a0fb4779edcaef16deb19f324b9ab5aa",
+      "sha256": "594d3bcad551c96011468ba3cfcafff3ae32b65482a0e61ccbfff58ac2fa96cf",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5254,9 +5254,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Count matrices and measurement-summary matrices use correct category identities and cells. Heatmap annotations and stated palette/range remain intentional; optional colorbar axes are not treated as data panels.",
-      "fullContractSHA256": "86f18733db6ef2d61c1869f911052e7086e10fa9fff1a2c98f1ebf42e5483589",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "79779739b89b9bac56f4d6fc9cbab1917d56a9cc53e0c9dfcd18f585fc70b794",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V28-1": {
       "sha256": "788e6ec8ee8b37fb2a1659e07721249916c2e402a9a774c2558995ad898c3093",
@@ -5271,9 +5271,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "f01f8026c391d99471be98b22b4c5d1501660fa47c4cbe0aa10933bdec5814ba",
-      "executionStatus": "passed",
+      "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
+      "fullContractSHA256": "ce4ec1431f7f0688643e8be926a1f62ce9d4f8bca0753ca6b66427d3b06ae408",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V28-2": {
@@ -5289,13 +5289,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "2fb2ba6e3d30d3bbdcab9f88d438b823acfa707fd264c5b6edd66c609a241d70",
-      "executionStatus": "passed",
+      "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
+      "fullContractSHA256": "cd090ac18ead51e105e7e35010c343bb6197d5d03d35c29b196f436da6115459",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V28-3": {
-      "sha256": "6dba4ea1773762daf94c11f4bd03250ede667b0fb3abf52e3a68d13565d9973c",
+      "sha256": "08cf0ee21a5d7a02ff9fece37689e880c50b5475ad42b102926de54dd8d8b546",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5307,13 +5307,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "a2cab29f3e268f73e9802ff6ea8e74cb68e7bd5d5f24fbe314eeac90e3bff381",
-      "executionStatus": "passed",
+      "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
+      "fullContractSHA256": "c5d53526b7d65f2b7db49be4b59abb3d88ace926389f24ec7adec74ea2c89c12",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "V30-1": {
-      "sha256": "281f2ced21e3def5ef9b57ccead38b7b3ce5ad2e30e6c6378005871a43ca30e8",
+      "sha256": "663af368bf4c4190033f58efc6e95f327bab78a7d7c370ac8d528bb005f17569",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5325,12 +5325,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Stacked components have correct bases/heights in common units and explanatory labels. Component baselines are semantic; incidental physical bar width is not.",
-      "fullContractSHA256": "91488c1b2e50816d1dbbaa1c9367f500ffe055237900fdb9606d8c3d0cea6b60",
-      "executionStatus": "passed"
+      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
+      "fullContractSHA256": "b64803b482db3c0d31480754f680397c9016c8625a7b2f66c1aae555082c80a1",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V30-2": {
-      "sha256": "e5ad072861a0f8c6aaa4e1dfd3ecefe68c9fb534acd7f5efa3b80073083b5f39",
+      "sha256": "b517566bc97619bbc8cc35654f52931e4e68cfed7588c0e41565d2591ccdcf3e",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5342,12 +5342,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Stacked components have correct bases/heights in common units and explanatory labels. Component baselines are semantic; incidental physical bar width is not.",
-      "fullContractSHA256": "d078e30959af438b79b95cc08425424ee05f18a2d9a07fb97615704232a02464",
-      "executionStatus": "passed"
+      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
+      "fullContractSHA256": "c450299362383deb708bbe7bf9b8d62611253f1ffd751af953be9aef96d89bfe",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V30-3": {
-      "sha256": "a035afe7bd17bf33585d02969111459f3f5621205ec89d85b6e395df3f40c4c4",
+      "sha256": "93d5c2f39e83c307ef3b9a470f68d1a11f8f1a9fa1d171e9386c1dbb34b87e92",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5359,9 +5359,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Stacked components have correct bases/heights in common units and explanatory labels. Component baselines are semantic; incidental physical bar width is not.",
-      "fullContractSHA256": "1c7ac1a0a690010f9429eac99cf3103b9288ac449872e101dce61ee68a545865",
-      "executionStatus": "passed"
+      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
+      "fullContractSHA256": "e63d1ca77e848ebd5d7498938236715d70269db8ca64f7c201e74f92a958227e",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V31-1": {
       "sha256": "2a6e827b7634ed9666ecf293c8cfeec429c60fb245675226b85e0686700202c3",
@@ -5376,9 +5376,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Pair plots own a Figure and show the requested variable grid with diagonal distributions. All required panels/variables remain necessary; internal data column names are never case-normalized.",
-      "fullContractSHA256": "1f1a08c8c6bac509732b8902465c3a7d6f00f1c95aa9feda182b8d7f12c31c2f",
-      "executionStatus": "passed"
+      "note": "Retain grid ownership and corner-panel reduction. Transfer selects three genuine measurements, excludes a numeric identifier and retains category context instead of repeating a filtered two-variable grid.",
+      "fullContractSHA256": "8b9db44355a2c3f9e7439d8da10e79be7b9b1ecfc9e7eb7a3aa4eb67a1547027",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V31-2": {
       "sha256": "995ef7bd044948f9db81449839c6354952566bd88b3eb5bbf3fae67bb538ae7c",
@@ -5393,12 +5393,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Pair plots own a Figure and show the requested variable grid with diagonal distributions. All required panels/variables remain necessary; internal data column names are never case-normalized.",
-      "fullContractSHA256": "05084bb9c59ddd3ef4b9ff62a9a188cacd44eb30f200dfdd96b993c35f7749b5",
-      "executionStatus": "passed"
+      "note": "Retain grid ownership and corner-panel reduction. Transfer selects three genuine measurements, excludes a numeric identifier and retains category context instead of repeating a filtered two-variable grid.",
+      "fullContractSHA256": "0e22edf7e38131cf3c6cf464695571f286866897be3d272b04667546479bb0be",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V31-3": {
-      "sha256": "fde5a8028e05d5884e334b1ee10086f44772a0209a679372334ff5500b93062c",
+      "sha256": "9b46c4c067fcfdb6820d19cf95ff0a97a1941e66f478a02dd75cc29864cebd38",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5410,9 +5410,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Pair plots own a Figure and show the requested variable grid with diagonal distributions. All required panels/variables remain necessary; internal data column names are never case-normalized.",
-      "fullContractSHA256": "98400389045190d36b54f0c3383bd880c313655cfbb9231b80fb6009bea9f609",
-      "executionStatus": "passed"
+      "note": "Retain grid ownership and corner-panel reduction. Transfer selects three genuine measurements, excludes a numeric identifier and retains category context instead of repeating a filtered two-variable grid.",
+      "fullContractSHA256": "3a9af8290ad921cef6418d5895dcfa18a8e9e09a03808ae0f3f05faee383fe79",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V32-1": {
       "sha256": "a396c978069d36712c6db0e8b3564adb4b957c60b372c0e4258e6d5fda8389f7",
@@ -5427,9 +5427,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Joint grids retain the central relationship and both marginal distributions. The Change transition teaches a central-only reference; applying it to a margin is wrong.",
-      "fullContractSHA256": "8c1e58450b2cefacb4a68fcad18e87cb297813e83e97de0c255c9a990fce2ec3",
-      "executionStatus": "passed"
+      "note": "Retain central-panel ownership. Transfer puts an external x-unit benchmark into the central joint plot while preserving all observations and margins, rather than another duration filter and horizontal rating line.",
+      "fullContractSHA256": "c2cfd52049173de77999a53178829099353da91b7f6dbe56141249e22f2b9b50",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V32-2": {
       "sha256": "bdd59fb10a5827a4c6be8283ce920bddae9eca9395ed2e1c395923048d822bca",
@@ -5444,12 +5444,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Joint grids retain the central relationship and both marginal distributions. The Change transition teaches a central-only reference; applying it to a margin is wrong.",
-      "fullContractSHA256": "f9f8b83718e16149367b5be01861b53af5dea3e2ffc96f973585bdf73db3384a",
-      "executionStatus": "passed"
+      "note": "Retain central-panel ownership. Transfer puts an external x-unit benchmark into the central joint plot while preserving all observations and margins, rather than another duration filter and horizontal rating line.",
+      "fullContractSHA256": "21106f71cc533803a8bd0a05227db4b5539bd597cd9b1609e7b2d9764d6467c6",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V32-3": {
-      "sha256": "7972bfb36b0bfb16a7eb8c59002c5976a8f037beadac6332554b05956645d3b6",
+      "sha256": "c38594e6fc8991b02c5f27982147b00c8e72d4e6bb4361b3d9f79ca1da926f76",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5461,9 +5461,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Joint grids retain the central relationship and both marginal distributions. The Change transition teaches a central-only reference; applying it to a margin is wrong.",
-      "fullContractSHA256": "913d5a32093ecf34560f756984f0e130a64396fd16c634be4ee57c62353729f4",
-      "executionStatus": "passed"
+      "note": "Retain central-panel ownership. Transfer puts an external x-unit benchmark into the central joint plot while preserving all observations and margins, rather than another duration filter and horizontal rating line.",
+      "fullContractSHA256": "4d3b7a5159c9c99b6c3561f407ccc55e9015ca6089ad512b2ea9d20b7c63303a",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V33-1": {
       "sha256": "fc3798bad831e33eb17ceeaa8f6d10461b7738b0b08283c3ba289e2406591d1c",
@@ -5478,9 +5478,9 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Facet subsets, kind and the explicitly stated 3-inch panel height remain required. Corrected distinct relplot/catplot/displot hints; whole-figure default figsize is not imposed.",
-      "fullContractSHA256": "d23ce94f98afdcd8aa2de0b4024971764834af3d90130b05fd03f1b2dbe6c109",
-      "executionStatus": "passed"
+      "note": "Repair near-answer examples and prescribed-family repetition. Neutral examples teach categorical/distribution facets. Transfer chooses the already-taught relationship family from a paired question; review chooses distribution facets from a one-measurement question.",
+      "fullContractSHA256": "08ffc7460ce43ea25be0c7be23edd367bca95e96ce722f6a0778b1e01c20de0d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V33-2": {
       "sha256": "14d5d925d9d7ae59a9ed9ef36df3e1ea39695d292261397b90bf3835fa717d7b",
@@ -5495,12 +5495,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Facet subsets, kind and the explicitly stated 3-inch panel height remain required. Corrected distinct relplot/catplot/displot hints; whole-figure default figsize is not imposed.",
-      "fullContractSHA256": "bc469d3b852bbdfa64ffb08def8d7b7794fb6f24fd92d0d75b4fab395b461dec",
-      "executionStatus": "passed"
+      "note": "Repair near-answer examples and prescribed-family repetition. Neutral examples teach categorical/distribution facets. Transfer chooses the already-taught relationship family from a paired question; review chooses distribution facets from a one-measurement question.",
+      "fullContractSHA256": "e7d69f5ed56825e28288c328926e797c3db0742720ca339d5a38e57fbd149c3d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "V33-3": {
-      "sha256": "d4df6ce51afbaf9cfeb36a9353078338bd64ef002563026e28228d982404bc6c",
+      "sha256": "7cf0d43ddd86e7eca410f4be0f76703bf64a5617b05ee4b60aa09c33c7afbbb0",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5512,12 +5512,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Facet subsets, kind and the explicitly stated 3-inch panel height remain required. Corrected distinct relplot/catplot/displot hints; whole-figure default figsize is not imposed.",
-      "fullContractSHA256": "54f74ba6dd7a4db92881ecc43c219bf0b02cb73636ed57263c1d228b3b5c0747",
-      "executionStatus": "passed"
+      "note": "Repair near-answer examples and prescribed-family repetition. Neutral examples teach categorical/distribution facets. Transfer chooses the already-taught relationship family from a paired question; review chooses distribution facets from a one-measurement question.",
+      "fullContractSHA256": "44882ae71e32534b548e605dfe784b4d36aee333de5271490bdb3e77f324b12d",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR6-1": {
-      "sha256": "6dba4ea1773762daf94c11f4bd03250ede667b0fb3abf52e3a68d13565d9973c",
+      "sha256": "fcb7ad4329698b0a84e39632f6737c92baadde9427f13c87b5d8490259d2db36",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5529,13 +5529,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Annotations identify the same selected extreme row and link text to its paired coordinates. Arrow and text-offset details are checked when required rather than accepting detached text. Responsibility review 2026-10-05: supplied preparation and learner work are separate visible sections; focused solutions preserve requested data/output semantics and stable IDs. See the complete 324-row responsibility ledger and affected runtime receipts.",
-      "fullContractSHA256": "92760530b691b259fba1297162b8028235a418991b5bb414807bac6571add167",
-      "executionStatus": "passed",
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "2789dafdbd60d3122cebd5f745daa0b4c3184d82f32cf434fb7797ff3756c9ae",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence.",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json"
     },
     "VR6-2": {
-      "sha256": "a035afe7bd17bf33585d02969111459f3f5621205ec89d85b6e395df3f40c4c4",
+      "sha256": "d05ba817a02f338870d8cb4c03650bd33bb49f1cc9a59b2ea45ee7c70129a9d2",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5547,12 +5547,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Stacked components have correct bases/heights in common units and explanatory labels. Component baselines are semantic; incidental physical bar width is not.",
-      "fullContractSHA256": "759e42cda32a8b34a4ca3b14502df2bc33da815339bc65a6fea595c3da9f6b49",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "dff31741e93454fba4c125ad8727ec471ac2ccac2a839498ef3ea9785d777ba2",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR6-3": {
-      "sha256": "fde5a8028e05d5884e334b1ee10086f44772a0209a679372334ff5500b93062c",
+      "sha256": "c74cf7d1ce339335bd05829ee6de94746c45d6918ff0674bc1bbb9e77c534c82",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5564,12 +5564,12 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Pair plots own a Figure and show the requested variable grid with diagonal distributions. All required panels/variables remain necessary; internal data column names are never case-normalized.",
-      "fullContractSHA256": "5126686f165f6ebdc0a17e19bd5afd4ddf08de6f755e81e3a650624ab420c381",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "9826a0d773117bb75dd6981a4559727243011c826b97984fbe474229a93d90bf",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     },
     "VR6-4": {
-      "sha256": "d4df6ce51afbaf9cfeb36a9353078338bd64ef002563026e28228d982404bc6c",
+      "sha256": "617eff9252821f624a6247b7a060f23159c9973dcff8651307bd0f590175c486",
       "criteria": [
         "purpose/prerequisites",
         "given input",
@@ -5581,9 +5581,43 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Facet subsets, kind and the explicitly stated 3-inch panel height remain required. Corrected distinct relplot/catplot/displot hints; whole-figure default figsize is not imposed.",
-      "fullContractSHA256": "7dc1ab9a1d34deee4e45d0be9e5c908f281bb6417422663657c607d70e94908b",
-      "executionStatus": "passed"
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "fullContractSHA256": "63928f850554cab8856ace11ffebc826abcf5f741a7f3323900637ad3b3d6ea2",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
+    },
+    "VR1-4": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "sha256": "cdcdafd13e4385da20b9dad14fc5d369d8b18fef06fdae101c20fadcfc5afabf",
+      "fullContractSHA256": "98b6ec48cb76797b83786211c29295f277b85586706bca52295f6af602a77303",
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
+    },
+    "VR2-4": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "sha256": "790095dff3d812bf0f1cc0338af76738bba7819c3183fff14e170588451fd7f7",
+      "fullContractSHA256": "c11a12de6ba3c14b2df8e7f965dfa3bfc9e4000d8a33b92318e4e7e40bb912f6",
+      "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
+      "executionStatus": "Native reference passed; final browser receipt supplied separately in candidate evidence."
     }
   },
   "teachingReview": "Every Follow concept has an authored idea, miniature example, comparison of relevant options, and interpretation note. Review tasks inherit corrected Transfer briefs.",
@@ -5607,20 +5641,20 @@
   "previousReview": "2026-09-26",
   "auditReport": "docs/foundations-exercise-audit-2026-10-05.md",
   "sourceHashes": {
-    "foundations/app.js": "e84ac0039493c026667dcf0c9087d06a1a994573ccc99f38f2686ff2639fd4d3",
-    "foundations/clarity.js": "be03dcb54bb8793db9c7bf8513d90159db6f1398aff0c6af816146507c8b1cb3",
-    "foundations/code-style.js": "1eb9901aad93ade206df6e2602e62c7dfb9eeb97977989606f507884cbde7f9b",
-    "foundations/curriculum.js": "33f873cedaa0227e3991dbc9c66514d916e6152b797babbe5a5a515f865821f6",
+    "foundations/app.js": "777e17122bf2400321b3a76950e2861a744eaaa26acc4880134f6bb666d96bfe",
+    "foundations/clarity.js": "910603a9e3ba7b63c4bd8d07e75b4cfb54f46fdb7c8e6a5c56b4b231ebf8a502",
+    "foundations/code-style.js": "24211b80ea266979ee825aaedda4a25fd3bd501f5d85ca87157f8b108ee55e99",
+    "foundations/curriculum.js": "709c4003137d24fb717008114584c71923cecba0668ddb7c891613fba26525c6",
     "foundations/editor.js": "1d4b5e4224b9bf6b1221344763979f432f3878b91441c65e103ef1973da0b698",
-    "foundations/learning-ui.js": "5efccabc8776f223eee2199e2018f08cdbcf8ef5fa388a9193deca32deacd30a",
+    "foundations/learning-ui.js": "a16793b166927c3617524741cafbecbca1765f024a9d6fa0464397810b5840cd",
     "foundations/practical.js": "655c0576369b87af814d404cc722159abb8b3ba9f99937948df4ecd38232e29f",
     "foundations/progression.js": "01703245befaa1f0b5d0c25f4ae1b8e7f8d2d2701bac571552bedc9d198388b2",
     "foundations/refinements.js": "2bd809ec37a480933381769f78f4d2b5bd38a80885ab1d76247cfe3962306e0c",
     "foundations/teaching.js": "fcf2b41ff11638b9407f338b61cf4c1fa48a37cae89d7224b7dc3e7a7211eeea",
     "foundations/visuals.js": "f3cfc46bf12e18fd6c39fd5867638394a26769944fc4f54f45ae370b0d43264e",
     "foundations/worker.js": "c8c7e6086170a33321d5822817f27f098052f5f8506bb538d30a34e055bfe11a",
-    "foundations/workspace.js": "9a3471d1c5f6de4baf9bd9d830a75ca4c3da02a4a9e407a11a2dce8384621402",
-    "foundations/runtime.py": "582c3327cfe083a6fa8bae611d48d82bfa7cde9cb046797a657341da97966f81",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "ef78de35499983f5f4f93522e10f00d136d0a31b99b83bba8fed3a67164d4730",
     "tests/test_foundations_audit.py": "754fd7fe0e038b9e92ec688bf1727cdde8e6acb920274f90cc136c6c5976c1df"
   },
   "execution": {

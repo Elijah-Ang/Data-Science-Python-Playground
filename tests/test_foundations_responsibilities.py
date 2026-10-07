@@ -61,14 +61,14 @@ def contract(source, index):
     if source == "V02":
         return [
             ("hours", "score", "Study hours and scores", "Hours studied", "Score"),
-            ("temperature", "humidity", "Does humidity vary with temperature?", "Temperature (°C)", "Humidity (%)"),
-            ("minutes", "rating", "Games lasting at least 20 minutes", "Minutes", "Rating"),
+            ("temperature", "humidity", "Weather relationship", "Temperature (°F)", "Humidity (%)"),
+            ("volume_ml", "mass_g", "Trial batch", "Volume (mL)", "Mass (g)"),
         ][index]
     if source == "V16":
         return [
             ("hours", "score", "Study club", "hours", "score"),
-            ("humidity", "temperature", "Weather diary", "humidity", "temperature"),
-            ("minutes", "rating", "Board games", "minutes", "rating"),
+            ("temperature", "humidity", "Weather diary", "Temperature (°F)", "Humidity (%)"),
+            ("wait_minutes", "consult_minutes", "Clinic visits", "wait_minutes", "consult_minutes"),
         ][index]
     if source == "V26":
         return [
@@ -80,7 +80,7 @@ def contract(source, index):
         return [
             ("flavour", "price", "Candy shop", "flavour", "price"),
             ("humidity", "sky", "Weather diary", "humidity", "sky"),
-            ("species", "weight", "Pet adoption", "species", "weight"),
+            ("batch", "mass_g", "Observations", "batch", "mass_g"),
         ][index]
     if source == "V36":
         return [
@@ -88,6 +88,10 @@ def contract(source, index):
             ("size", "price", "Café orders", "size", "Mean price"),
             ("species", "weight", "Pet adoption", "species", "Mean weight"),
         ][index]
+    if source == "V28" and index == 2:
+        return ("hours", "output", "Installation outputs", "hours", "output")
+    if source == "V34" and index == 2:
+        return ("wait_minutes", "consult_minutes", "Clinic visits", "Wait (minutes)", "Consultation (minutes)")
     if source == "V34" and index == 1:
         return ("temperature", None, "Weather diary", "temperature", "Count")
     return [
@@ -105,9 +109,9 @@ def alternative_work(source, index):
         return (f"ax.set_title({title!r})\nax.set_xlabel({xlabel!r})\n"
                 f"ax.set_ylabel({ylabel!r})\n" + finish)
     if source == "V16":
-        select = 'observations = df.loc[df["minutes"].ge(20)]' if index == 2 else "observations = df"
-        # Use Matplotlib and aligned pandas Series, retaining row pairing while
-        # reversing drawing order. No literal copy of the target coordinates.
+        if index == 1:
+            return 'ax.scatter(df["temperature"] * 9 / 5 + 32, df["humidity"])\n' + finish
+        select = 'observations = df.loc[df["wait_minutes"].notna() & df["consult_minutes"].notna()]' if index == 2 else "observations = df"
         return (select + f'\nobservations = observations.sort_values({y!r}, ascending=False)\n'
                 f'ax.scatter(x=observations[{x!r}], y=observations[{y!r}])\n' + finish)
     if source == "V26":
@@ -129,16 +133,16 @@ def alternative_work(source, index):
             lines = 'benchmark = ax.axhline\nbenchmark(y=4, linestyle="--")'
         return lines + "\n" + finish
     if source == "V28":
-        select = 'observations = df.loc[df["minutes"].ge(20)]' if index == 2 else "observations = df"
+        select = 'observations = df.loc[df["active"]]' if index == 2 else "observations = df"
         extreme = "idxmin" if index == 1 else "idxmax"
-        label = "Driest" if index == 1 else "Peak"
+        label = "Driest" if index == 1 else "Active peak" if index == 2 else "Peak"
         return (select + f'\npoint = observations.loc[observations[{y!r}].{extreme}()]\n'
                 f'annotation = dict(text={label!r}, xy=(point[{x!r}], point[{y!r}]), '
                 'xytext=(8, 8), textcoords="offset points", arrowprops={"arrowstyle": "->"})\n'
                 "ax.annotate(**annotation)\n" + finish)
     if source == "V34":
         # Select the supplied Figure explicitly before using pyplot.savefig.
-        labels = 'ax.set_xlabel("minutes")\nax.set_ylabel("rating")\n' if index == 2 else ""
+        labels = 'ax.set(title="Clinic visits", xlabel="Wait (minutes)", ylabel="Consultation (minutes)")\n' if index == 2 else ""
         layout = "fig.subplots_adjust(left=0.16, bottom=0.18, right=0.94, top=0.88)" if index == 1 else "fig.tight_layout()"
         return (labels + layout + '\nplt.figure(fig.number)\n'
                 'plt.savefig("chart.png", dpi=150, bbox_inches="tight")\nplt.show()')
@@ -147,6 +151,10 @@ def alternative_work(source, index):
                     'ax.set(yscale="linear")\nax.set_ybound(lower=0)',
                     "ax.set(ylim=(0, 25))"][index]
         return controls + "\n" + finish
+    if source == "V15" and index == 2:
+        return ('for artist in [*axes[0].lines, *axes[0].collections, *axes[0].patches]:\n    artist.remove()\n'
+                'sns.stripplot(x=df["batch"], y=df["mass_g"], jitter=False, ax=axes[0])\n'
+                'axes[0].set(title="Observations", xlabel="batch", ylabel="mass_g")\n' + finish)
     if source == "V15":
         # Remove the supplied draft's mark artists without creating a second
         # Axes or discarding the supplied title. Series arguments are equivalent
@@ -191,7 +199,7 @@ def focal_near_misses(source, index, alternative):
         return [("missing_title", f"ax.set_xlabel({xlabel!r})\nax.set_ylabel({ylabel!r})\nfig.tight_layout()\nplt.show()")]
     if source == "V16":
         x, y, *_ = contract(source, index)
-        data = 'df.loc[df["minutes"].ge(20)]' if index == 2 else "df"
+        data = 'df.dropna(subset=["wait_minutes", "consult_minutes"])' if index == 2 else "df"
         return [
             ("swapped_axis_mapping", f"observations={data}\nax.scatter(observations[{y!r}], observations[{x!r}])\nfig.tight_layout()\nplt.show()"),
             ("missing_observations", f"observations=({data}).iloc[:2]\nax.scatter(observations[{x!r}], observations[{y!r}])\nfig.tight_layout()\nplt.show()"),
@@ -223,7 +231,7 @@ def focal_near_misses(source, index, alternative):
             ("wrong_export_dpi", alternative.replace("dpi=150", "dpi=72")),
             ("missing_tight_export", alternative.replace('bbox_inches="tight"', 'bbox_inches=None')),
             ("export_after_show", 'fig.tight_layout()\nplt.show()\nfig.savefig("chart.png", dpi=150, bbox_inches="tight")'),
-            ("unfinished_export_before_show", ('ax.set(xlabel="minutes", ylabel="rating")\n' if index == 2 else "") + 'title = ax.get_title()\nax.set_title("Incomplete export")\nfig.savefig("chart.png", dpi=150, bbox_inches="tight")\nax.set_title(title)\nfig.tight_layout()\nplt.show()'),
+            ("unfinished_export_before_show", ('ax.set(title="Clinic visits", xlabel="Wait (minutes)", ylabel="Consultation (minutes)")\n' if index == 2 else "") + 'title = ax.get_title()\nax.set_title("Incomplete export")\nfig.savefig("chart.png", dpi=150, bbox_inches="tight")\nax.set_title(title)\nfig.tight_layout()\nplt.show()'),
         ]
         if index == 1:
             misses.append(("requested_layout_omitted", 'fig.savefig("chart.png", dpi=150, bbox_inches="tight")\nplt.show()'))
@@ -239,6 +247,12 @@ def focal_near_misses(source, index, alternative):
         if index == 2:
             misses.append(("wrong_common_report_range", alternative.replace("ylim=(0, 25)", "ylim=(0, 30)")))
         return misses
+    if source == "V15" and index == 2:
+        return [
+            ("wrong_panel_cleared", alternative.replace("axes[0]", "axes[1]")),
+            ("summary_instead_of_raw_points", alternative.replace("sns.stripplot", "sns.boxplot").replace("jitter=False, ", "")),
+            ("raw_points_appended_to_draft", 'sns.stripplot(data=df, x="batch", y="mass_g", jitter=False, ax=axes[0])\naxes[0].set(title="Observations", xlabel="batch", ylabel="mass_g")\nfig.tight_layout()\nplt.show()'),
+        ]
     if source == "V15":
         x, y, *_ = contract(source, index)
         return [
@@ -299,13 +313,16 @@ def main():
     families = set(FAMILIES)
     if arguments.include_v15 or any(row["sourceId"] == "V15" and row["exercise"].get("setupDescription") for row in exported["rounds"]):
         families.add("V15")
-    rows = [row for row in exported["rounds"] if row["sourceId"] in families]
+    # Fresh reviews retrieve concepts with their own contracts and fixtures;
+    # the complete Visualise audit checks them. This suite isolates original
+    # lessons whose editor splits fixed setup from focal learner work.
+    rows = [row for row in exported["rounds"] if row["sourceId"] in families and row["lessonId"] == row["sourceId"]]
     datasets_before = json_hash(exported["datasets"])
     baseline = json.loads(arguments.baseline_curriculum.read_text()) if arguments.baseline_curriculum else None
     baseline_rounds = {r["id"]: r for lesson in baseline["lessons"] for r in lesson["rounds"]} if baseline else {}
     failures = []
-    if baseline and exported["datasets"] != baseline["datasets"]:
-        failures.append({"case": "dataset_preservation", "reason": "Published dataset inputs changed."})
+    if baseline and any(exported["datasets"].get(key) != value for key, value in baseline["datasets"].items()):
+        failures.append({"case": "dataset_preservation", "reason": "An original published dataset was changed instead of adding an authored fixture."})
     sys.path.insert(0, str(ROOT))
     namespace = {}
     exec((ROOT / "table-serialization.py").read_text() + "\n" + (ROOT / "foundations/runtime.py").read_text(), namespace)
@@ -351,8 +368,8 @@ def main():
         ]
         cases += [(name, with_work(row, work), True, False) for name, work in focal_near_misses(source, index, alternate)]
         cases += [
-            ("wrong_title", before_show(row["code"], 'ax.set_title("Incorrect chart title")'), True, False),
-            ("wrong_labelled_pairs_or_counts", before_show(row["code"], wrongly_paired_marks(source, index)), True, False),
+            ("wrong_title", before_show(row["code"], 'axes[0].set_title("Incorrect chart title")' if source == "V15" and index == 2 else 'ax.set_title("Incorrect chart title")'), True, False),
+            ("wrong_labelled_pairs_or_counts", before_show(row["code"], wrongly_paired_marks(source, index).replace("ax.", "axes[0].") if source == "V15" and index == 2 else wrongly_paired_marks(source, index)), True, False),
             ("edited_wrong_supplied_values", edited_visible_data(row, exercise["solution"]), True, False),
             # A second prepared chart must be rejected even if each chart has
             # the correct marks individually. Retain the actual two images in

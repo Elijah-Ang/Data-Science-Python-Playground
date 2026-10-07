@@ -191,11 +191,14 @@ with sync_playwright() as p:
  for index in range(3):
   open_lesson('V23',index)
   model=solution('V23',index)
-  code=model.replace('fmt="d"','fmt=".1f"') if index<2 else model.replace('fmt=".1f"','fmt=".3f"')
+  required_format=['d','.2f','.1f'][index]
+  wrong_format=['.1f','.1f','.3f'][index]
+  code=model.replace(f'fmt="{required_format}"',f'fmt="{wrong_format}"')
+  assert code!=model,(index,'The cell-format negative must change the solution.')
   feedback=run(code)
   assert 'Not yet' in feedback,(index,feedback)
   report['annotation_cases'].append({'id':f'V23-{index+1}','case':'wrong explicitly requested cell format','expected':False,'feedback':feedback,'code':code,'status':'passed'})
- report['checks'].append('Real Pyodide flexible numeric annotation precision, wrong-cell rejection and explicit integer/.1f formatting')
+ report['checks'].append('Real Pyodide flexible numeric annotation precision, wrong-cell rejection and explicit integer/.2f/.1f formatting')
  # Core/extension routes remain separate, and chart-choice and inspection tasks run in real Python.
  open_lesson('V35');assert 'matches' in run('"scatter"')
  open_lesson('I05',1);assert 'Not yet' in run('# no answer');assert 'Not yet' in run('None');assert 'matches' in run('df.head(3).dtypes')
@@ -203,8 +206,10 @@ with sync_playwright() as p:
  assert page.locator('#foundationOutput .empty-output').count()==0
  open_lesson('V08',1);assert 'matches' in run(solution('V08',1))
  open_lesson('V37',1);assert 'matches' in run(solution('V37',1))
- assert page.locator('.foundation-practice-brief ol > li').count()==4
- assert page.locator('.foundation-practice-brief .practice-question').count()==1
+ steps=page.evaluate('FoundationsCurriculum.lessons.find(l=>l.id==="V37").rounds[1].steps')
+ assert len(steps)>1
+ assert page.locator('.foundation-practice-brief ol > li').all_text_contents()==steps[1:]
+ assert page.locator('.foundation-practice-brief .practice-question').inner_text()==steps[0]
  page.locator('#foundationHint summary').click()
  assert 'worked example' not in page.locator('#foundationHint').inner_text()
  open_lesson('V37',2)

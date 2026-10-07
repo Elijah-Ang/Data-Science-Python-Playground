@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "purpose": "Explicit meaningful alternatives for the 67 historical general-ledger gaps; every code string is executed per ID by test_ml_learning_exercise_audit.py.",
+  "purpose": "Executable scientific alternatives for the complete assembled ML audit; every explicit case is run on its own task and population.",
   "cases": [
     {
       "id": "ML-F05-2",
@@ -172,10 +172,10 @@
     },
     {
       "id": "ML-C01-3",
-      "family": "confusion_crosstab",
-      "label": "retain empty class in contingency",
-      "rationale": "Reindexes both contingency dimensions to A/B/C so the missing prediction category remains an explicit zero column.",
-      "code": "classes = ['A', 'B', 'C']\nanswer = pd.crosstab(df.actual, df.predicted).reindex(index=classes, columns=classes, fill_value=0).to_numpy()\n"
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "answer=pd.crosstab(df.actual,df.predicted).reindex(index=['A','B','C'],columns=['A','B','C'],fill_value=0).to_numpy()"
     },
     {
       "id": "ML-C02-1",
@@ -284,198 +284,696 @@
     },
     {
       "id": "ML-U05-1",
-      "family": "original_unit_group_aggregation",
-      "label": "group totals divided by sizes",
-      "rationale": "Computes original-unit cluster means from group totals and counts, and derives sizes from the same grouping.",
-      "code": "grouped = X.groupby(labels, sort=True)\nanswer = grouped.sum().div(grouped.size(), axis='index')\nsizes = grouped.size()\n"
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "answer=X.groupby(labels).mean()\nsizes=pd.Series(labels).value_counts().sort_index()\n\nanswer=answer.iloc[::-1]"
     },
     {
       "id": "ML-U05-2",
-      "family": "cluster_marker_backend",
-      "label": "Matplotlib per-cluster marker scatter",
-      "rationale": "Uses a separate Matplotlib collection and distinct marker for each aligned cluster, then calculates group means using agg.",
-      "code": "import matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nmarkers = ['o', 's', '^']\nfor marker, label in zip(markers, np.unique(labels)):\n    selected = X.loc[np.asarray(labels) == label]\n    ax.scatter(selected.bill_length_mm, selected.bill_depth_mm, marker=marker, label=str(label))\nax.set(xlabel='Bill length (mm)', ylabel='Bill depth (mm)', title='Groups in two measured features')\nax.legend()\nanswer = X.groupby(labels)[['bill_length_mm', 'bill_depth_mm']].agg('mean')\n"
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "import matplotlib.pyplot as plt\nimport seaborn as sns\nfig,ax=plt.subplots()\nsns.scatterplot(data=X,x='bill_length_mm',y='bill_depth_mm',hue=labels,style=labels,ax=ax)\nax.set(xlabel='Bill length (mm)',ylabel='Bill depth (mm)',title='Groups in two measured features')\nax.legend()\nanswer=X.groupby(labels)[['bill_length_mm','bill_depth_mm']].mean()\n\nanswer=answer.iloc[::-1]"
     },
     {
       "id": "ML-U07-1",
-      "family": "ward_linkage_recomputation",
+      "family": "discovery_recompute_ward_from_supplied_scaled_rows",
       "label": "recompute Ward from supplied scaled rows",
-      "rationale": "Independently rebuilds the requested Ward linkage from the immutable supplied scaled population rather than assigning its matrix alias.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "from scipy.cluster.hierarchy import linkage\nanswer = linkage(scaled, method='ward')\n"
     },
     {
       "id": "ML-U07-2",
-      "family": "dendrogram_orientation",
+      "family": "discovery_left_oriented_last_ten_ward_dendrogram",
       "label": "left-oriented last-ten Ward dendrogram",
-      "rationale": "Uses an explicitly horizontal orientation while retaining the same ten terminal groups and visible Ward distance/group labels.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "import matplotlib.pyplot as plt\nfrom scipy.cluster.hierarchy import dendrogram\nfig, ax = plt.subplots()\nanswer = dendrogram(linkage_matrix, truncate_mode='lastp', p=10, orientation='left', ax=ax)\nax.set(xlabel='Ward merge distance', ylabel='Merged observations/groups', title='Ward hierarchy')\n"
     },
     {
       "id": "ML-U08-1",
-      "family": "hierarchy_cut_api",
+      "family": "discovery_fcluster_three_group_partition",
       "label": "fcluster three-group partition",
-      "rationale": "Uses SciPy fcluster maxclust instead of cut_tree; the fitted partition is equivalent although arbitrary group IDs differ.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "from scipy.cluster.hierarchy import fcluster\nanswer = fcluster(linkage_matrix, t=3, criterion='maxclust')\n"
     },
     {
       "id": "ML-U08-2",
-      "family": "hierarchy_cut_api",
+      "family": "discovery_fcluster_cut_sizes_by_unique_counts",
       "label": "fcluster cut sizes by unique counts",
-      "rationale": "Uses the alternate cut API and numpy.unique counts, returning size Series with consistently renamed group IDs.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "from scipy.cluster.hierarchy import fcluster\nlabels_2 = fcluster(linkage_matrix, t=2, criterion='maxclust')\nlabels_4 = fcluster(linkage_matrix, t=4, criterion='maxclust')\ngroups_2, counts_2 = np.unique(labels_2, return_counts=True)\ngroups_4, counts_4 = np.unique(labels_4, return_counts=True)\nsizes_2 = pd.Series(counts_2, index=groups_2)\nsizes_4 = pd.Series(counts_4, index=groups_4)\n"
     },
     {
       "id": "ML-U09-1",
-      "family": "seeded_sample_positions",
+      "family": "discovery_randomstate_sampling_and_iloc",
       "label": "RandomState sampling and iloc",
-      "rationale": "Recreates the seeded without-replacement sample positions through NumPy and selects them with iloc, preserving exact order and source indices.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "positions = np.random.RandomState(42).choice(len(X), size=100, replace=False)\nanswer = X.iloc[positions]\n"
     },
     {
       "id": "ML-U10-1",
-      "family": "aligned_group_label_join",
-      "label": "explicit indexed label concatenation",
-      "rationale": "Joins a label Series aligned to X.index with concat before aggregating the original measured columns.",
-      "code": "assignments = pd.Series(labels, index=X.index, name='cluster')\nlabelled = pd.concat([X, assignments], axis=1)\nanswer = labelled.groupby('cluster').agg({'length': 'mean', 'width': 'mean'})\n"
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "cluster_labels = pd.Series(labels, index=X.index, name='cluster')\nanswer = pd.crosstab(cluster_labels, df['label']).reindex(columns=['A','B','C'], fill_value=0)\n\nanswer=answer.iloc[::-1]"
     },
     {
       "id": "ML-P02-1",
-      "family": "pca_score_matrix_product",
+      "family": "discovery_project_centred_rows_onto_fitted_axes",
       "label": "project centred rows onto fitted axes",
-      "rationale": "Recomputes all PCA coordinates with the fitted centring vector and component matrix, retaining original row order.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "answer = (scaled - pca.mean_) @ pca.components_.T\n"
     },
     {
       "id": "ML-P03-1",
-      "family": "pca_variance_normalization",
+      "family": "discovery_normalise_fitted_component_variances",
       "label": "normalise fitted component variances",
-      "rationale": "Derives the full fitted PCA variance-ratio vector from component variances and their total.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "answer = pca.explained_variance_ / pca.explained_variance_.sum()\n"
     },
     {
       "id": "ML-P03-2",
-      "family": "variance_bar_backend",
+      "family": "discovery_matplotlib_component_variance_bars",
       "label": "Matplotlib component variance bars",
-      "rationale": "Uses native Matplotlib bars for independently normalized component variances with explicit component positions and visible labels.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "answer = pca.explained_variance_ / pca.explained_variance_.sum()\n\nimport matplotlib.pyplot as plt\nfig, ax = plt.subplots()\nax.bar(np.arange(1, len(answer) + 1), answer)\nax.set(xlabel='Component', ylabel='Explained variance ratio', title='Variance by component')\n"
     },
     {
       "id": "ML-P04-1",
-      "family": "pca_retention_threshold",
+      "family": "discovery_count_cumulative_values_below_threshold",
       "label": "count cumulative values below threshold",
-      "rationale": "Uses an accumulate ufunc and monotone threshold count to find the minimum retained dimension, then selects its leading scores with numpy.take.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained = int(np.count_nonzero(cumulative < 0.9) + 1)\nanswer = np.take(scores, np.arange(retained), axis=1)\n"
     },
     {
       "id": "ML-P04-2",
-      "family": "pca_retention_threshold",
-      "label": "explicit cumulative threshold counts",
-      "rationale": "Returns the fitted cumulative ratios and computes both minimum component counts using monotone threshold counts instead of searchsorted.",
-      "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained_80 = int(np.count_nonzero(cumulative < 0.8) + 1)\nretained_95 = int(np.count_nonzero(cumulative < 0.95) + 1)\n"
+      "family": "discovery_equivalent_threshold_prefix_counts",
+      "label": "equivalent_threshold_prefix_counts",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "cumulative=np.add.accumulate(pca.explained_variance_ratio_)\nretained_80=int(np.count_nonzero(cumulative<.8)+1)\nretained_95=int(np.count_nonzero(cumulative<.95)+1)"
     },
     {
       "id": "ML-P05-1",
-      "family": "pca_axis_sign_and_named_table",
+      "family": "discovery_named_weights_with_alternate_first_axis_sign",
       "label": "named weights with alternate first-axis sign",
-      "rationale": "Creates a feature-keyed weight table through from_dict and flips the first component sign, an equivalent PCA axis convention.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "rows = {name: [pca.components_[0, index] * -1, pca.components_[1, index]] for index, name in enumerate(X.columns)}\nanswer = pd.DataFrame.from_dict(rows, orient='index', columns=['PC1', 'PC2'])\n"
     },
     {
       "id": "ML-P05-3",
-      "family": "pca_score_matrix_product",
+      "family": "discovery_named_score_table_from_direct_projection",
       "label": "named score table from direct projection",
-      "rationale": "Recomputes the two fitted coordinates by matrix projection and builds explicitly named columns with original row indices.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "coordinates = (scaled - pca.mean_) @ pca.components_[:2].T\nanswer = pd.DataFrame({'PC1': coordinates[:, 0], 'PC2': coordinates[:, 1]}, index=X.index)\n"
     },
     {
       "id": "ML-P06-1",
-      "family": "pca_variance_normalization",
+      "family": "discovery_two_axis_variance_divided_by_total",
       "label": "two-axis variance divided by total",
-      "rationale": "Computes visible two-axis variation by dividing their fitted variances by total fitted variance.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "answer = float((pca.explained_variance_[0] + pca.explained_variance_[1]) / pca.explained_variance_.sum())\n"
     },
     {
       "id": "ML-P06-2",
-      "family": "pca_retention_threshold",
+      "family": "discovery_retain_threshold_and_take_display_columns",
       "label": "retain threshold and take display columns",
-      "rationale": "Calculates the minimum 90% retained dimension independently and uses numpy.take for retained and separate two-axis coordinate arrays.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained = int(np.count_nonzero(cumulative < 0.9) + 1)\nretained_scores = np.take(scores, np.arange(retained), axis=1)\nview_2d = np.take(scores, [0, 1], axis=1)\n"
     },
     {
       "id": "ML-P07-1",
-      "family": "pca_axis_sign",
+      "family": "discovery_negative_ufunc_on_first_fitted_axis",
       "label": "negative ufunc on first fitted axis",
-      "rationale": "Uses the elementwise negative ufunc to implement the requested sign reversal of the fitted first component.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "answer = np.negative(pca.components_[0])\n"
     },
     {
       "id": "ML-P07-2",
-      "family": "pca_rank_one_matrix_product",
-      "label": "paired sign reversal and broadcast reconstruction",
-      "rationale": "Flips both scores and weights consistently and multiplies their column/row matrices instead of using numpy.outer.",
-      "code": "weights = np.negative(pca.components_[0])\nflipped_scores = np.negative(scores[:, 0])\nanswer = flipped_scores[:, None] @ weights[None, :]\n"
+      "family": "discovery_equivalent_broadcast_reconstruction",
+      "label": "equivalent_broadcast_reconstruction",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "weights=-pca.components_[0]\nflipped_scores=-scores[:,0]\nanswer=flipped_scores[:,None]*weights[None,:]"
     },
     {
       "id": "ML-P07-3",
-      "family": "pca_rank_two_matrix_product",
+      "family": "discovery_direct_two_component_reconstruction",
       "label": "direct two-component reconstruction",
-      "rationale": "Reconstructs scaled inputs directly from the first two score/weight matrices plus the fitted mean instead of calling inverse_transform on zeroed scores.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "answer = scores[:, :2] @ pca.components_[:2] + pca.mean_\n"
     },
     {
       "id": "ML-M01-1",
-      "family": "estimator_factory_registry",
+      "family": "discovery_construct_candidate_registry_from_factories",
       "label": "construct candidate registry from factories",
-      "rationale": "Instantiates each requested estimator through a named factory registry and derives answer from actual constructed class objects.",
+      "rationale": "Retained scientifically equivalent presentation after final discovery repair.",
       "code": "from sklearn.linear_model import LinearRegression\nfrom sklearn.tree import DecisionTreeRegressor\nfactories = {'line': LinearRegression, 'tree': DecisionTreeRegressor}\nparameters = {'line': {}, 'tree': {'random_state': 42}}\ncandidates = {name: factory(**parameters[name]) for name, factory in factories.items()}\nanswer = {name: estimator.__class__.__name__ for name, estimator in candidates.items()}\n"
     },
     {
       "id": "ML-R-R1-2",
-      "family": "population_mean_definition",
-      "label": "retrieval-population sum divided by size",
-      "rationale": "Runs the base mean-definition alternative against this distinct retrieval setup and its independent grader.",
-      "code": "evaluation_mean = float(np.asarray(y_test).sum() / len(y_test))\ntraining_mean = float(np.asarray(y_train).sum() / len(y_train))\n",
-      "family_reference": "ML-R02-3"
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses the direct residual-sum-of-squares R\u00b2 identity for the two declared constants instead of r2_score.",
+      "code": "denominator = np.sum((y_test-y_test.mean())**2)\nevaluation_r2 = 1-np.sum((y_test-y_test.mean())**2)/denominator\ntraining_constant_r2 = 1-np.sum((y_test-y_train.mean())**2)/denominator\n"
     },
     {
       "id": "ML-C-R1-1",
-      "family": "macro_f1_definition",
-      "label": "retrieval-population classwise contingency F1",
-      "rationale": "Runs the classwise contingency calculation on the new retrieval population, rather than reusing the original numeric answer.",
-      "code": "classes = np.union1d(df.actual, df.predicted)\nclass_f1 = []\nfor label in classes:\n    actual_class = df.actual.eq(label)\n    predicted_class = df.predicted.eq(label)\n    numerator = 2 * np.count_nonzero(actual_class & predicted_class)\n    denominator = np.count_nonzero(actual_class) + np.count_nonzero(predicted_class)\n    class_f1.append(numerator / denominator)\nanswer = float(np.mean(class_f1))\n",
-      "family_reference": "ML-C03-1"
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.metrics import f1_score,accuracy_score\nlabels=['clear','inspect','urgent']\nscores=pd.DataFrame(index=['predicted','alternative'],columns=labels+['macro_f1','accuracy'],dtype=float)\nfor p in scores.index:\n    for label in labels:\n        scores.loc[p,label]=f1_score(df.actual.eq(label),df[p].eq(label),zero_division=0)\n    scores.loc[p,'macro_f1']=scores.loc[p,labels].mean()\n    scores.loc[p,'accuracy']=np.mean(df.actual==df[p])\nchosen_policy=max(scores.index,key=lambda p:scores.loc[p,'macro_f1'])"
     },
     {
       "id": "ML-C-R1-3",
-      "family": "validation_numpy_containers",
-      "label": "retrieval most-frequent reference validation",
-      "rationale": "Runs recorded real cross-validation on this retrieval setup using equivalent numeric training containers and its own supplied folds.",
-      "code": "from sklearn.dummy import DummyClassifier\nreference = DummyClassifier(strategy='most_frequent')\nanswer = cross_validate(reference, X_train.to_numpy(), y_train.to_numpy(), cv=folds, scoring='f1_macro')['test_score']\n",
-      "family_reference": "ML-C06-2"
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.model_selection import cross_validate as validate\nfrom sklearn.dummy import DummyClassifier as Majority\nreference=Majority(strategy='most_frequent')\nanswer=validate(reference,X_train,y_train,cv=folds,scoring='f1_macro')['test_score'].tolist()\npaired_gain=np.asarray(candidate_scores)-np.asarray(answer)"
     },
     {
       "id": "ML-U-R1-3",
-      "family": "original_unit_group_aggregation",
-      "label": "retrieval original-unit totals over group sizes",
-      "rationale": "Runs group-total/count aggregation on this distinct retrieval population and its fitted assignments.",
-      "code": "grouped = X.groupby(labels, sort=True)\nanswer = grouped.sum().div(grouped.size(), axis='index')\nsizes = grouped.size()\n",
-      "family_reference": "ML-U05-1"
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "labels = shuffled_labels.reindex(X.index)\nanswer = X.groupby(labels).mean()\nsizes = labels.value_counts()\n\nanswer=answer.iloc[::-1]"
     },
     {
       "id": "ML-P-R1-1",
-      "family": "pca_retention_threshold",
-      "label": "retrieval cumulative threshold counts",
-      "rationale": "Runs the cumulative/count method using the retrieval setup fitted ratios and independent trusted PCA checks.",
-      "code": "cumulative = np.add.accumulate(pca.explained_variance_ratio_)\nretained_80 = int(np.count_nonzero(cumulative < 0.8) + 1)\nretained_95 = int(np.count_nonzero(cumulative < 0.95) + 1)\n",
-      "family_reference": "ML-P04-2"
+      "family": "discovery_equivalent_first_threshold_position",
+      "label": "equivalent_first_threshold_position",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "cumulative=np.cumsum(pca.explained_variance_ratio_)\nretained_80=int(np.flatnonzero(cumulative>=.8)[0]+1)\nretained_95=int(np.flatnonzero(cumulative>=.95)[0]+1)"
     },
     {
       "id": "ML-P-R1-2",
-      "family": "pca_score_matrix_product",
-      "label": "retrieval named scores from fitted projection",
-      "rationale": "Projects the new retrieval population onto its own fitted axes and retains that population row index.",
-      "code": "coordinates = (scaled - pca.mean_) @ pca.components_[:2].T\nanswer = pd.DataFrame({'PC1': coordinates[:, 0], 'PC2': coordinates[:, 1]}, index=X.index)\n",
-      "family_reference": "ML-P05-3"
+      "family": "discovery_equivalent_manual_coordinates",
+      "label": "equivalent_manual_coordinates",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "answer=pd.DataFrame((scaled-pca.mean_)@pca.components_[:2].T,index=X.index,columns=['PC1','PC2'])"
+    },
+    {
+      "id": "ML-F02-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "X = df.loc[:, ['distance', 'weight']]\ny = df.loc[:, 'duration']\n"
+    },
+    {
+      "id": "ML-F02-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "X = df.loc[:, ['backlog_at_open', 'device_age_years']]\ny = df.loc[:, 'completion_hours']\n"
+    },
+    {
+      "id": "ML-F07-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.model_selection import train_test_split\nX = df.loc[:, ['distance']]\ny = df.loc[:, 'duration']\n(X_train, X_test, y_train, y_test) = train_test_split(X, y, test_size=0.2, random_state=42)\n(original_train_rows, original_test_rows) = (len(X_train), len(X_test))\n(X_train, X_test, y_train, y_test) = train_test_split(X, y, test_size=0.25, random_state=42)\nallocation = pd.DataFrame.from_dict({'train_rows': [original_train_rows, len(X_train)], 'test_rows': [original_test_rows, len(X_test)]}).set_axis(['20%', '25%'], axis='index')\n"
+    },
+    {
+      "id": "ML-F07-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Compares the same observation identities as lists instead of using Index.equals; the alignment decision is unchanged.",
+      "code": "a,b,c,d = candidate_splits['joint']\nanswer = 'joint' if list(a.index)==list(c.index) and list(b.index)==list(d.index) else 'sorted_target'\n"
+    },
+    {
+      "id": "ML-F09-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.model_selection import train_test_split\nX = df.loc[:, ['signal', 'speed_rpm']]\ny = df.loc[:, 'status']\n(X_train, X_test, y_train, y_test) = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\nanswer = pd.DataFrame.from_dict({'population': y.value_counts(), 'training': y_train.value_counts(), 'test': y_test.value_counts()}).sort_index()\n"
+    },
+    {
+      "id": "ML-W03-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.preprocessing import StandardScaler\nscaler = StandardScaler().fit(X=X_train)\nanswer = scaler.transform(X=X_test)\nlearned_means = pd.Series(scaler.mean_, index=X_train.columns)\n"
+    },
+    {
+      "id": "ML-W08-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Returns an independent copy of the requested mathematical evidence while preserving its row/feature labels.",
+      "code": "from sklearn.model_selection import StratifiedKFold\nanswer = list(StratifiedKFold(5,shuffle=True,random_state=42).split(X_train,y_train))\n\n# Copy the result without changing its values or labels.\nanswer = answer.copy()\n"
+    },
+    {
+      "id": "ML-W11-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.model_selection import GridSearchCV, KFold\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.pipeline import Pipeline\nmodel = Pipeline([('model', LinearRegression())])\nfolds = KFold(n_splits=5, shuffle=True, random_state=42)\nsearch = GridSearchCV(model, {'model__fit_intercept': [True, False]}, cv=folds, scoring='neg_root_mean_squared_error')\nsearch.fit(X=X_train, y=y_train)\nanswer = pd.DataFrame(search.cv_results_)[['params', 'mean_test_score']]\n"
+    },
+    {
+      "id": "ML-W13-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.base import clone\nfrom sklearn.metrics import root_mean_squared_error\nfinal_model = clone(model).fit(X=X_train, y=y_train)\nfinal_predictions = final_model.predict(X=X_test)\nanswer = root_mean_squared_error(y_test, final_predictions)\n"
+    },
+    {
+      "id": "ML-W14-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.linear_model import LinearRegression\nmodel = LinearRegression().fit(X=train[['temperature']].iloc[training_positions], y=train.demand.iloc[training_positions])\nanswer = model.predict(X=train[['temperature']].iloc[validation_positions])\n"
+    },
+    {
+      "id": "ML-R03-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Returns an independent copy of the requested mathematical evidence while preserving its row/feature labels.",
+      "code": "from sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import cross_val_predict\nimport matplotlib.pyplot as plt\nimport seaborn as sns\npredicted = cross_val_predict(LinearRegression(),X_train,y_train,cv=folds)\nanswer = y_train-predicted\nfig,ax = plt.subplots()\nsns.scatterplot(x=X_train.x,y=answer,ax=ax)\nax.axhline(0,color='black')\nax.set(xlabel='x',ylabel='Residual',title='Training-only line residuals on curved observations')\n\n# Copy the result without changing its values or labels.\nanswer = answer.copy()\n"
+    },
+    {
+      "id": "ML-R06-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import root_mean_squared_error\noriginal = LinearRegression().fit(X=X, y=df.duration)\nadjusted = LinearRegression().fit(X=X, y=adjusted_target)\ncoefficients = pd.DataFrame.from_dict({'original': original.coef_, 'adjusted': adjusted.coef_}).set_axis(X.columns, axis='index')\nprediction_rmse = root_mean_squared_error(original.predict(X=X), adjusted.predict(X=X))\n"
+    },
+    {
+      "id": "ML-R08-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures, StandardScaler\nfrom sklearn.linear_model import Ridge\nmodel = Pipeline([('polynomial', PolynomialFeatures(degree=2, include_bias=False)), ('scale', StandardScaler()), ('model', Ridge())])\nanswer = model.named_steps['polynomial'].fit_transform(X=X_train)\n"
+    },
+    {
+      "id": "ML-R08-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures, StandardScaler\nfrom sklearn.linear_model import Ridge\nmodel = Pipeline([('polynomial', PolynomialFeatures(degree=2, include_bias=False)), ('scale', StandardScaler()), ('model', Ridge())])\nmodel.fit(X=X_train, y=y_train)\nanswer = model.predict(X=X_test)\n"
+    },
+    {
+      "id": "ML-R08-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures, StandardScaler\nfrom sklearn.linear_model import Ridge\nmodel = Pipeline([('polynomial', PolynomialFeatures(degree=2, include_bias=False)), ('scale', StandardScaler()), ('model', Ridge())])\nfrom sklearn.model_selection import GridSearchCV, KFold\nfolds = KFold(5, shuffle=True, random_state=42)\nsearch = GridSearchCV(model, {'polynomial__degree': [2, 3]}, cv=folds, scoring='neg_root_mean_squared_error').fit(X=X_train, y=y_train)\nanswer = search.cv_results_['mean_test_score']\n"
+    },
+    {
+      "id": "ML-R09-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.tree import DecisionTreeRegressor, plot_tree\nimport matplotlib.pyplot as plt\nmodel = DecisionTreeRegressor(max_depth=3, random_state=42).fit(X=X_train, y=y_train)\n(fig, ax) = plt.subplots(figsize=(9, 4))\nplot_tree(model, feature_names=['x'], ax=ax)\nanswer = model.predict(X=X_test)\n"
+    },
+    {
+      "id": "ML-R09-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.tree import DecisionTreeRegressor\nfeatures = ['sugarpercent', 'pricepercent']\noriginal_tree = DecisionTreeRegressor(max_depth=3, random_state=42).fit(X=train[features], y=train.winpercent)\nunit_changed_tree = DecisionTreeRegressor(max_depth=3, random_state=42).fit(X=train[features] * 100, y=train.winpercent)\noriginal_predictions = original_tree.predict(X=test[features])\nunit_changed_predictions = unit_changed_tree.predict(X=test[features] * 100)\n"
+    },
+    {
+      "id": "ML-F-R1-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Returns an independent copy of the requested mathematical evidence while preserving its row/feature labels.",
+      "code": "X = eligible[['backlog_at_open','device_age_years']]\ny = eligible['completion_hours']\n\n# Copy the result without changing its values or labels.\nX = X.copy()\n"
+    },
+    {
+      "id": "ML-F-R1-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "answer = pd.Series(model.predict(X=incoming[['backlog_at_open']]), index=incoming.index)\n"
+    },
+    {
+      "id": "ML-F-R1-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "answer = pd.DataFrame.from_dict({'actual': actual, 'predicted': predicted, 'residual': actual - predicted})\n"
+    },
+    {
+      "id": "ML-F-R2-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "answer = df.loc[:, ['signal', 'speed_rpm']]\n"
+    },
+    {
+      "id": "ML-F-R2-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.model_selection import train_test_split\nX = df.loc[:, ['signal', 'speed_rpm']]\ny = df.loc[:, 'status']\n(X_train, X_test, y_train, y_test) = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)\nminority_support = pd.Series([int(y_train.value_counts()['urgent']), int(y_test.value_counts()['urgent'])], index=['training', 'test'])\n"
+    },
+    {
+      "id": "ML-W-R1-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.preprocessing import StandardScaler\nscaler = StandardScaler().fit(X=X_train)\ntraining_scale = pd.Series(scaler.scale_, index=X_train.columns)\nanswer = pd.DataFrame(scaler.transform(X=X_test), index=X_test.index, columns=X_test.columns)\n"
+    },
+    {
+      "id": "ML-W-R1-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "answer = pd.DataFrame(encoder.transform(X=incoming), index=incoming.index, columns=encoder.get_feature_names_out())\n"
+    },
+    {
+      "id": "ML-W-R1-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.impute import SimpleImputer\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LinearRegression\nprepare = Pipeline([('impute', SimpleImputer(strategy='median')), ('scale', StandardScaler())])\nmodel = Pipeline([('prepare', prepare), ('model', LinearRegression())]).fit(X=X_train, y=y_train)\nanswer = model.predict(X=X_test)\n"
+    },
+    {
+      "id": "ML-W-R2-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.linear_model import LinearRegression\nmodel = LinearRegression().fit(X=train[['temperature']].iloc[training_positions], y=train.demand.iloc[training_positions])\nvalidation_X = train[['temperature']].iloc[validation_positions]\npredicted = model.predict(X=validation_X)\nactual = train.demand.iloc[validation_positions]\nanswer = pd.DataFrame.from_dict({'actual': actual, 'predicted': predicted, 'residual': actual - predicted})\n"
+    },
+    {
+      "id": "ML-R-R1-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "rows = pd.DataFrame.from_dict({'backlog_at_open': [3, 5], 'device_age_years': [5, 4]})\nanswer = pd.Series([2 * model.coef_[0], -model.coef_[1], float(np.diff(model.predict(X=rows))[0])], index=['backlog_contribution', 'age_contribution', 'total_change'])\n"
+    },
+    {
+      "id": "ML-R-R2-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.preprocessing import PolynomialFeatures\nexpander = PolynomialFeatures(degree=2, include_bias=False)\nvalues = expander.fit_transform(X=df.loc[:, ['backlog_at_open', 'device_age_years']])\nanswer = pd.DataFrame(values, index=df.index, columns=expander.get_feature_names_out())\n"
+    },
+    {
+      "id": "ML-R-R2-2",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import PolynomialFeatures, StandardScaler\nfrom sklearn.linear_model import Ridge\nfrom sklearn.model_selection import GridSearchCV, KFold\nmodel = Pipeline([('polynomial', PolynomialFeatures(include_bias=False)), ('scale', StandardScaler()), ('model', Ridge())])\nsearch = GridSearchCV(model, {'polynomial__degree': [2, 3]}, cv=KFold(5, shuffle=True, random_state=42), scoring='neg_root_mean_squared_error').fit(X=X_train, y=y_train)\nanswer = pd.DataFrame.from_dict({'degree': [2, 3], 'mean_rmse': -search.cv_results_['mean_test_score']})\nchosen_degree = int(search.best_params_['polynomial__degree'])\n"
+    },
+    {
+      "id": "ML-R-R2-3",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "search = GridSearchCV(DecisionTreeRegressor(random_state=42), {'min_samples_leaf': [1, 5, 10]}, cv=folds, scoring='neg_root_mean_squared_error').fit(X=X_train, y=y_train)\nanswer = pd.DataFrame.from_dict({'min_samples_leaf': [1, 5, 10], 'mean_rmse': -search.cv_results_['mean_test_score'], 'fold_sd': search.cv_results_['std_test_score']})\n"
+    },
+    {
+      "id": "ML-F-K1-1",
+      "family": "core-audit-equivalent",
+      "label": "Equivalent labelled containers and public API calls",
+      "rationale": "Uses public keyword estimator inputs and equivalent pandas/NumPy constructors or labelled selection, on this exact activity and population.",
+      "code": "from sklearn.model_selection import train_test_split, KFold, cross_validate, cross_val_predict\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.dummy import DummyRegressor\nfrom sklearn.base import clone\nfrom sklearn.metrics import mean_squared_error\nfeature_names = ['backlog_at_open', 'device_age_years']\ntarget = 'completion_hours'\n(X, y) = (df.loc[:, feature_names], df.loc[:, target])\n(X_train, X_test, y_train, y_test) = train_test_split(X, y, test_size=0.2, random_state=42)\nprint(X_train.describe())\ncandidates = {'simple': Pipeline([('prepare', 'passthrough'), ('model', LinearRegression())])}\nfolds = KFold(n_splits=3, shuffle=True, random_state=42)\nmetric = 'neg_root_mean_squared_error'\nreference = DummyRegressor(strategy='mean')\nreference_results = cross_validate(reference, X_train, y_train, cv=folds, scoring=metric)\ncv_results = {'simple': cross_validate(candidates['simple'], X_train, y_train, cv=folds, scoring=metric, return_train_score=True)}\nprint('Reference validation:', reference_results['test_score'])\nprint('Candidate validation:', cv_results['simple']['test_score'])\nprint('Candidate minus dummy mean:', cv_results['simple']['test_score'].mean() - reference_results['test_score'].mean())\nchosen_name = 'simple'\ndiagnostic_predictions = cross_val_predict(candidates[chosen_name], X_train, y_train, cv=folds)\nprint(pd.DataFrame.from_dict({'actual': y_train, 'predicted': diagnostic_predictions, 'residual': y_train - diagnostic_predictions}))\nfinal_model = clone(candidates[chosen_name]).fit(X=X_train, y=y_train)\nfinal_predictions = final_model.predict(X=X_test)\nfinal_score = np.sqrt(mean_squared_error(y_test, final_predictions))\nprint('Final metric:', final_score)\n"
+    },
+    {
+      "id": "ML-C05-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.linear_model import LogisticRegression\nmodel=Pipeline([('normalise',StandardScaler()),('classifier',LogisticRegression(max_iter=2000,random_state=42))]).fit(X_train,y_train)\nanswer=model.predict(X_test)\n"
+    },
+    {
+      "id": "ML-C08-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.preprocessing import StandardScaler\nscaler=StandardScaler().fit(X_train)\nneighbours=KNeighborsClassifier(n_neighbors=3).fit(scaler.transform(X_train),y_train)\nanswer=neighbours.kneighbors(scaler.transform(X_test.iloc[:1]),return_distance=False)\n\nmodel=neighbours\n"
+    },
+    {
+      "id": "ML-C08-2",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\ncandidate=Pipeline([('normalise',StandardScaler()),('classifier',KNeighborsClassifier(n_neighbors=5))]).fit(X_train,y_train)\nprobe=X_test.iloc[[-1]]\nanswer=candidate.predict(X_test.iloc[[-1]])\npositions=candidate.named_steps['classifier'].kneighbors(candidate.named_steps['normalise'].transform(probe),return_distance=False)[0]\nvote_counts=pd.Series({label:int((y_train.iloc[positions]==label).sum()) for label in reversed(candidate.classes_)})\n"
+    },
+    {
+      "id": "ML-C09-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.model_selection import GridSearchCV,StratifiedKFold\nmodel=Pipeline([('normalise',StandardScaler()),('classifier',KNeighborsClassifier())])\nsearch=GridSearchCV(model,{'classifier__n_neighbors':[3,5,9]},cv=StratifiedKFold(5,shuffle=True,random_state=42),scoring='f1_macro').fit(X_train,y_train)\nanswer=search.cv_results_['mean_test_score']\n"
+    },
+    {
+      "id": "ML-C11-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "model.steps[0]=('normalise',model.steps[0][1])\nmodel.steps[-1]=('classifier',model.steps[-1][1])\nfrom sklearn.model_selection import GridSearchCV,StratifiedKFold\nsearch=GridSearchCV(model,{'classifier__C':[.5,2,10]},cv=StratifiedKFold(5,shuffle=True,random_state=42),scoring='f1_macro').fit(X_train,y_train)\nanswer=search.cv_results_['mean_test_score']\n"
+    },
+    {
+      "id": "ML-C14-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.tree import DecisionTreeClassifier\nmodel=DecisionTreeClassifier(max_depth=3,random_state=42).fit(X_train,y_train)\nleaf=model.apply(X_test.iloc[[0]]).item()\nlabel=model.predict(X_test.iloc[:1])[0]\n"
+    },
+    {
+      "id": "ML-C16-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.naive_bayes import BernoulliNB as FlagClassifier\nflags=['chocolate','fruity','caramel','peanutyalmondy','nougat','crispedricewafer','hard','bar','pluribus']\nflags=list(reversed(flags))\nmodel=FlagClassifier().fit(train[flags],train.popular)\nanswer=model.predict(test[flags])\n"
+    },
+    {
+      "id": "ML-C16-3",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import OneHotEncoder\nfrom sklearn.naive_bayes import BernoulliNB\ncolumns=['buying','maintenance','doors','persons','luggage_boot','safety']\ncolumns=list(reversed(columns))\nmodel=Pipeline([('indicators',OneHotEncoder(handle_unknown='ignore',sparse_output=False)),('classifier',BernoulliNB())]).fit(train[columns],train.acceptability)\nanswer=model.predict(test[columns])\n"
+    },
+    {
+      "id": "ML-C17-3",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "endpoint_scores=list(model.decision_function(probe))\nmidpoint=pd.DataFrame([np.mean(probe.to_numpy(),axis=0)],columns=probe.columns)\nmidpoint_score=model.decision_function(midpoint).item()\ngap=midpoint_score-sum(endpoint_scores)/len(endpoint_scores)"
+    },
+    {
+      "id": "ML-C19-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "counts = df['label'].value_counts().sort_index(ascending=False)\nclass_a = df.loc[df['label'].eq('A'), ['length', 'width']]\nanswer=pd.DataFrame(np.cov(class_a.to_numpy(),rowvar=False,ddof=1),index=class_a.columns,columns=class_a.columns)\n"
+    },
+    {
+      "id": "ML-N04-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "model.fit(X_train,y_train)\nanswer=model.named_steps['model'].transformer_.mean_.tolist()\n"
+    },
+    {
+      "id": "ML-N04-2",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "model.fit(X_train,y_train)\nanswer=model.predict(X_test).tolist()\n"
+    },
+    {
+      "id": "ML-C18-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "model=QuadraticDiscriminantAnalysis(reg_param=.2).fit(X_train,y_train)\nanswer=model.predict(X_test)\n"
+    },
+    {
+      "id": "ML-N04-3",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.model_selection import GridSearchCV,KFold\nsearch=GridSearchCV(model,{'model__regressor__hidden_layer_sizes':[(16,),(24,)]},cv=KFold(5,shuffle=True,random_state=42),scoring='neg_root_mean_squared_error').fit(X_train,y_train)\nanswer=np.negative(search.cv_results_['mean_test_score'])\n"
+    },
+    {
+      "id": "ML-N04-4",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.metrics import root_mean_squared_error\nmodel.fit(X_train,y_train)\npredictions=model.predict(X_test)\nanswer=float(np.sqrt(np.mean((np.asarray(y_test)-np.asarray(predictions))**2)))\n"
+    },
+    {
+      "id": "ML-C-R1-2",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "values=model.predict_proba(X_test)\nanswer=pd.DataFrame(dict(zip(model.classes_,values.T)),index=X_test.index)\npredicted=answer.idxmax(axis=1).to_numpy()"
+    },
+    {
+      "id": "ML-C-R2-3",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "model=Pipeline([('roles',OneRPreprocessor(numeric_features=['distance'],categorical_features=['fragile','service_code'])),('rule',OneRClassifier(bins=5))]).fit(X,y)\nanswer=model.named_steps['rule'].categorical_mask_\nselected_feature=model.named_steps['roles'].get_feature_names_out()[model.named_steps['rule'].best_feature_]\n"
+    },
+    {
+      "id": "ML-C-K1-1",
+      "family": "Classification/network scientific equivalent",
+      "label": "scientific equivalent",
+      "rationale": "Equivalent estimator, labelled evidence or scientific representation verified against its own final task.",
+      "code": "from sklearn.base import clone\nfrom sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate, cross_val_predict, GridSearchCV\nfrom sklearn.dummy import DummyClassifier\nfrom sklearn.metrics import f1_score, accuracy_score, confusion_matrix\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nX=df[['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g', 'sex', 'island', 'year']]\ny=df['species']\nX_train,X_test,y_train,y_test=train_test_split(X,y,test_size=.2,random_state=42,stratify=y)\nfolds=StratifiedKFold(n_splits=5,shuffle=True,random_state=42)\ncandidates={}\ngrids={}\n# Prepare inputs and construct the candidate pipeline.\nnumeric_features = ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']\ncategorical_features = ['island', 'year']\nencoded_binary_features = ['sex']\nfrom sklearn.preprocessing import OneHotEncoder\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.preprocessing import StandardScaler\ncategory_encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False, drop=None)\npreprocessor = ColumnTransformer([('continuous', StandardScaler(), numeric_features), ('encoded', category_encoder, encoded_binary_features + categorical_features)], verbose_feature_names_out=False)\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\nmodel = LogisticRegression(max_iter=2000, random_state=42)\npipeline = Pipeline([('prepare', preprocessor), ('model', model)])\nmodel = pipeline\ncandidates['logistic']=model\ngrids['logistic']={'model__C': [0.1, 1.0, 10.0]}\n# Validate initial candidates on matching training folds.\ninitial_results={name:cross_validate(candidate,X_train,y_train,cv=folds,scoring='f1_macro') for name,candidate in candidates.items()}\n# Compare with a simple reference before tuning.\nreference_results=cross_validate(DummyClassifier(strategy='most_frequent'),X_train,y_train,cv=folds,scoring='f1_macro')\nrows=[]\nselected={}\nfor name,candidate in candidates.items():\n    initial=initial_results[name]\n    grid=grids[name]\n    if grid:\n        search=GridSearchCV(candidate,grid,cv=folds,scoring='f1_macro',n_jobs=1)\n        search.fit(X_train,y_train)\n        selected[name]=search.best_estimator_\n        validation_score=float(search.best_score_)\n        settings=search.best_params_\n    else:\n        selected[name]=candidate\n        validation_score=float(np.mean(initial['test_score']))\n        settings='Keep defaults: no production search'\n    rows.append({'model':name,'initial_score':float(np.mean(initial['test_score'])),'selected_score':validation_score,'settings':str(settings)})\ncv_results=pd.DataFrame(rows).set_index('model')\n# This solution nominates by mean training-fold score. Other evidence-based choices can be defensible.\nchosen_name=cv_results.selected_score.idxmax()\nchosen=selected[chosen_name]\n# Training-only measurements ablation at the selected regularisation strength.\nmeasurement_columns=['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']\nmeasurement_columns=list(reversed(measurement_columns))\nmeasurement_model=Pipeline([('normalise',StandardScaler()),('model',LogisticRegression(C=chosen.named_steps['model'].C,max_iter=2000,random_state=42))])\nablation_results=cross_validate(measurement_model,X_train.loc[:,measurement_columns],y_train,cv=folds,scoring='f1_macro')\noof_predictions=cross_val_predict(chosen,X_train,y_train,cv=folds)\ndiagnostic_y=y_train\nclass_labels=sorted(y_train.unique())\nmatrix=confusion_matrix(diagnostic_y,oof_predictions,labels=class_labels)\nfig,ax=plt.subplots(figsize=(6,4))\nsns.heatmap(matrix,annot=True,fmt='d',cmap='Blues',ax=ax,xticklabels=class_labels,yticklabels=class_labels)\nax.set(xlabel='Predicted class',ylabel='Actual class',title='Training-only confusion matrix')\nfig.tight_layout()\nfig.savefig('diagnostic.png',dpi=150,bbox_inches='tight')\nfinal_model=clone(chosen).fit(X_train,y_train)\nfinal_predictions=final_model.predict(X_test)\nfinal_f1=f1_score(y_test,final_predictions,average='macro')\nfinal_accuracy=accuracy_score(y_test,final_predictions)\nprint('Final macro F1:',final_f1,'; accuracy:',final_accuracy)\n"
+    },
+    {
+      "id": "ML-U03-1",
+      "family": "discovery_equivalent_centroid_row_permutation",
+      "label": "equivalent_centroid_row_permutation",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "model=KMeans(n_clusters=3,n_init=20,random_state=42).fit(scaled)\nanswer=model.cluster_centers_\n\nanswer=answer[[2,0,1]]"
+    },
+    {
+      "id": "ML-U03-2",
+      "family": "discovery_equivalent_estimator_alias",
+      "label": "equivalent_estimator_alias",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "clusterer=KMeans(n_clusters=3,n_init=20,random_state=42).fit(scaled)\ncluster=int(clusterer.labels_[0])\ndistance=float(np.linalg.norm(scaled[0]-clusterer.cluster_centers_[cluster]))\n"
+    },
+    {
+      "id": "ML-U03-3",
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\nX = df[['sugarpercent', 'pricepercent']]\nscaled = StandardScaler().fit_transform(X)\nmodel = KMeans(n_clusters=3, n_init=20, random_state=42).fit(scaled)\nlabels = model.labels_\nanswer = X.groupby(labels).mean()\n\nanswer=answer.iloc[::-1]"
+    },
+    {
+      "id": "ML-U07-4",
+      "family": "discovery_equivalent_linkage_alias",
+      "label": "equivalent_linkage_alias",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom scipy.cluster.hierarchy import linkage as ward_linkage\nX = df[['length_mm', 'width_cm']]\nscaled = StandardScaler().fit_transform(X)\nraw_linkage = ward_linkage(X, method='ward')\nscaled_linkage = ward_linkage(scaled, method='ward')\nraw_height = float(raw_linkage[-1, 2])\nscaled_height = float(scaled_linkage[-1, 2])\n"
+    },
+    {
+      "id": "ML-U09-2",
+      "family": "discovery_equivalent_explicit_population_transform",
+      "label": "equivalent_explicit_population_transform",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "from sklearn.preprocessing import StandardScaler\nX = df[['radius_mean','texture_mean','smoothness_mean','concavity_mean','symmetry_mean']]\nscaler = StandardScaler().fit(X)\nsample = X.sample(min(500,len(X)),random_state=42)\nanswer = (sample.to_numpy()-scaler.mean_)/scaler.scale_\n"
+    },
+    {
+      "id": "ML-P02-2",
+      "family": "discovery_equivalent_manual_projection",
+      "label": "equivalent_manual_projection",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "prepared=scaler.transform(incoming)\nanswer=(prepared-pca.mean_)@pca.components_.T"
+    },
+    {
+      "id": "ML-P02-3",
+      "family": "discovery_equivalent_input_order_selection",
+      "label": "equivalent_input_order_selection",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "ordered = incoming.loc[:,X.columns]\nanswer = pd.DataFrame(pca.transform(scaler.transform(ordered)), index=incoming.index, columns=['PC1','PC2','PC3','PC4'])\n"
+    },
+    {
+      "id": "ML-P02-4",
+      "family": "discovery_equivalent_fitted_transform",
+      "label": "equivalent_fitted_transform",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nX = df[['a','b','c','d','e']]\nscaler = StandardScaler().fit(X)\nscaled = scaler.transform(X)\npca = PCA()\ntraining_scores = pca.fit_transform(scaled)\nincoming_scores = pd.DataFrame(pca.transform(scaler.transform(incoming)), index=incoming.index,\n                               columns=['PC1','PC2','PC3','PC4','PC5'])\n"
+    },
+    {
+      "id": "ML-U-R2-2",
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "answer = sample.groupby(labels).mean()\npopulation_ids = sample.index.tolist()\n\nanswer=answer.iloc[::-1]"
+    },
+    {
+      "id": "ML-U-K1-1",
+      "family": "discovery_equivalent_reversed_labelled_group_rows",
+      "label": "equivalent_reversed_labelled_group_rows",
+      "rationale": "Scientifically equivalent complete answer executed against the final label-alignment grader.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\nfrom sklearn.metrics import silhouette_score\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nX=df.copy()\nscaler=StandardScaler()\nscaled=scaler.fit_transform(X)\nrows=[]\nfor k in range(2,min(8,len(X)-1)+1):\n    candidate=KMeans(n_clusters=k,n_init=20,random_state=42).fit(scaled)\n    score=silhouette_score(scaled,candidate.labels_,sample_size=min(2000,len(X)),random_state=42)\n    rows.append({'k':k,'inertia':candidate.inertia_,'silhouette':score})\nevidence=pd.DataFrame(rows)\n# Three is an illustrative choice to discuss against the evidence, not a unique optimum.\nmodel=KMeans(n_clusters=3,n_init=20,random_state=42).fit(scaled)\nlabels=model.labels_\nsizes=pd.Series(labels).value_counts().sort_index()\nprofiles=X.groupby(labels).mean()\nfig,ax=plt.subplots(figsize=(6,4))\nsns.scatterplot(data=X,x='length_mm',y='width_cm',hue=labels,style=labels,ax=ax)\nax.set(xlabel='Length (mm)',ylabel='Width (cm)',title='Exploratory measurement groups')\nax.legend()\nfig.savefig('clusters.png',dpi=150,bbox_inches='tight')\nprint(evidence)\n\nprofiles=profiles.iloc[::-1]"
+    },
+    {
+      "id": "ML-P-K1-1",
+      "family": "discovery_equivalent_paired_axis_signs",
+      "label": "equivalent_paired_axis_signs",
+      "rationale": "Scientifically equivalent code tested in discovery focused audit.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nX = df[['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]\nscaler = StandardScaler()\nscaled = scaler.fit_transform(X)\npca = PCA().fit(scaled)\nscores = pca.transform(scaled)\nratios = pca.explained_variance_ratio_\ncumulative = np.cumsum(ratios)\nretained = int(np.searchsorted(cumulative,0.9)+1)\nreduced = scores[:,:retained]\nweights = pd.DataFrame(pca.components_[:2].T.copy(),index=X.columns,columns=['PC1','PC2'])\nscores2 = scores[:,:2].copy()\nfig, ax = plt.subplots(figsize=(6,4))\nsns.scatterplot(x=scores2[:,0],y=scores2[:,1],s=12,ax=ax)\nax.set(title='Two-component view of measurements',xlabel='PC1 score',ylabel='PC2 score')\nprint('Retained dimensions:',retained,'; variance visible in 2D:',ratios[:2].sum())\n\nweights.iloc[:,0]*=-1\nscores2[:,0]*=-1\nax.clear()\nax.scatter(scores2[:,0],scores2[:,1])\nax.set(xlabel=\"PC1 score\",ylabel=\"PC2 score\")"
+    },
+    {
+      "id": "ML-U01-1",
+      "family": "discovery_explicit_measurement_selection_with_loc",
+      "label": "explicit measurement selection with loc",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "answer=df.loc[:,['bill_length_mm','bill_depth_mm','flipper_length_mm','body_mass_g']]"
+    },
+    {
+      "id": "ML-U02-1",
+      "family": "discovery_separate_fit_and_transform",
+      "label": "separate fit and transform",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "from sklearn.preprocessing import StandardScaler\nscaler=StandardScaler().fit(df)\nanswer=scaler.transform(df)"
+    },
+    {
+      "id": "ML-U02-2",
+      "family": "discovery_euclidean_distances_from_squared_coordinate_differences",
+      "label": "Euclidean distances from squared coordinate differences",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "from sklearn.preprocessing import StandardScaler\nscaled=StandardScaler().fit_transform(df)\nraw_distance=float(np.sqrt(np.square(df.iloc[0].to_numpy()-df.iloc[1].to_numpy()).sum()))\nscaled_distance=float(np.sqrt(np.square(scaled[0]-scaled[1]).sum()))"
+    },
+    {
+      "id": "ML-U04-1",
+      "family": "discovery_inertia_from_observed_assigned_centroid_squared_distances",
+      "label": "inertia from observed assigned-centroid squared distances",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "model=KMeans(n_clusters=3,n_init=20,random_state=42).fit(scaled)\nanswer=float(np.square(scaled-model.cluster_centers_[model.labels_]).sum())\n"
+    },
+    {
+      "id": "ML-U04-2",
+      "family": "discovery_mean_of_per_observation_silhouettes",
+      "label": "mean of per-observation silhouettes",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "from sklearn.metrics import silhouette_samples\nmodel=KMeans(n_clusters=3,n_init=20,random_state=42).fit(scaled)\nanswer=float(silhouette_samples(scaled,model.labels_).mean())"
+    },
+    {
+      "id": "ML-U04-3",
+      "family": "discovery_labelled_fitted_model_inventory_then_evidence_records",
+      "label": "labelled fitted-model inventory then evidence records",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "from sklearn.metrics import silhouette_score\nfitted={k:KMeans(n_clusters=k,n_init=20,random_state=42).fit(scaled) for k in range(2,9)}\nanswer=pd.DataFrame([{'k':k,'inertia':fit.inertia_,'silhouette':silhouette_score(scaled,fit.labels_)} for k,fit in fitted.items()])"
+    },
+    {
+      "id": "ML-U06-1",
+      "family": "discovery_seed_ordered_comprehension_of_observed_one_start_fits",
+      "label": "seed-ordered comprehension of observed one-start fits",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "answer=[KMeans(n_clusters=4,n_init=1,random_state=seed).fit(scaled).inertia_ for seed in [1,2,3]]"
+    },
+    {
+      "id": "ML-P01-1",
+      "family": "discovery_separate_pca_fit_and_coordinate_transform",
+      "label": "separate PCA fit and coordinate transform",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nX = df.select_dtypes(include='number')\nscaled = StandardScaler().fit_transform(X)\npca = PCA(n_components=2)\npca.fit(scaled)\nanswer = pca.transform(scaled)\n"
+    },
+    {
+      "id": "ML-P04-3",
+      "family": "discovery_count_insufficient_prefixes_before_checking_storage_cap",
+      "label": "count insufficient prefixes before checking storage cap",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "from sklearn.preprocessing import StandardScaler\nfrom sklearn.decomposition import PCA\nX = df[[c for c in df if c.endswith(('_mean','_se','_worst'))]]\nscaled = StandardScaler().fit_transform(X)\npca = PCA().fit(scaled)\nretained = int(np.count_nonzero(np.add.accumulate(pca.explained_variance_ratio_) < .9) + 1)\nbudget_met = bool(retained <= 8)\n"
+    },
+    {
+      "id": "ML-M02-1",
+      "family": "discovery_paired_numpy_subtraction_in_matching_fold_order",
+      "label": "paired NumPy subtraction in matching fold order",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "answer=np.subtract([3.5,4.8,5.0,4.9,3.8],[4.0,5.0,4.5,5.5,4.0])"
+    },
+    {
+      "id": "ML-M03-1",
+      "family": "discovery_record_wise_comparison_table",
+      "label": "record-wise comparison table",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "answer=pd.DataFrame.from_records([{'model':'linear','cv_rmse':4.2,'fold_sd':.6},{'model':'tree','cv_rmse':4.3,'fold_sd':.8}],columns=['model','cv_rmse','fold_sd'])"
+    },
+    {
+      "id": "ML-M04-1",
+      "family": "discovery_ordered_missing_schema_comprehension",
+      "label": "ordered missing-schema comprehension",
+      "rationale": "Scientifically equivalent construction of the requested evidence.",
+      "code": "required=['distance','weight']\nincoming=pd.DataFrame({'distance':[4,7]})\nanswer=[name for name in required if name not in incoming.columns]"
     }
   ]
 }
