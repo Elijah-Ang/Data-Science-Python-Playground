@@ -206,8 +206,10 @@ with sync_playwright() as p:
  assert page.locator('#foundationOutput .empty-output').count()==0
  open_lesson('V08',1);assert 'matches' in run(solution('V08',1))
  open_lesson('V37',1);assert 'matches' in run(solution('V37',1))
- assert page.locator('.foundation-practice-brief ol > li').count()==4
- assert page.locator('.foundation-practice-brief .practice-question').count()==1
+ steps=page.evaluate('FoundationsCurriculum.lessons.find(l=>l.id==="V37").rounds[1].steps')
+ assert len(steps)>1
+ assert page.locator('.foundation-practice-brief ol > li').all_text_contents()==steps[1:]
+ assert page.locator('.foundation-practice-brief .practice-question').inner_text()==steps[0]
  page.locator('#foundationHint summary').click()
  assert 'worked example' not in page.locator('#foundationHint').inner_text()
  open_lesson('V37',2)
