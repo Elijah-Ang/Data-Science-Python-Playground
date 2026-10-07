@@ -64,7 +64,12 @@ with sync_playwright() as pw:
   page.locator('#atlas').screenshot(path=str(out/f'{args.engine}-{theme}-alternate-rounds.png'))
   for item in page.locator('.concept-visual').evaluate_all('''els=>els.flatMap(svg=>[...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>260||r.y<0||r.y+r.height>108}).map(t=>({visual:svg.dataset.visual,text:t.textContent})))'''):
    failures.append({'theme':theme,**item})
- # All 324 rounds have valid diagrams, and retrieval rounds use the retrieved skill.
+ # Every authored round has a valid diagram, including restored review skills.
+ inventory=page.evaluate('FoundationsCurriculum.lessons.flatMap(l=>l.rounds.map(r=>({id:r.id,retrieves:r.retrieves})))')
+ ids=[r['id'] for r in inventory]
+ assert len(ids)==len(set(ids)), 'Authored exercise IDs must be unique'
+ retrieves={r['id']:r.get('retrieves') for r in inventory}
+ assert retrieves.get('VR1-4')=='V08' and retrieves.get('VR2-4')=='V17',retrieves
  result=page.evaluate('''()=>{
   let count=0;const failures=[];
   for(const l of FoundationsCurriculum.lessons)for(const r of l.rounds){
@@ -74,8 +79,8 @@ with sync_playwright() as pw:
   }
   return {count,failures};
  }''')
- assert result['count']==324 and not result['failures'],result
+ assert result['count']==len(inventory) and not result['failures'],result
  (out/f'{args.engine}-report.json').write_text(json.dumps({'rounds':result,'clipping':failures},indent=2))
  assert not failures,failures
  browser.close()
-print('All 106 cards, 324 round diagrams, three widths and both themes passed visual geometry/retrieval checks.')
+print(f'All {len(inventory)} authored round diagrams, including VR1-4/V08 and VR2-4/V17, three widths and both themes passed visual geometry/retrieval checks.')
