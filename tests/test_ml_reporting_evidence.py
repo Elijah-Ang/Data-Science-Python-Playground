@@ -1,5 +1,7 @@
 """M03 reports supplied scores; omissions and invented baseline values must fail."""
 import json
+import subprocess
+import sys
 from pathlib import Path
 import unittest
 import numpy as np
@@ -11,8 +13,12 @@ ROOT=Path(__file__).resolve().parents[1]
 class ReportingEvidenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        curriculum=json.loads((ROOT/'dist/ml-learning/curriculum.json').read_text())
+        curriculum=json.loads(subprocess.check_output([sys.executable,str(ROOT/'ml-learning/authoring.py')],cwd=ROOT))
         cls.card=next(c for c in curriculum['cards'] if c['id']=='ML-M03')
+        built=ROOT/'dist/ml-learning/curriculum.json'
+        if built.exists():
+            built_card=next(c for c in json.loads(built.read_text())['cards'] if c['id']=='ML-M03')
+            assert built_card==cls.card,'Built M03 must preserve final authoring and editorial hints'
 
     def test_each_practice_supplies_its_own_design_and_numeric_reference(self):
         for exercise in self.card['exercises']:
