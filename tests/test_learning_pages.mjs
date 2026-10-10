@@ -12,12 +12,49 @@ assert.equal(routes.route('data',legacy,{dataset:{}}),'inspect/I17/2');
 assert.equal(routes.url('data','inspect/I17/2','learn'),'data-foundations-I17.html?from=learn&practice=2');
 assert.equal(routes.route('ml',{hash:'',search:'?practice=1'},{dataset:{learningRoute:'workflow/ML-W-K1/0'}}),'workflow/ML-W-K1/1');
 assert.equal(routes.url('ml','workflow/chapter/2'),'ml-learn-workflow.html#chapter-2');
-assert.equal(routes.url('data','inspect/challenges/DC-I01'),'data-foundations.html#inspect/challenges/DC-I01');
+assert.equal(routes.url('data','inspect/challenges/IC01'),'data-foundations-IC01.html');
+assert.equal(routes.url('ml','workflows/challenges/ML-X01','learn'),'ml-learn-ML-X01.html?from=learn');
+assert.equal(routes.url('ml','workflows/challenges'),'ml-learn-workflows-challenges.html');
+assert.equal(routes.route('ml',{hash:'',search:'?practice=2'},{dataset:{learningRoute:'workflows/challenges/ML-X01'}}),'workflows/challenges/ML-X01');
+assert.equal(routes.route('ml',{hash:'',search:''},{dataset:{learningRoute:'workflows/challenges'}}),'workflows/challenges');
+assert.equal(routes.route('ml',{hash:'#workflows/challenges/ML-X01',search:''},{dataset:{}}),'workflows/challenges/ML-X01');
 assert.equal(routes.route('data',{hash:'#chapter-1',search:''},{dataset:{learningRoute:'inspect'}}),'inspect/chapter/1');
 const require=createRequire(import.meta.url),data=require('../foundations/curriculum.js');
 const ml=JSON.parse(await fs.readFile(path.join(dist,'ml-learning/curriculum.json'),'utf8'));
 const sitemap=await fs.readFile(path.join(dist,'sitemap.xml'),'utf8');
 const worker=await fs.readFile(path.join(dist,'service-worker.js'),'utf8');
+const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const challengeContext=vm.createContext({});challengeContext.window=challengeContext;
+vm.runInContext(await fs.readFile(path.join(root,'challenges/registry.js'),'utf8'),challengeContext);
+let briefCount=0;
+const briefFiles=new Set();
+for(const [family,challenges] of [['data',challengeContext.DataWorkflowChallenges.challenges],['ml',ml.challenges]]){
+  for(const deck of new Set(challenges.map(c=>c.deck))){
+    const collectionFile=routes.url(family,deck+'/challenges');
+    const collection=await fs.readFile(path.join(dist,collectionFile),'utf8');
+    for(const challenge of challenges.filter(c=>c.deck===deck))assert.ok(collection.includes('href="'+routes.url(family,deck+'/challenges/'+challenge.id)+'"'),collectionFile+' crawlable brief link');
+  }
+  for(const challenge of challenges){
+    const file=routes.url(family,challenge.deck+'/challenges/'+challenge.id);
+    assert.ok(!briefFiles.has(file),'One stable page per brief: '+file);briefFiles.add(file);
+    const html=await fs.readFile(path.join(dist,file),'utf8'),main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
+    assert.ok(main.includes('aria-label="Challenge brief"'),file+' actual independent brief');
+    assert.ok(main.includes(escape(challenge.question)),file+' authored question');
+    for(const text of [...Object.values(challenge.hints),...challenge.explanationSteps,...challenge.policies])assert.ok(main.includes(escape(text)),file+' authored help and policy: '+text);
+    assert.ok(main.includes(escape(family==='ml'?challenge.reference||challenge.exercise.solution:challenge.solution)),file+' complete explained solution');
+    const requirements=family==='ml'?challenge.deliverableGroups.map(g=>g.summary):challenge.deliverables.map(d=>d.requirement);
+    for(const requirement of requirements)assert.ok(main.includes(escape(requirement)),file+' authored deliverable');
+    const starter=challenge.exercise?.starter||challenge.starter;
+    assert.ok(main.includes(escape(starter)),file+' actual editor starter');
+    assert.equal((html.match(/rel="canonical"/g)||[]).length,1,file+' single canonical');
+    assert.ok(html.includes('href="https://dataplayground.science/'+file+'"'),file+' stable canonical');
+    assert.equal(sitemap.split('<loc>https://dataplayground.science/'+file+'</loc>').length-1,1,file+' single sitemap identity');
+    assert.ok(worker.includes('./'+file),file+' offline inventory');
+    assert.ok(html.includes('href="'+routes.url(family,challenge.deck+'/challenges')+'" class="back-playground">'),file+' collection back link');
+    assert.ok(!main.includes('href="#'+challenge.deck+'/'),file+' static prerequisite/navigation links');
+    briefCount++;
+  }
+}
 let count=0;
 for(const [family,curriculum,lessons] of [['data',data,data.lessons],['ml',ml,ml.cards]]){
   for(const deck of curriculum.decks){
@@ -61,4 +98,4 @@ const privacy=await fs.readFile(path.join(dist,'privacy.html'),'utf8');
 assert.ok(privacy.includes('Advertising is disabled in the current website and native build.'));
 assert.ok(!privacy.includes('consent message is configured'));
 assert.ok(privacy.includes('no application-set expiry period'));
-console.log(`Static learning: ${count} substantive lessons, all decks, legacy routes, canonical URLs, sitemap, offline inventory, checkpoint fixes and privacy disclosures passed.`);
+console.log(`Static learning: ${count} substantive lessons, ${briefCount} complete independent briefs, collections, legacy routes, canonical URLs, sitemap, offline inventory, checkpoint fixes and privacy disclosures passed.`);

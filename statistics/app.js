@@ -227,6 +227,7 @@
     if(s.id==='uncertainty'&&plan.route.some((_,i)=>isSkipped(i)))content+='<p class="output-caveat">The omnibus result did not meet the chosen α. Post-hoc comparisons are not opened; continue to your conclusion. This does not establish equality.</p>';
     content+=`<p class="output-cue"><strong>What to look for:</strong> ${escape(o.cue)}</p>`;
     if(o.interpretation)content+=`<p class="output-cue"><strong>Interpretation:</strong> ${escape(o.interpretation)}</p>`;
+    if(o.null_hypothesis)content+=`<p class="output-cue"><strong>Null hypothesis tested (not a conclusion):</strong> ${escape(o.null_hypothesis)}</p>`;
     if(o.edited&&s.id!=='conclude')content+='<p class="output-caveat">Your code differs from the suggested recipe. This evidence is from your actual execution; check that its method and units still answer the configured question.</p>';
     if(o.caveat)content+=`<p class="output-caveat">${escape(o.caveat)}</p>`;
     if(o.warnings?.length)content+=`<details><summary>Numerical cautions</summary><p class="output-caveat">${o.warnings.map(escape).join('<br>')}</p></details>`;

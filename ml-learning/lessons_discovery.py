@@ -141,12 +141,37 @@ def comparison():
         decide('Two models share five folds. Differences in RMSE are [.1,-.1,.0,.2,-.2]. What is a sound conclusion?',['One is universally superior','Differences are small and inconsistent; consider uncertainty and practical factors'],1,'The supplied paired differences do not justify an absolute ranking.'),
         decide('Model A uses random CV on Seoul; B uses forward CV. Is their score difference a clean model comparison?',['Yes','No'],1,'Validation design changed with the model, so score differences do not isolate model-family performance.'),
         reflect('Explain a nomination with similar scores but different cost and interpretability.','State the common evaluation design, size/variation of the score difference and relevant practical constraints. Nominate from training evidence, then reserve the final test for that chosen workflow.')],chapter=1)
+    report_evidence = ('Illustrative reporting evidence, not scores fitted here or results from the supplied teaching dataframe: '
+        'predict completion time in hours for repair jobs at one workshop, using measurements available at intake. '
+        'Of 100 historical jobs, 80 are development rows and 20 are reserved for a later final test; no final-test result is available. '
+        'All three workflows use the same five shuffled development folds, seed 42, with preparation fitted within each training fold. '
+        'The dummy predicts that training fold\'s mean completion time. Mean validation RMSE / fold standard deviation, both in hours: '
+        'dummy 4.4 / 0.7; linear 4.2 / 0.6; tree 4.3 / 0.8. Fold standard deviations describe variation, not confidence intervals; paired fold scores are not supplied.')
+    report_practice = [
+        py('Build answer from the supplied illustrative reporting evidence, with columns model, cv_rmse and fold_sd, in dummy, linear, tree row order. Include the training-mean reference as well as both candidates. All errors and fold standard deviations are in hours; do not fit models or claim a final-test result.',
+           "answer=pd.DataFrame({'model':['dummy','linear','tree'],'cv_rmse':[4.4,4.2,4.3],'fold_sd':[.7,.6,.8]})",
+           "list(answer.columns)==['model','cv_rmse','fold_sd'] and list(answer.model.astype(str).str.casefold())==['dummy','linear','tree'] and np.allclose(answer.cv_rmse,[4.4,4.2,4.3]) and np.allclose(answer.fold_sd,[.7,.6,.8])",
+           message='Include dummy, linear and tree in that order, with the supplied illustrative RMSE and fold standard deviations in hours.'),
+        decide('Which report wording is supported by these development-fold results?',
+               ['The intake measurements cause faster completion, and the linear model will beat the dummy at every workshop',
+                'For these workshop development rows, linear validation RMSE is 0.2 hours lower than the dummy; a reliable or final-test improvement has not been established'],
+               1,'The supplied linear mean is 4.2 hours versus the dummy\'s 4.4. That is a 0.2-hour descriptive gain on matching development folds, not a causal claim or a final evaluation.',evidence=report_evidence),
+        reflect('Use the supplied numbers to write a conclusion for this workshop when both candidates are close to the dummy. Name the population, units, evaluation design, size of the gain and unresolved uncertainty. Explain what to do before making a final-test or wider-population claim.',
+                'On the same five development folds for repair jobs at this workshop, illustrative mean RMSE is 4.4 hours for the training-mean dummy, 4.2 for linear and 4.3 for the tree. Linear improves the mean by 0.2 hours (12 minutes), while the tree improves it by 0.1 hours. The fold standard deviations of 0.7, 0.6 and 0.8 hours describe variation, not confidence intervals or a test of the paired improvement. Without paired fold scores, these summaries do not establish a reliable winner. A simpler linear workflow could be nominated provisionally on development evidence and practical cost; then fix the recipe and evaluate it once on the 20 reserved jobs. No final-test result, causal effect, absence of a relationship or transfer to another workshop has been established.',evidence=report_evidence)]
+    report_practice[0]['evidence']=report_evidence
+    report_practice[0]['hints']={'think':'A report needs the reference beside the candidates, in the same units and evaluation design.',
+        'tools':'pd.DataFrame with model, cv_rmse and fold_sd columns.',
+        'approach':'Enter dummy, linear and tree as three aligned rows using the supplied means and fold standard deviations.'}
+    report_practice[0]['explanation']='The three rows retain the reference and both candidates. The 0.2-hour linear advantage over dummy is descriptive development evidence; fold standard deviation is not an uncertainty interval for the paired difference.'
+    report_practice[2]['hints']={'think':'A small mean gain is useful evidence to qualify, not hide.',
+        'tools':'Compare candidate RMSE with dummy in hours; distinguish fold variation, paired uncertainty and final-test evidence.',
+        'approach':'State the 0.2-hour linear gain, the common development folds and the missing paired/final evidence before explaining a provisional nomination.'}
+    for exercise in report_practice:
+        exercise['showDatasetPreview']=False
+        exercise['version']=2
     lesson('M03','Explain a result responsibly','Connect claims with evidence and limitations.',
         'Reports should name the task, population, evaluation design, reference, selected approach and limitations. Discovery reports describe profiles and assumptions; PCA reports retention and representation rather than prediction accuracy.',
-        'Question → evidence → conclusion → limits','comparison',[
-        py('Build answer as an evidence table with columns model, cv_rmse and fold_sd. The linear model has CV RMSE 4.2 and fold standard deviation 0.6; the tree has 4.3 and 0.8.',"answer=pd.DataFrame({'model':['linear','tree'],'cv_rmse':[4.2,4.3],'fold_sd':[.6,.8]})","list(answer.columns)==['model','cv_rmse','fold_sd'] and list(answer.model.astype(str).str.casefold())==['linear','tree'] and np.allclose(answer.cv_rmse,[4.2,4.3]) and np.allclose(answer.fold_sd,[.6,.8])"),
-        decide('Which report wording is supported by a held-out predictive result?',['The feature causes the outcome','This selected workflow achieved the reported error on the held-out population'],1,'The held-out result describes predictive evidence for that population and design, not a causal effect.'),
-        reflect('Write a useful conclusion when all candidates are close to the dummy reference.','State the limited improvement and its uncertainty. Explain what was evaluated and what remains unresolved, rather than claiming there is no relationship or hiding the weak result.')],chapter=2)
+        'Question → evidence → conclusion → limits','comparison',report_practice,chapter=2)
     lesson('M04','What changes outside this dataset?','Identify evidence needed for a changed use context.',
         'Population shift, group structure and changed feature availability can break apparent validation success. State the intended use and the new evidence needed rather than promising transportability.',
         'Training context → intended use → evidence gap','tasks',[

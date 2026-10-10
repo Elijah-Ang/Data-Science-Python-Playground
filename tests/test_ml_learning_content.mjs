@@ -105,7 +105,8 @@ for(const [id,names] of Object.entries({
 }
 
 const evidenceTable=all.find(e=>e.id==='ML-M03-1');
-assert(evidenceTable.task.includes('4.2')&&evidenceTable.task.includes('0.8'));
+assert(evidenceTable.evidence.includes('linear 4.2 / 0.6')&&evidenceTable.evidence.includes('tree 4.3 / 0.8'));
+assert(evidenceTable.evidence.includes('dummy 4.4 / 0.7')&&evidenceTable.evidence.includes('hours'));
 assert(!evidenceTable.solution.includes("'role'"),'The report exercise should not invent a role column.');
 const hierarchy=c.challenges.find(ch=>ch.id==='ML-X18');
 assert(hierarchy.exercise.checks.some(check=>check.name==='Cut comparison'));

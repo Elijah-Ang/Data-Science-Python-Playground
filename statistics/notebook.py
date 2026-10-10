@@ -224,7 +224,8 @@ class NotebookSession:
                 if edited:
                     interpretation='This is an edited, exploratory analysis. The displayed evidence comes from your current Python; verify its method, units and assumptions before applying the original question’s interpretation.'
                 elif p is not None:
-                    interpretation=(f'At α = {alpha:g}, there is evidence against the stated null. ' if p<alpha else f'At α = {alpha:g}, evidence is insufficient to reject the stated null. This does not establish equality. ') + self.plan['hypotheses']['null']
+                    interpretation=(f'At α = {alpha:g}, there is evidence against the stated null.' if p<alpha else f'At α = {alpha:g}, evidence is insufficient to reject the stated null. This does not establish equality.')
+                    current['null_hypothesis']=self.plan['hypotheses']['null']
                 else:interpretation='Read the model terms and interactions separately; no single omnibus p-value answers this entire question.' if self.plan['method']=='factorial' else 'This is an estimation route; no hypothesis-test p-value was calculated.'
             if interpretation:
                 interpretation = self.plan['name'] + ': ' + interpretation

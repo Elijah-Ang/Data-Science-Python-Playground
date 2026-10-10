@@ -22,6 +22,7 @@ jobs:
       - run: python tests/test_ml_learning_verticals.py
       - run: python tests/test_ml_learning_runtime.py
       - run: python tests/test_ml_learning_semantics.py
+      - run: python tests/test_ml_reporting_evidence.py
   browser:
     name: ML learning real Pyodide (${{ matrix.engine }})
     runs-on: ubuntu-latest

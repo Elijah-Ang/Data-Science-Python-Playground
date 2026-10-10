@@ -1546,19 +1546,19 @@
     {
       "id": "ML-M03-1",
       "kind": "python",
-      "fingerprint": "ebc1dfdeffd9007d4d24156d101d6973f003bb0ad488dc84ea5a1be99718b0f5",
+      "fingerprint": "2255389da696a6d99d2743e2cb1815283e82d8d264475ecfe9f8024d474dde70",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M03-2",
       "kind": "decision",
-      "fingerprint": "742fb89986b9ec32c07eeea8cb31f0d3ae797c3864a934c6ce71468b4d573bad",
+      "fingerprint": "c94d4787f8a8ac0062d6845717540ef8f5ab64479f42e225ab252aa07fc2dff4",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {
       "id": "ML-M03-3",
       "kind": "reflection",
-      "fingerprint": "38ed207ad7ed10e5968bbb9d10b09494ba80df2a7a24c6e8656261ceadb37ca1",
+      "fingerprint": "fee249e6006e4d0ffe17b49bb7fd63f2539a61d9d5b6cfb1e35db08a57281cb7",
       "review": "Task/population/output alignment; Think→Tools→Approach fading; runnable solution and step rationale; no answer code in hints."
     },
     {

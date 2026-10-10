@@ -29,10 +29,27 @@ jobs:
       - run: python tests/test_learn_discovery_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_learning_entry_content_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_learning_routes_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+      - run: python tests/test_learning_quality_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_landing_refresh_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_mascot_hover_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+        if: ${{ !cancelled() }}
+      - name: Diagnose landing browser lifecycle
+        if: ${{ !cancelled() }}
+        run: python tests/diagnose_landing_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --case landing
+      - name: Diagnose mascot browser lifecycle
+        if: ${{ !cancelled() }}
+        run: python tests/diagnose_landing_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --case mascot
+      - name: Preserve small lifecycle diagnostics separately
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: learn-lifecycle-${{ matrix.engine }}
+          path: tests/evidence/learn-discovery/*-lifecycle.jsonl
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: learn-discovery-${{ matrix.engine }}
-          path: tests/evidence/learn-discovery/
+          path: |
+            tests/evidence/learn-discovery/
+            tests/evidence/review-learning/
+            tests/evidence/learning-quality/
