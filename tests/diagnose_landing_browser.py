@@ -47,6 +47,9 @@ def processes():
 
 def emit(event, **details):
     row = {'time': time.time(), 'monotonic': time.monotonic(), 'event': event, 'phase': phase, **details, 'processes': processes()}
+    # A summed process RSS snapshot can count shared pages more than once.
+    # It is neither unique memory consumption nor proof of an OOM kill.
+    row['rss_kib'] = sum(int(p.get('VmRSS', '0 kB').split()[0]) for p in row['processes'])
     log.write(json.dumps(row, ensure_ascii=True) + '\n')
     log.flush()
     print('Browser lifecycle:', json.dumps({k: v for k, v in row.items() if k != 'processes'}), flush=True)
@@ -70,11 +73,18 @@ def wrap(cls, method):
     def observed(self, *positional, **keywords):
         global phase
         # Other locator evaluations are unchanged and need no per-call sampling.
-        if cls is Locator and '.garden-slider' not in str(self):
+        if cls is Locator and method == 'evaluate' and '.garden-slider' not in str(self):
             return original(self, *positional, **keywords)
         caller = next((f for f in reversed(traceback.extract_stack()) if f.filename == str(test)), None)
         phase = f'{cls.__name__}.{method}' + (f' at {test.name}:{caller.lineno}' if caller else '')
         details = {'location': str(self)} if cls is Locator else {}
+        frame = sys._getframe().f_back
+        while frame and frame.f_code.co_filename != str(test):
+            frame = frame.f_back
+        if frame:
+            details['case_state'] = {k: frame.f_locals[k] for k in ('mode', 'width', 'height', '_')
+                                     if k in frame.f_locals and isinstance(frame.f_locals[k], (str, int))}
+        del frame
         if cls is Page and method in ('set_viewport_size', 'emulate_media'):
             details['arguments'] = positional or keywords
         emit('call.begin', **details)
@@ -99,8 +109,8 @@ def wrap(cls, method):
 
 for cls, methods in [(BrowserType, ['launch']), (Browser, ['new_page', 'new_context', 'close']),
                      (BrowserContext, ['new_page', 'close']),
-                     (Page, ['goto', 'reload', 'set_viewport_size', 'emulate_media', 'close']),
-                     (Locator, ['evaluate'])]:
+                     (Page, ['goto', 'reload', 'set_viewport_size', 'emulate_media', 'wait_for_timeout', 'wait_for_function', 'close']),
+                     (Locator, ['evaluate', 'hover', 'focus', 'get_attribute'])]:
     for method in methods:
         wrap(cls, method)
 

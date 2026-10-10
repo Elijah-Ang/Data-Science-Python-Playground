@@ -39,6 +39,12 @@ jobs:
       - name: Diagnose mascot browser lifecycle
         if: ${{ !cancelled() }}
         run: python tests/diagnose_landing_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --case mascot
+      - name: Preserve small lifecycle diagnostics separately
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: learn-lifecycle-${{ matrix.engine }}
+          path: tests/evidence/learn-discovery/*-lifecycle.jsonl
       - uses: actions/upload-artifact@v4
         if: always()
         with:
