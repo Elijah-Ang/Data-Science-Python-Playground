@@ -60,7 +60,12 @@ with sync_playwright() as p:
   page.locator('#foundationEditor').fill(code)
   page.locator('#checkExercise' if check else '#runExercise').click()
   page.wait_for_function('!document.querySelector("#runExercise").disabled',timeout=120000)
-  return page.locator('#foundationFeedback').inner_text()
+  feedback=page.locator('#foundationFeedback').inner_text()
+  trace={'route':current_route(),'heading':page.locator('.foundation-lesson-heading h2').inner_text(),'feedback':feedback,'runtime':page.locator('#foundationRuntime').inner_text(),'output':page.locator('#foundationOutput').inner_text()[:6000],'pageErrors':list(errors)}
+  report.setdefault('execution_trace',[]).append(trace)
+  (evidence/(args.engine+'-execution-trace.json')).write_text(json.dumps(report['execution_trace'],indent=2))
+  print('Execution:',json.dumps(trace),flush=True)
+  return feedback
  assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
  assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
  assert page.locator('.back-playground').get_attribute('href') in ('#inspect','data-foundations-inspect.html')

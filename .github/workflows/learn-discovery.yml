@@ -36,4 +36,7 @@ jobs:
         if: always()
         with:
           name: learn-discovery-${{ matrix.engine }}
-          path: tests/evidence/learn-discovery/
+          path: |
+            tests/evidence/learn-discovery/
+            tests/evidence/review-learning/
+            tests/evidence/learning-quality/

@@ -119,7 +119,15 @@ with sync_playwright() as pw:
     assert 'does not establish equality' in final.inner_text()
     assert final.locator('p').filter(has_text='Null hypothesis tested (not a conclusion):').count()==1
     for width in (1440,390):
-        page.set_viewport_size({'width':width,'height':1000});final.scroll_into_view_if_needed();snapshot(page,'statistics-conclusion-'+str(width))
+        page.set_viewport_size({'width':width,'height':1000})
+        # Crossing the real responsive breakpoint replaces output nodes. Wait
+        # for the conclusion to move into its final host before resolving it.
+        page.wait_for_function('''()=>{
+            const output=document.querySelector('[data-output-for="conclude"]');
+            return !!output && (matchMedia('(max-width:1120px)').matches
+                ? !!output.closest('.cell-inline-output') : !!output.closest('#outputList'));
+        }''')
+        final.scroll_into_view_if_needed();snapshot(page,'statistics-conclusion-'+str(width))
         final.screenshot(path=str(out/('statistics-interpretation-'+str(width)+'.png')))
     context.close();proof.append('Real default Penguin computation with separate evidence and labelled null at desktop/mobile')
     browser.close()
