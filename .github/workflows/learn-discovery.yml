@@ -32,6 +32,13 @@ jobs:
       - run: python tests/test_learning_quality_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_landing_refresh_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_mascot_hover_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+        if: ${{ !cancelled() }}
+      - name: Diagnose landing browser lifecycle
+        if: ${{ !cancelled() }}
+        run: python tests/diagnose_landing_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --case landing
+      - name: Diagnose mascot browser lifecycle
+        if: ${{ !cancelled() }}
+        run: python tests/diagnose_landing_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --case mascot
       - uses: actions/upload-artifact@v4
         if: always()
         with:
