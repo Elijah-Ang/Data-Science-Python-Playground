@@ -7,8 +7,8 @@
     const query=new URLSearchParams();
     if(from==='learn')query.set('from','learn');
     if(id&&id!=='chapter'&&id!=='challenges'&&Number(position)>0)query.set('practice',position);
-    const file=!deck?prefix+'.html':id==='challenges'?prefix+'.html':prefix+'-'+(id&&id!=='chapter'?id:deck)+'.html';
-    const hash=id==='chapter'?'#chapter-'+position:id==='challenges'?'#'+route.replace(/^#/,''):'';
+    const file=!deck?prefix+'.html':id==='challenges'?prefix+'-'+(position||deck+'-challenges')+'.html':prefix+'-'+(id&&id!=='chapter'?id:deck)+'.html';
+    const hash=id==='chapter'?'#chapter-'+position:'';
     return file+(query.size?'?'+query.toString():'')+hash;
   }
   function route(family,location,body){
@@ -16,6 +16,7 @@
     if(hash&&!/^(?:foundationsMain|chapter-\d+)$/.test(hash))return hash;
     const authored=body.dataset.learningRoute||'';
     if(/^chapter-\d+$/.test(hash)&&authored&&!authored.includes('/'))return authored+'/chapter/'+hash.slice(8);
+    if(authored.split('/')[1]==='challenges')return authored;
     const practice=new URLSearchParams(location.search).get('practice');
     return authored&&authored.includes('/')?authored.split('/').slice(0,2).join('/')+'/'+(/^\d+$/.test(practice||'')?practice:'0'):authored;
   }
@@ -35,10 +36,14 @@
     const link=root.document.querySelector('link[rel="canonical"]');
     if(link)link.href='https://dataplayground.science/'+url(family,current).split(/[?#]/)[0];
   }
-  function installRouter(family,curriculum,render){
+  function installRouter(family,curriculum,render,challenges=curriculum.challenges||[]){
     const registry=new Map([[prefixes[family]+'.html',''],
       ...curriculum.decks.map(deck=>[url(family,deck.id),deck.id]),
-      ...(curriculum.lessons||curriculum.cards).map(lesson=>[url(family,lesson.deck+'/'+lesson.id+'/0'),lesson.deck+'/'+lesson.id+'/0'])]);
+      ...(curriculum.lessons||curriculum.cards).map(lesson=>[url(family,lesson.deck+'/'+lesson.id+'/0'),lesson.deck+'/'+lesson.id+'/0']),
+      ...challenges.flatMap(challenge=>{
+        const collection=challenge.deck+'/challenges',route=collection+'/'+challenge.id;
+        return [[url(family,collection),collection],[url(family,route),route]];
+      })]);
     let previousURL=root.location.href;
     function sync(){const entry=registry.get(root.location.pathname.split('/').pop());if(entry!==undefined)root.document.body.dataset.learningRoute=entry;}
     function changed(){if(previousURL===root.location.href)return;previousURL=root.location.href;sync();render();}

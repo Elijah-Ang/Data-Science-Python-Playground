@@ -31,6 +31,13 @@ class SessionTests(unittest.TestCase):
                 raw=source(config);s=Session(raw,config);outputs=complete(s)
                 expected=engine.execute(raw,engine.build(raw,config),False)
                 scalars=outputs[-1]['scalars']
+                conclusion=outputs[-1]
+                if expected['p'] is not None:
+                    self.assertEqual(conclusion['null_hypothesis'],s.plan['hypotheses']['null'])
+                    self.assertNotIn(s.plan['hypotheses']['null'],conclusion['interpretation'])
+                    self.assertIn('evidence against' if expected['p']<s.plan['config']['alpha'] else 'insufficient to reject',conclusion['interpretation'])
+                else:
+                    self.assertNotIn('null_hypothesis',conclusion)
                 for key,target in [('p_value','p'),('statistic','statistic'),('estimate','estimate'),('effect_size','effect'),('interval','interval')]:
                     if expected[target] is not None:assert_allclose(scalars[key],expected[target],rtol=1e-10,atol=1e-10)
                 if 'comparisons' in expected['tables']:
@@ -53,6 +60,24 @@ class SessionTests(unittest.TestCase):
         b=PENGUINS.loc[PENGUINS.species=='Chinstrap','body_mass_g'].to_numpy()
         assert_allclose(s.env['p_value'],stats.ttest_ind(a,b,equal_var=False).pvalue)
         self.assertTrue(results[-1]['edited']);self.assertIn('exploratory',results[-1]['interpretation'])
+        self.assertNotIn('null_hypothesis',results[-1])
+
+    def test_default_penguin_evidence_and_changed_confidence_stay_dynamic(self):
+        a=PENGUINS.loc[PENGUINS.species=='Adelie','body_mass_g'].to_numpy()
+        b=PENGUINS.loc[PENGUINS.species=='Chinstrap','body_mass_g'].to_numpy()
+        expected=stats.ttest_ind(a,b,equal_var=False)
+        for confidence in (.90,.95,.99):
+            alpha=round(1-confidence,10)
+            with self.subTest(confidence=confidence):
+                s=Session(PENGUINS,{'family':'independent','confidence':confidence})
+                final=complete(s)[-1]
+                assert_allclose(final['scalars']['estimate'],a.mean()-b.mean())
+                assert_allclose(final['scalars']['p_value'],expected.pvalue)
+                assert_allclose(final['scalars']['interval'],expected.confidence_interval(confidence_level=confidence))
+                self.assertIn(f'α = {alpha:g}',final['interpretation'])
+                self.assertIn('insufficient to reject' if expected.pvalue>=alpha else 'evidence against',final['interpretation'])
+                self.assertEqual(final['null_hypothesis'],s.plan['hypotheses']['null'])
+                self.assertNotIn(s.plan['hypotheses']['null'],final['interpretation'])
 
     def test_failed_mutation_rolls_back_and_retry_does_not_double_apply(self):
         s=Session(PENGUINS,CASES['welch']);complete(s)

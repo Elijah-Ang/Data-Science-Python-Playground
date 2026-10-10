@@ -80,13 +80,18 @@ function auxiliaryTables(round,dataset){
 function pathLessons(lesson){return C.lessons.filter(l=>l.deck===lesson.deck&&(!lesson.path||l.path===lesson.path));}
 function previousLesson(lesson){const list=pathLessons(lesson),i=list.indexOf(lesson);return i?url(list[i-1],list[i-1].rounds.length-1):'#'+lesson.deck;}
 function nextLesson(lesson){const list=pathLessons(lesson),i=list.indexOf(lesson);return i<list.length-1?url(list[i+1]):'#'+lesson.deck;}
+function challengePage(challenge,deck){
+ view={challenge,lesson:{id:challenge.id,title:challenge.title,deck:deck.id},round:{...challenge,target:challenge.chart?'plot':'value'}};
+ document.body.dataset.deck=deck.id;
+ return ChallengeExperience.page(challenge,deck,{table,pythonPane,curriculum:C});
+}
 function render(){
  generation++; if(busy&&bridge){bridge.restart();busy=false;runtimeStatus='Python will restart for this exercise.';}
  view=null;
  const currentRoute=LearningRoutes.route('data',location,document.body);
  const [deckId,id,roundValue]=currentRoute.split('/');
  const deck=C.decks.find(d=>d.id===deckId),lesson=C.lessons.find(l=>l.id===id&&l.deck===deckId);
- if(deck&&id==='challenges'){document.body.dataset.deck=deck.id;const challenge=ChallengeExperience.all.find(c=>c.deck===deck.id&&c.id===roundValue);if(challenge){view={challenge,lesson:{id:challenge.id,title:challenge.title,deck:deck.id},round:{...challenge,target:challenge.chart?'plot':'value'}};main.innerHTML=ChallengeExperience.page(challenge,deck,{table,pythonPane,curriculum:C});bindEditor();ChallengeExperience.bind();ensureRuntime();}else main.innerHTML=ChallengeExperience.collection(deck);}
+ if(deck&&id==='challenges'){document.body.dataset.deck=deck.id;const challenge=ChallengeExperience.all.find(c=>c.deck===deck.id&&c.id===roundValue);if(challenge){main.innerHTML=challengePage(challenge,deck);bindEditor();ChallengeExperience.bind();ensureRuntime();}else main.innerHTML=ChallengeExperience.collection(deck);}
  else if(lesson){const index=/^\d+$/.test(roundValue||'0')?Number(roundValue||0):0;main.innerHTML=lessonPage(lesson,Math.min(index,lesson.rounds.length-1));bindEditor();ensureRuntime();}
  else main.innerHTML=deck?deckPage(deck):landing();
  // A URL-only entry hint survives deck/lesson hashes and reloads, without stored learning state.
@@ -161,8 +166,8 @@ function renderOutput(result){
  if(!result.stdout&&!result.error&&!result.outputs?.length)output.innerHTML+='<p class="empty-output">Python finished with no displayed value. Put the value on the last line, use print(...), or use plt.show() for a figure.</p>';
 }
 // Build-time rendering uses the same authored lessons and presentation as the app.
-if(window.DataPlaygroundPrerender){window.DataPlaygroundPrerender={curriculum:C,landing,deckPage,lessonPage};return;}
+if(window.DataPlaygroundPrerender){window.DataPlaygroundPrerender={curriculum:C,challenges:ChallengeExperience.all,landing,deckPage,lessonPage,challengePage,challengeCollection:ChallengeExperience.collection};return;}
 document.getElementById('themeButton').onclick=()=>AppAppearance.apply(document.body.dataset.theme==='light'?'dark':'light');
 document.querySelector('.foundation-skip').addEventListener('click',event=>{event.preventDefault();main.focus();main.scrollIntoView();});
-LearningRoutes.installRouter('data',C,render);
+LearningRoutes.installRouter('data',C,render,ChallengeExperience.all);
 })();
