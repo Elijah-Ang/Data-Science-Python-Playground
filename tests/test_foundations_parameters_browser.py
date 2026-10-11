@@ -51,17 +51,34 @@ with sync_playwright() as pw:
                     "Accepted forms", "Meaningful range", "Default", "Effect", "Example", "For this function"
                 ]
                 for field_index, field in enumerate(("forms", "range", "default", "effect", "example")):
-                    actual_field = entry.locator("dd").nth(field_index).inner_text()
-                    assert actual_field == definition[field], {
-                        "width": width, "lesson": item["id"], "round": item["round"],
-                        "parameter": definition["id"], "field": field,
-                        "actual": repr(actual_field),
-                        "expected": repr(definition[field]),
-                        "dom": entry.locator("dd").nth(field_index).evaluate(
-                            "e=>({textContent:e.textContent,innerHTML:e.innerHTML})"
-                        ),
-                        "visible": entry.locator("dd").nth(field_index).is_visible(),
-                    }
+                    dd = entry.locator("dd").nth(field_index)
+                    actual_field = dd.inner_text()
+                    actual_content = dd.text_content()
+                    field_visible = dd.is_visible()
+
+                    def diagnostic(**extra):
+                        return {
+                            "width": width, "lesson": item["id"], "round": item["round"],
+                            "parameter": definition["id"], "field": field,
+                            "actual": repr(actual_field),
+                            "expected": repr(definition[field]),
+                            "actualTextContent": repr(actual_content),
+                            "dom": dd.evaluate("e=>({textContent:e.textContent,innerHTML:e.innerHTML})"),
+                            "visible": field_visible,
+                            **extra,
+                        }
+
+                    assert field_visible, diagnostic()
+                    assert actual_content == definition[field], diagnostic()
+                    if field == "example":
+                        code = dd.locator("pre > code")
+                        assert dd.locator("pre").count() == 1 and code.count() == 1 and dd.locator("code").count() == 1, diagnostic()
+                        code_visible = code.is_visible()
+                        actual_code = code.inner_text()
+                        assert code_visible, diagnostic(actualCode=repr(actual_code), codeVisible=code_visible)
+                        assert actual_code == definition[field], diagnostic(actualCode=repr(actual_code), codeVisible=code_visible)
+                    else:
+                        assert actual_field == definition[field], diagnostic()
                 assert entry.locator("dd").last.inner_text() == definition["caveat"] + " Version-matched source"
                 assert entry.locator("dd a").get_attribute("href") == definition["source"]
                 assert entry.locator("details").count() == 0

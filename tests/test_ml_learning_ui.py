@@ -281,8 +281,14 @@ with sync_playwright() as p:
         emptyParagraphCount:el.querySelectorAll(':scope > p.ml-empty').length
     })""")
     reset_output_dom['emptyParagraphVisible']=reset_output.locator(':scope > p.ml-empty').is_visible()
-    print(json.dumps({'engine':args.engine,'phase':'reset-output','actualText':reset_output_text,'dom':reset_output_dom}),flush=True)
-    assert reset_output_text=='Code reset. Run to produce new output.',(repr(reset_output_text),reset_output_dom)
+    expected_reset_text='Code reset. Run to produce new output.'
+    print(json.dumps({'engine':args.engine,'phase':'reset-output','expectedText':expected_reset_text,'actualText':reset_output_text,'dom':reset_output_dom}),flush=True)
+    assert reset_output_text.removesuffix('\n\n')==expected_reset_text,(repr(reset_output_text),reset_output_dom)
+    assert reset_output_dom['textContent']==expected_reset_text,reset_output_dom
+    assert reset_output_dom['childElementCount']==1,reset_output_dom
+    assert reset_output_dom['emptyParagraphCount']==1,reset_output_dom
+    assert reset_output_dom['emptyParagraphVisible'],reset_output_dom
+    assert reset_output.locator(':scope > p.ml-empty').text_content()==expected_reset_text,reset_output_dom
     page.locator('#mlStop').click()
     assert not page.locator('#mlRun').is_disabled()
     assert page.locator('#mlStatus').inner_text()=='Execution stopped. Python will start fresh on the next Run.'
