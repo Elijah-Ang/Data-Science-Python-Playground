@@ -51,7 +51,17 @@ with sync_playwright() as pw:
                     "Accepted forms", "Meaningful range", "Default", "Effect", "Example", "For this function"
                 ]
                 for field_index, field in enumerate(("forms", "range", "default", "effect", "example")):
-                    assert entry.locator("dd").nth(field_index).inner_text() == definition[field]
+                    actual_field = entry.locator("dd").nth(field_index).inner_text()
+                    assert actual_field == definition[field], {
+                        "width": width, "lesson": item["id"], "round": item["round"],
+                        "parameter": definition["id"], "field": field,
+                        "actual": repr(actual_field),
+                        "expected": repr(definition[field]),
+                        "dom": entry.locator("dd").nth(field_index).evaluate(
+                            "e=>({textContent:e.textContent,innerHTML:e.innerHTML})"
+                        ),
+                        "visible": entry.locator("dd").nth(field_index).is_visible(),
+                    }
                 assert entry.locator("dd").last.inner_text() == definition["caveat"] + " Version-matched source"
                 assert entry.locator("dd a").get_attribute("href") == definition["source"]
                 assert entry.locator("details").count() == 0

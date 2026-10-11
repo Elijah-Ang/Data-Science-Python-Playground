@@ -56,6 +56,7 @@ def check(key, code=None, passes=True, name='reference'):
     actual = bool(response.get('passed'))
     EVIDENCE.append({'id': key, 'case': name, 'expected': passes, 'actual': actual,
                      'visibleReferenceWorkspace': code is None, 'error': response.get('error'), 'feedback': response.get('feedback')})
+    (ROOT / 'work/audit').mkdir(parents=True, exist_ok=True)
     (ROOT / 'work/audit/visualise-runtime-evidence.json').write_text(json.dumps({'seconds': round(time.time()-start, 1), 'cases': EVIDENCE}, indent=2) + '\n')
     assert actual == passes, (key, name, response.get('error') or response.get('feedback'))
     return response

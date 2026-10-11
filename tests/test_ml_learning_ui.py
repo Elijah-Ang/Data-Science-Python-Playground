@@ -273,7 +273,16 @@ with sync_playwright() as p:
     assert page.locator('#mlEditor').input_value()==starter
     assert page.evaluate('MLLearning.retainedReceipts')==0
     assert page.locator('#mlResults').inner_text()==''
-    assert page.locator('#mlOutput').inner_text()=='Code reset. Run to produce new output.'
+    reset_output=page.locator('#mlOutput')
+    reset_output_text=reset_output.inner_text()
+    reset_output_dom=reset_output.evaluate("""el=>({
+        innerText:el.innerText,innerHTML:el.innerHTML,textContent:el.textContent,
+        childElementCount:el.childElementCount,
+        emptyParagraphCount:el.querySelectorAll(':scope > p.ml-empty').length
+    })""")
+    reset_output_dom['emptyParagraphVisible']=reset_output.locator(':scope > p.ml-empty').is_visible()
+    print(json.dumps({'engine':args.engine,'phase':'reset-output','actualText':reset_output_text,'dom':reset_output_dom}),flush=True)
+    assert reset_output_text=='Code reset. Run to produce new output.',(repr(reset_output_text),reset_output_dom)
     page.locator('#mlStop').click()
     assert not page.locator('#mlRun').is_disabled()
     assert page.locator('#mlStatus').inner_text()=='Execution stopped. Python will start fresh on the next Run.'
