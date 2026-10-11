@@ -321,7 +321,7 @@
       "theme": "light",
       "width": 1440,
       "file": "ML-R02-light-1440.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R03",
@@ -1209,7 +1209,7 @@
       "theme": "dark",
       "width": 1440,
       "file": "ML-R02-dark-1440.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1217,7 +1217,7 @@
       "theme": "light",
       "width": 320,
       "file": "ML-R02-light-320.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R02",
@@ -1225,7 +1225,7 @@
       "theme": "light",
       "width": 390,
       "file": "ML-R02-light-390.png",
-      "title": "RMSE and R² answer different questions"
+      "title": "RMSE and R\u00b2 answer different questions"
     },
     {
       "id": "ML-R04",
@@ -2256,11 +2256,26 @@
     "route-slider.css": "28f96d75040ab03c3e18c879114dc413bb2ba99a179b91c83dd9c015f7e3a14a",
     "ml-learning/visuals.js": "7fa3d6ffc99eb42736e99a7fb74ac1479c9679ea1a12be469d77bfb3a5d9a7b6",
     "ml-learning/learning.css": "7e960ec9dbbd349a773345d68ee2903f2ff46bef0d9d8e96cab581cd698e3128",
-    "ml-learning/app.js": "55b064bd420ff45d015dd6c1ddd8b65246dece8d8efdc59116140b3a99c24f26",
-    "foundations/foundations.css": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
+    "ml-learning/app.js": "00edaeecb3c873212d31b0b9de58921903693610b0b1b637a0d6ef46f2c58be3",
+    "foundations/foundations.css": "d9ad0097b32a3beb1c8b16be036e03fe1a987423d87b358c0b7f18a9e0cfce45",
     "foundations/learning-ui.js": "a16793b166927c3617524741cafbecbca1765f024a9d6fa0464397810b5840cd",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "0935919843d2e535e09a133d7d7c8b3b487b3effdfe1288e82e4885fa3b43b59",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
+  },
+  "navigationReview": {
+    "reviewed": "2026-10-11",
+    "baselineCommit": "0ae290e6301d047dcc4b86977967c591eff786e2",
+    "changedSourceHashes": {
+      "ml-learning/app.js": {
+        "priorSha256": "55b064bd420ff45d015dd6c1ddd8b65246dece8d8efdc59116140b3a99c24f26",
+        "sha256": "00edaeecb3c873212d31b0b9de58921903693610b0b1b637a0d6ef46f2c58be3"
+      },
+      "foundations/foundations.css": {
+        "priorSha256": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
+        "sha256": "d9ad0097b32a3beb1c8b16be036e03fe1a987423d87b358c0b7f18a9e0cfce45"
+      }
+    },
+    "scope": "Collection navigation references unchanged110 cards/19 workflows; parameter-entry CSS is scoped to new Data Foundations panels. Existing visual module, all authored visual/title/goal/explanation fingerprints, thumbnail labels and captures remain unchanged. Actual collection and representative Data Foundations parameter panels independently reviewed at desktop/390/320; final full browser and hosted gates are recorded separately."
   }
 }

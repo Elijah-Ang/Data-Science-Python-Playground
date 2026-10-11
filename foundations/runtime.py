@@ -452,6 +452,25 @@ def _plot_state(figures, rules):
                 item['y_limits'] = _numeric(ax.get_ylim())
             if rules.get('swarm'):
                 item['swarm_nonoverlap'] = _swarm_nonoverlap(ax)
+            if rules.get('categorySpread'):
+                # Judge the marks, rather than a plotting keyword or random
+                # seed. Manual scatter/marker-only lines are valid jittered
+                # equivalents when only the category positions are spread.
+                category_axis = 1 if rules.get('categoryAxis') == 'y' else 0
+                category_positions = []
+                for collection in ax.collections:
+                    if isinstance(collection, PathCollection):
+                        offsets = np.asarray(collection.get_offsets())
+                        if offsets.size:
+                            category_positions.extend(offsets[:, category_axis])
+                for line in ax.lines:
+                    if line.get_linestyle() in (None, '', 'None', ' ') and line.get_marker() not in (None, '', 'None', ' '):
+                        category_positions.extend(line.get_ydata(orig=False) if category_axis else line.get_xdata(orig=False))
+                positions = np.asarray(category_positions, dtype=float)
+                groups = {int(category): positions[np.round(positions) == category]
+                          for category in np.unique(np.round(positions))}
+                item['category_spread'] = bool(any(len(values) > 1 and np.ptp(values) > 1e-7
+                                                  for values in groups.values()))
             if rules.get('zeroBaseline'):
 
                 item['zero_baseline'] = abs(ax.get_ylim()[0]) < 1e-9
@@ -564,7 +583,11 @@ def _plot_state(figures, rules):
                 combined = []
                 for line in list(ax.lines):
                     if line.get_linestyle() in (None, '', 'None', ' ') and line.get_marker() not in (None, '', 'None', ' '):
-                        combined.extend(_numeric(np.column_stack([line.get_xdata(orig=False), line.get_ydata(orig=False)])))
+                        points = np.column_stack([line.get_xdata(orig=False), line.get_ydata(orig=False)])
+                        if rules.get('jitter') or rules.get('swarm'):
+                            category_axis = 1 if rules.get('categoryAxis') == 'y' else 0
+                            points[:, category_axis] = np.round(points[:, category_axis])
+                        combined.extend(_numeric(points))
                         index = list(ax.lines).index(line)
                         if index < len(item['lines']):
                             item['lines'][index] = None
@@ -606,7 +629,7 @@ def _plot_requirement(path):
              'zero_baseline': 'zero baseline', 'panel_height': 'panel height', 'xlabel': 'horizontal axis label',
              'ylabel': 'vertical axis label', 'title': 'chart title', 'annotations': 'annotations', 'layout': 'panel arrangement',
              'matrix': 'heatmap values', 'legend': 'legend', 'points': 'paired observations', 'lines': 'lines, markers and reference styles',
-             'patches': 'bins, counts and distribution shapes', 'limits': 'axis limits', 'x_limits': 'horizontal limits', 'y_limits': 'vertical limits', 'shared_limits': 'common panel scales', 'swarm_nonoverlap': 'non-overlapping raw observations', 'size': 'Figure dimensions',
+             'patches': 'bins, counts and distribution shapes', 'limits': 'axis limits', 'x_limits': 'horizontal limits', 'y_limits': 'vertical limits', 'shared_limits': 'common panel scales', 'swarm_nonoverlap': 'non-overlapping raw observations', 'category_spread': 'jittered positions within categories', 'size': 'Figure dimensions',
              'clim': 'colour scale range', 'palette': 'palette', 'rotations': 'tick rotation', 'categories': 'category labels',
              'visibility': 'visible observations and axis bounds', 'visible_text': 'visible titles, labels and annotations',
              'figure_text_fits': 'title, axis labels and tick labels inside the Figure canvas (adjust its margins)',

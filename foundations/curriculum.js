@@ -270,6 +270,11 @@ const curriculum={version:1,datasets,decks,lessons:ordered,setupCode};
 (typeof module!=='undefined'?require('./refinements.js'):root.refineFoundations)(curriculum);
 (typeof module!=='undefined'?require('./progression.js'):root.progressFoundations)(curriculum);
 (typeof module!=='undefined'?require('./clarity.js'):root.FoundationClarity).clarify(curriculum);
+// Format final Visualise overrides without rewriting other decks' teaching code.
+if(typeof process==='undefined'||!process.env.FOUNDATIONS_RAW_CODE){
+ const visualise={...curriculum,lessons:curriculum.lessons.filter(lesson=>lesson.deck==='visualise')};
+ (typeof module!=='undefined'?require('./code-style.js'):root.styleFoundationsCode)(visualise);
+}
 if(typeof module!=='undefined')module.exports=curriculum;
 else root.FoundationsCurriculum=curriculum;
 })(typeof window!=='undefined'?window:globalThis);

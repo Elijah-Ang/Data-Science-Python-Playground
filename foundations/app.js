@@ -45,6 +45,7 @@ function lessonPage(lesson,roundIndex){
  ${round.id==='V01-1'?'':`<section><h3>${round.files?'Available file':'Your inputs'}</h3>${follow?`<p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>`:''}${datasetTable(dataset)}${round.files?csvPreview(round):''}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
  ${follow?`<section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3>${taskMarkup(round)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:`<p class="foundation-revisit"><a href="${url(round.retrieves?C.lessons.find(l=>l.id===round.retrieves):lesson)}">Revisit the ${round.teaching?'first example':'concept lesson'} →</a></p>${round.teaching?'':`<section class="teaching-reference"><h3>Remember the idea</h3>${FoundationTeaching.reference(C,lesson,round)}</section>`}`}
 
+ ${FoundationParameters.render(C,lesson,round)}
  <details id="foundationHint"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
  <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Keep any supplied setup in the editor and use this in the Your work section.</p><pre><code>${esc(round.solution)}</code></pre></details>
  ${lesson.stretch?`<details><summary>Optional stretch</summary><p>${esc(lesson.stretch)}</p></details>`:''}

@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FAMILIES = {"V02", "V16", "V26", "V27", "V28", "V34", "V36"}
 SOURCE_FILES = (
     "foundations/curriculum.js", "foundations/clarity.js",
+    "foundations/variety.js",
     "foundations/workspace.js", "foundations/runtime.py", "table-serialization.py",
 )
 
@@ -57,7 +58,14 @@ console.log(JSON.stringify({datasets:C.datasets,rounds:C.lessons.flatMap(l=>
 '''], cwd=ROOT))
 
 
-def contract(source, index):
+def contract(source, index, exercise=None):
+    # The final context override owns changed coordinates and labels. Keep the
+    # published contracts below for rounds whose original fixtures are retained.
+    if exercise and exercise.get("contextPlot"):
+        context = exercise["contextPlot"]
+        fields = ("x", "y", "title", "xlabel", "ylabel")
+        assert all(isinstance(context.get(field), str) and context[field] for field in fields), exercise["id"]
+        return tuple(context[field] for field in fields)
     if source == "V02":
         return [
             ("hours", "score", "Study hours and scores", "Hours studied", "Score"),
@@ -101,8 +109,21 @@ def contract(source, index):
     ][index]
 
 
-def alternative_work(source, index):
-    x, y, title, xlabel, ylabel = contract(source, index)
+def annotation_contract(index, exercise, x, y):
+    context = exercise.get("contextPlot", {})
+    if context:
+        # Changed annotation questions declare their ranking independently of
+        # the displayed x/y coordinates and the reference solution.
+        annotation = context["annotation"]
+        assert annotation["extreme"] in {"min", "max"}, exercise["id"]
+        assert isinstance(annotation["rankColumn"], str) and annotation["rankColumn"], exercise["id"]
+        assert isinstance(annotation["text"], str) and annotation["text"], exercise["id"]
+        return annotation["rankColumn"], "idx" + annotation["extreme"], annotation["text"]
+    return y, "idxmin" if index == 1 else "idxmax", "Driest" if index == 1 else "Active peak" if index == 2 else "Peak"
+
+
+def alternative_work(source, index, exercise):
+    x, y, title, xlabel, ylabel = contract(source, index, exercise)
     finish = "fig.tight_layout()\nplt.show()"
     if source == "V02":
         # Individual setters are the explicitly taught equivalent to ax.set.
@@ -125,18 +146,17 @@ def alternative_work(source, index):
     if source == "V27":
         if index == 0:
             lines = ('vertical = ax.axvline\nhorizontal = ax.axhline\n'
-                     'vertical(x=df["hours"].median(), linestyle="--")\n'
-                     'horizontal(y=df["score"].median(), linestyle="--")')
+                     f'vertical(x=df[{x!r}].median(), linestyle="--")\n'
+                     f'horizontal(y=df[{y!r}].median(), linestyle="--")')
         elif index == 1:
-            lines = 'benchmark = ax.axhline\nbenchmark(y=df["humidity"].mean(), linestyle="--")'
+            lines = f'benchmark = ax.axhline\nbenchmark(y=df[{y!r}].mean(), linestyle="--")'
         else:
             lines = 'benchmark = ax.axhline\nbenchmark(y=4, linestyle="--")'
         return lines + "\n" + finish
     if source == "V28":
         select = 'observations = df.loc[df["active"]]' if index == 2 else "observations = df"
-        extreme = "idxmin" if index == 1 else "idxmax"
-        label = "Driest" if index == 1 else "Active peak" if index == 2 else "Peak"
-        return (select + f'\npoint = observations.loc[observations[{y!r}].{extreme}()]\n'
+        rank_column, extreme, label = annotation_contract(index, exercise, x, y)
+        return (select + f'\npoint = observations.loc[observations[{rank_column!r}].{extreme}()]\n'
                 f'annotation = dict(text={label!r}, xy=(point[{x!r}], point[{y!r}]), '
                 'xytext=(8, 8), textcoords="offset points", arrowprops={"arrowstyle": "->"})\n'
                 "ax.annotate(**annotation)\n" + finish)
@@ -179,12 +199,19 @@ def before_show(code, extra):
     return prefix + extra + "\nplt.show()" + suffix
 
 
-def edited_visible_data(row, work):
+def edited_visible_data(row, work, datasets):
     source, index = row["sourceId"], row["sourceRound"]
-    x, y, *_ = contract(source, index)
+    x, y, *_ = contract(source, index, row["exercise"])
     column = x if source == "V34" and index == 1 else y
     if source == "V15" and index == 1:
         column = x
+    dataset = datasets[row["exercise"]["dataset"]]
+    if column not in dataset["columns"]:
+        # Precomputed bars name their displayed statistic rather than a raw
+        # data column. Mutate the fixture's actual source measurement instead.
+        assert source == "V36", (row["exercise"]["id"], column)
+        column = dataset["b"]
+    assert column in dataset["columns"], (row["exercise"]["id"], column)
     code = with_work(row, work)
     supplied = row["exercise"]["setup"]
     boundary = supplied + "\n\n# Your work\n"
@@ -193,12 +220,23 @@ def edited_visible_data(row, work):
     return code.replace(boundary, mutation + boundary, 1)
 
 
-def focal_near_misses(source, index, alternative):
+def reordered_bar_work(row, datasets):
+    x, _, title, xlabel, ylabel = contract(row["sourceId"], row["sourceRound"], row["exercise"])
+    measurement = datasets[row["exercise"]["dataset"]]["b"]
+    # An explicitly unordered category comparison permits different positions
+    # only when each group retains its own full-population mean.
+    return (f'means = df.groupby({x!r})[{measurement!r}].mean().sort_values(ascending=False)\n'
+            'ax.clear()\nax.bar(means.index, means.values)\n'
+            f'ax.set(title={title!r}, xlabel={xlabel!r}, ylabel={ylabel!r}, yscale="linear")\n'
+            'ax.set_ybound(lower=0)\nfig.tight_layout()\nplt.show()')
+
+
+def focal_near_misses(source, index, alternative, exercise):
     if source == "V02":
-        x, y, _, xlabel, ylabel = contract(source, index)
+        x, y, _, xlabel, ylabel = contract(source, index, exercise)
         return [("missing_title", f"ax.set_xlabel({xlabel!r})\nax.set_ylabel({ylabel!r})\nfig.tight_layout()\nplt.show()")]
     if source == "V16":
-        x, y, *_ = contract(source, index)
+        x, y, *_ = contract(source, index, exercise)
         data = 'df.dropna(subset=["wait_minutes", "consult_minutes"])' if index == 2 else "df"
         return [
             ("swapped_axis_mapping", f"observations={data}\nax.scatter(observations[{y!r}], observations[{x!r}])\nfig.tight_layout()\nplt.show()"),
@@ -212,20 +250,31 @@ def focal_near_misses(source, index, alternative):
             ]
         return [("wrong_limits", alternative.replace("xlim=(20, 35)", "xlim=(21, 35)") if index == 1 else alternative.replace("upper=5", "upper=6"))]
     if source == "V27":
+        x, y, *_ = contract(source, index, exercise)
         if index == 0:
-            wrong = alternative.replace('x=df["hours"].median()', 'x=df["hours"].median()+1')
+            wrong = alternative.replace(f'x=df[{x!r}].median()', f'x=df[{x!r}].median()+1')
         elif index == 1:
-            wrong = alternative.replace('y=df["humidity"].mean()', 'y=df["humidity"].mean()+1')
+            wrong = alternative.replace(f'y=df[{y!r}].mean()', f'y=df[{y!r}].mean()+1')
         else:
             wrong = alternative.replace("y=4,", "y=4.1,")
-        return [("wrong_benchmark", wrong), ("wrong_line_style", alternative.replace('linestyle="--"', 'linestyle=":"'))]
+        misses = [("wrong_benchmark", wrong), ("wrong_line_style", alternative.replace('linestyle="--"', 'linestyle=":"'))]
+        if index == 1 and exercise.get("contextPlot"):
+            misses.append(("wrong_summary", alternative.replace(".mean()", ".median()")))
+        return misses
     if source == "V28":
         opposite = alternative.replace("idxmin()", "idxmax()") if index == 1 else alternative.replace("idxmax()", "idxmin()")
-        return [
+        misses = [
             ("wrong_extreme", opposite),
             ("wrong_annotation_offset", alternative.replace("xytext=(8, 8)", "xytext=(0, 0)")),
             ("missing_annotation_arrow", alternative.replace('arrowprops={"arrowstyle": "->"}', 'arrowprops=None')),
         ]
+        if index == 1 and exercise.get("contextPlot"):
+            x, y, *_ = contract(source, index, exercise)
+            rank_column, extreme, _ = annotation_contract(index, exercise, x, y)
+            assert rank_column != y, exercise["id"]
+            misses.append(("wrong_ranking_field", alternative.replace(
+                f'observations[{rank_column!r}].{extreme}()', f'observations[{y!r}].{extreme}()')))
+        return misses
     if source == "V34":
         misses = [
             ("wrong_export_dpi", alternative.replace("dpi=150", "dpi=72")),
@@ -254,7 +303,7 @@ def focal_near_misses(source, index, alternative):
             ("raw_points_appended_to_draft", 'sns.stripplot(data=df, x="batch", y="mass_g", jitter=False, ax=axes[0])\naxes[0].set(title="Observations", xlabel="batch", ylabel="mass_g")\nfig.tight_layout()\nplt.show()'),
         ]
     if source == "V15":
-        x, y, *_ = contract(source, index)
+        x, y, *_ = contract(source, index, exercise)
         return [
             ("summary_instead_of_raw_points", 'for artist in [*ax.lines, *ax.collections, *ax.patches]:\n    artist.remove()\n'
              f'sns.boxplot(data=df, x={x!r}, y={y!r}, ax=ax)\nfig.tight_layout()\nplt.show()'),
@@ -359,18 +408,21 @@ def main():
                             "reference_has_no_import_boilerplate": not any(isinstance(node, (ast.Import, ast.ImportFrom)) for node in ast.walk(ast.parse(exercise["solution"])))}
         if not all(responsibilities.values()):
             failures.append({"id": round_id, "case": "responsibility_contract", "actual": responsibilities})
-        alternate = alternative_work(source, index)
+        alternate = alternative_work(source, index, exercise)
         cases = [
             ("model_with_fixed_setup", exercise["solution"], False, True),
             ("full_visible_reference_workspace", row["code"], True, True),
             ("equivalent_focal_work", with_work(row, alternate), True, True),
             ("no_focal_work_still_show", with_work(row, "plt.show()"), True, False),
         ]
-        cases += [(name, with_work(row, work), True, False) for name, work in focal_near_misses(source, index, alternate)]
+        if source == "V36" and index == 1 and exercise.get("contextPlot"):
+            assert exercise["plot"].get("unorderedBars"), round_id
+            cases.append(("equivalent_reordered_bar_groups", with_work(row, reordered_bar_work(row, exported["datasets"])), True, True))
+        cases += [(name, with_work(row, work), True, False) for name, work in focal_near_misses(source, index, alternate, exercise)]
         cases += [
             ("wrong_title", before_show(row["code"], 'axes[0].set_title("Incorrect chart title")' if source == "V15" and index == 2 else 'ax.set_title("Incorrect chart title")'), True, False),
             ("wrong_labelled_pairs_or_counts", before_show(row["code"], wrongly_paired_marks(source, index).replace("ax.", "axes[0].") if source == "V15" and index == 2 else wrongly_paired_marks(source, index)), True, False),
-            ("edited_wrong_supplied_values", edited_visible_data(row, exercise["solution"]), True, False),
+            ("edited_wrong_supplied_values", edited_visible_data(row, exercise["solution"], exported["datasets"]), True, False),
             # A second prepared chart must be rejected even if each chart has
             # the correct marks individually. Retain the actual two images in
             # the receipt rather than merely asserting a source-code pattern.
@@ -406,7 +458,7 @@ def main():
                 finally:
                     os.chdir(previous)
             artifacts = output_receipts(response,
-                receipt_dir / "figures" if receipt_dir and name in {"full_visible_reference_workspace", "equivalent_focal_work"} else None,
+                receipt_dir / "figures" if receipt_dir and name in {"full_visible_reference_workspace", "equivalent_focal_work", "equivalent_reordered_bar_groups"} else None,
                 round_id + "-" + name)
             figure_count = sum(output.get("kind") == "figure" for output in response.get("outputs", []))
             expected_figure_count = 2 if name == "duplicate_figure" else 1

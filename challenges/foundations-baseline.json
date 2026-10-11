@@ -1,6 +1,6 @@
 {
   "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "61b85b0d1df536c3ecb531365b217420015be05fe9f70ef1ffdadebd82dc5987",
+  "sha256": "d9220c72c2d9eed61c5a29ff30b9bcb8e3287ed2c140990dd4e8cf1837f0d49a",
   "cards": 106,
   "lessons": 89,
   "reviews": 17,
@@ -877,7 +877,7 @@
       ]
     }
   ],
-  "reviewed": "2026-10-06",
+  "reviewed": "2026-10-11",
   "reason": "Authorized isolated curriculum repair:106cards and326rounds, including43Visualisecards/132rounds; missingVR1/VR2 retrieval tasks restored, allVisualise rounds and localexamples reviewed against effective content. ExistingInspect/Wrangle and30workflowchallenges retain semantic intent. Native reference, scientific equivalent, negative and real browser evidence accompany the candidate before user release review.",
   "previousReview": {
     "reviewed": "2026-09-26",
@@ -895,5 +895,12 @@
       "priorSHA256": "76d6e1828097a38a8820ddac963d90fe1af3e819ed6222c4290d2882d3f9b91a",
       "reason": "Final reviewed audit preserves authored grouped checkpoint steps and distinguishes practical checkpoints from spaced retrieval. No card or exercise identity was added or removed."
     }
+  },
+  "teachingVarietyReview": {
+    "baselineCommit": "0ae290e6301d047dcc4b86977967c591eff786e2",
+    "priorSHA256": "61b85b0d1df536c3ecb531365b217420015be05fe9f70ef1ffdadebd82dc5987",
+    "reviewed": "2026-10-11",
+    "reason": "Authorized Visualise variety/parameter teaching repair preserves106cards/326rounds and all30workflowchallenge contracts. Frozen-source native verification passes326references,210Visualise cases,174variety cases and277responsibility cases; independent source review corrected support-field and jitter geometry findings. Final rendered and exact-commit hosted gates are recorded separately.",
+    "finalRationaleCorrection": "V24-2 rationale now distinguishes six supplied samples from four selected alkaline samples; code, data and grading rules unchanged."
   }
 }

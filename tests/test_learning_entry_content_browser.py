@@ -13,7 +13,7 @@ pages = {
     'index.html': ('.welcome-value', 'missing'),
     'learn.html': ('.learn-method', 'synthetic'),
     'data-foundations.html': ('.foundation-decks', 'inspect'),
-    'ml-learn.html': ('.foundation-decks', 'workflow'),
+    'ml-learn.html': ('section[aria-labelledby="ml-start"] .foundation-decks', 'workflow'),
 }
 
 with sync_playwright() as playwright:

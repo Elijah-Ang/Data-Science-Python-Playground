@@ -11,7 +11,7 @@ with sync_playwright() as p:
     # Python starts separately from reading. Count workers without changing any runtime API.
     page.add_init_script("window.__workers=0; const NativeWorker=Worker;window.Worker=class extends NativeWorker{constructor(...args){super(...args);window.__workers++;}};")
     def visit(file,title):
-        page.goto(base+'/'+file);page.get_by_role('heading',name=title,exact=True).wait_for();page.wait_for_function("document.querySelector('#foundationsMain')?.dataset.ready==='1' || !!window.MLLearning || !!document.querySelector('#foundationEditor') || location.pathname.includes('learn.html') || location.pathname.includes('privacy.html')")
+        page.goto(base+'/'+file);page.get_by_role('heading',name=title,exact=True).wait_for();page.wait_for_function("document.querySelector('#foundationsMain')?.dataset.ready==='1' || !!window.MLLearning || !!document.querySelector('#foundationEditor') || location.pathname.endsWith('/learn.html') || location.pathname.endsWith('/privacy.html')")
     visit('ml-learn.html?from=learn#workflow/ML-W-K1/0','Supervised Workflow checkpoint')
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     assert page.locator('.ml-concept').inner_text().find('Final RMSE')>=0

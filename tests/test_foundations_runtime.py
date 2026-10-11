@@ -118,13 +118,13 @@ assert not request('W01',code='clean = df\nclean["price"] *= 2\nclean')['passed'
 assert not request('W12',code='df')['passed']
 assert not request('W13',code='df')['passed']
 assert not request('W29',code='df = df.iloc[:2]\ndf')['passed']
-assert not request('V16',code='fig, ax = plt.subplots()\nax.set(title="Study club", xlabel="hours", ylabel="score")\nplt.show()')['passed']
+assert not request('V16',code='fig, ax = plt.subplots()\nax.set(title="Air chamber tests", xlabel="volume_ml", ylabel="pressure_kpa")\nplt.show()')['passed']
 plot=next(l for l in C['lessons'] if l['id']=='V16')['rounds'][0]['solution']
 assert not request('V16',code=plot.replace('data=df,','data=df.head(2),'))['passed']
-assert not request('V16',code=plot.replace('x="hours", y="score"','x="score", y="hours"'))['passed']
+assert not request('V16',code=plot.replace('x="volume_ml", y="pressure_kpa"','x="pressure_kpa", y="volume_ml"'))['passed']
 assert not request('V16',code=plot.replace('plt.show()', 'ax.set_title("Incorrect")\nplt.show()'))['passed']
 assert not request('V30',code=next(l for l in C['lessons'] if l['id']=='V30')['rounds'][0]['solution'].replace('bottom=first','bottom=0'))['passed']
-for id,old,new in [('V16','sns.scatterplot(data=df, x="hours", y="score", ax=ax)','ax.scatter(df["hours"], df["score"])'),('V04','sns.histplot(data=df, x="hours", bins=4, ax=ax)','ax.hist(df["hours"], bins=4)')]:
+for id,old,new in [('V16','sns.scatterplot(data=df, x="volume_ml", y="pressure_kpa", ax=ax)','ax.scatter(df["volume_ml"], df["pressure_kpa"])'),('V04','sns.histplot(data=df, x="diameter_mm", bins=4, ax=ax)','ax.hist(df["diameter_mm"], bins=4)')]:
  ex=next(l for l in C['lessons'] if l['id']==id)['rounds'][0]
  assert request(id,code=ex['solution'].replace(old,new))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V16')['rounds'][2]
@@ -194,7 +194,7 @@ for id,round_index,series in [('V29',0,'means'),
  wrong=source.replace(original,f'ax.bar({series}.index, {series}.values[::-1])')
  assert not request(id,round_index,code=wrong,explicit_setup=explicit_setup)['passed'],(id,round_index,'swapped values')
 ex=next(l for l in C['lessons'] if l['id']=='V08')['rounds'][0]
-assert request('V08',code=ex['solution'].replace('x="flavour", ax=ax','x="flavour", order=["mint", "fruity", "chocolate"], ax=ax'))['passed']
+assert request('V08',code=ex['solution'].replace('x="shelf", ax=ax','x="shelf", order=["History", "Science", "Fiction"], ax=ax'))['passed']
 ex=next(l for l in C['lessons'] if l['id']=='V09')['rounds'][1]
-assert request('V09',1,code=ex['solution'].replace('errorbar=None, ax=ax','errorbar=None, order=["Cloud", "Sun", "Rain"], ax=ax'))['passed']
+assert request('V09',1,code=ex['solution'].replace('errorbar=None, ax=ax','errorbar=None, order=["Express", "Local"], ax=ax'))['passed']
 print(json.dumps({'solutions':count,'intent_semantic_negative_and_recovery_checks':'passed','seconds':round(time.time()-start,1)}))

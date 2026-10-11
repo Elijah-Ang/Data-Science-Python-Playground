@@ -12,18 +12,9 @@
   const receipts=MLLearningReceipts.createReceiptStore();
   let view=null,bridge=null,workerSource=null,busy=false,generation=0;
   const downloadURLs=new Set();
-  const url=(c,i=0)=>`#${c.deck}/${c.id}/${i}`;
-  const range=(prefix,start,end)=>Array.from({length:end-start+1},(_,i)=>'ML-'+prefix+String(start+i).padStart(2,'0'));
-  const order={
-    foundations:[...range('F',1,5),'ML-F-R1',...range('F',6,10),'ML-F-R2','ML-F11','ML-F12','ML-F-K1'],
-    workflow:[...range('W',1,7),'ML-W-R1',...range('W',8,14),'ML-W-R2','ML-W15','ML-W16','ML-W-K1','ML-W-K2','ML-W-K3'],
-    regression:[...range('R',1,5),'ML-R-R1','ML-R06',...range('R',7,10),'ML-R-R2','ML-R11','ML-R-K1'],
-    classification:[...range('C',1,6),'ML-C-R1',...range('C',7,13),'ML-C-R2',...range('C',14,18),'ML-C-R3','ML-C19','ML-C-K1'],
-    networks:['ML-N01','ML-N02','ML-N05','ML-N-R1','ML-N03','ML-N-K2','ML-N04','ML-N-K1','ML-N06'],
-    clustering:[...range('U',1,5),'ML-U-R1',...range('U',6,10),'ML-U-R2','ML-U-K1'],
-    pca:[...range('P',1,6),'ML-P-R1','ML-P07','ML-P-K1'],
-    comparison:[...range('M',1,3),'ML-M-R1','ML-M04','ML-M-K1']
-  };
+  const collections=MLLearningCollections;
+  C.collections=collections.collections;
+  const url=(c,i=0,collection='')=>LearningRoutes.url('ml',`${c.deck}/${c.id}/${i}`,new URLSearchParams(location.search).get('from'),collection);
   // A writing field earns its space only when this activity asks for a specific
   // interpretation. Routine syntax and retrieval prompts stay in the lesson.
   const reflectionQuestions=Object.freeze({
@@ -81,7 +72,7 @@
     'ML-X18':"What claim about sampled Breast measurements can the chosen Ward cut support?",
     'ML-X19':"Why does a two-axis PCA plot omit information even when the retained representation reaches 90% variance?"
   });
-  const ordered=deck=>(order[deck]||[]).map(id=>byId.get(id));
+  const ordered=deck=>(collections.legacyOrder[deck]||[]).map(id=>byId.get(id));
   function table(columns,rows,caption){
     return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}; scroll for more columns"><table><caption>${esc(caption)}</caption><thead><tr>${columns.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${esc(typeof v==='number'?Number(v.toPrecision(6)):v===null?'missing':v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
@@ -110,17 +101,31 @@
     const ch=view?.challenge;return datasetPreview(ch?.exercise.dataset,input);
   }});
   const deckIcon=FoundationLearning.deckIcon;
-  const deckLabel=(deck,index)=>deck==='regression'?'ROUTE 3A':deck==='classification'?'ROUTE 3B':`DECK ${index>=4?index:index+1}`;
-  function landing(){
-    return `<section class="foundation-hero"><div><h2>Machine Learning</h2><p>Begin with Foundations and Supervised Workflow. Then choose Regression or Classification; both lead to the later model families and independent challenges.</p></div></section><div class="foundation-decks">${C.decks.map((d,i)=>`<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>${deckLabel(d.id,i)}</span>${deckIcon}</div><h3>${esc(d.title)}</h3><p>${esc(d.description)}</p><div class="deck-bottom"><span>${ordered(d.id).filter(c=>c.kind==='teaching').length} lessons · ${ordered(d.id).filter(c=>c.kind!=='teaching').length} reviews</span><span aria-hidden="true">↗</span></div></a>`).join('')}<a class="foundation-deck" data-deck="challenges" href="#workflows/challenges"><div class="deck-top"><span>WORKFLOWS</span>${deckIcon}</div><h3>Workflow Challenges</h3><p>Bring the steps together. Load data, build each model, inspect evidence and explain the result.</p><div class="deck-bottom"><span>${C.challenges.length} independent workflows · ${C.models.length} models</span><span aria-hidden="true">↗</span></div></a></div>`;
+  const deckLabel=deck=>deck==='foundations'?'START HERE':deck==='workflow'?'SHARED SUPERVISED WORKFLOW':'SUBJECT LIBRARY';
+  function deckTile(d){
+    return `<a class="foundation-deck" data-deck="${d.id}" href="#${d.id}"><div class="deck-top"><span>${deckLabel(d.id)}</span>${deckIcon}</div><h3>${esc(d.title)}</h3><p>${esc(d.description)}</p><div class="deck-bottom"><span>${ordered(d.id).filter(c=>c.kind==='teaching').length} lessons · ${ordered(d.id).filter(c=>c.kind!=='teaching').length} reviews</span><span aria-hidden="true">↗</span></div></a>`;
   }
-  function cardTile(c){
-    return `<a class="lesson-card ${c.kind!=='teaching'?'is-review':''}" href="${url(c)}"><div class="card-meta"><span class="card-id">${esc(c.id.replace('ML-',''))}</span><span class="card-level">${c.tier==='core'?'Core':'Go Further'} · ${esc(c.kind)}</span></div>${MLLearningVisuals.thumbnail(c)}<h4>${esc(c.title)}</h4><p>${esc(c.goal)}</p><small>${esc(c.minutes)} min · ${c.exercises.length} practices</small></a>`;
+  function collectionTile(c){
+    const cards=c.ids.map(id=>byId.get(id));
+    return `<a class="foundation-deck" data-collection="${c.id}" data-deck="${c.deck}" href="#${collections.route(c)}"><div class="deck-top"><span>${c.group==='capstone'?'CAPSTONE':'MODEL DECK'}</span>${deckIcon}</div><h3>${esc(c.title)}</h3><p>${esc(c.description)}</p><div class="deck-bottom"><span>${cards.filter(card=>card.kind==='teaching').length} lessons · ${cards.filter(card=>card.kind!=='teaching').length} reviews / checkpoints</span><span aria-hidden="true">↗</span></div></a>`;
+  }
+  function landing(){
+    return `<section class="foundation-hero"><div><h2>Machine Learning</h2><p>Begin with ML Foundations. For prediction, practise the shared Supervised Workflow, then choose a model deck for your task. For discovery or PCA, take Discovery foundations and the relevant preparation ideas. Helpful prior knowledge guides your choice; every lesson and workflow remains open.</p></div></section><section aria-labelledby="ml-start"><h3 id="ml-start">Start with the foundations</h3><div class="foundation-decks">${C.decks.filter(d=>['foundations','workflow'].includes(d.id)).map(deckTile).join('')}</div></section>${collections.groups.map(group=>`<section aria-labelledby="ml-group-${group.id}" data-collection-group="${group.id}"><h3 id="ml-group-${group.id}">${esc(group.title)}</h3><p>${esc(group.description)}</p><div class="foundation-decks">${collections.collections.filter(c=>c.group===group.id).map(collectionTile).join('')}</div></section>`).join('')}<section aria-labelledby="ml-workflows"><h3 id="ml-workflows">Independent workflow challenges</h3><div class="foundation-decks"><a class="foundation-deck" data-deck="challenges" href="#workflows/challenges"><div class="deck-top"><span>WORKFLOWS</span>${deckIcon}</div><h3>Workflow Challenges</h3><p>Bring the steps together. Load data, build each model, inspect evidence and explain the result.</p><div class="deck-bottom"><span>${C.challenges.length} independent workflows · ${C.models.length} models</span><span aria-hidden="true">↗</span></div></a></div></section><details class="ml-subject-libraries"><summary>Browse the original subject libraries</summary><p>These links retain the complete subject lists, including shared reviews and checkpoints.</p><p>${C.decks.map(d=>`<a href="#${d.id}">${esc(d.title)}</a>`).join(' · ')}</p></details>`;
+  }
+  function cardTile(c,collection=''){
+    return `<a class="lesson-card ${c.kind!=='teaching'?'is-review':''}" href="${url(c,0,collection)}"><div class="card-meta"><span class="card-id">${esc(c.id.replace('ML-',''))}</span><span class="card-level">${c.tier==='core'?'Core':'Go Further'} · ${esc(c.kind)}</span></div>${MLLearningVisuals.thumbnail(c)}<h4>${esc(c.title)}</h4><p>${esc(c.goal)}</p><small>${esc(c.minutes)} min · ${c.exercises.length} practices</small></a>`;
   }
   function deckPage(deck){
     const list=ordered(deck.id);
     const chapters=[...new Set(list.map(c=>c.chapter))];
-    return `<header class="foundation-deck-heading"><span class="foundation-eyebrow">${deckLabel(deck.id,C.decks.indexOf(deck))}</span><h2>${esc(deck.title)}</h2><p>${esc(deck.description)}</p><nav class="chapter-jumps" aria-label="Jump to chapter">${chapters.map((chapter,i)=>`<span class="chapter-step">${i?'<span class="chapter-flow-arrow" aria-hidden="true">→</span>':''}<a href="#${deck.id}/chapter/${i}">${esc(chapter)}</a></span>`).join('')}</nav></header>`+chapters.map((chapter,i)=>`<section class="foundation-chapter" id="chapter-${i}" tabindex="-1"><h3>${String(i+1).padStart(2,'0')} / ${esc(chapter)}</h3><div class="lesson-library">${list.filter(c=>c.chapter===chapter).map(cardTile).join('')}</div></section>`).join('');
+    return `<header class="foundation-deck-heading"><span class="foundation-eyebrow">${deckLabel(deck.id)}</span><h2>${esc(deck.title)}</h2><p>${esc(deck.description)}</p>${collections.collections.some(c=>c.deck===deck.id)?`<p>Choose a model deck from <a href="#">Machine Learning</a>, or browse the complete subject below.</p>`:''}<nav class="chapter-jumps" aria-label="Jump to chapter">${chapters.map((chapter,i)=>`<span class="chapter-step">${i?'<span class="chapter-flow-arrow" aria-hidden="true">→</span>':''}<a href="#${deck.id}/chapter/${i}">${esc(chapter)}</a></span>`).join('')}</nav></header>`+chapters.map((chapter,i)=>`<section class="foundation-chapter" id="chapter-${i}" tabindex="-1"><h3>${String(i+1).padStart(2,'0')} / ${esc(chapter)}</h3><div class="lesson-library">${list.filter(c=>c.chapter===chapter).map(c=>cardTile(c)).join('')}</div></section>`).join('');
+  }
+  function collectionPage(collection){
+    const deck=C.decks.find(d=>d.id===collection.deck);
+    const prior=collection.prior.map(id=>byId.get(id));
+    const list=collection.ids.map(id=>byId.get(id));
+    const next=collection.id==='neural-foundations'?['neural-classification','neural-quantity']:collection.id==='classification-evidence'?collections.collections.filter(c=>c.group==='classes'&&c.id!==collection.id).map(c=>c.id):collection.id==='discovery-foundations'?['k-means','hierarchical','pca']:[];
+    return `<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${deck.id}">${esc(deck.title)}</a><span>/</span><span>${esc(collection.title)}</span></nav><header class="foundation-deck-heading"><span class="foundation-eyebrow">${collection.group==='capstone'?'CAPSTONE':'TEACHING COLLECTION'}</span><h2>${esc(collection.title)}</h2><p>${esc(collection.description)}</p><p class="ml-prerequisites"><strong>Helpful prior knowledge:</strong> ${prior.map(c=>`<a href="${url(c)}">${esc(c.title)}</a>`).join(' · ')}. These links are guidance, not locks.</p><p>Follow teaches the idea; Change asks you to make a choice; Transfer changes the context. Apply, reviews and checkpoints appear where the existing lessons provide them. Go Further lessons are optional.</p></header><section class="foundation-chapter"><h3>Lessons in this model deck</h3><div class="lesson-library">${list.map(c=>cardTile(c,collection.id)).join('')}</div></section>${next.length?`<section><h3>Choose your next model deck</h3><p>${next.map(id=>collections.get(id)).map(c=>`<a href="#${collections.route(c)}">${esc(c.title)}</a>`).join(' · ')}</p></section>`:''}<p><a href="#${deck.id}">Browse all ${esc(deck.title)} lessons, reviews and checkpoints →</a></p><p><a href="#workflows/challenges">Choose an independent workflow challenge →</a></p>`;
   }
   function prerequisites(card){
     return `<p class="ml-prerequisites"><strong>Helpful prior knowledge:</strong> ${card.prerequisites.length?card.prerequisites.map(id=>`<a href="${url(byId.get(id))}">${esc(byId.get(id).title)}</a>`).join(' · '):'Data Foundations: inspecting, preparing and plotting tables.'} These links are guidance, not locks.</p>`;
@@ -129,32 +134,33 @@
     return `<details><summary>Hint 1 — Think</summary><p>${esc(ex.hints.think)}</p></details><details><summary>Hint 2 — Tools</summary><p>${esc(ex.hints.tools)}</p></details><details><summary>Hint 3 — Approach</summary><p>${esc(ex.hints.approach)}</p></details><details class="ml-explained-solution"><summary>Explained solution</summary>${ex.kind==='python'?code(ex.solution):`<p>${esc(ex.solution)}</p>`}<p>${esc(ex.explanation)}</p></details>`;
   }
   function pathList(card){
-    if(card.deck==='networks'){
-      if(['ML-N03','ML-N-K2'].includes(card.id))return ['ML-N03','ML-N-K2'].map(id=>byId.get(id));
-      if(['ML-N04','ML-N-K1'].includes(card.id))return ['ML-N04','ML-N-K1'].map(id=>byId.get(id));
-      return ['ML-N01','ML-N02','ML-N05','ML-N-R1'].map(id=>byId.get(id));
-    }
-    return ordered(card.deck).filter(c=>c.tier==='core'||c.id===card.id);
+    const collection=collections.selected(card,location.search)||collections.primary(card);
+    return (collection?collection.ids.map(id=>byId.get(id)):ordered(card.deck)).filter(c=>c.tier==='core'||c.id===card.id);
   }
   function navigation(card,index){
     const list=pathList(card),position=list.indexOf(card);
-    const previous=index?url(card,index-1):position>0?url(list[position-1],list[position-1].exercises.length-1):'#'+card.deck;
-    const next=index<card.exercises.length-1?url(card,index+1):position>=0&&position<list.length-1?url(list[position+1]):'#'+card.deck;
-    return `<nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+card.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${index?'Previous practice':'Previous lesson'}</a>`}${next==='#'+card.deck?(card.deck==='networks'?`<a href="${next}">Choose a neural route →</a>`:'<span class="deck-boundary">End of deck</span>'):`<a href="${next}">${index<card.exercises.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
+    const collection=collections.primary(card),context=collection?.id||'';
+    const boundary=collection?'#'+collections.route(collection):'#'+card.deck;
+    const previous=index?url(card,index-1,context):position>0?url(list[position-1],list[position-1].exercises.length-1,context):boundary;
+    const next=index<card.exercises.length-1?url(card,index+1,context):position>=0&&position<list.length-1?url(list[position+1],0,context):boundary;
+    return `<nav class="foundation-navigation" aria-label="Lesson progression">${previous===boundary?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${index?'Previous practice':'Previous lesson'}</a>`}${next===boundary?(collection?`<a href="${next}">${card.deck==='networks'?'Choose a neural route':'Return to model deck'} →</a>`:'<span class="deck-boundary">End of deck</span>'):`<a href="${next}">${index<card.exercises.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
   }
   function learningContext(card,index){
     const list=pathList(card),position=list.indexOf(card);
     const next=index+1<card.exercises.length?card.exercises[index+1].label+' · '+card.title:list[position+1]?.title;
-    if(card.kind==='checkpoint'&&next)return `<p class="teaching-note"><strong>Next:</strong> ${esc(sentence(next||nextDeckTitle(card)))}</p>`;
-    if(!next&&card.deck==='workflow')return '<p class="teaching-note"><strong>This practice:</strong> '+esc(sentence(card.exercises[index].demand||card.goal))+' <strong>Next:</strong> choose <a href="#regression">Regression</a> or <a href="#classification">Classification</a>. Both routes build on the shared supervised workflow.</p>';
-    if(!next&&['regression','classification'].includes(card.deck)){
-      const other=card.deck==='regression'?'classification':'regression';
-      return `<p class="teaching-note"><strong>This practice:</strong> ${esc(sentence(card.exercises[index].demand||card.goal))} <strong>Next:</strong> explore <a href="#${other}">${other==='regression'?'Regression':'Classification'}</a> or <a href="#">choose another model family</a>.</p>`;
+    if(card.kind==='checkpoint'&&next)return `<p class="teaching-note"><strong>Next:</strong> ${esc(sentence(next))}</p>`;
+    let guidance=next?esc(sentence(next)):'';
+    if(!next){
+      if(card.deck==='foundations')guidance='choose <a href="#workflow">Supervised Workflow</a> for prediction, or <a href="#collections/discovery-foundations">Discovery foundations</a> for clustering and PCA.';
+      else if(card.deck==='workflow')guidance='choose <a href="#collections/simple-linear">a quantity model</a> or begin with <a href="#collections/classification-evidence">classification evidence</a>. Both prediction branches build on the shared supervised workflow.';
+      else if(card.deck==='networks')guidance='choose <a href="#collections/neural-classification">Neural classification</a> or <a href="#collections/neural-quantity">Neural quantity prediction</a>. These task routes are independent.';
+      else if(card.id==='ML-U02')guidance='choose <a href="#collections/k-means">K-Means</a>, <a href="#collections/hierarchical">Hierarchical clustering</a> or <a href="#collections/pca">PCA</a> for your discovery question.';
+      else if(card.id==='ML-C04')guidance='<a href="#">choose a classifier</a> using the shared class-evidence ideas.';
+      else if(card.deck==='comparison')guidance='apply your choices in an <a href="#workflows/challenges">independent workflow challenge</a>.';
+      else guidance='<a href="#">choose another model deck</a> or apply this family in an <a href="#workflows/challenges">independent workflow challenge</a>.';
     }
-    const nextDeck=C.decks[C.decks.findIndex(d=>d.id===card.deck)+1];
-    return `<p class="teaching-note"><strong>This practice:</strong> ${esc(sentence(card.exercises[index].demand||card.goal))} <strong>Next:</strong> ${esc(sentence(next||nextDeck?.title||'Apply the workflow in an independent challenge'))}${!next&&nextDeck?` <a href="#${esc(nextDeck.id)}">Continue to ${esc(nextDeck.title)} →</a>`:''}</p>`;
+    return `<p class="teaching-note"><strong>This practice:</strong> ${esc(sentence(card.exercises[index].demand||card.goal))} <strong>Next:</strong> ${guidance}</p>`;
   }
-  function nextDeckTitle(card){return C.decks[C.decks.findIndex(d=>d.id===card.deck)+1]?.title||'Apply the workflow in an independent challenge';}
   function conceptSupport(card){
     if(card.kind==='teaching')return `<a href="${url(card)}">Revisit the first example →</a>`;
     const seen=new Set([card.id]), sources=[];
@@ -171,7 +177,9 @@
     const bridge=card.exercises.findIndex(e=>e.modelBridge);
     const discovery=['clustering','pca'].includes(card.deck);
     const bridgeText=card.deck==='clustering'?'Construct and compare raw and scaled Ward merge geometry':card.deck==='pca'?'Reuse a fitted scale and PCA representation on incoming rows':'Apply this model with a baseline, training validation and one final evaluation';
-    const prior=discovery?'Use the <a href="#clustering/ML-U01/0">Discovery route</a> to frame a question without a prediction target.':'First practise complete regression and classification in <a href="#foundations/ML-F11/0">F11–F12</a>; check readiness in <a href="#workflow/ML-W-K2/0">W-K2–W-K3</a>.';
+    const classification=card.deck==='classification'||card.id==='ML-N03';
+    const regression=card.deck==='regression'||card.id==='ML-N04';
+    const prior=discovery?'Use <a href="#collections/discovery-foundations">Discovery foundations</a> to frame a question without a prediction target.':classification?'First practise the complete classification workflow in <a href="#foundations/ML-F12/0">F12</a>; check classification readiness in <a href="#workflow/ML-W-K3/0">W-K3</a>.':regression?'First practise the complete regression workflow in <a href="#foundations/ML-F11/0">F11</a>; check regression readiness in <a href="#workflow/ML-W-K2/0">W-K2</a>.':'Choose the complete foundations workflow for your task, then practise <a href="#workflow">Supervised Workflow</a> before a task-specific network route.';
     return card.modelGuide.map(g=>`<section class="teaching-reference"><h3>${esc(g.name)} · from idea to workflow</h3><p><strong>Question:</strong> ${esc(g.question)}</p><p><strong>Mechanism:</strong> ${esc(g.mechanism)}</p><p><strong>Watch for:</strong> ${esc(g.failure)}</p><p><strong>Interpret or debug · self-review:</strong> ${esc(g.debug)}</p>${bridge>=0?`<p><strong>Guided application:</strong> <a href="${url(card,bridge)}">${bridgeText} →</a></p>`:''}<p><strong>Independent full workflow:</strong> ${g.challenges.map(id=>`<a href="#workflows/challenges/${esc(id)}">${esc(id)}</a>`).join(' · ')}. ${prior}</p></section>`).join('');
   }
   function syntaxSupport(card,ex){
@@ -188,7 +196,8 @@
   function lessonPage(card,index){
     const ex=card.exercises[index];
     const follow=card.kind==='teaching'&&index===0;
-    return `<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a><span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2><p>${esc(follow?card.goal:ex.label+(ex.demand?' · '+ex.demand:''))}</p>${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" aria-label="Lesson content">${follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${MLLearningVisuals.render(ex.visual||card.visual)}${card.pythonSkill?`<p class="teaching-note"><strong>Python skill:</strong> ${esc(card.pythonSkill)}</p>`:''}</section>`:`<section class="foundation-practice-brief"><span class="foundation-eyebrow">${esc(ex.label)} · ${esc(ex.showDatasetPreview===false?'Supplied reporting evidence':ex.dataset||card.dataset||'Reasoning practice')}</span>${practicePrompt(ex)}${!ex.dictionary&&(ex.context||card.goal)!==ex.task?`<p class="practice-context">${esc(ex.context||card.goal)}</p>`:''}</section>`}${follow?syntaxSupport(card,ex):''}${learningContext(card,index)}${masterySupport(ex)}${modelSupport(card,ex)}${ex.kind==='python'&&ex.showDatasetPreview!==false?datasetPreview(ex.dataset):''}${ex.setup?`<details class="ml-supplied-setup"><summary>Supplied setup · available if you need to inspect it</summary><p>This code runs before your editor on every Run. These are the objects your exercise uses.</p>${code(ex.setup)}</details>`:''}${!follow?`<p class="foundation-revisit">${conceptSupport(card)}</p><section class="teaching-reference"><h3>Remember the idea</h3><p>${esc(card.explanation)}</p>${MLLearningVisuals.render(ex.visual||card.visual)}${syntaxSupport(card,ex)}</section>`:''}${follow||ex.reasoningPrompt||ex.evidence?`<section class="foundation-task"><h3>${follow?'Your task · '+esc(ex.label):'Reasoning and evidence'}</h3>${follow?`<p>${esc(ex.task)}</p>`:''}${ex.reasoningPrompt?`<p><strong>Reasoning · self-review:</strong> ${esc(ex.reasoningPrompt)} A useful explanation names the decision, its consequence and evidence for a repair; code checks cannot assess this reasoning.</p>`:''}${ex.evidence?`<p>${esc(ex.evidence)}</p>`:''}</section>`:''}${evidenceContract(ex)}${help(ex)}${prerequisites(card)}<details class="ml-sources"><summary>Sources and API context</summary><p>Examples run with this Playground’s scikit-learn 1.4.2 / Pyodide 0.26.4 runtime.</p><ul>${card.sources.map(([title,href])=>`<li><a href="${esc(href)}" target="_blank" rel="noopener">${esc(title)}</a></li>`).join('')}</ul></details></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${navigation(card,index)}</div>`;
+    const collection=collections.primary(card);
+    return `<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2><p>${esc(follow?card.goal:ex.label+(ex.demand?' · '+ex.demand:''))}</p>${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" aria-label="Lesson content">${follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${MLLearningVisuals.render(ex.visual||card.visual)}${card.pythonSkill?`<p class="teaching-note"><strong>Python skill:</strong> ${esc(card.pythonSkill)}</p>`:''}</section>`:`<section class="foundation-practice-brief"><span class="foundation-eyebrow">${esc(ex.label)} · ${esc(ex.showDatasetPreview===false?'Supplied reporting evidence':ex.dataset||card.dataset||'Reasoning practice')}</span>${practicePrompt(ex)}${!ex.dictionary&&(ex.context||card.goal)!==ex.task?`<p class="practice-context">${esc(ex.context||card.goal)}</p>`:''}</section>`}${follow?syntaxSupport(card,ex):''}${learningContext(card,index)}${masterySupport(ex)}${modelSupport(card,ex)}${ex.kind==='python'&&ex.showDatasetPreview!==false?datasetPreview(ex.dataset):''}${ex.setup?`<details class="ml-supplied-setup"><summary>Supplied setup · available if you need to inspect it</summary><p>This code runs before your editor on every Run. These are the objects your exercise uses.</p>${code(ex.setup)}</details>`:''}${!follow?`<p class="foundation-revisit">${conceptSupport(card)}</p><section class="teaching-reference"><h3>Remember the idea</h3><p>${esc(card.explanation)}</p>${MLLearningVisuals.render(ex.visual||card.visual)}${syntaxSupport(card,ex)}</section>`:''}${follow||ex.reasoningPrompt||ex.evidence?`<section class="foundation-task"><h3>${follow?'Your task · '+esc(ex.label):'Reasoning and evidence'}</h3>${follow?`<p>${esc(ex.task)}</p>`:''}${ex.reasoningPrompt?`<p><strong>Reasoning · self-review:</strong> ${esc(ex.reasoningPrompt)} A useful explanation names the decision, its consequence and evidence for a repair; code checks cannot assess this reasoning.</p>`:''}${ex.evidence?`<p>${esc(ex.evidence)}</p>`:''}</section>`:''}${evidenceContract(ex)}${help(ex)}${prerequisites(card)}<details class="ml-sources"><summary>Sources and API context</summary><p>Examples run with this Playground’s scikit-learn 1.4.2 / Pyodide 0.26.4 runtime.</p><ul>${card.sources.map(([title,href])=>`<li><a href="${esc(href)}" target="_blank" rel="noopener">${esc(title)}</a></li>`).join('')}</ul></details></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${navigation(card,index)}</div>`;
   }
   function evidenceContract(ex){
     return ex.contract?`<section class="ml-contract"><h3>Required Python variables and evidence</h3><p>Use these names so Check can inspect your workflow. Each meaning is shown beside its name.</p>${table(['Variable','Meaning'],ex.contract.map(c=>[c.name,c.description]),'Workflow evidence contract')}</section>`:'';
@@ -302,10 +311,12 @@
     const currentRoute=LearningRoutes.route('ml',location,document.body);
     const [deckId,id,position]=currentRoute.split('/');
     const deck=C.decks.find(d=>d.id===deckId),card=byId.get(id);
+    const collection=deckId==='collections'?collections.get(id):null;
     receipts.enter(null);
-    document.body.dataset.deck=deckId||'';
+    document.body.dataset.deck=collection?.deck||deckId||'';
     main.classList.add('ml-learning');
-    if(deckId==='workflows'){
+    if(collection)main.innerHTML=collectionPage(collection);
+    else if(deckId==='workflows'){
       const challenge=C.challenges.find(c=>c.id===position);
       if(id==='challenges'&&challenge){
         receipts.enter(challenge.exercise.id);
@@ -317,17 +328,18 @@
       view={card,index,exercise:card.exercises[index]};receipts.enter(view.exercise.id);
       main.innerHTML=lessonPage(card,index);
     }else main.innerHTML=deck?deckPage(deck):landing();
-    document.title=(view?.card?.title||view?.challenge?.title||deck?.title||'Machine Learning')+' · Learn / Refresh';
+    document.title=(view?.card?.title||view?.challenge?.title||collection?.title||deck?.title||'Machine Learning')+' · Learn / Refresh';
     FoundationLearning.highlightContent(main);
     const exit=document.querySelector('.back-playground');
-    exit.href=view?.challenge?'#workflows/challenges':view?.card?'#'+view.card.deck:deck||deckId==='workflows'?'#':'learn.html';
-    exit.textContent=view?.challenge?'← All challenges':view?.card?'← '+deck.title+' lessons':deck||deckId==='workflows'?'← Choose a deck':'← Learn / Refresh';
+    const selected=view?.card?collections.selected(view.card,location.search):null;
+    exit.href=selected?'#'+collections.route(selected):view?.challenge?'#workflows/challenges':view?.card?'#'+view.card.deck:deck||collection||deckId==='workflows'?'#':'learn.html';
+    exit.textContent=selected?'← '+selected.title+' lessons':view?.challenge?'← All challenges':view?.card?'← '+deck.title+' lessons':collection?'← Choose a model deck':deck||deckId==='workflows'?'← Choose a deck':'← Learn / Refresh';
     LearningRoutes.enhance('ml',main);LearningRoutes.canonical('ml',currentRoute);
     bind();main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
     if(deck&&id==='chapter'){const chapter=document.getElementById('chapter-'+position);chapter?.focus({preventScroll:true});chapter?.scrollIntoView({block:'start'});}
   }
   // The static build renders through these same functions, without Python or DOM bindings.
-  if(window.DataPlaygroundPrerender){window.DataPlaygroundPrerender={curriculum:C,challenges:C.challenges,landing,deckPage,challengePage,challengeCollection:challengeExperience.collection,lessonPage:(card,index)=>{view={card,index,exercise:card.exercises[index]};return lessonPage(card,index);}};return;}
+  if(window.DataPlaygroundPrerender){window.DataPlaygroundPrerender={curriculum:C,challenges:C.challenges,collections:C.collections,landing,deckPage,collectionPage,challengePage,challengeCollection:challengeExperience.collection,lessonPage:(card,index)=>{view={card,index,exercise:card.exercises[index]};return lessonPage(card,index);}};return;}
   document.getElementById('themeButton').addEventListener('click',()=>AppAppearance.apply(document.body.dataset.theme==='light'?'dark':'light'));
   window.addEventListener('pagehide',clearResources);
   // Inspectable content/read-only state for real-browser audits; no persistence API.

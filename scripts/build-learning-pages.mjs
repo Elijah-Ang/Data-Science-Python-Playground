@@ -14,8 +14,8 @@ async function renderer(root,output,family){
     fetch:async file=>({ok:true,json:async()=>JSON.parse(await fs.readFile(path.join(output,file),'utf8'))})
   });
   context.window=context;
-  const dataFiles=['foundations/refinements.js','foundations/code-style.js','foundations/practical.js','foundations/progression.js','foundations/visuals.js','foundations/clarity.js','foundations/curriculum.js','challenges/registry.js','challenges/experience.js','foundations/workspace.js','foundations/teaching.js','foundations/learning-ui.js'];
-  const mlFiles=['dataset-dictionary.js','foundations/learning-ui.js','challenges/experience.js','ml-learning/receipts.js','ml-learning/visuals.js'];
+  const dataFiles=['foundations/refinements.js','foundations/code-style.js','foundations/practical.js','foundations/progression.js','foundations/visuals.js','foundations/variety.js','foundations/clarity.js','foundations/curriculum.js','challenges/registry.js','challenges/experience.js','foundations/workspace.js','foundations/teaching.js','foundations/learning-ui.js','foundations/parameter-guide.js'];
+  const mlFiles=['dataset-dictionary.js','foundations/learning-ui.js','challenges/experience.js','ml-learning/receipts.js','ml-learning/visuals.js','ml-learning/collections.js'];
   for(const file of ['code-identifiers.js','learning-routes.js',...(family==='data'?dataFiles:mlFiles),family==='data'?'foundations/app.js':'ml-learning/app.js']){
     await vm.runInContext(await fs.readFile(path.join(root,file),'utf8'),context,{filename:file});
   }
@@ -38,6 +38,7 @@ export async function buildLearningPages(root,output){
     const challengeDecks=[...new Set(api.challenges.map(c=>c.deck))].map(id=>api.curriculum.decks.find(deck=>deck.id===id)||{id,title:'Machine Learning'});
     const pages=[{route:'',title:family==='data'?'Data Foundations':'Machine Learning',description:family==='data'?'Inspect, clean, transform and visualise data with Python.':'Learn machine learning with visual explanations and Python practice.',html:api.landing()},
       ...api.curriculum.decks.map(deck=>({route:deck.id,title:deck.title,description:deck.description,html:api.deckPage(deck)})),
+      ...(api.collections||[]).map(collection=>({route:'collections/'+collection.id,title:collection.title,description:collection.description,html:api.collectionPage(collection)})),
       ...lessons.map(lesson=>{
         const exercise=family==='data'?lesson.rounds[0]:lesson.exercises[0];
         const starter=family==='data'?context.FoundationWorkspace.code(api.curriculum,exercise):exercise.starter;
@@ -59,8 +60,9 @@ export async function buildLearningPages(root,output){
       // Static back links must match the same navigation as the enhanced page.
       const [parent,kind,id]=page.route.split('/');
       const isBrief=kind==='challenges'&&id, isCollection=kind==='challenges'&&!id;
-      const exit=isBrief?context.LearningRoutes.url(family,parent+'/challenges'):isCollection?context.LearningRoutes.url(family,''):page.route?context.LearningRoutes.url(family,page.route.includes('/')?parent:''):family==='ml'?'learn.html':'playground.html';
-      const exitLabel=isBrief?'← All challenges':isCollection?'← Choose a deck':page.route.includes('/')?'← '+api.curriculum.decks.find(d=>d.id===parent).title+' lessons':page.route?'← Choose a deck':family==='ml'?'← Learn / Refresh':'← Data Playground';
+      const isModelCollection=family==='ml'&&parent==='collections';
+      const exit=isBrief?context.LearningRoutes.url(family,parent+'/challenges'):isCollection||isModelCollection?context.LearningRoutes.url(family,''):page.route?context.LearningRoutes.url(family,page.route.includes('/')?parent:''):family==='ml'?'learn.html':'playground.html';
+      const exitLabel=isBrief?'← All challenges':isModelCollection?'← Choose a model deck':isCollection?'← Choose a deck':page.route.includes('/')?'← '+api.curriculum.decks.find(d=>d.id===parent).title+' lessons':page.route?'← Choose a deck':family==='ml'?'← Learn / Refresh':'← Data Playground';
       html=html.replace(/(<a href=")[^"]+(" class="back-playground">)[^<]+/,(_,open,rest)=>open+exit+rest+escape(exitLabel));
       await fs.writeFile(path.join(output,file),html);
       routes.push(file);

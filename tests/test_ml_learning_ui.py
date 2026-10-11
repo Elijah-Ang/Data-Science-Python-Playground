@@ -35,7 +35,11 @@ with sync_playwright() as p:
     assert page.locator('.mode-link[aria-current="page"]').get_attribute('aria-label')=='Statistics Playground'
     page.goto(args.base_url+'/ml-learn.html'+('?runtime=local' if args.runtime=='local' else ''))
     page.wait_for_function('!!window.MLLearning')
-    assert page.locator('.foundation-decks .foundation-deck').count()==9
+    assert page.locator('section[aria-labelledby="ml-start"] .foundation-deck').count()==2
+    assert page.locator('section[aria-labelledby="ml-start"] .foundation-deck').evaluate_all('(cards)=>cards.map(card=>card.dataset.deck)')==['foundations','workflow']
+    assert page.locator('.foundation-deck[data-collection]').count()==len(page.evaluate('MLLearning.curriculum.collections'))==23
+    assert page.locator('[data-collection-group]').evaluate_all('(groups)=>groups.map(group=>group.dataset.collectionGroup)')==['quantity','classes','neural','discovery','capstone']
+    assert page.locator('.ml-subject-libraries a').evaluate_all('(links)=>links.map(link=>link.getAttribute("href").split("?")[0])')==['ml-learn-'+deck+'.html' for deck in ['foundations','workflow','regression','classification','networks','clustering','pca','comparison']]
     assert page.locator('.ml-orientation,.ml-index,.ml-concepts-nav').count()==0
     assert page.get_by_role('link',name='Workflow Challenges',exact=False).count()==1
     assert page.locator('[aria-current="location"]').inner_text().strip()=='ML'
@@ -162,7 +166,8 @@ with sync_playwright() as p:
         assert 'no prediction target or reserved final test' in page.locator('.ml-workflow-map > p').inner_text()
     page.evaluate("location.hash='#workflow/ML-W-K3/0'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K3-1'")
-    assert 'choose Regression or Classification' in page.locator('.teaching-note').inner_text()
+    assert 'choose a quantity model or begin with classification evidence' in page.locator('.teaching-note').inner_text()
+    assert page.locator('.teaching-note a').evaluate_all('(links)=>links.map(link=>link.getAttribute("href").split("?")[0])')==['ml-learn-collection-simple-linear.html','ml-learn-collection-classification-evidence.html']
     for route,id,question in [
         ('#regression/ML-R01/0','ML-R01-1',False),
         ('#regression/ML-R02/2','ML-R02-3',False),
@@ -242,7 +247,7 @@ with sync_playwright() as p:
     page.evaluate("document.documentElement.style.zoom=''")
     page.evaluate("location.hash='#networks/ML-N-R1/2'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-N-R1-3'")
-    assert page.locator('.foundation-navigation a').last.get_attribute('href')=='ml-learn-networks.html'
+    assert page.locator('.foundation-navigation a').last.get_attribute('href')=='ml-learn-collection-neural-foundations.html'
     page.evaluate("location.hash='#networks/ML-N04/3'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-N04-4'")
     assert 'ML-N-K1' in page.locator('.foundation-navigation a').last.get_attribute('href')
@@ -262,6 +267,16 @@ with sync_playwright() as p:
     page.locator('#mlEditor').fill(solution+'\n# Edited')
     page.locator('#mlCheck').click()
     assert 'Run the current code first' in page.locator('#mlFeedback').inner_text()
+    assert page.evaluate('MLLearning.retainedReceipts')==0
+    starter=page.evaluate('MLLearning.activity.starter')
+    page.locator('#mlReset').click()
+    assert page.locator('#mlEditor').input_value()==starter
+    assert page.evaluate('MLLearning.retainedReceipts')==0
+    assert page.locator('#mlResults').inner_text()==''
+    assert page.locator('#mlOutput').inner_text()=='Code reset. Run to produce new output.'
+    page.locator('#mlStop').click()
+    assert not page.locator('#mlRun').is_disabled()
+    assert page.locator('#mlStatus').inner_text()=='Execution stopped. Python will start fresh on the next Run.'
     assert page.evaluate('MLLearning.retainedReceipts')==0
     # Keyboard escape exits the editor; navigation/reload discards the draft.
     page.locator('#mlEditor').focus();page.keyboard.press('Escape');page.keyboard.press('Tab')
@@ -288,7 +303,8 @@ with sync_playwright() as p:
     page.locator('#mlReflection').wait_for()
     assert page.locator('#mlReflection').input_value()==''
     writes=page.evaluate('__mlWrites')
-    assert not any('learning' in key.lower() or 'foundation' in key.lower() for key in writes),writes
+    assert not any(any(term in key.lower() for term in ['learning','foundation','progress','completion','draft','resume']) for key in writes),writes
+    assert page.locator('progress,[role="progressbar"],#forgetProgress,#resetLearningDialog,#storageStatus,.foundation-continue').count()==0
     assert not errors,errors
     browser.close()
 print(args.engine,'all card/challenge routes, six widths, themes, task forks, real Run/Check, keyboard and no learning persistence passed.')
