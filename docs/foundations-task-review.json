@@ -6901,7 +6901,7 @@
   "previousReview": "2026-09-26",
   "auditReport": "docs/foundations-exercise-audit-2026-10-05.md",
   "sourceHashes": {
-    "foundations/app.js": "a2a6f369a2a0e29621cd35573db5bf190d008b286e07660cea8e9aff7f920748",
+    "foundations/app.js": "e076554aaea7e958427b89f75f258ca3ade1b64aea20b53e1a76a07e1e8feff0",
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/code-style.js": "7fa40673bf930970eee4b85b9bcf7ce990a9aab3c0c6d9be58616192a830e54d",
     "foundations/curriculum.js": "4e1707b6eeb0b451b4526c1422ec80e078d673285b61a96ae02fa02b264b1d7a",
@@ -6917,7 +6917,7 @@
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "tests/test_foundations_audit.py": "5f8ba9b4921a257872b5d5709f88b48886199800331a2e61c57a536d80446e47",
     "foundations/prerequisites.js": "b6dde7fb32e55744d0bd6dc5bad69c707eeddb2510c605396c8b3859454c7c6b",
-    "code-identifiers.js": "1c51b7f20b176d1b6c4e221139344fc53e98a6b85a697621a624689e64f91cc0",
+    "code-identifiers.js": "3c3919f13a925b3234da70ed83de0b2998e8a349ea68c98303f4c7dbcd044e4c",
     "learning-language.js": "c42553806f920fc266cab2b2cc4fb61ee53e2c8a12a732853fa5d9e95fe731a8",
     "learning-identifiers.js": "9787376e015e07e9daf48b0cb1ecae7129af76159a9feb41a7c5cc91b10cd19c"
   },

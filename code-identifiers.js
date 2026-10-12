@@ -85,7 +85,7 @@
       if (!node.parentElement.closest('svg,math,code,kbd,pre,textarea,script,style,button,select,option,td')) nodes.push(node);
     }
     for (const text of nodes) {
-      const instruction=!!text.parentElement.closest('.learning-instructions,.foundation-task,.foundation-practice-brief,.foundation-task-reminder,.case-requirements,.ml-contract');
+      const instruction=!!text.parentElement.closest('.learning-instructions,.foundation-task-steps');
       const html = format(text.textContent,{...context,instruction});
       if (!html.includes('<code')) continue;
       const template = document.createElement('template'); template.innerHTML = html;
@@ -112,7 +112,7 @@
         }
         if(token.startsWith('</')){const at=stack.map(s=>s.tag).lastIndexOf(tag);if(at>=0)stack.splice(at);}
         else if(!/^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/.test(tag)){
-          const instruction=/learning-instructions|foundation-task|foundation-practice-brief|case-requirements|ml-contract/.test(token);
+          const instruction=/learning-instructions|foundation-task-steps/.test(token);
           stack.push({tag,instruction});
         }
         return token;

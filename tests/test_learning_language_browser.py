@@ -75,6 +75,11 @@ with sync_playwright() as p:
                     assert panel.locator('a[href="data-foundations-I19S.html"]').count()==1
                 if id in ['I06S','I13L','I19S','I19A']:
                     assert page.locator('.teaching-example-output').count()>0
+                    if index:
+                        brief=page.locator('.foundation-practice-brief')
+                        assert brief.locator('.practice-question').inner_text()=='Your task'
+                        assert brief.locator('.learning-instructions > li').count()>=2
+                        assert brief.locator('.foundation-eyebrow code').count()==0,'Dataset metadata remains prose'
                 if id=='ML-M03':
                     text=page.locator('.foundation-content').inner_text()
                     assert all(value in text for value in ['4.4','0.7','4.2','0.6','4.3','0.8','hours'])
