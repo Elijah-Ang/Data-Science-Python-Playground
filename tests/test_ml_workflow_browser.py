@@ -52,7 +52,7 @@ def emit_startup_failure(page, error, browser_errors, failed_requests) -> None:
             evidence["runtime_dom"][element_id] = page.locator(f"#{element_id}").text_content(timeout=1_000)
         except Exception as observer_error:
             evidence["runtime_dom"][element_id] = {"observer_error": str(observer_error)}
-    serialized = json.dumps(evidence, indent=2, ensure_ascii=False)
+    serialized = json.dumps(evidence, indent=2, ensure_ascii=True)
     print("Initial Python readiness failure diagnostics:\n" + serialized, file=sys.stderr, flush=True)
     try:
         path = Path("work/ml-browser/startup-failure.json")
@@ -258,7 +258,13 @@ def run(page, base_url: str) -> dict[str, object]:
         page.goto(base_url, wait_until="domcontentloaded")
         wait_ready(page)
     except Exception as error:
-        emit_startup_failure(page, error, browser_errors, failed_requests)
+        try:
+            emit_startup_failure(page, error, browser_errors, failed_requests)
+        except Exception as diagnostic_error:
+            try:
+                print(f"Startup diagnostics unavailable: {diagnostic_error!r}", file=sys.stderr, flush=True)
+            except Exception:
+                pass  # An unavailable observer must not replace the startup failure.
         raise
     assert_removed_controls(page)
 
