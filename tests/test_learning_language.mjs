@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import {createRequire} from 'node:module';
+import {execFileSync} from 'node:child_process';
+import path from 'node:path';
 const ctx={};ctx.window=ctx;
 for(const file of ['code-identifiers.js','learning-identifiers.js','learning-language.js'])vm.runInNewContext(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'),ctx);
 const L=ctx.LearningLanguage,F=ctx.CodeIdentifiers.format;
@@ -51,7 +53,7 @@ for(const d of prices.deliverables){
   for(const step of d.instructions)assert(step.split(/\s+/).length<=20,'Price steps remain short');
 }
 assert(L.activity({id:'ML-M-K1-1'}).includes('569')&&L.activity({id:'ML-M-K1-1'}).includes('90%'));
-const ml=JSON.parse(fs.readFileSync(new URL('../dist/ml-learning/curriculum.json',import.meta.url),'utf8'));
+const ml=JSON.parse(execFileSync(process.env.PYTHON||'python3',['ml-learning/authoring.py'],{cwd:path.resolve(import.meta.dirname,'..'),encoding:'utf8',maxBuffer:20*1024*1024}));
 for(const card of ml.cards)for(const ex of card.exercises){
   assert(L.context(ex.id).columns,ex.id+' has an authored context');
   const output=L.activity(ex);
