@@ -29,11 +29,13 @@ with sync_playwright() as p:
  base=args.base_url+'/data-foundations.html'+runtime_query
  page.goto(base)
  page.locator('.foundation-deck[data-deck="inspect"]').click()
- assert page.locator('.lesson-card').count()==27
+ inspect_inventory=page.evaluate('FoundationsCurriculum.lessons.filter(l=>l.deck==="inspect").map(l=>l.id)')
+ assert len(inspect_inventory)==31 and all(id in inspect_inventory for id in ['I06S','I13L','I19S','I19A'])
+ assert page.locator('.lesson-card').count()==len(inspect_inventory)
  assert page.locator('.foundation-breadcrumb').count()==0
  page.locator('.chapter-jumps a').last.click()
  assert page.locator('#chapter-3').evaluate('(e)=>e.getBoundingClientRect().top')>=0
- assert page.locator('.lesson-card svg').count()==27
+ assert page.locator('.lesson-card svg').count()==len(inspect_inventory)
  page.locator('.back-playground').click();assert page.locator('.foundation-deck').count()==3
  page.locator('.foundation-deck[data-deck="inspect"]').click()
  page.locator('.lesson-card[href="#inspect/I01/0"], .lesson-card[href="data-foundations-I01.html"]').click()

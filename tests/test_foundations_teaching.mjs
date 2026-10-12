@@ -82,7 +82,7 @@ assert(qcut.includes('Tied values at a boundary')&&qcut.includes('qcut chooses b
 assert(bins.rounds[1].solution.includes('pd.qcut')&&bins.rounds[1].task.includes('sample-quantile'));
 assert.equal(teaching.transition(bins.rounds[0]),'');
 const transitions=curriculum.lessons.flatMap(l=>l.rounds.filter(r=>r.teaching));
-assert.deepEqual(transitions.map(r=>r.id),['I02-3','I10-2','I10-3','I12-3','I14-2','I16-2','I16-3','W08-2','W09-2','W10-2','W15-3','W26-2','W28-2','W28-3','V04-3','V08-2','V25-3','V23-2','V32-2','V33-2','V33-3']);
+assert.deepEqual(transitions.map(r=>r.id),['I02-3','I06-2','I10-2','I10-3','I12-3','I14-2','I16-2','I16-3','I19A-3','W08-2','W09-2','W10-2','W15-3','W26-2','W28-2','W28-3','V04-2','V04-3','V08-2','V13-3','V25-3','V23-2','V32-2','V33-2','V33-3']);
 for(const round of transitions){
   const panel=teaching.transition(round);
   assert(panel.includes('A small example')&&panel.includes('What each part does'),round.id);

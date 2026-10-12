@@ -88,7 +88,8 @@ if(process.argv.includes('--built'))for(const lesson of visualise){
  const routes=globalThis.LearningRoutes;
  const page=fs.readFileSync(new URL('../dist/'+routes.url('data',lesson.deck+'/'+lesson.id+'/0'),import.meta.url),'utf8');
  const expected=parameters.render(curriculum,lesson,lesson.rounds[0]);
- assert(page.includes(expected),lesson.id+' static page contains the exact shared parameter content');
+ const unstyled=html=>html.replace(/<code class="code-identifier"(?: data-code-role="[^"]*" title="[^"]*")?>([^<]*)<\/code>/g,'$1');
+ assert(unstyled(page).includes(unstyled(expected)),lesson.id+' static page contains the exact shared parameter content, allowing inline identifier decoration');
 }
 const unique=[...new Set(inventory.map(item=>item.entry))];
 console.log(`Parameter guide: ${visualise.length} cards, ${roundCount} rounds, ${inventory.length} introduced option occurrences, ${unique.length} reusable entries; independent AST coverage and function-specific contracts verified.`);

@@ -104,8 +104,10 @@ with sync_playwright() as p:
                 assert page.locator('.practice-question').inner_text()==checkpoint['question']
                 contract=page.locator('.ml-contract')
                 assert contract.is_visible() and contract.evaluate('(e)=>!e.closest("details")')
-                rows=contract.locator('tbody tr')
-                assert rows.evaluate_all('(rows)=>rows.map(row=>Array.from(row.cells,c=>c.textContent))')==[[c['name'],c['description']] for c in checkpoint['contract']]
+                rows=contract.locator('.ml-evidence-names > div')
+                expected_contract=page.evaluate('(contract)=>contract.map(c=>[c.name,LearningLanguage.split(c.description)])',checkpoint['contract'])
+                assert rows.evaluate_all('(rows)=>rows.map(row=>[row.querySelector("dt").textContent,Array.from(row.querySelectorAll("dd li"),e=>e.textContent)])')==expected_contract
+                assert all(row.locator('dt code').count()==1 for row in rows.all())
                 assert all(row.is_visible() for row in rows.all())
                 design=contract.inner_text()
                 assert '15–30%' in design and '3–5-fold' in design
