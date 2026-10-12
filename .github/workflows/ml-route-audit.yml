@@ -113,6 +113,14 @@ jobs:
         run: python tests/test_notebook_session_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
       - name: Check product trust and responsive public pages
         run: python tests/test_product_browser.py --engine ${{ matrix.engine }} --base-url http://127.0.0.1:8000
+      - name: Preserve product startup failure diagnostics
+        if: ${{ failure() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-startup-${{ matrix.engine }}-${{ github.sha }}
+          path: work/product-browser/startup-failure.json
+          if-no-files-found: warn
 
   required-browser-status:
     name: Browser/Pyodide route smoke test

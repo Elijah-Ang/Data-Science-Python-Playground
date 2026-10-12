@@ -1,11 +1,29 @@
 """Rendered public navigation, notebook trust, recovery and responsive regressions."""
-import argparse,json
+import argparse,json,sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+
+def emit_product_startup_failure(page,error,browser_errors,failed_requests):
+ evidence={'exception':{'type':type(error).__name__,'message':str(error)},'runtime_dom':{},'browser_errors':browser_errors,'failed_requests':failed_requests}
+ for element_id in ('runtimeStatus','runtimeDetailsSummary','runtimeDetailsText'):
+  try:
+   evidence['runtime_dom'][element_id]=page.locator(f'#{element_id}').text_content(timeout=1000)
+  except Exception as observer_error:
+   evidence['runtime_dom'][element_id]={'observer_error':str(observer_error)}
+ serialized=json.dumps(evidence,indent=2,ensure_ascii=True)
+ print('Initial product Python readiness failure diagnostics:\n'+serialized,file=sys.stderr,flush=True)
+ try:
+  path=Path('work/product-browser/startup-failure.json');path.parent.mkdir(parents=True,exist_ok=True);path.write_text(serialized+'\n',encoding='utf-8')
+ except OSError as artifact_error:
+  print(f'Could not save product startup diagnostic artifact: {artifact_error}',file=sys.stderr,flush=True)
+
 parser=argparse.ArgumentParser();parser.add_argument('--engine',default='chromium');parser.add_argument('--base-url',default='http://127.0.0.1:8001');args=parser.parse_args()
 results=[]
 with sync_playwright() as p:
  browser=getattr(p,args.engine).launch(); context=browser.new_context();page=context.new_page(); errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+ console_errors=[];failed_requests=[]
+ page.on('console',lambda message:console_errors.append(message.text) if message.type=='error' else None)
+ page.on('requestfailed',lambda request:failed_requests.append({'url':request.url,'reason':request.failure}))
  for width in [390,834,1440]:
   page.set_viewport_size({'width':width,'height':900})
   for name in ['help','about','privacy','acknowledgements','tutorial']:
@@ -29,8 +47,19 @@ with sync_playwright() as p:
     assert link.is_visible(); assert float(link.evaluate('(e)=>getComputedStyle(e).fontSize').replace('px',''))>=12
    assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 2'),(width,name)
    results.append([width,name,'navigation passed'])
- page.set_viewport_size({'width':390,'height':844});page.goto(args.base_url+'/playground.html')
- page.wait_for_function("document.querySelector('#runtimeStatus').textContent.includes('Python ready')",timeout=120000)
+ page.set_viewport_size({'width':390,'height':844})
+ try:
+  page.goto(args.base_url+'/playground.html')
+  page.wait_for_function("document.querySelector('#runtimeStatus').textContent.includes('Python ready')",timeout=120000)
+ except Exception as error:
+  try:
+   emit_product_startup_failure(page,error,errors+console_errors,failed_requests)
+  except Exception as diagnostic_error:
+   try:
+    print(f'Product startup diagnostics unavailable: {diagnostic_error!r}',file=sys.stderr,flush=True)
+   except Exception:
+    pass  # An unavailable observer must not replace the startup failure.
+  raise
  def run_data(code):
   page.locator('#addCellButton').click(); cell=page.locator('article.cell').last;cell.locator('textarea').fill(code);cell.locator('.run').click()
   page.wait_for_function("['done','error'].includes([...document.querySelectorAll('article.cell')].at(-1).dataset.status)",timeout=120000)
