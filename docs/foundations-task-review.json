@@ -6917,9 +6917,9 @@
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "tests/test_foundations_audit.py": "5f8ba9b4921a257872b5d5709f88b48886199800331a2e61c57a536d80446e47",
     "foundations/prerequisites.js": "b6dde7fb32e55744d0bd6dc5bad69c707eeddb2510c605396c8b3859454c7c6b",
-    "code-identifiers.js": "a9ea0a16454bb244f5e79b5d5f4b78f65c0f3c428807a054582d24fa3be7b0e2",
-    "learning-language.js": "3746a1403005c687f248e121c0571cc1dc8203da44119b5bb6027393895542ec",
-    "learning-identifiers.js": "357db329a5f63e1c2327c214ca6ce6ed41f37113ca4951b1deab93973363161a"
+    "code-identifiers.js": "1c51b7f20b176d1b6c4e221139344fc53e98a6b85a697621a624689e64f91cc0",
+    "learning-language.js": "c42553806f920fc266cab2b2cc4fb61ee53e2c8a12a732853fa5d9e95fe731a8",
+    "learning-identifiers.js": "9787376e015e07e9daf48b0cb1ecae7129af76159a9feb41a7c5cc91b10cd19c"
   },
   "execution": {
     "rounds": 324,

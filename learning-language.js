@@ -19,7 +19,7 @@
     [/\brespectively\b/gi,'in that same order']
   ];
   function plain(text){
-    return String(text??'').split(/(`[^`]*`|"[^"\n]*"|'[^'\n]*'|\b(?:[A-Za-z_]\w*\.)*[A-Za-z_]\w*\([^\n]*?\))/g).map((part,i)=>{
+    return String(text??'').split(/(`[^`]*`|"[^"\n]*"|(?<!\w)'[^'\n]*'|\b(?:[A-Za-z_]\w*\.)*[A-Za-z_]\w*\([^\n]*?\))/g).map((part,i)=>{
       if(i%2)return part;
       for(const [pattern,value] of phrases)part=part.replace(pattern,value);
       return part;
@@ -33,12 +33,15 @@
     for(let i=0;i<text.length;i++){
       const char=text[i];
       if(quote){if(char===quote&&text[i-1]!=='\\')quote='';continue;}
-      if('"\'`'.includes(char)){quote=char;continue;}
+      if('"\'`'.includes(char)){
+        if(char==="'"&&/[A-Za-z0-9_]$/.test(text.slice(0,i)))continue;
+        quote=char;continue;
+      }
       if('([{'.includes(char)){depth++;continue;}
       if(')]}'.includes(char)){depth=Math.max(0,depth-1);continue;}
       if(depth)continue;
       const tail=text.slice(i+1);
-      const sentence=/[.!?]/.test(char)&&/^\s+[A-Z]/.test(tail);
+      const sentence=/[.!?]/.test(char)&&(/^\s+[A-Z]/.test(tail)||/^\s+(?:choose|keep|make|create|return|display|use|add|save|sort|fit|compare|report|evaluate|explain|plot|calculate|draw|filter|write|avoid)\b/.test(tail));
       const action=char===';'&&/^\s*(?:then\s+)?(?:keep|make|create|return|display|use|add|save|sort|label|do|leave|fit|compare|report|evaluate|choose|explain|plot|calculate|draw|set|filter|count|write|avoid)\b/i.test(tail);
       const commaAction=char===','&&!/\b(?:if|unless|when|until)\b/i.test(text.slice(start,i))&&/^\s*(?:and\s+|then\s+)?(?:keep|make|create|return|display|add|save|sort|fit|compare|report|evaluate|choose|plot|calculate|draw|filter|write|avoid)\b/i.test(tail);
       if(sentence||action||commaAction){
@@ -52,10 +55,14 @@
     return result.map(s=>s.replace(/^(keep|make|create|return|display|use|add|save|sort|label|do|leave|fit|compare|report|evaluate|choose|explain|plot|calculate|draw|set|filter|count|write|avoid)\b/,word=>word[0].toUpperCase()+word.slice(1)));
   }
   function context(id){return root.LearningIdentifiers?.[id]||{};}
-  function text(value,id,instruction=false){return root.CodeIdentifiers?.format(plain(value),{...context(id),instruction})||esc(plain(value));}
+  function text(value,id,instruction=false,local){return root.CodeIdentifiers?.format(plain(value),{...(local||context(id)),instruction})||esc(plain(value));}
   function steps(value,id){
     const items=(Array.isArray(value)?value:[value]).flatMap(split);
-    return '<ol class="learning-instructions">'+items.map(s=>'<li>'+text(s,id,true)+'</li>').join('')+'</ol>';
+    let local=context(id);
+    return '<ol class="learning-instructions">'+items.map(s=>{
+      local=root.CodeIdentifiers.columnContext(s,local);
+      return '<li>'+text(s,id,true,local)+'</li>';
+    }).join('')+'</ol>';
   }
   const taskSteps={
     'ML-M-K1-1':[
@@ -69,7 +76,7 @@
     ]
   };
   const activity=ex=>steps(taskSteps[ex.id]||ex.steps||ex.task,ex.id);
-  function key(){return '<p class="learning-name-key"><span>Boxed names are Python objects.</span> <span>Underlined names are table columns.</span> Use each name exactly as shown.</p>';}
+  function key(){return '<p class="learning-name-key"><span>Boxed names are used in Python.</span> <span>Underlined names are table columns.</span> Use each name exactly as shown.</p>';}
   const meanings={
     DataFrame:'a table with rows and columns',Series:'one labelled set of values',
     numeric:'a number, rather than text',missing:'no value was supplied',

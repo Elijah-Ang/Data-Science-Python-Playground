@@ -34,6 +34,12 @@ with sync_playwright() as p:
       return {count:rounds.length,failures:rounds.filter(r=>!LearningLanguage.context(r.id).columns || !LearningLanguage.activity(r).includes('learning-instructions')).map(r=>r.id)};
     }''')
     assert report['inventory']['ml'] == dict(count=327, failures=[])
+    page.goto(base+'/ml-learn-ML-C-K1.html')
+    page.wait_for_function("window.MLLearning?.activity?.id==='ML-C-K1-1'")
+    assert page.locator('.foundation-practice-brief code').filter(has_text='logistic').count()==0,'Model-family prose is not a table column'
+    page.goto(base+'/ml-learn-ML-F01.html')
+    page.wait_for_function("window.MLLearning?.activity?.id==='ML-F01-1'")
+    assert page.locator('.foundation-task code[data-code-role="variable"]').filter(has_text='answer').count()>0
     data_routes = [(f'data-foundations-{id}.html?practice={i}', id, i) for id in ['I06S','I13L','I19S','I19A'] for i in range(3)]
     data_routes += [('data-foundations-V13.html?practice=2','V13',2), ('data-foundations-WC02.html','WC02',0)]
     ml_routes = [('ml-learn-'+id+'.html'+(f'?practice={i}' if i else ''),id,i) for id,i in [('ML-F02',0),('ML-F02',2),('ML-F-K1',0),('ML-M03',0),('ML-M03',1),('ML-M03',2),('ML-M-K1',0),('ML-X01',0),('ML-X19',0)]]
@@ -96,6 +102,7 @@ with sync_playwright() as p:
         assert nojs.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),file
         if file.endswith('WC02.html'):
             assert nojs.locator('#case-deliverables code[data-code-role="column"]').filter(has_text='numeric_price').count()>0
+            assert nojs.locator('.case-fields dt code[data-code-role="column"]').filter(has_text='price').count()>0
         report['static'].append(file)
     assert not errors,errors
     browser.close()

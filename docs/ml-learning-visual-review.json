@@ -2252,7 +2252,7 @@
     "ML-W16": "c35792e1340e250807c1882937254a15dbafcaa5cf1ac7c219006d60450d45f6"
   },
   "sourceHashes": {
-    "code-identifiers.js": "a9ea0a16454bb244f5e79b5d5f4b78f65c0f3c428807a054582d24fa3be7b0e2",
+    "code-identifiers.js": "1c51b7f20b176d1b6c4e221139344fc53e98a6b85a697621a624689e64f91cc0",
     "route-slider.css": "28f96d75040ab03c3e18c879114dc413bb2ba99a179b91c83dd9c015f7e3a14a",
     "ml-learning/visuals.js": "7fa3d6ffc99eb42736e99a7fb74ac1479c9679ea1a12be469d77bfb3a5d9a7b6",
     "ml-learning/learning.css": "7e960ec9dbbd349a773345d68ee2903f2ff46bef0d9d8e96cab581cd698e3128",
@@ -2262,8 +2262,8 @@
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "6fc8bbea1eacd53a1ae7e6ed522545451fd05265098b8dc78ef06a56d9e2a695",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8",
-    "learning-language.js": "3746a1403005c687f248e121c0571cc1dc8203da44119b5bb6027393895542ec",
-    "learning-identifiers.js": "357db329a5f63e1c2327c214ca6ce6ed41f37113ca4951b1deab93973363161a"
+    "learning-language.js": "c42553806f920fc266cab2b2cc4fb61ee53e2c8a12a732853fa5d9e95fe731a8",
+    "learning-identifiers.js": "9787376e015e07e9daf48b0cb1ecae7129af76159a9feb41a7c5cc91b10cd19c"
   },
   "navigationReview": {
     "reviewed": "2026-10-11",
