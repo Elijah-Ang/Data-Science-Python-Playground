@@ -10,10 +10,20 @@ parser.add_argument('--runtime',choices=['local','remote'],default='local')
 args=parser.parse_args()
 out=Path('tests/evidence/ml-learning');out.mkdir(parents=True,exist_ok=True)
 errors=[]
+error_details=[]
+worker_urls=[]
+phase='route and layout checks'
 with sync_playwright() as p:
     browser=getattr(p,args.engine).launch()
     page=browser.new_page(viewport={'width':1440,'height':1000})
-    page.on('pageerror',lambda e:errors.append(str(e)))
+    def record_error(error):
+        errors.append(str(error))
+        detail={'message':str(error),'stack':error.stack,'phase':phase,'url':page.url,'workers':list(worker_urls)}
+        error_details.append(detail)
+        (out/(args.engine+'-ui-page-errors.json')).write_text(json.dumps(error_details,indent=2))
+        print(json.dumps({'engine':args.engine,'pageError':detail}),flush=True)
+    page.on('pageerror',record_error)
+    page.on('worker',lambda worker:worker_urls.append({'url':worker.url,'phase':phase}))
     page.add_init_script("""window.__mlRunPosts=0;window.__mlWorkerCount=0;window.__mlWrites=[];
       const NativeWorker=Worker;
       window.Worker=class extends NativeWorker{
@@ -259,6 +269,7 @@ with sync_playwright() as p:
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     solution=page.evaluate('MLLearning.activity.solution')
     page.locator('#mlEditor').fill(solution)
+    phase='Run and repeated Check'
     page.locator('#mlRun').click()
     page.wait_for_function("document.getElementById('mlStatus').textContent.startsWith('Run finished')",timeout=180000)
     calls=page.evaluate('__mlRunPosts')
@@ -271,6 +282,7 @@ with sync_playwright() as p:
     assert 'Run the current code first' in page.locator('#mlFeedback').inner_text()
     assert page.evaluate('MLLearning.retainedReceipts')==0
     starter=page.evaluate('MLLearning.activity.starter')
+    phase='Reset'
     page.locator('#mlReset').click()
     assert page.locator('#mlEditor').input_value()==starter
     assert page.evaluate('MLLearning.retainedReceipts')==0
@@ -291,6 +303,7 @@ with sync_playwright() as p:
     assert reset_output_dom['emptyParagraphCount']==1,reset_output_dom
     assert reset_output_dom['emptyParagraphVisible'],reset_output_dom
     assert reset_output.locator(':scope > p.ml-empty').text_content()==expected_reset_text,reset_output_dom
+    phase='Stop / restart'
     page.locator('#mlStop').click()
     assert not page.locator('#mlRun').is_disabled()
     assert page.locator('#mlStatus').inner_text()=='Execution stopped. Python will start fresh on the next Run.'
@@ -298,12 +311,14 @@ with sync_playwright() as p:
     # Keyboard escape exits the editor; navigation/reload discards the draft.
     page.locator('#mlEditor').focus();page.keyboard.press('Escape');page.keyboard.press('Tab')
     assert page.locator('#mlRun').evaluate('(e)=>e===document.activeElement')
+    phase='Reload after Stop'
     page.reload();page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     assert page.locator('#mlEditor').input_value()!=solution
     page.evaluate("location.hash='#workflow/ML-W-K2/0'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K2-1'")
     readiness=page.evaluate('MLLearning.activity.solution')
     page.locator('#mlEditor').fill(readiness)
+    phase='Readiness Run'
     page.locator('#mlRun').click()
     page.wait_for_function("!document.getElementById('mlRun').disabled",timeout=180000)
     page.locator('#mlCheck').click()
@@ -312,10 +327,12 @@ with sync_playwright() as p:
     assert 'not automatically verified' in page.locator('#mlResults .self-review').inner_text()
     page.locator('#mlReflection').fill('My interpretation is self-review, not an automatic pass.')
     page.locator('#mlEditor').fill(readiness.replace("['jobs_waiting', 'device_age_years']", "['jobs_waiting', 'invoice_labor_hours']"))
+    phase='Boundary negative Run'
     page.locator('#mlRun').click()
     page.wait_for_function("!document.getElementById('mlRun').disabled",timeout=180000)
     page.locator('#mlCheck').click()
     assert 'Critical boundary' in page.locator('#mlResults .needs-attention').inner_text()
+    phase='Final reload'
     page.reload();page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K2-1'")
     page.locator('#mlReflection').wait_for()
     assert page.locator('#mlReflection').input_value()==''

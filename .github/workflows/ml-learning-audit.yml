@@ -44,6 +44,7 @@ jobs:
       - run: python -m playwright install --with-deps ${{ matrix.engine }}
       - name: Serve built site
         run: nohup python -m http.server 8000 -d dist > /tmp/ml-learning-http.log 2>&1 &
+      - run: python tests/test_worker_bridge_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_ml_learning_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote --all-solutions
       - run: python tests/test_ml_learning_ui.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote
       - run: python tests/test_ml_learning_collections_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --evidence tests/evidence/ml-learning/collections
