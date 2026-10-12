@@ -26,7 +26,11 @@
   }
   function reference(curriculum, lesson, round) {
     const {source}=model(curriculum,lesson,round), g=source.guide;
-    return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+callout(g,source.id)+'</div>';
+    return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+callout(g,source.id)+earlier(g.prerequisiteLessons)+'</div>';
+  }
+  function earlier(lessons) {
+    if(!lessons?.length)return '';
+    return '<p class="teaching-prerequisites">Earlier teaching: '+lessons.map(l=>'<a href="data-foundations-'+esc(l.id)+'.html">'+esc(l.title)+'</a>').join(' · ')+'</p>';
   }
   function exampleOutput(output) {
     return output?'<table class="teaching-example-output"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+esc(header)+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table>':'';
@@ -38,7 +42,7 @@
     const g=round.teaching;
     if(!g)return '';
     const parts=g.parts.map(([code,meaning])=>'<div><dt><code>'+esc(code)+'</code></dt><dd>'+esc(meaning)+'</dd></div>').join('');
-    return '<section class="teaching-transition" aria-label="New method for this practice"><span class="foundation-eyebrow">New in this practice</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.idea)+'</p><div class="teaching-example"><h4>A small example</h4><p>'+esc(g.example)+'</p><pre><code>'+esc(g.code)+'</code></pre>'+exampleOutput(g.output)+(g.result?'<p class="teaching-example-result"><strong>Result:</strong> '+esc(g.result)+'</p>':'')+'</div><h4>What each part does</h4><dl class="foundation-syntax teaching-syntax-parts">'+parts+'</dl><aside class="syntax-choice-callout"><strong>'+esc(g.noteTitle)+'</strong><p>'+esc(g.note)+'</p></aside></section>';
+    return '<section class="teaching-transition" aria-label="New method for this practice"><span class="foundation-eyebrow">New in this practice</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.idea)+'</p><div class="teaching-example"><h4>A small example</h4><p>'+esc(g.example)+'</p><pre><code>'+esc(g.code)+'</code></pre>'+exampleOutput(g.output)+(g.result?'<p class="teaching-example-result"><strong>Result:</strong> '+esc(g.result)+'</p>':'')+'</div><h4>What each part does</h4><dl class="foundation-syntax teaching-syntax-parts">'+parts+'</dl><aside class="syntax-choice-callout"><strong>'+esc(g.noteTitle)+'</strong><p>'+esc(g.note)+'</p></aside>'+earlier(g.lessons)+'</section>';
   }
   function intro(curriculum, lesson, round) {
     const m = model(curriculum, lesson, round), g=m.source.guide;
@@ -50,7 +54,7 @@
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
       : '<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>';
     const plottingIntro=m.source.id==='V02'?'<aside class="syntax-choice-callout"><strong>Two plotting tools, one Figure</strong><p>Matplotlib creates the Figure and Axes and controls labels and layout. These examples use Seaborn for a short, consistent way to read named columns and draw many chart types. Seaborn draws on Matplotlib Axes. Equivalent Matplotlib or other Python code is welcome when it shows the requested data and chart features.</p></aside>':'';
-    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+'</section>';
+    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+example(g,m.source.id)+earlier(g.prerequisiteLessons)+'</section>';
   }
   function syntax(lesson) {
     const row=([code,meaning],i) => {

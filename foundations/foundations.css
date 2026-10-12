@@ -386,6 +386,24 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .foundation-content :is(.foundation-practice-brief,.foundation-task,.teaching-reference),
 .foundation-task-reminder { min-width:0; overflow-wrap:anywhere; }
 .foundation-lesson-copy { overflow-wrap:anywhere; }
+/* Column identity also uses an underline, so meaning never relies on colour. */
+code.code-identifier[data-code-role="column"] {
+  text-decoration:underline;
+  text-decoration-thickness:2px;
+  text-underline-offset:.2em;
+  border-bottom:2px solid currentColor;
+}
+.learning-instructions { padding-inline-start:1.6em; max-width:68ch; }
+.learning-instructions > li { padding-inline-start:.2em; margin-block:.55em; }
+.learning-name-key { font-size:.85em; line-height:1.6; max-width:68ch; }
+.learning-word-help { margin-block:1em; }
+.learning-word-help dl > div { margin-block:.8em; }
+.learning-word-help dt { font-weight:700; }
+.learning-word-help dd { margin-inline-start:0; }
+.ml-evidence-names > div { padding-block:1em; border-bottom:1px solid var(--line); }
+.ml-evidence-names dt { font-weight:700; }
+.ml-evidence-names dd { margin-inline-start:0; }
+.ml-evidence-names dd .learning-instructions { margin-top:.5em; }
 .foundation-content :not(pre) > code.code-identifier,
 .foundation-task-reminder code.code-identifier,
 .foundation-lesson-copy code.code-identifier {

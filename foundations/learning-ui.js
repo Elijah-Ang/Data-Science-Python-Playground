@@ -16,8 +16,8 @@
     const meaning={Follow:'Read and try the Python',Change:'Adapt one part',Transfer:'Apply to a new question',Practise:'Reinforce the skill',Observe:'Inspect the evidence',Decide:'Use the evidence',Explain:'Interpret the result'};
     return `<section class="foundation-practices" aria-label="Exercise type"><ol>${exercises.map((e,i)=>`<li ${i===index?'aria-current="step"':''}><strong>${esc(e.label)}</strong><span>${esc(e.demand||meaning[e.label]||'Retrieve and apply')}</span>${i===index?'<em>Current exercise</em>':''}</li>`).join('')}</ol></section>`;
   }
-  function highlightContent(element){
-    root.CodeIdentifiers?.decorate(element);
+  function highlightContent(element,context){
+    root.CodeIdentifiers?.decorate(element,context);
     element.querySelectorAll('.foundation-content code, .ml-contract code, .ml-output-names code').forEach(code=>{
       const value=code.textContent, token=code.dataset.focus?`"${code.dataset.focus}"`:null;
       const at=token?value.indexOf(token):-1;

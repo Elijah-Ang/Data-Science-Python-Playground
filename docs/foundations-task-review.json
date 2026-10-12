@@ -1,7 +1,7 @@
 {
   "baseSHA": "0ae290e6301d047dcc4b86977967c591eff786e2",
-  "reviewed": "2026-10-11",
-  "scope": "326 effective Foundations rounds. Visualise 43 cards / 132 rounds reviewed for distinct contexts, question/unit/rationale/decision and reusable pinned parameter teaching; native and Chromium verification evidence is recorded separately. Non-Visualise contracts retained. Hosted exact-head validation remains a draft-PR gate.",
+  "reviewed": "2026-10-12",
+  "scope": "338 Foundations practices: all original 326 identities retained, four ordered prerequisite lessons / twelve discriminating practices added. Shared readable instructions and semantic identifier styling also cover 327 ML practices and 49 existing independent briefs. Current native/browser evidence is recorded separately; prior execution totals are historical.",
   "exercises": {
     "I01-1": {
       "sha256": "3995ccd0ce31ba2fed3bda85dfc1e1f5007be296ac7690fc0c2edd9dbc028b70",
@@ -424,7 +424,7 @@
       ],
       "assessment": "reviewed",
       "note": "A single column is a Series rather than a one-column DataFrame. Paired row labels and filtered source population remain part of the answer.",
-      "fullContractSHA256": "c3a27c57941b858b7b26106180cbf4a7f9c07d8ef4951b4cef98b386703a7f90",
+      "fullContractSHA256": "853d96f0efe2d87f9a20b92b5687cd9a8ac49d163e2f60cd2454380f8d9647d8",
       "executionStatus": "passed"
     },
     "I06-3": {
@@ -1002,7 +1002,7 @@
       ],
       "assessment": "reviewed",
       "note": "Missing-cell counts and percentages exclude present invalid text from missingness. Labelled summaries can reorder; the positional flags exercise keeps row order.",
-      "fullContractSHA256": "079179b11caa9eeeb3d918300a23570738a26c520a01646c8bb42c4f00fe7e15",
+      "fullContractSHA256": "db42600495b0560ed33d6e14c4a3bf37ff020768c47e26e7fa54d31b837c8a88",
       "executionStatus": "passed"
     },
     "I17-1": {
@@ -1393,7 +1393,7 @@
       ],
       "assessment": "reviewed",
       "note": "The checkpoint combines schema, missingness and focused inspection without new syntax. Unranked labelled storage/gap summaries can reorder; the handoff row selection remains exact.",
-      "fullContractSHA256": "32fd3d9cfe4803538bca70b1ec23def518687fcac565d2c4194ce66f0e0686a1",
+      "fullContractSHA256": "022b549059737e8d28e75d40d9fa1845839282b696cbb436de82e97b33bbbbd2",
       "executionStatus": "passed"
     },
     "I22-2": {
@@ -1410,7 +1410,7 @@
       ],
       "assessment": "reviewed",
       "note": "The checkpoint combines schema, missingness and focused inspection without new syntax. Unranked labelled storage/gap summaries can reorder; the handoff row selection remains exact.",
-      "fullContractSHA256": "154f802991bd9a19c51ac6916ddddd60ef07a4d5eb77ed69aa9d00fe4f0a14ec",
+      "fullContractSHA256": "b3f53c3773b0ec7d3f417053c91fc5a57ef07aa423e6fe45766dae6e977b7ba9",
       "executionStatus": "passed"
     },
     "I22-3": {
@@ -1427,7 +1427,7 @@
       ],
       "assessment": "reviewed",
       "note": "The checkpoint combines schema, missingness and focused inspection without new syntax. Unranked labelled storage/gap summaries can reorder; the handoff row selection remains exact.",
-      "fullContractSHA256": "e6ba0db422aeb7c55f38f0155ea5168ff30d3b3ba206fc66a2c446e4ee162deb",
+      "fullContractSHA256": "532219961d9117de84af94fb32b630e31467256bce76ee1657ed3697314bb74d",
       "executionStatus": "passed"
     },
     "W01-1": {
@@ -2583,7 +2583,7 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "f35112300b4f150eca01476b6e23620ccd76139658ff20bc148b9923e308bb7f",
+      "fullContractSHA256": "71f4063f5e756678e145753414f035c9f5d3c3c26ad20389719f724518fcd214",
       "executionStatus": "passed"
     },
     "W20-2": {
@@ -2600,7 +2600,7 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "bcc52aad3f71242c67b6dbc8fd5f158b33f5c395879829ef8f405d088e52d087",
+      "fullContractSHA256": "c88a3991e9c087b6192638fbc7818b1389790a8c0d56428f35b2417de5732b4b",
       "executionStatus": "passed"
     },
     "W20-3": {
@@ -2617,7 +2617,7 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "eb0192747c2b6f80b935fd3d8115b05d2be0858893551d9b3c2aa546f0242bdf",
+      "fullContractSHA256": "508fddbfc15c6a7f6186bf98dbfab73662f727b4a4ffbfae8ab582be8f13716f",
       "executionStatus": "passed"
     },
     "W21-1": {
@@ -2855,7 +2855,7 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "d072ff28abdee9e4435cda59c78d32d23396ddccb1c45eb62a1752310279e989",
+      "fullContractSHA256": "94f873918761f2e788e7113f8283f999476ffa6a285415fd1e8d8fad434b5daa",
       "executionStatus": "passed"
     },
     "WR4-3": {
@@ -3628,7 +3628,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
-      "fullContractSHA256": "b32c0244ce5bf810ad45ad5681b5350c276631b9d0bfeffc61c5ae6d54d546f6",
+      "fullContractSHA256": "8ef96d264c59020cbbee0f5ee7d1bab10cbd8214d4cffaf0b8fc5e7ff2d7bdbc",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3834,7 +3834,7 @@
       "varietyReview": {
         "reviewed": "2026-10-11",
         "question": "How did observations change along their chronological sequence?",
-        "observationUnit": "one day\u2019s sales total",
+        "observationUnit": "one day’s sales total",
         "datasetRationale": "One sales total per ordered day supports a trajectory without across-record aggregation.",
         "decision": "Connect ordered observations without aggregation.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
@@ -3983,7 +3983,7 @@
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
-        "question": "Which offset values were recorded in each sensor\u2019s repeated checks?",
+        "question": "Which offset values were recorded in each sensor’s repeated checks?",
         "observationUnit": "one repeated sensor check",
         "datasetRationale": "Repeated equal offsets expose the difference between random category-direction jitter and exact category positions.",
         "decision": "Expose individual observations using random category-direction jitter.",
@@ -4029,7 +4029,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain raw-value/jitter versus coincident-point Change. Its new fixture actually contains repeated measurements. Transfer derives group order from medians while retaining every raw record, rather than using the common duration population.",
-      "fullContractSHA256": "68050d6334b2cea823a9902967c2bf39736df4c731989c9a2425527a617eef39",
+      "fullContractSHA256": "2cd7da4aa8400f2fa75c340b8455fcefe872843b56d4fa6ef347606cb16b6dc1",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4822,8 +4822,8 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean\u2192bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
-      "fullContractSHA256": "cf303e71fc02373f834e8c50fe12883c9456c9ef4c5bfb75195db49b05c7728d",
+      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
+      "fullContractSHA256": "f08611049462db8db41ba625de9c57fd235202b7d23dc944b5d451c7dd2249ea",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4847,8 +4847,8 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean\u2192bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
-      "fullContractSHA256": "fd51e88b6273bc8f6bf3f4f196db86ece2f0318421a32bf847be86a5da3f45f6",
+      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
+      "fullContractSHA256": "35f60592fd92ae73b49043ee8c2fec98ff337a34b81140faa491e7ba498b2642",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4872,8 +4872,8 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean\u2192bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
-      "fullContractSHA256": "8d6d031623006b40f8c105b77bc392ab87b3d8e684c20ce2e04021ef330dc492",
+      "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
+      "fullContractSHA256": "e2207a16bc6fd762a265aadb855c9f37ff22ef6a3c100f828e87b4dd25a81d57",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6160,7 +6160,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
-      "fullContractSHA256": "e5f0b7dfd8b46c711da942dd39900da49bee5af37a5fcc49b27612f042f0837f",
+      "fullContractSHA256": "922f391a0781ca57fa95d227a0eedabef76de9d6d28fdf89e937652520071102",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6186,7 +6186,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
-      "fullContractSHA256": "15705176a6e876ec2064cfb544f8177ced21b5e4d0b2ca4724dac1bb2eddc618",
+      "fullContractSHA256": "53e0f644b9517e894589154bf479ebe395777591cd542d6e5f5750e1dcc403f7",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6212,7 +6212,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
-      "fullContractSHA256": "5de823486a9cec185081d7631841b8616a2154f032194481f34276973b088896",
+      "fullContractSHA256": "b817b7202283df4da63442bf6a661d08d17aa4131defbbe21fe151eedff26afc",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6237,13 +6237,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change\u2019s common-baseline panel.",
+      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
       "fullContractSHA256": "47402ea373192a02cc14da2c7bb0458539f7b484ebeb235eae995d45f20d8420",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
         "question": "Does the question concern composition, exact component comparisons or within-item shares?",
-        "observationUnit": "one genre\u2019s session counts",
+        "observationUnit": "one genre’s session counts",
         "datasetRationale": "Solo and Two-player session counts are actual measured parts with different category totals.",
         "decision": "Stack actual components with the correct cumulative baseline.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
@@ -6262,13 +6262,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change\u2019s common-baseline panel.",
+      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
       "fullContractSHA256": "9ccab890bf8b29ad4d8a6b7acf9bc6edb38a59aad1bcedc6baed4d0acb686fe1",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
         "question": "Does the question concern composition, exact component comparisons or within-item shares?",
-        "observationUnit": "one collection site\u2019s measured amounts",
+        "observationUnit": "one collection site’s measured amounts",
         "datasetRationale": "Unequal bases make stacked glass and zero-baseline glass comparisons different.",
         "decision": "Choose complementary views for total composition and a precise component comparison.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
@@ -6287,13 +6287,13 @@
         "stable semantic identifiers"
       ],
       "assessment": "reviewed",
-      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change\u2019s common-baseline panel.",
+      "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
       "fullContractSHA256": "bcb3d90ba62be70264432ebfc55b7547b30b345a3d56f52001eb1b1e00e0abc8",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
         "question": "Does the question concern composition, exact component comparisons or within-item shares?",
-        "observationUnit": "one item\u2019s channel counts",
+        "observationUnit": "one item’s channel counts",
         "datasetRationale": "Online and Shop counts have unequal item totals, separating absolute amounts from within-item percentages.",
         "decision": "Normalize components by their own total to compare relative composition.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
@@ -6394,7 +6394,7 @@
         "reviewed": "2026-10-11",
         "question": "How do passengers vary with delay and what are their separate observed distributions?",
         "observationUnit": "one train arrival",
-        "datasetRationale": "The paired delay/passenger question and each measurement\u2019s marginal distribution belong to different Axes on one grid-owned Figure.",
+        "datasetRationale": "The paired delay/passenger question and each measurement’s marginal distribution belong to different Axes on one grid-owned Figure.",
         "decision": "Distinguish the paired relationship panel from marginal distributions.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       }
@@ -6538,7 +6538,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "f4e9873347b3c2190748b266e2bf7c99bbd0141c5ee7676054224cb91b0fb8ff",
+      "fullContractSHA256": "0e84e139733aa8e54e51cdb7a3b8e9b877ce005a1df8e12292f52b9958b2fbda",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6569,7 +6569,7 @@
       "varietyReview": {
         "reviewed": "2026-10-11",
         "question": "Does the question concern composition, exact component comparisons or within-item shares?",
-        "observationUnit": "one collection site\u2019s measured amounts",
+        "observationUnit": "one collection site’s measured amounts",
         "datasetRationale": "Unequal bases make stacked glass and zero-baseline glass comparisons different.",
         "decision": "Retrieve actual component offsets with the base reversed.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
@@ -6674,6 +6674,210 @@
         "decision": "Retrieve redundant category mappings with paired trial/standard evidence.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       }
+    },
+    "I06S-1": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "bdfada96a19653f5be93ac71b61d01b3c3394f124b5bf9ba76f51aaeae149ef1",
+      "fullContractSHA256": "34ef15fd9649ae974aff2fda2d03c96585186699e1649528907ec523c8950f39"
+    },
+    "I06S-2": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "954664c3ad2bcad05bd2e2798b5387120d9f10e4d6e67ffcc721423969e56f85",
+      "fullContractSHA256": "ce047a3faa341647f4f30d8f2014981ff85d18d6933128dc1c107109c8f71a41"
+    },
+    "I06S-3": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "55db9fb45f8ce6b2ea20d07edd383708a78f4d9b465bdd3fd6feef11dc478247",
+      "fullContractSHA256": "003480a9fca529a13e080f3809456ceae6995fc26d78cd3420fb88c4a5e369f6"
+    },
+    "I13L-1": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "eb7f2ac1b82feb125bcd46dfeb7ca9ebdeed0c4002fc2223c75b678b3b5b510f",
+      "fullContractSHA256": "679eb390f2514f731e1bc3faa1e0d644d1106dc2b1d42407257dd06f95042526"
+    },
+    "I13L-2": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "374725fe2e579df7a3289fc0791080187934297351a92e0ecebc48866fca9003",
+      "fullContractSHA256": "a587710882bd39807214c6d85fe094c07bc56bafbca6582593586b2b1222adf7"
+    },
+    "I13L-3": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "cae29bee173d0fdfd415021d28b030b1714101bfe9817b9a467ecfcbd40f7ab3",
+      "fullContractSHA256": "e2933be96fc61f37c56884661160dfc7e7ff7bb280557efc35be5f98e242e118"
+    },
+    "I19S-1": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "c6e5d8da800baff2594746799a750ee39d4f21450b6bbbf91cc9ad04f49a1e3f",
+      "fullContractSHA256": "6e0e7c74da9223aa639cb44f60b1e39a6c350bb2d98fa01ead27e8b37ed0dcc5"
+    },
+    "I19S-2": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "2c6de6c0f96347925ec71c21c105550d444dcd13fda4e2743af912c6da4014ad",
+      "fullContractSHA256": "ab023ce161db98591d1ae16b7ec9055a1b9b0de288161b1197099b97c8eaa9e2"
+    },
+    "I19S-3": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "21113a0468c6eb118ccce3ae5080c528e17c85b8e6f218c58b399f62e3d5ac04",
+      "fullContractSHA256": "2cebad2b71e9f58af372d039564a618bf2cebe3d5c7c2a69f8480854768625ea"
+    },
+    "I19A-1": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "f85f596fa2d876c317ff6699c60d05a6778eda4a7b40b44214c93ce085623eca",
+      "fullContractSHA256": "8d769eb4a0800ab8498de66531a70f962e6c4c114b2cb914f7a32e5bd36e9ed3"
+    },
+    "I19A-2": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "a83f9223a91cc3895cbdcce0ef69dfbb18427316a60e7c64515b390cb3780415",
+      "fullContractSHA256": "a57e105425c105bfc53a2209728860e39f56f56c0183beadbbe3b5dbe1939773"
+    },
+    "I19A-3": {
+      "criteria": [
+        "purpose/prerequisites",
+        "given input",
+        "task/hint/example/solution agreement",
+        "explicit intentional requirements",
+        "equivalent Python acceptance",
+        "wrong semantic output rejection",
+        "displayed pedagogic order",
+        "stable semantic identifiers"
+      ],
+      "assessment": "reviewed",
+      "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
+      "executionStatus": "passed",
+      "sha256": "7c3910547b396d45227920f999711acc0c5f37625bc9615b9fce208fdad61a61",
+      "fullContractSHA256": "f01590e3922644e3560bae8bacc4aa1c641acbf47091708c29132420229b09cb"
     }
   },
   "teachingReview": "Every Follow concept has an authored idea, miniature example, comparison of relevant options, and interpretation note. Review tasks inherit corrected Transfer briefs.",
@@ -6697,21 +6901,25 @@
   "previousReview": "2026-09-26",
   "auditReport": "docs/foundations-exercise-audit-2026-10-05.md",
   "sourceHashes": {
-    "foundations/app.js": "777e17122bf2400321b3a76950e2861a744eaaa26acc4880134f6bb666d96bfe",
-    "foundations/clarity.js": "910603a9e3ba7b63c4bd8d07e75b4cfb54f46fdb7c8e6a5c56b4b231ebf8a502",
-    "foundations/code-style.js": "24211b80ea266979ee825aaedda4a25fd3bd501f5d85ca87157f8b108ee55e99",
-    "foundations/curriculum.js": "709c4003137d24fb717008114584c71923cecba0668ddb7c891613fba26525c6",
+    "foundations/app.js": "e076554aaea7e958427b89f75f258ca3ade1b64aea20b53e1a76a07e1e8feff0",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/code-style.js": "7fa40673bf930970eee4b85b9bcf7ce990a9aab3c0c6d9be58616192a830e54d",
+    "foundations/curriculum.js": "4e1707b6eeb0b451b4526c1422ec80e078d673285b61a96ae02fa02b264b1d7a",
     "foundations/editor.js": "1d4b5e4224b9bf6b1221344763979f432f3878b91441c65e103ef1973da0b698",
-    "foundations/learning-ui.js": "a16793b166927c3617524741cafbecbca1765f024a9d6fa0464397810b5840cd",
+    "foundations/learning-ui.js": "aa5b95043409c5076382558df9faa5e4a61145bc20108b129bb5abba5bb67be3",
     "foundations/practical.js": "655c0576369b87af814d404cc722159abb8b3ba9f99937948df4ecd38232e29f",
     "foundations/progression.js": "01703245befaa1f0b5d0c25f4ae1b8e7f8d2d2701bac571552bedc9d198388b2",
     "foundations/refinements.js": "2bd809ec37a480933381769f78f4d2b5bd38a80885ab1d76247cfe3962306e0c",
-    "foundations/teaching.js": "fcf2b41ff11638b9407f338b61cf4c1fa48a37cae89d7224b7dc3e7a7211eeea",
-    "foundations/visuals.js": "f3cfc46bf12e18fd6c39fd5867638394a26769944fc4f54f45ae370b0d43264e",
+    "foundations/teaching.js": "6a8e7bc3c6f5c91b08465180291b087a0755ea42f010b45e1dfe677b7ea89fa6",
+    "foundations/visuals.js": "4d50c1a7a07e1026a593b302449b5d2140029d5e7e81cc5a502b2d51009fd15a",
     "foundations/worker.js": "c8c7e6086170a33321d5822817f27f098052f5f8506bb538d30a34e055bfe11a",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
-    "foundations/runtime.py": "ef78de35499983f5f4f93522e10f00d136d0a31b99b83bba8fed3a67164d4730",
-    "tests/test_foundations_audit.py": "754fd7fe0e038b9e92ec688bf1727cdde8e6acb920274f90cc136c6c5976c1df"
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "tests/test_foundations_audit.py": "5f8ba9b4921a257872b5d5709f88b48886199800331a2e61c57a536d80446e47",
+    "foundations/prerequisites.js": "b6dde7fb32e55744d0bd6dc5bad69c707eeddb2510c605396c8b3859454c7c6b",
+    "code-identifiers.js": "3c3919f13a925b3234da70ed83de0b2998e8a349ea68c98303f4c7dbcd044e4c",
+    "learning-language.js": "c42553806f920fc266cab2b2cc4fb61ee53e2c8a12a732853fa5d9e95fe731a8",
+    "learning-identifiers.js": "9787376e015e07e9daf48b0cb1ecae7129af76159a9feb41a7c5cc91b10cd19c"
   },
   "execution": {
     "rounds": 324,
@@ -6721,5 +6929,19 @@
     "model_solutions": 324,
     "positive_cases": 1502,
     "semantic_or_feature_negative_cases": 821
+  },
+  "prerequisiteReview": {
+    "report": "docs/learning-prerequisite-and-language-review.md",
+    "referenceSolutions": {
+      "rounds": 338,
+      "failed": 0,
+      "evidence": "work/prerequisite-audit/full-runtime.log"
+    },
+    "focusedCases": {
+      "cases": 39,
+      "failed": 0,
+      "evidence": "work/prerequisite-audit/targeted-runtime-final.log"
+    },
+    "independentReview": "Pending final-revision independent review; existing review receipts apply only to the preserved baseline."
   }
 }

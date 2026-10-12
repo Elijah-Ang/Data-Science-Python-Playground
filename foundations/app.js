@@ -4,7 +4,7 @@ const C=window.FoundationsCurriculum;
 const main=document.getElementById('foundationsMain');
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const highlightPython=FoundationLearning.highlightPython;
-const taskText=value=>window.CodeIdentifiers?.format(value)||esc(value);
+const taskText=value=>LearningLanguage.text(value,view?.round?.id,true);
 let shownControlHelp=false;
 let view=null, generation=0, bridge=null, bridgePromise=null, busy=false;
 let runtimeStatus='Python starts when you open a lesson.';
@@ -35,22 +35,22 @@ function lessonPage(lesson,roundIndex){
  const controlHelp=!lesson.review&&roundIndex===0&&!shownControlHelp; if(controlHelp)shownControlHelp=true;
  view={lesson,round,roundIndex};document.body.dataset.deck=lesson.deck;
  const previous=roundIndex?url(lesson,roundIndex-1):previousLesson(lesson),next=roundIndex<lesson.rounds.length-1?url(lesson,roundIndex+1):nextLesson(lesson);
- return `<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><span>${esc(deck.title)}</span><span aria-hidden="true">/</span><span>${esc(lessonSequence(lesson))}</span></nav>
+ return LearningLanguage.render(`<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><span>${esc(deck.title)}</span><span aria-hidden="true">/</span><span>${esc(lessonSequence(lesson))}</span></nav>
  <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${esc(lessonSequence(lesson))} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(follow?lesson.goal:round.label+' · '+(round.demand||'Apply what you learned'))}</p><button class="foundation-editor-jump" type="button">Go to editor ↓</button></div>${FoundationLearning.stages(lesson.rounds,roundIndex)}</header>
  <div class="foundation-split"><article class="foundation-content" aria-label="Lesson content">
  ${follow?FoundationTeaching.intro(C,lesson,round):''}
  ${follow?`<section class="teaching-worked"><h3>Follow the code</h3><p>Apply the idea to the supplied table. Read from top to bottom; the final line displays the result.</p><pre><code>${esc(lesson.example)}</code></pre><h4>What each part does</h4>${FoundationTeaching.syntax(lesson)}</section>`:''}
  ${round.teaching?FoundationTeaching.transition(round):''}
- ${!follow?`<section class="foundation-practice-brief"><span class="foundation-eyebrow">${esc(round.label)} · ${esc(C.datasets[round.dataset].name)}</span><h3 class="practice-question">${taskText(round.steps?.[0]||round.task)}</h3><p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>${round.steps?.length>1?`<h4>Your requirements</h4><ol>${round.steps.slice(1).map(step=>`<li>${taskText(step)}</li>`).join('')}</ol>`:''}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:''}
+ ${!follow?`<section class="foundation-practice-brief"><span class="foundation-eyebrow">${esc(round.label)} · ${esc(C.datasets[round.dataset].name)}</span><h3 class="practice-question">Your task</h3>${LearningLanguage.key()}${LearningLanguage.activity(round)}<p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>${LearningLanguage.glossary(round.steps||round.task)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:''}
  ${round.id==='V01-1'?'':`<section><h3>${round.files?'Available file':'Your inputs'}</h3>${follow?`<p class="practice-context">${esc(FoundationWorkspace.context(C,round))}</p>`:''}${datasetTable(dataset)}${round.files?csvPreview(round):''}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
- ${follow?`<section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3>${taskMarkup(round)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:`<p class="foundation-revisit"><a href="${url(round.retrieves?C.lessons.find(l=>l.id===round.retrieves):lesson)}">Revisit the ${round.teaching?'first example':'concept lesson'} →</a></p>${round.teaching?'':`<section class="teaching-reference"><h3>Remember the idea</h3>${FoundationTeaching.reference(C,lesson,round)}</section>`}`}
+ ${follow?`<section class="foundation-task"><h3>Your task · ${esc(round.label)}</h3>${LearningLanguage.key()}${taskMarkup(round)}${round.reflection?`<p class="foundation-reflection"><strong>Read the result:</strong> ${esc(round.reflection)}</p>`:''}</section>`:`<p class="foundation-revisit"><a href="${url(round.retrieves?C.lessons.find(l=>l.id===round.retrieves):lesson)}">Revisit the ${round.teaching?'first example':'concept lesson'} →</a></p>${round.teaching?'':`<section class="teaching-reference"><h3>Remember the idea</h3>${FoundationTeaching.reference(C,lesson,round)}</section>`}`}
 
  ${FoundationParameters.render(C,lesson,round)}
  <details id="foundationHint"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
  <details id="foundationSolution"><summary>Reveal solution</summary><p>One way to do it. Keep any supplied setup in the editor and use this in the Your work section.</p><pre><code>${esc(round.solution)}</code></pre></details>
  ${lesson.stretch?`<details><summary>Optional stretch</summary><p>${esc(lesson.stretch)}</p></details>`:''}
  </article>${pythonPane(round,controlHelp)}</div>
- ${['I22','W31','V37'].includes(lesson.id)&&roundIndex===lesson.rounds.length-1?`<a class="challenge-checkpoint-link" href="#${lesson.deck}/challenges">Try the workflow challenges →</a>`:''}<nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+lesson.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a>`}${next==='#'+lesson.deck?'<span class="deck-boundary">End of deck</span>':`<a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
+ ${['I22','W31','V37'].includes(lesson.id)&&roundIndex===lesson.rounds.length-1?`<a class="challenge-checkpoint-link" href="#${lesson.deck}/challenges">Try the workflow challenges →</a>`:''}<nav class="foundation-navigation" aria-label="Lesson progression">${previous==='#'+lesson.deck?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${roundIndex?'Previous practice':'Previous lesson'}</a>`}${next==='#'+lesson.deck?'<span class="deck-boundary">End of deck</span>':`<a href="${next}">${roundIndex<lesson.rounds.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`,round.id);
 }
 function pythonPane(round,controlHelp,challenge=false){
  const runNote=challenge?'Named outputs appear below when you run.':round.target==='plot'?'Display charts with plt.show().':'Display a value by leaving it on the final line.';
@@ -61,7 +61,7 @@ function pythonPane(round,controlHelp,challenge=false){
  <div class="foundation-runtime" id="foundationRuntime" role="status">${esc(runtimeStatus)}</div><p class="foundation-feedback" id="foundationFeedback" role="status"></p>
  ${challenge?'<section id="challengeResults" class="challenge-results" aria-label="Check results" aria-live="polite"></section>':''}<div class="foundation-output" id="foundationOutput" role="region" aria-label="Python output"><h3>Output</h3><p class="empty-output">Run your code to see what Python returns.</p></div></section>`;
 }
-function taskMarkup(round){return round.steps?.length>1?`<ol class="foundation-task-steps">${round.steps.map(step=>`<li>${taskText(step)}</li>`).join('')}</ol>`:`<p>${taskText(round.task)}</p>`;}
+function taskMarkup(round){return LearningLanguage.steps(round.steps?.length?round.steps:round.task,round.id)+LearningLanguage.glossary(round.steps||round.task);}
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{
   if(typeof columns==='string')return `<section><h3>File · ${esc(name)}</h3><p>This file is available in the lesson folder.</p><pre>${esc(columns)}</pre></section>`;
@@ -99,7 +99,7 @@ function render(){
  const fromHub=new URLSearchParams(location.search).get('from')==='learn';
  const exit=document.querySelector('.back-playground');exit.href=view?.challenge?'#'+view.lesson.deck+'/challenges':view?'#'+view.lesson.deck:deck?'#':fromHub?'learn.html':'playground.html';exit.textContent=view?.challenge?'← All challenges':view?'← '+({inspect:'Inspect',wrangle:'Wrangle',visualise:'Visualise'}[view.lesson.deck])+' lessons':deck?'← Choose a deck':fromHub?'← Learn / Refresh':'← Data Playground';
  LearningRoutes.enhance('data',main);LearningRoutes.canonical('data',currentRoute);
- FoundationLearning.highlightContent(main);
+ FoundationLearning.highlightContent(main,LearningLanguage.context(view?.round?.id));
  document.title=view?`${view.challenge?"Workflow challenge "+view.challenge.id:lessonSequence(view.lesson)} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
  if(deck&&id==='chapter'){const chapter=document.getElementById('chapter-'+roundValue);chapter?.focus({preventScroll:true});chapter?.scrollIntoView({block:'start'});}

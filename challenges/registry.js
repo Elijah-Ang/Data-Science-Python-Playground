@@ -2552,6 +2552,14 @@ const registry = {
           "name": "eligible",
           "label": "Usable prices",
           "requirement": "Create eligible with all original columns plus numeric_price; retain rows whose price parses as numeric, in source order.",
+          "instructions": [
+            "Make a table named `eligible`.",
+            "Keep every original column.",
+            "Add a column named `numeric_price`. Put the price as a number in this column.",
+            "Keep only rows where `price` can be read as a number.",
+            "Keep the rows in their original order.",
+            "Keep the original text in `price`. Do not replace it with the converted number."
+          ],
           "kind": "frame",
           "feedback": "Check all required eligibility conditions and keep the requested source columns and order.",
           "checkIndex": false,
@@ -2562,6 +2570,14 @@ const registry = {
           "name": "invalid",
           "label": "Repair queue",
           "requirement": "Create invalid with the same columns for rows whose price is missing or cannot parse. Preserve raw price text in both outputs.",
+          "instructions": [
+            "Make a table named `invalid`.",
+            "Use the same columns as `eligible`, including `numeric_price`.",
+            "Keep rows where `price` is missing or cannot be read as a number.",
+            "Missing means that no value was supplied.",
+            "Keep the rows in their original order.",
+            "Keep the original text in `price` in both output tables."
+          ],
           "kind": "frame",
           "feedback": "Retain every missing or unparseable price with the raw text still available.",
           "checkIndex": false,

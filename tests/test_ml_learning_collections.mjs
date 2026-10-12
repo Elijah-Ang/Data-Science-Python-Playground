@@ -11,7 +11,7 @@ const context=vm.createContext({URLSearchParams,URL,console,DataPlaygroundPreren
   location:{hash:'',search:'',pathname:'/'},document:{body:{dataset:{}},getElementById:()=>({innerHTML:''})},
   fetch:async file=>({ok:true,json:async()=>file.endsWith('curriculum.json')?{...curriculum,models:[]}:JSON.parse(await fs.readFile(path.join(root,file),'utf8'))})});
 context.window=context;
-for(const file of ['code-identifiers.js','learning-routes.js','dataset-dictionary.js','foundations/learning-ui.js','challenges/experience.js','ml-learning/receipts.js','ml-learning/visuals.js','ml-learning/collections.js','ml-learning/app.js'])
+for(const file of ['code-identifiers.js','learning-identifiers.js','learning-language.js','learning-routes.js','dataset-dictionary.js','foundations/learning-ui.js','challenges/experience.js','ml-learning/receipts.js','ml-learning/visuals.js','ml-learning/collections.js','ml-learning/app.js'])
   await vm.runInContext(await fs.readFile(path.join(root,file),'utf8'),context,{filename:file});
 const api=context.DataPlaygroundPrerender, registry=context.MLLearningCollections, routes=context.LearningRoutes;
 assert.equal(curriculum.cards.length,110);
