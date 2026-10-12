@@ -12,6 +12,8 @@ disposable source/dist overlay, for example::
 from __future__ import annotations
 
 import argparse
+import json
+import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -36,6 +38,28 @@ def wait_ready(page, timeout: int = 180_000) -> None:
         arg=READY_TEXT,
         timeout=timeout,
     )
+
+
+def emit_startup_failure(page, error, browser_errors, failed_requests) -> None:
+    evidence = {
+        "exception": {"type": type(error).__name__, "message": str(error)},
+        "runtime_dom": {},
+        "browser_errors": browser_errors,
+        "failed_requests": failed_requests,
+    }
+    for element_id in ("runtimeStatus", "runtimeDetailsSummary", "runtimeDetailsText"):
+        try:
+            evidence["runtime_dom"][element_id] = page.locator(f"#{element_id}").text_content(timeout=1_000)
+        except Exception as observer_error:
+            evidence["runtime_dom"][element_id] = {"observer_error": str(observer_error)}
+    serialized = json.dumps(evidence, indent=2, ensure_ascii=True)
+    print("Initial Python readiness failure diagnostics:\n" + serialized, file=sys.stderr, flush=True)
+    try:
+        path = Path("work/ml-browser/startup-failure.json")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(serialized + "\n", encoding="utf-8")
+    except OSError as artifact_error:
+        print(f"Could not save startup diagnostic artifact: {artifact_error}", file=sys.stderr, flush=True)
 
 
 def route_ids(page) -> list[str]:
@@ -225,11 +249,23 @@ def assert_optional_edit_invalidates(page, expected: list[str]) -> None:
 
 def run(page, base_url: str) -> dict[str, object]:
     browser_errors: list[str] = []
+    failed_requests: list[dict[str, str | None]] = []
     page.on("pageerror", lambda error: browser_errors.append(str(error)))
     page.on("console", lambda message: browser_errors.append(message.text) if message.type == "error" else None)
+    page.on("requestfailed", lambda request: failed_requests.append({"url": request.url, "reason": request.failure}))
 
-    page.goto(base_url, wait_until="domcontentloaded")
-    wait_ready(page)
+    try:
+        page.goto(base_url, wait_until="domcontentloaded")
+        wait_ready(page)
+    except Exception as error:
+        try:
+            emit_startup_failure(page, error, browser_errors, failed_requests)
+        except Exception as diagnostic_error:
+            try:
+                print(f"Startup diagnostics unavailable: {diagnostic_error!r}", file=sys.stderr, flush=True)
+            except Exception:
+                pass  # An unavailable observer must not replace the startup failure.
+        raise
     assert_removed_controls(page)
 
     # The initial route is the default supervised workflow.  Its final task
