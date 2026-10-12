@@ -22,7 +22,8 @@ if args.start_at:
     activities=activities[next(i for i,e in enumerate(activities) if e['id']==args.start_at):]
 one_r=subprocess.check_output(['node','--input-type=module','-e',"import {productionInventory} from './scripts/ml-production.mjs';console.log('import numpy as np\\n'+productionInventory().ONE_R_HELPER_SOURCE)"],cwd=ROOT,text=True)
 index_url='https://cdn.jsdelivr.net/pyodide/v0.26.4/full/' if args.runtime=='remote' else args.base_url+('/vendor/pyodide/' if args.runtime=='source-local' else '/pyodide/')
-config=dict(indexURL=index_url,oneR=one_r,source=(ROOT/'ml-learning/fixtures.py').read_text()+'\n'+(ROOT/'ml-learning/runtime.py').read_text())
+seaborn_requirement='seaborn==0.13.2' if args.runtime=='remote' else index_url+'wheels/seaborn-0.13.2-py3-none-any.whl'
+config=dict(indexURL=index_url,seaborn=seaborn_requirement,oneR=one_r,source=(ROOT/'ml-learning/fixtures.py').read_text()+'\n'+(ROOT/'ml-learning/runtime.py').read_text())
 files={str(p.relative_to(ROOT)):p.read_text() for p in (ROOT/'data').rglob('*.csv')}
 with sync_playwright() as p:
     browser=getattr(p,args.engine).launch()

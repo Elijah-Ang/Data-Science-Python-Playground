@@ -29,11 +29,13 @@ with sync_playwright() as p:
  base=args.base_url+'/data-foundations.html'+runtime_query
  page.goto(base)
  page.locator('.foundation-deck[data-deck="inspect"]').click()
- assert page.locator('.lesson-card').count()==27
+ inspect_inventory=page.evaluate('FoundationsCurriculum.lessons.filter(l=>l.deck==="inspect").map(l=>l.id)')
+ assert len(inspect_inventory)==31 and all(id in inspect_inventory for id in ['I06S','I13L','I19S','I19A'])
+ assert page.locator('.lesson-card').count()==len(inspect_inventory)
  assert page.locator('.foundation-breadcrumb').count()==0
  page.locator('.chapter-jumps a').last.click()
  assert page.locator('#chapter-3').evaluate('(e)=>e.getBoundingClientRect().top')>=0
- assert page.locator('.lesson-card svg').count()==27
+ assert page.locator('.lesson-card svg').count()==len(inspect_inventory)
  page.locator('.back-playground').click();assert page.locator('.foundation-deck').count()==3
  page.locator('.foundation-deck[data-deck="inspect"]').click()
  page.locator('.lesson-card[href="#inspect/I01/0"], .lesson-card[href="data-foundations-I01.html"]').click()
@@ -213,8 +215,14 @@ with sync_playwright() as p:
  open_lesson('V37',1);assert 'matches' in run(solution('V37',1))
  steps=page.evaluate('FoundationsCurriculum.lessons.find(l=>l.id==="V37").rounds[1].steps')
  assert len(steps)>1
- assert page.locator('.foundation-practice-brief ol > li').all_text_contents()==steps[1:]
- assert page.locator('.foundation-practice-brief .practice-question').inner_text()==steps[0]
+ expected_steps=page.evaluate('(steps)=>steps.flatMap(LearningLanguage.split)',steps)
+ task_items=page.locator('.foundation-practice-brief .learning-instructions > li')
+ assert len(expected_steps)>=len(steps)
+ assert task_items.all_text_contents()==expected_steps,(steps,expected_steps,task_items.all_text_contents())
+ assert all(task_items.nth(i).is_visible() for i in range(task_items.count()))
+ assert page.locator('.foundation-practice-brief .practice-question').inner_text()=='Your task'
+ assert page.locator('.foundation-practice-brief .learning-name-key').is_visible()
+ report['checkpoint_instructions']={'authored':steps,'displayed':expected_steps}
  page.locator('#foundationHint summary').click()
  assert 'worked example' not in page.locator('#foundationHint').inner_text()
  open_lesson('V37',2)
@@ -247,6 +255,7 @@ with sync_playwright() as p:
   report['pyodide_solutions']=result
   (evidence/f'{args.engine}-pyodide-solutions.json').write_text(json.dumps(result,indent=2))
   assert not result['failures'],result
+  assert result['count']==338,result
  # Content, output and controls stay within their columns in both themes.
  for id,deck in [('I22','inspect'),('W31','wrangle'),('V37','visualise')]:
   open_lesson(id,2);assert page.locator(route_link(deck)).count()==1

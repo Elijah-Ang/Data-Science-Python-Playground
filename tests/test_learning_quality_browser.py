@@ -83,19 +83,23 @@ with sync_playwright() as pw:
     page.on('pageerror',lambda e:errors.append(str(e)))
     for family,deck,id in [('ml','workflows','ML-X01'),('ml','workflows','ML-X19'),('data','inspect','IC01'),('data','wrangle','WC01'),('data','visualise','VC01')]:
         prefix='ml-learn' if family=='ml' else 'data-foundations';file=prefix+'-'+id+'.html'
+        def wait_for_brief():
+            page.wait_for_selector('[aria-label="Challenge brief"]')
+            # The prerendered article arrives before the ML curriculum fetch
+            # installs the active exercise and its transient editor starter.
+            if family=='ml':page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=id)
         page.goto(base+'/'+file+'?runtime='+args.runtime+'&from=learn')
-        page.wait_for_selector('[aria-label="Challenge brief"]')
-        if family=='ml':page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=id)
+        wait_for_brief()
         editor=page.locator('#mlEditor' if family=='ml' else '#foundationEditor')
         starter=editor.input_value();assert starter.strip()
         editor.fill(starter+'\n# transient QA edit')
         page.get_by_role('link',name='All challenges',exact=True).click();page.wait_for_selector('.case-file')
         assert page.url.split('?')[0].endswith(prefix+'-'+deck+'-challenges.html')
-        page.locator('a.case-file[href^="'+file+'"]').click();page.wait_for_selector('[aria-label="Challenge brief"]')
+        page.locator('a.case-file[href^="'+file+'"]').click();wait_for_brief()
         assert editor.input_value()==starter,'Navigation must start from this brief starter'
-        page.go_back();page.wait_for_selector('.case-file');page.go_forward();page.wait_for_selector('[aria-label="Challenge brief"]')
-        page.reload();page.wait_for_selector('[aria-label="Challenge brief"]');assert editor.input_value()==starter
-        page.goto(base+'/'+prefix+'.html#'+deck+'/challenges/'+id);page.wait_for_selector('[aria-label="Challenge brief"]')
+        page.go_back();page.wait_for_selector('.case-file');page.go_forward();wait_for_brief()
+        page.reload();wait_for_brief();assert editor.input_value()==starter
+        page.goto(base+'/'+prefix+'.html#'+deck+'/challenges/'+id);wait_for_brief()
         assert page.locator('link[rel="canonical"]').get_attribute('href')=='https://dataplayground.science/'+file
         assert editor.input_value()==starter
         for width in (1440,390):

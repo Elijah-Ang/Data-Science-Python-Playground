@@ -3,11 +3,11 @@ import {createRequire} from 'node:module';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
 const require=createRequire(import.meta.url), c=require('../foundations/curriculum.js');
-assert.equal(c.lessons.length,106);
+assert.equal(c.lessons.length,110);
 assert.equal(c.lessons.filter(l=>l.review).length,17);
-assert.equal(c.lessons.reduce((n,l)=>n+l.rounds.length,0),326);
+assert.equal(c.lessons.reduce((n,l)=>n+l.rounds.length,0),338);
 for(const [prefix,count] of [['I',22],['W',31],['V',37]])for(let n=1;n<=count;n++)assert(c.lessons.some(l=>l.id===prefix+String(n).padStart(2,'0')));
-assert.equal(new Set(c.lessons.flatMap(l=>l.rounds.map(r=>r.id))).size,326);
+assert.equal(new Set(c.lessons.flatMap(l=>l.rounds.map(r=>r.id))).size,338);
 for(const [key,d] of Object.entries(c.datasets)){
  const lengths=Object.values(d.columns).map(v=>v.length);assert(lengths.every(n=>n===lengths[0]&&n>=4&&n<=10),key);
 }
@@ -23,7 +23,7 @@ for(const d of c.decks){
 const page=fs.readFileSync(new URL('../playground.html',import.meta.url),'utf8');
 assert.equal((page.match(/href="data-foundations.html"/g)||[]).length,1);
 for(const file of ['index.html','ml.html','statistics.html'])assert(!fs.readFileSync(new URL('../'+file,import.meta.url),'utf8').includes('data-foundations.html'),file);
-console.log('Foundations: 106 ordered cards, 326 unique exercises, complete I/W/V IDs, valid tiny tables, review spacing and Data-only navigation.');
+console.log('Foundations: 110 ordered cards, 338 unique exercises, complete I/W/V IDs, valid tiny tables, review spacing and Data-only navigation.');
 
 const taskReviews=JSON.parse(fs.readFileSync(new URL('../docs/foundations-task-review.json',import.meta.url),'utf8')).exercises;
 const visuals=require('../foundations/visuals.js');

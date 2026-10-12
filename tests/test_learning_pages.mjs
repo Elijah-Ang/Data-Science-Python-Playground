@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import {createRequire} from 'node:module';
 const root=path.resolve(import.meta.dirname,'..'),dist=path.join(root,'dist');
 const context=vm.createContext({URLSearchParams,URL});context.window=context;
-vm.runInContext(await fs.readFile(path.join(root,'learning-routes.js'),'utf8'),context);
+for(const file of ['learning-routes.js','code-identifiers.js','learning-identifiers.js','learning-language.js'])vm.runInContext(await fs.readFile(path.join(root,file),'utf8'),context);
 const routes=context.LearningRoutes;
 const legacy={hash:'#inspect/I17/2',search:'?from=learn'};
 assert.equal(routes.route('data',legacy,{dataset:{}}),'inspect/I17/2');
@@ -21,9 +21,33 @@ assert.equal(routes.route('ml',{hash:'#workflows/challenges/ML-X01',search:''},{
 assert.equal(routes.route('data',{hash:'#chapter-1',search:''},{dataset:{learningRoute:'inspect'}}),'inspect/chapter/1');
 const require=createRequire(import.meta.url),data=require('../foundations/curriculum.js');
 const ml=JSON.parse(await fs.readFile(path.join(dist,'ml-learning/curriculum.json'),'utf8'));
+vm.runInContext(await fs.readFile(path.join(root,'ml-learning/collections.js'),'utf8'),context);
+const mlCollections=context.MLLearningCollections.collections;
 const sitemap=await fs.readFile(path.join(dist,'sitemap.xml'),'utf8');
 const worker=await fs.readFile(path.join(dist,'service-worker.js'),'utf8');
+const readable=html=>html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+const inlineReadable=html=>html.replace(/<\/?(?:code|span|mark)\b[^>]*>/g,'');
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mlLanding=await fs.readFile(path.join(dist,'ml-learn.html'),'utf8');
+for(const collection of mlCollections){
+  const file=routes.url('ml','collections/'+collection.id),html=await fs.readFile(path.join(dist,file),'utf8');
+  const main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
+  assert(mlLanding.includes('href="'+file+'"'),file+' foundations-first landing link');
+  assert(main.includes(escape(collection.description)),file+' authored collection purpose');
+  assert(main.includes('guidance, not locks'),file+' open prerequisite guidance');
+  assert.equal((main.match(/class="lesson-card /g)||[]).length,collection.ids.length,file+' exact referenced lesson inventory');
+  for(const id of collection.ids){
+    const card=ml.cards.find(c=>c.id===id);
+    assert(card,file+' references an existing lesson '+id);
+    assert(main.includes('href="'+routes.url('ml',card.deck+'/'+id+'/0','',collection.id)+'"'),file+' stable lesson link '+id);
+  }
+  assert.equal((html.match(/rel="canonical"/g)||[]).length,1,file+' single canonical');
+  assert(html.includes('href="https://dataplayground.science/'+file+'"'),file+' canonical identity');
+  assert.equal(sitemap.split('<loc>https://dataplayground.science/'+file+'</loc>').length-1,1,file+' single sitemap identity');
+  assert(worker.includes('./'+file),file+' offline inventory');
+  assert(html.includes('href="ml-learn.html" class="back-playground">'),file+' static model chooser back link');
+  assert(!main.includes('href="#'),file+' crawlable collection navigation');
+}
 const challengeContext=vm.createContext({});challengeContext.window=challengeContext;
 vm.runInContext(await fs.readFile(path.join(root,'challenges/registry.js'),'utf8'),challengeContext);
 let briefCount=0;
@@ -39,11 +63,12 @@ for(const [family,challenges] of [['data',challengeContext.DataWorkflowChallenge
     assert.ok(!briefFiles.has(file),'One stable page per brief: '+file);briefFiles.add(file);
     const html=await fs.readFile(path.join(dist,file),'utf8'),main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
     assert.ok(main.includes('aria-label="Challenge brief"'),file+' actual independent brief');
-    assert.ok(main.includes(escape(challenge.question)),file+' authored question');
-    for(const text of [...Object.values(challenge.hints),...challenge.explanationSteps,...challenge.policies])assert.ok(main.includes(escape(text)),file+' authored help and policy: '+text);
+    assert.ok(inlineReadable(main).includes(escape(challenge.question)),file+' authored question');
+    for(const text of [...Object.values(challenge.hints),...challenge.explanationSteps])assert.ok(inlineReadable(main).includes(escape(text)),file+' authored help: '+text);
+    for(const text of challenge.policies)assert.ok(inlineReadable(main).includes(escape(context.LearningLanguage.plain(text))),file+' authored policy: '+text);
     assert.ok(main.includes(escape(family==='ml'?challenge.reference||challenge.exercise.solution:challenge.solution)),file+' complete explained solution');
-    const requirements=family==='ml'?challenge.deliverableGroups.map(g=>g.summary):challenge.deliverables.map(d=>d.requirement);
-    for(const requirement of requirements)assert.ok(main.includes(escape(requirement)),file+' authored deliverable');
+    const requirements=family==='ml'?challenge.deliverableGroups.map(g=>g.instructions||g.summary):challenge.deliverables.map(d=>d.instructions||d.requirement);
+    for(const requirement of requirements)for(const step of (Array.isArray(requirement)?requirement:[requirement]).flatMap(context.LearningLanguage.split))assert.ok(readable(inlineReadable(main)).includes(escape(step.replaceAll('`',''))),file+' visible complete action: '+step);
     const starter=challenge.exercise?.starter||challenge.starter;
     assert.ok(main.includes(escape(starter)),file+' actual editor starter');
     assert.equal((html.match(/rel="canonical"/g)||[]).length,1,file+' single canonical');
@@ -98,4 +123,4 @@ const privacy=await fs.readFile(path.join(dist,'privacy.html'),'utf8');
 assert.ok(privacy.includes('Advertising is disabled in the current website and native build.'));
 assert.ok(!privacy.includes('consent message is configured'));
 assert.ok(privacy.includes('no application-set expiry period'));
-console.log(`Static learning: ${count} substantive lessons, ${briefCount} complete independent briefs, collections, legacy routes, canonical URLs, sitemap, offline inventory, checkpoint fixes and privacy disclosures passed.`);
+console.log(`Static learning: ${count} substantive lessons, ${briefCount} complete independent briefs, ${mlCollections.length} ML model collections, legacy routes, canonical URLs, sitemap, offline inventory, checkpoint fixes and privacy disclosures passed.`);

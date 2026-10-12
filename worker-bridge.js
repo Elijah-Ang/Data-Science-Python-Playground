@@ -1,6 +1,6 @@
 /* Shared serial transport; restarting invalidates queued work and late messages. */
 window.createPythonBridge = function(source, {field='type', onStatus=()=>{}, onError=()=>{}}={}) {
-  let worker, sequence=0, generation=0, queue=Promise.resolve(), count=0;
+  let worker, releaseSource=()=>{}, sequence=0, generation=0, queue=Promise.resolve(), count=0;
   const pending=new Map();
   function errorFromResponse(data) {
     const error=new Error(data.error || 'Python request failed');
@@ -15,14 +15,20 @@ window.createPythonBridge = function(source, {field='type', onStatus=()=>{}, onE
   }
   function spawn() {
     const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
-    worker=new Worker(url); URL.revokeObjectURL(url);
+    // Loading a worker script is asynchronous. Keep its source available until
+    // the worker responds, fails, or is terminated before it can start.
+    let released=false;
+    const release=()=>{if(!released){released=true;URL.revokeObjectURL(url);}};
+    try {worker=new Worker(url);} catch(error) {release();throw error;}
+    releaseSource=release;
     worker.onmessage=({data}) => {
+      release();
       if (data.type==='status') {onStatus(data); return;}
       const request=pending.get(data.id); if (!request) return;
       pending.delete(data.id);
       data.ok===false ? request.reject(errorFromResponse(data)) : request.resolve(data);
     };
-    worker.onerror=worker.onmessageerror=event=>fail(event.message);
+    worker.onerror=worker.onmessageerror=event=>{release();fail(event.message);};
   }
   spawn();
   return {
@@ -40,7 +46,7 @@ window.createPythonBridge = function(source, {field='type', onStatus=()=>{}, onE
       return request.finally(()=>{count--;});
     },
     restart() {
-      generation++; worker.terminate();
+      generation++; worker.terminate(); releaseSource();
       for (const request of pending.values()) request.reject(new Error('Execution cancelled; Python variables reset.'));
       pending.clear(); queue=Promise.resolve(); spawn();
     }

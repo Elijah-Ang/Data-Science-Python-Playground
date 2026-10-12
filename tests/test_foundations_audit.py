@@ -45,8 +45,8 @@ def display_answer(code):
     tree = ast.parse(code)
     if isinstance(tree.body[-1], ast.Expr):
         expression = tree.body.pop().value
-        tree.body.extend([ast.Assign(targets=[ast.Name(id='answer', ctx=ast.Store())], value=expression),
-                          ast.Expr(value=ast.Call(func=ast.Name(id='display', ctx=ast.Load()), args=[ast.Name(id='answer', ctx=ast.Load())], keywords=[]))])
+        display = ast.Name(id='answer', ctx=ast.Load()) if isinstance(expression, ast.Constant) and isinstance(expression.value, str) else ast.Call(func=ast.Name(id='display', ctx=ast.Load()), args=[ast.Name(id='answer', ctx=ast.Load())], keywords=[])
+        tree.body.extend([ast.Assign(targets=[ast.Name(id='answer', ctx=ast.Store())], value=expression), ast.Expr(value=display)])
     return ast.unparse(ast.fix_missing_locations(tree))
 
 
@@ -154,7 +154,10 @@ def matplotlib_alternative(exercise):
         if method == 'scatterplot' and x and y:
             hue, style, size = keywords.get('hue'), keywords.get('style'), keywords.get('size')
             if not hue:
-                body = f'{ax}.scatter({data}[{x}], {data}[{y}])'
+                def values(expression):
+                    node=ast.parse(expression,mode='eval').body
+                    return f'{data}[{expression}]' if isinstance(node,ast.Constant) and isinstance(node.value,str) else expression
+                body = f'{ax}.scatter({values(x)}, {values(y)})'
             else:
                 order = keywords.get('hue_order', f'list({data}[{hue}].unique())')
                 palette = keywords.get('palette', '"deep"')
@@ -167,7 +170,9 @@ def matplotlib_alternative(exercise):
         elif method == 'histplot' and x:
             body = f'{ax}.hist({data}[{x}], bins={keywords.get("bins", "4")})'
         elif method == 'countplot' and x:
-            body = f'counts = {data}[{x}].value_counts(sort=False)\n{ax}.bar(counts.index, counts.values, width=0.6)'
+            order = keywords.get('order')
+            reindex = f'.reindex({order}, fill_value=0)' if order else ''
+            body = f'counts = {data}[{x}].value_counts(sort=False){reindex}\n{ax}.bar(counts.index, counts.values, width=0.6)'
         elif method == 'barplot' and x and y and keywords.get('errorbar') == 'None':
             estimator = keywords.get('estimator', '"mean"')
             body = f'heights = {data}.groupby({x}, sort=False)[{y}].agg({estimator})\n{ax}.bar(heights.index, heights.values, width=0.6)'
@@ -178,7 +183,8 @@ def matplotlib_alternative(exercise):
         elif method == 'boxplot' and x and y:
             horizontal = (exercise.get('plot') or {}).get('categoryAxis') == 'y'
             category, measure = (y, x) if horizontal else (x, y)
-            body = f'levels = list({data}[{category}].unique())\n{ax}.boxplot([{data}.loc[{data}[{category}] == level, {measure}] for level in levels], positions=range(len(levels)), widths=0.6, vert={not horizontal})\n{ax}.set_{"y" if horizontal else "x"}ticks(range(len(levels)), levels)'
+            order = keywords.get('order',f'list({data}[{category}].unique())')
+            body = f'levels = {order}\n{ax}.boxplot([{data}.loc[{data}[{category}] == level, {measure}] for level in levels], positions=range(len(levels)), widths=0.6, vert={not horizontal})\n{ax}.set_{"y" if horizontal else "x"}ticks(range(len(levels)), levels)'
         elif method == 'ecdfplot' and x:
             complementary = keywords.get('complementary') == 'True'
             body = f'values = np.sort({data}[{x}].to_numpy())\nfractions = np.arange(len(values) + 1) / len(values)\n{ax}.step(np.r_[-np.inf, values], {"1 - fractions" if complementary else "fractions"}, where="post")'
@@ -192,7 +198,7 @@ def matplotlib_alternative(exercise):
             matrix = ast.unparse(call.args[0])
             fmt = keywords.get('fmt', '".2g"')
             optional = ', '.join(f'{key}={keywords[key]}' for key in ('cmap', 'vmin', 'vmax') if key in keywords)
-            body = f'cells = {matrix}\n{ax}.imshow(cells.to_numpy(), {optional})\n{ax}.set_xticks(range(len(cells.columns)), list(cells.columns))\n{ax}.set_yticks(range(len(cells.index)), list(cells.index))\nfor i in range(len(cells.index)):\n    for j in range(len(cells.columns)):\n        if pd.notna(cells.iloc[i, j]):\n            {ax}.text(j, i, format(cells.iloc[i, j], {fmt}), ha="center", va="center")'
+            body = f'cells = {matrix}\n{ax}.pcolormesh(cells.to_numpy(), {optional})\n{ax}.invert_yaxis()\n{ax}.set_xticks(np.arange(len(cells.columns)) + 0.5, list(cells.columns))\n{ax}.set_yticks(np.arange(len(cells.index)) + 0.5, list(cells.index))\nfor i in range(len(cells.index)):\n    for j in range(len(cells.columns)):\n        if pd.notna(cells.iloc[i, j]):\n            {ax}.text(j + 0.5, i + 0.5, format(cells.iloc[i, j], {fmt}), ha="center", va="center")'
         if body:
             tree.body[index:index + 1] = ast.parse(body).body
             changed = True
@@ -207,6 +213,12 @@ def semantic_negative(exercise):
     if exercise.get('target') == 'plot':
         if (exercise.get('plot') or {}).get('empty'):
             return exercise['solution'].replace('figsize=(6, 4)', 'figsize=(7, 4)'), 'wrong explicitly requested canvas width'
+        if exercise.get('setup') and any(node.func.attr.endswith('plot') or node.func.attr in ('scatter','bar','hist','step') for node in ast.walk(ast.parse(exercise['setup'])) if isinstance(node,ast.Call) and isinstance(node.func,ast.Attribute)):
+            # Changing df after supplied setup cannot change marks already drawn.
+            # Mutate the required title instead; full population probes remain
+            # in the responsibility/variety suites, where setup is rebuilt.
+            tree.body[-1:-1]=ast.parse('for _axis in plt.gcf().axes:\n    _axis.set_title("Incorrect task title")').body
+            return ast.unparse(ast.fix_missing_locations(tree)), 'incorrect required title on supplied marks'
         for index, statement in enumerate(tree.body):
             if isinstance(statement, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'selected' for target in statement.targets):
                 tree.body[index + 1:index + 1] = ast.parse('selected = selected.iloc[:-1]').body
@@ -230,6 +242,9 @@ elif isinstance(answer, np.ndarray):
     answer.flat[0] += 1
 elif isinstance(answer, (list, tuple, pd.Index)):
     answer = answer[:-1]
+elif isinstance(answer, dict):
+    answer = answer.copy()
+    answer.pop(next(iter(answer)))
 elif isinstance(answer, str):
     answer = "line" if answer != "line" else "scatter"
 else:

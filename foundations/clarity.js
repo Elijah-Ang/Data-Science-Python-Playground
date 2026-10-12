@@ -1425,6 +1425,7 @@ function clarify(c) {
  for(const l of c.lessons.filter(l=>l.deck==='visualise'&&!l.review))l.example=l.rounds[0].solution;
 
  byId.WR2.rounds.forEach((r,i)=>{r.demand=['Section 02 · W07: create a numeric column','Section 02 · W10: clean text','Section 03 · W12: convert numeric text'][i];});
+ (typeof module!=='undefined'?require('./variety.js'):root.FoundationVariety).vary(c);
  return c;
 }
 const api={guides,clarify};

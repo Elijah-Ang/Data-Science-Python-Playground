@@ -2,12 +2,13 @@
 (function(root){
   'use strict';
   const prefixes={data:'data-foundations',ml:'ml-learn'};
-  function url(family,route='',from=''){
+  function url(family,route='',from='',collection=''){
     const prefix=prefixes[family], [deck,id,position]=route.replace(/^#/,'').split('/');
     const query=new URLSearchParams();
     if(from==='learn')query.set('from','learn');
     if(id&&id!=='chapter'&&id!=='challenges'&&Number(position)>0)query.set('practice',position);
-    const file=!deck?prefix+'.html':id==='challenges'?prefix+'-'+(position||deck+'-challenges')+'.html':prefix+'-'+(id&&id!=='chapter'?id:deck)+'.html';
+    if(family==='ml'&&deck!=='collections'&&id&&id!=='chapter'&&id!=='challenges'&&/^[a-z0-9-]+$/.test(collection))query.set('collection',collection);
+    const file=!deck?prefix+'.html':deck==='collections'?prefix+'-collection-'+id+'.html':id==='challenges'?prefix+'-'+(position||deck+'-challenges')+'.html':prefix+'-'+(id&&id!=='chapter'?id:deck)+'.html';
     const hash=id==='chapter'?'#chapter-'+position:'';
     return file+(query.size?'?'+query.toString():'')+hash;
   }
@@ -15,6 +16,7 @@
     const hash=location.hash.slice(1);
     if(hash&&!/^(?:foundationsMain|chapter-\d+)$/.test(hash))return hash;
     const authored=body.dataset.learningRoute||'';
+    if(family==='ml'&&authored.startsWith('collections/'))return authored;
     if(/^chapter-\d+$/.test(hash)&&authored&&!authored.includes('/'))return authored+'/chapter/'+hash.slice(8);
     if(authored.split('/')[1]==='challenges')return authored;
     const practice=new URLSearchParams(location.search).get('practice');
@@ -39,6 +41,7 @@
   function installRouter(family,curriculum,render,challenges=curriculum.challenges||[]){
     const registry=new Map([[prefixes[family]+'.html',''],
       ...curriculum.decks.map(deck=>[url(family,deck.id),deck.id]),
+      ...(curriculum.collections||[]).map(collection=>[url(family,'collections/'+collection.id),'collections/'+collection.id]),
       ...(curriculum.lessons||curriculum.cards).map(lesson=>[url(family,lesson.deck+'/'+lesson.id+'/0'),lesson.deck+'/'+lesson.id+'/0']),
       ...challenges.flatMap(challenge=>{
         const collection=challenge.deck+'/challenges',route=collection+'/'+challenge.id;

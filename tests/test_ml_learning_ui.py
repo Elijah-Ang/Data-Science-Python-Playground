@@ -10,10 +10,20 @@ parser.add_argument('--runtime',choices=['local','remote'],default='local')
 args=parser.parse_args()
 out=Path('tests/evidence/ml-learning');out.mkdir(parents=True,exist_ok=True)
 errors=[]
+error_details=[]
+worker_urls=[]
+phase='route and layout checks'
 with sync_playwright() as p:
     browser=getattr(p,args.engine).launch()
     page=browser.new_page(viewport={'width':1440,'height':1000})
-    page.on('pageerror',lambda e:errors.append(str(e)))
+    def record_error(error):
+        errors.append(str(error))
+        detail={'message':str(error),'stack':error.stack,'phase':phase,'url':page.url,'workers':list(worker_urls)}
+        error_details.append(detail)
+        (out/(args.engine+'-ui-page-errors.json')).write_text(json.dumps(error_details,indent=2))
+        print(json.dumps({'engine':args.engine,'pageError':detail}),flush=True)
+    page.on('pageerror',record_error)
+    page.on('worker',lambda worker:worker_urls.append({'url':worker.url,'phase':phase}))
     page.add_init_script("""window.__mlRunPosts=0;window.__mlWorkerCount=0;window.__mlWrites=[];
       const NativeWorker=Worker;
       window.Worker=class extends NativeWorker{
@@ -35,7 +45,11 @@ with sync_playwright() as p:
     assert page.locator('.mode-link[aria-current="page"]').get_attribute('aria-label')=='Statistics Playground'
     page.goto(args.base_url+'/ml-learn.html'+('?runtime=local' if args.runtime=='local' else ''))
     page.wait_for_function('!!window.MLLearning')
-    assert page.locator('.foundation-decks .foundation-deck').count()==9
+    assert page.locator('section[aria-labelledby="ml-start"] .foundation-deck').count()==2
+    assert page.locator('section[aria-labelledby="ml-start"] .foundation-deck').evaluate_all('(cards)=>cards.map(card=>card.dataset.deck)')==['foundations','workflow']
+    assert page.locator('.foundation-deck[data-collection]').count()==len(page.evaluate('MLLearning.curriculum.collections'))==23
+    assert page.locator('[data-collection-group]').evaluate_all('(groups)=>groups.map(group=>group.dataset.collectionGroup)')==['quantity','classes','neural','discovery','capstone']
+    assert page.locator('.ml-subject-libraries a').evaluate_all('(links)=>links.map(link=>link.getAttribute("href").split("?")[0])')==['ml-learn-'+deck+'.html' for deck in ['foundations','workflow','regression','classification','networks','clustering','pca','comparison']]
     assert page.locator('.ml-orientation,.ml-index,.ml-concepts-nav').count()==0
     assert page.get_by_role('link',name='Workflow Challenges',exact=False).count()==1
     assert page.locator('[aria-current="location"]').inner_text().strip()=='ML'
@@ -100,8 +114,10 @@ with sync_playwright() as p:
                 assert page.locator('.practice-question').inner_text()==checkpoint['question']
                 contract=page.locator('.ml-contract')
                 assert contract.is_visible() and contract.evaluate('(e)=>!e.closest("details")')
-                rows=contract.locator('tbody tr')
-                assert rows.evaluate_all('(rows)=>rows.map(row=>Array.from(row.cells,c=>c.textContent))')==[[c['name'],c['description']] for c in checkpoint['contract']]
+                rows=contract.locator('.ml-evidence-names > div')
+                expected_contract=page.evaluate('(contract)=>contract.map(c=>[c.name,LearningLanguage.split(c.description)])',checkpoint['contract'])
+                assert rows.evaluate_all('(rows)=>rows.map(row=>[row.querySelector("dt").textContent,Array.from(row.querySelectorAll("dd li"),e=>e.textContent)])')==expected_contract
+                assert all(row.locator('dt code').count()==1 for row in rows.all())
                 assert all(row.is_visible() for row in rows.all())
                 design=contract.inner_text()
                 assert '15–30%' in design and '3–5-fold' in design
@@ -162,7 +178,8 @@ with sync_playwright() as p:
         assert 'no prediction target or reserved final test' in page.locator('.ml-workflow-map > p').inner_text()
     page.evaluate("location.hash='#workflow/ML-W-K3/0'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K3-1'")
-    assert 'choose Regression or Classification' in page.locator('.teaching-note').inner_text()
+    assert 'choose a quantity model or begin with classification evidence' in page.locator('.teaching-note').inner_text()
+    assert page.locator('.teaching-note a').evaluate_all('(links)=>links.map(link=>link.getAttribute("href").split("?")[0])')==['ml-learn-collection-simple-linear.html','ml-learn-collection-classification-evidence.html']
     for route,id,question in [
         ('#regression/ML-R01/0','ML-R01-1',False),
         ('#regression/ML-R02/2','ML-R02-3',False),
@@ -242,7 +259,7 @@ with sync_playwright() as p:
     page.evaluate("document.documentElement.style.zoom=''")
     page.evaluate("location.hash='#networks/ML-N-R1/2'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-N-R1-3'")
-    assert page.locator('.foundation-navigation a').last.get_attribute('href')=='ml-learn-networks.html'
+    assert page.locator('.foundation-navigation a').last.get_attribute('href')=='ml-learn-collection-neural-foundations.html'
     page.evaluate("location.hash='#networks/ML-N04/3'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-N04-4'")
     assert 'ML-N-K1' in page.locator('.foundation-navigation a').last.get_attribute('href')
@@ -252,6 +269,7 @@ with sync_playwright() as p:
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     solution=page.evaluate('MLLearning.activity.solution')
     page.locator('#mlEditor').fill(solution)
+    phase='Run and repeated Check'
     page.locator('#mlRun').click()
     page.wait_for_function("document.getElementById('mlStatus').textContent.startsWith('Run finished')",timeout=180000)
     calls=page.evaluate('__mlRunPosts')
@@ -263,15 +281,44 @@ with sync_playwright() as p:
     page.locator('#mlCheck').click()
     assert 'Run the current code first' in page.locator('#mlFeedback').inner_text()
     assert page.evaluate('MLLearning.retainedReceipts')==0
+    starter=page.evaluate('MLLearning.activity.starter')
+    phase='Reset'
+    page.locator('#mlReset').click()
+    assert page.locator('#mlEditor').input_value()==starter
+    assert page.evaluate('MLLearning.retainedReceipts')==0
+    assert page.locator('#mlResults').inner_text()==''
+    reset_output=page.locator('#mlOutput')
+    reset_output_text=reset_output.inner_text()
+    reset_output_dom=reset_output.evaluate("""el=>({
+        innerText:el.innerText,innerHTML:el.innerHTML,textContent:el.textContent,
+        childElementCount:el.childElementCount,
+        emptyParagraphCount:el.querySelectorAll(':scope > p.ml-empty').length
+    })""")
+    reset_output_dom['emptyParagraphVisible']=reset_output.locator(':scope > p.ml-empty').is_visible()
+    expected_reset_text='Code reset. Run to produce new output.'
+    print(json.dumps({'engine':args.engine,'phase':'reset-output','expectedText':expected_reset_text,'actualText':reset_output_text,'dom':reset_output_dom}),flush=True)
+    assert reset_output_text.removesuffix('\n\n')==expected_reset_text,(repr(reset_output_text),reset_output_dom)
+    assert reset_output_dom['textContent']==expected_reset_text,reset_output_dom
+    assert reset_output_dom['childElementCount']==1,reset_output_dom
+    assert reset_output_dom['emptyParagraphCount']==1,reset_output_dom
+    assert reset_output_dom['emptyParagraphVisible'],reset_output_dom
+    assert reset_output.locator(':scope > p.ml-empty').text_content()==expected_reset_text,reset_output_dom
+    phase='Stop / restart'
+    page.locator('#mlStop').click()
+    assert not page.locator('#mlRun').is_disabled()
+    assert page.locator('#mlStatus').inner_text()=='Execution stopped. Python will start fresh on the next Run.'
+    assert page.evaluate('MLLearning.retainedReceipts')==0
     # Keyboard escape exits the editor; navigation/reload discards the draft.
     page.locator('#mlEditor').focus();page.keyboard.press('Escape');page.keyboard.press('Tab')
     assert page.locator('#mlRun').evaluate('(e)=>e===document.activeElement')
+    phase='Reload after Stop'
     page.reload();page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K1-1'")
     assert page.locator('#mlEditor').input_value()!=solution
     page.evaluate("location.hash='#workflow/ML-W-K2/0'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K2-1'")
     readiness=page.evaluate('MLLearning.activity.solution')
     page.locator('#mlEditor').fill(readiness)
+    phase='Readiness Run'
     page.locator('#mlRun').click()
     page.wait_for_function("!document.getElementById('mlRun').disabled",timeout=180000)
     page.locator('#mlCheck').click()
@@ -280,15 +327,18 @@ with sync_playwright() as p:
     assert 'not automatically verified' in page.locator('#mlResults .self-review').inner_text()
     page.locator('#mlReflection').fill('My interpretation is self-review, not an automatic pass.')
     page.locator('#mlEditor').fill(readiness.replace("['jobs_waiting', 'device_age_years']", "['jobs_waiting', 'invoice_labor_hours']"))
+    phase='Boundary negative Run'
     page.locator('#mlRun').click()
     page.wait_for_function("!document.getElementById('mlRun').disabled",timeout=180000)
     page.locator('#mlCheck').click()
     assert 'Critical boundary' in page.locator('#mlResults .needs-attention').inner_text()
+    phase='Final reload'
     page.reload();page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K2-1'")
     page.locator('#mlReflection').wait_for()
     assert page.locator('#mlReflection').input_value()==''
     writes=page.evaluate('__mlWrites')
-    assert not any('learning' in key.lower() or 'foundation' in key.lower() for key in writes),writes
+    assert not any(any(term in key.lower() for term in ['learning','foundation','progress','completion','draft','resume']) for key in writes),writes
+    assert page.locator('progress,[role="progressbar"],#forgetProgress,#resetLearningDialog,#storageStatus,.foundation-continue').count()==0
     assert not errors,errors
     browser.close()
 print(args.engine,'all card/challenge routes, six widths, themes, task forks, real Run/Check, keyboard and no learning persistence passed.')
