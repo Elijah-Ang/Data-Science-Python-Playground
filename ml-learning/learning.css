@@ -104,8 +104,8 @@
   .ml-editor-dictionary>div{grid-template-columns:1fr;gap:1px}
   .ml-code-pane .foundation-editor-wrap{grid-template-columns:minmax(0,1fr)}
   .ml-code-pane .foundation-line-numbers{display:none}
-  .ml-code-pane #mlHighlight{inset:0;white-space:pre-wrap;overflow-wrap:anywhere}
-  .ml-code-pane #mlEditor{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+  .ml-code-pane #mlHighlight{inset:0;white-space:pre;overflow-wrap:normal}
+  .ml-code-pane #mlEditor{white-space:pre;overflow-wrap:normal;word-break:normal}
   .ml-code-pane{scroll-margin-top:12px}
   .ml-code-pane .foundation-editor-head{scroll-margin-top:12px}
   .ml-editor-head-actions #mlBriefJump{display:inline-flex}
@@ -136,3 +136,14 @@
 .ml-column-definitions dt { font-weight:700; }
 .ml-column-definitions dd { margin:0; line-height:1.6; }
 .ml-column-definitions small { display:block; margin-top:4px; font-size:12px; line-height:1.6; }
+
+/* An optional dictionary must never become a second scrolling task pane. */
+.ml-editor-reference { max-height:none; overflow:visible; }
+.ml-editor-reference > summary { cursor:pointer; min-height:44px; align-content:center; font-weight:700; }
+.ml-editor-head-actions { flex-wrap:wrap; }
+.ml-code-pane .foundation-task-reminder { max-height:none; }
+.ml-lesson > .foundation-split > .ml-choice { height:auto; overflow:visible; }
+@media(max-width:800px) {
+  .ml-editor-reference { padding:10px 14px; }
+  .ml-editor-reference-head { flex-wrap:wrap; }
+}

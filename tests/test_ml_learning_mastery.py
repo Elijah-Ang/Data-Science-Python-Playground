@@ -1,8 +1,13 @@
 """New workflow acceptance, boundary failures and honest self-review coverage."""
-import json, subprocess, sys
+import json, subprocess, sys, types
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 r=json.loads(subprocess.check_output([sys.executable,'ml-learning/authoring.py'],cwd=ROOT))
+# Guided One-R application uses the same helper as production and independent
+# challenges; install its source into the parity test process.
+helper=types.ModuleType('ml_helpers')
+source=subprocess.check_output(['node','--input-type=module','-e',"import {productionInventory} from './scripts/ml-production.mjs';console.log(productionInventory().ONE_R_HELPER_SOURCE)"],cwd=ROOT,text=True)
+exec('import numpy as np\n'+source,helper.__dict__);sys.modules['ml_helpers']=helper
 ns={};exec((ROOT/'ml-learning/fixtures.py').read_text()+'\n'+(ROOT/'ml-learning/runtime.py').read_text(),ns)
 activities={e['id']:e for c in r['cards'] for e in c['exercises'] if e.get('assessment')}
 def run(id,code):

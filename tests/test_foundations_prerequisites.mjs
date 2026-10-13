@@ -22,7 +22,7 @@ for(const id of inserted){
  for(const r of l.rounds){
   const html=teaching.intro(c,l,r)+teaching.syntax(l)+teaching.transition(r);
   assert(!html.includes('<details'),r.id+' required teaching remains visible');
-  assert(html.includes('A small example')&&html.includes('Concept sketch:'),r.id);
+  assert((html.includes('A small example')&&html.includes('Concept sketch:'))||html.includes('data-foundation-explorer="summary-order"'),r.id+' retains a concrete example or a computed teaching explorer');
  }
 }
 const bridge=lesson('V13').rounds[2];
@@ -30,7 +30,8 @@ const bridgeHTML=teaching.transition(bridge);
 assert(bridgeHTML.includes('Build the category order from a grouped Series'));
 assert(bridgeHTML.includes('ranked.index')&&bridgeHTML.includes('median numbers'));
 for(const id of ['I06S','I19S'])assert(bridgeHTML.includes('href="data-foundations-'+id+'.html"'));
-assert(lesson('V13').rounds[2].solution.includes('.median().sort_values().index'),'Retain the genuine application rather than removing the prerequisite');
+for(const step of ['medians = df.groupby','ranked = medians.sort_values()','order = ranked.index'])assert(lesson('V13').rounds[2].solution.includes(step),'Teach the grouped-Series application progressively: '+step);
+assert(lesson('V13').rounds[2].teaching.referenceCode.includes('.median().sort_values().index'),'Retain the equivalent chain in optional reference');
 for(const [consumer,source] of [['I22','I19A'],['W20','I19A'],['V28','I13L'],['V29','I19S']]){
  assert(teaching.intro(c,lesson(consumer),lesson(consumer).rounds[0]).includes('data-foundations-'+source+'.html'),consumer+' has a usable earlier-teaching link');
 }

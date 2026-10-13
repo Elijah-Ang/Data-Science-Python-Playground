@@ -1,0 +1,674 @@
+{
+  "id": "V36-3",
+  "sourceId": "V36",
+  "sourceRound": 3,
+  "retrieves": null,
+  "exercise": {
+    "id": "V36-3",
+    "label": "Transfer",
+    "dataset": "pets",
+    "task": "Which repaired bar axis represents the supplied magnitudes fairly? Each row is one animal. Use the rows specified below from df. The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\". Its y-axis starts at 1. Use the report’s common linear range from 0 to 25; every group mean fits inside that range. Keep every group and its actual mean weight; arrange and display fig.",
+    "solution": "ax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
+    "starter": "# Repair the draft’s y-axis, then arrange and display fig\n",
+    "hint": "Use ax.set_ylim(0, 25) to match the report range. Dog mean weight is 20.25, so this upper bound keeps it visible.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "semantic": "bars",
+      "categorical": true,
+      "zeroBaseline": true,
+      "unorderedBars": true,
+      "textCaseInsensitive": true,
+      "barGeometry": true,
+      "yLimits": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "bars",
+      "variant": "mean-bars",
+      "label": "Concept sketch: bar height = group average"
+    },
+    "requiredKeywords": [],
+    "demand": "Use a common zero-based comparison range while preserving group means.",
+    "preserveData": false,
+    "reflection": null,
+    "bridge": null,
+    "steps": [
+      "Which repaired bar axis represents the supplied magnitudes fairly?",
+      "Each row is one animal. Use the rows specified below from df.",
+      "The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\".",
+      "Its y-axis starts at 1.",
+      "Use the report’s common linear range from 0 to 25; every group mean fits inside that range.",
+      "Keep every group and its actual mean weight; arrange and display fig."
+    ],
+    "setupDescription": "A misleading draft of mean-weight bars with y limits from 1 to 25.",
+    "decision": "Use a common zero-based comparison range while preserving group means.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V36"
+    ],
+    "fixtureFeature": "Individual weights by species support group means while preserving all animals.",
+    "question": "Which repaired bar axis represents the supplied magnitudes fairly?",
+    "observationUnit": "one animal",
+    "datasetRationale": "Individual weights by species support group means while preserving all animals.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "prerequisites": [
+        "V29",
+        "V26"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.bar",
+        "matplotlib.scales",
+        "chart.fair-comparison"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V29",
+        "V26"
+      ]
+    },
+    "stageSummary": "Repair a new comparison.",
+    "brief": {
+      "question": "Which repaired bar axis represents the supplied magnitudes fairly?",
+      "rows": "Each row is one animal. Use the rows specified below from df.",
+      "result": "The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\".",
+      "constraints": [
+        "Its y-axis starts at 1.",
+        "Use the report’s common linear range from 0 to 25; every group mean fits inside that range.",
+        "Keep every group and its actual mean weight; arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "name",
+        "species",
+        "age",
+        "weight",
+        "room"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "changed": "Repair a new comparison.",
+      "why": "Use a common zero-based comparison range while preserving group means.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "name": [
+      "Milo",
+      "Pepper",
+      "Luna",
+      "Bean",
+      "Rex",
+      "Nori"
+    ],
+    "species": [
+      "Cat",
+      "Dog",
+      "Cat",
+      "Rabbit",
+      "Dog",
+      "Rabbit"
+    ],
+    "age": [
+      3,
+      7,
+      2,
+      4,
+      5,
+      1
+    ],
+    "weight": [
+      4.2,
+      18.5,
+      3.6,
+      2.4,
+      22,
+      1.8
+    ],
+    "room": [
+      "A",
+      "B",
+      "A",
+      "B",
+      "A",
+      "B"
+    ]
+  },
+  "inputSHA256": "9c9a6db35d2441cdd6179bb59a440702688d8023374d2a7d51a8e4adbb395d85",
+  "visibleWorkspaceSHA256": "5e38ea4f3817e7e9028e17eec591fc5144ca15fccdf4236a789323ffe986d3ea",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\n# Repair the draft’s y-axis, then arrange and display fig\n",
+  "context": "A misleading draft of mean-weight bars with y limits from 1 to 25. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
+    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
+    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "7b667c4e8a41acfc2988cce71cff8707f179541ee364208108657a7457365115",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.096,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "40d40f823fecd98ed52854465f5411e7bb30cb90e773c25f821eae5078f9dbdc",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "5e38ea4f3817e7e9028e17eec591fc5144ca15fccdf4236a789323ffe986d3ea",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.1,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "40d40f823fecd98ed52854465f5411e7bb30cb90e773c25f821eae5078f9dbdc",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V36-3-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set(ylim=(0, 25))\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "de432ed83cfdfdaa057ca0ab27b43d9504c9b9d59d7028c7d5cd698bcf241031",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.156,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "40d40f823fecd98ed52854465f5411e7bb30cb90e773c25f821eae5078f9dbdc",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V36-3-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nplt.show()",
+      "codeSHA256": "caa9d1609deb351537f4d315987509ff3daaea80481685186dc7b41f1b9ea22e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.09,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the visible observations and axis bounds.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "4075443adc79d6a8a321e113d899138f5e76eab8ad639c05e32c88d94b253ee5",
+          "bytes": 13732,
+          "width": 584,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "misleading_baseline",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set(ylim=(3, 25))\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "23e84a3594f4624fdeee30770ae202b7ad7cf4f7015040393819bbc36a9e58e8",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.102,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the visible observations and axis bounds.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "05d6f5032749358f46969712530ca6a70a418211ef6e386af660b4b83c63b154",
+          "bytes": 17876,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_common_report_range",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set(ylim=(0, 30))\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "340a6a439755006b1e0de42596ecefe01b3867b44f3e9822ad4ce729771dcf5a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.1,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the axis limits.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "4dfca2ccd9a5ddadb411c75c7b78b9b4b8786d1b6f9aca435b3cebc19ec517c1",
+          "bytes": 14797,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set_ylim(0, 25)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "bf48615cf4ef0062c56998b9ff2f7763b0a720ed51711db62b02e6c861435943",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.097,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'pet adoption'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "153590233eb1369f475924e3b3e3068b5a836e84d1842f14b3175843c6fbf2b8",
+          "bytes": 14393,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set_ylim(0, 25)\nfig.tight_layout()\nheights = [bar.get_height() for bar in ax.patches]\nfor bar, height in zip(ax.patches, heights[::-1]):\n    bar.set_height(height)\nplt.show()",
+      "codeSHA256": "0184fbd023cdddd85667657bb9a723639faa07bd80e50f543e99a3ee095d7d9c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.097,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the category labels, bar heights and baselines; expected ('Cat', [[0.0, 3.9]]).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "33f6ac6985fbeafbf7b54a9b9a8aa96bd343eb14d804f7e0536a562836b2bebe",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\n# Learner edits the supplied values before their marks are drawn.\ndf['weight'] = df['weight'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "401f24b398b132ef2e2e877ff20d4a0c157e12b8cc4d5903a0b6f9d3b241d78f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.139,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the visible observations and axis bounds.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "d5845524a095cb6379c095a081566f70aba50ce395edbf1b3bb63f73f2fa9c8a",
+          "bytes": 14088,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\nax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "40d6a46561c686dda77ba89675f09d94732bcb0adb50b7abad12282459084b95",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.159,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "40d40f823fecd98ed52854465f5411e7bb30cb90e773c25f821eae5078f9dbdc",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "40d40f823fecd98ed52854465f5411e7bb30cb90e773c25f821eae5078f9dbdc",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\nax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "5e38ea4f3817e7e9028e17eec591fc5144ca15fccdf4236a789323ffe986d3ea",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.098,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Pet adoption",
+          "sha256": "40d40f823fecd98ed52854465f5411e7bb30cb90e773c25f821eae5078f9dbdc",
+          "bytes": 14125,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

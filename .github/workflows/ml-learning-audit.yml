@@ -17,7 +17,10 @@ jobs:
         with:
           python-version: '3.10'
       - run: npm run check:ml-learning
+      - run: python tests/test_ml_curriculum_coherence.py
       - run: python -m pip install -r tests/requirements-pyodide-parity.txt
+      - run: python tests/test_ml_model_applications.py
+      - run: python tests/test_ml_supplied_provenance.py
       - run: python tests/test_ml_learning_inputs.py
       - run: python tests/test_ml_learning_verticals.py
       - run: python tests/test_ml_learning_runtime.py

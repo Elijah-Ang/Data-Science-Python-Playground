@@ -16,7 +16,7 @@ function table(x,y,w,headers,rows,select=()=>false){
 }
 const pair=(a,b,c,d,select)=>table(5,15,105,a,b)+arrow()+table(150,15,105,c,d,select);
 const points=[[42,65],[68,47],[96,56],[122,34],[148,42],[176,23],[206,30]];
-const pointCloud=(encoded=false)=>points.map(([x,y],i)=>{const r=encoded?2+i*.45:3;return encoded&&i%2?rect(x-r,y-r,2*r,2*r,'visual-secondary'):dot(x,y,r);}).join('');
+const pointCloud=(encoded=false,size=true)=>points.map(([x,y],i)=>{const r=encoded&&size?2+i*.45:3;return encoded&&i%2?rect(x-r,y-r,2*r,2*r,'visual-secondary'):dot(x,y,r);}).join('');
 function bars(values,{labels=['A','B','C'],kind='count',zero=true}={}){
  const max=Math.max(...values),height=v=>v/max*48;
  return axes()+text(30,11,kind)+ (zero?text(16,81,'0'):'')+values.map((v,i)=>rect(51+i*63,78-height(v),32,height(v),'visual-fill')+text(57+i*63,73-height(v),v)+text(61+i*63,89,labels[i])).join('');
@@ -106,7 +106,7 @@ define('density','distribution','curve height = estimated density',()=>axes()+te
 define('ecdf','distribution','ECDF: fraction at or below x',()=>axes()+text(16,81,'0')+text(16,22,'1')+path('M29 78h34V63h42V49h42V34h42V19h40','visual-bold'));
 define('rug','distribution','rug: one tick for each observation',()=>axes()+[2,4,3,2].map((v,i)=>rect(42+i*43,78-v*9,43,v*9,'visual-wash')).join('')+[47,68,91,101,114,126,133,146,155,176,198].map(x=>path(`M${x} 68v12`,'visual-bold')).join(''));
 define('count-bars','bars','bar height = number of rows',()=>bars([4,2,3],{kind:'Count'}));
-define('mean-bars','bars','bar height = group average',()=>bars([2,4,3],{kind:'Mean value'}));
+define('mean-bars','bars','bar height = group average',(v={})=>bars([2,4,3],{kind:v.statistic==='median'?'Median value':'Mean value'}));
 define('point-interval','distribution','dot = mean; interval = ±1 SD',()=>axes()+[69,130,191].map((x,i)=>{const y=[49,35,44][i];return path(`M${x} ${y-13}v26m-5 0h10m-10-26h10`)+dot(x,y,4)+text(x-3,89,['A','B','C'][i]);}).join(''));
 define('boxplot','distribution','box: Q1–Q3; line: median; dot: outlier',()=>axes()+path('M52 46h118M52 37v18M170 37v18')+rect(80,32,40,28,'visual-wash')+path('M100 32v28','visual-bold')+dot(216,46)+text(75,27,'Q1')+text(117,27,'Q3'));
 define('violin','distribution','width shows density along the value axis',()=>axes()+path('M95 22C98 30 122 36 116 51S101 64 95 75C89 64 74 66 74 51S92 30 95 22Z','visual-wash')+path('M173 24C189 36 191 41 180 50S176 67 173 75C170 67 160 61 164 50S157 36 173 24Z','visual-wash')+text(92,89,'A')+text(170,89,'B'));
@@ -118,7 +118,7 @@ define('strip','distribution','jitter separates points; overlap can remain',()=>
 define('swarm','distribution','swarm packs equal values without overlap',()=>rawPoints(true));
 define('boxen','distribution','nested quantile bands expose the tails',()=>axes()+rect(117,22,22,52,'visual-wash')+rect(103,30,50,36,'visual-wash')+rect(87,40,82,17,'visual-wash')+path('M87 49h82','visual-bold')+dot(128,16,2));
 define('scatter','relationship','one point per pair of numeric values',()=>axes()+pointCloud()+text(30,11,'y')+text(229,89,'x'));
-define('scatter-dimensions','relationship','group = shape/colour; magnitude = size',()=>axes()+pointCloud(true)+dot(165,10,2)+dot(184,10,4)+dot(208,10,6));
+define('scatter-dimensions','relationship','group = shape/colour; magnitude = size',(v={})=>axes()+pointCloud(true,v.sizeEncoding!==false)+(v.sizeEncoding===false?dot(165,10,3)+text(176,13,'A')+rect(198,7,6,6,'visual-secondary')+text(210,13,'B'):dot(165,10,2)+dot(184,10,4)+dot(208,10,6)));
 define('line','relationship','connect observations in time order',()=>axes()+path('M42 65L95 48L148 55L206 25','visual-bold')+[[42,65],[95,48],[148,55],[206,25]].map(([x,y],i)=>dot(x,y)+text(x-3,89,i+1)).join('')+text(190,11,'Day'));
 define('line-band','relationship','line = mean; band = ±1 SD at each x',()=>axes()+path('M42 48L95 34L148 39L206 16L206 36L148 65L95 60L42 74Z','visual-wash')+path('M42 61L95 47L148 52L206 26','visual-bold')+[[42,61],[95,47],[148,52],[206,26]].map(([x,y])=>dot(x,y)).join(''));
 define('regression','relationship','straight fitted trend, with observed points',()=>axes()+pointCloud()+path('M35 68L218 20','visual-bold'));
@@ -130,7 +130,7 @@ define('legend','relationship','legend maps category to colour AND shape',()=>ax
 define('log-scale','relationship','equal x spacing = equal ratios on log scale',()=>axes()+text(16,81,'0')+[[45,1],[128,10],[211,100]].map(([x,n])=>path(`M${x} 78v4`)+text(x-5,91,n)).join('')+dot(45,60)+dot(128,42)+dot(211,23)+text(80,12,'log x; y starts at 0'));
 define('references','relationship','vertical AND horizontal median benchmarks',()=>axes()+pointCloud()+path('M122 19v59M28 42h202','visual-dashed')+text(134,15,'median x')+text(157,57,'median y'));
 define('annotation','relationship','arrow identifies the highest observation',()=>axes()+pointCloud()+text(188,13,'Peak')+path('M192 16L177 23m2-5-2 5 6-1','visual-bold'));
-define('exact-bars','bars','precomputed totals → exact bar heights',()=>bars([6,9,3],{kind:'Total (sum)'}));
+define('exact-bars','bars','precomputed values → exact bar heights',(v={})=>bars(v.summaryStatistic?summaries(v.summaryStatistic).map(g=>g.value):[6,9,3],{kind:v.summaryStatistic==='mean'?'Mean value':v.summaryStatistic==='median'?'Median value':'Total (sum)'}));
 define('stacked','bars','each total is the sum of both components',()=>axes()+text(15,81,'0')+[2,3,1].map((v,i)=>rect(50+i*63,78-v*9,31,v*9,'visual-fill')+rect(50+i*63,78-(v+2)*9,31,18,'visual-hatch')+text(57+i*63,89,['A','B','C'][i])).join('')+rect(53,3,8,8,'visual-fill')+text(66,11,'part 1')+rect(144,3,8,8,'visual-hatch')+text(157,11,'part 2'));
 define('pair-grid','panels','diagonal: distributions; off-diagonal: pairs',()=>{
  const values=[[1,2,3,4,5],[2,4,3,6,5]],binCounts=[[],[]];
@@ -180,15 +180,95 @@ function configure(curriculum){
   l.rounds.forEach(r=>{r.visual={...curriculum.lessons.find(l=>l.id===r.retrieves).rounds[2].visual};});
  }
 }
+function sceneLabel(v){
+ if(v.variant==='scatter-dimensions'&&v.sizeEncoding===false)return 'group = shape/colour; constant point size';
+ if(v.variant==='mean-bars'&&v.statistic==='median')return 'bar height = group median';
+ if(v.variant==='exact-bars'&&v.summaryStatistic)return `precomputed ${v.summaryStatistic} → exact bar heights`;
+ return scene[v.variant]?.label||v.label;
+}
 function artwork(v){
  if(v.variant==='review'){
   // Two legible thumbnails of skills actually retrieved, with every skill named below.
   return v.concepts.slice(0,2).map((id,i)=>`<g transform="translate(${i*130} 6) scale(.49 .70)">${scene[mapping[id]].draw()}</g>`+text(12+i*130,83,id)).join('')+caption(v.concepts.join(' + '));
  }
  const s=scene[v.variant];if(!s||s.type!==v.type)throw Error('Invalid concept visual: '+v.variant);
- return s.draw()+caption(s.label);
+ return s.draw(v)+caption(sceneLabel(v));
 }
-function diagram(v){return `<svg class="concept-visual" viewBox="0 0 260 108" role="img" aria-label="${esc(v.label)}" data-visual="${esc(v.variant)}"><title>${esc(v.label)}</title><g>${artwork(v)}</g></svg>`;}
-const api={diagram,configure,spec,mapping,scene,types:new Set([...Object.keys(scene),'review']),families:new Set(Object.values(scene).map(s=>s.type))};
+function diagram(v){const label=v.variant==='review'?v.label:'Concept sketch: '+sceneLabel(v);return `<svg class="concept-visual" viewBox="0 0 260 108" role="img" aria-label="${esc(label)}" data-visual="${esc(v.variant)}"><title>${esc(label)}</title><g>${artwork(v)}</g></svg>`;}
+// This separate example is deliberately labelled: these are computed teaching
+// marks, never a substitute for the learner's executed Python figure.
+const exampleRows=Object.freeze([
+ ['r1','A',1,2],['r2','A',2,4],['r3','A',3,6],['r4','B',2,3],
+ ['r5','B',4,7],['r6','C',1,1],['r7','C',3,2],['r8','C',5,3],['r9','C',6,18]
+].map(([id,group,x,value])=>Object.freeze({id,group,x,value})));
+const q=(values,p)=>{const sorted=[...values].sort((a,b)=>a-b),at=(sorted.length-1)*p,lo=Math.floor(at);return sorted[lo]+(sorted[Math.ceil(at)]-sorted[lo])*(at-lo);};
+const fmt=n=>Number(n.toFixed(2)).toString();
+const et=(x,y,s)=>`<text x="${x}" y="${y}" style="font-size:12px">${esc(s)}</text>`;
+function plotRows(rows,x=40,y=25,w=435,h=150,selected=''){
+ const px=v=>x+v/7*w,py=v=>y+h-v/20*h;
+ return axes(x,y,w,h)+[0,2,4,6].map(n=>et(px(n)-3,y+h+17,n)).join('')+[0,10,20].map(n=>et(x-26,py(n)+4,n)).join('')+et(x+w-5,y+h+33,'x')+et(x-28,y-6,'value')+
+ rows.map(r=>`<g data-row="${r.id}"><title>${esc(`${r.id}: group ${r.group}, x=${r.x}, value=${r.value}`)}</title>`+dot(px(r.x),py(r.value),r.id===selected?6:4,r.id===selected?'visual-selected':'visual-fill')+'</g>').join('');
+}
+function summaries(kind){return ['A','B','C'].map(group=>{const rows=exampleRows.filter(r=>r.group===group),values=rows.map(r=>r.value);return {group,rows:rows.map(r=>r.id),value:kind==='count'?rows.length:kind==='sum'?values.reduce((a,b)=>a+b,0):kind==='median'?q(values,.5):values.reduce((a,b)=>a+b,0)/rows.length};});}
+function summaryBars(groups,label){const max=Math.max(...groups.map(g=>g.value));return axes(65,25,410,145)+et(66,16,label)+et(43,174,'0')+groups.map((g,i)=>rect(105+i*130,170-g.value/max*120,65,g.value/max*120,'visual-fill')+et(115+i*130,160-g.value/max*120,fmt(g.value))+et(125+i*130,192,g.group)).join('');}
+const explorerSpecs={
+ scatter:{label:'Trace an observation',options:exampleRows.map(r=>[r.id,`${r.id} · ${r.group}: (${r.x}, ${r.value})`])},
+ histogram:{label:'Bin boundaries',options:[['wide','Width 4'],['narrow','Width 2'],['shifted','Width 3']]},
+ 'count-bars':{label:'Height represents',options:[['count','Record count'],['mean','Mean value'],['sum','Sum of values']]},
+ 'mean-bars':{label:'Height represents',options:[['count','Record count'],['mean','Mean value'],['median','Median value']]},
+ 'summary-order':{label:'Group summary order',options:[['original','A, B, C'],['ascending','Mean: smallest first'],['descending','Mean: largest first']]},
+ boxplot:{label:'Display of the same values',options:[['raw','Raw observations'],['box','Raw observations + box plot']]},
+ references:{label:'Calculated median line',options:[['x','x median'],['value','Value median'],['both','Both medians']]},
+ facets:{label:'Panel grouping',options:[['pooled','All nine rows'],['groups','One panel for each group']]}
+};
+function exploration(variant,choice,options={}){
+ const spec=explorerSpecs[variant];if(!spec||!spec.options.some(([value])=>value===choice))throw Error('Unknown teaching visual choice');
+ let art='',summary='',code='',data;
+ if(variant==='scatter'){
+  const row=exampleRows.find(r=>r.id===choice),px=40+row.x/7*435,py=175-row.value/20*150;
+  art=plotRows(exampleRows,40,25,435,150,row.id)+path(`M40 ${py}H${px}V175`,'visual-dashed');
+  summary=`${row.id}: x=${row.x} and value=${row.value} place this one observation at (${row.x}, ${row.value}). All nine rows remain plotted.`;
+  code='sns.scatterplot(data=example, x="x", y="value", ax=ax)';data={row,point:[row.x,row.value],count:exampleRows.length};
+ }else if(variant==='histogram'){
+  const edges=choice==='wide'?[0,4,8,12,16,20]:choice==='narrow'?Array.from({length:11},(_,i)=>i*2):[0,3,6,9,12,15,18,21];
+  const bins=edges.slice(0,-1).map((lo,i)=>({lo,hi:edges[i+1],rows:exampleRows.filter(r=>r.value>=lo&&(i===edges.length-2?r.value<=edges[i+1]:r.value<edges[i+1])).map(r=>r.id)}));
+  const w=420/bins.length,max=Math.max(...bins.map(b=>b.rows.length));art=axes(50,25,420,145)+et(50,17,'count')+et(29,174,'0')+bins.map((b,i)=>rect(50+i*w,170-b.rows.length/max*120,w,b.rows.length/max*120,'visual-fill')+et(50+i*w+4,162-b.rows.length/max*120,b.rows.length)+et(50+i*w,192,b.lo)).join('')+et(462,192,edges.at(-1));
+  summary=`Same nine observations. ${bins.map(b=>`[${b.lo}, ${b.hi}${b===bins.at(-1)?']':')'}: ${b.rows.length}`).join('; ')}. Left edge included; only the final right edge is included.`;
+  code=`sns.histplot(data=example, x="value", bins=[${edges.join(', ')}], ax=ax)`;data={edges,bins,count:bins.reduce((n,b)=>n+b.rows.length,0)};
+ }else if(['count-bars','mean-bars','summary-order'].includes(variant)){
+  const kind=variant==='summary-order'?(options.statistic==='median'?'median':'mean'):choice,groups=summaries(kind);
+  if(variant==='summary-order'&&choice!=='original')groups.sort((a,b)=>choice==='ascending'?a.value-b.value:b.value-a.value);
+  art=summaryBars(groups,kind==='count'?'Record count':`${kind} of value`);summary=`${groups.map(g=>`${g.group}: ${fmt(g.value)} from ${g.rows.join(', ')}`).join('; ')}. ${variant==='summary-order'?`Labels and their ${kind==='median'?'medians':'means'} move together.`:'Counting rows and calculating a value summary answer different questions.'} Original observations stay unchanged.`;
+  code=kind==='count'?'sns.countplot(data=example, x="group", ax=ax)':`summary = example.groupby("group")["value"].${kind}()\n${variant==='summary-order'&&choice!=='original'?`summary = summary.sort_values(ascending=${choice==='ascending'?'True':'False'})\n`:''}ax.bar(summary.index, summary.values)`;data={kind,groups};
+ }else if(variant==='boxplot'){
+  const values=exampleRows.map(r=>r.value),q1=q(values,.25),median=q(values,.5),q3=q(values,.75),iqr=q3-q1,fences=[q1-1.5*iqr,q3+1.5*iqr],inside=values.filter(v=>v>=fences[0]&&v<=fences[1]),outliers=exampleRows.filter(r=>r.value<fences[0]||r.value>fences[1]);
+  const px=v=>45+v/20*425;art=axes(45,25,425,145)+[0,5,10,15,20].map(n=>et(px(n)-3,192,n)).join('')+et(50,18,'value · same nine observations')+exampleRows.map((r,i)=>dot(px(r.value),66+(i%5)*12,4)+et(px(r.value)-6,58+(i%5)*12,r.id)).join('');
+  if(choice==='box')art+=path(`M${px(Math.min(...inside))} 137H${px(Math.max(...inside))}`)+rect(px(q1),121,px(q3)-px(q1),32,'visual-wash')+path(`M${px(median)} 121v32`,'visual-bold')+outliers.map(r=>dot(px(r.value),137,5,'visual-selected')).join('')+et(90,213,'Q1=2 · median=3 · Q3=6 · upper fence=12');
+  summary=choice==='raw'?'Nine marks show the nine original values, including repeated values. No records have been removed.':`Q1=${q1}, median=${median}, Q3=${q3}; whiskers end at observed values ${Math.min(...inside)} and ${Math.max(...inside)}. ${outliers.map(r=>`${r.id} (${r.value})`).join(', ')} lies beyond 1.5×IQR fences [${fences.join(', ')}]. A flag is not an instruction to delete a row.`;
+  code=choice==='raw'?'sns.stripplot(data=example, x="value", jitter=True, ax=ax)':'fig, (raw_ax, box_ax) = plt.subplots(2, 1, sharex=True)\nsns.stripplot(data=example, x="value", jitter=True, ax=raw_ax)\nsns.boxplot(data=example, x="value", whis=1.5, ax=box_ax)';data={q1,median,q3,fences,whiskers:[Math.min(...inside),Math.max(...inside)],outliers:outliers.map(r=>r.id),count:values.length};
+ }else if(variant==='references'){
+  const medianX=q(exampleRows.map(r=>r.x),.5),medianValue=q(exampleRows.map(r=>r.value),.5);art=plotRows(exampleRows);
+  if(choice!=='value')art+=path(`M${40+medianX/7*435} 25V175`,'visual-dashed');
+  if(choice!=='x')art+=path(`M40 ${175-medianValue/20*150}H475`,'visual-dashed');
+  summary=`The calculated x median is ${medianX}; the value median is ${medianValue}. ${choice==='x'?'The x benchmark becomes a vertical line.':choice==='value'?'The value benchmark becomes a horizontal line.':'Each benchmark uses its own measurement axis.'}`;
+  code=(choice!=='value'?'ax.axvline(example["x"].median(), linestyle="--")':'')+(choice==='both'?'\n':'')+(choice!=='x'?'ax.axhline(example["value"].median(), linestyle="--")':'');data={medianX,medianValue,count:exampleRows.length};
+ }else{
+  const panels=choice==='pooled'?[{group:'All',rows:exampleRows}]:['A','B','C'].map(group=>({group,rows:exampleRows.filter(r=>r.group===group)}));
+  art=choice==='pooled'?plotRows(exampleRows):panels.map((p,i)=>et(52+i*162,17,`${p.group}: ${p.rows.length} rows`)+plotRows(p.rows,38+i*162,35,125,125)).join('');
+  summary=`${panels.map(p=>`${p.group}: ${p.rows.map(r=>r.id).join(', ')}`).join('; ')}. Nine rows appear once each; every panel keeps the same x and value scales.`;code=choice==='pooled'?'sns.scatterplot(data=example, x="x", y="value", ax=ax)':'sns.relplot(data=example, x="x", y="value", col="group", kind="scatter")';data={panels:panels.map(p=>({group:p.group,rows:p.rows.map(r=>r.id)})),count:panels.reduce((n,p)=>n+p.rows.length,0)};
+ }
+ const svg=`<div class="teaching-visual-scroll" tabindex="0" role="region" aria-label="Teaching chart; scroll if needed"><svg class="concept-visual data-teaching-visual" viewBox="0 0 520 225" role="img" aria-label="${esc(summary)}"><title>${esc(summary)}</title><g>${art}</g></svg></div>`;
+ return {summary,code,svg,data};
+}
+function resultHtml(result){return result.svg+`<p>${esc(result.summary)}</p><pre><code>${esc(result.code)}</code></pre>`;}
+function interactive(v){
+ const spec=explorerSpecs[v.variant];if(!spec)return '';
+ const options={statistic:v.summaryStatistic},choices=spec.options.map(([value,label])=>[value,v.variant==='summary-order'&&v.summaryStatistic==='median'?label.replace('Mean','Median'):label]);
+ const baseline=spec.options[0][0],current=v.statistic&&spec.options.some(([value])=>value===v.statistic)?v.statistic:spec.options[1]?.[0]||baseline;
+ return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-statistic="${esc(v.summaryStatistic||'')}"><h4>Connect data to the mark</h4><p>Illustrative example · nine rows, separate from your exercise data. Group A: (x, value) = (1,2), (2,4), (3,6); B: (2,3), (4,7); C: (1,1), (3,2), (5,3), (6,18).</p><label class="teaching-visual-controls">${esc(spec.label)} <select data-visual-choice>${choices.map(([value,label])=>`<option value="${esc(value)}"${value===current?' selected':''}>${esc(label)}</option>`).join('')}</select></label><p><strong>Starting view</strong> · ${esc(exploration(v.variant,baseline,options).summary)}</p><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(exploration(v.variant,current,options))}</div><p class="teaching-note">Computed teaching example · your Run output appears beside the editor.</p></section>`;
+}
+const mounted=new WeakSet();
+function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-visual-choice]'),section=control?.closest('[data-foundation-explorer]');if(!section)return;section.querySelector('.teaching-visual-result').innerHTML=resultHtml(exploration(section.dataset.foundationExplorer,control.value,{statistic:section.dataset.visualStatistic}));});}
+const api={diagram,configure,spec,mapping,scene,interactive,mount,exploration,exampleRows,types:new Set([...Object.keys(scene),'review']),families:new Set(Object.values(scene).map(s=>s.type))};
 if(typeof module!=='undefined')module.exports=api;else root.FoundationVisuals=api;
 })(typeof window!=='undefined'?window:globalThis);

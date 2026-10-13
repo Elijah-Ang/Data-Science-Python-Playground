@@ -1,6 +1,6 @@
 /* Shared, version-pinned reference for the options used by Visualise lessons.
- * The inventory reads final assembled teaching, so later authoring overrides
- * cannot silently introduce an unexplained option. No learner state is stored.
+ * Code inventory audits final assembly; authored progression chooses current
+ * teaching. Reused syntax stays available on demand. No learner state is stored.
  */
 (function(root){
 'use strict';
@@ -182,13 +182,95 @@ function entriesFor(curriculum,lesson,round){
  const found=roundKeywords(lesson,round,curriculum);
  const groups=new Map();
  for(const item of found){const definition=lookup(item.function,item.keyword);if(!definition)continue;const group=groups.get(definition.id)||{...definition,functions:[]};if(!group.functions.includes(item.function))group.functions.push(item.function);groups.set(definition.id,group);}
+ for(const id of [...(round.parameterTeaching?.introduces||[]),...(round.parameterTeaching?.extends||[])]){
+  if(!registry[id])throw new Error(round.id+': unknown authored parameter '+id);
+  if(!groups.has(id))groups.set(id,{...registry[id],functions:[]});
+ }
  return [...groups.values()];
 }
-function render(curriculum,lesson,round){
- const entries=entriesFor(curriculum,lesson,round);if(!entries.length)return '';
- return `<section class="foundation-parameter-guide" aria-label="Chart parameter guide"><h3>Understand the options</h3><p>These reusable explanations cover the options introduced in this practice, including its setup, hint and solution. Defaults refer to Seaborn 0.13.2, Matplotlib 3.5.2 and pandas 2.2.0.</p>${entries.map(item=>`<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}"><h4><code>${esc(item.keyword)}</code> · ${esc(item.purpose)}</h4>${item.functions.some(fn=>fn!=='reference')?`<p><strong>Used in:</strong> ${item.functions.filter(fn=>fn!=='reference').map(fn=>`<code>${esc(fn)}</code>`).join(', ')}</p>`:''}<dl><dt>Accepted forms</dt><dd>${esc(item.forms)}</dd><dt>Meaningful range</dt><dd>${esc(item.range)}</dd><dt>Default</dt><dd>${esc(item.default)}</dd><dt>Effect</dt><dd>${esc(item.effect)}</dd><dt>Example</dt><dd><pre><code>${esc(item.example)}</code></pre></dd><dt>For this function</dt><dd>${esc(item.caveat)} <a href="${esc(item.source)}" target="_blank" rel="noopener">Version-matched source</a></dd></dl></section>`).join('')}</section>`;
+function guidanceFor(curriculum,lesson,round){
+ const entries=entriesFor(curriculum,lesson,round),plan=round.parameterTeaching||{introduces:[],extends:[],reuses:[],prerequisites:[]};
+ const introduces=new Set(plan.introduces),extendsSet=new Set(plan.extends),reuses=new Set(plan.reuses);
+ return {introduces:entries.filter(item=>introduces.has(item.id)),extends:entries.filter(item=>extendsSet.has(item.id)&&!introduces.has(item.id)),reminders:entries.filter(item=>reuses.has(item.id)&&!introduces.has(item.id)&&!extendsSet.has(item.id)),reference:entries,prerequisites:plan.prerequisites||[]};
 }
-const api={versions:{seaborn:'0.13.2',matplotlib:'3.5.2',pandas:'2.2.0'},sources,registry,keywords,lookup,authoredFields,inventory,entriesFor,render};
+function definition(item,level){
+ const code=`<code>${esc(item.keyword)}</code>`;
+ return `<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}" data-guidance="${level}"><h4>${code} · ${esc(item.purpose)}</h4><dl><dt>Accepted forms</dt><dd>${esc(item.forms)}</dd><dt>Useful choices</dt><dd>${esc(item.range)}</dd><dt>Default</dt><dd>${esc(item.default)}</dd><dt>Effect</dt><dd>${esc(item.effect)}</dd><dt>Small example</dt><dd><pre><code>${esc(item.example)}</code></pre></dd>${level==='reference'?`<dt>Restrictions and other choices</dt><dd>${esc(item.caveat)} <a href="${esc(item.source)}" target="_blank" rel="noopener">Version-matched source</a></dd>`:''}</dl></section>`;
+}
+function currentDefinition(item,lesson,round,level){
+ if(level==='extend'){
+  const note=extensionNotes[round.id]?.[item.id]||'Apply the familiar argument to this new chart or question; its function-specific contract is in the full reference.';
+  const example=extensionExamples[round.id]?.[item.id]||item.example;
+  return `<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}" data-guidance="extend"><h4><code>${esc(item.keyword)}</code> · What changes here</h4><p>${esc(note)}</p><pre><code>${esc(example)}</code></pre></section>`;
+ }
+ const paired=pairedIntroductions[item.id];
+ if(paired&&round.parameterTeaching?.introduces.includes(paired.after)){
+  return `<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}" data-guidance="introduce"><h4><code>${esc(item.keyword)}</code> · ${esc(paired.purpose)}</h4><p>${esc(paired.explanation)}</p><pre><code>${esc(paired.example)}</code></pre></section>`;
+ }
+ let current={...item};
+ if(item.id==='estimator'){
+  current.purpose='Choose how category measurements become one summary.';
+  current.forms='A supported statistic-name string, or a callable that returns one summary value.';
+  current.range='"mean": arithmetic average; "median": middle ordered value; "sum": total.';
+  current.effect='Each group’s measurements become one bar height. Changing the statistic changes the question the chart answers.';
+  current.example='sns.barplot(data=df, x="route", y="fare", estimator="mean", errorbar=None, ax=ax)';
+ }
+ if(item.id==='errorbar'&&lesson.id==='V09')current={...current,purpose:'Omit the optional interval for this summary comparison.',forms:'Use None to draw the summary bars without an error bar.',range:'This task uses errorbar=None. Spread and uncertainty intervals are taught in the optional point-estimate lesson.',effect:'Hides the interval around each bar; the chosen mean or median height stays the same.',example:'sns.barplot(data=df, x="route", y="fare", estimator="mean", errorbar=None, ax=ax)'};
+ let html=definition(current,level);
+ if(item.id==='estimator')html+='<table class="teaching-example-output"><caption>Same measurements: 2, 2, 8</caption><thead><tr><th scope="col">Summary</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Mean</th><td>4</td></tr><tr><th scope="row">Median</th><td>2</td></tr><tr><th scope="row">Sum</th><td>12</td></tr></tbody></table>';
+ if(item.id==='lineplot.estimator'&&lesson.id==='V18')html+='<p>Here there is one observation per time point. Each marker shows that observed value. With repeated times, the default mean combines rows; <code>estimator=None</code> keeps them separate. Choose a replicate before connecting independent repeated series.</p>';
+ return html;
+}
+// Teach both members of a related pair, while sharing their accepted forms and
+// example. This applies to authored introductions wherever that pair is used.
+const pairedIntroductions={
+ y:{after:'x',purpose:'Choose the vertical coordinate.',explanation:'Like x, y accepts a column-name string in data or an aligned vector; its default is None. Here y maps pressure_kpa to vertical position while x keeps volume_ml horizontal. Changing y changes the vertical measurement. Keep both values from the same observation.',example:'sns.scatterplot(data=df, x="volume_ml", y="pressure_kpa", ax=ax)'},
+ vmax:{after:'vmin',purpose:'Choose the upper end of the colour scale.',explanation:'vmax accepts a number or None, like vmin; None infers the upper limit from the data. For correlations, vmin=-1 and vmax=1 fix one comparable scale across charts. Changing either endpoint changes colour mapping, rather than the correlation values.',example:'sns.heatmap(matrix, vmin=-1, vmax=1, center=0, ax=ax)'},
+ xytext:{after:'xy',purpose:'Place the annotation text away from its anchor.',explanation:'Use a pair (x, y) or None. The default None places text at xy. textcoords determines the pair’s units; it defaults to xycoords. With textcoords="offset points", xytext=(0, 12) moves text 12 points above xy while leaving the measured anchor unchanged.',example:'ax.annotate("Peak", xy=(10, 20), xytext=(0, 12), textcoords="offset points")'}
+};
+const extensionExamples={
+ 'V04-3':{bins:'sns.histplot(data=df, x="weight_kg", bins=[0, 2, 5, 10], ax=ax)'},
+ 'V13-3':{order:'medians = df.groupby("bench")["reading"].median()\nranked = medians.sort_values()\norder = ranked.index'},
+ 'V11-2':{order:'ranked = medians.sort_values(ascending=False)\norder = ranked.index'},
+ 'V17-3':{size:'plotted["speed_kmh"] = plotted["distance_km"] / plotted["minutes"] * 60'},
+ 'V19-1':{'lineplot.estimator':'sns.lineplot(data=df, x="day", y="sales", estimator="mean", errorbar="sd", ax=ax)',errorbar:'errorbar="sd"'},
+ 'V10-1':{errorbar:'sns.pointplot(data=df, x="batch", y="result", estimator="mean", errorbar="sd", ax=ax)'},
+ 'V12-1':{cut:'sns.violinplot(data=df, x="group", y="measurement", cut=0, ax=ax)'},
+ 'V23-2':{axis:'row_totals = counts.sum(axis=1)\nproportions = counts.div(row_totals, axis=0)'},
+ 'V23-3':{aggfunc:'aggfunc="mean"'},
+ 'V33-1':{kind:'sns.relplot(data=df, x="minutes", y="thickness", col="workshop", kind="scatter", height=3)'},
+ 'V33-2':{kind:'sns.catplot(data=df, x="method", y="thickness", col="workshop", kind="box", height=3)'},
+ 'V33-3':{kind:'sns.relplot(data=df, x="inflow", y="outflow", col="region", kind="scatter", height=3)'}
+};
+const extensionNotes={
+ 'V04-3':{bins:'An integer chooses a count of equal-width bins. A sequence instead states the interval edges; [0, 2, 5, 10] gives three unequal-width intervals.'},
+ 'V13-3':{order:'The same plotting argument now receives the Index extracted from a sorted grouped Series, rather than a hand-written list.'},
+ 'V11-2':{order:'Median-based ordering also works with horizontal boxes. Keep category labels and their summary values paired while sorting.'},
+ 'V17-3':{size:'Calculate speed in km/h first, then map that derived numeric column to marker area.'},
+ 'V19-1':{'lineplot.estimator':'This dataset has repeated times. estimator="mean" creates one mean per time; selecting one replicate and using None creates a different, observed trajectory.',errorbar:'errorbar="sd" describes the spread of observed replicates at each time. It is not a confidence interval for the mean.'},
+ 'V10-1':{errorbar:'This optional lesson introduces the interpretation of observation-spread intervals. errorbar="sd" shows one standard deviation, rather than uncertainty about an estimate.'},
+ 'V12-1':{cut:'For a violin, cut limits the density outline beyond the observed range; it does not delete observations.'},
+ 'V23-2':{axis:'sum(axis=1) works across columns to calculate a total for each row. div(..., axis=0) instead aligns that Series by row label before dividing. They use different directions because summation and alignment are different operations.'},
+ 'V23-3':{aggfunc:'Use a measured mean inside each category-pair cell. A count of rows and a mean measurement answer different questions; missing combinations remain missing.'},
+ 'V33-1':{kind:'For relplot, kind="scatter" makes relationship panels. It does not select a univariate distribution.'},
+ 'V33-2':{kind:'catplot uses kinds such as "box" for category distributions. This is a different family from relplot’s paired relationships.'},
+ 'V33-3':{kind:'Choose relplot(kind="scatter") for inflow/outflow relationships. displot(kind="hist") would answer a different, one-variable distribution question.'}
+};
+function renderCurrent(curriculum,lesson,round){
+ const g=guidanceFor(curriculum,lesson,round);if(!g.introduces.length&&!g.extends.length)return '';
+ return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>New here</h3>${g.introduces.map(item=>currentDefinition(item,lesson,round,'introduce')).join('')}${g.extends.map(item=>currentDefinition(item,lesson,round,'extend')).join('')}</section>`;
+}
+function renderReference(curriculum,lesson,round){
+ const g=guidanceFor(curriculum,lesson,round);if(!g.reference.length)return '';
+ const reminders=g.reminders.length?`<details class="foundation-parameter-reminder"><summary>Quick reminder of familiar syntax</summary><ul>${g.reminders.map(item=>`<li><code>${esc(item.keyword)}</code>: ${esc(item.purpose)}</li>`).join('')}</ul></details>`:'';
+ return `<section class="foundation-parameter-guide" aria-label="Optional parameter help">${reminders}<details class="foundation-parameter-reference"><summary>Full parameter reference · ${g.reference.length} options</summary><p>Defaults and restrictions refer to Seaborn 0.13.2, Matplotlib 3.5.2 and pandas 2.2.0.</p>${g.reference.map(item=>definition(item,'reference')).join('')}</details></section>`;
+}
+function render(curriculum,lesson,round,{level}={}){
+ if(level==='current')return renderCurrent(curriculum,lesson,round);
+ if(level==='reference')return renderReference(curriculum,lesson,round);
+ return renderCurrent(curriculum,lesson,round)+renderReference(curriculum,lesson,round);
+}
+const api={versions:{seaborn:'0.13.2',matplotlib:'3.5.2',pandas:'2.2.0'},sources,registry,keywords,lookup,authoredFields,inventory,entriesFor,guidanceFor,renderCurrent,renderReference,render};
 if(typeof module==='object'&&module.exports)module.exports=api;
 else root.FoundationParameters=api;
 })(typeof window==='undefined'?globalThis:window);

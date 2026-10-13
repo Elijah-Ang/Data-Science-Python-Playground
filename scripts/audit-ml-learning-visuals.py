@@ -29,7 +29,11 @@ with sync_playwright() as pw:
    records.append(dict(id=c['id'],family=group,theme=theme,width=width,file=name,title=c['title']));return
   page.set_viewport_size({'width':width,'height':1000});page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
   page.evaluate('(hash)=>location.hash=hash','#'+c['deck']+'/'+c['id']+'/0');page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=c['exercises'][0]['id'])
-  page.evaluate('document.fonts.ready');figure=page.locator('.ml-concept');figure.scroll_into_view_if_needed();figure.locator('.ml-concept-scroll').evaluate('(e)=>e.scrollLeft=0')
+  page.evaluate('document.fonts.ready');figure=page.locator('.ml-concept')
+  # Model explorers are the primary teaching visual; retained schematics are
+  # optional references. Expand only that ancestor for the schematic audit.
+  figure.evaluate('(e)=>{for(let n=e.parentElement;n;n=n.parentElement)if(n.tagName==="DETAILS")n.open=true}')
+  figure.scroll_into_view_if_needed();figure.locator('.ml-concept-scroll').evaluate('(e)=>e.scrollLeft=0')
   assert not page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1'),(c['id'],width)
   clipped=figure.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox();return b.x<0||b.y<0||b.x+b.width>560.5||b.y+b.height>235.5}).map(n=>n.textContent)')
   assert not clipped,(c['id'],clipped)

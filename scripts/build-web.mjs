@@ -50,6 +50,8 @@ const files = [
   "foundations/prerequisites.js",
   "foundations/workspace.js",
   "foundations/curriculum.js",
+  "foundations/content-guidance.js",
+  "foundations/visualise-guidance.js",
   "foundations/refinements.js",
   "foundations/progression.js",
   "foundations/practical.js",

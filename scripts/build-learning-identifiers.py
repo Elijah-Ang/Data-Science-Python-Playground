@@ -1,4 +1,8 @@
-"""Authored code-name contexts for Learn / Refresh; no learner-code inspection."""
+"""Build scoped identifier semantics from the authored curriculum, never learner state.
+
+Code supplies a conservative fallback; ``identifiers`` metadata and occurrence
+overrides supply the authority for ambiguous prose. See code-identifiers.js.
+"""
 import argparse
 import ast
 import json
@@ -6,6 +10,74 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+ROLE_FIELDS = {
+    'inputColumns': ('column', 'input'),
+    'derivedColumns': ('column', 'derived'),
+    'outputColumns': ('column', 'output'),
+    'columns': ('column', ''),
+    'variables': ('variable', ''),
+    'suppliedObjects': ('variable', 'supplied'),
+    'createdObjects': ('variable', 'created'),
+    'exampleVariables': ('variable', 'example'),
+    'functions': ('function', ''),
+    'parameters': ('parameter', ''),
+    'operations': ('operation', ''),
+    'literals': ('literal', ''),
+    'prose': ('prose', ''),
+    'keys': ('key', ''),
+    'files': ('file', ''),
+}
+
+
+def authored_metadata(owner):
+    """Normalize role arrays/maps without guessing roles from teaching prose."""
+    metadata = owner.get('identifiers', {}) if isinstance(owner, dict) else {}
+    if not metadata:
+        return {}
+    semantics = {}
+    occurrences = []
+    if isinstance(metadata, list):
+        entries = metadata
+    else:
+        entries = metadata.get('names', [])
+        for field, (role, kind) in ROLE_FIELDS.items():
+            for name in metadata.get(field, []):
+                semantics[name] = dict(role=role, **({'kind': kind} if kind else {}))
+        # Name maps make a single ambiguous identifier convenient to author.
+        for name, meaning in metadata.get('semantics', {}).items():
+            semantics[name] = dict(role=meaning) if isinstance(meaning, str) else meaning
+        occurrences = metadata.get('occurrences', [])
+    for entry in entries:
+        if isinstance(entry, dict) and entry.get('name') and entry.get('role'):
+            semantics[entry['name']] = {k: v for k, v in entry.items() if k != 'name'}
+    result = {'semantics': semantics} if semantics else {}
+    if occurrences:
+        result['occurrences'] = occurrences
+    return result
+
+
+def merge_metadata(*contexts):
+    result = {}
+    for context in contexts:
+        if context.get('semantics'):
+            result.setdefault('semantics', {}).update(context['semantics'])
+        if context.get('occurrences'):
+            result.setdefault('occurrences', []).extend(context['occurrences'])
+    return result
+
+
+def worked_code(owner):
+    """Read executable worked examples, not descriptive concept metadata."""
+    if not isinstance(owner, dict):
+        return []
+    result = []
+    for field in ('example', 'exampleCode', 'syntaxCode', 'code', 'referenceCode'):
+        if isinstance(owner.get(field), str):
+            result.append(owner[field])
+    for field in ('guide', 'teaching'):
+        result.extend(worked_code(owner.get(field)))
+    return result
 
 
 def registry():
@@ -17,9 +89,12 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
     datasets = json.loads((ROOT / 'ml-learning/datasets.json').read_text())
     result = {}
 
-    def add(item, columns, supplied_tables=()):
+    def add(item, columns, supplied_tables=(), lesson=None):
         variables = set(item.get('outputs', []))
-        columns = set(columns)
+        input_columns = set(columns)
+        columns = set(input_columns)
+        derived_columns, output_columns, example_variables = set(), set(), set()
+        functions, parameters, operations = set(), set(), set()
         keys = set()
         frames = {'df', 'X', 'X_train', 'X_test', 'X_valid', *supplied_tables}
         containers = {}
@@ -27,9 +102,11 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
         instruction_objects = {'df', *item.get('outputs', []), *(entry['name'] for entry in item.get('contract', [])), *supplied_tables}
         if item.get('target') == 'copy':
             instruction_objects.add('clean')
-        for field in ('setup', 'starter', 'solution', 'reference'):
+        code_fields = [(field, item.get(field) or '') for field in ('setup', 'starter', 'solution', 'reference')]
+        code_fields += [('example', code) for code in worked_code(lesson) + worked_code(item)]
+        for field, code in code_fields:
             try:
-                tree = ast.parse(item.get(field) or '')
+                tree = ast.parse(code)
             except SyntaxError:
                 continue  # Deliberate starter blanks are not reference code.
             if field == 'setup':
@@ -53,7 +130,7 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
                 if isinstance(value, ast.Call) and isinstance(value.func, ast.Attribute):
                     if value.func.attr in ('DataFrame', 'read_csv'):
                         return True
-                    if value.func.attr in ('copy', 'head', 'tail', 'sample', 'drop', 'dropna', 'rename', 'assign', 'sort_values', 'reset_index', 'set_index', 'select_dtypes'):
+                    if value.func.attr in ('copy', 'head', 'tail', 'sample', 'drop', 'dropna', 'rename', 'assign', 'sort_values', 'reset_index', 'set_index', 'select_dtypes', 'groupby', 'agg', 'melt', 'pivot', 'pivot_table'):
                         return frame_expression(value.func.value)
                 if isinstance(value, ast.Attribute) and value.attr in ('loc', 'iloc'):
                     return frame_expression(value.value)
@@ -81,9 +158,63 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
             for node in ast.walk(tree):
                 if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
                     variables.add(node.id)
+                    if field == 'example':
+                        example_variables.add(node.id)
                 if isinstance(node, ast.Subscript) and isinstance(node.ctx, ast.Store):
                     if isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str):
-                        (columns if frame_expression(node.value) else keys).add(node.slice.value)
+                        if frame_expression(node.value):
+                            columns.add(node.slice.value)
+                            derived_columns.add(node.slice.value)
+                        else:
+                            keys.add(node.slice.value)
+                    elif isinstance(node.value, ast.Attribute) and node.value.attr == 'loc' and frame_expression(node.value) and isinstance(node.slice, ast.Tuple) and len(node.slice.elts) == 2:
+                        selected_columns = labels(node.slice.elts[1])
+                        columns.update(selected_columns)
+                        derived_columns.update(selected_columns)
+                if isinstance(node, ast.Call):
+                    if isinstance(node.func, ast.Attribute):
+                        function = node.func.attr
+                        functions.add(function)
+                        if isinstance(node.func.value, ast.Name):
+                            functions.add(node.func.value.id + '.' + function)
+                    elif isinstance(node.func, ast.Name):
+                        function = node.func.id
+                        functions.add(function)
+                    else:
+                        function = ''
+                    for keyword in node.keywords:
+                        if not keyword.arg:
+                            continue
+                        # pandas named aggregation is output authoring, not an
+                        # arbitrary keyword parameter named mean_amount.
+                        named_agg = function == 'agg' and isinstance(keyword.value, ast.Tuple) and len(keyword.value.elts) == 2
+                        if named_agg:
+                            columns.add(keyword.arg)
+                            output_columns.add(keyword.arg)
+                            operations.update(labels(keyword.value.elts[1]))
+                        else:
+                            parameters.add(keyword.arg)
+                        if function == 'melt' and keyword.arg in ('var_name', 'value_name'):
+                            output_columns.update(labels(keyword.value))
+                            columns.update(labels(keyword.value))
+                        if function in ('to_frame', 'reset_index') and keyword.arg == 'name':
+                            output_columns.update(labels(keyword.value))
+                            columns.update(labels(keyword.value))
+                        if function == 'assign':
+                            derived_columns.add(keyword.arg)
+                            columns.add(keyword.arg)
+                        if function == 'rename' and keyword.arg == 'columns' and isinstance(keyword.value, ast.Dict):
+                            output_columns.update(label for value in keyword.value.values for label in labels(value))
+                            columns.update(output_columns)
+                        if keyword.arg in ('aggfunc', 'estimator'):
+                            operations.update(labels(keyword.value))
+                    if function in ('agg', 'aggregate', 'transform') and node.args:
+                        operations.update(labels(node.args[0]))
+                        if isinstance(node.args[0], ast.Dict):
+                            operations.update(operation for value in node.args[0].values for operation in labels(value))
+                    if function == 'insert' and len(node.args) >= 2 and isinstance(node.func, ast.Attribute) and frame_expression(node.func.value):
+                        derived_columns.update(labels(node.args[1]))
+                        columns.update(labels(node.args[1]))
                 if isinstance(node, ast.Dict):
                     keys.update(k.value for k in node.keys if isinstance(k, ast.Constant) and isinstance(k.value, str))
                 if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) and node.func.attr == 'DataFrame':
@@ -96,11 +227,48 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
                         columns.update(containers.get(node.args[0].id, set()))
                     if node.args and isinstance(node.args[0], ast.ListComp) and isinstance(node.args[0].elt, ast.Dict):
                         columns.update(k.value for k in node.args[0].elt.keys if isinstance(k, ast.Constant) and isinstance(k.value, str))
-        result[item['id']] = dict(columns=sorted(columns), variables=sorted(variables), keys=sorted(keys - columns - variables), instructionObjects=sorted(instruction_objects))
+        output_columns.update(columns - input_columns - derived_columns)
+        metadata = merge_metadata(authored_metadata(lesson), authored_metadata(item))
+        # Observation units are authored descriptions of real-world entities,
+        # not field references. A stone/sample/ticket ID can share that noun.
+        # Preserve the structured row-unit phrase wherever a task uses it.
+        unit = item.get('observationUnit')
+        if isinstance(unit, str) and unit:
+            metadata = merge_metadata(metadata, {'occurrences': [
+                {'text': unit, 'role': 'prose', 'before': prefix, 'scope': 'task'}
+                for prefix in ('Each row is ', 'Each row represents ', 'Each observation is ', 'Each observation represents ')
+            ]})
+        scopes = {}
+        for scope, owner in [('guide', (lesson or {}).get('guide')), ('teaching', item.get('teaching'))]:
+            scoped = authored_metadata(owner)
+            if scoped:
+                scopes[scope] = scoped
+        for owner in (lesson or {}, item):
+            identifiers = owner.get('identifiers', {})
+            if isinstance(identifiers, dict):
+                for scope, scoped in identifiers.get('scopes', {}).items():
+                    scopes[scope] = merge_metadata(scopes.get(scope, {}), authored_metadata({'identifiers': scoped}))
+        # Keep old flat arrays for consumers and diagnostics. Explicit metadata
+        # wins in the renderer even when code has the same name in another role.
+        for name, meaning in metadata.get('semantics', {}).items():
+            if meaning['role'] == 'column':
+                columns.add(name)
+                {'input': input_columns, 'derived': derived_columns, 'output': output_columns}.get(meaning.get('kind'), set()).add(name)
+            if meaning['role'] == 'variable':
+                variables.add(name)
+                if meaning.get('kind') == 'example':
+                    example_variables.add(name)
+        result[item['id']] = dict(columns=sorted(columns), variables=sorted(variables), keys=sorted(keys - columns - variables), instructionObjects=sorted(instruction_objects),
+                                inputColumns=sorted(input_columns), derivedColumns=sorted(derived_columns), outputColumns=sorted(output_columns),
+                                exampleVariables=sorted(example_variables), functions=sorted(functions), parameters=sorted(parameters), operations=sorted(operations), **metadata)
+        if scopes:
+            result[item['id']]['scopes'] = scopes
 
+    lessons_by_id = {lesson['id']: lesson for lesson in data['curriculum']['lessons']}
     for lesson in data['curriculum']['lessons']:
         for item in lesson['rounds']:
-            add(item, data['curriculum']['datasets'][item['dataset']]['columns'])
+            teaching_source = lessons_by_id.get(item.get('retrieves'), lesson)
+            add(item, data['curriculum']['datasets'][item['dataset']]['columns'], lesson=teaching_source)
     for item in data['challenges']:
         add(item, [key for source in item['inputs'] for key in source.get('columns', {})], [source.get('name', '') for source in item['inputs']])
     for card in ml['cards']:
@@ -109,7 +277,7 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
             cols = dataset.get('columns', [])
             cols = list(cols) if isinstance(cols, dict) else cols
             cols += [entry[0] for entry in item.get('dictionary', [])]
-            add(item, cols)
+            add(item, cols, lesson=card)
     for challenge in ml['challenges']:
         item = dict(challenge['exercise'], id=challenge['id'])
         cols = [entry[0] for entry in item.get('dictionary', [])]

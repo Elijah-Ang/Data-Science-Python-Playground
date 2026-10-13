@@ -25,7 +25,7 @@
     "check:statistics": "python3 -m unittest discover -s statistics/tests -p \"test_*.py\"",
     "check:ml-learning": "node scripts/sync-ml-workflows.mjs --check && node tests/test_ml_learning_manifest.mjs && node tests/test_ml_learning_collections.mjs && node tests/test_ml_learning_content.mjs && node tests/test_ml_learning_receipts.mjs && node scripts/audit-ml-learning.mjs --check && python3 scripts/audit-ml-learning-help.py && python3 tests/test_ml_learning_visual_audit.py",
     "check:ml-mastery": "python3 tests/test_ml_learning_mastery.py",
-    "check:learning-pages": "python3 scripts/build-learning-identifiers.py --check && node tests/test_learning_pages.mjs && node tests/test_code_identifiers.mjs && node tests/test_learning_language.mjs && node tests/test_foundations_prerequisites.mjs"
+    "check:learning-pages": "python3 scripts/build-learning-identifiers.py --check && node tests/test_learning_pages.mjs && node tests/test_code_identifiers.mjs && node tests/test_learning_language.mjs && node tests/test_foundations_prerequisites.mjs && node tests/test_foundations_guidance.mjs && node tests/test_teaching_visual_interactions.mjs && python3 tests/test_ml_curriculum_coherence.py"
   },
   "dependencies": {
     "@capacitor/browser": "8.0.4",

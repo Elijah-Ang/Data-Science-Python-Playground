@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-13",
+  "formatter": "Black 25.1.0",
+  "snippetsChecked": 597,
+  "formattedMappings": 178,
+  "changedFields": [
+    {
+      "id": "V17",
+      "field": "syntaxCode",
+      "before": "sns.scatterplot(data=df, x=\"seconds\", y=\"signal\", hue=\"instrument\", style=\"instrument\", ax=ax)",
+      "after": "sns.scatterplot(\n    data=df, x=\"seconds\", y=\"signal\", hue=\"instrument\", style=\"instrument\", ax=ax\n)",
+      "astUnchanged": true
+    },
+    {
+      "id": "V17-2",
+      "field": "solution",
+      "before": "import matplotlib.pyplot as plt\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"seconds\", y=\"signal\", hue=\"instrument\", style=\"instrument\",\n    size=\"area_cm2\", ax=ax)\nax.set(title=\"Observatory exposures\", xlabel=\"seconds\", ylabel=\"signal\")\nfig.tight_layout()\nplt.show()",
+      "after": "import matplotlib.pyplot as plt\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(\n    data=df,\n    x=\"seconds\",\n    y=\"signal\",\n    hue=\"instrument\",\n    style=\"instrument\",\n    size=\"area_cm2\",\n    ax=ax,\n)\nax.set(title=\"Observatory exposures\", xlabel=\"seconds\", ylabel=\"signal\")\nfig.tight_layout()\nplt.show()",
+      "astUnchanged": true
+    }
+  ],
+  "changedSolutionCount": 1,
+  "changedStarterCount": 0,
+  "changedExampleCount": 0,
+  "changedSetupCount": 0,
+  "methodology": "Compare exact final field strings and independent Python ASTs before/after regeneration; no algorithm or data changes."
+}

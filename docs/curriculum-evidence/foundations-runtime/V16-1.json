@@ -1,0 +1,644 @@
+{
+  "id": "V16-1",
+  "sourceId": "V16",
+  "sourceRound": 1,
+  "retrieves": null,
+  "exercise": {
+    "id": "V16-1",
+    "label": "Follow",
+    "dataset": "air_chambers",
+    "task": "How does measured pressure vary with chamber volume? Each row is one paired chamber test. Use the rows specified below from df. The setup creates an empty labelled ax. Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig.",
+    "solution": "sns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+    "starter": "____(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+    "hint": "Preserve row pairing when mapping two physical measurements.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter"
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "relationship",
+      "variant": "scatter",
+      "label": "Concept sketch: one point per pair of numeric values"
+    },
+    "demand": "Preserve row pairing when mapping two physical measurements.",
+    "steps": [
+      "How does measured pressure vary with chamber volume?",
+      "Each row is one paired chamber test. Use the rows specified below from df.",
+      "The setup creates an empty labelled ax.",
+      "Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig."
+    ],
+    "requiredKeywords": [],
+    "setupDescription": "An empty labelled Axes for chamber pairs.",
+    "decision": "Preserve row pairing when mapping two physical measurements.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle"
+    ],
+    "fixtureFeature": "Scrambled volumes and pressures catch independently sorted coordinates; these are measured associations, not causal evidence.",
+    "question": "How does measured pressure vary with chamber volume?",
+    "contextPlot": {
+      "x": "volume_ml",
+      "y": "pressure_kpa",
+      "title": "Air chamber tests",
+      "xlabel": "volume_ml",
+      "ylabel": "pressure_kpa"
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one paired chamber test",
+    "datasetRationale": "Scrambled volumes and pressures catch independently sorted coordinates; these are measured associations, not causal evidence.",
+    "parameterTeaching": {
+      "introduces": [
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "prerequisites": [
+        "V02",
+        "I07"
+      ]
+    },
+    "concepts": {
+      "introduces": [
+        "seaborn.scatterplot",
+        "seaborn.data-mapping"
+      ],
+      "reuses": [
+        "matplotlib.figure-axes",
+        "matplotlib.labels"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V02",
+        "I07"
+      ]
+    },
+    "stageSummary": "Plot paired measurements.",
+    "brief": {
+      "question": "How does measured pressure vary with chamber volume?",
+      "rows": "Each row is one paired chamber test. Use the rows specified below from df.",
+      "result": "The setup creates an empty labelled ax.",
+      "constraints": [
+        "Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "test",
+        "volume_ml",
+        "pressure_kpa"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [
+        [
+          "sns.scatterplot(...)",
+          "Draw one point for each record."
+        ],
+        [
+          "data=df",
+          "Read the values from df."
+        ],
+        [
+          "x=\"volume_ml\"",
+          "Use volume_ml for each point’s horizontal position."
+        ],
+        [
+          "y=\"pressure_kpa\"",
+          "Use pressure_kpa from the same row for its vertical position."
+        ],
+        [
+          "ax=ax",
+          "Draw on the supplied, already labelled Axes."
+        ]
+      ],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "changed": "Plot paired measurements.",
+      "why": "Preserve row pairing when mapping two physical measurements.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "test": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "volume_ml": [
+      9,
+      3,
+      6,
+      12,
+      4,
+      8
+    ],
+    "pressure_kpa": [
+      20,
+      42,
+      29,
+      18,
+      36,
+      24
+    ]
+  },
+  "inputSHA256": "0f9481549cbdc670454e89e9cc7b8f8fc7c4a0ae68500327d182edaaa3b6f226",
+  "visibleWorkspaceSHA256": "f9e15d2e4fe838d56b57f27815abe18c27c4931985649e4e08ee0df8877522a5",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\n____(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+  "context": "An empty labelled Axes for chamber pairs. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
+    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
+    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "sns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "8a7c109cd343d3da9189f36e9db813477ac4e385c393602fd98a7b4228218c5a",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.188,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "93e99b6082a876653c887cf3b832ec14fb495eb898cb04ab303d639b08197e3e",
+          "bytes": 15205,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "f9e15d2e4fe838d56b57f27815abe18c27c4931985649e4e08ee0df8877522a5",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.179,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "93e99b6082a876653c887cf3b832ec14fb495eb898cb04ab303d639b08197e3e",
+          "bytes": 15205,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V16-1-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nobservations = df\nobservations = observations.sort_values('pressure_kpa', ascending=False)\nax.scatter(x=observations['volume_ml'], y=observations['pressure_kpa'])\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "9c3b0ca4e0335f0054d86a02f0a06daebf8caa699c39cc914548a22c85236fd8",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.186,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "60a65920bd3b8cc4692d5894f67cccf58c5279e6b94d8e29bd15d3f502bfce8c",
+          "bytes": 15325,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V16-1-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "ebfb7e41bc09abf2edf53cad0c8aef4a575628e4047e75f07a109f7ef54166f9",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.181,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "ab911353c71c346929a6c3fc5bc5f35b3d1db010a45b83ef4918808fce10bf03",
+          "bytes": 14765,
+          "width": 602,
+          "height": 431,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "swapped_axis_mapping",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nobservations=df\nax.scatter(observations['pressure_kpa'], observations['volume_ml'])\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "44cba8eadf4ca3ea315abca5bbc4806f9c40ed9abff02f107d7c50c0d0dbd448",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.241,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "121159df27c19d1e2e33a65f8b717aef19ffcb4f71401962daa5f9c7fccf4195",
+          "bytes": 14626,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_observations",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nobservations=(df).iloc[:2]\nax.scatter(observations['volume_ml'], observations['pressure_kpa'])\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "7a88deb8e42a3914ee0037a9327a90b88a39e481864ed9c3f69978e096cdd263",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.249,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "154a6f825e2d569974d5ad04ca9fa5ff8b8c9bab52e0afa3920d27156dd88ba1",
+          "bytes": 14496,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "1dea45c604a9fc03f7a1f2e449655ab24b664eb914aec86f730f41fee277e349",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.177,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'air chamber tests'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "53c45a97a6eed96c58ac83d3c9917c85fec434b245f9520afcb1e1b069bfe0cc",
+          "bytes": 15115,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "9c9dd771500571d6c645d9410b040fe33bb78b2a935d0594c27a4a07be35b455",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.192,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "08e752222add596bfae48afcbf662a89b283acbf740d0441960bddd9328add73",
+          "bytes": 15212,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['pressure_kpa'] = df['pressure_kpa'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "b7fffcb40388f2c76ce7196dffc101e326b737c5b8549e9ec934d1a33535ac1a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.191,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "13430c6764c880fdecf40a19855d178a07d6b6e76c488e2b1d72a1baae17c764",
+          "bytes": 16267,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "50ae2d9fadda48ba781c3ac615e254a0fcd846e7e4b1118cc3946cfba4aae5f7",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.295,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "93e99b6082a876653c887cf3b832ec14fb495eb898cb04ab303d639b08197e3e",
+          "bytes": 15205,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "93e99b6082a876653c887cf3b832ec14fb495eb898cb04ab303d639b08197e3e",
+          "bytes": 15205,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "f9e15d2e4fe838d56b57f27815abe18c27c4931985649e4e08ee0df8877522a5",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.229,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Air chamber tests",
+          "sha256": "93e99b6082a876653c887cf3b832ec14fb495eb898cb04ab303d639b08197e3e",
+          "bytes": 15205,
+          "width": 649,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

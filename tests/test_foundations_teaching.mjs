@@ -19,7 +19,7 @@ for(const lesson of curriculum.lessons){
     assert(model.guide.noteTitle,round.id+' has a named teaching callout');
     const html=teaching.intro(curriculum,lesson,round);
     assert(model.source.guide,round.id+' has an authored guide');
-    assert(html.includes('A small example')&&!html.includes('What each choice does'),round.id);
+    assert((html.includes('A small example')||html.includes('teaching-explorer')||html.includes('teaching-chart-choices')||model.source.deck==='visualise'&&html.includes('concept-visual'))&&!html.includes('What each choice does'),round.id);
     assert(!html.includes('<details')&&!html.includes('>undefined<'),round.id+' essential explanations are visible');
     assert(!html.includes('teaching-route')&&!html.includes('teaching-tools'),round.id+' one reading path');
     assert(model.source.guide.choices.length>=2 && model.source.guide.choices.length<=4,round.id);
@@ -29,6 +29,13 @@ for(const lesson of curriculum.lessons){
       assert.equal((syntax.match(/<dt>/g)||[]).length,lesson.syntax.length,round.id);
       assert.equal((syntax.match(/<details/g)||[]).length,lesson.syntaxLater?.length?1:0,round.id);
       assert(syntax.includes('syntax-choice-callout'),round.id);
+    }
+    if(round.syntaxGuidance){
+      const guided=teaching.syntax(lesson,round);
+      const entries=[...round.syntaxGuidance.current,...round.syntaxGuidance.reminders,...round.syntaxGuidance.reference];
+      assert.equal((guided.match(/<dt>/g)||[]).length,entries.length,round.id+' renders authored syntax guidance');
+      assert(!/<details[^>]*\bopen\b/.test(guided),round.id+' familiar syntax stays collapsed');
+      if(round.syntaxGuidance.reminders.length)assert(guided.includes('quick reminder'),round.id+' reminder remains discoverable');
     }
     count++;
   }
@@ -82,7 +89,7 @@ assert(qcut.includes('Tied values at a boundary')&&qcut.includes('qcut chooses b
 assert(bins.rounds[1].solution.includes('pd.qcut')&&bins.rounds[1].task.includes('sample-quantile'));
 assert.equal(teaching.transition(bins.rounds[0]),'');
 const transitions=curriculum.lessons.flatMap(l=>l.rounds.filter(r=>r.teaching));
-assert.deepEqual(transitions.map(r=>r.id),['I02-3','I06-2','I10-2','I10-3','I12-3','I14-2','I16-2','I16-3','I19A-3','W08-2','W09-2','W10-2','W15-3','W26-2','W28-2','W28-3','V04-2','V04-3','V08-2','V13-3','V25-3','V23-2','V32-2','V33-2','V33-3']);
+assert.deepEqual(transitions.map(r=>r.id),['I02-3','I06-2','I10-2','I10-3','I12-3','I14-2','I16-2','I16-3','I19A-3','W08-2','W09-2','W10-2','W15-3','W26-2','W28-2','W28-3','V04-2','V04-3','V08-2','V13-3','V17-2','V17-3','V25-3','V23-2','V32-2','V33-2','V33-3']);
 for(const round of transitions){
   const panel=teaching.transition(round);
   assert(panel.includes('A small example')&&panel.includes('What each part does'),round.id);

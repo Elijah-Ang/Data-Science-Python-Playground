@@ -1,6 +1,6 @@
 {
-  "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "bf52cd47f9ec9c969d5db0a644b78ebadc4a93e4ad0cecb3570faf673464270c",
+  "commit": "curriculum-coherence-2026-10-13",
+  "sha256": "b8c742654803f15541363c179c047f26a9b181c84f65ca6f128e559681e0cbbc",
   "cards": 110,
   "lessons": 93,
   "reviews": 17,
@@ -1810,5 +1810,11 @@
     ],
     "addedPractices": 12,
     "preservedOriginalPractices": 326
-  }
+  },
+  "previousBaseline": {
+    "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
+    "sha256": "bf52cd47f9ec9c969d5db0a644b78ebadc4a93e4ad0cecb3570faf673464270c"
+  },
+  "review": "docs/curriculum-coherence.md",
+  "reviewedFromCommit": "8a72b291a3c4"
 }

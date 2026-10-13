@@ -2,10 +2,12 @@
 import argparse,json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-p=argparse.ArgumentParser();p.add_argument('--base-url',default='http://127.0.0.1:8010');p.add_argument('--engine',default='chromium');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--base-url',default='http://127.0.0.1:8010');p.add_argument('--engine',default='chromium');p.add_argument('--executable-path',help='Use an installed browser executable.');args=p.parse_args()
 out=Path('tests/evidence/foundations/visual-audit');out.mkdir(parents=True,exist_ok=True)
 with sync_playwright() as pw:
- browser=getattr(pw,args.engine).launch();page=browser.new_page(viewport={'width':1400,'height':1000})
+ launch={'executable_path':args.executable_path} if args.executable_path else {}
+ browser=getattr(pw,args.engine).launch(**launch);page=browser.new_page(viewport={'width':1400,'height':1000},reduced_motion='reduce')
+ errors=[];page.on('pageerror',lambda error:errors.append(str(error)))
  page.goto(args.base_url+'/data-foundations.html')
  page.wait_for_function('window.FoundationsCurriculum && window.FoundationVisuals')
  # Inspect geometry of each SVG at the actual card width and narrow mobile width.
@@ -27,23 +29,82 @@ with sync_playwright() as pw:
     })''')
     failures.extend([{'width':width,'theme':theme,'deck':deck,**b} for b in bad])
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
- # Practice rounds show either the authored new-method worked example or the
- # stage-specific concept visual beside their retained reference.
+ # Essential stage teaching remains visible. The source concept is retained in
+ # an optional closed reference; expand it only when inspecting that reference.
  for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facet-hist'),('#inspect/IR2/1','loc')]:
   page.evaluate('(route)=>{location.hash=route}',route)
   page.wait_for_function('''(route)=>LearningRoutes.route('data',location,document.body)===route.replace(/^#/,'')
    && document.querySelector('.foundation-practices [aria-current=step] strong')?.textContent===FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])].label
-   && !!document.querySelector('.foundation-practice-brief')''',arg=route)
-  round=page.evaluate('''route=>{const r=FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])];return {variant:r.visual.variant,teaching:r.teaching||null}}''',route)
-  assert round['variant']==variant
-  if round['teaching']:
-   assert page.locator('.teaching-reference').count()==0
-   assert page.locator('.teaching-transition').is_visible()
-   assert page.locator('.teaching-transition pre').inner_text()==round['teaching']['code']
-   assert page.locator('.teaching-transition .teaching-example-output' if round['teaching'].get('output') else '.teaching-transition .teaching-example-result').is_visible()
+   && !!document.querySelector('.foundation-task-reminder')''',arg=route)
+  round_data=page.evaluate('''route=>{const r=FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])];return {variant:r.visual.variant,teaching:r.teaching||null}}''',route)
+  assert round_data['variant']==variant
+  reference=page.locator('.foundation-reference-content .teaching-reference')
+  assert reference.count()==1 and reference.get_attribute('open') is None
+  if round_data['teaching']:
+   transition=page.locator('.foundation-content:not(.foundation-reference-content) .teaching-transition')
+   assert transition.is_visible()
+   assert transition.locator('pre').first.inner_text()==round_data['teaching']['code']
+   assert transition.locator('.teaching-example-output' if round_data['teaching'].get('output') else '.teaching-example-result').is_visible()
   else:
-   visual=page.locator('.teaching-reference .concept-visual')
+   visual=page.locator('.foundation-content:not(.foundation-reference-content) .concept-visual')
    assert visual.is_visible() and visual.get_attribute('data-visual')==variant
+  reference.locator('summary').first.click()
+  visual=reference.locator('.concept-visual')
+  assert visual.is_visible() and visual.get_attribute('data-visual')==variant
+  reference.locator('summary').first.click()
+  assert not visual.is_visible()
+ # The same source-backed example replaces a miniature on these primary views.
+ # Check every native option through the mounted app at all existing audit widths
+ # and themes, including exact data-linked results and readable SVG text.
+ explorer_checks=[]
+ cases=[('#inspect/I19S/0','summary-order','medians move together'),
+        ('#visualise/V04/0','histogram','[18, 21]: 1'),
+        ('#visualise/V08/0','count-bars','C: 24'),
+        ('#visualise/V09/0','mean-bars','C: 2.5'),
+        ('#visualise/V11/0','boxplot','Q1=2, median=3, Q3=6'),
+        ('#visualise/V16/0','scatter','x=6 and value=18'),
+        ('#visualise/V27/0','references','x median is 3'),
+        ('#visualise/V33/0','facets','C: r6, r7, r8, r9')]
+ for width in [1400,834,320]:
+  page.set_viewport_size({'width':width,'height':1000})
+  for theme in ['light','dark']:
+   page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
+   for route,variant,expected in cases:
+    page.evaluate('(route)=>location.hash=route',route)
+    page.wait_for_function('''([route,variant])=>LearningRoutes.route('data',location,document.body)===route.replace(/^#/,'')&&!!document.querySelector('[data-foundation-explorer="'+variant+'"]')''',arg=[route,variant])
+    explorer=page.locator('[data-foundation-explorer="'+variant+'"]')
+    assert explorer.is_visible()
+    control=explorer.locator('[data-visual-choice]')
+    assert control.evaluate('e=>e.labels.length')==1
+    height=control.evaluate('e=>e.getBoundingClientRect().height')
+    if height<44:failures.append({'route':route,'width':width,'theme':theme,'touchTargetHeight':height})
+    options=control.locator('option').evaluate_all('(items)=>items.map(e=>e.value)')
+    baseline=explorer.locator(':scope > p').nth(1).inner_text()
+    summaries=[]
+    for option in options:
+     control.select_option(option)
+     summaries.append(explorer.locator('.teaching-visual-result').inner_text())
+     assert explorer.locator(':scope > p').nth(1).inner_text()==baseline
+     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
+     bad=explorer.locator('svg').evaluate('''svg=>{const b=svg.viewBox.baseVal;return [...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>b.width+.5||r.y<0||r.y+r.height>b.height+.5}).map(t=>t.textContent)}''')
+     assert not bad,(route,width,theme,bad)
+    assert len(set(summaries))==len(options),(route,'every option has a distinct result')
+    assert expected in summaries[-1],(route,summaries[-1])
+    assert explorer.locator('.teaching-visual-result').get_attribute('aria-live')=='polite'
+    # Canvas resolves CSS color-mix and named colors to actual RGB pixels.
+    contrast=explorer.locator('svg').evaluate('''svg=>{
+      const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const c=canvas.getContext('2d');
+      const backing=getComputedStyle(svg.closest('.teaching-explorer')).backgroundColor;
+      const rgb=color=>{c.clearRect(0,0,1,1);c.fillStyle=backing;c.fillRect(0,0,1,1);c.fillStyle=color;c.fillRect(0,0,1,1);return [...c.getImageData(0,0,1,1).data].slice(0,3)};
+      const lum=color=>rgb(color).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+      const bg=lum(getComputedStyle(svg).backgroundColor);
+      return Math.min(...[...svg.querySelectorAll('text')].map(t=>{const fg=lum(getComputedStyle(t).fill);return (Math.max(fg,bg)+.05)/(Math.min(fg,bg)+.05)}));
+    }''')
+    assert contrast>=4.5,(route,theme,'SVG text contrast',contrast)
+    if route.startswith('#visualise/'):
+     workflow=page.locator('.foundation-reference-content .teaching-full-workflow')
+     assert workflow.count()==1 and workflow.get_attribute('open') is None
+    explorer_checks.append({'route':route,'width':width,'theme':theme,'options':len(options),'contrast':round(contrast,2)})
  # Contact sheets contain every card at a consistent readable size in both themes.
  page.set_viewport_size({'width':1280,'height':1000})
  for theme in ['light','dark']:
@@ -58,8 +119,8 @@ with sync_playwright() as pw:
  for theme in ['light','dark']:
   page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
   page.evaluate('''()=>{
-   const cards=new Set(FoundationsCurriculum.lessons.map(l=>l.visual.variant)),seen=new Set();
-   document.querySelector('#foundationsMain').innerHTML='<div id="atlas" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'+FoundationsCurriculum.lessons.flatMap(l=>l.rounds.map(r=>({l,r}))).filter(({r})=>!cards.has(r.visual.variant)&&!seen.has(r.visual.variant)&&seen.add(r.visual.variant)).map(({l,r})=>'<div data-deck="'+l.deck+'" style="padding:8px;background:var(--panel)"><p>'+l.id+' · '+r.label+'</p>'+FoundationVisuals.diagram(r.visual)+'</div>').join('')+'</div>';
+   const cards=new Set(FoundationsCurriculum.lessons.map(l=>JSON.stringify(l.visual))),seen=new Set();
+   document.querySelector('#foundationsMain').innerHTML='<div id="atlas" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">'+FoundationsCurriculum.lessons.flatMap(l=>l.rounds.map(r=>({l,r}))).filter(({r})=>{const key=JSON.stringify(r.visual);return !cards.has(key)&&!seen.has(key)&&seen.add(key)}).map(({l,r})=>'<div data-deck="'+l.deck+'" style="padding:8px;background:var(--panel)"><p>'+l.id+' · '+r.label+'</p>'+FoundationVisuals.diagram(r.visual)+'</div>').join('')+'</div>';
   }''')
   page.locator('#atlas').screenshot(path=str(out/f'{args.engine}-{theme}-alternate-rounds.png'))
   for item in page.locator('.concept-visual').evaluate_all('''els=>els.flatMap(svg=>[...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>260||r.y<0||r.y+r.height>108}).map(t=>({visual:svg.dataset.visual,text:t.textContent})))'''):
@@ -75,12 +136,19 @@ with sync_playwright() as pw:
   for(const l of FoundationsCurriculum.lessons)for(const r of l.rounds){
    const svg=FoundationVisuals.diagram(r.visual);count++;
    if(!svg.includes('Concept sketch:'))failures.push(r.id);
-   if(r.retrieves){const source=FoundationsCurriculum.lessons.find(x=>x.id===r.retrieves).rounds[2];if(JSON.stringify(source.visual)!==JSON.stringify(r.visual))failures.push(r.id);}
+   if(r.retrieves){
+    const source=FoundationsCurriculum.lessons.find(x=>x.id===r.retrieves).rounds[2];
+    if(source.visual.type!==r.visual.type||source.visual.variant!==r.visual.variant)failures.push(r.id);
+    // Retrieval asks a fresh question: V09's mean review and median Transfer
+    // share a summary-bar concept but legitimately use different statistics.
+    if(r.visual.statistic&&!r.solution.includes('estimator="'+r.visual.statistic+'"')&&!r.solution.includes('.'+r.visual.statistic+'('))failures.push(r.id+' statistic');
+   }
   }
   return {count,failures};
  }''')
  assert result['count']==len(inventory) and not result['failures'],result
- (out/f'{args.engine}-report.json').write_text(json.dumps({'rounds':result,'clipping':failures},indent=2))
+ (out/f'{args.engine}-report.json').write_text(json.dumps({'rounds':result,'clipping':failures,'explorers':explorer_checks,'pageErrors':errors},indent=2))
  assert not failures,failures
+ assert not errors,errors
  browser.close()
-print(f'All {len(inventory)} authored round diagrams, including VR1-4/V08 and VR2-4/V17, three widths and both themes passed visual geometry/retrieval checks.')
+print(f'All {len(inventory)} authored round diagrams, including VR1-4/V08 and VR2-4/V17, plus {len(explorer_checks)} primary explorer views passed three-width, two-theme geometry, contrast, interaction and retrieval checks.')

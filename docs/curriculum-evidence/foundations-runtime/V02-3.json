@@ -1,0 +1,586 @@
+{
+  "id": "V02-3",
+  "sourceId": "V02",
+  "sourceRound": 3,
+  "retrieves": null,
+  "exercise": {
+    "id": "V02-3",
+    "label": "Transfer",
+    "dataset": "material_samples",
+    "task": "Do the chart labels describe the prepared measurements and population? Each row is one material sample. Use the rows specified below from df. The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs. Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown. Label x Volume (mL) and y Mass (g), keep the prepared pairs, arrange and display fig.",
+    "solution": "ax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
+    "starter": "# Choose the data and chart operations from the brief\n",
+    "hint": "The title describes the observations on ax. Selecting trial rows means the plotted evidence is not all samples.",
+    "setup": "selected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter"
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "figure",
+      "variant": "chart-labels",
+      "label": "Concept sketch: finish title, x label and y label"
+    },
+    "requiredKeywords": [],
+    "title": "Games lasting at least 20 minutes",
+    "rules": {
+      "semantic": "scatter"
+    },
+    "demand": "Choose an accurate population title by reading the supplied selection.",
+    "steps": [
+      "Do the chart labels describe the prepared measurements and population?",
+      "Each row is one material sample. Use the rows specified below from df.",
+      "The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs.",
+      "Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown.",
+      "Label x Volume (mL) and y Mass (g), keep the prepared pairs, arrange and display fig."
+    ],
+    "setupDescription": "A prepared scatter; inspect its selection to identify the plotted population.",
+    "decision": "Choose an accurate population title by reading the supplied selection.",
+    "fixtureFeature": "Scrambled pairs distinguish independently sorted coordinates and wrong batch.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V02"
+    ],
+    "question": "Do the chart labels describe the prepared measurements and population?",
+    "observationUnit": "one material sample",
+    "datasetRationale": "Scrambled pairs distinguish independently sorted coordinates and wrong batch.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "prerequisites": [
+        "V01"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.figure-axes",
+        "matplotlib.labels"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V01"
+      ]
+    },
+    "stageSummary": "Finish a new chart.",
+    "brief": {
+      "question": "Do the chart labels describe the prepared measurements and population?",
+      "rows": "Each row is one material sample. Use the rows specified below from df.",
+      "result": "The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs.",
+      "constraints": [
+        "Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown.",
+        "Label x Volume (mL) and y Mass (g), keep the prepared pairs, arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "sample",
+        "batch",
+        "volume_ml",
+        "mass_g"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "changed": "Finish a new chart.",
+      "why": "Choose an accurate population title by reading the supplied selection.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "sample": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "batch": [
+      "trial",
+      "standard",
+      "trial",
+      "standard",
+      "trial",
+      "standard"
+    ],
+    "volume_ml": [
+      9,
+      3,
+      6,
+      12,
+      3,
+      8
+    ],
+    "mass_g": [
+      18,
+      4,
+      13,
+      17,
+      5,
+      12
+    ]
+  },
+  "inputSHA256": "8cb6a73943b4be157cb077240aa76cabb8b94f6c75162c6201b02125ca49c94d",
+  "visibleWorkspaceSHA256": "0f2c0a5519b49384a33a0a26a43dc6e574d39816cdf778d2bce4ec631d4e1e54",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\n# Choose the data and chart operations from the brief\n",
+  "context": "A prepared scatter; inspect its selection to identify the plotted population. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
+    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
+    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "394bbce965ea356767e070cd0f1f254bd5171d102790e41aff0389e2998717e0",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.192,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "ada6dbe105ba69b674926363d6c74ddf5955854efd8335a74a2cefe9b12416ea",
+          "bytes": 13729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "0f2c0a5519b49384a33a0a26a43dc6e574d39816cdf778d2bce4ec631d4e1e54",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.153,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "ada6dbe105ba69b674926363d6c74ddf5955854efd8335a74a2cefe9b12416ea",
+          "bytes": 13729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V02-3-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set_title('Trial batch')\nax.set_xlabel('Volume (mL)')\nax.set_ylabel('Mass (g)')\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d4b56397800b8096c08181532145a1105e657008a82e9e9629978158df620acc",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.153,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "ada6dbe105ba69b674926363d6c74ddf5955854efd8335a74a2cefe9b12416ea",
+          "bytes": 13729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V02-3-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nplt.show()",
+      "codeSHA256": "aca27a1ec46de10c59c8c017588c2532bccd4b3881a006a9f7436c18871d3e9c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.138,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'trial batch'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "b9e671dc6b48b45d1e4bb017780b114670c71b1be8e19ae12a493e46eb25df41",
+          "bytes": 11095,
+          "width": 584,
+          "height": 408,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set_xlabel('Volume (mL)')\nax.set_ylabel('Mass (g)')\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "dac8ce7670a6e52c27a6fdaac32ebc7e2bf93fbde6bca5cee504f9e008118f83",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.177,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'trial batch'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "f5cc069bfbf269e0d484afddcca89f646df0580fc3002d576af54dcdd491b42e",
+          "bytes": 12196,
+          "width": 648,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "3d2f81823f09fee5c120a4e42167ef0addfd008843a867dc11d303239853a4fc",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.281,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'trial batch'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "3a3e146f45d557f9e3f0e15415befb13951648ab6d704ba920cc0e22e0a4edc4",
+          "bytes": 14740,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "b783f765d675ea41fc7907683724ddb75ad7a97c9f6d9ef52295baefca713034",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.182,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "35e6507a0b718a10f1be531ef327c4b797784efb9843003594f6274b8dccb609",
+          "bytes": 13717,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['mass_g'] = df['mass_g'] + 123\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "4f515f4f6039096fc63061a7fd105d2134d6fd494af1b58a4e02cc38156e96d7",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.202,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "a6b106287bad4023cf75a02596b01dc7b7324fa88f6c8df14ad9895791b43b60",
+          "bytes": 15692,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "30cacaff7fdb39e93fff5d59750ecc35bf7378f340d0a5f57608793a82c82aa9",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.359,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "ada6dbe105ba69b674926363d6c74ddf5955854efd8335a74a2cefe9b12416ea",
+          "bytes": 13729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "ada6dbe105ba69b674926363d6c74ddf5955854efd8335a74a2cefe9b12416ea",
+          "bytes": 13729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\nax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "0f2c0a5519b49384a33a0a26a43dc6e574d39816cdf778d2bce4ec631d4e1e54",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.248,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Trial batch",
+          "sha256": "ada6dbe105ba69b674926363d6c74ddf5955854efd8335a74a2cefe9b12416ea",
+          "bytes": 13729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

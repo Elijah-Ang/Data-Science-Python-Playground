@@ -63,7 +63,7 @@
     "ML-C07": "1e379040969a963beca0e18da9b4b12b3ad573f510fb74c472d7315369540b70",
     "ML-C08": "740405fc27bde60df914d7953c6c43388f327c8b018d5fe81a65d463acef0841",
     "ML-C09": "ce56a3bfd396c44d2694c8535f33f2926ad0e584e13ba3f945f7dc83528c5c3a",
-    "ML-C10": "9dba5cd4d4fd7211d6b6611441a94a46077f2e5ffc0bcb6453fe5286beccda09",
+    "ML-C10": "8bb92ef57ad3a03b526446f81df12ddd3675cf8fdae445eb476c1554c658a352",
     "ML-C11": "51bc9de46f1f84753edc1865a111b84c93ef2d4efb6634e82a0b937a6157e48e",
     "ML-C12": "499cb0cf3e01d66153df4959090791dcdb569f4f3afc61da9fe790bc8ae99fae",
     "ML-C13": "8077f95e86d55dc380cf0c44f548fae6579ab0087b8dbba943255faf8ef9fffe",
@@ -441,7 +441,7 @@
       "theme": "light",
       "width": 1440,
       "file": "ML-C06-light-1440.png",
-      "title": "A logistic workflow"
+      "title": "Tune logistic regularisation"
     },
     {
       "id": "ML-C07",
@@ -2205,24 +2205,24 @@
     "ML-C03": "d84b21af347e97ee76ded9a4abddc4ed3f9058447cb1e3e9bcaa68c4929bc327",
     "ML-C04": "23b3b41ba530d726b0afada72129dc1f447e695bb8133ebcbc492870350e989b",
     "ML-C05": "170aef26a15645fb9f5d5a0c6fd57acd164e44170e8f24745047c562c610ff4c",
-    "ML-C06": "0e6ff9791fbf9cddd7aeab3d1aa27076f79bb446f8e76a9c80220270851adf79",
+    "ML-C06": "437966ce366f25a7d6af533a34c932b37ea9fc1f2ee487087aedce308e620998",
     "ML-C07": "0915c6d7a696e374a93292b614767c7799f7b32d19f847f4060bc0a3ec21180a",
-    "ML-C08": "2fc85421bc9f1dc757ccc626537e22584b7d90336f7f0b25c9ead56ff09804ad",
+    "ML-C08": "baed70aaaf79aa228e050dfe1d7a9af6a73844cab21297fe4261bb72c98f722c",
     "ML-C09": "fd163f7067b84b108054ce4f138dd2bbdc2df11ebc1f9f29d0c995e7380fe1b1",
-    "ML-C10": "e0241b3d4d59ea3d2c0dad37edb78e030806f182d592c2ada57e2c9552055f1c",
+    "ML-C10": "ee944f94148af1e1b319784b02fc1e6c5dafd4fc883b55e746b2df58b02d2199",
     "ML-C11": "0288400577c66239d2747bed12b504e073380b5a1f4ec33934f1bba3b9e02955",
     "ML-C12": "be25cd1559e3813485621c723c2b512ad14dbd743315bed2cc2155d375668ab2",
     "ML-C13": "3ca5cba135590baf8a44283726c800b5f78b2fb995f6ff6a9696efddc99a7649",
     "ML-C14": "c166a65fa1a75a066f647efabe9aedb1c407562183897ee1b7d8e85229ed3a0f",
     "ML-C15": "0e9586abaca604ed32217db9e2c5498b305b1519e43feb23edaec0f64f7161bd",
     "ML-C16": "6b97310f19a80bc448de0d88ccb1444b600ecd1cb053ee7e85e3ef42cbf4a8c8",
-    "ML-C17": "2af8134210651415d366df89e3c68c9e492656c3a9ad772aac76527cf37b9523",
+    "ML-C17": "b5584ac6072531b7dfa810606377979d3379839ea968a818d78fbf37a79b03e3",
     "ML-C18": "cf21356a9ea26e28e4b91e2963a194e81021ec47622ae98ad8fd7ccb9c971484",
     "ML-C19": "4219c8423753fce57fd352a12fe116e5ea8dfac9d9616de579e5f9a086f45f91",
     "ML-N01": "1192b8dadba7f92bd3f404f65bce0112f1f2abb32f7f4e1f2aba91dec9d96b78",
     "ML-N02": "03ae7a8017d0a7af66adb73be60a7ee605ea8354fc906bff07d119b10a6fe31b",
     "ML-N03": "1d8a563292f638123c9725725d56d96e0296b4bbb2c6707270e0f27b34f3ba9b",
-    "ML-N04": "eb7bfbfb9c14d76cada248bff27e39b6d991c621642d0c8bc417f5b341d33436",
+    "ML-N04": "e20782d8cebf9a661a46f72cb92c3eb0d59710dfa1a8a7e0188633e67497ff12",
     "ML-N05": "4dd49e7480acdb069ed91f42eb19bdbadc781e4e56f7b8580e32f4aa42199d6d",
     "ML-N06": "fe34875f85e153f090f6b2726e66d2eff63f54072301354e904aa604dfe5c9bc",
     "ML-U01": "d7084a2237f3b3e603f14c1dcadf77f781c49c4e193b38f7d0229769cd29bce7",
@@ -2252,43 +2252,15 @@
     "ML-W16": "c35792e1340e250807c1882937254a15dbafcaa5cf1ac7c219006d60450d45f6"
   },
   "sourceHashes": {
-    "code-identifiers.js": "3c3919f13a925b3234da70ed83de0b2998e8a349ea68c98303f4c7dbcd044e4c",
-    "route-slider.css": "28f96d75040ab03c3e18c879114dc413bb2ba99a179b91c83dd9c015f7e3a14a",
-    "ml-learning/visuals.js": "7fa3d6ffc99eb42736e99a7fb74ac1479c9679ea1a12be469d77bfb3a5d9a7b6",
-    "ml-learning/learning.css": "7e960ec9dbbd349a773345d68ee2903f2ff46bef0d9d8e96cab581cd698e3128",
-    "ml-learning/app.js": "191d3d24fb6cc5c50a766fa07cbb4d88e26c7489b62e14124f83f7c422ff0bfb",
-    "foundations/foundations.css": "292d55a361190979a175f166e023a4145ba4dfd419685fa96c849c33dd02ac2a",
-    "foundations/learning-ui.js": "aa5b95043409c5076382558df9faa5e4a61145bc20108b129bb5abba5bb67be3",
+    "code-identifiers.js": "8ff4c737ad01d01dd38298537b3e8b66fd560de06645be699a0fa50bd6f4347a",
+    "route-slider.css": "bcae15342adf5e3c297c1f8ec2055ec6276316da111faff5d4651d498003aa96",
+    "ml-learning/visuals.js": "0507357cfc51909bbe0416ac57e0a0e9d4ce6c5d1c2eb3c96c38ab4560a3386a",
+    "ml-learning/learning.css": "a3bfa732bccdf17a0cfea8e7979585a2813bb799912a46cb9f7ec61c8f794ff1",
+    "ml-learning/app.js": "1781e65b49497c5f7b5ba89fa715fde3e33d0102b410be3068ee1f6a1e09a4ba",
+    "foundations/foundations.css": "b425d2de578553013cdbd6ca58f310cb573e40b22dc142949b33375a6c1b4440",
+    "foundations/learning-ui.js": "f69cf6f8407f2232426dc5c1e590c611b7c213d5aeae515dcb0aea8002288337",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "6fc8bbea1eacd53a1ae7e6ed522545451fd05265098b8dc78ef06a56d9e2a695",
-    "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8",
-    "learning-language.js": "c42553806f920fc266cab2b2cc4fb61ee53e2c8a12a732853fa5d9e95fe731a8",
-    "learning-identifiers.js": "9787376e015e07e9daf48b0cb1ecae7129af76159a9feb41a7c5cc91b10cd19c"
-  },
-  "navigationReview": {
-    "reviewed": "2026-10-11",
-    "baselineCommit": "0ae290e6301d047dcc4b86977967c591eff786e2",
-    "changedSourceHashes": {
-      "ml-learning/app.js": {
-        "priorSha256": "55b064bd420ff45d015dd6c1ddd8b65246dece8d8efdc59116140b3a99c24f26",
-        "sha256": "00edaeecb3c873212d31b0b9de58921903693610b0b1b637a0d6ef46f2c58be3"
-      },
-      "foundations/foundations.css": {
-        "priorSha256": "27b74f205b68ed8581ecf6830097ce2bf96bfc7f5a6b72c3d5bacc697d39e167",
-        "sha256": "d9ad0097b32a3beb1c8b16be036e03fe1a987423d87b358c0b7f18a9e0cfce45"
-      }
-    },
-    "scope": "Collection navigation references unchanged110 cards/19 workflows; parameter-entry CSS is scoped to new Data Foundations panels. Existing visual module, all authored visual/title/goal/explanation fingerprints, thumbnail labels and captures remain unchanged. Actual collection and representative Data Foundations parameter panels independently reviewed at desktop/390/320; final full browser and hosted gates are recorded separately."
-  },
-  "languagePresentationReview": {
-    "date": "2026-10-12",
-    "scope": "Shared readable steps and semantic column/object identifiers; existing 85 teaching visuals, 110 thumbnails, 23 collections, 327 activities and 19 briefs retained.",
-    "checks": [
-      "All ML card/challenge routes, six widths, themes, task branches, real Run/Check, keyboard and transient-state contracts pass in local Chromium.",
-      "665 authored activity contexts checked; 92 representative desktop/mobile light/dark views and six no-JavaScript pages checked.",
-      "Existing primitive visual source and per-card semantic content are unchanged; historical contact-sheet captures remain separately identified."
-    ],
-    "evidence": "work/prerequisite-audit/ml-ui-first.log; language-browser-final.log",
-    "independentReview": "Pending final-revision independent review"
+    "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
   }
 }

@@ -58,7 +58,7 @@
   function text(value,id,instruction=false,local){return root.CodeIdentifiers?.format(plain(value),{...(local||context(id)),instruction})||esc(plain(value));}
   function steps(value,id){
     const items=(Array.isArray(value)?value:[value]).flatMap(split);
-    let local=context(id);
+    let local=root.CodeIdentifiers.contextFor(context(id),'task');
     return '<ol class="learning-instructions">'+items.map(s=>{
       local=root.CodeIdentifiers.columnContext(s,local);
       return '<li>'+text(s,id,true,local)+'</li>';
@@ -76,7 +76,7 @@
     ]
   };
   const activity=ex=>steps(taskSteps[ex.id]||ex.steps||ex.task,ex.id);
-  function key(){return '<p class="learning-name-key"><span>Boxed names are used in Python.</span> <span>Underlined names are table columns.</span> Use each name exactly as shown.</p>';}
+  function key(){return '<details class="learning-name-key"><summary>Python name key</summary><p>Teal boxes name table columns; violet labels name Python objects. Monospace names identify functions and parameters. Use each name exactly as shown.</p></details>';}
   const meanings={
     DataFrame:'a table with rows and columns',Series:'one labelled set of values',
     numeric:'a number, rather than text',missing:'no value was supplied',

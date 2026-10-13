@@ -1,0 +1,743 @@
+{
+  "id": "V28-1",
+  "sourceId": "V28",
+  "sourceRound": 1,
+  "retrieves": null,
+  "exercise": {
+    "id": "V28-1",
+    "label": "Follow",
+    "dataset": "solar_checks",
+    "task": "Which measured panel produced the most power? Each row is one panel measurement. Use the rows specified below from df. Find the highest output_w row and annotate its own area_m2/output_w pair as Peak, with offset (8, 8) points and an arrow. Keep the prepared observations; arrange and display fig.",
+    "solution": "peak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+    "starter": "peak = df.loc[df[\"output_w\"].idxmax()]\n____(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+    "hint": "Locate an observed maximum and keep both coordinates from its row.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "annotations": true,
+      "annotationDetails": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "relationship",
+      "variant": "annotation",
+      "label": "Concept sketch: arrow identifies the highest observation"
+    },
+    "demand": "Locate an observed maximum and keep both coordinates from its row.",
+    "steps": [
+      "Which measured panel produced the most power?",
+      "Each row is one panel measurement. Use the rows specified below from df.",
+      "Find the highest output_w row and annotate its own area_m2/output_w pair as Peak, with offset (8, 8) points and an arrow.",
+      "Keep the prepared observations; arrange and display fig."
+    ],
+    "requiredKeywords": [],
+    "setupDescription": "All measured panels on a labelled scatter without annotations.",
+    "decision": "Locate an observed maximum and keep both coordinates from its row.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle"
+    ],
+    "fixtureFeature": "The highest-output and smallest-area records differ; an annotation must use both coordinates from the selected row.",
+    "question": "Which measured panel produced the most power?",
+    "contextPlot": {
+      "x": "area_m2",
+      "y": "output_w",
+      "title": "Solar panel checks",
+      "xlabel": "area_m2",
+      "ylabel": "output_w",
+      "annotation": {
+        "rankColumn": "output_w",
+        "extreme": "max",
+        "text": "Peak"
+      }
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one panel measurement",
+    "datasetRationale": "The highest-output and smallest-area records differ; an annotation must use both coordinates from the selected row.",
+    "parameterTeaching": {
+      "introduces": [
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom",
+        "bw_adjust",
+        "cut",
+        "complementary",
+        "capsize",
+        "inner",
+        "swarmplot.size",
+        "ci",
+        "fmt"
+      ],
+      "prerequisites": [
+        "V27",
+        "I09",
+        "I13L"
+      ]
+    },
+    "concepts": {
+      "introduces": [
+        "matplotlib.annotate"
+      ],
+      "reuses": [
+        "matplotlib.reference-lines",
+        "pandas.loc",
+        "pandas.idxmax"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V27",
+        "I09",
+        "I13L"
+      ]
+    },
+    "stageSummary": "Annotate a whole record.",
+    "brief": {
+      "question": "Which measured panel produced the most power?",
+      "rows": "Each row is one panel measurement. Use the rows specified below from df.",
+      "result": "Find the highest output_w row and annotate its own area_m2/output_w pair as Peak, with offset (8, 8) points and an arrow.",
+      "constraints": [
+        "Keep the prepared observations; arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": [
+        {
+          "name": "peak",
+          "type": "Python object",
+          "description": "Created by your Python for this task."
+        }
+      ]
+    },
+    "identifiers": {
+      "inputColumns": [
+        "panel",
+        "area_m2",
+        "output_w"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax",
+        "peak"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [
+        [
+          "peak = df.loc[df[\"output_w\"].idxmax()]",
+          "Retrieve the whole row with the highest output_w."
+        ],
+        [
+          "ax.annotate(\"Peak\", xy=(x, y), ...)",
+          "Label the chosen row’s paired coordinates on the prepared Axes."
+        ],
+        [
+          "xytext=(8, 8), textcoords=\"offset points\"",
+          "Place the text 8 points right and 8 points above the observation."
+        ],
+        [
+          "arrowprops={\"arrowstyle\": \"->\"}",
+          "Point an arrow at that observation."
+        ],
+        [
+          "idxmin()",
+          "Find the row label of a minimum in the later practice."
+        ]
+      ],
+      "reminders": [
+        [
+          "fig.tight_layout(); plt.show()",
+          "Arrange and display the annotated chart."
+        ]
+      ],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "changed": "Annotate a whole record.",
+      "why": "Locate an observed maximum and keep both coordinates from its row.",
+      "changedLines": [
+        2
+      ],
+      "changedSyntaxLines": [
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "panel": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "area_m2": [
+      5,
+      2,
+      8,
+      3,
+      6,
+      4
+    ],
+    "output_w": [
+      40,
+      22,
+      70,
+      18,
+      51,
+      29
+    ]
+  },
+  "inputSHA256": "062f98b94729a21bb5272bc39f5e6fb89ba627eb7848c03845e8fdba0aa29e70",
+  "visibleWorkspaceSHA256": "eff0dfb3adedbfa201f00cdde43c4867ccef07407f8c2b217e62b5da98faf264",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\n____(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+  "context": "All measured panels on a labelled scatter without annotations. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
+    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
+    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "peak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "6ff01d1fbf974823cb9277d68e8b0fbe8d5804cfc39f1ee78970aa9af8538ea0",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.203,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "69d9aaf6eb23a5022f65e879e553a7a6582c23b8496b1cd5db0e20b79dc4d482",
+          "bytes": 16583,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "eff0dfb3adedbfa201f00cdde43c4867ccef07407f8c2b217e62b5da98faf264",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.16,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "69d9aaf6eb23a5022f65e879e553a7a6582c23b8496b1cd5db0e20b79dc4d482",
+          "bytes": 16583,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V28-1-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\nobservations = df\npoint = observations.loc[observations['output_w'].idxmax()]\nannotation = dict(text='Peak', xy=(point['area_m2'], point['output_w']), xytext=(8, 8), textcoords=\"offset points\", arrowprops={\"arrowstyle\": \"->\"})\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "2ee56920c3d565dd2a8e56146e063d4270c228cd69003c368919ff0cb5e07295",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.162,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "69d9aaf6eb23a5022f65e879e553a7a6582c23b8496b1cd5db0e20b79dc4d482",
+          "bytes": 16583,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V28-1-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "b247347203a1229fbd90eaf5b4411ccdc9b88e77412c63ce0567cd6f7d1044f1",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.135,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "b8929510ecb0c6d4955072e0a48fdf827cc9faaf2a654f78566a1c86988967e1",
+          "bytes": 15478,
+          "width": 585,
+          "height": 431,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_extreme",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\nobservations = df\npoint = observations.loc[observations['output_w'].idxmin()]\nannotation = dict(text='Peak', xy=(point['area_m2'], point['output_w']), xytext=(8, 8), textcoords=\"offset points\", arrowprops={\"arrowstyle\": \"->\"})\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "72b001c0b279d506473b5bfa1a7a00e6a50701647cd7ae99f546af5fc5e10a17",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.16,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the annotations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "4030bdc824290721c1c1a1b8aa19bfdacfe14a7b3542f8097773cd98484fca72",
+          "bytes": 16656,
+          "width": 649,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_annotation_offset",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\nobservations = df\npoint = observations.loc[observations['output_w'].idxmax()]\nannotation = dict(text='Peak', xy=(point['area_m2'], point['output_w']), xytext=(0, 0), textcoords=\"offset points\", arrowprops={\"arrowstyle\": \"->\"})\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "1b789b17fb0ac7f5b47e416a1d0a243e6b7551d4d97d9d7137818265b365c502",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.2,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the annotation arrow and text offset.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "05a98a520c94319d51d038e68291d5b722c402fd64c0b77b5b65442895a2237d",
+          "bytes": 16549,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_annotation_arrow",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\nobservations = df\npoint = observations.loc[observations['output_w'].idxmax()]\nannotation = dict(text='Peak', xy=(point['area_m2'], point['output_w']), xytext=(8, 8), textcoords=\"offset points\", arrowprops=None)\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "23d5a1d509ffb966ec44ff1cc651eec927453b7be61f2f4eeec13f7bd53f535b",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.182,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the annotation arrow and text offset.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "af9fee158b02af04a51666c7cdb23f4e6e7876f2b33bab1fbcf328e1942a6eca",
+          "bytes": 16423,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "e86d3faa694d107c58225be66cabff6639f842d1d7381609895d87b8b10d6d2f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.172,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'solar panel checks'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "a7bc0e58c31483ee3ca072934aba1284e2d3419bce891f310eb485bb6ef79cc5",
+          "bytes": 16421,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "fd10d3b361a3b093c9304a0731e54d3de6b027c6d3ee6c31c19c3fe9084ca1ce",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.161,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "08dfdae59de8a91cac50ead802d8a26d0dfb87013d15c1e4a56641d0249fca32",
+          "bytes": 16610,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['output_w'] = df['output_w'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "0a79f12dbeea540931ac831bceb9aff6fbecac50df226d2a0b3ee81227c63c17",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.169,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "50811bb5e803f3b9bbe707910603fafb21d7638b2dedd7e26d1f546c7308b5ef",
+          "bytes": 17389,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "2e315bc880deb2fb2ff515e9dd3ab9b635acae3d88f524a16f97fc67bf5ac0ec",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.319,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "69d9aaf6eb23a5022f65e879e553a7a6582c23b8496b1cd5db0e20b79dc4d482",
+          "bytes": 16583,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "69d9aaf6eb23a5022f65e879e553a7a6582c23b8496b1cd5db0e20b79dc4d482",
+          "bytes": 16583,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"panel\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"area_m2\": [5, 2, 8, 3, 6, 4],\n    \"output_w\": [40, 22, 70, 18, 51, 29],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"area_m2\", y=\"output_w\", ax=ax)\nax.set(title=\"Solar panel checks\", xlabel=\"area_m2\", ylabel=\"output_w\")\n\n# Your work\npeak = df.loc[df[\"output_w\"].idxmax()]\nax.annotate(\n    \"Peak\",\n    xy=(peak[\"area_m2\"], peak[\"output_w\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "eff0dfb3adedbfa201f00cdde43c4867ccef07407f8c2b217e62b5da98faf264",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.161,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Solar panel checks",
+          "sha256": "69d9aaf6eb23a5022f65e879e553a7a6582c23b8496b1cd5db0e20b79dc4d482",
+          "bytes": 16583,
+          "width": 647,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

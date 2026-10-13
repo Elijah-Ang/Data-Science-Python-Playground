@@ -1,0 +1,347 @@
+{
+  "scope": {
+    "cards": 110,
+    "teachingCards": 85,
+    "reviewCards": 14,
+    "checkpointCards": 11,
+    "cardActivities": 338,
+    "independentChallenges": 19,
+    "pythonActivities": 245,
+    "decisionOrReflectionActivities": 112,
+    "preservedDatasetVariants": 38
+  },
+  "before": {
+    "cardActivities": 327,
+    "guidedApplications": 6
+  },
+  "after": {
+    "cardActivities": 338,
+    "guidedApplications": 17,
+    "newGuidedApplications": 11
+  },
+  "assemblyOrder": "editorial \u2192 python_path \u2192 mastery \u2192 transfer_practice \u2192 model_bridges \u2192 historical repairs \u2192 complete_coverage \u2192 contracts \u2192 curriculum_coherence",
+  "modelsAndMilestones": [
+    {
+      "lesson": "ML-R01",
+      "model": [
+        "simple_linear"
+      ],
+      "exercise": "ML-R01-4",
+      "kind": "supervised",
+      "dataset": "LINE24"
+    },
+    {
+      "lesson": "ML-R04",
+      "model": [
+        "multiple_linear"
+      ],
+      "exercise": "ML-R04-4",
+      "kind": "supervised",
+      "dataset": "ENERGY72"
+    },
+    {
+      "lesson": "ML-R07",
+      "model": [
+        "polynomial"
+      ],
+      "exercise": "ML-R07-4",
+      "kind": "supervised",
+      "dataset": "LINE24"
+    },
+    {
+      "lesson": "ML-R09",
+      "model": [
+        "regression_tree"
+      ],
+      "exercise": "ML-R09-4",
+      "kind": "supervised",
+      "dataset": "LINE24"
+    },
+    {
+      "lesson": "ML-C06",
+      "model": [
+        "logistic"
+      ],
+      "exercise": "ML-C06-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C08",
+      "model": [
+        "knn_cls"
+      ],
+      "exercise": "ML-C08-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C10",
+      "model": [
+        "svm_cls"
+      ],
+      "exercise": "ML-C10-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C12",
+      "model": [
+        "one_r"
+      ],
+      "exercise": "ML-C12-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C14",
+      "model": [
+        "classification_tree"
+      ],
+      "exercise": "ML-C14-5",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C15",
+      "model": [
+        "naive_bayes"
+      ],
+      "exercise": "ML-C15-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C17",
+      "model": [
+        "lda"
+      ],
+      "exercise": "ML-C17-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-C18",
+      "model": [
+        "qda"
+      ],
+      "exercise": "ML-C18-5",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-N03",
+      "model": [
+        "mlp_cls"
+      ],
+      "exercise": "ML-N03-4",
+      "kind": "supervised",
+      "dataset": "CLASS180"
+    },
+    {
+      "lesson": "ML-N04",
+      "model": [
+        "mlp_reg"
+      ],
+      "exercise": "ML-N04-5",
+      "kind": "supervised",
+      "dataset": "ENERGY72"
+    },
+    {
+      "lesson": "ML-U03",
+      "model": [
+        "kmeans"
+      ],
+      "exercise": "ML-U03-4",
+      "kind": "unsupervised",
+      "dataset": "CLUSTER36"
+    },
+    {
+      "lesson": "ML-U07",
+      "model": [
+        "hierarchical"
+      ],
+      "exercise": "ML-U07-4",
+      "kind": "unsupervised",
+      "dataset": "CLUSTER45_ANISO"
+    },
+    {
+      "lesson": "ML-P02",
+      "model": [
+        "pca"
+      ],
+      "exercise": "ML-P02-4",
+      "kind": "unsupervised",
+      "dataset": "PCA60_MIXED"
+    }
+  ],
+  "verification": [
+    {
+      "test": "tests/test_ml_learning_runtime.py",
+      "result": "pass",
+      "cases": 245,
+      "elapsedSeconds": 51.539
+    },
+    {
+      "test": "tests/test_ml_model_applications.py",
+      "result": "pass",
+      "cases": 27,
+      "references": 17,
+      "methodologyNearMissesRejected": 10,
+      "elapsedSeconds": 3.759
+    },
+    {
+      "test": "tests/test_ml_curriculum_coherence.py",
+      "result": "pass",
+      "cards": 110,
+      "activities": 338,
+      "challenges": 19
+    },
+    {
+      "test": "tests/test_ml_core_audit.py",
+      "result": "pass",
+      "references": 112,
+      "equivalents": 112,
+      "nearMissesRejected": 112,
+      "semanticNegativesRejected": 29
+    },
+    {
+      "test": "tests/test_ml_classification_audit.py",
+      "result": "pass",
+      "cases": 121,
+      "references": 66
+    },
+    {
+      "test": "tests/test_ml_discovery_audit.py",
+      "result": "pass",
+      "cases": 147,
+      "references": 48
+    },
+    {
+      "test": "tests/test_ml_learning_mastery.py",
+      "result": "pass"
+    },
+    {
+      "test": "tests/test_ml_learning_content.mjs",
+      "result": "pass"
+    },
+    {
+      "test": "tests/test_ml_learning_manifest.mjs",
+      "result": "pass"
+    },
+    {
+      "test": "tests/test_ml_learning_collections.mjs",
+      "result": "pass"
+    },
+    {
+      "test": "tests/test_ml_learning_receipts.mjs",
+      "result": "pass"
+    },
+    {
+      "test": "tests/test_ml_learning_contract_regressions.py",
+      "result": "pass",
+      "cases": 39
+    },
+    {
+      "test": "tests/test_ml_supplied_provenance.py",
+      "result": "pass",
+      "suppliedEstimatorStates": 107,
+      "uniqueSetups": 75
+    },
+    {
+      "test": "tests/test_ml_learning_browser.py --all-solutions --runtime local",
+      "result": "pass",
+      "engine": "system Chromium / Pyodide 0.26.4",
+      "solutions": 245,
+      "semanticCases": 19,
+      "dynamicImports": true,
+      "repeatedRunCleanup": true
+    },
+    {
+      "test": "tests/test_ml_learning_collections_browser.py",
+      "result": "pass",
+      "engine": "system Chromium",
+      "collections": 23,
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "noJavaScriptNavigation": true
+    },
+    {
+      "test": "tests/test_ml_learning_ui.py --runtime local",
+      "result": "pass",
+      "engine": "system Chromium / Pyodide 0.26.4",
+      "build": "d0ba50f38233",
+      "cardRoutes": 110,
+      "challengeRoutes": 19,
+      "widths": [
+        1440,
+        1280,
+        1024,
+        768,
+        390,
+        320
+      ],
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "checks": [
+        "collapsed references and output contracts",
+        "provided-state provenance",
+        "four/five-stage touch bounds",
+        "natural desktop flow",
+        "forced colours and reduced motion",
+        "200% zoom",
+        "real Run/Check and negative boundary",
+        "receipt reuse without rerun",
+        "reset/stop/reload",
+        "keyboard escape",
+        "no learning persistence"
+      ]
+    },
+    {
+      "test": "tests/test_ml_learning_inputs.py",
+      "result": "pass",
+      "exactChallengeInputContracts": 19
+    },
+    {
+      "test": "tests/test_ml_learning_verticals.py",
+      "result": "pass",
+      "references": 6,
+      "leakageNegative": true,
+      "repeatCleanupRuns": 12
+    },
+    {
+      "test": "tests/test_ml_learning_semantics.py",
+      "result": "pass",
+      "acceptedAlternatives": 8,
+      "rejectedWrongWorkflows": 30
+    },
+    {
+      "test": "tests/test_ml_reporting_evidence.py",
+      "result": "pass",
+      "tests": 5,
+      "builtAuthoredM03Equality": true
+    }
+  ],
+  "parityEnvironment": {
+    "python": "3.10.21",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "scikit-learn": "1.4.2",
+    "scipy": "1.12.0",
+    "matplotlib": "3.5.2",
+    "seaborn": "0.13.2"
+  },
+  "scopeLimit": "This record includes assembled content, pinned scientific execution, real Chromium/Pyodide all-solution execution, collection navigation and full UI gate. Detailed screenshots and the coordinated visual/responsive inventory are recorded separately. WebKit was not run locally; default CI engine support remains unchanged.",
+  "sourceHashes": {
+    "ml-learning/authoring.py": "3a42156f742978334fb9432449cd02ebd3cc0912338f26a69f89167b19f4499c",
+    "ml-learning/curriculum_coherence.py": "f290995b4a70dab624ab0d6c6a1be3b30f7b23ccc684eca580d478456356f114",
+    "ml-learning/model_bridges.py": "27b2fc6abc7f5acd64bbc2bec55a8a2c733242794da342d5730f530d5f162481",
+    "ml-learning/runtime.py": "8598fd0714bef3fe4033e368e4884b4c8c1c40adee36ffab368e24ff6d1aa8ae",
+    "ml-learning/manifest.json": "58e88d77408a52f2d48b66d4bd192d190ff88c6812b375b267680303258f3056"
+  }
+}

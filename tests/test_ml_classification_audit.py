@@ -32,7 +32,7 @@ for id,e in activities.items():
 eq={
  'ML-C01-3':"answer=pd.crosstab(df.actual,df.predicted).reindex(index=['A','B','C'],columns=['A','B','C'],fill_value=0).to_numpy()",
  'ML-C05-1':activities['ML-C05-1']['solution'].replace("('scale',","('normalise',").replace("('model',","('classifier',"),
- 'ML-C08-1':activities['ML-C08-1']['solution'].replace('model=','neighbours=').replace('model.kneighbors','neighbours.kneighbors')+'\nmodel=neighbours\n',
+ 'ML-C08-1':activities['ML-C08-1']['solution'].replace('model=','neighbours=').replace('model.fit','neighbours.fit').replace('model.predict','neighbours.predict')+'\nmodel=neighbours\n',
  'ML-C08-2':activities['ML-C08-2']['solution'].replace('model=Pipeline','candidate=Pipeline').replace('model.predict','candidate.predict').replace('model.named_steps','candidate.named_steps').replace('model.classes_','candidate.classes_').replace("('scale',","('normalise',").replace("('model',","('classifier',").replace("named_steps['scale']","named_steps['normalise']").replace("named_steps['model']","named_steps['classifier']").replace('query=','probe=').replace('.transform(query)','.transform(probe)').replace('vote_counts=y_train.iloc[positions].value_counts().reindex(candidate.classes_,fill_value=0)',"vote_counts=pd.Series({label:int((y_train.iloc[positions]==label).sum()) for label in reversed(candidate.classes_)})"),
  'ML-C09-1':activities['ML-C09-1']['solution'].replace("('scale',","('normalise',").replace("('model',","('classifier',").replace('model__n_neighbors','classifier__n_neighbors'),
  'ML-C11-1':"model.steps[0]=('normalise',model.steps[0][1])\nmodel.steps[-1]=('classifier',model.steps[-1][1])\n"+activities['ML-C11-1']['solution'].replace('model__C','classifier__C'),

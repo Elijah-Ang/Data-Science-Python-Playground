@@ -15,7 +15,7 @@ for(const card of c.cards){
     assert.equal(card.exercises[0].label,'Follow');
     assert.equal(card.exercises[0].starter,card.exercises[0].solution,card.id+' Follow should run before learners adapt it');
     assert.equal(card.exercises[1].label,'Change');
-    assert(card.exercises.length>=3&&card.exercises.length<=4);
+    assert(card.exercises.length>=3&&card.exercises.length<=5);
     if(card.exercises.some(e=>e.kind==='python')){
       assert(Array.isArray(card.syntaxBreakdown)&&card.syntaxBreakdown.length,card.id+' syntax parts');
       for(const part of card.syntaxBreakdown){

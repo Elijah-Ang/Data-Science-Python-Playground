@@ -478,6 +478,7 @@ class LearningTrace:
         def candidates_valid():
             from sklearn.pipeline import Pipeline
             allowed_models=('LogisticRegression','DecisionTreeClassifier','KNeighborsClassifier','GaussianNB','LinearDiscriminantAnalysis','SVC','MLPClassifier') if spec['classification'] else ('LinearRegression','Ridge','DecisionTreeRegressor')
+            allowed_models=spec.get('allowedModels',allowed_models)
             for name, candidate in ns['candidates'].items():
                 if not isinstance(candidate,Pipeline) or type(candidate.steps[-1][1]).__name__ not in allowed_models:return False
                 if not matching_run(candidate,ns['cv_results'][name]['test_score']):return False

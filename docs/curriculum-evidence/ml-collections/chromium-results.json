@@ -1,0 +1,24 @@
+{
+  "engine": "chromium",
+  "collections": 23,
+  "widths": [
+    1440,
+    390,
+    320
+  ],
+  "passed": [
+    "foundations first",
+    "collection references",
+    "canonical lesson identity",
+    "legacy deck requirement",
+    "practice/from/collection state",
+    "Back/Forward/reload",
+    "transient edits",
+    "independent neural branches",
+    "all collection direct pages",
+    "no-JavaScript navigation",
+    "no learner storage",
+    "no Python while reading"
+  ],
+  "pageErrors": []
+}

@@ -109,9 +109,10 @@
         text(278,218,classification?'Purer child class counts reduce impurity.':'Each leaf predicts its training target average.','text-anchor="middle"');
     }
     if(['C10','C11'].includes(id)){
-      return line(145,185,370,20,'class="accent-stroke"')+line(90,185,315,20,'stroke-dasharray="5 4"')+line(200,185,425,20,'stroke-dasharray="5 4"')+
-        [[90,65],[155,60],[120,110],[350,145],[420,85],[400,165]].map(([x,y],i)=>(i<3?'<circle cx="'+x+'" cy="'+y+'" r="6"/>':box(x,y,11,11,''))+(i===2||i===3?'<circle cx="'+x+'" cy="'+y+'" r="16" fill="none"/>':'')).join('')+
-        text(278,219,'Support vectors influence the boundary and its margin.','text-anchor="middle"');
+      return line(280,180,280,20,'class="accent-stroke"')+line(200,180,200,20,'stroke-dasharray="5 4"')+line(360,180,360,20,'stroke-dasharray="5 4"')+
+        [[80,65],[135,135],[200,95],[360,95],[430,65],[480,145]].map(([x,y],i)=>(i<3?'<circle cx="'+x+'" cy="'+y+'" r="6"/>':box(x-5.5,y-5.5,11,11,''))+(i===2||i===3?'<circle cx="'+x+'" cy="'+y+'" r="16" fill="none"/>':'')).join('')+
+        text(278,204,'Linear-margin intuition · RBF operates in feature space.','text-anchor="middle"')+
+        text(278,226,'Its boundary can curve in the original feature space.','text-anchor="middle"');
     }
     if(['R07','R08'].includes(id)){
       return line(25,184,530,184)+line(25,184,25,18)+'<path d="M40 45 Q270 270 510 40" fill="none" class="accent-stroke"/><path d="M40 155 Q270 110 510 70" fill="none" stroke-dasharray="6 4"/>'+
@@ -186,7 +187,7 @@
     C07:'prob|Lower threshold|More alerts|Fewer misses',
     C08:'scatter|Query point|Nearby votes|Chosen label',
     C09:'bars|Small k|Large k|Validate k',
-    C10:'scatter|Margin|Support rows|Scaled SVC',
+    C10:'scatter|Linear intuition|Support rows|Scaled SVC',
     C11:'curve|RBF boundary|Curved regions|Tune with CV',
     C12:'tree|One feature|Majority rule|Default class',
     C13:'tree|Numeric cut|Binned values|One-R rule',
@@ -371,9 +372,120 @@
     const description=card.title+': '+parts.join(', ');
     return '<svg class="concept-visual ml-thumbnail" viewBox="0 0 560 200" role="img" aria-label="'+esc(description)+'"><title>'+esc(description)+'</title><g>'+miniScene(mode,parts,key)+'</g></svg>';
   }
+  const number=n=>Number(n.toFixed(3)).toString();
+  const label=(x,y,s,anchor='start')=>text(x,y,s,'style="font-size:13px" text-anchor="'+anchor+'"');
+  const teachingCircle=(x,y,r=4,cls='')=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" class="'+cls+'"/>';
+  const knnRows=Object.freeze([
+    ['n1',.3,.2,'B'],['n2',.5,.2,'A'],['n3',.4,.5,'A'],
+    ['n4',1,.4,'B'],['n5',-.9,.5,'B'],['n6',1.5,1.2,'A']
+  ].map(([id,x,y,group])=>Object.freeze({id,x,y,group})));
+  const treeRows=Object.freeze([
+    ['t1',2,3,'A'],['t2',3,5,'A'],['t3',4,4,'A'],['t4',7,3,'B'],
+    ['t5',8,6,'B'],['t6',6,6,'B'],['t7',7,8,'A']
+  ].map(([id,width,length,group])=>Object.freeze({id,width,length,group})));
+  const regressionRows=Object.freeze([[1,3],[2,5],[3,7],[6,12],[7,14],[8,16]].map(([x,y],i)=>Object.freeze({id:'r'+(i+1),x,y})));
+  const polynomialTrain=Object.freeze([[0,1],[1,2.8],[2,3.6],[3,8.8],[4,10.6],[5,16.2]].map(Object.freeze));
+  const polynomialValidation=Object.freeze([[.5,1.6],[1.5,3.4],[2.5,6],[3.5,9.4],[4.5,13.6]].map(Object.freeze));
+  const pcaRows=Object.freeze([[1,1],[2,3],[3,2],[4,5],[5,4],[6,6]].map(([x,y],i)=>Object.freeze({id:'p'+(i+1),x,y})));
+  const mlExplorerSpecs={
+    C08:{title:'Change the neighbour vote',label:'Number of neighbours',options:[['1','k = 1'],['3','k = 3'],['5','k = 5']]},
+    C09:{title:'Change the neighbour vote',label:'Number of neighbours',options:[['1','k = 1'],['3','k = 3'],['5','k = 5']]},
+    C14:{title:'Trace a row through the tree',label:'Observation',options:treeRows.map(r=>[r.id,`${r.id}: width ${r.width}, length ${r.length}`])},
+    R09:{title:'Trace a leaf prediction',label:'Observation',options:regressionRows.map(r=>[r.id,`${r.id}: x ${r.x}, actual y ${r.y}`])},
+    R10:{title:'Trace a leaf prediction',label:'Observation',options:regressionRows.map(r=>[r.id,`${r.id}: x ${r.x}, actual y ${r.y}`])},
+    C10:{title:'Connect C to a linear margin',label:'Penalty for margin violations',options:[['0.05','C = 0.05'],['0.2','C = 0.2'],['1','C = 1']]},
+    C11:{title:'Linear-margin intuition for an RBF model',label:'Linear example penalty',options:[['0.05','C = 0.05'],['0.2','C = 0.2'],['1','C = 1']]},
+    R07:{title:'Fit a curve on training rows',label:'Polynomial degree',options:[['1','Degree 1'],['2','Degree 2'],['4','Degree 4']]},
+    R08:{title:'Compare flexibility using validation',label:'Polynomial degree',options:[['1','Degree 1'],['2','Degree 2'],['4','Degree 4']]},
+    P01:{title:'Track every row into new axes',label:'Highlighted observation',options:pcaRows.map(r=>[r.id,`${r.id}: (${r.x}, ${r.y})`])},
+    P06:{title:'Track every row into new axes',label:'Highlighted observation',options:pcaRows.map(r=>[r.id,`${r.id}: (${r.x}, ${r.y})`])}
+  };
+  // Small least-squares example. The degree changes a fit to the same training
+  // rows, and validation rows are never used to learn its coefficients.
+  function polynomialFit(rows,degree){
+    const n=degree+1,matrix=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>rows.reduce((sum,[x])=>sum+x**(i+j),0)).concat(rows.reduce((sum,[x,y])=>sum+y*x**i,0)));
+    for(let column=0;column<n;column++){
+      let pivot=column;for(let i=column+1;i<n;i++)if(Math.abs(matrix[i][column])>Math.abs(matrix[pivot][column]))pivot=i;
+      [matrix[column],matrix[pivot]]=[matrix[pivot],matrix[column]];
+      const divisor=matrix[column][column];if(Math.abs(divisor)<1e-10)throw Error('Singular polynomial example');
+      for(let j=column;j<=n;j++)matrix[column][j]/=divisor;
+      for(let i=0;i<n;i++)if(i!==column){const factor=matrix[i][column];for(let j=column;j<=n;j++)matrix[i][j]-=factor*matrix[column][j];}
+    }
+    return matrix.map(row=>row[n]);
+  }
+  function polynomialPrediction(coefficients,x){return coefficients.reduce((sum,c,i)=>sum+c*x**i,0);}
+  function mlExploration(id,choice){
+    id=id.replace(/^ML-/,'');const spec=mlExplorerSpecs[id];if(!spec||!spec.options.some(([v])=>v===choice))throw Error('Unknown model teaching visual choice');
+    let art='',summary='',code='',data,smallTree=false;
+    if(id==='C08'||id==='C09'){
+      const k=Number(choice),neighbours=knnRows.map(r=>({...r,distance:Math.hypot(r.x,r.y)})).sort((a,b)=>a.distance-b.distance).slice(0,k),votes={A:neighbours.filter(r=>r.group==='A').length,B:neighbours.filter(r=>r.group==='B').length},prediction=votes.A>votes.B?'A':'B',px=x=>180+x*85,py=y=>160-y*85;
+      art=line(25,160,490,160)+line(180,25,180,190)+label(25,17,'Fixed prepared feature space · ○ A  □ B')+
+        neighbours.map(r=>line(px(0),py(0),px(r.x),py(r.y),'stroke-dasharray="4 3"')).join('')+
+        knnRows.map(r=>'<g><title>'+esc(`${r.id}: (${r.x}, ${r.y}), class ${r.group}`)+'</title>'+(r.group==='A'?teachingCircle(px(r.x),py(r.y),5):'<rect x="'+(px(r.x)-5)+'" y="'+(py(r.y)-5)+'" width="10" height="10"/>')+(neighbours.some(n=>n.id===r.id)?teachingCircle(px(r.x),py(r.y),10,'accent-stroke'):'')+label(px(r.x)+9,py(r.y)+4,r.id)+'</g>').join('')+teachingCircle(px(0),py(0),7,'accent')+label(188,185,'Query (0, 0)')+label(30,220,`${k} neighbours: ${votes.A} A + ${votes.B} B → ${prediction}`);
+      summary=`k=${k}: ${neighbours.map(r=>`${r.id} (${r.group}), distance ${number(r.distance)}`).join('; ')}. Votes A=${votes.A}, B=${votes.B}; predicted class ${prediction}. All six training observations and the query stay fixed. Distances use the already prepared coordinates; no preprocessing is refitted.`;
+      code=`model = KNeighborsClassifier(n_neighbors=${k})\nmodel.fit(X_train_prepared, y_train)\nmodel.predict([[0, 0]])  # ${prediction}`;data={k,neighbours,votes,prediction,count:knnRows.length};
+    }else if(id==='C14'){
+      smallTree=true;const row=treeRows.find(r=>r.id===choice),left=row.width<=5,lower=row.length<=7,prediction=left?'A':lower?'B':'A',conditions=[`width ${row.width} ≤ 5: ${left?'yes':'no'}`,...(left?[]:[`length ${row.length} ≤ 7: ${lower?'yes':'no'}`])];
+      const node=(x,y,w,value,active=false)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="40" rx="4" class="'+(active?'accent':'')+'"/>'+text(x+w/2,y+25,value,'style="font-size:14px" text-anchor="middle"');
+      art=node(82,12,176,'width ≤ 5?',true)+line(130,52,55,95,left?'class="accent-stroke"':'')+line(215,52,234,85,!left?'class="accent-stroke"':'')+label(72,72,'yes')+label(228,72,'no')+node(10,98,92,'A · 3 rows',left)+node(134,88,196,'length ≤ 7?',!left)+line(188,128,176,174,!left&&lower?'class="accent-stroke"':'')+line(267,128,284,174,!left&&!lower?'class="accent-stroke"':'')+label(147,153,'yes')+label(288,153,'no')+node(125,178,99,'B · 3 rows',!left&&lower)+node(235,178,95,'A · 1 row',!left&&!lower);
+      summary=`${row.id} (${row.width}, ${row.length}): ${conditions.join(' → ')} → predict ${prediction}. Actual training label ${row.group}. Highlighted branches trace this one row through the illustrative fitted tree; leaf counts refer to the seven training rows.`;
+      code=`row = pd.DataFrame([{"width": ${row.width}, "length": ${row.length}}])\nmodel.predict(row)  # ${prediction}`;data={row,conditions,prediction,count:treeRows.length};
+    }else if(id==='R09'||id==='R10'){
+      smallTree=true;const row=regressionRows.find(r=>r.id===choice),left=row.x<=4.5,leaf=regressionRows.filter(r=>(r.x<=4.5)===left),prediction=leaf.reduce((sum,r)=>sum+r.y,0)/leaf.length;
+      const node=(x,y,w,value,active)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="47" rx="4" class="'+(active?'accent':'')+'"/>'+text(x+w/2,y+29,value,'style="font-size:14px" text-anchor="middle"');
+      art=node(82,22,176,'x ≤ 4.5?',true)+line(128,69,80,133,left?'class="accent-stroke"':'')+line(213,69,260,133,left?'':'class="accent-stroke"')+label(73,105,'yes')+label(249,105,'no')+node(8,136,149,'Mean = 5',left)+node(183,136,149,'Mean = 14',!left)+label(170,219,'Each leaf has three training rows','middle');
+      summary=`${row.id}: x=${row.x} → x ≤ 4.5 is ${left?'true':'false'} → leaf targets ${leaf.map(r=>r.y).join(', ')} → prediction ${prediction}. Actual y=${row.y}; residual=${row.y-prediction}. The leaf predicts the average of its training targets.`;
+      code=`model.predict(pd.DataFrame({"x": [${row.x}]}))  # ${prediction}`;data={row,leaf,prediction,residual:row.y-prediction,count:regressionRows.length};
+    }else if(id==='C10'||id==='C11'){
+      const C=Number(choice),weight=C<=.0625?8*C:C<.125?.5:Math.min(1,4*C),margin=1/weight,rows=[[-2,0,'A'],[-1,-1,'A'],[-1,1,'A'],[1,-1,'B'],[1,1,'B'],[2,0,'B']].map(([x,y,group],i)=>({id:'s'+(i+1),x,y,group})),support=rows.filter(r=>Math.abs(weight*r.x)<=1+1e-10),px=x=>260+x*78,py=y=>110-y*55;
+      art=line(35,185,485,185)+line(px(0),22,px(0),185,'class="accent-stroke"')+line(px(-margin),22,px(-margin),185,'stroke-dasharray="5 4"')+line(px(margin),22,px(margin),185,'stroke-dasharray="5 4"')+label(25,17,'Linear example · boundary x = 0')+rows.map(r=>(r.group==='A'?teachingCircle(px(r.x),py(r.y),5):'<rect x="'+(px(r.x)-5)+'" y="'+(py(r.y)-5)+'" width="10" height="10"/>')+(support.some(s=>s.id===r.id)?teachingCircle(px(r.x),py(r.y),11,'accent-stroke'):'')+label(px(r.x)+12,py(r.y)+4,r.id)).join('')+label(25,211,`C=${C} · margins x=±${number(margin)} · ○ A  □ B`);
+      summary=`Linear-margin intuition: C=${C}, learned weight ${number(weight)}, boundary x=0, margin lines x=±${number(margin)}. Support candidates ${support.map(r=>r.id).join(', ')} are on or inside the margin; soft-margin candidates can violate it. Symmetry keeps every class prediction unchanged here: negative x → A, positive x → B. ${id==='C11'?'Your RBF model can curve in original feature space; this linear calculation does not simulate gamma or an RBF fit.':'These six symmetric prepared training rows permit an exact one-dimensional linear solution.'}`;
+      code=`model = SVC(kernel="linear", C=${C})\nmodel.fit(X_train_prepared, y_train)`;data={C,weight,margin,support:support.map(r=>r.id),rows,boundary:0};
+    }else if(id==='R07'||id==='R08'){
+      const degree=Number(choice),coefficients=polynomialFit(polynomialTrain,degree),predict=x=>polynomialPrediction(coefficients,x),rmse=rows=>Math.sqrt(rows.reduce((sum,[x,y])=>sum+(y-predict(x))**2,0)/rows.length),trainRMSE=rmse(polynomialTrain),validationRMSE=rmse(polynomialValidation),px=x=>45+x*85,py=y=>185-y/20*155;
+      art=line(45,185,470,185)+line(45,185,45,25)+label(45,17,'○ Training     □ Validation')+[0,2,4].map(x=>label(px(x),205,x)).join('')+[0,10,20].map(y=>label(15,py(y)+4,y)).join('')+'<path d="'+Array.from({length:61},(_,i)=>`${i?'L':'M'}${px(i/12)} ${py(predict(i/12))}`).join('')+'" fill="none" class="accent-stroke"/>'+polynomialTrain.map(([x,y])=>teachingCircle(px(x),py(y),5)).join('')+polynomialValidation.map(([x,y])=>'<rect x="'+(px(x)-4)+'" y="'+(py(y)-4)+'" width="8" height="8"/>').join('');
+      summary=`Degree ${degree}: training RMSE ${number(trainRMSE)}; validation RMSE ${number(validationRMSE)}. The curve is fitted only to the same six training rows. Five fixed validation rows measure how it generalises; a smaller training error alone does not justify a degree. No final test rows are used.`;
+      code=`model = make_pipeline(PolynomialFeatures(degree=${degree}, include_bias=False), LinearRegression())\nmodel.fit(X_train, y_train)\nvalidation_rmse = mean_squared_error(y_validation, model.predict(X_validation), squared=False)`;data={degree,coefficients,trainRMSE,validationRMSE,trainingCount:polynomialTrain.length,validationCount:polynomialValidation.length,points:Array.from({length:61},(_,i)=>[i/12,predict(i/12)])};
+    }else{
+      const means=[pcaRows.reduce((sum,r)=>sum+r.x,0)/pcaRows.length,pcaRows.reduce((sum,r)=>sum+r.y,0)/pcaRows.length],centered=pcaRows.map(r=>({...r,x:r.x-means[0],y:r.y-means[1]})),xx=centered.reduce((sum,r)=>sum+r.x*r.x,0),yy=centered.reduce((sum,r)=>sum+r.y*r.y,0),xy=centered.reduce((sum,r)=>sum+r.x*r.y,0),angle=.5*Math.atan2(2*xy,xx-yy),c=Math.cos(angle),s=Math.sin(angle),scores=centered.map(r=>({id:r.id,pc1:-c*r.x-s*r.y,pc2:-s*r.x+c*r.y})),row=pcaRows.find(r=>r.id===choice),score=scores.find(r=>r.id===choice),share=(xx+yy+Math.hypot(xx-yy,2*xy))/(2*(xx+yy));
+      const px=x=>40+x/7*200,py=y=>185-y/7*145,sx=x=>390+x/5*105,sy=y=>112-y/5*75;
+      art=line(40,185,240,185)+line(40,185,40,25)+label(40,17,'Original features')+line(280,112,500,112)+line(390,30,390,185)+label(295,17,'PCA coordinates')+pcaRows.map(r=>teachingCircle(px(r.x),py(r.y),r.id===choice?7:4,r.id===choice?'accent':'')+label(px(r.x)+5,py(r.y)-7,r.id)).join('')+scores.map(r=>teachingCircle(sx(r.pc1),sy(r.pc2),r.id===choice?7:4,r.id===choice?'accent':'')+label(sx(r.pc1)+6,sy(r.pc2)-6,r.id)).join('')+label(75,209,'features: x and y')+label(345,209,'PC1 and PC2');
+      summary=`${row.id}: original (${row.x}, ${row.y}) → subtract training mean (${means.join(', ')}) → scores (${number(score.pc1)}, ${number(score.pc2)}). All six rows rotate with the same axes; PC1 weights (${number(-c)}, ${number(-s)}) retain ${number(share*100)}% of variance. Both features share units in this example. Fit any required scaler on training rows first. Consistently flipping a component and its scores gives an equivalent PCA.`;
+      code=`pca = PCA(n_components=2).fit(X_train)\nscores = pca.transform(X_train)\nscores[${pcaRows.indexOf(row)}]  # ${row.id}`;data={row,score,scores,means,weights:[[-c,-s],[-s,c]],varianceShare:share,count:pcaRows.length};
+    }
+    const svg='<div class="teaching-visual-scroll" tabindex="0" role="region" aria-label="'+(smallTree?'Tree path':'Teaching chart; scroll if needed')+'"><svg class="concept-visual data-teaching-visual'+(smallTree?' is-tree':'')+'" viewBox="0 0 '+(smallTree?'340 235':'520 235')+'" role="img" aria-label="'+esc(summary)+'"><title>'+esc(summary)+'</title><g>'+art+'</g></svg></div>';
+    return {summary,code,svg,data};
+  }
+  function mlResult(result){return result.svg+'<p>'+esc(result.summary)+'</p><pre><code>'+esc(result.code)+'</code></pre>';}
+  function comparisonSummary(id,result){
+    const d=result.data;
+    if(id==='C08'||id==='C09')return `k=${d.k}: ${d.votes.A} A + ${d.votes.B} B → ${d.prediction}; nearest rows ${d.neighbours.map(r=>r.id).join(', ')}.`;
+    if(id==='C14')return `${d.row.id}: ${d.conditions.join(' → ')} → predict ${d.prediction}.`;
+    if(id==='R09'||id==='R10')return `${d.row.id}: x=${d.row.x} → prediction ${d.prediction}, residual ${d.residual}.`;
+    if(id==='C10'||id==='C11')return `C=${d.C}: margins x=±${number(d.margin)}, boundary x=0, ${d.support.length} support candidates.`;
+    if(id==='R07'||id==='R08')return `Degree ${d.degree}: training RMSE ${number(d.trainRMSE)}, validation RMSE ${number(d.validationRMSE)}.`;
+    return `${d.row.id}: (${d.row.x}, ${d.row.y}) → (${number(d.score.pc1)}, ${number(d.score.pc2)}).`;
+  }
+  function observations(id){
+    if(id==='C08'||id==='C09')return knnRows.map(r=>`${r.id}: (${r.x}, ${r.y}), class ${r.group}`).join('; ')+'. Query: (0, 0).';
+    if(id==='C14')return treeRows.map(r=>`${r.id}: width ${r.width}, length ${r.length}, class ${r.group}`).join('; ')+'.';
+    if(id==='R09'||id==='R10')return regressionRows.map(r=>`${r.id}: x=${r.x}, target=${r.y}`).join('; ')+'.';
+    if(id==='R07'||id==='R08')return `Training (x, y): ${polynomialTrain.map(p=>`(${p.join(', ')})`).join(', ')}. Validation: ${polynomialValidation.map(p=>`(${p.join(', ')})`).join(', ')}.`;
+    if(id==='C10'||id==='C11')return 'Class A: (−2, 0), (−1, −1), (−1, 1). Class B: (1, −1), (1, 1), (2, 0). Coordinates are already prepared and remain fixed.';
+    return pcaRows.map(r=>`${r.id}: (${r.x}, ${r.y})`).join('; ')+'. All six rows fit the same mean and PCA axes.';
+  }
+  function interactive(visual){
+    const id=(visual.id||'').replace(/^ML-/,''),spec=mlExplorerSpecs[id];if(!spec)return '';
+    const baseline=spec.options[0][0],current=spec.options[1]?.[0]||baseline;
+    return '<section class="teaching-explorer" data-ml-explorer="'+id+'"><h4>'+esc(spec.title)+'</h4><p>Illustrative training example · separate from your exercise and its final test rows. These controls compute the example in this page; run your Python to produce exercise evidence.</p><details><summary>Example observations</summary><p>'+esc(observations(id))+'</p></details><label class="teaching-visual-controls">'+esc(spec.label)+' <select data-ml-visual-choice>'+spec.options.map(([value,title])=>'<option value="'+value+'"'+(value===current?' selected':'')+'>'+esc(title)+'</option>').join('')+'</select></label><p><strong>Starting view</strong> · '+esc(comparisonSummary(id,mlExploration(id,baseline)))+'</p><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">'+mlResult(mlExploration(id,current))+'</div></section>';
+  }
+  const mounted=new WeakSet();
+  function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-ml-visual-choice]'),section=control?.closest('[data-ml-explorer]');if(section)section.querySelector('.teaching-visual-result').innerHTML=mlResult(mlExploration(section.dataset.mlExplorer,control.value));});}
   function render(visual){
     const kind=visual?.type||'tasks',id='ml-arrow-'+(++diagramId),content=(variant(visual)||(types[kind]||types.tasks)()).replaceAll('url(#ml-arrow)','url(#'+id+')');
-    return '<figure class="teaching-illustration ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="'+id+'" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>Schematic · '+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
+    const schematic='<figure class="teaching-illustration ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="'+id+'" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>Schematic · '+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
+    const explorer=interactive(visual);
+    return explorer?explorer+'<details class="ml-schematic-reference"><summary>Concept schematic</summary>'+schematic+'</details>':schematic;
   }
-  root.MLLearningVisuals={render,thumbnail,types:Object.keys(types),family:v=>variant(v)?v.id:v.type};
+  root.MLLearningVisuals={render,thumbnail,interactive,mount,exploration:mlExploration,polynomialFit,exampleRows:{knn:knnRows,tree:treeRows,regression:regressionRows,pca:pcaRows,polynomialTrain,polynomialValidation},types:Object.keys(types),family:v=>variant(v)?v.id:v.type};
 })(window);
