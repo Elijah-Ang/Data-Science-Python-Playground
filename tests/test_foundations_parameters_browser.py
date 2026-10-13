@@ -27,111 +27,73 @@ def assert_no_overflow(page, state):
 
 
 def inspect_guidance(page, guidance, state):
-    """Compare levels separately; opening help must require a real interaction."""
+    """Current meanings stay visible; full contracts share one flat Reference."""
     current = page.locator(".foundation-parameter-teaching")
     current_ids = [item["id"] for item in guidance["introduces"] + guidance["extends"]]
-    reminders_expected = guidance["reminders"]
     reference_expected = guidance["reference"]
     assert current.count() == bool(current_ids), state
-    assert parameter_ids(current.locator(".foundation-parameter-entry")) == current_ids, state
-    assert parameter_ids(page.locator(".foundation-parameter-entry:visible")) == current_ids, state
-    assert not set(current_ids).intersection(item["id"] for item in reminders_expected), state
+    assert parameter_ids(current.locator(".foundation-parameter-row")) == current_ids, state
+    assert parameter_ids(page.locator('[data-parameter]:visible')) == current_ids, state
+    assert not set(current_ids).intersection(item["id"] for item in guidance["reminders"]), state
+    assert current.locator("details").count() == 0, state
+    for level, definitions in (("introduce", guidance["introduces"]), ("extend", guidance["extends"])):
+        for definition in definitions:
+            entry = current.locator(f'[data-parameter="{definition["id"]}"]')
+            assert entry.get_attribute("data-guidance") == level, state
+            assert entry.is_visible(), state
+            assert entry.locator('dt code[data-code-role="parameter"]').inner_text() == definition["keyword"], state
+            meaning = entry.locator("dd").inner_text()
+            assert meaning and len(meaning.split()) >= 3, (state, definition["id"])
+            assert entry.locator("pre, details").count() == 0, state
+            # Full authored contracts survive in the registry; the visible row
+            # explains this use without repeating every contract field.
+            for key in ("forms", "range", "default", "effect", "example", "caveat", "source"):
+                assert definition[key], (state, definition["id"], key)
 
-    for definition in guidance["introduces"]:
-        entry = current.locator(f'[data-parameter="{definition["id"]}"]')
-        assert entry.get_attribute("data-guidance") == "introduce", state
-        assert entry.is_visible(), state
-        assert entry.locator("dt").all_inner_texts() == [
-            "Accepted forms", "Useful choices", "Default", "Effect", "Small example"
-        ], state
-        assert entry.locator("dd").count() == 5, state
-        assert all(entry.locator("dd").nth(index).inner_text() for index in range(5)), state
-        assert entry.locator("pre > code").count() == 1, state
-        assert entry.locator("dd a").count() == 0, state
-    for definition in guidance["extends"]:
-        entry = current.locator(f'[data-parameter="{definition["id"]}"]')
-        assert entry.get_attribute("data-guidance") == "extend", state
-        assert entry.is_visible(), state
-        assert entry.locator("h4").inner_text() == definition["keyword"] + " · What changes here", state
-        assert entry.locator("p").inner_text(), state
-        assert entry.locator("pre > code").inner_text(), state
-        assert entry.locator("dl").count() == 0, state
-
-    optional = page.locator('.foundation-parameter-guide[aria-label="Optional parameter help"]')
-    assert optional.count() == bool(reference_expected), state
-    reminder = optional.locator("details.foundation-parameter-reminder")
-    reference = optional.locator("details.foundation-parameter-reference")
-    assert reminder.count() == bool(reminders_expected), state
-    assert reference.count() == bool(reference_expected), state
-    assert optional.locator("details[open]").count() == 0, state
-
-    if reminders_expected:
-        assert not reminder.locator("ul").is_visible(), state
-        reminder.locator("summary").click()
-        assert reminder.get_attribute("open") is not None, state
-        assert reminder.locator("ul").is_visible(), state
-        assert reminder.locator("li > code:first-child").all_inner_texts() == [
-            item["keyword"] for item in reminders_expected
-        ], state
-        # Familiar reminders never duplicate the comprehensive parameter forms.
-        assert reminder.locator(".foundation-parameter-entry, dl").count() == 0, state
-        assert parameter_ids(page.locator(".foundation-parameter-entry:visible")) == current_ids, state
-        reminder.locator("summary").click()
-        assert reminder.get_attribute("open") is None, state
-        assert not reminder.locator("ul").is_visible(), state
-
+    support = page.locator('.foundation-reference-content')
+    assert support.locator(":scope > details > summary").all_inner_texts() == ["Reference", "Hint", "Reveal solution"], state
+    assert support.locator("details details").count() == 0, state
+    assert support.locator("details[open]").count() == 0, state
+    reference = support.locator(":scope > .foundation-reference")
+    table = reference.locator(".foundation-parameter-reference")
+    assert table.count() == bool(reference_expected), state
+    entries = table.locator('tr[data-parameter]')
+    assert parameter_ids(entries) == [item["id"] for item in reference_expected], state
+    assert entries.locator(":visible").count() == 0, state
     if reference_expected:
-        entries = reference.locator(".foundation-parameter-entry")
-        assert parameter_ids(entries) == [item["id"] for item in reference_expected], state
-        assert reference.locator(".foundation-parameter-entry:visible").count() == 0, state
-        reference.locator("summary").click()
+        reference.locator(":scope > summary").click()
         assert reference.get_attribute("open") is not None, state
         rendered = entries.evaluate_all("""items=>{
           const visible=e=>!!e.getClientRects().length && getComputedStyle(e).visibility!=='hidden';
           return items.map(entry=>({
-            level:entry.dataset.guidance, visible:visible(entry), header:entry.querySelector('h4').innerText,
-            terms:Array.from(entry.querySelectorAll('dt'),e=>e.innerText),
-            fields:Array.from(entry.querySelectorAll('dd'),e=>({
-              visible:visible(e), text:e.textContent, displayed:e.innerText,
-              code:Array.from(e.querySelectorAll('pre > code'),code=>code.innerText)
-            })),
-            source:entry.querySelector('dd a')?.getAttribute('href'),
+            id:entry.dataset.parameter, level:entry.dataset.guidance, visible:visible(entry),
+            keyword:entry.querySelector('th code').textContent,
+            cells:Array.from(entry.querySelectorAll('td'),e=>e.textContent),
+            source:entry.querySelector('th a')?.getAttribute('href'),
             nestedDetails:entry.querySelectorAll('details').length
           }));
         }""")
         for actual, definition in zip(rendered, reference_expected, strict=True):
-            assert actual["level"] == "reference", (state, definition["id"])
+            assert actual["id"] == definition["id"] and actual["level"] == "reference", state
             assert actual["visible"], (state, definition["id"])
-            assert actual["header"] == definition["keyword"] + " · " + definition["purpose"], state
-            assert actual["terms"] == [
-                "Accepted forms", "Useful choices", "Default", "Effect", "Small example",
-                "Restrictions and other choices"
-            ], state
-            for field_index, field in enumerate(("forms", "range", "default", "effect", "example")):
-                dd = actual["fields"][field_index]
-                assert dd["visible"], (state, definition["id"], field)
-                assert dd["text"] == definition[field], (state, definition["id"], field)
-                if field == "example":
-                    assert dd["code"] == [definition[field]], state
-                else:
-                    assert dd["displayed"] == definition[field], state
-            assert actual["fields"][-1]["displayed"] == definition["caveat"] + " Version-matched source", state
-            assert actual["source"] == definition["source"], state
+            assert actual["keyword"] == definition["keyword"], state
+            assert actual["cells"] == [definition["purpose"] + " " + definition["forms"], definition["default"]], (state, definition["id"])
+            assert actual["source"] == definition["source"], (state, definition["id"])
             assert actual["nestedDetails"] == 0, state
         assert_no_overflow(page, (state, "reference open"))
-        reference.locator("summary").click()
+        reference.locator(":scope > summary").click()
         assert reference.get_attribute("open") is None, state
-        assert reference.locator(".foundation-parameter-entry:visible").count() == 0, state
-    assert parameter_ids(page.locator(".foundation-parameter-entry:visible")) == current_ids, state
-    assert optional.locator("details[open]").count() == 0, state
+        assert entries.locator(":visible").count() == 0, state
+    assert parameter_ids(page.locator('[data-parameter]:visible')) == current_ids, state
+    assert support.locator("details[open]").count() == 0, state
     assert_no_overflow(page, (state, "help closed"))
     return {
         "introduces": [item["id"] for item in guidance["introduces"]],
         "extends": [item["id"] for item in guidance["extends"]],
-        "reminders": [item["id"] for item in reminders_expected],
+        "reminders": [item["id"] for item in guidance["reminders"]],
         "reference": [item["id"] for item in reference_expected],
         "referenceOpenedAndClosed": bool(reference_expected),
-        "reminderOpenedAndClosed": bool(reminders_expected),
+        "flatDisclosures": 3,
     }
 
 
@@ -193,4 +155,4 @@ record = {
     "noJavaScriptWidth": 320, "staticDisclosures": static_records
 }
 (out / f"{args.engine}-parameters.json").write_text(json.dumps(record, indent=2) + "\n")
-print(args.engine, len(records), "round/viewport states and 43 static 320px lessons verify authored current teaching, closed help, and interactive full references")
+print(args.engine, len(records), "round/viewport states and 43 static 320px lessons verify concise current teaching, complete registry contracts, and a single flat reference")

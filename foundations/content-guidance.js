@@ -66,6 +66,130 @@
     W31: [[], ['pandas.copy', 'pandas.drop-duplicates', 'pandas.str-strip', 'pandas.str-lower', 'pandas.str-title', 'pandas.str-replace', 'pandas.to-numeric', 'pandas.to-datetime', 'pandas.fillna', 'pandas.median', 'pandas.dropna', 'pandas.vector-arithmetic', 'pandas.sort-values', 'pandas.reset-index', 'pandas.dataframe-selection'], [], ['W01', 'W06', 'W07', 'W10', 'W12', 'W14', 'W16', 'W17', 'W18']]
   };
 
+  // One explanation per idea. Worked code and value tables carry the detail.
+  const conciseGuides = {
+    I01: ['A DataFrame is a table. A dictionary names its columns; equal-length lists supply the rows.', 'Names ["A", "B"] and ages [2, 4] form rows A/2 and B/4.', 'Use quotes for text and `=` to store a value under a name.'],
+    I02: ['A preview selects rows with all their columns and leaves `df` unchanged.', 'For rows A–D, `head(2)` shows A/B; `tail(2)` shows C/D.', 'A spot check can miss important groups.'],
+    I01CSV: ['`read_csv()` loads a text file into a DataFrame. The separator keeps its fields apart.', 'A semicolon-separated file needs `sep=";"`.', 'Import pandas as `pd`; use an available filename.'],
+    I03: ['`df.shape` gives (rows, columns); `len(df)` counts rows.', 'A six-row, five-column table has shape (6, 5).', '`shape` is an attribute: no parentheses.'],
+    I04: ['`df.columns` holds field names; `df.index` holds row labels.', 'Labels [101, 109, 103] identify rows at positions 0, 1, 2.', 'Labels need not be consecutive numbers.'],
+    I05: ['A dtype describes how a column stores values. `info()` also reports non-missing counts.', 'Ages may use int64; decimal prices may use float64.', 'A stored type does not prove that values are correct.'],
+    I06: ['One column name inside brackets returns a Series: values with row labels.', '`df["age"]` is a Series; `df[["age"]]` is a table.', 'Use the exact column name, including case.'],
+    I06S: ['A Series pairs each value with an index label. Labels and numbered positions are different.', 'Labels [101, 109, 103] pair with readings [12, 4, 19].', '`index` has no parentheses; `to_numpy()` returns values without labels.'],
+    I07: ['A list of column names inside `df[...]` returns a DataFrame.', 'Selecting ["rating", "price"] keeps that column order.', 'Even a list containing one column name returns a table.'],
+    I08: ['`iloc` selects numbered positions. In `start:stop`, the stop is excluded.', '`df.iloc[:3]` selects positions 0, 1 and 2.', 'A single position returns a Series; a slice returns a table.'],
+    I09: ['`loc` selects labels. A label slice includes its end label.', 'Labels B through D include B, C and D.', 'Use a list for separated labels or a chosen order.'],
+    I10: ['A condition makes one True/False flag per row. `df[mask]` keeps the True rows.', 'For ages [2, 4, 6], `age > 4` keeps only 6.', '`==` compares; `=` assigns. Filtering keeps row order and labels.'],
+    I11: ['Combine row masks with `&` for both, `|` for either and `~` to reverse.', '“Age at least 3 AND Dog” keeps rows meeting both tests.', 'Put each comparison in parentheses; pandas masks need `&` and `|`.'],
+    I12: ['Sorting moves whole rows. Additional keys order ties in the first key.', 'Sort groups A–Z, then scores highest first within each group.', '`sort_values()` returns a table; assign it back to change `df`.'],
+    I13: ['`nlargest()` and `nsmallest()` return the requested extreme records.', 'The two largest prices in [3, 8, 2] are 8 and 3.', 'Filter first when the extreme must come from eligible rows.'],
+    I13L: ['`idxmax()` and `idxmin()` return an extreme value’s row label. Use `loc` to retrieve that row.', 'For label 109 with reading 19, `idxmax()` returns 109.', 'Find the extreme within the eligible table. Ties return the first matching label.'],
+    I14: ['`unique()` returns distinct values; `nunique()` counts them.', '["A", "B", "A"] has values A/B and count 2.', '`unique()` keeps first-appearance order; `nunique()` excludes missing values by default.'],
+    I15: ['`value_counts()` counts records per category; `normalize=True` returns proportions.', 'Two A records out of four give proportion 0.5, or 50%.', 'Missing values are excluded unless `dropna=False`.'],
+    I16: ['`isna()` marks gaps True. Missing means unknown or absent, rather than zero.', '[5, missing, 0, missing] has two gaps: 50%.', 'Present text such as "oops" can still be invalid.'],
+    I17: ['`duplicated()` flags repeated rows; its default leaves each first occurrence unflagged.', 'Rows A/B/A/A produce flags False/False/True/True.', 'Use Boolean `False` without quotes to include first copies. Repeated categories alone are not duplicate rows.'],
+    I18: ['`describe()` summarises numeric columns with count, centre, spread and percentiles.', 'The 50% row is the median; count excludes missing values.', 'Investigate unusual values before deciding to change them.'],
+    I18S: ['Choose one summary: `mean()` for average, `sum()` for total or `median()` for the middle value.', 'For [2, 3, 10]: mean 5, total 15, median 3.', 'Missing values are skipped; an all-missing mean or median is undefined.'],
+    I19: ['`groupby()` gathers equal category labels; an aggregation gives one result per group.', 'Prices 2 and 4 in one group have mean 3 and total 6.', 'An average alone does not show group size or variation.'],
+    I19S: ['A grouped Series pairs categories with statistics. Sort the statistics, then extract the labels.', 'Median readings Ash=10, Birch=4, Cedar=7 rank Birch, Cedar, Ash.', 'Keep labels attached while sorting; choose a tie policy when fixed order matters.'],
+    I19A: ['A DataFrame built from Series matches their index labels, regardless of displayed order.', 'Means A=4/B=9 and counts B=3/A=2 match A with 4/2 and B with 9/3.', 'Keep labels for alignment. An unreported count stays missing.'],
+    I20: ['A crosstab counts records for pairs of categories.', 'A row with `flavour` fruity and `shelf` A adds one to that cell.', 'Zero means no observed rows for that category pair.'],
+    I21: ['Correlation measures linear association, from −1 to 1 when defined.', 'Positive correlation means larger values tend to occur together.', 'Correlation does not establish causation; tiny samples can mislead.'],
+    I22: ['Combine familiar inspection tools without changing the source table.', 'A quality profile pairs each field’s dtype with its missing count.', 'Keep the selected population clear before summarising it.'],
+    W01: ['`copy()` creates a separate table for changes while preserving `df`.', 'Select or sort `clean`; the original `df` remains intact.', 'Giving `df` another name alone does not make a copy.'],
+    W02: ['`rename()` changes column headings without changing their values.', 'Rename `price` to `amount` with a dictionary mapping old name to new name.', 'Assign the returned table to keep the rename.'],
+    W03: ['Select a list of columns to keep and reorder them.', '["name", "age"] keeps just those fields in that order.', 'Assignment replaces the working table; omitted fields are dropped.'],
+    W04: ['`drop(columns=[...])` removes named fields and keeps the rows.', 'Dropping `shelf` leaves every candy record.', 'Store the returned table to keep the change.'],
+    W05: ['Assign a filtered table when only matching rows belong in the working data.', 'Keeping `flavour` "fruity" excludes other flavours.', 'State the eligibility rule before removing rows.'],
+    W06: ['Sort first, then reset row labels. `drop=True` discards the old labels.', 'Sorted labels [3, 1, 5] become [0, 1, 2].', 'Without `drop=True`, old labels become a column named `index`.'],
+    W07: ['Column arithmetic calculates a value for every row.', 'Prices [2, 3] become pair prices [4, 6] when multiplied by 2.', 'Use a new column name to preserve the source values; check units.'],
+    W08: ['`np.where()` chooses one of two values from a row’s True/False test.', 'Prices [2, 4] tested against > 3 become ["low", "high"].', 'A strict `>` excludes equality.'],
+    W09: ['`replace()` keeps unmatched labels; `map()` makes them missing.', 'With {"A": 1}, ["A", "B"] becomes [1, "B"] using `replace()` or [1, missing] using `map()`.', 'Store new codes separately when original labels must remain.'],
+    W10: ['`.str` applies text methods to a column. Chain the steps in the required order.', '" TEA-CUP " becomes "tea cup" after strip, lowercase and literal hyphen replacement.', 'Each text step needs `.str`; case and spacing changes do not fix spelling.'],
+    W11: ['`str.contains()` makes a row mask for matching text.', 'Ignoring case, literal "a" matches "Latte" and "Tea".', 'Use `regex=False` for literal text and `na=False` for missing values.'],
+    W12: ['`to_numeric()` parses numbers stored as text. `errors="coerce"` makes invalid text missing.', '"6.20" becomes 6.2; "oops" becomes NaN.', 'Keep a separate parsed column when raw text must remain.'],
+    W13: ['`astype()` changes a column’s storage type.', '"Int64" stores whole numbers and can also represent missing values.', 'Conversion must fit the values; invalid conversions can raise an error.'],
+    W14: ['`to_datetime()` parses date text using the stated format.', '"2026-06-01" becomes a date; invalid text becomes NaT with coercion.', 'NaT marks an unknown date.'],
+    W15: ['After parsing dates, `.dt` extracts calendar fields.', '2026-06-01 has year 2026, month 6 and weekday Monday.', 'Invalid dates remain missing in derived fields.'],
+    W16: ['`dropna(subset=[...])` removes rows missing required fields.', 'A report requiring price can keep rows with unknown tips.', 'Parse first: invalid numeric text may reveal additional missing values.'],
+    W17: ['`fillna()` replaces gaps using an explicit assumption.', 'If missing discount means none, fill it with zero.', 'A median fill is an assumption; preserve a missingness flag when needed.'],
+    W18: ['`drop_duplicates()` removes extra identical records.', 'Rows A/B/A become A/B when keeping the first occurrence.', 'Remove only confirmed copies; preserve labels or reset them deliberately.'],
+    W19: ['`agg()` makes one row per group. In `output=("source", "operation")`, output names a new column.', 'Prices 2 and 4 give `mean_amount` 3 and `records` 2; a lone price 8 gives 8 and 1.', '`size` counts rows; `count` counts known values. They agree when nothing is missing.'],
+    W20: ['`transform()` repeats a group statistic at each original row label.', 'A group mean of 5 is assigned to every row in that group.', 'Aggregation shrinks groups; transformation keeps the original rows.'],
+    W21: ['A pivot table aggregates measurements for row/column category pairs.', 'Mean `price` can be compared by `flavour` rows and `shelf` columns.', 'Repeated pairs are aggregated; absent combinations stay missing.'],
+    W22: ['`melt()` stacks measurement columns into rows and repeats their identifiers.', '`price` 2 and `rating` 4 become two rows with `candy`, `measure`, `value`.', '`measure` and `value` are chosen output headings. Two measurements double the row count.'],
+    W23: ['`pivot()` turns `measure` labels into column headings without aggregation.', 'A `candy`/`measure`/`value` table becomes one row per `candy`.', 'Each identifier/measurement pair must be unique. Missing combinations remain missing.'],
+    W24: ['`merge()` matches rows using a shared key.', 'A left join keeps every source row and attaches matching lookup fields.', '`validate="many_to_one"` checks lookup-key uniqueness; unmatched lookup values are missing.'],
+    W25: ['`concat()` stacks compatible tables in the supplied order.', '`second` appears below `first`; all their rows remain.', '`ignore_index=True` creates consecutive labels; otherwise original labels remain.'],
+    W26: ['`cut()` assigns values to fixed intervals with chosen labels.', 'Edges [0, 3, 10] define [0, 3] and (3, 10] when the lowest edge is included.', 'Values outside the intervals become missing.'],
+    W27: ['One-hot encoding replaces a category with one indicator column per label.', 'A Cat row has Cat=1 and other species indicators=0.', 'Integer indicators use 0/1; preserve the other fields.'],
+    W28: ['A scaler learns reference values and rescales each column separately.', '`StandardScaler` subtracts the mean and divides by the population standard deviation.', 'Fit on training rows; use the fitted scaler to transform later rows.'],
+    W29: ['Use 1.5×IQR fences to flag values for investigation.', 'IQR = Q3 − Q1; fences are Q1 − 1.5×IQR and Q3 + 1.5×IQR.', 'Keep original values and rows: a flag requires review.'],
+    W30: ['Vectorised arithmetic applies a calculation to every column value.', 'Multiplying prices by 1.1 raises them by 10%.', 'Use a new field to preserve the source values.'],
+    W31: ['Combine cleaning steps under the stated missing-value and duplicate policies.', 'Parse before checking numeric completeness; deduplicate before calculating the required median.', 'Keep `df` intact and make only the requested changes.']
+  };
+  const conciseSyntax = {
+    W19: ['Group by `flavour`; keep it as a column.', 'Calculate one result row per group.', 'Name the new output column `mean_amount`.', 'A two-item tuple: source column `price`, then operation `mean`.', 'Name the new output column `records`.', 'Use source column `price` with row-count operation `size`.'],
+    W28: ['Import the standardisation tool.', 'Create the scaler.', 'Select both columns in this order.', 'Learn each column’s mean/spread and return its scaled values.'],
+    W26: ['Assign prices to these fixed intervals.', 'Name the two intervals in order.', 'Include zero in the first interval.'],
+    W08: ['Import NumPy as `np`.', 'Create the new `band` column.', 'Choose yes for True rows; no otherwise.', 'Prices equal to 2.1 fail this strict test.', 'Use "high" for True and "low" for False.'],
+    I19A: ['Match the Series by bench label.', 'Labels used to match values.', 'Remove labels; table construction then matches positions.'],
+    I10: ['Test each price; return one Boolean per row.', 'Keep rows with True flags.', 'Compare values; `=` assigns.'],
+    I12: ['Sort by this column.', 'Put largest values first.', 'Name the filtered table.'],
+    I02: ['The source table.', 'Access the table’s method.', 'Select first rows.', 'Call the method for two rows.'],
+    I06: ['Select one Series.', 'Select from the table.', 'Values with row labels.'],
+    I16: ['Mark missing cells True.', 'Count True flags down each column.', 'Missing-value representations.']
+  };
+  const conciseChoices = {
+    W19: ['Group by `flavour`; keep it as a column.', 'Calculate one result row per group.', 'Create `mean_amount` from each group’s mean `price`.', 'Create `records` from each group’s row count.'],
+    W28: ['Subtract the training mean and divide by its population standard deviation.', 'Map the training minimum/maximum to 0/1; constant columns become 0.', 'Learn and apply the scale to these rows.', 'Fit training rows; reuse the scale on other rows.'],
+    W26: ['Three edges define two intervals; supply two labels.', 'Include each upper edge; include the first lower edge with `include_lowest=True`.'],
+    W08: ['Choose yes for True rows; no otherwise.', 'Use the first matching rule.', 'Store a Boolean flag directly.'],
+    I19A: ['Match Series by label; keep the union of their labels.', 'Keep unreported cells missing.', 'Arrays match positions rather than labels.'],
+    I10: ['Strictly greater / greater or equal.', 'Match either listed value.', 'Include both endpoints by default.'],
+    I12: ['Smallest first by default.', 'Largest first.', 'Match each key with its sort direction.'],
+    I16: ['Count missing cells per column.', 'Return the percentage missing per column.', 'Reverse the missing mask to keep present prices.'],
+    I06: ['Select one labelled Series.', 'Preview two rows, then select their ages.', 'Select the final two ages with original labels.'],
+    I02: ['Select first / last rows; default five.', 'Sample rows; the fixed seed repeats the choice on identical data.']
+  };
+  const conciseTransitions = {
+    'I02-3': ['`sample()` chooses rows from across the table. A fixed seed repeats the selection.', 'The two-row sample below selects D and C.', 'A fixed seed makes a spot check repeatable, not representative.', ['Choose rows from across the table.', 'Select two rows.', 'Repeat the selection on identical input.']],
+    'I06-2': ['Brackets select any column name. Dot notation is a shortcut for names that do not conflict with pandas.', '`sample["reading"]` and `sample.reading` select the same Series.', 'Names with spaces or conflicts such as "index" need brackets.', ['Select by exact column name.', 'Shortcut for this ordinary column name.', 'The row-label property / a column named "index".']],
+    'I10-2': ['`isin()` flags values belonging to a supplied list.', 'Tea and Latte match; Coffee does not.', 'Filtering retains original row order.', ['Read each drink value.', 'Flag either allowed drink True.', 'Keep True rows.']],
+    'I10-3': ['`between()` flags values inside a range, including both endpoints by default.', 'The range 2–5 keeps ages 2 and 5.', 'Strict `>` or `<` tests would exclude an endpoint.', ['Read each age.', 'Flag ages 2–5, including endpoints.', 'Keep True rows.']],
+    'I12-3': ['Supply one sort direction per key. Later keys order ties in earlier keys.', 'Group A comes first; its score 3 precedes score 1.', 'The column and direction lists must match.', ['Sort group first, then score within group.', 'Group A–Z; score highest first.', 'Sort whole rows so values stay paired.']],
+    'I14-2': ['`unique()` returns distinct values in first-appearance order.', '["Large", "Small", "Large"] gives ["Large", "Small"].', '`nunique()` returns a count; `unique()` returns the values.', ['Read the size labels.', 'Find distinct labels in appearance order.', 'Convert the returned array to a list.']],
+    'I16-2': ['The mean of missing-value flags is the missing fraction. Multiply by 100 for a percentage.', 'Two gaps among four prices give 50%.', '`sum()` counts gaps; `mean() * 100` gives their percentage.', ['Mark gaps True.', 'Average flags: True=1, False=0.', 'Convert fraction to percentage.']],
+    'I16-3': ['Reverse an `isna()` mask with `~`, or use `notna()`, to select present values.', 'Prices 2 and 4 remain; the missing price is excluded.', 'A present value can still contain invalid text.', ['Flag missing prices True.', 'Reverse the flags.', 'Keep True rows.', 'Flag present prices True directly.']],
+    'I19A-3': ['`df.dtypes` describes storage types. `astype(str)` turns those descriptions into text.', 'The dtype int64 becomes the text "int64".', 'Convert the dtype descriptions, leaving the original measurements unchanged.', ['Storage types indexed by field name.', 'Convert descriptions to Python text.', 'Missing counts indexed by field name.', 'Match both Series by field name.']],
+    'W08-2': ['`np.select()` uses the result for the first True condition.', 'Price 6 matches both tests, so test > 5 first.', 'Testing > 3 first would label 6 "middle".', ['Choose among several conditions.', 'Check in order; first True wins.', 'Pair conditions with labels by position.', 'Use "low" if no test matches.', 'Store the chosen labels.']],
+    'W09-2': ['`map()` looks up each label and leaves unmatched labels missing.', 'Large gets code 1; Small gets a missing code.', '`replace()` keeps unmatched labels. Missing values can make numeric codes display as 1.0.', ['Read original size labels.', 'Look up codes; unmatched labels become missing.', 'Store codes in a new column.']],
+    'W10-2': ['After trimming and lowercasing, `str.replace()` swaps literal text inside each value.', '"  Sky-Run  " becomes "sky run".', 'Each chained text method needs `.str`.', ['Trim both ends.', 'Make letters lowercase.', 'Replace literal hyphens with spaces.', 'Store the cleaned values.']],
+    'W15-3': ['`value_counts()` sorts by frequency. `sort_index()` orders the resulting month labels.', 'Month 6 comes before month 7, regardless of their counts.', 'Use label order for calendar sequence.', ['Extract month numbers.', 'Count valid dates per month.', 'Order month labels numerically.']],
+    'W26-2': ['`qcut()` chooses sample-based boundaries to make similarly sized groups.', 'Prices 2/3 form the lower group; 8/9 form the upper group.', 'Ties can prevent equal counts or distinct bins. `cut()` uses fixed boundaries instead.', ['Choose boundaries from sample values.', 'Use these numeric prices.', 'Aim for two groups of equal size.', 'Name the groups lower and upper.', 'Store each row’s group.']],
+    'W28-2': ['`MinMaxScaler` maps the training minimum to 0 and maximum to 1.', 'Scores [10, 20, 30] become [0, 0.5, 1].', 'Fit training rows; transform later rows with the same scaler.', ['Import the scaler.', 'Create a scaler for minimum/maximum.', 'Select a two-dimensional score table.', 'Learn the bounds and return scaled values.']],
+    'W28-3': ['`fit()` learns reference values; `transform()` reuses them on other rows.', 'Training scores 10/20 have mean 15 and population SD 5; score 30 becomes 3.', 'Held-out rows must not affect the training scale.', ['Use the first two training rows.', 'Store their mean and spread; return no scaled rows.', 'Select the held-out row as a table.', 'Apply the learned scale to that row.']]
+  };
+  function shortenTeaching(lesson) {
+    const copy = conciseGuides[lesson.id];
+    if (copy && lesson.guide) [lesson.guide.idea, lesson.guide.example, lesson.guide.note] = copy;
+    if (lesson.id === 'W19') lesson.guide.followNote = '`size` counts every group row, including missing prices. Use it for `records`. These prices are complete, so `count` gives the same totals.';
+    for (const [index, meaning] of (conciseSyntax[lesson.id] || []).entries()) if (lesson.syntax[index]) lesson.syntax[index][1] = meaning;
+    for (const [index, meaning] of (conciseChoices[lesson.id] || []).entries()) if (lesson.guide.choices[index]) lesson.guide.choices[index][1] = meaning;
+    if (lesson.id === 'W22') lesson.guide.choices = [
+      ['id_vars=["candy"]', 'Repeat `candy` beside each measurement.'],
+      ['value_vars=["price", "rating"]', 'Stack `price`, then `rating`.'],
+      ['var_name="measure", value_name="value"', 'Name the output columns `measure` and `value`.']
+    ];
+    for (const round of lesson.rounds) {
+      const transition = conciseTransitions[round.id];
+      if (!transition || !round.teaching) continue;
+      const [idea, example, note, meanings] = transition;
+      Object.assign(round.teaching, {idea, example, note});
+      for (const [index, meaning] of meanings.entries()) if (round.teaching.parts[index]) round.teaching.parts[index][1] = meaning;
+    }
+  }
+
   const b = (question, rows, result, constraints = []) => ({question, rows, result, constraints});
   const briefs = {
     I01: [
@@ -546,6 +670,7 @@
   function apply(curriculum) {
     const byId = new Map(curriculum.lessons.map(lesson => [lesson.id, lesson]));
     for (const lesson of curriculum.lessons.filter(item => item.deck === 'inspect' || item.deck === 'wrangle')) {
+      shortenTeaching(lesson);
       const declared = concepts[lesson.id];
       if (declared) {
         const [introduces, reuses, extendsConcepts, prerequisites] = declared;
@@ -620,8 +745,8 @@
     grouping.guide.identifiers = {...grouping.guide.identifiers, operations: ['mean', 'sum', 'size', 'count']};
     ordering.visual.summaryStatistic = 'median';
     ordering.rounds.forEach(round => { round.visual.summaryStatistic = 'median'; });
-    ordering.guide.example = 'Group readings by bench to create `medians`, a Series indexed by bench names. Sorting it creates `ranked`: the numbers move with their labels. Read `ranked.index` into `order` to extract the ordered bench names.';
-    ordering.guide.note = 'Break the chain into `medians`, `ranked` and `order` while learning. Converting to an unlabeled array too early loses the category names. For tied statistics, choose and state a tie policy when a fixed order matters.';
+    ordering.guide.example = '`medians` pairs bench names with median readings. `ranked` sorts those pairs; `order` holds labels extracted with `ranked.index`.';
+    ordering.guide.note = 'Keep labels attached while sorting. A fixed order may need a tie policy.';
     ordering.guide.exampleCode = 'sample = pd.DataFrame({"bench": ["Ash", "Birch", "Cedar"], "reading": [10, 4, 7]})\nmedians = sample.groupby("bench")["reading"].median()\nranked = medians.sort_values()\norder = ranked.index\nlist(order)';
     ordering.guide.exampleObjects = {
       supplied: [object('sample', 'DataFrame', 'Three bench readings constructed in the small example.')],

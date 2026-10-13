@@ -7,7 +7,7 @@
     "id": "V15-3",
     "label": "Transfer",
     "dataset": "ceramic_checks",
-    "task": "Which observed evidence should replace a draft that exceeds the sample detail? Each row is one ceramic sample. Use the rows specified below from df. The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1]. Replace only the first panel with every mass_g observation by batch using jitter=False. Restore its title Observations and labels batch and mass_g. Preserve the second panel and all its evidence.",
+    "task": "The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1]. Replace only the first panel with every mass_g observation by batch using jitter=False. Restore its title Observations and labels batch and mass_g. Preserve the second panel and all its evidence.",
     "solution": "axes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
     "starter": "# Choose the data and chart operations from the brief\n",
     "hint": "Clear and redraw axes[0] only. Clearing axes[1] or all Figures erases valid evidence.",
@@ -34,8 +34,6 @@
     "preserveData": false,
     "bridge": null,
     "steps": [
-      "Which observed evidence should replace a draft that exceeds the sample detail?",
-      "Each row is one ceramic sample. Use the rows specified below from df.",
       "The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1].",
       "Replace only the first panel with every mass_g observation by batch using jitter=False.",
       "Restore its title Observations and labels batch and mass_g.",
@@ -132,7 +130,7 @@
     "stageSummary": "Explain a new sample.",
     "brief": {
       "question": "Which observed evidence should replace a draft that exceeds the sample detail?",
-      "rows": "Each row is one ceramic sample. Use the rows specified below from df.",
+      "rows": "One row: one ceramic sample.",
       "result": "The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1].",
       "constraints": [
         "Replace only the first panel with every mass_g observation by batch using jitter=False.",
@@ -167,7 +165,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Explain a new sample.",
       "why": "Target a local repair and preserve an unaffected chart.",
       "changedLines": [
@@ -206,7 +204,7 @@
       4
     ]
   },
-  "inputSHA256": "1d2038579176986f6495107a9d69664a39420f9ff622402b250a426072e5dc96",
+  "inputSHA256": "5d7c0646bb0a843113e845f437b29a185dbea2b34426dd7593630c2debb46601",
   "visibleWorkspaceSHA256": "3d7f1081714577ef6f5f58664eb3f980c5a5dfe53e5410a38ca0ac1edec9d90e",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\n# Choose the data and chart operations from the brief\n",
@@ -235,9 +233,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -255,7 +253,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.44,
+      "elapsedSeconds": 0.792,
       "response": {
         "passed": true,
         "checked": true,
@@ -290,7 +288,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.45,
+      "elapsedSeconds": 0.763,
       "response": {
         "passed": true,
         "checked": true,
@@ -326,7 +324,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.431,
+      "elapsedSeconds": 0.72,
       "response": {
         "passed": true,
         "checked": true,
@@ -362,7 +360,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.302,
+      "elapsedSeconds": 0.775,
       "response": {
         "passed": false,
         "checked": true,
@@ -397,7 +395,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.404,
+      "elapsedSeconds": 0.707,
       "response": {
         "passed": false,
         "checked": true,
@@ -432,7 +430,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.378,
+      "elapsedSeconds": 0.595,
       "response": {
         "passed": false,
         "checked": true,
@@ -467,7 +465,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.372,
+      "elapsedSeconds": 0.676,
       "response": {
         "passed": false,
         "checked": true,
@@ -502,7 +500,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.461,
+      "elapsedSeconds": 0.776,
       "response": {
         "passed": false,
         "checked": true,
@@ -537,7 +535,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.395,
+      "elapsedSeconds": 0.717,
       "response": {
         "passed": false,
         "checked": true,
@@ -572,7 +570,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.393,
+      "elapsedSeconds": 0.738,
       "response": {
         "passed": false,
         "checked": true,
@@ -607,7 +605,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.676,
+      "elapsedSeconds": 1.228,
       "response": {
         "passed": false,
         "checked": true,
@@ -654,7 +652,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.381,
+      "elapsedSeconds": 0.691,
       "response": {
         "passed": true,
         "checked": true,

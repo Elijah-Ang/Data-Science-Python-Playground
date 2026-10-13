@@ -1,10 +1,10 @@
-# ML Learn/Refresh implementation coverage
+# ML curriculum implementation coverage
 
 The final registry retains 110 cards: 85 teaching cards, 14 reviews and 11 checkpoints. All 327 existing card activities remain, with 11 new guided applications bringing the total to 338. The 19 independent workflow challenges remain separate. All 38 existing card dataset variants are preserved.
 
 ## Shared teaching and assembly
 
-`ml-learning/curriculum_coherence.py` runs after editorial, prerequisite/Python, mastery, transfer, guided-application and historical repair layers. It assigns authored concept origins, introduction/reuse/extension metadata, activity-specific current teaching, compact reminders and full references. Learn and Refresh consume this same assembled registry.
+`ml-learning/curriculum_coherence.py` runs after editorial, prerequisite/Python, mastery, transfer, guided-application and historical repair layers. It assigns authored concept origins, introduction/reuse/extension metadata, activity-specific current teaching, compact reminders and full references. The lesson renderer consumes this assembled registry. The later presentation correction preserves this teaching and replaces the added mode controls with the original stage indicators and one flat Reference.
 
 New references contain purpose, accepted inputs, useful choices and examples. The first complete regression and classification workflows expose eight numbered teaching sections with the actual code belonging to each section. Repeated pipeline, fold, baseline, out-of-fold and final-fit explanations become reminders in F12. The renderer can disclose the detailed guidance beside the corresponding section instead of presenting another full syntax listing.
 
@@ -50,7 +50,7 @@ Unsupervised applications retain a separate five-step sequence: select measureme
 | PCA/clustering forced consistency | Separate discovery sequence preserves actual existing unsupervised APIs and populations | 147 discovery audit cases; full K-Means/Ward/PCA references executed |
 | Provided objects called outputs | Explicit supplied/fitted provenance and output-only small contracts | Prefit SVM/LDA/network assertions; supplied-state contract regression |
 | Repeated scaffolding | Removed generated validation task suffixes; current/reuse/full-reference levels; conditional numbered code sections | All-card metadata and final assembly tests |
-| Learn/Refresh divergence | One registry, one code/data/source convention, mode-independent metadata | Shared-mode contract; rendered mode verification recorded separately |
+| Teaching consistency | One registry and common code/data/source conventions | Registry contracts and rendered content-preservation checks |
 | Model family alone passes incorrect preparation | Guided checks observe scaling, tree depth, k, QDA regularisation, One-R numeric roles, neural target wrapper and polynomial preparation | 17 bridge references plus 10 targeted methodological near misses |
 
 ## Verification
@@ -70,6 +70,6 @@ Scientific execution used Python 3.10.21 with the exact Pyodide parity packages:
 - Remaining native CI gates passed: 19 exact challenge-input contracts; 6 difficult vertical references with leakage rejection and 12-run cleanup; 8 accepted semantic alternatives and 30 rejected wrong workflows; and five reporting-evidence tests including exact built/authored M03 equality.
 - The generated registry audit and 357 activity/help fingerprints were refreshed after final source review.
 
-Evidence is summarised in `docs/curriculum-evidence/ml-verification.json`. This report covers source, final registry assembly, scientific execution and the browser execution/collection gates listed above. Additional rendered Learn/Refresh checks, the complete responsive inventory, screenshots and visual review are recorded by the coordinated curriculum verification. Chromium was exercised locally; WebKit remains a CI matrix target with unchanged default engine launch.
+Evidence is summarised in `docs/curriculum-evidence/ml-verification.json`. This report covers source, final registry assembly, scientific execution and the browser execution/collection gates listed above. The corrected two-pane layout, complete responsive inventory, screenshots and visual review are recorded in curriculum-coherence.md. Chromium was exercised locally; WebKit remains a CI matrix target with unchanged default engine launch.
 
 The current host’s default scikit-learn 1.8 raised an existing string-label/early-stopping neural fitting error. Exact parity execution passes those unchanged activities. Matplotlib 3.5.2 also required Python 3.10 wheels rather than a host-Python 3.12 source build. Neither dependency issue required a curriculum workaround or a production package change.

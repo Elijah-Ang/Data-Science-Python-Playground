@@ -260,15 +260,40 @@ function exploration(variant,choice,options={}){
  const svg=`<div class="teaching-visual-scroll" tabindex="0" role="region" aria-label="Teaching chart; scroll if needed"><svg class="concept-visual data-teaching-visual" viewBox="0 0 520 225" role="img" aria-label="${esc(summary)}"><title>${esc(summary)}</title><g>${art}</g></svg></div>`;
  return {summary,code,svg,data};
 }
-function resultHtml(result){return result.svg+`<p>${esc(result.summary)}</p><pre><code>${esc(result.code)}</code></pre>`;}
+function shortResult(result,variant,choice){
+ const d=result.data;
+ if(variant==='scatter')return `${d.row.id}: x=${d.row.x}, value=${d.row.value} → point (${d.row.x}, ${d.row.value}).`;
+ if(variant==='histogram')return `Count the same nine values in ${d.bins.length} bins. Include left edges and the final right edge.`;
+ if(variant==='summary-order')return `Labels and ${d.kind==='median'?'medians':'means'} move together; observations stay unchanged.`;
+ if(d.groups)return `${d.kind==='count'?'Count rows':d.kind==='mean'?'Average values':d.kind==='median'?'Take the middle value after sorting':'Add values'} within each group.`;
+ if(variant==='boxplot')return choice==='raw'?'One mark per value; jitter separates repeats.':`Q1=${d.q1}, median=${d.median}, Q3=${d.q3}. Whiskers: ${d.whiskers.join('–')}; ${d.outliers.join(', ')} lies beyond the ${d.fences[1]} fence. Keep the flagged row.`;
+ if(variant==='references')return [choice!=='value'?`x median is ${d.medianX} → vertical`:null,choice!=='x'?`value median is ${d.medianValue} → horizontal`:null].filter(Boolean).join('; ')+'.';
+ return choice==='pooled'?`All ${d.count} rows in one panel.`:`Each of ${d.count} rows appears once; panels share scales.`;
+}
+function shortComparison(result,variant){
+ const d=result.data;
+ if(variant==='scatter')return `${d.row.id}: (${d.row.x}, ${d.row.value})`;
+ if(variant==='histogram')return `Width ${d.edges[1]-d.edges[0]} · counts ${d.bins.map(b=>b.rows.length).join(', ')}`;
+ if(d.groups)return `${d.kind==='count'?'Counts':d.kind==='median'?'Medians':'Means'} · ${d.groups.map(g=>`${g.group}: ${fmt(g.value)}`).join(' · ')}`;
+ if(variant==='boxplot')return `${d.count} raw values`;
+ if(variant==='references')return `x median: ${d.medianX}`;
+ return `All ${d.count} rows`;
+}
+function exampleTable(variant){
+ const numeric=['histogram','boxplot'].includes(variant),coordinates=['scatter','references','facets'].includes(variant);
+ const heads=numeric?['Column','Values']:['Group',coordinates?'(x, value)':'Values'];
+ const rows=numeric?[['value',exampleRows.map(r=>r.value).join(', ')]]:['A','B','C'].map(group=>[group,exampleRows.filter(r=>r.group===group).map(r=>coordinates?`(${r.x},${r.value})`:r.value).join(', ')]);
+ return `<table class="teaching-example-output teaching-visual-data" data-code-table="${numeric?'dictionary':'teaching'}"><caption class="sr-only">Example observations</caption><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(([group,values])=>`<tr><th scope="row">${numeric?`<code data-code-role="column">${esc(group)}</code>`:esc(group)}</th><td>${esc(values)}</td></tr>`).join('')}</tbody></table>`;
+}
+function resultHtml(result,variant,choice){return result.svg+`<p>${esc(shortResult(result,variant,choice))}</p><pre><code>${esc(result.code)}</code></pre>`;}
 function interactive(v){
  const spec=explorerSpecs[v.variant];if(!spec)return '';
  const options={statistic:v.summaryStatistic},choices=spec.options.map(([value,label])=>[value,v.variant==='summary-order'&&v.summaryStatistic==='median'?label.replace('Mean','Median'):label]);
  const baseline=spec.options[0][0],current=v.statistic&&spec.options.some(([value])=>value===v.statistic)?v.statistic:spec.options[1]?.[0]||baseline;
- return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-statistic="${esc(v.summaryStatistic||'')}"><h4>Connect data to the mark</h4><p>Illustrative example · nine rows, separate from your exercise data. Group A: (x, value) = (1,2), (2,4), (3,6); B: (2,3), (4,7); C: (1,1), (3,2), (5,3), (6,18).</p><label class="teaching-visual-controls">${esc(spec.label)} <select data-visual-choice>${choices.map(([value,label])=>`<option value="${esc(value)}"${value===current?' selected':''}>${esc(label)}</option>`).join('')}</select></label><p><strong>Starting view</strong> · ${esc(exploration(v.variant,baseline,options).summary)}</p><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(exploration(v.variant,current,options))}</div><p class="teaching-note">Computed teaching example · your Run output appears beside the editor.</p></section>`;
+ return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-statistic="${esc(v.summaryStatistic||'')}"><p>Illustrative data · nine rows</p>${exampleTable(v.variant)}<label class="teaching-visual-controls">${esc(spec.label)} <select data-visual-choice>${choices.map(([value,label])=>`<option value="${esc(value)}"${value===current?' selected':''}>${esc(label)}</option>`).join('')}</select></label><p><strong>Starting view</strong> · ${esc(shortComparison(exploration(v.variant,baseline,options),v.variant))}</p><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(exploration(v.variant,current,options),v.variant,current)}</div></section>`;
 }
 const mounted=new WeakSet();
-function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-visual-choice]'),section=control?.closest('[data-foundation-explorer]');if(!section)return;section.querySelector('.teaching-visual-result').innerHTML=resultHtml(exploration(section.dataset.foundationExplorer,control.value,{statistic:section.dataset.visualStatistic}));});}
+function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-visual-choice]'),section=control?.closest('[data-foundation-explorer]');if(!section)return;const variant=section.dataset.foundationExplorer,result=section.querySelector('.teaching-visual-result');result.innerHTML=resultHtml(exploration(variant,control.value,{statistic:section.dataset.visualStatistic}),variant,control.value);root.FoundationLearning?.highlightContent?.(result);});}
 const api={diagram,configure,spec,mapping,scene,interactive,mount,exploration,exampleRows,types:new Set([...Object.keys(scene),'review']),families:new Set(Object.values(scene).map(s=>s.type))};
 if(typeof module!=='undefined')module.exports=api;else root.FoundationVisuals=api;
 })(typeof window!=='undefined'?window:globalThis);

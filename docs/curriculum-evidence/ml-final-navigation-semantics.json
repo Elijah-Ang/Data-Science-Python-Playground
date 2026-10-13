@@ -1,0 +1,532 @@
+{
+  "widths": [
+    1440,
+    390
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "finalStageRenders": 8,
+  "enhancedLinkNavigations": 20,
+  "noJavascriptCollectionRenders": 4,
+  "noJavascriptLinkNavigations": 10,
+  "noJavascriptScope": "Canonical lesson HTML pre-renders stage 0; static foundations collection counterparts carry the same final-stage branch destinations.",
+  "pageErrors": [],
+  "semanticRenders": [
+    {
+      "card": "ML-M03",
+      "width": 1440,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-F11",
+      "width": 1440,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-F12",
+      "width": 1440,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-R01",
+      "width": 1440,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-M03",
+      "width": 1440,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-F11",
+      "width": 1440,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-F12",
+      "width": 1440,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-R01",
+      "width": 1440,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-M03",
+      "width": 390,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-F11",
+      "width": 390,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-F12",
+      "width": 390,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-R01",
+      "width": 390,
+      "theme": "light",
+      "passed": true
+    },
+    {
+      "card": "ML-M03",
+      "width": 390,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-F11",
+      "width": 390,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-F12",
+      "width": 390,
+      "theme": "dark",
+      "passed": true
+    },
+    {
+      "card": "ML-R01",
+      "width": 390,
+      "theme": "dark",
+      "passed": true
+    }
+  ],
+  "noJavascriptSemanticRenders": [
+    {
+      "card": "ML-M03",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "card": "ML-F11",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "card": "ML-F12",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "card": "ML-M03",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "card": "ML-F11",
+      "width": 390,
+      "passed": true
+    },
+    {
+      "card": "ML-F12",
+      "width": 390,
+      "passed": true
+    }
+  ],
+  "build": "3089e69bdceb",
+  "results": [
+    {
+      "card": "ML-N-R1",
+      "width": 1440,
+      "theme": "light",
+      "destinations": [
+        {
+          "title": "Neural classification",
+          "file": "ml-learn-collection-neural-classification.html"
+        },
+        {
+          "title": "Neural quantity prediction",
+          "file": "ml-learn-collection-neural-quantity.html"
+        }
+      ],
+      "pane": {
+        "leftScroll": "auto",
+        "rightScroll": "auto",
+        "referenceInLeft": true,
+        "sideBySide": true,
+        "aligned": true,
+        "independent": true,
+        "rightOverflow": 0
+      },
+      "linkRects": [
+        {
+          "left": 145.484375,
+          "right": 280.6875,
+          "top": 884,
+          "bottom": 904,
+          "width": 135.203125,
+          "height": 20
+        },
+        {
+          "left": 291.859375,
+          "right": 467.15625,
+          "top": 884,
+          "bottom": 904,
+          "width": 175.296875,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-U02",
+      "width": 1440,
+      "theme": "light",
+      "destinations": [
+        {
+          "title": "K-Means",
+          "file": "ml-learn-collection-k-means.html"
+        },
+        {
+          "title": "Hierarchical clustering",
+          "file": "ml-learn-collection-hierarchical.html"
+        },
+        {
+          "title": "Principal component analysis",
+          "file": "ml-learn-collection-pca.html"
+        }
+      ],
+      "pane": {
+        "leftScroll": "auto",
+        "rightScroll": "auto",
+        "referenceInLeft": true,
+        "sideBySide": true,
+        "aligned": true,
+        "independent": true,
+        "rightOverflow": 0
+      },
+      "linkRects": [
+        {
+          "left": 145.484375,
+          "right": 205.25,
+          "top": 884,
+          "bottom": 904,
+          "width": 59.765625,
+          "height": 20
+        },
+        {
+          "left": 216.421875,
+          "right": 366.171875,
+          "top": 884,
+          "bottom": 904,
+          "width": 149.75,
+          "height": 20
+        },
+        {
+          "left": 377.34375,
+          "right": 572.859375,
+          "top": 884,
+          "bottom": 904,
+          "width": 195.515625,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-N-R1",
+      "width": 1440,
+      "theme": "dark",
+      "destinations": [
+        {
+          "title": "Neural classification",
+          "file": "ml-learn-collection-neural-classification.html"
+        },
+        {
+          "title": "Neural quantity prediction",
+          "file": "ml-learn-collection-neural-quantity.html"
+        }
+      ],
+      "pane": {
+        "leftScroll": "auto",
+        "rightScroll": "auto",
+        "referenceInLeft": true,
+        "sideBySide": true,
+        "aligned": true,
+        "independent": true,
+        "rightOverflow": 0
+      },
+      "linkRects": [
+        {
+          "left": 145.484375,
+          "right": 280.6875,
+          "top": 884,
+          "bottom": 904,
+          "width": 135.203125,
+          "height": 20
+        },
+        {
+          "left": 291.859375,
+          "right": 467.15625,
+          "top": 884,
+          "bottom": 904,
+          "width": 175.296875,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-U02",
+      "width": 1440,
+      "theme": "dark",
+      "destinations": [
+        {
+          "title": "K-Means",
+          "file": "ml-learn-collection-k-means.html"
+        },
+        {
+          "title": "Hierarchical clustering",
+          "file": "ml-learn-collection-hierarchical.html"
+        },
+        {
+          "title": "Principal component analysis",
+          "file": "ml-learn-collection-pca.html"
+        }
+      ],
+      "pane": {
+        "leftScroll": "auto",
+        "rightScroll": "auto",
+        "referenceInLeft": true,
+        "sideBySide": true,
+        "aligned": true,
+        "independent": true,
+        "rightOverflow": 0
+      },
+      "linkRects": [
+        {
+          "left": 145.484375,
+          "right": 205.25,
+          "top": 884,
+          "bottom": 904,
+          "width": 59.765625,
+          "height": 20
+        },
+        {
+          "left": 216.421875,
+          "right": 366.171875,
+          "top": 884,
+          "bottom": 904,
+          "width": 149.75,
+          "height": 20
+        },
+        {
+          "left": 377.34375,
+          "right": 572.859375,
+          "top": 884,
+          "bottom": 904,
+          "width": 195.515625,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-N-R1",
+      "width": 390,
+      "theme": "light",
+      "destinations": [
+        {
+          "title": "Neural classification",
+          "file": "ml-learn-collection-neural-classification.html"
+        },
+        {
+          "title": "Neural quantity prediction",
+          "file": "ml-learn-collection-neural-quantity.html"
+        }
+      ],
+      "pane": null,
+      "linkRects": [
+        {
+          "left": 121.484375,
+          "right": 256.6875,
+          "top": 1745.78125,
+          "bottom": 1765.78125,
+          "width": 135.203125,
+          "height": 20
+        },
+        {
+          "left": 267.859375,
+          "right": 372.421875,
+          "top": 1745.78125,
+          "bottom": 1765.78125,
+          "width": 104.5625,
+          "height": 20
+        },
+        {
+          "left": 16,
+          "right": 82.859375,
+          "top": 1769.03125,
+          "bottom": 1789.03125,
+          "width": 66.859375,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-U02",
+      "width": 390,
+      "theme": "light",
+      "destinations": [
+        {
+          "title": "K-Means",
+          "file": "ml-learn-collection-k-means.html"
+        },
+        {
+          "title": "Hierarchical clustering",
+          "file": "ml-learn-collection-hierarchical.html"
+        },
+        {
+          "title": "Principal component analysis",
+          "file": "ml-learn-collection-pca.html"
+        }
+      ],
+      "pane": null,
+      "linkRects": [
+        {
+          "left": 121.484375,
+          "right": 181.25,
+          "top": 1550.71875,
+          "bottom": 1570.71875,
+          "width": 59.765625,
+          "height": 20
+        },
+        {
+          "left": 192.421875,
+          "right": 342.171875,
+          "top": 1550.71875,
+          "bottom": 1570.71875,
+          "width": 149.75,
+          "height": 20
+        },
+        {
+          "left": 16,
+          "right": 211.515625,
+          "top": 1573.96875,
+          "bottom": 1593.96875,
+          "width": 195.515625,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-N-R1",
+      "width": 390,
+      "theme": "dark",
+      "destinations": [
+        {
+          "title": "Neural classification",
+          "file": "ml-learn-collection-neural-classification.html"
+        },
+        {
+          "title": "Neural quantity prediction",
+          "file": "ml-learn-collection-neural-quantity.html"
+        }
+      ],
+      "pane": null,
+      "linkRects": [
+        {
+          "left": 121.484375,
+          "right": 256.6875,
+          "top": 1745.78125,
+          "bottom": 1765.78125,
+          "width": 135.203125,
+          "height": 20
+        },
+        {
+          "left": 267.859375,
+          "right": 372.421875,
+          "top": 1745.78125,
+          "bottom": 1765.78125,
+          "width": 104.5625,
+          "height": 20
+        },
+        {
+          "left": 16,
+          "right": 82.859375,
+          "top": 1769.03125,
+          "bottom": 1789.03125,
+          "width": 66.859375,
+          "height": 20
+        }
+      ],
+      "passed": true
+    },
+    {
+      "card": "ML-U02",
+      "width": 390,
+      "theme": "dark",
+      "destinations": [
+        {
+          "title": "K-Means",
+          "file": "ml-learn-collection-k-means.html"
+        },
+        {
+          "title": "Hierarchical clustering",
+          "file": "ml-learn-collection-hierarchical.html"
+        },
+        {
+          "title": "Principal component analysis",
+          "file": "ml-learn-collection-pca.html"
+        }
+      ],
+      "pane": null,
+      "linkRects": [
+        {
+          "left": 121.484375,
+          "right": 181.25,
+          "top": 1550.71875,
+          "bottom": 1570.71875,
+          "width": 59.765625,
+          "height": 20
+        },
+        {
+          "left": 192.421875,
+          "right": 342.171875,
+          "top": 1550.71875,
+          "bottom": 1570.71875,
+          "width": 149.75,
+          "height": 20
+        },
+        {
+          "left": 16,
+          "right": 211.515625,
+          "top": 1573.96875,
+          "bottom": 1593.96875,
+          "width": 195.515625,
+          "height": 20
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "reviewedBuild": {
+    "contentId": "3089e69bdcebdd83e8f2e3e0725472c4383c7b49db56c5b1e5de26fd4becf56a",
+    "baseUrl": "http://127.0.0.1:8000",
+    "runtime": "local",
+    "browserExecutable": "/usr/bin/chromium",
+    "reusedCaptures": false
+  }
+}

@@ -7,7 +7,7 @@
     "id": "V34-1",
     "label": "Follow",
     "dataset": "report_checks",
-    "task": "Which finished Figure belongs in the report handoff? Each row is one report measurement. Use the rows specified below from df. Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it. Preserve every measured pair.",
+    "task": "Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it. Preserve every measured pair.",
     "solution": "fig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
     "starter": "____(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
     "hint": "Export the stated finished Figure before display.",
@@ -30,8 +30,6 @@
     },
     "demand": "Export the stated finished Figure before display.",
     "steps": [
-      "Which finished Figure belongs in the report handoff?",
-      "Each row is one report measurement. Use the rows specified below from df.",
       "Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it.",
       "Preserve every measured pair."
     ],
@@ -126,7 +124,7 @@
     "stageSummary": "Export the finished chart.",
     "brief": {
       "question": "Which finished Figure belongs in the report handoff?",
-      "rows": "Each row is one report measurement. Use the rows specified below from df.",
+      "rows": "One row: one report measurement.",
       "result": "Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it.",
       "constraints": [
         "Preserve every measured pair."
@@ -197,7 +195,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Export the finished chart.",
       "why": "Export the stated finished Figure before display.",
       "changedLines": [
@@ -235,7 +233,7 @@
       15
     ]
   },
-  "inputSHA256": "9e401e3f8ebada50b6e8a17396eeade7c0c8d19416c198da7d10956000274498",
+  "inputSHA256": "0c4726416f42dc5c1be3b90b2b8c382669c1d5826741d9a72b5f29c9788f4e47",
   "visibleWorkspaceSHA256": "94545eeca7cbe0c993d0cc3e5a36dac2f60d9edfc97071c41e6a4a43db5a9c94",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\n____(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
@@ -264,9 +262,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -284,7 +282,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.34,
+      "elapsedSeconds": 0.461,
       "response": {
         "passed": true,
         "checked": true,
@@ -331,7 +329,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.4,
+      "elapsedSeconds": 0.335,
       "response": {
         "passed": true,
         "checked": true,
@@ -380,7 +378,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.389,
+      "elapsedSeconds": 0.29,
       "response": {
         "passed": true,
         "checked": true,
@@ -429,7 +427,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.276,
+      "elapsedSeconds": 0.212,
       "response": {
         "passed": false,
         "checked": true,
@@ -464,7 +462,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.342,
+      "elapsedSeconds": 0.301,
       "response": {
         "passed": false,
         "checked": true,
@@ -511,7 +509,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.381,
+      "elapsedSeconds": 0.287,
       "response": {
         "passed": false,
         "checked": true,
@@ -558,7 +556,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.501,
+      "elapsedSeconds": 0.365,
       "response": {
         "passed": false,
         "checked": true,
@@ -605,7 +603,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.411,
+      "elapsedSeconds": 0.314,
       "response": {
         "passed": false,
         "checked": true,
@@ -652,7 +650,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.347,
+      "elapsedSeconds": 0.316,
       "response": {
         "passed": false,
         "checked": true,
@@ -699,7 +697,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.335,
+      "elapsedSeconds": 0.531,
       "response": {
         "passed": false,
         "checked": true,
@@ -746,7 +744,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.465,
+      "elapsedSeconds": 0.589,
       "response": {
         "passed": false,
         "checked": true,
@@ -793,7 +791,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.738,
+      "elapsedSeconds": 0.78,
       "response": {
         "passed": false,
         "checked": true,
@@ -852,7 +850,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.398,
+      "elapsedSeconds": 0.579,
       "response": {
         "passed": true,
         "checked": true,

@@ -1,0 +1,201 @@
+{
+  "stylesheetSha256": "cf4cf538e52e0291e2a8a8467ed4c2b0314d286a7befae6b914e7f1dbb951cd5",
+  "records": [
+    {
+      "viewport": 320,
+      "theme": "light",
+      "width": 261,
+      "scrollWidth": 271,
+      "headers": [
+        {
+          "text": "flavour",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            1150.078125
+          ]
+        },
+        {
+          "text": "mean_amount",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            1150.078125
+          ]
+        },
+        {
+          "text": "records",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            1150.078125
+          ]
+        }
+      ],
+      "pageOverflow": false,
+      "keyboardBefore": {
+        "tableX": 0,
+        "pageX": 0
+      },
+      "keyboardAfter": {
+        "tableX": 1,
+        "pageX": 0
+      }
+    },
+    {
+      "viewport": 320,
+      "theme": "dark",
+      "width": 261,
+      "scrollWidth": 271,
+      "headers": [
+        {
+          "text": "flavour",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            1037.078125
+          ]
+        },
+        {
+          "text": "mean_amount",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            1037.078125
+          ]
+        },
+        {
+          "text": "records",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            1037.078125
+          ]
+        }
+      ],
+      "pageOverflow": false,
+      "keyboardBefore": {
+        "tableX": 2,
+        "pageX": 0
+      },
+      "keyboardAfter": {
+        "tableX": 8,
+        "pageX": 0
+      }
+    },
+    {
+      "viewport": 390,
+      "theme": "light",
+      "width": 331,
+      "scrollWidth": 331,
+      "headers": [
+        {
+          "text": "flavour",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            327.65625
+          ]
+        },
+        {
+          "text": "mean_amount",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            327.65625
+          ]
+        },
+        {
+          "text": "records",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            327.65625
+          ]
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "viewport": 390,
+      "theme": "dark",
+      "width": 331,
+      "scrollWidth": 331,
+      "headers": [
+        {
+          "text": "flavour",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            280.65625
+          ]
+        },
+        {
+          "text": "mean_amount",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            280.65625
+          ]
+        },
+        {
+          "text": "records",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            280.65625
+          ]
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "viewport": 1440,
+      "theme": "light",
+      "width": 606,
+      "scrollWidth": 606,
+      "headers": [
+        {
+          "text": "flavour",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            517.78125
+          ]
+        },
+        {
+          "text": "mean_amount",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            517.78125
+          ]
+        },
+        {
+          "text": "records",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            517.78125
+          ]
+        }
+      ],
+      "pageOverflow": false
+    },
+    {
+      "viewport": 1440,
+      "theme": "dark",
+      "width": 606,
+      "scrollWidth": 606,
+      "headers": [
+        {
+          "text": "flavour",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            517.78125
+          ]
+        },
+        {
+          "text": "mean_amount",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            517.78125
+          ]
+        },
+        {
+          "text": "records",
+          "whiteSpace": "nowrap",
+          "textLineY": [
+            517.78125
+          ]
+        }
+      ],
+      "pageOverflow": false
+    }
+  ]
+}

@@ -76,7 +76,7 @@
     ]
   };
   const activity=ex=>steps(taskSteps[ex.id]||ex.steps||ex.task,ex.id);
-  function key(){return '<details class="learning-name-key"><summary>Python name key</summary><p>Teal boxes name table columns; violet labels name Python objects. Monospace names identify functions and parameters. Use each name exactly as shown.</p></details>';}
+  function key(){return '<section class="learning-name-key"><h3>Python name key</h3><p>Teal outlines name table columns. Violet left rules name Python objects. Dotted rules mark syntax, functions and parameters. Use each name exactly as shown.</p></section>';}
   const meanings={
     DataFrame:'a table with rows and columns',Series:'one labelled set of values',
     numeric:'a number, rather than text',missing:'no value was supplied',

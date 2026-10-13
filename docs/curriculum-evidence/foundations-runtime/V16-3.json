@@ -7,7 +7,7 @@
     "id": "V16-3",
     "label": "Transfer",
     "dataset": "clinic_pairs",
-    "task": "Which same-row measurement pairs belong in the scatter population? Each row is one clinic visit. Use the rows specified below from df. Show wait_minutes against consult_minutes only where both plotting measurements are known. A missing note does not disqualify a visit. Keep each eligible visit’s pair together. Chart: title \"Clinic visits\"; x \"wait_minutes\"; y \"consult_minutes\".",
+    "task": "Show wait_minutes against consult_minutes only where both plotting measurements are known. A missing note does not disqualify a visit. Keep each eligible visit’s pair together. Chart: title \"Clinic visits\"; x \"wait_minutes\"; y \"consult_minutes\".",
     "solution": "selected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\nfig.tight_layout()\nplt.show()",
     "starter": "# Choose the data and chart operations from the brief\n",
     "hint": "dropna(subset=[...]) tests only the two plotted measurements. Filtering each coordinate independently breaks pairing.",
@@ -33,8 +33,6 @@
     },
     "demand": "Define pairwise completeness without dropping rows for unrelated missing fields.",
     "steps": [
-      "Which same-row measurement pairs belong in the scatter population?",
-      "Each row is one clinic visit. Use the rows specified below from df.",
       "Show wait_minutes against consult_minutes only where both plotting measurements are known.",
       "A missing note does not disqualify a visit.",
       "Keep each eligible visit’s pair together.",
@@ -95,7 +93,7 @@
     "stageSummary": "Handle missing pairs.",
     "brief": {
       "question": "Which same-row measurement pairs belong in the scatter population?",
-      "rows": "Each row is one clinic visit. Use the rows specified below from df.",
+      "rows": "One row: one clinic visit.",
       "result": "Show wait_minutes against consult_minutes only where both plotting measurements are known.",
       "constraints": [
         "A missing note does not disqualify a visit.",
@@ -156,7 +154,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Handle missing pairs.",
       "why": "Define pairwise completeness without dropping rows for unrelated missing fields.",
       "changedLines": [
@@ -210,7 +208,7 @@
       "Remote"
     ]
   },
-  "inputSHA256": "2e5e6a1764be2b969d26bc5042f3e5f0f5642cea286ff08f32313416cf33bcd7",
+  "inputSHA256": "eb428aa7a1ba18b3b903a48ca3052ff5220601ac49782378903fbbb892f72e2d",
   "visibleWorkspaceSHA256": "eab2aadc1d555d974ac3ca2e140619254517d1d5be8a9fe687e6cc46df8d0f0c",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Clinic visits\", xlabel=\"wait_minutes\", ylabel=\"consult_minutes\")",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Clinic visits\", xlabel=\"wait_minutes\", ylabel=\"consult_minutes\")\n\n# Your work\n# Choose the data and chart operations from the brief\n",
@@ -239,9 +237,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -259,7 +257,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.207,
+      "elapsedSeconds": 0.258,
       "response": {
         "passed": true,
         "checked": true,
@@ -294,7 +292,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.2,
+      "elapsedSeconds": 0.302,
       "response": {
         "passed": true,
         "checked": true,
@@ -330,7 +328,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.186,
+      "elapsedSeconds": 0.275,
       "response": {
         "passed": true,
         "checked": true,
@@ -366,7 +364,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.207,
+      "elapsedSeconds": 0.262,
       "response": {
         "passed": false,
         "checked": true,
@@ -401,7 +399,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.189,
+      "elapsedSeconds": 0.281,
       "response": {
         "passed": false,
         "checked": true,
@@ -436,7 +434,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.192,
+      "elapsedSeconds": 0.262,
       "response": {
         "passed": false,
         "checked": true,
@@ -471,7 +469,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.225,
+      "elapsedSeconds": 0.29,
       "response": {
         "passed": false,
         "checked": true,
@@ -506,7 +504,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.191,
+      "elapsedSeconds": 0.28,
       "response": {
         "passed": false,
         "checked": true,
@@ -541,7 +539,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.297,
+      "elapsedSeconds": 0.348,
       "response": {
         "passed": false,
         "checked": true,
@@ -576,7 +574,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.372,
+      "elapsedSeconds": 0.522,
       "response": {
         "passed": false,
         "checked": true,
@@ -623,7 +621,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.234,
+      "elapsedSeconds": 0.362,
       "response": {
         "passed": true,
         "checked": true,

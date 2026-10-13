@@ -1,0 +1,55 @@
+{
+  "method": "Compare the same Foundation explorer and existing production CSS at 390px; inject the updated visual renderer into the baseline page. Counts include SVG labels, table values, code and native option text.",
+  "width": 390,
+  "baselineContentId": "e51fb88889b73f874981ee58bcc365e4b16ab581ebd9e918b4390e8b57762e34",
+  "results": [
+    {
+      "lesson": "V04",
+      "wordsBefore": 161,
+      "wordsAfter": 92,
+      "wordReductionPct": 43,
+      "heightBefore": 820.86,
+      "heightAfter": 587.33
+    },
+    {
+      "lesson": "V09",
+      "wordsBefore": 132,
+      "wordsAfter": 62,
+      "wordReductionPct": 53,
+      "heightBefore": 868.55,
+      "heightAfter": 654.55
+    },
+    {
+      "lesson": "V11",
+      "wordsBefore": 143,
+      "wordsAfter": 94,
+      "wordReductionPct": 34,
+      "heightBefore": 812.98,
+      "heightAfter": 630.2
+    },
+    {
+      "lesson": "V16",
+      "wordsBefore": 138,
+      "wordsAfter": 96,
+      "wordReductionPct": 30,
+      "heightBefore": 745.61,
+      "heightAfter": 633.11
+    },
+    {
+      "lesson": "V27",
+      "wordsBefore": 101,
+      "wordsAfter": 54,
+      "wordReductionPct": 47,
+      "heightBefore": 745.61,
+      "heightAfter": 633.11
+    },
+    {
+      "lesson": "V33",
+      "wordsBefore": 146,
+      "wordsAfter": 88,
+      "wordReductionPct": 40,
+      "heightBefore": 770.11,
+      "heightAfter": 633.11
+    }
+  ]
+}

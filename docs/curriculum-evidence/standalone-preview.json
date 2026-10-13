@@ -13,10 +13,10 @@
     {
       "context": "opaque HTML-file sandbox",
       "navigation": "Data to ML",
-      "visualAndDepthControls": "passed"
+      "visualsAndOriginalIndicators": "passed"
     }
   ],
   "pageErrors": [],
   "requiredSiblingAssets": [],
-  "artifactBytes": 4739444
+  "artifactBytes": 4880527
 }

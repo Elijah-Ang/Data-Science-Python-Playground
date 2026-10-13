@@ -130,10 +130,13 @@ with sync_playwright() as playwright:
         # First-use code, complete scripts and reference remain available with
         # semantic HTML disclosure even without browser enhancement.
         assert readonly.locator('article pre, #mlEditor').count() > 0
-        reference=readonly.locator('article[aria-label="Optional reference and help"]')
-        assert reference.count()==1 and reference.locator('details').count()>0
-        reference.locator('details').first.locator(':scope > summary').click()
-        assert reference.locator('details').first.get_attribute('open') is not None
+        reference=readonly.locator('section[aria-label="Reference and help"]')
+        assert reference.count()==1 and reference.locator(':scope > details').count()==3
+        assert reference.locator(':scope > details > summary').all_text_contents()==['Reference','Hints','Explained solution']
+        assert not reference.locator(':scope > details[open]').count()
+        assert not reference.locator('details details').count()
+        reference.locator('.ml-reference > summary').click()
+        assert reference.locator('.ml-reference').get_attribute('open') is not None
         readonly.locator('.foundation-navigation a').last.click()
         assert '.html' in readonly.url
         assert readonly.locator('article[aria-label="Lesson content"]').count() == 1

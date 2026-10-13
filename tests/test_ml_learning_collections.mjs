@@ -68,6 +68,8 @@ for(const [id,collection] of [['ML-R03','simple-linear'],['ML-C14','classificati
 assert(!nav('ML-N03').includes('ML-N04')&&!nav('ML-N04').includes('ML-N03'));
 assert(!nav('ML-C14').includes('ML-C15')&&!nav('ML-R03').includes('ML-R04'));
 assert(last('ML-N-R1').includes('ml-learn-collection-neural-classification.html')&&last('ML-N-R1').includes('ml-learn-collection-neural-quantity.html'));
-assert(!last('ML-U02').match(/<p class="teaching-note">[\s\S]*?<\/p>/)[0].includes('ml-learn-workflow.html'));
+const discoveryFork=last('ML-U02').match(/<p class="ml-branch-links">[\s\S]*?<\/p>/)[0];
+for(const collection of ['k-means','hierarchical','pca'])assert(discoveryFork.includes('href="'+routes.url('ml','collections/'+collection)+'"'));
+assert(!discoveryFork.includes('ml-learn-workflow.html'));
 for(const id of ['ML-C10','ML-C15','ML-N03'])assert(!api.lessonPage(byId.get(id),0).includes('First practise complete regression and classification'));
 console.log('23 reference collections: unchanged 110 cards/19 workflows; exact model groups, independent rendered branches, legacy URLs and practice/context routing passed.');

@@ -104,6 +104,120 @@ const summaries={
 };
 const expandedOrder=(code)=>code.replace(/order = df\.groupby\(("[^"]+")\)\[("[^"]+")\]\.median\(\)\.sort_values\(([^)]*)\)\.index/g,
  (_,category,measurement,args)=>`medians = df.groupby(${category})[${measurement}].median()\nranked = medians.sort_values(${args})\norder = ranked.index`);
+// One definition, one small example and one useful caveat. These are authored
+// replacements, not shortened previews of a second, longer teaching view.
+const conciseGuides={
+ V35:['Match the chart to the question and data types.','Distance versus time: scatter. Stone diameters: histogram.','Return a quoted chart name in these exercises.'],
+ V01:['A Figure is the canvas; an Axes is one plotting area.','`fig, ax = plt.subplots(figsize=(6, 4))` creates a 6-by-4-inch canvas.','This exercise creates an empty canvas. Later lessons add data.'],
+ V02:['Use a title for the question and axis labels for measurements and units.','`distance_km` can be labelled "Distance (km)" without renaming the column.','Label the values actually plotted, including any unit conversion.'],
+ V16:['A scatter point pairs two numeric measurements from the same row.','`volume_ml=9` and `pressure_kpa=20` give the point (9, 20).','Keep coordinates paired when selecting rows. Association does not establish causation.'],
+ V04:['A histogram counts numeric observations in intervals called bins.','Values [1, 2, 3, 7] in intervals [0, 4, 8] give counts 3 and 1.','Interior boundaries enter the right bin; the last bin includes its upper edge.'],
+ V08:['A count plot shows the number of records per category.','A, A, B gives counts A: 2 and B: 1.','`order` changes category positions, not counts; an empty listed category has count zero.'],
+ V18:['A line connects observations along a meaningful sequence, such as time.','One row per day gives one observed sales total per marker.','`estimator=None` retains observations. Repeated times need an explicit replicate or summary choice.'],
+ V09:['A summary bar shows a numeric statistic for each category.','Fares [2, 2, 3, 9]: mean 4, median 2.5, count 4.','Choose the statistic requested; a summary bar is not a record count.'],
+ V13:['A strip plot shows every measurement within its category.','Readings [2, 2, 7] produce three points; two may overlap.','`jitter` separates category positions without changing measured values.'],
+ V11:['A box covers the middle half of ordered values; its line marks the median.','Values [2, 4, 6] have median 4.','Points beyond whiskers need review; they are not proven errors.'],
+ V03:['Map a data column to colour when group identity matters.','`hue="habitat"` colours observations by habitat; `color="blue"` makes all points blue.','Categorical `hue` assigns distinct colours; numeric `hue` uses a colour range.'],
+ V17:['Add marker shape to the familiar category colours.','Observations from one instrument share a colour and shape.','Change adds numeric marker area; Transfer first calculates that measurement.'],
+ V22:['A correlation heatmap colours pairwise linear relationships between numeric measurements.','A light–height cell holds their correlation; `sample_id` identifies a record.','Exclude identifiers. Constant columns have undefined correlation; correlation does not establish causation.'],
+ V24:['`subplots` creates several Axes on one Figure. Direct each chart to its panel.','A pH histogram and a pH–conductivity scatter use separate Axes.','`figsize` sizes the whole canvas. Arrange and display the complete Figure once.'],
+ V25:['A legend explains data mappings; colour plus shape keeps categories distinguishable.','Overlapping production-line observations remain identifiable through colour and shape.','`palette` chooses colours; `hue` chooses the column receiving them.'],
+ V26:['Scale sets value spacing; limits set the visible range.','On a log axis, 1→10 and 10→100 occupy equal space.','Keep relevant observations visible. Common panel limits support fair comparisons.'],
+ V27:['Reference lines mark a benchmark on the appropriate measurement axis.','Mean yield is a horizontal benchmark; median rpm is vertical.','Use the requested mean, median or documented threshold. A threshold is not an automatic decision.'],
+ V29:['Calculate group summaries, then give their exact heights to `ax.bar`.','North deliveries [2, 8]: mean 5 boxes per delivery; total 10 boxes.','`ax.bar` draws supplied heights. Choose mean for typical size or sum for total boxes.'],
+ V34:['Finish labels and layout, then save the Figure before displaying it.','`fig.savefig("chart.png", dpi=150, bbox_inches="tight")` exports the finished PNG.','Keep the requested filename, resolution and bounding box.'],
+ V36:['Bar lengths compare magnitude fairly from a zero baseline on a linear scale.','Values 3 and 7 appear as lengths 1 and 5 when the baseline starts at 2.','Repair the axis while preserving every group, value and requested order.'],
+ V37:['Use one selected population for all views in a report.','A histogram describes its distribution; grouped bars compare its summaries.','Reuse the selected rows and finish each Figure with its requested labels.'],
+ V05:['A KDE smooths observations into an estimated density curve.','Changing `bw_adjust` from 1 to 2 produces a smoother curve.','Probability is area over an interval. Tiny samples and smoothing can mislead.'],
+ V06:['An ECDF gives the fraction of observations at or below each value.','For [2, 4, 4, 8], the fraction at or below 4 is 0.75.','`complementary=True` shows the fraction strictly above; ties create larger jumps.'],
+ V07:['A rug marks each observed position with a small tick.','For [2, 4, 4, 8], the two ticks at 4 overlap.','Tick height carries no measurement; overlapping ticks can hide repeats.'],
+ V10:['A point plot shows category summaries with optional intervals.','Mean 10 and SD 2 give an SD interval from 8 to 12.','SD describes observed spread; a confidence interval describes uncertainty in the estimate.'],
+ V12:['A violin’s width represents estimated density within a category.','Adding three observed points exposes how little data supports a smooth outline.','The outline depends on smoothing and sample size; wider does not mean a larger measurement.'],
+ V14:['A swarm separates overlapping points along the category axis, preserving measured positions.','Three 10-mm bolts remain three points at length 10.','Crowded groups may produce an unplaced-point warning. Reduce marker size to improve readability.'],
+ V15:['Replace unsupported density detail with the observed values.','Readings [3, 7, 7] remain three observations, including the coincident pair.','`ax.clear()` removes labels too. Restore them; raw points may still overlap.'],
+ V19:['Repeated times can be summarised or followed as one replicate’s trajectory.','At day 1, A=4 and B=8 give mean 6; replicate A gives 4.','An SD band describes spread between observations, not confidence in the mean.'],
+ V20:['A regression plot adds a fitted straight line to paired observations.','Fit a Reference calibration using only Reference rows, not Trial rows.','Inspect curves and influential points. A fitted line does not establish causation.'],
+ V21:['A residual is observed y minus predicted y.','Observed 12 and predicted 10 give residual +2.','Give `residplot` the original measurements; it fits the line and calculates residuals.'],
+ V23:['A heatmap colours a prepared matrix of counts or measurement summaries.','Two East–Adult entries give that category-pair cell count 2.','Missing measurement combinations stay missing. A count of zero has a different meaning.'],
+ V28:['Select one row, then annotate its paired coordinates.','A 2-m² panel producing 22 W belongs at (2, 22).','Find the extreme within the plotted population; both coordinates must come from that row.'],
+ V30:['Stack components with the same units; `bottom` sets the upper segment’s starting height.','Base 3 plus upper 2 gives total height 5.','Upper segments have different baselines. Compare one component alone from zero when needed.'],
+ V31:['`pairplot` creates a Figure with distributions diagonally and paired relationships elsewhere.','Choose oxygen, temperature and depth; exclude a lake sample’s identifier.','Finish `g.figure`; avoid a separate canvas and limit columns to keep the grid readable.'],
+ V32:['`jointplot` combines a central relationship with each measurement’s marginal distribution.','The centre pairs `delay_minutes` with `passengers`; margins show them separately.','Add central benchmarks through `g.ax_joint` to leave the margins unchanged.'],
+ V33:['Faceting repeats a chart for each category’s rows on a Seaborn-created Figure.','Use workshop panels to compare the same relationship or distribution.','Comparable scales support fair panel comparisons. Finish `g.figure`, the grid’s own canvas.']
+};
+const conciseChoices={
+ V02:['Set the title and both axis labels.','Set the same labels individually.','Arrange and display the Figure.','Convert measured values, then label their resulting units.'],
+ V16:['Read both coordinates from one row.','Draw on the supplied Axes.','Select one table for both coordinates.','Arrange and display the Figure.'],
+ V03:['Use the paired measurements for position.','Categories get distinct colours; numeric values get a colour range.','Give all points one colour.','List every mapped value in the legend.'],
+ V04:['Count values in four intervals.','Change interval detail, keeping observations fixed.'],
+ V08:['Count rows automatically; no numeric y is needed.','Choose category order, retaining empty categories at zero.'],
+ V09:['Average within each group.','Middle value within each group.','Omit intervals; uncertainty still exists.'],
+ V11:['Quartiles (25%–75%) / median.','Extremes within 1.5×IQR fences / points outside them.','Swap axes for horizontal boxes.'],
+ V25:['Choose distinguishable category colours.','Keep colour and shape orders aligned; `alpha=0.6` can expose overlap.','Name the legend.','Clear the draft, then restore labels when redrawing.'],
+ V26:['Use multiplicative spacing; values must be positive.','Set the visible range; retain relevant observations.','Set only the lower bound; leave the upper automatic.','Rotate labels without moving observations.'],
+ V27:['Horizontal dashed benchmark at y.','Vertical dashed benchmark at x.','Use the benchmark requested by the question.'],
+ V29:['Compute mean boxes per delivery for each depot.','Pair depot labels with their calculated heights.','Compute total boxes per depot.'],
+ V34:['Save this Figure under the requested filename.','150 pixels per inch.','Crop around visible content, including labels.'],
+ V36:['Start bars at zero; keep the upper bound automatic.','Use equal spacing for equal changes.','Use a common range containing every mean.'],
+ V10:['Observed spread: one SD each side.','Uncertainty: a bootstrapped 95% confidence interval.','Omit intervals; `estimator="median"` changes the centre.','Set interval-end cap width.'],
+ V12:['Stop at observed values.','Show quartiles.','Show observations inside the violin.','Omit the inner layer before adding raw points.'],
+ V14:['Pack points within categories without random jitter.','Set a fixed marker size.','Preserve measured x positions in a horizontal swarm.'],
+ V15:['Remove draft marks and labels.','Show every observed value.','Restore labels after clearing.','Place measurements horizontally.'],
+ V19:['Average y at each x.','Show one SD of observed spread.','Keep observations; filter one replicate for its trajectory.'],
+ V20:['Fit y from x; draw points and fitted line.','Omit the confidence band, not the uncertainty.','Select the fitting population first.'],
+ V21:['Fit the line, then plot its residuals against x.','Zero: prediction matches observation. Positive: above; negative: below.','Look for curvature or changing spread.'],
+ V23:['Count category combinations.','Summarise a measurement per combination.','Print integer counts; `.1f` prints one decimal.'],
+ V28:['Select the whole maximum-output row.','Observation location / text location.','Measure the text offset in typographic points.','Draw an arrow to the observation.'],
+ V30:['Draw the lower component from zero.','Stack the upper component on the lower.','Label the components.','Divide both components by their item total for percentage shares.'],
+ V31:['Select numeric columns in the requested order.','Histogram diagonals; `hue` adds group colour.','Keep only diagonal and lower panels.','Finish the returned grid’s Figure.'],
+ V32:['Create and store the grid.','Target the central Axes.','Finish the grid’s Figure.'],
+ V33:['Two numeric measurements: scatter panels.','Category and measurement: box panels.','One numeric measurement: four-bin histograms.','Panel height in inches; `aspect` controls relative width.']
+};
+function conciseGuideCopy(byId){
+ for(const [id,[idea,example,note]]of Object.entries(conciseGuides)){
+  Object.assign(byId[id].guide,{idea,example,note});
+  const meanings=conciseChoices[id];
+  if(meanings){
+   if(meanings.length!==byId[id].guide.choices.length)throw new Error(id+': concise choices must retain their meanings');
+   byId[id].guide.choices=byId[id].guide.choices.map(([code],i)=>[code,meanings[i]]);
+  }
+ }
+}
+const conciseTransitions={
+ 'V04-2':{idea:'Change `bins=4` to `bins=2` for wider intervals on the same data.',example:'Eight observations remain eight observations.',result:'Two bins.',parts:[['bins=2','Use two equal-width intervals.']],note:'Bin count changes the view, not the measurements.'},
+ 'V04-3':{idea:'A `bins` list specifies interval boundaries instead of an interval count.',example:'Values [1, 3, 8, 9] with edges [0, 4, 10] give counts 2 and 2.',parts:[['bins=[0, 4, 10]','Three edges define two intervals.']],note:'Interior edges enter the right bin. With unequal widths, count height does not make bar area a frequency.'},
+ 'V08-2':{idea:'`order` sets category positions and keeps listed empty categories.',example:'For email, chat, email, the order chat, email, phone gives counts 1, 2, 0.',parts:[['order=[...]','List categories in their required display order.'],['"phone" in order','Keep its tick at zero; add no invented record.']],note:'An empty category has count zero, but its mean is undefined.'},
+ 'V13-3':{idea:'Compute medians, sort with labels attached, then extract those labels for `order`.',example:'The supplied bench medians are A=4, B=5 and C=7.',parts:[['medians = sample.groupby("bench")["reading"].median()','One labelled median per bench.'],['ranked = medians.sort_values()','Sort medians with bench labels attached.'],['order = ranked.index','Extract ordered bench labels.'],['order=order','Order categories; keep all raw readings.']],note:'`ranked.values` gives numbers; `ranked.index` gives category labels.',referenceNote:'The equivalent chain returns the ordered labels.'},
+ 'V17-2':{idea:'Keep instrument colour and shape; map `area_cm2` to marker area.',example:'The same instrument keeps its shape; greater collecting area gives a larger mark.',result:'Separate legend scales explain instrument and collecting area.',parts:[['size="area_cm2"','Larger numeric values give larger marker areas.']],note:'Marker area represents collecting area, not observation count or uncertainty.'},
+ 'V17-3':{idea:'Calculate speed in km/h, then map it to marker area.',example:'6 km in 30 minutes gives 12 km/h; in 15 minutes, 24 km/h.',result:'Positions show distance and duration; area shows speed.',parts:[['distance_km / minutes * 60','Convert km/min to km/h; supplied durations are positive.'],['size="speed_kmh"','Map derived speed, retaining surface colour and shape.']],note:'Duration alone cannot compare speed when distances differ.'},
+ 'V23-2':{idea:'Divide each row by its own total to get within-group proportions.',example:'Counts [1, 3] become [0.25, 0.75]; [2, 0] become [1, 0].',parts:[['sum(axis=1)','Compute each row total.'],['div(totals, axis=0)','Align totals to row labels, then divide.']],note:'A grand-total denominator would answer a different question.'},
+ 'V25-3':{idea:'`ax.clear()` removes one Axes’ marks and labels. Redraw the requested evidence.',example:'Replace a line joining (1, 3) and (2, 1) with two separate points.',result:'Two points replace the draft line.',parts:[['ax.clear()','Clear this plotting area.'],['ax.scatter(...)','Redraw the observations.'],['ax.set(...)','Restore the removed labels.']],note:'The source data stays intact. Redraw every requested pair.'},
+ 'V32-2':{idea:'Add the benchmark to `g.ax_joint`, the grid’s central Axes.',example:'A horizontal line at score 70 crosses only the central scatter.',result:'The margins remain unchanged.',parts:[['g.ax_joint','Target the central relationship panel.'],['.axhline(70, linestyle="--")','Draw a dashed horizontal benchmark at 70.']],note:'`jointplot` creates its own Axes; use its returned grid.'},
+ 'V33-2':{idea:'`catplot` uses the familiar grid pattern for categorical charts.',example:'Compare thickness by method in separate workshop box-plot panels.',result:'Each workshop compares Brush and Spray.',parts:[['sns.catplot(...)','Create a categorical-chart grid.'],['x="method", y="thickness"','Pair categories with their measurements.'],['col="workshop"','One panel per workshop.'],['kind="box", height=3','Boxes; three-inch panel height.']],note:'Finish `g.figure`; the grid supplies its own canvas.'},
+ 'V33-3':{idea:'Use `relplot` for paired measurements; `displot` shows one measurement’s distribution.',example:'Inflow versus outflow needs scatter panels. Inflow frequency needs histogram panels.',result:'One scatter per region retains the requested pairs.',parts:[['relplot(x="inflow", y="outflow", kind="scatter")','Choose relationship panels.'],['displot(x="inflow", kind="hist")','Contrast: distribution panels for another question.'],['col="region"','One region’s rows per panel.']],note:'This task asks for the relationship; it requires one scatter grid.'}
+};
+// Worked excerpts use the plotting imports and objects already taught. The
+// exercise editor retains its complete runnable starter and solution.
+const conciseExamples={
+ 'V04-3':'sns.histplot(x=[1, 3, 8, 9], bins=[0, 4, 10], ax=ax)',
+ 'V08-2':'sns.countplot(x=["email", "chat", "email"], order=["chat", "email", "phone"], ax=ax)',
+ 'V13-3':'medians = df.groupby("bench")["reading"].median()\nranked = medians.sort_values()\norder = ranked.index',
+ 'V25-3':'ax.clear()\nax.scatter([1, 2], [3, 1])\nax.set(xlabel="x", ylabel="y")',
+ 'V32-2':'g = sns.jointplot(x=[1, 2, 3], y=[60, 70, 80], kind="scatter")\ng.ax_joint.axhline(70, linestyle="--")',
+ 'V33-2':'sample = pd.DataFrame({"workshop": ["East"] * 4 + ["West"] * 4, "method": ["Brush", "Brush", "Spray", "Spray"] * 2, "thickness": [2, 4, 1, 3, 5, 7, 4, 6]})\ng = sns.catplot(data=sample, x="method", y="thickness", col="workshop", kind="box", height=3)',
+ 'V33-3':'g = sns.relplot(data=df, x="inflow", y="outflow", col="region", kind="scatter", height=3)'
+};
+function conciseTransitionCopy(byId){
+ for(const l of Object.values(byId))for(const r of l.rounds){
+  if(conciseTransitions[r.id])Object.assign(r.teaching,conciseTransitions[r.id]);
+  if(conciseExamples[r.id])Object.assign(r.teaching,{code:conciseExamples[r.id],excerpt:true});
+  if(r.id==='V13-3'){
+   r.teaching.parts[0][0]='medians = df.groupby("bench")["reading"].median()';
+   r.teaching.result='Bench labels ordered by ascending median.';
+   r.teaching.identifiers.variables=['df','medians','ranked','order'];
+  }
+ }
+}
 const steps=text=>String(text).split(/(?<=[.!?])\s+(?=[A-Z])/).map(s=>s.trim()).filter(Boolean);
 function apply(c){
  if(c.teachingGuidance?.version===1)return c;
@@ -161,6 +275,8 @@ function apply(c){
  line.guide.note='This introductory dataset has one observation per x-value. When times repeat, select a replicate or deliberately summarise them; V19 compares those choices.';
  line.guide.prerequisiteLessons=[{id:'I12',title:'Sort whole rows'}];
  line.explanation='Each introductory point is one day’s recorded sales total. A line connects those observations along a meaningful time order. estimator=None keeps observations; Seaborn otherwise averages repeated x-values by default. With several observations at each time, choose one replicate or an explicit summary, as in the optional aggregation lesson.';
+ conciseGuideCopy(byId);
+ conciseTransitionCopy(byId);
  // These arguments have already been taught in Inspect/Wrangle. Further
  // reminders follow the explicit introduction plan above, never code words.
  const parameterKnown=new Set(['ascending','subset','numeric_only','DataFrame.index','pivot_table.index','columns','values','aggfunc','axis']);
@@ -190,12 +306,12 @@ function apply(c){
    action=action.charAt(0).toUpperCase()+action.slice(1);
    const chart=action.match(/\s*Chart:\s*([\s\S]*)$/);if(chart)action=action.slice(0,chart.index).trim();
    if(l.id==='V01'){r.question='Create an empty chart canvas.';action='Make one Figure with one Axes, sized 6 by 4 inches. Arrange the layout and display it.';}
-   const rows=l.id==='V01'?'No data rows are needed.':`Each row is ${r.observationUnit}. Use the rows specified below from df.`;
+   const rows=l.id==='V01'?'No data needed.':`One row: ${r.observationUnit}.`;
    const instruction=steps(action);
    r.brief={question:r.question,rows,result:instruction[0]||action,constraints:[...instruction.slice(1),...(chart?['Chart: '+chart[1]]:[])]};
-   if(r.id==='V09-1')r.brief={question:'Compare average fares by route.',rows:'Each row is one purchased ticket. Use all tickets.',result:'Plot mean `fare` for each `route`, without error bars.',constraints:['Title: "Bus fare receipts". Axes: "route" and "Mean fare".']};
-   if(r.id==='V08-3')r.brief={question:'Compare open requests by channel.',rows:'Each row is one received support request. Keep open requests only.',result:'Plot the count for each `channel`, from most to fewest open requests.',constraints:chart?['Chart: '+chart[1]]:[]};
-   r.steps=[r.brief.question,r.brief.rows,r.brief.result,...r.brief.constraints];r.task=r.steps.join(' ');
+   if(r.id==='V09-1')r.brief={question:'Compare average fares by route.',rows:'One row: one purchased ticket.',result:'Using all tickets, plot mean `fare` by `route`, without error bars.',constraints:['Title: "Bus fare receipts". Axes: "route" and "Mean fare".']};
+   if(r.id==='V08-3')r.brief={question:'Compare open requests by channel.',rows:'One row: one received support request.',result:'Keep open requests; plot counts by `channel`, most first.',constraints:chart?['Chart: '+chart[1]]:[]};
+   r.steps=[r.brief.result,...r.brief.constraints];r.task=r.steps.join(' ');
    const created=[...r.solution.matchAll(/^([A-Za-z_]\w*)(?:\s*,\s*([A-Za-z_]\w*))?\s*=(?!=)/gm)].flatMap(m=>[m[1],m[2]].filter(Boolean));
    const supplied=['df',...(r.setup.match(/\bfig\s*,\s*ax\s*=/)?['fig','ax']:[])];
    r.provenance={supplied:supplied.map(name=>({name,type:name==='df'?'DataFrame':name==='fig'?'Figure':'Axes',description:name==='df'?'Loaded from the visible supplied table.':'Created by the supplied setup.'})),created:[...new Set(created)].filter(name=>!supplied.includes(name)).map(name=>({name,type:name==='fig'?'Figure':name==='ax'?'Axes':name==='g'?'Seaborn grid':'Python object',description:'Created by your Python for this task.'}))};
@@ -204,9 +320,9 @@ function apply(c){
    const isFamiliar=code=>familiar.test(code)&&l.id!=='V01'&&!intro.some(id=>code.includes(id+'='));
    const syntax=index===0&&!l.review?l.syntax:(r.teaching?.parts||[]);
    r.syntaxGuidance={current:syntax.filter(([code])=>!isFamiliar(code)),reminders:syntax.filter(([code])=>isFamiliar(code)),reference:[]};
-   r.workflow={same:'Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.',changed:r.stageSummary,why:r.decision||l.goal,changedLines:r.solution.split('\n').flatMap((line,i)=>/sns\.\w+\(|ax\.(?:bar|hist|plot|scatter|annotate|axvline|axhline|set_[xy]scale|set_[xy]lim)\(|^\s*(?:bins|estimator|errorbar|jitter|style|size|col|kind)=/.test(line)?[i+1]:[])};
-   if(['V31','V32','V33'].includes(l.id))r.workflow.same='Choose the data and mappings; label and finish the resulting Figure.';
-   if(['V31','V32','V33'].includes(l.id))r.workflow.changed='Seaborn creates its own Figure or grid. Store it as g and finish g.figure; do not create a separate fig, ax canvas.';
+   r.workflow={same:'Select rows, draw, label and display.',changed:r.stageSummary,why:r.decision||l.goal,changedLines:r.solution.split('\n').flatMap((line,i)=>/sns\.\w+\(|ax\.(?:bar|hist|plot|scatter|annotate|axvline|axhline|set_[xy]scale|set_[xy]lim)\(|^\s*(?:bins|estimator|errorbar|jitter|style|size|col|kind)=/.test(line)?[i+1]:[])};
+   if(['V31','V32','V33'].includes(l.id))r.workflow.same='Choose mappings, then finish the grid’s Figure.';
+   if(['V31','V32','V33'].includes(l.id))r.workflow.changed='Seaborn supplies the canvas. Store its grid as `g` and finish `g.figure`.';
   }
   if(!l.review){const r=l.rounds[0];l.example=(r.setup?r.setup+'\n\n':'')+r.solution;}
  }

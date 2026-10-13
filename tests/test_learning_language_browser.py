@@ -1,6 +1,7 @@
 """Readable instructions, name roles and prerequisites in static/enhanced pages."""
 import argparse
 import json
+import re
 import shutil
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -49,7 +50,7 @@ with sync_playwright() as p:
     data_routes = [(f'data-foundations-{id}.html?practice={i}', id, i) for id in ['I06S','I13L','I19S','I19A'] for i in range(3)]
     data_routes += [('data-foundations-V13.html?practice=2','V13',2), ('data-foundations-WC02.html','WC02',0)]
     data_routes += [(f'data-foundations-{id}.html'+(f'?practice={i}' if i else ''),id,i) for id,i in [('W19',0),('W19',1),('W22',0),('V09',0),('V04',0)]]
-    ml_routes = [('ml-learn-'+id+'.html'+(f'?practice={i}' if i else ''),id,i) for id,i in [('ML-F02',0),('ML-F02',2),('ML-F-K1',0),('ML-M03',0),('ML-M03',1),('ML-M03',2),('ML-M-K1',0),('ML-X01',0),('ML-X19',0)]]
+    ml_routes = [('ml-learn-'+id+'.html'+(f'?practice={i}' if i else ''),id,i) for id,i in [('ML-F02',0),('ML-F02',2),('ML-F-K1',0),('ML-M03',0),('ML-M03',1),('ML-M03',2),('ML-M-K1',0),('ML-X01',0),('ML-X19',0),('ML-F11',0),('ML-F12',0),('ML-R01',0),('ML-R01',3)]]
     for width in [1440,320]:
         page.set_viewport_size(dict(width=width,height=1000))
         for theme in ['light','dark']:
@@ -82,21 +83,46 @@ with sync_playwright() as p:
                     assert panel.is_visible() and panel.locator('pre').is_visible()
                     assert panel.locator('a[href*="data-foundations-I19S.html"]').count()==1
                 if id in ['I06S','I13L','I19S','I19A']:
-                    assert page.locator('.teaching-example-output').count()>0
+                    assert page.locator('.teaching-example-output').count()>0,(file,width,theme,'worked-example table remains available')
                     if index:
                         brief=page.locator('.foundation-task-reminder')
                         assert brief.is_visible() and brief.get_attribute('aria-label')=='Current task'
                         assert brief.locator('.learning-instructions > li').count()>=2
                         assert brief.locator('.foundation-eyebrow code').count()==0,'Dataset metadata remains prose'
+                        reference=page.locator('.foundation-reference')
+                        assert reference.count()==1 and reference.locator(':scope > summary').inner_text()=='Reference'
+                        reference.locator(':scope > summary').click()
+                        assert reference.get_by_role('heading',name='Related syntax',exact=True).is_visible(),(file,'flat syntax reference')
+                        assert reference.locator('details').count()==0,'Reference has flat support sections'
+                        reference.locator(':scope > summary').click()
                 if id=='ML-M03':
                     evidence=page.locator('.ml-provided-evidence')
                     assert evidence.count()==1 and evidence.is_visible(),'Required reporting inputs appear beside the current task'
                     assert evidence.locator('h3').inner_text()=='Evidence to use'
                     text=evidence.inner_text()
                     assert all(value in text for value in ['4.4','0.7','4.2','0.6','4.3','0.8','hours'])
-                    page.locator('[data-learning-mode="refresh"]').click()
-                    assert evidence.is_visible() and evidence.inner_text()==text,'Refresh retains the same essential supplied evidence'
-                    page.locator('[data-learning-mode="learn"]').click()
+                    assert page.locator('[data-learning-mode]').count()==0,'The unrequested explanation-mode controls are removed'
+                    if not index:
+                        for name in ['cv_rmse','fold_sd']:
+                            column=page.locator('.ml-syntax code[data-code-role="column"]').filter(has_text=re.compile("^['\"]?"+name+"['\"]?$"))
+                            assert column.count()>0 and column.first.is_visible(),(file,name,'explicit column definition')
+                if id in ['ML-F11','ML-F12','ML-R01']:
+                    reference=page.locator('.ml-reference')
+                    assert reference.count()==1 and reference.locator(':scope > summary').inner_text()=='Reference'
+                    reference.locator(':scope > summary').click()
+                    assert reference.locator('details').count()==0,'Machine Learning Reference also has flat support sections'
+                    for name in ['X','y']:
+                        assert reference.locator('code[data-code-role="variable"]').filter(has_text=re.compile('^'+name+'$')).count()>0,(file,name,'aligned feature/target objects')
+                    if id in ['ML-F11','ML-F12'] or index==3:
+                        for name in ['candidates','cv_results']:
+                            objects=reference.locator('.ml-contract code[data-code-role="variable"]').filter(has_text=re.compile('^'+name+'$'))
+                            assert objects.count()>0 and objects.first.is_visible(),(file,name,'structured output inventory objects')
+                        assert reference.locator('code[data-code-role="parameter"]').filter(has_text=re.compile('^n_splits$')).count()>0,(file,'n_splits parameter explanation')
+                        dictionaries=reference.locator('[data-code-table="dictionary"]')
+                        assert dictionaries.count()>0 and dictionaries.locator('td:first-child code[data-code-role="column"]').count()>0,(file,'schema names in explanatory table')
+                    else:
+                        assert page.locator('.ml-provided-note code[data-code-role="variable"]').filter(has_text=re.compile('^model$')).is_visible(),(file,'supplied fitted model object')
+                    reference.locator(':scope > summary').click()
                 if id=='ML-M-K1':
                     text=page.locator('.ml-choice').inner_text()
                     assert all(value in text for value in ['0.81','0.1','.95','.2','.51','.52','500','569','90%','seven','two'])
@@ -104,6 +130,7 @@ with sync_playwright() as p:
                     if not index:
                         for name in ['medians','ranked','order']:
                             assert page.locator('.foundation-content code[data-code-role="variable"]').filter(has_text=name).count()>0,(id,name)
+                            assert page.locator('.teaching-example-output code[data-code-role="variable"]').filter(has_text=name).count()>0,(id,'object table',name)
                 if id=='I19A' and index==1:
                     task=page.locator('.foundation-task-reminder')
                     assert task.locator('code[data-code-role="variable"]').filter(has_text='checks').count()>0
@@ -113,8 +140,9 @@ with sync_playwright() as p:
                         assert page.locator('.foundation-task-reminder code[data-code-role="column"]').filter(has_text=name).count()>0,(id,name)
                 if id=='W19' and index==1:
                     assert page.locator('.foundation-task-reminder code[data-code-role="column"]').filter(has_text='size').count()>0
-                    reminder=page.locator('.teaching-reference')
-                    reminder.locator('summary').click()
+                    reference=page.locator('.foundation-reference')
+                    reference.locator(':scope > summary').click()
+                    reminder=page.locator('.foundation-reference-content')
                     assert reminder.locator('code[data-code-role="operation"]').filter(has_text='size').count()>0
                 if id=='V09':
                     task=page.locator('.foundation-task-reminder')
@@ -123,6 +151,8 @@ with sync_playwright() as p:
                     assert task.locator('li').filter(has_text='Title:').locator('code[data-code-role="column"]').count()==0,'Display title is literal'
                 if id=='V04':
                     assert page.locator('.foundation-task-reminder code[data-code-role="column"]').filter(has_text='stone').count()==0,'Ordinary entity noun remains prose'
+                    illustrative=page.locator('.teaching-visual-data th[scope="row"] code[data-code-role="column"]').filter(has_text=re.compile('^value$'))
+                    assert illustrative.count()>0,(file,'illustrative dictionary declares its own value column')
                 assert page.locator('.foundation-editor-wrap code.code-identifier,pre code.code-identifier[data-code-role="column"],pre code.code-identifier[data-code-role="variable"]').count()==0,'Python blocks retain syntax highlighting'
                 report['views'].append(dict(id=id,index=index,width=width,theme=theme))
                 if id in ['I19S','WC02','ML-F-K1','ML-M-K1'] and index==0:

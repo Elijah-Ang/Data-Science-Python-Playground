@@ -5,10 +5,10 @@ import {execFileSync} from 'node:child_process';
 import {createRequire} from 'node:module';
 const context={window:{}};vm.runInNewContext(fs.readFileSync(new URL('../code-identifiers.js',import.meta.url),'utf8'),context);
 const format=context.window.CodeIdentifiers.format;
-const count=s=>(s.match(/<code class="code-identifier">/g)||[]).length;
+const count=s=>(s.match(/<code class="code-identifier"(?: [^>]*)?>/g)||[]).length;
 const axes=format('Chart: title "Board games"; x "minutes"; y "Count".');
-assert(axes.includes('<code class="code-identifier">x</code>'));
-assert(axes.includes('<code class="code-identifier">y</code>'));
+assert(axes.includes('>x</code>'));
+assert(axes.includes('>y</code>'));
 assert.equal(count(axes),2);assert(!axes.includes('<code class="code-identifier">minutes'));
 assert.equal(count(format('A 6 x 4 inch chart shows counts. Explain why the pattern differs.')),0);
 assert.equal(count(format('Set x="minutes" and y="score".')),2);
@@ -26,7 +26,7 @@ for(const file of ['data-foundations.html','ml-learn.html','foundations/learning
 console.log('Axis identifiers align; ordinary prose and labels remain plain; filler removed.');
 
 const identifiers=context.window.CodeIdentifiers;
-const semanticCount=s=>(s.match(/data-code-role="(?:column|variable|function|parameter|operation|literal|key|file)"/g)||[]).length;
+const semanticCount=s=>(s.match(/data-code-role="(?:column|variable|function|parameter|operation|syntax|literal|key|file)"/g)||[]).length;
 const column=s=>s.includes('data-code-role="column"');
 const variable=s=>s.includes('data-code-role="variable"');
 const authored={
@@ -45,6 +45,8 @@ assert.equal(semanticCount(format('Show "value" and \'order\' as display text.',
 assert(column(format('The column "fare" contains ticket prices.',authored)),'An explicit field cue still works');
 assert(format('[[column:value]] stores each measurement; [[prose:value]] is ordinary English.',authored).includes('>value</code> stores each measurement; <span data-code-role="prose">value</span> is ordinary English.'));
 for(const role of ['function','parameter','operation','literal'])assert(format(`[[${role}:mean]]`,authored).includes(`data-code-role="${role}"`),role+' explicit role preserved');
+for(const [name,role] of [['sns.barplot()','function'],['sns.barplot(data=df, x="route")','syntax'],['estimator="mean"','parameter'],['df["fare"]','syntax'],['ranked.index','syntax']])assert(format('Use `'+name+'`.',authored).includes('data-code-role="'+role+'"'),name+' authored syntax has an explicit semantic role');
+assert(identifiers.decorateHTML('<p><code data-code-role="parameter">estimator</code></p>',authored).includes('class="code-identifier"'),'Explicit inline roles receive their shared styling class before JavaScript');
 assert.equal(semanticCount(format('Keep mean and size as operation names.',authored)),0,'Aggregation operation prose does not become a column');
 assert(format('[[literal:<unsafe>]]',authored).includes('&lt;unsafe&gt;'),'Explicit markup still escapes content');
 assert(!format('[[invalid:<unsafe>]]',authored).includes('<unsafe>'),'Unknown role cannot create unsafe HTML');
@@ -65,6 +67,13 @@ assert.equal(identifiers.decorateHTML(protectedHTML,authored),protectedHTML,'Exp
 const scopedHTML=identifiers.decorateHTML('<section data-code-context="example"><code>order</code></section><section data-code-context="task"><code>order</code></section>',authored);
 assert(scopedHTML.includes('data-code-role="variable"')&&scopedHTML.includes('data-code-role="column"'),'HTML scopes preserve different meanings for the same name');
 assert.equal(identifiers.decorateHTML('<p data-code-role="literal">Bus fare receipts</p>',{...authored,instruction:true}),'<p data-code-role="literal">Bus fare receipts</p>');
+const teachingTable=identifiers.decorateHTML('<table class="teaching-comparison"><tr><td>Use `fare` with `estimator="mean"`; store the result in `ranked`.</td></tr></table>',authored);
+assert(column(teachingTable)&&variable(teachingTable)&&teachingTable.includes('data-code-role="parameter"'),'Teaching-table prose preserves column, object and argument roles');
+const dictionary=identifiers.decorateHTML('<table data-code-table="dictionary"><tr><td>value</td><td>A value may be missing.</td></tr></table>',authored);
+assert.equal(semanticCount(dictionary),1,'Dictionary field cell is a column; the ordinary noun in its meaning stays prose');
+const objects=identifiers.decorateHTML('<table data-code-table="objects"><tr><th scope="row">order</th><td>ranked</td></tr></table>',authored);
+assert.equal(semanticCount(objects),1);assert(variable(objects),'Object table names are variables; literal output cells stay untouched');
+assert.equal(semanticCount(identifiers.decorateHTML('<table><tr><td>fare</td><td>order</td></tr></table>',authored)),0,'Unmarked data-table cells remain literal values');
 execFileSync(process.env.PYTHON||'python3',['tests/test_identifier_registry.py'],{cwd:new URL('..',import.meta.url),stdio:'inherit'});
 console.log('Explicit occurrence roles, scoped ambiguous names, literal strings, output columns and worked-example objects verified.');
 
@@ -75,7 +84,7 @@ const require=createRequire(import.meta.url),curriculum=require('../foundations/
 const byId=Object.fromEntries(curriculum.lessons.map(lesson=>[lesson.id,lesson]));
 const language=context.window.LearningLanguage;
 const ordering=language.context('I19S-1');
-const orderingNote=identifiers.decorateHTML('<p>'+byId.I19S.guide.note+'</p>',ordering);
+const orderingNote=identifiers.decorateHTML('<p>'+byId.I19S.guide.example+'</p>',ordering);
 for(const name of ['medians','ranked','order']){
  assert(ordering.exampleVariables.includes(name),'I19S worked-example object '+name+' is registered');
  assert(orderingNote.includes('data-code-role="variable" title="Python object">'+name+'</code>'),'I19S explanatory object '+name+' is correctly rendered');

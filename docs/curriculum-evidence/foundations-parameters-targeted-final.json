@@ -1,0 +1,436 @@
+{
+  "build": "3089e69bdceb",
+  "states": [
+    {
+      "width": 1440,
+      "id": "V04",
+      "index": 0,
+      "introduces": [
+        "bins"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "V04",
+      "index": 2,
+      "introduces": [],
+      "extends": [
+        "bins"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "V09",
+      "index": 0,
+      "introduces": [
+        "estimator",
+        "errorbar"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "V09",
+      "index": 2,
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "V13",
+      "index": 0,
+      "introduces": [
+        "jitter"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "V13",
+      "index": 2,
+      "introduces": [],
+      "extends": [
+        "order"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "I17",
+      "index": 0,
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceOpenedAndClosed": false,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 1440,
+      "id": "I17",
+      "index": 2,
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceOpenedAndClosed": false,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "V04",
+      "index": 0,
+      "introduces": [
+        "bins"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "V04",
+      "index": 2,
+      "introduces": [],
+      "extends": [
+        "bins"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "V09",
+      "index": 0,
+      "introduces": [
+        "estimator",
+        "errorbar"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "V09",
+      "index": 2,
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "V13",
+      "index": 0,
+      "introduces": [
+        "jitter"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "V13",
+      "index": 2,
+      "introduces": [],
+      "extends": [
+        "order"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceOpenedAndClosed": true,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "I17",
+      "index": 0,
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceOpenedAndClosed": false,
+      "flatDisclosures": 3
+    },
+    {
+      "width": 320,
+      "id": "I17",
+      "index": 2,
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceOpenedAndClosed": false,
+      "flatDisclosures": 3
+    }
+  ],
+  "pageErrors": []
+}

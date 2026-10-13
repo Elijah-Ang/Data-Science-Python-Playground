@@ -2252,15 +2252,22 @@
     "ML-W16": "c35792e1340e250807c1882937254a15dbafcaa5cf1ac7c219006d60450d45f6"
   },
   "sourceHashes": {
-    "code-identifiers.js": "8ff4c737ad01d01dd38298537b3e8b66fd560de06645be699a0fa50bd6f4347a",
-    "route-slider.css": "bcae15342adf5e3c297c1f8ec2055ec6276316da111faff5d4651d498003aa96",
+    "code-identifiers.js": "71854dcf3826d8f0837a47a3910a108ffd747acb28f03ab0de289edf6bcacc39",
+    "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652",
     "ml-learning/visuals.js": "0507357cfc51909bbe0416ac57e0a0e9d4ce6c5d1c2eb3c96c38ab4560a3386a",
-    "ml-learning/learning.css": "a3bfa732bccdf17a0cfea8e7979585a2813bb799912a46cb9f7ec61c8f794ff1",
-    "ml-learning/app.js": "1781e65b49497c5f7b5ba89fa715fde3e33d0102b410be3068ee1f6a1e09a4ba",
-    "foundations/foundations.css": "b425d2de578553013cdbd6ca58f310cb573e40b22dc142949b33375a6c1b4440",
-    "foundations/learning-ui.js": "f69cf6f8407f2232426dc5c1e590c611b7c213d5aeae515dcb0aea8002288337",
+    "ml-learning/learning.css": "3acccfb6d1dc583089df09cfd3873f054cc18220b2f7e1b556614c5727868b9f",
+    "ml-learning/app.js": "a801f44eba7a6f7ab38db2647de02780d15371374b3a39a488f286d056635d9d",
+    "foundations/foundations.css": "cf4cf538e52e0291e2a8a8467ed4c2b0314d286a7befae6b914e7f1dbb951cd5",
+    "foundations/learning-ui.js": "703472bbab76ae4e254e7d9797994755348799f3be07d73114486dd673c36711",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "6fc8bbea1eacd53a1ae7e6ed522545451fd05265098b8dc78ef06a56d9e2a695",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
+  },
+  "reviewedBuild": {
+    "contentId": "3089e69bdcebdd83e8f2e3e0725472c4383c7b49db56c5b1e5de26fd4becf56a",
+    "baseUrl": "http://127.0.0.1:8000",
+    "runtime": "local",
+    "browserExecutable": "/usr/bin/chromium",
+    "reusedCaptures": false
   }
 }

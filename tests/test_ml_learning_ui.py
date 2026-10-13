@@ -77,15 +77,17 @@ with sync_playwright() as p:
         assert page.locator('.teaching-overview').count()==1
         guidance=page.evaluate('MLLearning.activity.syntaxGuidance')
         if guidance['current']:
-            syntax=page.locator('details.ml-syntax')
-            assert syntax.get_attribute('open') is not None and syntax.locator('.ml-syntax-parts').is_visible()
+            syntax=page.locator('section.ml-syntax')
+            assert syntax.locator('.ml-syntax-parts').is_visible()
             assert syntax.locator('.ml-syntax-parts code span').evaluate_all('(nodes)=>nodes.every(e=>getComputedStyle(e).display!=="none")')
         else:assert not page.locator('.ml-syntax').count()
-        assert page.locator('.foundation-practices a').count()==3
+        assert page.locator('.foundation-practices li').count()==3
+        assert page.locator('.foundation-practices a').count()==0
         assert page.locator('.foundation-practices button,.ml-exercise-tabs').count()==0
         assert page.locator('.foundation-lesson-heading .foundation-practices [aria-current="step"] strong').inner_text()==label
-        if page.locator('.ml-syntax-reference').count():assert page.locator('.ml-syntax-reference').get_attribute('open') is None
-        if page.locator('.ml-syntax-reminder').count():assert page.locator('.ml-syntax-reminder').get_attribute('open') is None
+        assert page.locator('.ml-reference').get_attribute('open') is None
+        assert not page.locator('details details,.learning-depth,.teaching-orientation').count()
+        assert page.locator('.foundation-reference-content > details > summary').all_text_contents()==['Reference','Hints','Explained solution']
         assert page.locator('#mlHighlight .py-comment,#mlHighlight .py-function').count()>0
 
     # A practice sentence appears once; long generated setup stays available on demand.
@@ -99,8 +101,10 @@ with sync_playwright() as p:
     card,ex=setup_case
     page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{card['exercises'].index(ex)}")
     page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=ex['id'])
-    assert page.locator('.ml-supplied-setup').count()==1
-    assert page.locator('.ml-supplied-setup pre').is_hidden()
+    assert page.locator('.ml-provided-state').count()==1
+    assert page.locator('.ml-provided-state pre').is_hidden()
+    open_details('.ml-reference')
+    assert ex['setup'] in page.locator('.ml-provided-state pre').last.inner_text()
 
     page.evaluate("location.hash='#foundations/ML-F08/1'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-F08-2'")
@@ -122,14 +126,14 @@ with sync_playwright() as p:
         if card['kind']=='teaching':
             schematic=page.locator('.ml-schematic-reference')
             if schematic.count():
-                assert schematic.get_attribute('open') is None
-                schematic.locator(':scope > summary').click()
+                assert schematic.is_hidden()
+                open_details('.ml-reference')
             assert page.locator('.ml-concept svg').count()==1
             caption=page.locator('.ml-concept figcaption').inner_text()
             assert caption and ('schematic' in caption.lower() or card['visual']['caption'] in caption), (card['id'],caption)
             clipped=page.locator('.ml-concept svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox();return b.x<0||b.y<0||b.x+b.width>560.5||b.y+b.height>235.5}).map(n=>n.textContent)')
             assert not clipped,(card['id'],clipped)
-            if schematic.count():schematic.locator(':scope > summary').click()
+            if schematic.count():page.locator('.ml-reference > summary').click()
         if card['id']=='ML-F-K1':
             # Both redesigned retrievals expose the full workflow and supported
             # choices, rather than the former fixed single-fit validation panel.
@@ -137,20 +141,25 @@ with sync_playwright() as p:
                 page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{index}")
                 page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=checkpoint['id'])
                 assert page.locator('.foundation-task-reminder').is_visible()
-                assert page.locator('.ml-contract').get_attribute('open') is None
-                contract=open_details('.ml-contract')
-                assert contract.is_visible() and contract.locator(':scope > summary').inner_text()=='Outputs you create'
+                assert page.locator('.ml-contract').is_hidden()
+                open_details('.ml-reference')
+                contract=page.locator('.ml-contract')
+                assert contract.is_visible() and contract.locator('h3').inner_text()=='Outputs you create'
                 rows=contract.locator('.ml-evidence-names > div')
                 expected_contract=page.evaluate('(contract)=>contract.map(c=>[c.name,LearningLanguage.split(c.description)])',checkpoint['contract'])
                 assert rows.evaluate_all('(rows)=>rows.map(row=>[row.querySelector("dt").textContent,Array.from(row.querySelectorAll("dd li"),e=>e.textContent)])')==expected_contract
-                assert all(row.locator('dt code').count()==1 for row in rows.all())
+                for row,item in zip(rows.all(),checkpoint['contract']):
+                    names=item['name'].split(' / ')
+                    variables=page.evaluate('(id)=>CodeIdentifiers.contextFor(LearningLanguage.context(id),"guide").variables',checkpoint['id'])
+                    grouped=len(names)>1 and all(name.isidentifier() and name in variables for name in names)
+                    assert row.locator('dt code').all_text_contents()==(names if grouped else [item['name']])
+                    if grouped:assert row.locator('dt code').evaluate_all('(nodes)=>nodes.every(n=>n.dataset.codeRole==="variable")')
                 assert all(row.is_visible() for row in rows.all())
                 design=contract.inner_text()
                 assert '15–30%' in design and '3–5-fold' in design
                 assert 'cross_validate' in design and 'cross_val_predict' in design
                 assert 'final_predictions / final_score' in design and 'No further selection after this call' in design
-                assert page.locator('.ml-workflow-help').get_attribute('open') is None
-                open_details('.ml-workflow-help')
+                assert page.locator('.ml-workflow-help').is_visible()
                 assert page.get_by_role('heading',name='The question and data dictionary',exact=True).is_visible()
                 rubric=page.locator('.ml-rubric')
                 assert rubric.is_visible()
@@ -181,7 +190,6 @@ with sync_playwright() as p:
         assert page.locator('.case-solution-setup pre').inner_text().strip()=="\n".join(challenge['reference'].splitlines()[:3]),challenge['id']
         assert challenge['exercise']['inputFile'] in page.locator('.case-solution-setup pre').inner_text()
         if challenge['exercise'].get('protect'):
-            if page.locator('.ml-inputs').count():open_details('.ml-inputs')
             design=page.locator('.ml-validation-design').inner_text()
             assert '20%' in design and 'five' in design
             assert ('forward' if challenge['exercise']['protect'].get('time') else '42') in design
@@ -197,10 +205,11 @@ with sync_playwright() as p:
         assert 'reserved final test' not in brief.inner_text()
         exercise=page.evaluate('MLLearning.activity')
         assert page.locator('.ml-output-names code').all_text_contents()==exercise['outputs']
-        contract=open_details('.ml-contract')
+        assert page.locator('.ml-contract').is_hidden()
+        open_details('.ml-reference')
+        contract=page.locator('.ml-contract')
         assert contract.is_visible() and all(name in contract.inner_text() for name in exercise['outputs'])
-        assert page.locator('.ml-model-guide').get_attribute('open') is None
-        open_details('.ml-model-guide')
+        assert page.locator('.ml-model-guide').is_visible()
         support=page.locator('.teaching-reference').filter(has_text='Guided application:').first
         assert support.is_visible() and application in support.inner_text()
         assert 'baseline, training validation' not in support.inner_text()
@@ -210,9 +219,9 @@ with sync_playwright() as p:
         assert 'no prediction target or reserved final test' in page.locator('.ml-workflow-map > p').inner_text()
     page.evaluate("location.hash='#workflow/ML-W-K3/0'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K3-1'")
-    note=page.locator('.teaching-note').filter(has_text='choose a quantity model or begin with classification evidence')
-    assert note.count()==1
-    assert [file_name(href) for href in note.locator('a').evaluate_all('(links)=>links.map(link=>link.href)')]==['ml-learn-collection-simple-linear.html','ml-learn-collection-classification-evidence.html']
+    assert not page.locator('.teaching-note,.teaching-orientation,.learning-depth').count()
+    assert page.locator('.foundation-navigation .deck-boundary').inner_text()=='End of deck'
+    assert 'ML-W-K2' in page.locator('.foundation-navigation a').last.get_attribute('href')
     for route,id,question in [
         ('#regression/ML-R01/0','ML-R01-1',False),
         ('#regression/ML-R02/2','ML-R02-3',False),
@@ -241,10 +250,11 @@ with sync_playwright() as p:
                 overflow=page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1')
                 assert not overflow,(width,theme,route,'horizontal page overflow')
                 if width in [320,390] and route in ['#clustering/ML-U07/3','#pca/ML-P02/3']:
-                    stages=page.locator('.foundation-practices a')
+                    stages=page.locator('.foundation-practices li')
                     assert stages.count()==4
                     geometry=stages.evaluate_all('(links)=>links.map(link=>{const r=link.getBoundingClientRect();return {left:r.left,right:r.right,height:r.height,width:r.width};})')
-                    assert all(-1<=r['left'] and r['right']<=width+1 and r['height']>=44 and r['width']>=44 for r in geometry),(width,route,geometry)
+                    assert all(-1<=r['left'] and r['right']<=width+1 and r['height']>0 and r['width']>0 for r in geometry),(width,route,geometry)
+                    assert not page.locator('.foundation-practices a,.foundation-practices button').count()
                 if width in [1440,390] and theme=='light':
                     name=(route or 'landing').replace('#','').replace('/','-')
                     page.screenshot(path=str(out/(args.engine+'-'+str(width)+'-'+name+'.png')),full_page=True)
@@ -253,8 +263,8 @@ with sync_playwright() as p:
         page.evaluate('(hash)=>location.hash=hash',route)
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=id)
         assert page.get_by_role('heading',name='The question and data dictionary',include_hidden=True).count()==1
-        assert page.locator('.ml-workflow-help').get_attribute('open') is None
-        open_details('.ml-workflow-help')
+        assert page.locator('.ml-workflow-help').is_hidden()
+        open_details('.ml-reference')
         assert page.locator('.ml-workflow-map li').count()==8
         assert page.locator('.ml-workflow-map').is_visible()
         assert page.locator('.ml-rubric > li').count()==5
@@ -263,48 +273,54 @@ with sync_playwright() as p:
         assert 'not machine-graded' in page.locator('#mlReflection + p').inner_text()
         assert page.locator('.ml-concept svg').count()==1
         assert page.locator('.foundation-practices button').count()==0
-        assert page.locator('.foundation-practices a').count()==len(next(c for c in registry['cards'] if any(e['id']==id for e in c['exercises']))['exercises'])
+        assert page.locator('.foundation-practices li').count()==len(next(c for c in registry['cards'] if any(e['id']==id for e in c['exercises']))['exercises'])
         if '-K' in id:assert 'fit(' not in page.locator('#mlEditor').input_value()
-    # Desktop keeps teaching beside the editor, with natural page flow for the
-    # optional references rather than long nested scrolling panels.
+    # Desktop restores two bounded, independent scrolling panes. Reference
+    # belongs to the left reading pane; Python and output belong to the right.
     for width in [1440,801]:
         page.set_viewport_size({'width':width,'height':900})
-        page.evaluate("location.hash='#foundations/ML-F03/0'")
-        page.wait_for_function("window.MLLearning?.activity?.id==='ML-F03-1'")
+        page.evaluate("location.hash='#foundations/ML-F11/0'")
+        page.wait_for_function("window.MLLearning?.activity?.id==='ML-F11-1'")
+        open_details('.ml-reference')
         geometry=page.evaluate('''() => {
-          const lesson=document.querySelector('.ml-lesson');
           const content=document.querySelector('.foundation-content');
           const editor=document.querySelector('.ml-code-pane');
-          const next=document.querySelector('.foundation-navigation');
+          content.scrollTop=120;editor.scrollTop=0;
+          const leftOnly=content.scrollTop>0&&editor.scrollTop===0;
+          const priorLeft=content.scrollTop;editor.scrollTop=180;
           return {contentLeft:content.getBoundingClientRect().left,
             editorLeft:editor.getBoundingClientRect().left,
             contentTop:content.getBoundingClientRect().top,
             editorTop:editor.getBoundingClientRect().top,
-            referenceTop:document.querySelector('.foundation-reference-content').getBoundingClientRect().top,
-            editorBottom:editor.getBoundingClientRect().bottom,
+            columns:document.querySelector('.foundation-split').children.length,
+            referenceInContent:content.contains(document.querySelector('.foundation-reference-content')),
             contentOverflow:content.scrollHeight-content.clientHeight,
-            contentScroll:getComputedStyle(content).overflowY};
+            contentScroll:getComputedStyle(content).overflowY,
+            editorScroll:getComputedStyle(editor).overflowY,
+            independent:leftOnly&&editor.scrollTop>0&&content.scrollTop===priorLeft};
         }''')
         assert geometry['editorLeft']>geometry['contentLeft'] and abs(geometry['contentTop']-geometry['editorTop'])<2,(width,geometry)
-        assert geometry['referenceTop']>=geometry['editorBottom']-2,(width,geometry)
-        assert geometry['contentScroll']=='visible' and geometry['contentOverflow']<2,(width,geometry)
+        assert geometry['columns']==2 and geometry['referenceInContent'],(width,geometry)
+        assert geometry['contentScroll']=='auto' and geometry['editorScroll']=='auto' and geometry['contentOverflow']>0,(width,geometry)
+        assert geometry['independent'],(width,geometry)
     # Shared neural Next ends at a fork; task-specific paths do not cross branches.
     for cid in ('ML-C14','ML-C18','ML-N04'):
         card=next(c for c in registry['cards'] if c['id']==cid)
         page.set_viewport_size({'width':320,'height':844})
         page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{cid}/4")
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=cid+'-5')
-        stages=page.locator('.foundation-practices a')
+        stages=page.locator('.foundation-practices li')
         assert stages.count()==5 and stages.last.locator('strong').inner_text()=='Apply'
         bounds=stages.evaluate_all('(links)=>links.map(link=>{const r=link.getBoundingClientRect();return {left:r.left,right:r.right,height:r.height,width:r.width};})')
-        assert all(-1<=r['left'] and r['right']<=321 and r['height']>=44 and r['width']>=44 for r in bounds),(cid,bounds)
+        assert all(-1<=r['left'] and r['right']<=321 and r['height']>0 and r['width']>0 for r in bounds),(cid,bounds)
+        assert not page.locator('.foundation-practices a,.foundation-practices button').count()
         assert page.locator('.foundation-practices [aria-current="step"] strong').inner_text()=='Apply'
     page.set_viewport_size({'width':1280,'height':1000})
     page.emulate_media(forced_colors='active',reduced_motion='reduce')
     page.evaluate("location.hash='#workflows/challenges/ML-X19'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-X19'")
     assert page.locator('#mlRun').is_visible()
-    open_details('.ml-contract')
+    assert page.locator('.ml-contract').is_visible()
     assert 'weights' in page.locator('.ml-contract').inner_text()
     assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1')
     page.emulate_media(forced_colors='none',reduced_motion='no-preference')

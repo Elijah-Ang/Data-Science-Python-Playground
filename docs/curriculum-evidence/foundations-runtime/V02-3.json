@@ -7,7 +7,7 @@
     "id": "V02-3",
     "label": "Transfer",
     "dataset": "material_samples",
-    "task": "Do the chart labels describe the prepared measurements and population? Each row is one material sample. Use the rows specified below from df. The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs. Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown. Label x Volume (mL) and y Mass (g), keep the prepared pairs, arrange and display fig.",
+    "task": "The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs. Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown. Label x Volume (mL) and y Mass (g), keep the prepared pairs, arrange and display fig.",
     "solution": "ax.set(title=\"Trial batch\", xlabel=\"Volume (mL)\", ylabel=\"Mass (g)\")\nfig.tight_layout()\nplt.show()",
     "starter": "# Choose the data and chart operations from the brief\n",
     "hint": "The title describes the observations on ax. Selecting trial rows means the plotted evidence is not all samples.",
@@ -34,8 +34,6 @@
     },
     "demand": "Choose an accurate population title by reading the supplied selection.",
     "steps": [
-      "Do the chart labels describe the prepared measurements and population?",
-      "Each row is one material sample. Use the rows specified below from df.",
       "The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs.",
       "Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown.",
       "Label x Volume (mL) and y Mass (g), keep the prepared pairs, arrange and display fig."
@@ -87,7 +85,7 @@
     "stageSummary": "Finish a new chart.",
     "brief": {
       "question": "Do the chart labels describe the prepared measurements and population?",
-      "rows": "Each row is one material sample. Use the rows specified below from df.",
+      "rows": "One row: one material sample.",
       "result": "The supplied setup chooses a batch before plotting its volume_ml/mass_g pairs.",
       "constraints": [
         "Read the setup and choose title \"Trial batch\" or \"All samples\" to describe the population actually shown.",
@@ -134,7 +132,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Finish a new chart.",
       "why": "Choose an accurate population title by reading the supplied selection.",
       "changedLines": [
@@ -180,7 +178,7 @@
       12
     ]
   },
-  "inputSHA256": "8cb6a73943b4be157cb077240aa76cabb8b94f6c75162c6201b02125ca49c94d",
+  "inputSHA256": "005b6218b620c073c58c30bae11269c2887a8ebdb82e91b80834247d39593b4b",
   "visibleWorkspaceSHA256": "0f2c0a5519b49384a33a0a26a43dc6e574d39816cdf778d2bce4ec631d4e1e54",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"sample\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"batch\": [\"trial\", \"standard\", \"trial\", \"standard\", \"trial\", \"standard\"],\n    \"volume_ml\": [9, 3, 6, 12, 3, 8],\n    \"mass_g\": [18, 4, 13, 17, 5, 12],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"batch\"] == \"trial\"]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"volume_ml\", y=\"mass_g\", ax=ax)\n\n# Your work\n# Choose the data and chart operations from the brief\n",
@@ -209,9 +207,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -229,7 +227,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.192,
+      "elapsedSeconds": 0.337,
       "response": {
         "passed": true,
         "checked": true,
@@ -264,7 +262,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.153,
+      "elapsedSeconds": 0.279,
       "response": {
         "passed": true,
         "checked": true,
@@ -300,7 +298,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.153,
+      "elapsedSeconds": 0.292,
       "response": {
         "passed": true,
         "checked": true,
@@ -336,7 +334,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.138,
+      "elapsedSeconds": 0.28,
       "response": {
         "passed": false,
         "checked": true,
@@ -371,7 +369,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.177,
+      "elapsedSeconds": 0.319,
       "response": {
         "passed": false,
         "checked": true,
@@ -406,7 +404,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.281,
+      "elapsedSeconds": 0.307,
       "response": {
         "passed": false,
         "checked": true,
@@ -441,7 +439,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.182,
+      "elapsedSeconds": 0.291,
       "response": {
         "passed": false,
         "checked": true,
@@ -476,7 +474,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.202,
+      "elapsedSeconds": 0.311,
       "response": {
         "passed": false,
         "checked": true,
@@ -511,7 +509,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.359,
+      "elapsedSeconds": 0.488,
       "response": {
         "passed": false,
         "checked": true,
@@ -558,7 +556,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.248,
+      "elapsedSeconds": 0.344,
       "response": {
         "passed": true,
         "checked": true,

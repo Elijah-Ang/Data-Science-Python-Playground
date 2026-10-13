@@ -17,23 +17,24 @@
     return '<table class="teaching-flags"><caption>Same rows, different keep choices</caption><thead><tr><th scope="col">Row</th><th scope="col"><code>"first"</code></th><th scope="col"><code>"last"</code></th><th scope="col"><code>False</code></th></tr></thead><tbody>' + flags.map(row => '<tr><th scope="row">' + row[0] + '</th>' + row.slice(1).map(flag=>'<td class="'+(flag?'flag-true':'flag-false')+'">'+(flag?'True':'False')+'</td>').join('') + '</tr>').join('') + '</tbody></table>';
   }
   function comparison(guide, id) {
-    return '<table class="teaching-comparison"><caption>What each choice does</caption><thead><tr><th scope="col">Code or choice</th><th scope="col">Meaning</th></tr></thead><tbody>' + guide.choices.map(([code,meaning]) => '<tr><th scope="row"><code>' + esc(code) + '</code></th><td>' + esc(id==='I17' ? meaning.replace(/ Flags:.*$/, '') : meaning) + '</td></tr>').join('') + '</tbody></table>';
+    return '<table class="teaching-comparison" data-code-table="teaching"><caption>What each choice does</caption><thead><tr><th scope="col">Code or choice</th><th scope="col">Meaning</th></tr></thead><tbody>' + guide.choices.map(([code,meaning]) => '<tr><th scope="row"><code>' + esc(code) + '</code></th><td>' + esc(id==='I17' ? meaning.replace(/ Flags:.*$/, '') : meaning) + '</td></tr>').join('') + '</tbody></table>';
   }
   function callout(guide,id,follow=false) {
     const title=id==='W19'?(follow?'Why <code>size</code> here?':'<code>size</code> or <code>count</code>?'):esc(guide.noteTitle);
     const note=follow&&guide.followNote?guide.followNote:guide.note;
     return '<aside class="syntax-choice-callout'+(id==='W19'&&follow?' is-linked':'')+'"><strong>'+title+'</strong><p>'+esc(note)+'</p></aside>';
   }
-  function reference(curriculum, lesson, round) {
+  function reference(curriculum, lesson, round, {includeExample=true}={}) {
     const {source}=model(curriculum,lesson,round), g=source.guide;
-    return '<div class="teaching-recall"><figure class="teaching-illustration">'+root.FoundationVisuals.diagram(round.visual)+'</figure><p>'+esc(g.idea)+'</p>'+example(g,source.id)+comparison(g,source.id)+callout(g,source.id)+earlier(g.prerequisiteLessons)+'</div>';
+    return '<div class="teaching-recall">'+(includeExample?example(g,source.id):'')+comparison(g,source.id)+callout(g,source.id)+earlier(g.prerequisiteLessons)+'</div>';
   }
   function earlier(lessons) {
     if(!lessons?.length)return '';
     return '<p class="teaching-prerequisites">Earlier teaching: '+lessons.map(l=>'<a href="data-foundations-'+esc(l.id)+'.html">'+esc(l.title)+'</a>').join(' · ')+'</p>';
   }
   function exampleOutput(output) {
-    return output?'<table class="teaching-example-output"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+esc(header)+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table>':'';
+    const kind=output?.kind||(output?.headers?.[0]==='Object'?'objects':output?.headers?.[0]==='Column'?'dictionary':'teaching');
+    return output?'<div class="teaching-example-table-scroll"><table class="teaching-example-output" data-code-table="'+kind+'"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+esc(header)+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
   }
   function example(guide, id) {
     return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+exampleOutput(guide.exampleOutput)+(id==='I17'?duplicateExample():'')+'</div>';
@@ -44,7 +45,7 @@
     const parts=g.parts.map(([code,meaning])=>'<div><dt><code>'+esc(code)+'</code></dt><dd>'+esc(meaning)+'</dd></div>').join('');
     const code=round.workflow?.changedTeachingLines?.length&&root.FoundationLearning?.changedCode
       ?root.FoundationLearning.changedCode(g.code,round.workflow.changedTeachingLines):esc(g.code);
-    return '<section class="teaching-transition" data-code-context="teaching" aria-label="New method for this practice"><span class="foundation-eyebrow">New in this practice</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.idea)+'</p><div class="teaching-example"><h4>A small example</h4><p>'+esc(g.example)+'</p><pre><code>'+code+'</code></pre>'+exampleOutput(g.output)+(g.result?'<p class="teaching-example-result"><strong>Result:</strong> '+esc(g.result)+'</p>':'')+'</div><h4>What each part does</h4><dl class="foundation-syntax teaching-syntax-parts">'+parts+'</dl><aside class="syntax-choice-callout"><strong>'+esc(g.noteTitle)+'</strong><p>'+esc(g.note)+'</p></aside>'+earlier(g.lessons)+'</section>';
+    return '<section class="teaching-transition" data-code-context="teaching" aria-label="New method for this practice"><span class="foundation-eyebrow">New in this practice</span><h3>'+esc(g.title)+'</h3><p>'+esc(g.idea)+'</p><div class="teaching-example"><h4>A small example</h4><p>'+esc(g.example)+'</p><pre><code>'+code+'</code></pre>'+(g.excerpt?'<p class="teaching-excerpt-note">Uses the imports already shown in the editor.</p>':'')+exampleOutput(g.output)+(g.result?'<p class="teaching-example-result"><strong>Result:</strong> '+esc(g.result)+'</p>':'')+'</div><h4>What each part does</h4><dl class="foundation-syntax teaching-syntax-parts">'+parts+'</dl><aside class="syntax-choice-callout"><strong>'+esc(g.noteTitle)+'</strong><p>'+esc(g.note)+'</p></aside>'+earlier(g.lessons)+'</section>';
   }
   function intro(curriculum, lesson, round) {
     const m = model(curriculum, lesson, round), g=m.source.guide;
@@ -56,33 +57,29 @@
     const diagram = m.source.id === 'V35'
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
       : (explorer||'<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>');
-    const plottingIntro=m.source.id==='V02'?'<aside class="syntax-choice-callout"><strong>Two plotting tools, one Figure</strong><p>Matplotlib creates the Figure and Axes and controls labels and layout. These examples use Seaborn for a short, consistent way to read named columns and draw many chart types. Seaborn draws on Matplotlib Axes. Equivalent Matplotlib or other Python code is welcome when it shows the requested data and chart features.</p></aside>':'';
+    const plottingIntro=m.source.id==='V02'?'<aside class="syntax-choice-callout"><strong>Two plotting tools, one Figure</strong><p>Matplotlib creates fig and ax and handles labels and layout. Seaborn draws on ax. Equivalent Matplotlib code is welcome.</p></aside>':'';
     const detailedExample=explorer||m.source.deck==='visualise'&&m.source.id!=='V35';
-    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+(detailedExample?'':example(g,m.source.id))+earlier(g.prerequisiteLessons)+'</section>';
+    return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+(detailedExample?'':example(g,m.source.id))+'</section>';
   }
-  function syntax(lesson,round) {
-    const row=([code,meaning],i) => {
+  function syntaxRows(lesson,items){
+    return items.map((entry,i)=>{
+      const [code,meaning]=Array.isArray(entry)?entry:[entry.code||entry.title,entry.meaning];
       const size=lesson.id==='W19'&&code==='("price", "size")';
-      return '<div'+(size?' class="syntax-size-row"':'')+'><dt><span aria-hidden="true">' + (i+1) + '</span><code'+(size?' data-focus="size"':'')+'>' + esc(code) + '</code></dt><dd>' + esc(meaning) + '</dd></div>';
-    };
-    if(round?.syntaxGuidance){
-      const entries=items=>items.map((p,i)=>row(Array.isArray(p)?p:[p.code||p.title,p.meaning],i)).join('');
-      const {current=[],reminders=[],reference=[]}=round.syntaxGuidance;
-      const taughtParameters=new Set([...(round.parameterTeaching?.introduces||[]),...(round.parameterTeaching?.extends||[])].map(name=>name.split('.').at(-1)));
-      const repeated=current.filter(p=>taughtParameters.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1]));
-      const essential=current.filter(p=>!repeated.includes(p));
-      return (essential.length?'<h4>New syntax to try</h4><dl class="foundation-syntax teaching-syntax-parts">'+entries(essential)+'</dl>':'')+
-        (repeated.length?'<details class="teaching-more"><summary>Parameter syntax · explained below</summary><dl class="foundation-syntax teaching-syntax-parts">'+entries(repeated)+'</dl></details>':'')+
-        (reminders.length?'<details class="teaching-more"><summary>Familiar syntax · quick reminder</summary><dl class="foundation-syntax teaching-syntax-parts">'+entries(reminders)+'</dl></details>':'')+
-        (reference.length?'<details class="teaching-more"><summary>Full syntax reference</summary><dl class="foundation-syntax teaching-syntax-parts">'+entries(reference)+'</dl></details>':'')+(lesson.guide?callout(lesson.guide,lesson.id,true):'');
-    }
-    const later=new Set(lesson.syntaxLater||[]);
-    const worked=lesson.syntax.filter(([code])=>!later.has(code));
-    const alternatives=lesson.syntax.filter(([code])=>later.has(code));
-    const related=alternatives.length?'<details class="teaching-more"><summary>Other choices for later exercises</summary><dl class="foundation-syntax teaching-syntax-parts">'+alternatives.map(row).join('')+'</dl></details>':'';
-    return '<dl class="foundation-syntax teaching-syntax-parts">'+worked.map(row).join('')+'</dl>'+related+callout(lesson.guide,lesson.id,true);
+      return '<div'+(size?' class="syntax-size-row"':'')+'><dt><span aria-hidden="true">'+(i+1)+'</span><code'+(size?' data-focus="size"':'')+'>'+esc(code)+'</code></dt><dd>'+esc(meaning)+'</dd></div>';
+    }).join('');
   }
-  const api = {model, intro, syntax, reference, transition, example};
+  function syntax(lesson,round){
+    const params=new Set([...(round?.parameterTeaching?.introduces||[]),...(round?.parameterTeaching?.extends||[])].map(name=>name.split('.').at(-1)));
+    const current=round?.syntaxGuidance?.current || (lesson.syntax||[]).filter(([code])=>!(lesson.syntaxLater||[]).includes(code));
+    const essential=current.filter(p=>!params.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1]));
+    return essential.length?'<h4>What the syntax does</h4><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,essential)+'</dl>':'';
+  }
+  function syntaxReference(lesson,round){
+    const guidance=round?.syntaxGuidance;
+    const entries=guidance?[...guidance.reminders,...guidance.reference]:(lesson.syntax||[]).filter(([code])=>(lesson.syntaxLater||[]).includes(code));
+    return entries.length?'<section><h3>Related syntax</h3><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,entries)+'</dl></section>':'';
+  }
+  const api = {model, intro, syntax, syntaxReference, reference, transition, example};
   root.FoundationTeaching = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

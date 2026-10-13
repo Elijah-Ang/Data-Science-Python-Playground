@@ -70,7 +70,9 @@ with sync_playwright() as pw:
                     if name == 'identifiers':
                         columns=page.locator('.foundation-task-reminder code[data-code-role="column"]').filter(has_text=re.compile('^mean_amount$'))
                         objects=page.locator('.foundation-task-reminder code[data-code-role="variable"]').filter(has_text=re.compile('^df$'))
+                        syntax=page.locator('.foundation-content code[data-code-role="function"]:not(pre code)').filter(has_text=re.compile('^agg\\(\\)$'))
                         assert columns.count()>0 and objects.count()>0,(origin,theme,'explicit semantic roles')
+                        assert syntax.count()>0,(origin,theme,'authored syntax in teaching prose')
                         def identifier_style(locator):
                             return locator.first.evaluate('''(node)=>{
                               const s=getComputedStyle(node), canvas=document.createElement('canvas');
@@ -80,23 +82,34 @@ with sync_playwright() as pw:
                               const foreground=rgba(s.color),background=rgba(s.backgroundColor);
                               const luminance=rgb=>rgb.slice(0,3).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
                               const a=luminance(foreground),b=luminance(background);
-                              return {background:s.backgroundColor,border:s.borderLeftStyle,display:s.display,shadow:s.boxShadow,underline:s.textDecorationLine.includes('underline'),weight:Number(s.fontWeight),font:s.fontFamily,contrast:(Math.max(a,b)+.05)/(Math.min(a,b)+.05),opaque:background[3]===1};
+                              return {background:s.backgroundColor,border:s.borderLeftStyle,top:s.borderTopStyle,bottom:s.borderBottomStyle,display:s.display,shadow:s.boxShadow,underline:s.textDecorationLine.includes('underline'),weight:Number(s.fontWeight),font:s.fontFamily,contrast:(Math.max(a,b)+.05)/(Math.min(a,b)+.05),opaque:background[3]===1};
                             }''')
                         column_style=identifier_style(columns)
                         object_style=identifier_style(objects)
-                        record['identifiers']=dict(column=column_style,variable=object_style)
-                        assert column_style['border']=='solid' and object_style['border']=='dashed',(column_style,object_style)
+                        syntax_style=identifier_style(syntax)
+                        record['identifiers']=dict(column=column_style,variable=object_style,syntax=syntax_style)
+                        assert column_style['border']=='solid' and object_style['border']=='double',(column_style,object_style)
+                        assert syntax_style['top']=='dotted' and syntax_style['bottom']=='dotted',syntax_style
                         assert column_style['background']!=object_style['background'],'Shape and tint both distinguish column/object roles'
-                        for role in [column_style,object_style]:
+                        for role in [column_style,object_style,syntax_style]:
                             assert role['display']=='inline' and role['shadow']=='none' and not role['underline'],role
                             assert role['weight']>=600 and 'monospace' in role['font'],role
                             assert role['opaque'] and role['contrast']>=4.5,(origin,width,theme,role)
                         assert page.locator('pre code.code-identifier[data-code-role],.foundation-editor-wrap code.code-identifier').count()==0
+                        header=page.locator('.teaching-example-output thead code[data-code-role="column"]').filter(has_text=re.compile('^mean_amount$'))
+                        assert header.count()>0,(origin,'worked output header')
+                        header_lines=header.first.evaluate('''(node)=>{
+                          const range=document.createRange();range.selectNodeContents(node);
+                          return {whiteSpace:getComputedStyle(node).whiteSpace,lines:new Set([...range.getClientRects()].map(rect=>rect.y.toFixed(1))).size};
+                        }''')
+                        assert header_lines==dict(whiteSpace='nowrap',lines=1),(origin,width,theme,'intact column name in worked table',header_lines)
                         key=page.locator('.learning-name-key')
-                        assert key.get_attribute('open') is None,'The optional name key starts collapsed'
-                        key.locator('summary').click()
-                        assert 'table columns' in key.inner_text() and 'Python objects' in key.inner_text()
-                        key.locator('summary').click()
+                        reference=page.locator('.foundation-reference')
+                        assert reference.get_attribute('open') is None,'Reference starts collapsed as one optional section'
+                        reference.locator(':scope > summary').click()
+                        assert key.evaluate('(e)=>e.tagName')=='SECTION' and key.is_visible(),'Name key is flat within Reference'
+                        assert all(text in key.inner_text() for text in ['table columns','Python objects','Dotted rules']),key.inner_text()
+                        reference.locator(':scope > summary').click()
                     page.screenshot(path=str(evidence / f'{args.engine}-{origin}-{width}-{theme}-{name}.png'))
                     records.append(record)
     browser.close()

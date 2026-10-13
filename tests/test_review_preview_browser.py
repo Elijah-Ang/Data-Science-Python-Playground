@@ -24,10 +24,11 @@ def visual_and_depth(page):
     editor = page.locator("#foundationEditor")
     starter = editor.input_value()
     editor.fill(starter + "\n# Active preview work")
-    page.locator('button[data-learning-mode="refresh"]').click()
-    assert page.evaluate('document.body.dataset.learningMode') == 'refresh'
-    page.locator('button[data-learning-mode="learn"]').click()
-    assert page.evaluate('document.body.dataset.learningMode') == 'learn'
+    assert page.locator('[data-learning-mode]').count() == 0
+    assert page.locator('.foundation-practices li').count() == 3
+    assert page.locator('.foundation-split > *').count() == 2
+    assert page.locator('.foundation-reference-content details').count() == 3
+    assert page.locator('.foundation-reference-content details details').count() == 0
     assert editor.input_value().endswith("# Active preview work")
     page.locator("#resetExercise").click()
     assert editor.input_value() == starter
@@ -47,7 +48,8 @@ def switch_to_ml(page):
     page.locator('a[href$="#foundations/ML-F11/0"]').first.click()
     page.wait_for_selector("#mlEditor")
     assert page.locator("h2").first.inner_text() == "Your first complete regression workflow"
-    assert page.locator(".ml-progressive-workflow > details").count() == 8
+    assert page.locator(".ml-workflow-outline li").count() == 8
+    assert page.locator(".foundation-reference-content details").count() == 3
 
 
 with sync_playwright() as pw:
@@ -106,10 +108,9 @@ with sync_playwright() as pw:
     frame = sandbox.frames[-1]
     visual_and_depth(frame)
     switch_to_ml(frame)
-    frame.locator('button[data-learning-mode="refresh"]').click()
-    frame.locator('button[data-learning-mode="learn"]').click()
+    assert frame.locator("[data-learning-mode]").count() == 0
     assert not frame.evaluate("document.documentElement.scrollWidth > innerWidth + 2")
-    records.append({"context": "opaque HTML-file sandbox", "navigation": "Data to ML", "visualAndDepthControls": "passed"})
+    records.append({"context": "opaque HTML-file sandbox", "navigation": "Data to ML", "visualsAndOriginalIndicators": "passed"})
     browser.close()
 
 assert not errors, errors

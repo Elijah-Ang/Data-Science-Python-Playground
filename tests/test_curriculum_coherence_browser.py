@@ -63,7 +63,10 @@ with sync_playwright() as pw:
                 assert page.locator('.foundation-reference-content').count() == 1
                 if width == 390:
                     assert record['editorTop'] < 4200, record
-                    assert page.locator('.foundation-code-pane').evaluate('(e)=>e.nextElementSibling.classList.contains("foundation-reference-content")')
+                    assert page.locator('.foundation-split > .foundation-content .foundation-reference-content').count() == 1
+                assert page.locator('.foundation-split > *').count() == 2
+                assert page.locator('.foundation-reference-content details').count() == 3
+                assert page.locator('.foundation-reference-content details details').count() == 0
                 starter = page.locator('#'+editor_id).input_value()
                 page.locator('#'+editor_id).fill(starter+'\n# Temporary browser check')
                 page.locator('#resetExercise' if family == 'data' else '#mlReset').click()

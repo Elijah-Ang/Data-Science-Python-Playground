@@ -193,33 +193,28 @@ function guidanceFor(curriculum,lesson,round){
  const introduces=new Set(plan.introduces),extendsSet=new Set(plan.extends),reuses=new Set(plan.reuses);
  return {introduces:entries.filter(item=>introduces.has(item.id)),extends:entries.filter(item=>extendsSet.has(item.id)&&!introduces.has(item.id)),reminders:entries.filter(item=>reuses.has(item.id)&&!introduces.has(item.id)&&!extendsSet.has(item.id)),reference:entries,prerequisites:plan.prerequisites||[]};
 }
-function definition(item,level){
- const code=`<code>${esc(item.keyword)}</code>`;
- return `<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}" data-guidance="${level}"><h4>${code} · ${esc(item.purpose)}</h4><dl><dt>Accepted forms</dt><dd>${esc(item.forms)}</dd><dt>Useful choices</dt><dd>${esc(item.range)}</dd><dt>Default</dt><dd>${esc(item.default)}</dd><dt>Effect</dt><dd>${esc(item.effect)}</dd><dt>Small example</dt><dd><pre><code>${esc(item.example)}</code></pre></dd>${level==='reference'?`<dt>Restrictions and other choices</dt><dd>${esc(item.caveat)} <a href="${esc(item.source)}" target="_blank" rel="noopener">Version-matched source</a></dd>`:''}</dl></section>`;
-}
+function parameterCode(item){return `<code data-code-role="parameter">${esc(item.keyword)}</code>`;}
+const conciseMeanings={
+ data:'The table containing the named columns; here, df.',
+ x:'Column-name text or an aligned vector for the horizontal axis.',
+ y:'Column-name text or an aligned vector for the vertical axis.',
+ ax:'The Axes returned by plt.subplots; receives this chart.',
+ figsize:'(width, height) in inches; changes canvas space.',
+ bins:'A positive bin count, increasing interval edges, or a rule such as "auto".',
+ hue:'A column mapped to colour; categories get distinct colours.',
+ style:'A column mapped to marker shapes or line patterns.',
+ size:'A numeric column mapped to marker area; categories get distinct sizes.',
+ order:'Category labels in the intended display order; accepts a list or Index.',
+ estimator:'"mean" averages, "median" takes the middle value, and "sum" totals each group.',
+ 'lineplot.estimator':'"mean" combines repeated x values; None keeps individual observations.',
+ palette:'A palette name, colour list, or category-to-colour mapping.',
+ alpha:'Transparency from 0 (invisible) to 1 (opaque).'
+};
 function currentDefinition(item,lesson,round,level){
- if(level==='extend'){
-  const note=extensionNotes[round.id]?.[item.id]||'Apply the familiar argument to this new chart or question; its function-specific contract is in the full reference.';
-  const example=extensionExamples[round.id]?.[item.id]||item.example;
-  return `<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}" data-guidance="extend"><h4><code>${esc(item.keyword)}</code> · What changes here</h4><p>${esc(note)}</p><pre><code>${esc(example)}</code></pre></section>`;
- }
- const paired=pairedIntroductions[item.id];
- if(paired&&round.parameterTeaching?.introduces.includes(paired.after)){
-  return `<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}" data-guidance="introduce"><h4><code>${esc(item.keyword)}</code> · ${esc(paired.purpose)}</h4><p>${esc(paired.explanation)}</p><pre><code>${esc(paired.example)}</code></pre></section>`;
- }
- let current={...item};
- if(item.id==='estimator'){
-  current.purpose='Choose how category measurements become one summary.';
-  current.forms='A supported statistic-name string, or a callable that returns one summary value.';
-  current.range='"mean": arithmetic average; "median": middle ordered value; "sum": total.';
-  current.effect='Each group’s measurements become one bar height. Changing the statistic changes the question the chart answers.';
-  current.example='sns.barplot(data=df, x="route", y="fare", estimator="mean", errorbar=None, ax=ax)';
- }
- if(item.id==='errorbar'&&lesson.id==='V09')current={...current,purpose:'Omit the optional interval for this summary comparison.',forms:'Use None to draw the summary bars without an error bar.',range:'This task uses errorbar=None. Spread and uncertainty intervals are taught in the optional point-estimate lesson.',effect:'Hides the interval around each bar; the chosen mean or median height stays the same.',example:'sns.barplot(data=df, x="route", y="fare", estimator="mean", errorbar=None, ax=ax)'};
- let html=definition(current,level);
- if(item.id==='estimator')html+='<table class="teaching-example-output"><caption>Same measurements: 2, 2, 8</caption><thead><tr><th scope="col">Summary</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Mean</th><td>4</td></tr><tr><th scope="row">Median</th><td>2</td></tr><tr><th scope="row">Sum</th><td>12</td></tr></tbody></table>';
- if(item.id==='lineplot.estimator'&&lesson.id==='V18')html+='<p>Here there is one observation per time point. Each marker shows that observed value. With repeated times, the default mean combines rows; <code>estimator=None</code> keeps them separate. Choose a replicate before connecting independent repeated series.</p>';
- return html;
+ let meaning=level==='extend'&&extensionNotes[round.id]?.[item.id] || conciseMeanings[item.id] || item.purpose+' '+item.forms;
+ if(item.id==='errorbar'&&lesson.id==='V09')meaning='None hides intervals; the mean or median bar height stays unchanged.';
+ if(item.id==='lineplot.estimator'&&lesson.id==='V18')meaning='None keeps each observed time point; "mean" would combine repeated times.';
+ return `<div class="foundation-parameter-row" data-parameter="${esc(item.id)}" data-guidance="${level}"><dt>${parameterCode(item)}</dt><dd>${esc(meaning)}</dd></div>`;
 }
 // Teach both members of a related pair, while sharing their accepted forms and
 // example. This applies to authored introductions wherever that pair is used.
@@ -258,12 +253,13 @@ const extensionNotes={
 };
 function renderCurrent(curriculum,lesson,round){
  const g=guidanceFor(curriculum,lesson,round);if(!g.introduces.length&&!g.extends.length)return '';
- return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>New here</h3>${g.introduces.map(item=>currentDefinition(item,lesson,round,'introduce')).join('')}${g.extends.map(item=>currentDefinition(item,lesson,round,'extend')).join('')}</section>`;
+ const rows=g.introduces.map(item=>currentDefinition(item,lesson,round,'introduce')).join('')+g.extends.map(item=>currentDefinition(item,lesson,round,'extend')).join('');
+ const estimator=g.introduces.some(item=>item.id==='estimator')?'<table class="teaching-example-output"><caption>Same measurements: 2, 2, 8</caption><thead><tr><th scope="col">Summary</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Mean</th><td>4</td></tr><tr><th scope="row">Median</th><td>2</td></tr><tr><th scope="row">Sum</th><td>12</td></tr></tbody></table>':'';
+ return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>Arguments</h3><dl class="foundation-parameter-parts">${rows}</dl>${estimator}</section>`;
 }
 function renderReference(curriculum,lesson,round){
  const g=guidanceFor(curriculum,lesson,round);if(!g.reference.length)return '';
- const reminders=g.reminders.length?`<details class="foundation-parameter-reminder"><summary>Quick reminder of familiar syntax</summary><ul>${g.reminders.map(item=>`<li><code>${esc(item.keyword)}</code>: ${esc(item.purpose)}</li>`).join('')}</ul></details>`:'';
- return `<section class="foundation-parameter-guide" aria-label="Optional parameter help">${reminders}<details class="foundation-parameter-reference"><summary>Full parameter reference · ${g.reference.length} options</summary><p>Defaults and restrictions refer to Seaborn 0.13.2, Matplotlib 3.5.2 and pandas 2.2.0.</p>${g.reference.map(item=>definition(item,'reference')).join('')}</details></section>`;
+ return `<section class="foundation-parameter-guide foundation-parameter-reference" aria-label="Parameter reference"><h3>Argument reference</h3><div class="foundation-table-scroll"><table data-code-table="teaching"><thead><tr><th scope="col">Argument</th><th scope="col">Meaning and accepted forms</th><th scope="col">Default</th></tr></thead><tbody>${g.reference.map(item=>`<tr data-parameter="${esc(item.id)}" data-guidance="reference"><th scope="row">${parameterCode(item)}<br><a href="${esc(item.source)}" target="_blank" rel="noopener">API source</a></th><td>${esc(item.purpose)} ${esc(item.forms)}</td><td>${esc(item.default)}</td></tr>`).join('')}</tbody></table></div></section>`;
 }
 function render(curriculum,lesson,round,{level}={}){
  if(level==='current')return renderCurrent(curriculum,lesson,round);

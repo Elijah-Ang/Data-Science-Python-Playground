@@ -7,7 +7,7 @@
     "id": "V02-2",
     "label": "Change",
     "dataset": "weather",
-    "task": "Do the chart labels describe the prepared measurements and population? Each row is one station observation. Use the rows specified below from df. Df stores temperature in Celsius. The supplied setup transforms those values before plotting them against humidity. Name the horizontal units accurately: choose x label \"Temperature (°C)\" or \"Temperature (°F)\" from that setup. Set title Weather relationship and y label Humidity (%). Keep all prepared pairs and arrange and display fig.",
+    "task": "Df stores temperature in Celsius. The supplied setup transforms those values before plotting them against humidity. Name the horizontal units accurately: choose x label \"Temperature (°C)\" or \"Temperature (°F)\" from that setup. Set title Weather relationship and y label Humidity (%). Keep all prepared pairs and arrange and display fig.",
     "solution": "ax.set(title=\"Weather relationship\", xlabel=\"Temperature (°F)\", ylabel=\"Humidity (%)\")\nfig.tight_layout()\nplt.show()",
     "starter": "# Choose the data and chart operations from the brief\n",
     "hint": "A label describes the plotted values, not just the original column. The conversion changes their displayed unit.",
@@ -31,8 +31,6 @@
     "title": "Does humidity vary with temperature?",
     "demand": "Infer displayed units from the prepared coordinate transformation.",
     "steps": [
-      "Do the chart labels describe the prepared measurements and population?",
-      "Each row is one station observation. Use the rows specified below from df.",
       "Df stores temperature in Celsius.",
       "The supplied setup transforms those values before plotting them against humidity.",
       "Name the horizontal units accurately: choose x label \"Temperature (°C)\" or \"Temperature (°F)\" from that setup.",
@@ -86,7 +84,7 @@
     "stageSummary": "Adapt the labels.",
     "brief": {
       "question": "Do the chart labels describe the prepared measurements and population?",
-      "rows": "Each row is one station observation. Use the rows specified below from df.",
+      "rows": "One row: one station observation.",
       "result": "Df stores temperature in Celsius.",
       "constraints": [
         "The supplied setup transforms those values before plotting them against humidity.",
@@ -136,7 +134,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Adapt the labels.",
       "why": "Infer displayed units from the prepared coordinate transformation.",
       "changedLines": [
@@ -200,7 +198,7 @@
       "West"
     ]
   },
-  "inputSHA256": "808c6a86a38d320be0ba8b803f0f62d9e96351e172ad7f057584d92a125a1d73",
+  "inputSHA256": "bd6aeee5e0e0a6deabfcb4834d48b191003a7aed28fbf9c286c778e192781117",
   "visibleWorkspaceSHA256": "1ac633d27cc43a893906a1b22ae086ff3c3eb6d1f72343b61ffd44c74a4cbb0d",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(x=df[\"temperature\"] * 9 / 5 + 32, y=df[\"humidity\"], ax=ax)",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(x=df[\"temperature\"] * 9 / 5 + 32, y=df[\"humidity\"], ax=ax)\n\n# Your work\n# Choose the data and chart operations from the brief\n",
@@ -229,9 +227,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -249,7 +247,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.196,
+      "elapsedSeconds": 0.393,
       "response": {
         "passed": true,
         "checked": true,
@@ -284,7 +282,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.162,
+      "elapsedSeconds": 0.53,
       "response": {
         "passed": true,
         "checked": true,
@@ -320,7 +318,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.154,
+      "elapsedSeconds": 0.567,
       "response": {
         "passed": true,
         "checked": true,
@@ -356,7 +354,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.147,
+      "elapsedSeconds": 0.378,
       "response": {
         "passed": false,
         "checked": true,
@@ -391,7 +389,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.15,
+      "elapsedSeconds": 0.403,
       "response": {
         "passed": false,
         "checked": true,
@@ -426,7 +424,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.217,
+      "elapsedSeconds": 0.397,
       "response": {
         "passed": false,
         "checked": true,
@@ -461,7 +459,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.155,
+      "elapsedSeconds": 0.305,
       "response": {
         "passed": false,
         "checked": true,
@@ -496,7 +494,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.182,
+      "elapsedSeconds": 0.324,
       "response": {
         "passed": false,
         "checked": true,
@@ -531,7 +529,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.261,
+      "elapsedSeconds": 0.612,
       "response": {
         "passed": false,
         "checked": true,
@@ -578,7 +576,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.163,
+      "elapsedSeconds": 0.311,
       "response": {
         "passed": true,
         "checked": true,

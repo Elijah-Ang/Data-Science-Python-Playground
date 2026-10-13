@@ -9,7 +9,7 @@
   const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const namePattern=/^[A-Za-z_]\w*$/;
   const filenamePattern=/^(?:[A-Za-z0-9_.-]+\/)*[A-Za-z0-9_.-]+\.(?:csv|tsv|png|svg|webp|jpe?g|json|py|html)$/i;
-  const titles={column:'Table column',variable:'Python object',key:'Dictionary key',file:'Filename',function:'Python function',parameter:'Python parameter',operation:'Aggregation operation',literal:'Literal text',prose:'Ordinary prose'};
+  const titles={column:'Table column',variable:'Python object',key:'Dictionary key',file:'Filename',function:'Python function',parameter:'Python parameter',operation:'Aggregation operation',syntax:'Python syntax',literal:'Literal text',prose:'Ordinary prose'};
   const fields={inputColumns:['column','input'],derivedColumns:['column','derived'],outputColumns:['column','output'],exampleVariables:['variable','example'],variables:['variable'],columns:['column'],keys:['key'],files:['file'],functions:['function'],parameters:['parameter'],operations:['operation'],literals:['literal'],prose:['prose']};
   function contextFor(context={},scope=context?.scope){
     const scoped=context?.scopes?.[scope]||{};
@@ -34,7 +34,7 @@
     for(const [field,[role,kind]] of Object.entries(fields))if(context[field]?.includes(name))return {role,...(kind?{kind}:{})};
     return {};
   }
-  const ambiguous=new Set(['mean','sum','count','size','value','values','name','group','time','date','index','order','sample','train','test','model','score','scores','target','features','result','answer','missing','label','labels','data','work','first','last','selected','prediction','predictions','clear','inspect','urgent','chosen','rows']);
+  const ambiguous=new Set(['mean','sum','count','size','value','values','name','group','time','date','index','order','sample','train','test','model','candidates','score','scores','target','features','result','answer','missing','label','labels','data','work','first','last','selected','prediction','predictions','clear','inspect','urgent','chosen','rows']);
   function role(name,context){
     if(filenamePattern.test(name))return 'file';
     if(context?.columnReferences?.includes(name))return 'column';
@@ -44,14 +44,37 @@
     return '';
   }
   function markup(name,context,explicit){
-    const kind=explicit||meaning(name,context).role;
+    const kind=explicit||codeMeaning(name,context).role;
     // Preserve the override through prerendering and a later DOM decoration.
     if(kind==='prose')return '<span data-code-role="prose">'+escape(name)+'</span>';
     return '<code class="code-identifier"'+(Object.hasOwn(titles,kind)?' data-code-role="'+kind+'" title="'+titles[kind]+'"':'')+'>'+escape(name)+'</code>';
   }
+  function codeMeaning(value,context={}){
+    const exact=meaning(value,context);
+    if(exact.role)return exact;
+    // Authored code spans are an explicit instruction to treat their contents
+    // as Python. Do not reclassify quoted display values inside them.
+    if(/^(?:[rubf]|rf|fr)?["']/.test(value)||/^(?:True|False|None|\d+(?:\.\d+)?)$/.test(value))return {role:'literal'};
+    const call=value.match(/^((?:[A-Za-z_]\w*\.)*[A-Za-z_]\w*)\(\)$/);
+    if(call)return {role:'function'};
+    const argument=value.match(/^([A-Za-z_]\w*)\s*=/);
+    if(argument&&meaning(argument[1],context).role==='parameter')return {role:'parameter'};
+    return {role:'syntax'};
+  }
+  function tableNameRole(value,context,kind){
+    const name=value.trim();
+    const exception=meaning(name,context).role;
+    if(exception==='literal'||exception==='prose')return exception;
+    const authored=occurrenceRanges(value,context).find(range=>range.start===0&&range.end===value.length);
+    if(authored)return authored.role;
+    if(kind==='dictionary'&&context.columns?.includes(name))return 'column';
+    if(kind==='objects'&&context.variables?.includes(name))return 'variable';
+    return '';
+  }
   function contextual(name,text,at,context){
     const kind=meaning(name,context).role;
-    if(!kind||['literal','prose','operation','function','parameter'].includes(kind))return false;
+    if(!kind||['literal','prose','operation'].includes(kind))return false;
+    if(['function','parameter','syntax'].includes(kind))return name.includes('_')||(kind==='function'&&/^[A-Z][A-Za-z0-9_]{2,}$/.test(name));
     const before=text.slice(0,at),after=text.slice(at+name.length);
     // Exact field/object cues are a conservative fallback. Quotes alone do not
     // make display text or ordinary English an identifier reference.
@@ -136,7 +159,8 @@
       }
       if (m[0] === 'x' && ((/\d\s*$/.test(text.slice(0,m.index)) && /^\s*\d/.test(text.slice(m.index+1))) || /^-(?!axis\b)[a-z]/i.test(text.slice(m.index+1)))) continue;
       if(!m[3]&&!filenamePattern.test(m[0])&&!m[0].includes('(')&&!/^\.[A-Za-z_]/.test(m[0])&&!familiar.test(m[0])&&!contextual(m[0],text,m.index,context))continue;
-      html += escape(text.slice(start,m.index)) + markup(m[3] || m[0],context,semanticRole(m[3]||m[0],text,m.index,context));
+      const value=m[3]||m[0],explicit=semanticRole(value,text,m.index,context);
+      html += escape(text.slice(start,m.index)) + markup(value,context,explicit||((m[3]||m[0].includes('(')||m[0].startsWith('.'))?codeMeaning(value,context).role:''));
       start = m.index + m[0].length;
     }
     return html + escape(text.slice(start));
@@ -147,18 +171,25 @@
     element.querySelectorAll('code').forEach(code => {
       if (!code.closest('pre')) {
         code.classList.add('code-identifier');
-        const kind=meaning(code.textContent,local(code)).role;
-        if(kind&&(namePattern.test(code.textContent)||filenamePattern.test(code.textContent)||local(code).columns?.includes(code.textContent))&&!code.hasAttribute('data-code-role')){code.dataset.codeRole=kind;code.title=titles[kind];}
+        const kind=codeMeaning(code.textContent,local(code)).role;
+        if(kind&&!code.hasAttribute('data-code-role')){code.dataset.codeRole=kind;code.title=titles[kind];}
       }
     });
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
     const nodes = []; let node;
     while ((node = walker.nextNode())) {
-      if (!node.parentElement.closest('svg,math,code,kbd,pre,textarea,script,style,button,select,option,td,[data-code-role="literal"],[data-code-role="prose"]')) nodes.push(node);
+      const parent=node.parentElement;
+      if(parent.closest('svg,math,code,kbd,pre,textarea,script,style,button,select,option,[data-code-role="literal"],[data-code-role="prose"]'))continue;
+      if(parent.closest('td')&&!parent.closest('.teaching-comparison,[data-code-table="teaching"],[data-code-table="dictionary"],[data-code-table="objects"]'))continue;
+      nodes.push(node);
     }
     for (const text of nodes) {
       const instruction=!!text.parentElement.closest('.learning-instructions,.foundation-task-steps');
-      const html = format(text.textContent,{...local(text.parentElement),instruction});
+      const scoped=local(text.parentElement);
+      const table=text.parentElement.closest('[data-code-table]'),firstCell=text.parentElement.closest('td:first-child,th[scope="row"]:first-child');
+      const tableRole=table&&firstCell?tableNameRole(text.textContent,scoped,table.dataset.codeTable):'';
+      if(table?.dataset.codeTable==='objects'&&text.parentElement.closest('td')&&!tableRole)continue;
+      const html=tableRole?markup(text.textContent,scoped,tableRole):format(text.textContent,{...scoped,instruction});
       if (html===escape(text.textContent)) continue;
       const template = document.createElement('template'); template.innerHTML = html;
       text.replaceWith(template.content);
@@ -176,7 +207,12 @@
         if(!tag)return token;
         if(tag==='code'&&!token.startsWith('</')&&!stack.some(s=>s.tag==='pre')){
           const value=decode(input.slice(offset+token.length).match(/^([^<]*)<\/code>/)?.[1]||'');
-          const scoped=local(),kind=namePattern.test(value)||filenamePattern.test(value)||scoped?.columns?.includes(value)?meaning(value,scoped).role:'';
+          const scoped=local(),kind=codeMeaning(value,scoped).role;
+          const authoredRole=token.match(/\bdata-code-role=["']([^"']+)["']/)?.[1];
+          if(!['literal','prose'].includes(authoredRole)){
+            if(!/\bclass=/.test(token))token=token.replace(/>$/,' class="code-identifier">');
+            else if(!/\bcode-identifier\b/.test(token))token=token.replace(/\bclass=(["'])([^"']*)\1/,(match,quote,value)=>'class='+quote+value+' code-identifier'+quote);
+          }
           if(kind&&!/\bdata-code-role=/.test(token)){
             token=token.replace(/\sdata-code-role="[^"]*"|\stitle="[^"]*"/g,'');
             if(!/\bclass=/.test(token))token=token.replace(/>$/,' class="code-identifier">');
@@ -186,17 +222,23 @@
         if(token.startsWith('</')){const at=stack.map(s=>s.tag).lastIndexOf(tag);if(at>=0)stack.splice(at);}
         else if(!/^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/.test(tag)){
           const instruction=/learning-instructions|foundation-task-steps/.test(token);
-          stack.push({tag,instruction,scope:token.match(/\bdata-code-context=["']([^"']*)["']/)?.[1],literal:/\bdata-code-role=["'](?:literal|prose)["']/.test(token)});
+          const row=(tag==='td'||tag==='th')?stack.findLast(entry=>entry.tag==='tr'):null;
+          if(row)row.cells=(row.cells||0)+1;
+          stack.push({tag,instruction,columnCell:!!row&&row.cells===1,scope:token.match(/\bdata-code-context=["']([^"']*)["']/)?.[1],literal:/\bdata-code-role=["'](?:literal|prose)["']/.test(token),table:token.match(/\bdata-code-table=["']([^"']*)["']/)?.[1]||(/\bteaching-comparison\b/.test(token)?'teaching':'')});
         }
         return token;
       }
-      if(stack.some(s=>s.literal||/^(?:svg|math|code|kbd|pre|textarea|script|style|button|select|option|td)$/.test(s.tag)))return token;
+      if(stack.some(s=>s.literal||/^(?:svg|math|code|kbd|pre|textarea|script|style|button|select|option)$/.test(s.tag)))return token;
       const decoded=decode(token);
       const scoped=local();
-      if(stack.at(-1)?.tag==='th'&&scoped?.columns?.includes(decoded))return markup(decoded,scoped,'column');
+      const cell=stack.findLast(s=>s.tag==='td'||s.tag==='th'),table=stack.findLast(s=>s.table)?.table;
+      const tableRole=cell?.columnCell?tableNameRole(decoded,scoped,table):'';
+      if(tableRole)return markup(decoded,scoped,tableRole);
+      if(stack.some(s=>s.tag==='td')&&table!=='teaching'&&table!=='dictionary')return token;
+      if(stack.at(-1)?.tag==='th'&&scoped?.columns?.includes(decoded))return markup(decoded,scoped,['literal','prose'].includes(meaning(decoded,scoped).role)?meaning(decoded,scoped).role:'column');
       const formatted=format(decoded,{...scoped,instruction:stack.some(s=>s.instruction)});
       return formatted!==escape(decoded)?formatted:token;
     });
   }
-  root.CodeIdentifiers = {format,decorate,decorateHTML,columnContext,contextFor,meaning};
+  root.CodeIdentifiers = {format,decorate,decorateHTML,columnContext,contextFor,meaning,codeMeaning};
 })(typeof window!=='undefined'?window:globalThis);

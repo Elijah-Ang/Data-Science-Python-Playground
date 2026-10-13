@@ -39,7 +39,7 @@ for(const l of c.lessons){
   assert(review&&review.sha256===createHash('sha256').update(JSON.stringify([r.task,r.solution,c.datasets[r.dataset],r.requiredCalls||[],r.requiredKeywords||[],r.forbiddenCalls||[],!!r.unorderedIndex,!!r.unorderedColumns,r.unorderedRowsBy||null,r.plot||null])).digest('hex'),'Task review must be renewed: '+r.id);
   const source=r.retrieves?c.lessons.find(item=>item.id===r.retrieves):l;
   assert.equal(review.fullContractSHA256,createHash('sha256').update(JSON.stringify([l.id,source.guide||null,r,c.datasets[r.dataset]])).digest('hex'),'Renew the complete task/hint/example/grader review: '+r.id);
-  assert(/df|supplied|long table|empty Figure|No data rows/.test(r.task)||(r.provenance.supplied.some(object=>object.name==='df')&&r.brief.rows.startsWith('Each row is ')),r.id+' identifies the input table and row unit or the empty canvas');
+  assert(/df|supplied|long table|empty Figure|No data rows/.test(r.task)||/^No data/.test(r.brief.rows)||(r.provenance.supplied.some(object=>object.name==='df')&&/^(?:Each row is |One row: )/.test(r.brief.rows)),r.id+' identifies the input table and row unit or the empty canvas');
   for(const call of r.requiredCalls||[])assert(r.task.includes(call.split(':').pop()),r.id);
  }
 }

@@ -7,7 +7,7 @@
     "id": "V16-1",
     "label": "Follow",
     "dataset": "air_chambers",
-    "task": "How does measured pressure vary with chamber volume? Each row is one paired chamber test. Use the rows specified below from df. The setup creates an empty labelled ax. Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig.",
+    "task": "The setup creates an empty labelled ax. Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig.",
     "solution": "sns.scatterplot(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
     "starter": "____(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
     "hint": "Preserve row pairing when mapping two physical measurements.",
@@ -29,8 +29,6 @@
     },
     "demand": "Preserve row pairing when mapping two physical measurements.",
     "steps": [
-      "How does measured pressure vary with chamber volume?",
-      "Each row is one paired chamber test. Use the rows specified below from df.",
       "The setup creates an empty labelled ax.",
       "Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig."
     ],
@@ -99,7 +97,7 @@
     "stageSummary": "Plot paired measurements.",
     "brief": {
       "question": "How does measured pressure vary with chamber volume?",
-      "rows": "Each row is one paired chamber test. Use the rows specified below from df.",
+      "rows": "One row: one paired chamber test.",
       "result": "The setup creates an empty labelled ax.",
       "constraints": [
         "Add every volume_ml/pressure_kpa pair from the same test row, then arrange and display fig."
@@ -165,7 +163,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Plot paired measurements.",
       "why": "Preserve row pairing when mapping two physical measurements.",
       "changedLines": [
@@ -203,7 +201,7 @@
       24
     ]
   },
-  "inputSHA256": "0f9481549cbdc670454e89e9cc7b8f8fc7c4a0ae68500327d182edaaa3b6f226",
+  "inputSHA256": "3ec79cc91efd837fe1912cdad601d414f4b2c70bd46fba3a7ee73c78fe46c877",
   "visibleWorkspaceSHA256": "f9e15d2e4fe838d56b57f27815abe18c27c4931985649e4e08ee0df8877522a5",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"test\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"volume_ml\": [9, 3, 6, 12, 4, 8],\n    \"pressure_kpa\": [20, 42, 29, 18, 36, 24],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Air chamber tests\", xlabel=\"volume_ml\", ylabel=\"pressure_kpa\")\n\n# Your work\n____(data=df, x=\"volume_ml\", y=\"pressure_kpa\", ax=ax)\nfig.tight_layout()\nplt.show()",
@@ -232,9 +230,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -252,7 +250,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.188,
+      "elapsedSeconds": 0.297,
       "response": {
         "passed": true,
         "checked": true,
@@ -287,7 +285,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.179,
+      "elapsedSeconds": 0.331,
       "response": {
         "passed": true,
         "checked": true,
@@ -323,7 +321,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.186,
+      "elapsedSeconds": 0.29,
       "response": {
         "passed": true,
         "checked": true,
@@ -359,7 +357,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.181,
+      "elapsedSeconds": 0.223,
       "response": {
         "passed": false,
         "checked": true,
@@ -394,7 +392,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.241,
+      "elapsedSeconds": 0.278,
       "response": {
         "passed": false,
         "checked": true,
@@ -429,7 +427,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.249,
+      "elapsedSeconds": 0.327,
       "response": {
         "passed": false,
         "checked": true,
@@ -464,7 +462,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.177,
+      "elapsedSeconds": 0.286,
       "response": {
         "passed": false,
         "checked": true,
@@ -499,7 +497,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.192,
+      "elapsedSeconds": 0.269,
       "response": {
         "passed": false,
         "checked": true,
@@ -534,7 +532,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.191,
+      "elapsedSeconds": 0.283,
       "response": {
         "passed": false,
         "checked": true,
@@ -569,7 +567,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.295,
+      "elapsedSeconds": 0.456,
       "response": {
         "passed": false,
         "checked": true,
@@ -616,7 +614,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.229,
+      "elapsedSeconds": 0.333,
       "response": {
         "passed": true,
         "checked": true,

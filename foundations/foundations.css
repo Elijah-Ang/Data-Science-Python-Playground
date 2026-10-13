@@ -140,9 +140,9 @@ body[data-foundations] [hidden] { display:none !important; }
  .foundations-main:has(.foundation-split) .foundation-breadcrumb { margin-bottom:10px; }
  .foundation-lesson-heading { padding-bottom:10px; }
  .foundation-lesson-heading h2 { margin:5px 0; }
- .foundation-split { flex:1; min-height:0; }
- .foundation-content { padding-right:12px; }
- .foundation-code-pane { position:sticky; top:82px; max-height:calc(100dvh - 104px); display:flex; flex-direction:column; }
+ .foundation-split { flex:none; min-height:0; height:var(--lesson-pane-height,calc(100dvh - 330px)); overflow:hidden; }
+ .foundation-split > .foundation-content { height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; padding-right:12px; }
+ .foundation-code-pane { position:static; height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; display:flex; flex-direction:column; }
  .foundation-editor-head,.foundation-actions,.foundation-runtime,.foundation-feedback { flex-shrink:0; }
  .foundation-editor-wrap { flex:0 0 clamp(320px,38vh,400px); min-height:320px; overflow:hidden; }
  :is(#foundationEditor,#mlEditor) { height:100%; min-height:100%; max-height:none; resize:none; }
@@ -264,7 +264,9 @@ body[data-foundations] [hidden] { display:none !important; }
 .teaching-example { padding:14px 16px; border-left:3px solid var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 5%,var(--panel)); }
 .teaching-example h4 { font:700 13px/1.5 var(--body); margin:0 0 6px; color:var(--lesson-accent); }
 .foundation-content .teaching-example p,.foundation-content .teaching-note { font-size:14px; line-height:1.65; }
-.teaching-example-output { width:100%; margin-top:12px; border-collapse:collapse; table-layout:fixed; font-size:13px; text-align:left; }
+.teaching-example-table-scroll { max-width:100%; overflow-x:auto; }
+.teaching-example-output { width:100%; margin-top:12px; border-collapse:collapse; table-layout:auto; font-size:13px; text-align:left; }
+.teaching-example-table-scroll .teaching-example-output thead code.code-identifier { white-space:nowrap; overflow-wrap:normal; }
 .teaching-example-output caption { padding-bottom:7px; text-align:left; font-weight:700; }
 .teaching-example-output th,.teaching-example-output td { padding:7px 8px; border-bottom:1px solid var(--border-soft); overflow-wrap:anywhere; }
 .teaching-example-output tbody th { font-weight:500; }
@@ -407,37 +409,15 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
   box-decoration-break:clone;
 }
 
-/* The working area stays between the current teaching and optional reference
-   in DOM order. Desktop keeps the familiar two columns; phones read straight
-   through the idea, task, editor, output and then the reference. */
-.foundation-split:has(.foundation-reference-content) {
-  grid-template-areas:"content code" "reference code";
-  grid-template-rows:auto auto;
-  row-gap:24px;
-}
-.foundation-split:has(.foundation-reference-content) > .foundation-content:not(.foundation-reference-content) { grid-area:content; }
-.foundation-split:has(.foundation-reference-content) > :is(.foundation-code-pane,.ml-choice) { grid-area:code; }
-.foundation-reference-content { grid-area:reference; min-width:0; }
+/* Desktop has the original independent reading and Python panes. Supporting
+   material stays inside the left pane, behind one reference disclosure. */
+.foundation-reference-content { min-width:0; }
 .foundation-reference-content > h3 { margin:0; }
-.foundation-reference-content > details { margin:0; }
-.foundation-reference-content summary { padding-block:8px; }
-.foundation-reference-content .foundation-reference-body { display:grid; gap:16px; padding-top:12px; }
+.foundation-reference-content > details { margin:0; padding-bottom:6px; }
+.foundation-reference-content summary { min-height:44px; padding-block:6px; }
+.foundation-reference-content .foundation-reference-body { display:grid; gap:12px; padding-top:10px; }
+.foundation-reference-content .foundation-parameter-entry { margin:10px 0; padding:10px 12px; }
 .foundation-reference-content:empty { display:none; }
-.foundation-content:not(.foundation-reference-content) { height:auto; overflow:visible; overscroll-behavior:auto; }
-.foundation-practices ol { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
-.foundation-practices li { display:block; padding:0; border:0; color:var(--muted); }
-.foundation-practices a {
-  display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:8px 12px;
-  border:1px solid var(--border-soft); border-radius:4px; color:var(--ink);
-  background:var(--panel); font:700 14px/1.4 var(--body); text-decoration:underline; text-underline-offset:3px;
-}
-.foundation-practices li[aria-current="step"] a {
-  border-color:var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 10%,var(--panel));
-  text-decoration:none;
-}
-.foundation-practices a > span { display:none; }
-.foundation-practices a:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
-.foundation-practices em { font-size:10px; text-transform:none; }
 .foundation-editor-head { flex-wrap:wrap; }
 .foundation-editor-head button { min-height:44px; }
 .foundation-actions button { min-height:44px; }
@@ -453,13 +433,13 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 :is(#foundationEditor,#mlEditor) { height:100%; min-height:100%; max-height:none; resize:none; }
 @media(min-width:801px) {
   .foundation-editor-wrap { flex-basis:auto; flex-shrink:0; min-height:220px; }
-  .foundation-code-pane { align-self:start; overflow:auto; }
+  .foundation-code-pane { align-self:start; }
+  .foundation-split > .ml-choice { height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; }
 }
 @media(max-width:800px) {
-  .foundation-split:has(.foundation-reference-content) { grid-template-areas:"content" "code" "reference"; }
-  .foundation-practices ol { justify-content:flex-start; }
+  .foundation-split { height:auto; max-height:none; overflow:visible; }
   .foundation-lesson-heading { gap:12px; }
-  .foundation-code-pane { max-height:none; overflow:visible; }
+  .foundation-split > :is(.foundation-content,.foundation-code-pane,.ml-choice) { height:auto; max-height:none; overflow:visible; overscroll-behavior:auto; }
   .foundation-editor-wrap { --editor-line-height:28.8px; height:clamp(260px,calc((var(--editor-lines) + 2) * var(--editor-line-height) + 36px),520px); }
   .foundation-code-pane .foundation-actions { position:static; }
   .foundation-content { padding-right:0; }
@@ -486,30 +466,25 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .teaching-visual-result { font-size:14px; line-height:1.6; overflow-wrap:anywhere; }
 .teaching-visual-result p { margin-block:8px; }
 
-.learning-depth { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:12px; }
-.learning-depth button,.learning-depth-controls button {
-  min-height:44px; padding:8px 12px; border:1px solid var(--border-soft); border-radius:4px;
-  color:var(--ink); background:var(--panel); font:700 13px var(--body); cursor:pointer;
-}
-.learning-depth button[aria-pressed="true"],.learning-depth-controls button[aria-pressed="true"] {
-  border-color:var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 10%,var(--panel));
-}
-.learning-depth button:focus-visible,.learning-depth-controls button:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
 .teaching-orientation { padding:12px 14px; border-left:3px solid var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 5%,var(--panel)); }
 .teaching-orientation p + p { margin-top:8px; }
 .teaching-workflow { min-width:0; }
 .teaching-workflow pre { margin-top:10px; }
 .workflow-code-change { padding:0; color:inherit; background:color-mix(in srgb,var(--lesson-accent) 20%,transparent); border-left:2px solid var(--lesson-accent); box-decoration-break:clone; -webkit-box-decoration-break:clone; }
 .teaching-essential > summary { color:var(--ink); }
-/* Keep the complete first explanation readable without dedicating a separate
-   line to every short field label. Expanded references retain their layout. */
+/* Explain current arguments in plain rows; the reference table wraps prose. */
 .foundation-parameter-teaching { display:grid; gap:12px; }
 .foundation-parameter-teaching > h3 { margin:0; }
-.foundation-parameter-teaching > .foundation-parameter-entry { margin:0; padding:12px; }
-.foundation-parameter-teaching dl dt { display:inline; margin:0; }
-.foundation-parameter-teaching dl dt::after { content:': '; }
-.foundation-parameter-teaching dl dd { display:inline; margin:0; }
-.foundation-parameter-teaching dl dd::after { display:block; content:''; margin-bottom:6px; }
+.foundation-parameter-parts { margin:0; }
+.foundation-parameter-row { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:14px; padding:8px 0; border-bottom:1px solid var(--border-soft); }
+.foundation-parameter-row:last-child { border-bottom:0; }
+.foundation-parameter-row :is(dt,dd) { min-width:0; margin:0; font-size:16px; line-height:1.6; overflow-wrap:anywhere; }
+.foundation-parameter-row dt { font-weight:700; }
+.foundation-parameter-reference table { table-layout:fixed; font:14px/1.6 var(--body); }
+.foundation-parameter-reference :is(th,td) { vertical-align:top; padding:8px; white-space:normal; overflow-wrap:anywhere; }
+.foundation-parameter-reference tr > :first-child { width:27%; }
+.foundation-parameter-reference tr > :last-child { width:18%; }
+@media(max-width:480px) { .foundation-parameter-row { grid-template-columns:minmax(0,1fr); gap:3px; } }
 /* Long tuple assignments stay readable inside syntax definitions. */
 .teaching-syntax-parts :is(dt,dd) { min-width:0; }
 .teaching-syntax-parts dt { display:block; }

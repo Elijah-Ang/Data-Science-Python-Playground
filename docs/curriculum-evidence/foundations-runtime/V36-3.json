@@ -7,7 +7,7 @@
     "id": "V36-3",
     "label": "Transfer",
     "dataset": "pets",
-    "task": "Which repaired bar axis represents the supplied magnitudes fairly? Each row is one animal. Use the rows specified below from df. The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\". Its y-axis starts at 1. Use the report’s common linear range from 0 to 25; every group mean fits inside that range. Keep every group and its actual mean weight; arrange and display fig.",
+    "task": "The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\". Its y-axis starts at 1. Use the report’s common linear range from 0 to 25; every group mean fits inside that range. Keep every group and its actual mean weight; arrange and display fig.",
     "solution": "ax.set_ylim(0, 25)\nfig.tight_layout()\nplt.show()",
     "starter": "# Repair the draft’s y-axis, then arrange and display fig\n",
     "hint": "Use ax.set_ylim(0, 25) to match the report range. Dog mean weight is 20.25, so this upper bound keeps it visible.",
@@ -38,8 +38,6 @@
     "reflection": null,
     "bridge": null,
     "steps": [
-      "Which repaired bar axis represents the supplied magnitudes fairly?",
-      "Each row is one animal. Use the rows specified below from df.",
       "The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\".",
       "Its y-axis starts at 1.",
       "Use the report’s common linear range from 0 to 25; every group mean fits inside that range.",
@@ -130,7 +128,7 @@
     "stageSummary": "Repair a new comparison.",
     "brief": {
       "question": "Which repaired bar axis represents the supplied magnitudes fairly?",
-      "rows": "Each row is one animal. Use the rows specified below from df.",
+      "rows": "One row: one animal.",
       "result": "The supplied shelter draft calculates mean weight by species from every pet record and draws exact bars labelled \"Pet adoption\", \"species\" and \"Mean weight\".",
       "constraints": [
         "Its y-axis starts at 1.",
@@ -179,7 +177,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Repair a new comparison.",
       "why": "Use a common zero-based comparison range while preserving group means.",
       "changedLines": [
@@ -233,7 +231,7 @@
       "B"
     ]
   },
-  "inputSHA256": "9c9a6db35d2441cdd6179bb59a440702688d8023374d2a7d51a8e4adbb395d85",
+  "inputSHA256": "94299118e823cdc813f9a1e838775969c186461d54b29d554514bbd9792ba600",
   "visibleWorkspaceSHA256": "5e38ea4f3817e7e9028e17eec591fc5144ca15fccdf4236a789323ffe986d3ea",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"Milo\", \"Pepper\", \"Luna\", \"Bean\", \"Rex\", \"Nori\"],\n    \"species\": [\"Cat\", \"Dog\", \"Cat\", \"Rabbit\", \"Dog\", \"Rabbit\"],\n    \"age\": [3, 7, 2, 4, 5, 1],\n    \"weight\": [4.2, 18.5, 3.6, 2.4, 22, 1.8],\n    \"room\": [\"A\", \"B\", \"A\", \"B\", \"A\", \"B\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"species\")[\"weight\"].mean()\nax.bar(means.index, means.values)\nax.set(title=\"Pet adoption\", xlabel=\"species\", ylabel=\"Mean weight\")\nax.set_ylim(1, 25)\n\n# Your work\n# Repair the draft’s y-axis, then arrange and display fig\n",
@@ -262,9 +260,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -282,7 +280,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.096,
+      "elapsedSeconds": 0.184,
       "response": {
         "passed": true,
         "checked": true,
@@ -317,7 +315,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.1,
+      "elapsedSeconds": 0.259,
       "response": {
         "passed": true,
         "checked": true,
@@ -353,7 +351,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.156,
+      "elapsedSeconds": 0.251,
       "response": {
         "passed": true,
         "checked": true,
@@ -389,7 +387,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.09,
+      "elapsedSeconds": 0.197,
       "response": {
         "passed": false,
         "checked": true,
@@ -424,7 +422,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.102,
+      "elapsedSeconds": 0.248,
       "response": {
         "passed": false,
         "checked": true,
@@ -459,7 +457,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.1,
+      "elapsedSeconds": 0.255,
       "response": {
         "passed": false,
         "checked": true,
@@ -494,7 +492,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.097,
+      "elapsedSeconds": 0.202,
       "response": {
         "passed": false,
         "checked": true,
@@ -529,7 +527,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.097,
+      "elapsedSeconds": 0.197,
       "response": {
         "passed": false,
         "checked": true,
@@ -564,7 +562,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.139,
+      "elapsedSeconds": 0.259,
       "response": {
         "passed": false,
         "checked": true,
@@ -599,7 +597,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.159,
+      "elapsedSeconds": 0.42,
       "response": {
         "passed": false,
         "checked": true,
@@ -646,7 +644,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.098,
+      "elapsedSeconds": 0.154,
       "response": {
         "passed": true,
         "checked": true,

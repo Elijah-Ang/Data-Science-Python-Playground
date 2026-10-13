@@ -64,6 +64,16 @@ class IdentifierRegistryTests(unittest.TestCase):
         self.assertIn({'text': 'one measured stone', 'role': 'prose', 'before': 'Each row is ', 'scope': 'task'}, context['occurrences'])
         self.assertEqual(context['semantics']['stone'], {'role': 'column', 'kind': 'input'})
 
+    def test_authored_object_contracts_supply_variable_roles(self):
+        lesson = {'id': 'example', 'rounds': [{'id': 'example-1', 'dataset': 'fixture', 'suppliedState': [{'name': 'model', 'description': 'Already fitted.'}, {'name': 'X', 'description': 'Supplied measurements.'}], 'learnerOutputs': [{'name': 'candidates'}], 'solution': 'folds = KFold(n_splits=3)\ny = df["response"]'}]}
+        context = self.registry(lesson)['example-1']
+        for name in ['model', 'X', 'candidates']:
+            self.assertEqual(context['semantics'][name]['role'], 'variable')
+            self.assertIn(name, context['variables'])
+        self.assertIn('n_splits', context['parameters'])
+        self.assertIn('response', context['columns'])
+        self.assertNotIn('response', context['outputColumns'])
+
     def test_dictionary_keys_do_not_become_columns(self):
         lesson = {'id': 'example', 'rounds': [{'id': 'example-1', 'dataset': 'fixture', 'solution': 'candidates = {}\ncandidates["logistic"] = model\nreport = [{"setting": 1, "score": 2}]\nsummary = pd.DataFrame(report)'}]}
         context = self.registry(lesson)['example-1']

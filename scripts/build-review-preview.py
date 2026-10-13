@@ -206,7 +206,7 @@ BOOTSTRAP = r"""
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "dist" / "curriculum-preview.html")
+    parser.add_argument("--output", type=Path, default=ROOT.parent / "curriculum-preview.html")
     args = parser.parse_args()
     resources = {name: (DIST / name).read_text() for name in [
         "foundations/worker.js", "ml-learning/worker.js", "ml-learning/curriculum.json",

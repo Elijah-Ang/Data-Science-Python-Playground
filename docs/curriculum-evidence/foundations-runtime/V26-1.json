@@ -7,7 +7,7 @@
     "id": "V26-1",
     "label": "Follow",
     "dataset": "load_test",
-    "task": "Which scale or visible range serves fair comparison while retaining observations? Each row is one service-load test. Use the rows specified below from df. The supplied setup draws every load-test request/response pair and labels the chart \"Service load test\", \"Requests\" and \"Response time (ms)\". Use a logarithmic x-axis, a linear y-axis beginning at zero and x tick labels rotated by 30 degrees. Retain every observation; arrange and display fig.",
+    "task": "The supplied setup draws every load-test request/response pair and labels the chart \"Service load test\", \"Requests\" and \"Response time (ms)\". Use a logarithmic x-axis, a linear y-axis beginning at zero and x tick labels rotated by 30 degrees. Retain every observation; arrange and display fig.",
     "solution": "ax.set_xscale(\"log\")\nax.set_ylim(bottom=0)\nax.tick_params(axis=\"x\", labelrotation=30)\nfig.tight_layout()\nplt.show()",
     "starter": "ax.set_xscale(____)\nax.set_ylim(bottom=0)\nax.tick_params(axis=\"x\", labelrotation=30)\nfig.tight_layout()\nplt.show()",
     "hint": "Set xscale to \"log\"; set only the lower y bound to 0 and rotate x tick labels by 30 degrees.",
@@ -35,8 +35,6 @@
     "reflection": null,
     "bridge": null,
     "steps": [
-      "Which scale or visible range serves fair comparison while retaining observations?",
-      "Each row is one service-load test. Use the rows specified below from df.",
       "The supplied setup draws every load-test request/response pair and labels the chart \"Service load test\", \"Requests\" and \"Response time (ms)\".",
       "Use a logarithmic x-axis, a linear y-axis beginning at zero and x tick labels rotated by 30 degrees.",
       "Retain every observation; arrange and display fig."
@@ -117,7 +115,7 @@
     "stageSummary": "Choose an honest scale.",
     "brief": {
       "question": "Which scale or visible range serves fair comparison while retaining observations?",
-      "rows": "Each row is one service-load test. Use the rows specified below from df.",
+      "rows": "One row: one service-load test.",
       "result": "The supplied setup draws every load-test request/response pair and labels the chart \"Service load test\", \"Requests\" and \"Response time (ms)\".",
       "constraints": [
         "Use a logarithmic x-axis, a linear y-axis beginning at zero and x tick labels rotated by 30 degrees.",
@@ -184,7 +182,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Choose an honest scale.",
       "why": "Use a logarithmic axis for positive values spanning orders of magnitude.",
       "changedLines": [
@@ -216,7 +214,7 @@
       240
     ]
   },
-  "inputSHA256": "6bf2bbd265c53c5dfd893534efd9c97abf482b84545a7f5593e1bbcc051744ca",
+  "inputSHA256": "cc008fda64ebe56b0a70961a9d5983a4f7865b6ddfcd9c27facd29a8452fd543",
   "visibleWorkspaceSHA256": "63c2b85bbfdef9b555e1eeb253ff38982ae6e78b29949cc20df79a550180d36a",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"requests\": [10, 30, 100, 300, 1000, 3000],\n    \"response_ms\": [35, 37, 42, 60, 110, 240],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"requests\", y=\"response_ms\", ax=ax)\nax.set(title=\"Service load test\", xlabel=\"Requests\", ylabel=\"Response time (ms)\")",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"requests\": [10, 30, 100, 300, 1000, 3000],\n    \"response_ms\": [35, 37, 42, 60, 110, 240],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"requests\", y=\"response_ms\", ax=ax)\nax.set(title=\"Service load test\", xlabel=\"Requests\", ylabel=\"Response time (ms)\")\n\n# Your work\nax.set_xscale(____)\nax.set_ylim(bottom=0)\nax.tick_params(axis=\"x\", labelrotation=30)\nfig.tight_layout()\nplt.show()",
@@ -245,9 +243,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -265,7 +263,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.626,
+      "elapsedSeconds": 0.878,
       "response": {
         "passed": true,
         "checked": true,
@@ -300,7 +298,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.351,
+      "elapsedSeconds": 0.619,
       "response": {
         "passed": true,
         "checked": true,
@@ -336,7 +334,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.383,
+      "elapsedSeconds": 0.684,
       "response": {
         "passed": true,
         "checked": true,
@@ -372,7 +370,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.208,
+      "elapsedSeconds": 0.406,
       "response": {
         "passed": false,
         "checked": true,
@@ -407,7 +405,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.212,
+      "elapsedSeconds": 0.452,
       "response": {
         "passed": false,
         "checked": true,
@@ -442,7 +440,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.394,
+      "elapsedSeconds": 0.674,
       "response": {
         "passed": false,
         "checked": true,
@@ -477,7 +475,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.453,
+      "elapsedSeconds": 0.606,
       "response": {
         "passed": false,
         "checked": true,
@@ -512,7 +510,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.612,
+      "elapsedSeconds": 0.661,
       "response": {
         "passed": false,
         "checked": true,
@@ -547,7 +545,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.532,
+      "elapsedSeconds": 0.615,
       "response": {
         "passed": false,
         "checked": true,
@@ -582,7 +580,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 1.2,
+      "elapsedSeconds": 1.029,
       "response": {
         "passed": false,
         "checked": true,
@@ -629,7 +627,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.711,
+      "elapsedSeconds": 0.637,
       "response": {
         "passed": true,
         "checked": true,

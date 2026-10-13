@@ -74,7 +74,7 @@
   });
   const ordered=deck=>(collections.legacyOrder[deck]||[]).map(id=>byId.get(id));
   function table(columns,rows,caption){
-    return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}; scroll for more columns"><table><caption>${esc(caption)}</caption><thead><tr>${columns.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${esc(typeof v==='number'?Number(v.toPrecision(6)):v===null?'missing':v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    return `<div class="foundation-table-scroll" tabindex="0" role="region" aria-label="${esc(caption)}; scroll for more columns"><table${columns[0]==='Column'?' data-code-table="dictionary"':''}><caption>${esc(caption)}</caption><thead><tr>${columns.map(c=>`<th scope="col">${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${esc(typeof v==='number'?Number(v.toPrecision(6)):v===null?'missing':v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
   function datasetPreview(name,challengeInput=null){
     const d=challengeInput?challengeInputs[view.challenge.id]:datasets[name];
@@ -131,7 +131,7 @@
     return `<p class="ml-prerequisites"><strong>Helpful prior knowledge:</strong> ${card.prerequisites.length?card.prerequisites.map(id=>`<a href="${url(byId.get(id))}">${esc(byId.get(id).title)}</a>`).join(' · '):'Data Foundations: inspecting, preparing and plotting tables.'} These links are guidance, not locks.</p>`;
   }
   function help(ex){
-    return `<details><summary>Hint 1 — Think</summary><p>${esc(ex.hints.think)}</p></details><details><summary>Hint 2 — Tools</summary><p>${esc(ex.hints.tools)}</p></details><details><summary>Hint 3 — Approach</summary><p>${esc(ex.hints.approach)}</p></details><details class="ml-explained-solution"><summary>Explained solution</summary>${ex.kind==='python'?code(ex.solution):`<p>${esc(ex.solution)}</p>`}<p>${esc(ex.explanation)}</p></details>`;
+    return `<details class="ml-hints"><summary>Hints</summary><p><strong>Think:</strong> ${esc(ex.hints.think)}</p><p><strong>Tools:</strong> ${esc(ex.hints.tools)}</p><p><strong>Approach:</strong> ${esc(ex.hints.approach)}</p></details><details class="ml-explained-solution"><summary>Explained solution</summary>${ex.kind==='python'?code(ex.solution):`<p>${esc(ex.solution)}</p>`}<p>${esc(ex.explanation)}</p></details>`;
   }
   function pathList(card){
     const collection=collections.selected(card,location.search)||collections.primary(card);
@@ -144,6 +144,11 @@
     const previous=index?url(card,index-1,context):position>0?url(list[position-1],list[position-1].exercises.length-1,context):boundary;
     const next=index<card.exercises.length-1?url(card,index+1,context):position>=0&&position<list.length-1?url(list[position+1],0,context):boundary;
     return `<nav class="foundation-navigation" aria-label="Lesson progression">${previous===boundary?'<span class="deck-boundary">Start of deck</span>':`<a href="${previous}">← ${index?'Previous practice':'Previous lesson'}</a>`}${next===boundary?(collection?`<a href="${next}">${card.deck==='networks'?'Choose a neural route':'Return to model deck'} →</a>`:'<span class="deck-boundary">End of deck</span>'):`<a href="${next}">${index<card.exercises.length-1?'Next practice':'Next lesson'} →</a>`}</nav>`;
+  }
+  function branchNavigation(card,index){
+    if(index!==card.exercises.length-1)return '';
+    const ids=card.id==='ML-N-R1'?['neural-classification','neural-quantity']:card.id==='ML-U02'?['k-means','hierarchical','pca']:[];
+    return ids.length?`<p class="ml-branch-links"><strong>Continue with:</strong> ${ids.map(id=>collections.get(id)).map(c=>`<a href="#${collections.route(c)}">${esc(c.title)}</a>`).join(' · ')}</p>`:'';
   }
   function learningContext(card,index){
     const list=pathList(card),position=list.indexOf(card);
@@ -182,52 +187,102 @@
     const prior=discovery?'Use <a href="#collections/discovery-foundations">Discovery foundations</a> to frame a question without a prediction target.':classification?'First practise the complete classification workflow in <a href="#foundations/ML-F12/0">F12</a>; check classification readiness in <a href="#workflow/ML-W-K3/0">W-K3</a>.':regression?'First practise the complete regression workflow in <a href="#foundations/ML-F11/0">F11</a>; check regression readiness in <a href="#workflow/ML-W-K2/0">W-K2</a>.':'Choose the complete foundations workflow for your task, then practise <a href="#workflow">Supervised Workflow</a> before a task-specific network route.';
     return card.modelGuide.map(g=>`<section class="teaching-reference"><h3>${esc(g.name)} · from idea to workflow</h3><p><strong>Question:</strong> ${esc(g.question)}</p><p><strong>Mechanism:</strong> ${esc(g.mechanism)}</p><p><strong>Watch for:</strong> ${esc(g.failure)}</p><p><strong>Interpret or debug · self-review:</strong> ${esc(g.debug)}</p>${bridge>=0?`<p><strong>Guided application:</strong> <a href="${url(card,bridge)}">${bridgeText} →</a></p>`:''}<p><strong>Independent full workflow:</strong> ${g.challenges.map(id=>`<a href="#workflows/challenges/${esc(id)}">${esc(id)}</a>`).join(' · ')}. ${prior}</p></section>`).join('');
   }
+  function syntaxProse(value,part){
+    // Parameter occurrences come from this concept's existing call signature.
+    // Common English names are marked only in an assignment or a parameter
+    // definition; quoted examples and ordinary model prose retain their roles.
+    const parameters=new Set([...String(part.code||'').matchAll(/[(,]\s*([A-Za-z_]\w*)\s*=/g)].map(m=>m[1]));
+    const source=String(value||'');
+    const tokens=/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`|\b[A-Za-z_]\w*\b/g;
+    let html='',start=0;
+    for(const match of source.matchAll(tokens)){
+      const name=match[0],before=source.slice(0,match.index),after=source.slice(match.index+name.length);
+      const definition=/(?:^|[.!?]\s+)$/.test(before)&&/^\s+(?:accepts|defaults|controls|is|names|must)\b/.test(after);
+      const parameter=parameters.has(name)&&(name.includes('_')||/^\s*=/.test(after)||definition);
+      html+=esc(source.slice(start,match.index))+(parameter?`<code data-code-role="parameter">${esc(name)}</code>`:esc(name));
+      start=match.index+name.length;
+    }
+    return html+esc(source.slice(start));
+  }
+  function syntaxParts(parts,full=true){
+    return `<dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">${parts.map(p=>{
+      const columnHead=view?.card?.id==='ML-M03'&&/^(['"])(cv_rmse|fold_sd)\1$/.test(p.code||'');
+      return `<div><dt><code${columnHead?' data-code-role="column"':''}>${esc(p.code||p.title)}</code></dt><dd>${syntaxProse(p.meaning,p)}${full&&(p.forms||p.choices)?`<p><strong>Values and choices:</strong> ${syntaxProse(p.forms||p.choices,p)}</p>`:''}${full&&p.example?code(p.example):''}</dd></div>`;
+    }).join('')}</dl>`;
+  }
   function syntaxSupport(card,ex,level='current'){
-    if(card.kind!=='teaching')return '';
+    if(card.kind!=='teaching'&&level==='current')return '';
     const guidance=ex.syntaxGuidance;
-    const partsMarkup=parts=>`<dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">${parts.map(p=>`<div><dt><code>${esc(p.code||p.title)}</code></dt><dd>${esc(p.meaning)}${p.forms||p.choices?`<p><strong>Values and choices:</strong> ${esc(p.forms||p.choices)}</p>`:''}${p.example?code(p.example):''}</dd></div>`).join('')}</dl>`;
     if(guidance){
-      if(level==='reference')return `${guidance.reminders?.length?`<details class="ml-syntax-reminder"><summary>Familiar syntax · quick reminder</summary>${partsMarkup(guidance.reminders)}</details>`:''}${guidance.reference?.length?`<details class="ml-syntax-reference"><summary>Full syntax reference</summary>${partsMarkup(guidance.reference)}</details>`:''}`;
+      if(level==='reference'){
+        const current=guidance.current||[];
+        const reference=(guidance.reference||[]).filter(p=>!current.some(c=>JSON.stringify(c)===JSON.stringify(p)));
+        return `${!ex.workflowSections?.length&&current.length?`<section class="ml-syntax-detail"><h3>Current syntax: choices and examples</h3>${syntaxParts(current)}</section>`:''}${guidance.reminders?.length?`<section class="ml-syntax-reminder"><h3>Familiar syntax</h3>${syntaxParts(guidance.reminders)}</section>`:''}${reference.length?`<section class="ml-syntax-reference"><h3>Syntax reference</h3>${syntaxParts(reference)}</section>`:''}${card.example&&ex.label==='Follow'&&String(card.example).trim()!==String(ex.starter).trim()?`<section class="teaching-worked"><h3>Worked example</h3>${code(card.example)}</section>`:''}`;
+      }
       const current=guidance.current||[];
-      const duplicate=String(card.example||'').trim()===String(ex.starter||'').trim();
-      const numbered=/^\s*#\s*\d+[.) ·:-]/m.test(card.example||'');
-      return `${current.length?`<details class="teaching-essential ml-syntax" data-learning-depth open><summary>New syntax for this activity</summary>${partsMarkup(current)}</details>`:''}${card.example&&ex.label==='Follow'&&!duplicate?`<details class="teaching-worked"><summary>Worked example</summary><p>${numbered?'Match each numbered comment to the workflow question.':'Read the code from top to bottom, then try the operation in the editor.'}</p>${code(card.example)}</details>`:''}`;
+      return current.length?`<section class="teaching-essential ml-syntax"><h3>Python for this practice</h3>${syntaxParts(current,false)}</section>`:'';
     }
     const parts=Array.isArray(card.syntaxBreakdown)?card.syntaxBreakdown:[];
-    return `<details class="teaching-essential ml-syntax" data-learning-depth open><summary>Syntax for this activity</summary>${code(card.syntax)}${partsMarkup(parts)}</details>`;
+    return `<section class="teaching-essential ml-syntax"><h3>Python for this practice</h3>${code(card.syntax)}${syntaxParts(parts,level==='reference')}</section>`;
   }
-  function suppliedState(ex){
+  function suppliedState(ex,full=false){
     if(!ex.suppliedState?.length&&!ex.setup)return '';
-    return `<section class="ml-provided-state" aria-label="Provided objects"><h3>Already provided</h3>${ex.suppliedState?.length?`<dl>${ex.suppliedState.map(p=>`<div><dt><code data-code-role="variable">${esc(p.name)}</code></dt><dd>${esc(p.fitted?p.description.replace('Already fitted on '+p.training+'. ' ,''):p.description)}${p.fitted?` <strong>Already fitted${p.training?' on '+esc(p.training):''}.</strong>`:''}</dd></div>`).join('')}</dl>`:'<p>The dataset and objects in supplied setup are available when your code starts.</p>'}${ex.familiarSetup?`<details><summary>Familiar preparation</summary>${code(ex.familiarSetup)}</details>`:''}</section>`;
+    if(!full){
+      const fitted=(ex.suppliedState||[]).filter(p=>p.fitted);
+      return fitted.length?`<p class="ml-provided-note"><strong>Supplied fitted objects:</strong> ${fitted.map(p=>`<code data-code-role="variable">${esc(p.name)}</code>${p.training?' (fitted on '+esc(p.training)+')':''}`).join('; ')}.</p>`:'';
+    }
+    return `<section class="ml-provided-state" aria-label="Provided objects"><h3>Supplied objects and preparation</h3>${ex.suppliedState?.length?`<dl>${ex.suppliedState.map(p=>`<div><dt><code data-code-role="variable">${esc(p.name)}</code></dt><dd>${esc(p.fitted?p.description.replace('Already fitted on '+p.training+'. ' ,''):p.description)}${p.fitted?` <strong>Already fitted${p.training?' on '+esc(p.training):''}.</strong>`:''}</dd></div>`).join('')}</dl>`:''}${ex.familiarSetup&&!ex.setup?code(ex.familiarSetup):''}${ex.setup?`<p>This setup runs before your editor on each Run.</p>${code(ex.setup)}`:''}</section>`;
   }
-  function workflowSections(ex){
+  function workflowSections(ex,full=false){
     if(!ex.workflowSections?.length)return '';
+    if(!full)return `<section class="ml-progressive-workflow" aria-label="Complete workflow outline"><h3>The workflow</h3><ol class="ml-workflow-outline">${ex.workflowSections.map(s=>`<li><strong>${esc(s.title)}</strong><p>${esc(s.question)}</p></li>`).join('')}</ol></section>`;
     const stepFor={assignment:1,'features-target':1,split:2,stratify:2,pipeline:4,scale:4,logistic:4,knn:4,tree:4,svm:4,lda:4,qda:4,neural:4,polynomial:4,'target-transform':4,'balanced-accuracy':7,baseline:5,folds:5,'cross-validation':5,oof:6,clone:7,mae:7,rmse:7,'macro-f1':7};
-    return `<section class="ml-progressive-workflow" aria-label="Complete workflow explained in sections"><h3>One workflow, one question at a time</h3><p>Open a step to connect its purpose with Python. The editor below keeps the complete executable script together.</p>${ex.workflowSections.map((s,i)=>{
+    return `<section class="ml-workflow-detail" aria-label="Complete workflow explained in sections"><h3>Workflow explained</h3>${ex.workflowSections.map((s,i)=>{
       const current=(ex.syntaxGuidance?.current||[]).filter(p=>(stepFor[p.id]||8)===(s.number||i+1));
-      return `<details class="ml-workflow-section"${i===0?' data-learning-depth open':''}><summary>${esc(s.number||i+1)} · ${esc(s.title)}</summary><p><strong>${esc(s.question)}</strong></p><p>${esc(s.meaning)}</p>${s.code?code(s.code):''}${current.length?`<dl class="foundation-syntax">${current.map(p=>`<div><dt><code>${esc(p.code||p.title)}</code></dt><dd>${esc(p.meaning)}${p.choices?`<p><strong>Useful choices:</strong> ${esc(p.choices)}</p>`:''}${p.example?code(p.example):''}</dd></div>`).join('')}</dl>`:''}</details>`;
+      return `<section class="ml-workflow-section"><h4>${esc(s.number||i+1)} · ${esc(s.title)}</h4><p><strong>${esc(s.question)}</strong></p><p>${esc(s.meaning)}</p>${s.code?code(s.code):''}${current.length?syntaxParts(current):''}</section>`;
     }).join('')}</section>`;
   }
   function modelComparison(card){
     const comparison=card.modelComparison;if(!comparison)return '';
-    return `<details class="ml-model-comparison"><summary>Compare the model definitions</summary><p><strong>Same:</strong> ${esc(comparison.same)}</p><p><strong>Why the change:</strong> ${esc(comparison.why||comparison.reason)}</p><p>${esc(comparison.dataset||'The same illustrative observations support this direct comparison.')}</p>${comparison.examples.map(e=>`<h4>${esc(e.name)}</h4><pre><code>${FoundationLearning.changedCode(e.code,e.changedLines)}</code></pre>`).join('')}</details>`;
+    return `<section class="ml-model-comparison"><h3>Compare the model definitions</h3><p><strong>Same:</strong> ${esc(comparison.same)}</p><p><strong>Why the change:</strong> ${esc(comparison.why||comparison.reason)}</p><p>${esc(comparison.dataset||'The same illustrative observations support this direct comparison.')}</p>${comparison.examples.map(e=>`<h4>${esc(e.name)}</h4><pre><code>${FoundationLearning.changedCode(e.code,e.changedLines)}</code></pre>`).join('')}</section>`;
   }
   function practicePrompt(ex){
     const task=String(ex.task||'').trim();
     const heading=ex.question||'Your task';
     const detail=ex.question?(task.startsWith(ex.question)?task.slice(ex.question.length).trim():task):task;
-    return `<h3 class="practice-question">${LearningLanguage.text(heading,ex.id,true)}</h3>${detail?LearningLanguage.activity({...ex,task:detail}):''}${LearningLanguage.glossary(task)}`;
+    return `<h3 class="practice-question">${LearningLanguage.text(heading,ex.id,true)}</h3>${detail?LearningLanguage.activity({...ex,task:detail}):''}`;
+  }
+  // Supporting material shares one disclosure. Its headings remain searchable
+  // and readable together instead of becoming a list of nested controls.
+  function flatSupport(html){
+    return html.replace(/<details\b[^>]*>\s*<summary>([\s\S]*?)<\/summary>/g,'<section><h3>$1</h3>').replaceAll('</details>','</section>');
+  }
+  function visualPresentation(visual){
+    const rendered=MLLearningVisuals.render(visual);
+    const schematic=rendered.match(/<details class="ml-schematic-reference"><summary>Concept schematic<\/summary>([\s\S]*?)<\/details>$/);
+    let primary=schematic?rendered.slice(0,schematic.index):rendered;
+    const observations=primary.match(/<details><summary>Example observations<\/summary>([\s\S]*?)<\/details>/);
+    if(observations)primary=primary.replace(observations[0],'');
+    const reference=`${observations?`<section class="ml-example-observations"><h3>Illustrative observations</h3>${observations[1]}</section>`:''}${schematic?`<section class="ml-schematic-reference"><h3>Concept schematic</h3>${schematic[1]}</section>`:''}`;
+    return {primary,reference};
   }
   function lessonPage(card,index){
     const ex=card.exercises[index],follow=card.kind==='teaching'&&index===0;
     const collection=collections.primary(card);
-    const idea=follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${MLLearningVisuals.render(ex.visual||card.visual)}</section>`:`<section class="teaching-overview"><h3>${esc(ex.milestone||ex.label)}</h3><p>${esc(ex.activityExplanation||ex.focusExplanation||ex.context||card.goal)}</p>${MLLearningVisuals.render(ex.visual||card.visual)}</section>`;
-    const reference=`${ex.kind==='python'&&ex.showDatasetPreview!==false?`<details class="ml-inputs"><summary>Inspect the dataset, columns and validation</summary>${datasetPreview(ex.dataset)}</details>`:''}${ex.setup?`<details class="ml-supplied-setup"><summary>Full supplied setup</summary><p>This code runs before your editor on every Run. The objects above describe its relevant state.</p>${code(ex.setup)}</details>`:''}${syntaxSupport(card,ex,'reference')}${!follow?`<details class="teaching-reference"><summary>Remember the idea</summary><p>${esc(card.explanation)}</p><p>${conceptSupport(card)}</p>${code(card.syntax)}</details>`:''}${ex.rubric?`<details class="ml-workflow-help"><summary>Workflow questions and self-review guidance</summary>${masterySupport(ex)}</details>`:''}${card.modelGuide?.length?`<details class="ml-model-guide"><summary>Model guide and independent application</summary>${modelSupport(card,ex)}</details>`:''}${ex.reasoningPrompt?`<details class="foundation-task"><summary>Reasoning and evidence · self-review</summary>${ex.reasoningPrompt?`<p>${esc(ex.reasoningPrompt)} Explain the decision and use your result as evidence.</p>`:''}</details>`:''}${help(ex)}${prerequisites(card)}${LearningLanguage.key()}<details class="ml-sources"><summary>Sources and API context</summary><p>Examples run with scikit-learn 1.4.2 / Pyodide 0.26.4.</p><ul>${card.sources.map(([title,href])=>`<li><a href="${esc(href)}" target="_blank" rel="noopener">${esc(title)}</a></li>`).join('')}</ul></details>`;
-    return LearningLanguage.render(`<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2><p>${esc(follow?card.goal:ex.label+' · '+(ex.stageSummary||ex.demand||''))}</p>${FoundationLearning.modeSwitch()}${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index,i=>url(card,i,collection?.id))}</header><div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">${FoundationLearning.orientation(ex.teaching||card.teaching,ex.id)}${idea}${workflowSections(ex)}${ex.workflowSections?.length?"":syntaxSupport(card,ex)}${suppliedState(ex)}${ex.evidence?`<section class="ml-provided-evidence"><h3>Evidence to use</h3>${LearningLanguage.steps(ex.evidence,ex.id)}</section>`:''}${modelComparison(card)}</article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}<article class="foundation-content foundation-reference-content" data-code-context="guide" aria-label="Optional reference and help">${reference}</article></div>${learningContext(card,index)}${navigation(card,index)}</div>`,ex.id);
+    const visual=visualPresentation(ex.visual||card.visual);
+    const idea=follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${visual.primary}</section>`:`<section class="teaching-overview"><h3>${esc(ex.milestone||ex.label)}</h3><p>${esc(ex.activityExplanation||ex.focusExplanation||ex.context||card.goal)}</p>${visual.primary}</section>`;
+    const reference=flatSupport(`${workflowSections(ex,true)}${syntaxSupport(card,ex,'reference')}${suppliedState(ex,true)}${evidenceContract(ex)}${visual.reference}${modelComparison(card)}${ex.kind==='python'&&ex.showDatasetPreview!==false?`<section class="ml-inputs">${datasetPreview(ex.dataset)}</section>`:''}${!follow?`<section class="teaching-reference"><h3>Remember the idea</h3><p>${esc(card.explanation)}</p><p>${conceptSupport(card)}</p>${code(card.syntax)}</section>`:''}${ex.rubric?`<section class="ml-workflow-help">${masterySupport(ex)}</section>`:''}${card.modelGuide?.length?`<section class="ml-model-guide">${modelSupport(card,ex)}</section>`:''}${ex.reasoningPrompt?`<section class="ml-reasoning-help"><h3>Reasoning and evidence</h3><p>${esc(ex.reasoningPrompt)}</p></section>`:''}${prerequisites(card)}${LearningLanguage.key()}${LearningLanguage.glossary(ex.task)}<section class="ml-sources"><h3>Sources and API context</h3><p>Examples run with scikit-learn 1.4.2 / Pyodide 0.26.4.</p><ul>${card.sources.map(([title,href])=>`<li><a href="${esc(href)}" target="_blank" rel="noopener">${esc(title)}</a></li>`).join('')}</ul></section>`);
+    return LearningLanguage.render(`<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2>${follow?`<p>${esc(card.goal)}</p>`:''}${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">${idea}${workflowSections(ex)}${ex.workflowSections?.length?'':syntaxSupport(card,ex)}${suppliedState(ex)}${ex.evidence?`<section class="ml-provided-evidence"><h3>Evidence to use</h3>${LearningLanguage.steps(ex.evidence,ex.id)}</section>`:''}<section class="foundation-reference-content" data-code-context="guide" aria-label="Reference and help"><details class="ml-reference"><summary>Reference</summary><div class="foundation-reference-body">${reference}</div></details>${help(ex)}</section></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${branchNavigation(card,index)}${navigation(card,index)}</div>`,ex.id);
   }
   function evidenceContract(ex){
     const outputs=ex.assessment?ex.contract:ex.learnerOutputs||ex.contract;
-    return outputs?.length?`<details class="ml-contract"><summary>Outputs you create</summary><p>Create these named results. Objects listed under Already provided are available before your code runs.</p><dl class="ml-evidence-names">${outputs.map(c=>`<div><dt>${LearningLanguage.text('`'+c.name+'`',ex.id,true)}</dt><dd>${LearningLanguage.steps(c.description,ex.id)}</dd></div>`).join('')}</dl></details>`:'';
+    const context=CodeIdentifiers.contextFor(LearningLanguage.context(ex.id),'guide');
+    const nameMarkup=name=>{
+      const names=name.split(/\s+\/\s+/);
+      if(names.length>1&&names.every(n=>/^[A-Za-z_]\w*$/.test(n)&&context.variables?.includes(n)))return names.map(n=>`<code data-code-role="variable">${esc(n)}</code>`).join(' / ');
+      return LearningLanguage.text('`'+name+'`',ex.id,true);
+    };
+    return outputs?.length?`<section class="ml-contract"><h3>Outputs you create</h3><dl class="ml-evidence-names">${outputs.map(c=>`<div><dt>${nameMarkup(c.name)}</dt><dd>${LearningLanguage.steps(c.description,ex.id)}</dd></div>`).join('')}</dl></section>`:'';
   }
   function workflowMap(ch){
     const discovery=['clustering','pca'].includes(view?.card?.deck)||['ML-X17','ML-X18','ML-X19'].includes(ch?.id);
@@ -243,7 +298,7 @@
   function pythonPane(ex){
     ex=view?.exercise||ex;
     const question=ex.interpretationQuestion||reflectionQuestions[ex.id];
-    return `<section class="foundation-code-pane ml-code-pane" aria-label="Python practice"><div class="foundation-task-reminder" data-code-context="task"><strong>You do here · · ${esc(ex.depth==='deeper'?'Deeper investigation':ex.label||"Workflow challenge")}</strong>${LearningLanguage.activity({...ex,task:ex.task||view?.challenge?.question})}<div class="ml-output-names" aria-label="Requested output variables">${ex.outputs.map(name=>`<code>${esc(name)}</code>`).join('')}</div></div>${evidenceContract(ex)}<div class="foundation-editor-head"><label for="mlEditor">YOUR PYTHON</label><div class="ml-editor-head-actions"><button type="button" id="mlBriefJump">Brief ↑</button><button type="button" id="jumpToWork">Jump to your work ↓</button></div></div><p class="foundation-editor-shortcuts" id="mlEditorHelp">Ctrl/⌘+Enter: Run · Tab: indent · Esc then Tab: leave editor</p><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="mlHighlight" aria-hidden="true"></pre><textarea id="mlEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="mlEditorHelp"></textarea></div><div class="foundation-actions"><button class="primary" id="mlRun" type="button">▶ Run code</button><button id="mlCheck" type="button">✓ Check answer</button><button id="mlReset" type="button">Reset code</button><button id="mlStop" type="button">Stop / restart</button></div><p class="foundation-runtime" id="mlStatus" role="status">Python loads when you run. Code and results stay in this activity only.</p><p class="foundation-feedback" id="mlFeedback" role="status"></p><div class="foundation-output ml-output" id="mlOutput" role="region" aria-label="Python output"><p class="ml-empty">Run your code to inspect its output. Check uses that same run.</p></div><div class="ml-output ml-results" id="mlResults" aria-live="polite"></div>${question?`<div class="ml-output"><label for="mlReflection">Your interpretation · self-review</label><p id="mlReflectionQuestion"><strong>${esc(question)}</strong></p><textarea class="ml-reflection" id="mlReflection" aria-describedby="mlReflectionQuestion mlReflectionHelp"></textarea><p class="ml-data-note" id="mlReflectionHelp">Use your Run output as evidence. This response is optional, not machine-graded or saved.</p></div>`:''}</section>`;
+    return `<section class="foundation-code-pane ml-code-pane" aria-label="Python practice"><div class="foundation-task-reminder" data-code-context="task"><strong>Your task${ex.depth==='deeper'?' · Deeper investigation':''}</strong>${LearningLanguage.activity({...ex,task:ex.task||view?.challenge?.question})}<div class="ml-output-names" aria-label="Requested output variables">${ex.outputs.map(name=>`<code>${esc(name)}</code>`).join('')}</div></div>${view?.challenge?evidenceContract(ex):''}<div class="foundation-editor-head"><label for="mlEditor">YOUR PYTHON</label><div class="ml-editor-head-actions"><button type="button" id="mlBriefJump">Brief ↑</button><button type="button" id="jumpToWork">Jump to your work ↓</button></div></div><p class="foundation-editor-shortcuts" id="mlEditorHelp">Ctrl/⌘+Enter: Run · Tab: indent · Esc then Tab: leave editor</p><div class="foundation-editor-wrap"><div class="foundation-line-numbers" aria-hidden="true"></div><pre id="mlHighlight" aria-hidden="true"></pre><textarea id="mlEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="mlEditorHelp"></textarea></div><div class="foundation-actions"><button class="primary" id="mlRun" type="button">▶ Run code</button><button id="mlCheck" type="button">✓ Check answer</button><button id="mlReset" type="button">Reset code</button><button id="mlStop" type="button">Stop / restart</button></div><p class="foundation-runtime" id="mlStatus" role="status">Python loads when you run. Code and results stay in this activity only.</p><p class="foundation-feedback" id="mlFeedback" role="status"></p><div class="foundation-output ml-output" id="mlOutput" role="region" aria-label="Python output"><p class="ml-empty">Run your code to inspect its output. Check uses that same run.</p></div><div class="ml-output ml-results" id="mlResults" aria-live="polite"></div>${question?`<div class="ml-output"><label for="mlReflection">Your interpretation · self-review</label><p id="mlReflectionQuestion"><strong>${esc(question)}</strong></p><textarea class="ml-reflection" id="mlReflection" aria-describedby="mlReflectionQuestion mlReflectionHelp"></textarea><p class="ml-data-note" id="mlReflectionHelp">Use your Run output as evidence. This response is optional, not machine-graded or saved.</p></div>`:''}</section>`;
   }
   function conceptPane(ex){
     return `<section class="ml-choice foundation-code-pane" data-code-context="task" aria-label="Concept practice">${ex.kind==='decision'?`<fieldset><legend>${esc(ex.task)}</legend>${ex.options.map((option,i)=>`<label><input type="${ex.correct.length>1?'checkbox':'radio'}" name="mlChoice" value="${i}"><span>${esc(option)}</span></label>`).join('')}</fieldset>`:`${LearningLanguage.activity(ex)}<label for="mlExplain"><strong>Your explanation</strong></label><p>Use the evidence and state a limitation. This is self-review, not a keyword test.</p><textarea id="mlExplain" aria-label="Your explanation"></textarea>`}<button type="button" id="mlConceptCheck">${ex.kind==='decision'?'Check reasoning':'Show self-review guidance'}</button><div id="mlConceptResult" role="status" class="ml-results"></div></section>`;
@@ -370,8 +425,8 @@
     exit.href=selected?'#'+collections.route(selected):view?.challenge?'#workflows/challenges':view?.card?'#'+view.card.deck:deck||collection||deckId==='workflows'?'#':'learn.html';
     exit.textContent=selected?'← '+selected.title+' lessons':view?.challenge?'← All challenges':view?.card?'← '+deck.title+' lessons':collection?'← Choose a model deck':deck||deckId==='workflows'?'← Choose a deck':'← Learn / Refresh';
     LearningRoutes.enhance('ml',main);LearningRoutes.canonical('ml',currentRoute);
-    FoundationLearning.bindDepth(main);
     bind();main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});
+    FoundationLearning.bindPanels?.(main);
     if(deck&&id==='chapter'){const chapter=document.getElementById('chapter-'+position);chapter?.focus({preventScroll:true});chapter?.scrollIntoView({block:'start'});}
   }
   // The static build renders through these same functions, without Python or DOM bindings.

@@ -12,9 +12,9 @@
     }
     return result+esc(code.slice(start));
   }
-  function stages(exercises,index,hrefFor){
+  function stages(exercises,index){
     const meaning={Follow:'Read and try the Python',Change:'Adapt one part',Transfer:'Apply to a new question',Practise:'Reinforce the skill',Observe:'Inspect the evidence',Decide:'Use the evidence',Explain:'Interpret the result'};
-    return `<section class="foundation-practices" aria-label="Exercise type"><ol>${exercises.map((e,i)=>`<li ${i===index?'aria-current="step"':''}>${hrefFor?`<a href="${esc(hrefFor(i))}">`:''}<strong>${esc(e.label)}</strong><span>${esc(e.stageSummary||meaning[e.label]||'Retrieve and apply')}</span>${hrefFor?'</a>':''}</li>`).join('')}</ol></section>`;
+    return `<section class="foundation-practices" aria-label="Exercise type"><ol>${exercises.map((e,i)=>`<li ${i===index?'aria-current="step"':''}><strong>${esc(e.label)}</strong><span>${esc(e.demand||meaning[e.label]||'Retrieve and apply')}</span>${i===index?'<em>Current exercise</em>':''}</li>`).join('')}</ol></section>`;
   }
   const conceptTitles={
     'figure-axes':'Figure and Axes','labels':'Chart titles and axis labels','reference-lines':'Calculated reference lines','subplots-panels':'Several Axes in one Figure','scales':'Axis limits and measurement scales',
@@ -42,35 +42,34 @@
     const changed=new Set(lines);
     return String(source||'').split('\n').map((line,i)=>changed.has(i+1)?`<mark class="workflow-code-change">${highlightPython(line)}</mark>`:highlightPython(line)).join('\n');
   }
-  function modeSwitch(){
-    return '<div class="learning-depth" role="group" aria-label="Explanation depth"><button type="button" data-learning-mode="learn">Learn</button><button type="button" data-learning-mode="refresh">Refresh</button></div>';
-  }
-  function bindDepth(element){
-    const apply=mode=>{
-      root.document.body.dataset.learningMode=mode;
-      element.querySelectorAll('[data-learning-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.learningMode===mode)));
-      element.querySelectorAll('[data-learning-depth]').forEach(details=>details.open=mode==='learn');
-      element.querySelectorAll('a[href]').forEach(link=>{
-        const address=new URL(link.getAttribute('href'),root.location.href);
-        if(address.origin===root.location.origin&&/\.html$/.test(address.pathname)){address.searchParams.set('mode',mode);link.href=address.href;}
-      });
+  let panelObserver, updatePanels;
+  root.addEventListener?.('resize',()=>updatePanels?.());
+  function bindPanels(element){
+    panelObserver?.disconnect();
+    updatePanels=()=>{
+      const split=element.querySelector('.foundation-split');
+      if(!split?.isConnected)return;
+      if(root.innerWidth<=800){split.style.removeProperty('--lesson-pane-height');return;}
+      split.style.setProperty('--lesson-pane-height',Math.max(240,root.innerHeight-split.getBoundingClientRect().top-32)+'px');
     };
-    apply(new URLSearchParams(root.location.search).get('mode')==='refresh'?'refresh':'learn');
-    element.querySelectorAll('[data-learning-mode]').forEach(button=>button.addEventListener('click',()=>{
-      const mode=button.dataset.learningMode, address=new URL(root.location.href);address.searchParams.set('mode',mode);
-      root.history.replaceState(null,'',address);apply(mode);
-    }));
+    updatePanels();
+    root.requestAnimationFrame?.(()=>updatePanels?.());
+    root.document.fonts?.ready.then(()=>updatePanels?.());
+    if(root.ResizeObserver){
+      panelObserver=new root.ResizeObserver(()=>updatePanels?.());
+      [element.querySelector('.foundation-lesson-heading'),root.document.querySelector('.topbar'),root.document.querySelector('.foundation-strip')].filter(Boolean).forEach(node=>panelObserver.observe(node));
+    }
   }
   function highlightContent(element,context){
     root.CodeIdentifiers?.decorate(element,context);
     element.querySelectorAll('.foundation-content code, .foundation-reference-content code, .ml-contract code, .ml-output-names code').forEach(code=>{
-      if(code.matches('.code-identifier')&&!code.dataset.focus&&(['literal','prose'].includes(code.dataset.codeRole)||/^[\w.]+(?:\(\))?$/.test(code.textContent)))return;
       if(code.querySelector('.workflow-code-change'))return;
       const value=code.textContent, token=code.dataset.focus?`"${code.dataset.focus}"`:null;
       const at=token?value.indexOf(token):-1;
-      code.innerHTML=at<0?highlightPython(value):highlightPython(value.slice(0,at))+'<mark class="syntax-focus">'+highlightPython(token)+'</mark>'+highlightPython(value.slice(at+token.length));
+      if(code.closest('pre'))code.innerHTML=highlightPython(value);
+      else if(at>=0)code.innerHTML=esc(value.slice(0,at))+'<mark class="syntax-focus">'+esc(token)+'</mark>'+esc(value.slice(at+token.length));
     });
   }
   const deckIcon='<svg class="deck-icon" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h25v5H7zM10 9h25v5H10zM5 14h26v22H5zM10 21h16M10 27h10"/></svg>';
-  root.FoundationLearning={esc,highlightPython,highlightContent,stages,deckIcon,orientation,changedCode,modeSwitch,bindDepth};
+  root.FoundationLearning={esc,highlightPython,highlightContent,stages,deckIcon,orientation,changedCode,bindPanels};
 })(window);

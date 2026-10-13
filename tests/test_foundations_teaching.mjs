@@ -25,17 +25,17 @@ for(const lesson of curriculum.lessons){
     assert(model.source.guide.choices.length>=2 && model.source.guide.choices.length<=4,round.id);
     assert(model.source.guide.idea.split(/\s+/).length<=50,round.id+' concise idea');
     if(!lesson.review){
-      const syntax=teaching.syntax(lesson);
-      assert.equal((syntax.match(/<dt>/g)||[]).length,lesson.syntax.length,round.id);
-      assert.equal((syntax.match(/<details/g)||[]).length,lesson.syntaxLater?.length?1:0,round.id);
-      assert(syntax.includes('syntax-choice-callout'),round.id);
+      const syntax=teaching.syntax(lesson), related=teaching.syntaxReference(lesson);
+      assert.equal(((syntax+related).match(/<dt>/g)||[]).length,lesson.syntax.length,round.id+' partitions authored syntax between visible current and flat reference');
+      assert(!syntax.includes('<details')&&!related.includes('<details'),round.id+' no nested disclosure forest');
     }
     if(round.syntaxGuidance){
-      const guided=teaching.syntax(lesson,round);
-      const entries=[...round.syntaxGuidance.current,...round.syntaxGuidance.reminders,...round.syntaxGuidance.reference];
-      assert.equal((guided.match(/<dt>/g)||[]).length,entries.length,round.id+' renders authored syntax guidance');
-      assert(!/<details[^>]*\bopen\b/.test(guided),round.id+' familiar syntax stays collapsed');
-      if(round.syntaxGuidance.reminders.length)assert(guided.includes('quick reminder'),round.id+' reminder remains discoverable');
+      const guided=teaching.syntax(lesson,round), reference=teaching.syntaxReference(lesson,round);
+      const params=new Set([...(round.parameterTeaching?.introduces||[]),...(round.parameterTeaching?.extends||[])].map(name=>name.split('.').at(-1)));
+      const essential=round.syntaxGuidance.current.filter(p=>!params.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1]));
+      assert.equal((guided.match(/<dt>/g)||[]).length,essential.length,round.id+' current syntax remains visible without duplicate argument definitions');
+      assert.equal((reference.match(/<dt>/g)||[]).length,round.syntaxGuidance.reminders.length+round.syntaxGuidance.reference.length,round.id+' familiar syntax retained in flat reference');
+      assert(!guided.includes('<details')&&!reference.includes('<details'),round.id+' flat syntax');
     }
     count++;
   }
@@ -52,15 +52,15 @@ for(const round of choices.rounds){
 const finishing=curriculum.lessons.find(l=>l.id==='V02');
 const plottingIntro=teaching.intro(curriculum,finishing,finishing.rounds[0]);
 assert(plottingIntro.includes('Two plotting tools, one Figure'));
-assert(plottingIntro.includes('short, consistent way to read named columns and draw many chart types'));
-assert(plottingIntro.includes('Equivalent Matplotlib or other Python code is welcome'));
+assert(plottingIntro.includes('Seaborn draws on ax'));
+assert(plottingIntro.includes('Equivalent Matplotlib code is welcome'));
 console.log(`Visual teaching: all ${count} exercises, retrieval links, authored guides, syntax coverage and chart alternatives verified.`);
 
 const duplicates=curriculum.lessons.find(l=>l.id==='I17');
 const html=teaching.intro(curriculum,duplicates,duplicates.rounds[0]);
 assert(html.includes('Same rows, different keep choices'));
 assert(html.includes('B · unique') && html.includes('flag-false'));
-assert(teaching.syntax(duplicates).includes('without quotes'));
+assert((teaching.syntax(duplicates)+teaching.syntaxReference(duplicates)).includes('keep=False'));
 assert(teaching.reference(curriculum,duplicates,duplicates.rounds[1]).includes('including the first'));
 const bridge=curriculum.lessons.find(l=>l.id==='WR2');
 assert.match(bridge.title,/Bridge review · Sections 02 \+ 03/);
@@ -76,8 +76,8 @@ assert(grouped.syntax.every(([,meaning])=>!/output name, source, operation/i.tes
 assert(grouped.syntaxCode.includes('mean_amount=("price", "mean"),\n    records=("price", "size")'));
 assert(!teaching.syntax(grouped).includes('isolated-syntax'));
 assert(teaching.syntax(grouped).includes('data-focus="size"'));
-assert(teaching.syntax(grouped).includes('Why <code>size</code> here?'));
-assert(teaching.reference(curriculum,grouped,grouped.rounds[1]).includes('Use size for a row count and count for known values.'));
+assert(teaching.reference(curriculum,grouped,grouped.rounds[0]).includes('<code>size</code> or <code>count</code>'));
+assert(teaching.reference(curriculum,grouped,grouped.rounds[1]).includes('`size` counts rows; `count` counts known values.'));
 assert(!teaching.reference(curriculum,grouped,grouped.rounds[1]).includes('This exercise asks for records'));
 const bins=curriculum.lessons.find(l=>l.id==='W26');
 const qcut=teaching.transition(bins.rounds[1]);
@@ -85,7 +85,7 @@ assert(!teaching.intro(curriculum,bins,bins.rounds[0]).includes('qcut'),'Follow 
 assert(!teaching.syntax(bins).includes('qcut'),'Follow syntax stays on cut');
 assert(qcut.includes('pd.qcut')&&qcut.includes('q=2')&&qcut.includes('labels=[&quot;lower&quot;, &quot;upper&quot;]'));
 assert(qcut.includes('sample = pd.DataFrame')&&qcut.includes('Result of the four-price example'));
-assert(qcut.includes('Tied values at a boundary')&&qcut.includes('qcut chooses boundaries'));
+assert(qcut.includes('Ties can prevent equal counts')&&qcut.includes('sample-based boundaries')&&qcut.includes('fixed boundaries'));
 assert(bins.rounds[1].solution.includes('pd.qcut')&&bins.rounds[1].task.includes('sample-quantile'));
 assert.equal(teaching.transition(bins.rounds[0]),'');
 const transitions=curriculum.lessons.flatMap(l=>l.rounds.filter(r=>r.teaching));

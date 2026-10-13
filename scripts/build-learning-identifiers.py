@@ -23,6 +23,7 @@ ROLE_FIELDS = {
     'functions': ('function', ''),
     'parameters': ('parameter', ''),
     'operations': ('operation', ''),
+    'syntax': ('syntax', ''),
     'literals': ('literal', ''),
     'prose': ('prose', ''),
     'keys': ('key', ''),
@@ -67,6 +68,24 @@ def merge_metadata(*contexts):
     return result
 
 
+def provided_metadata(owner):
+    """The authored object contract also supplies exact Python-name roles."""
+    if not isinstance(owner, dict):
+        return {}
+    provenance = owner.get('provenance', {})
+    semantics = {}
+    for kind, entries in [('supplied', owner.get('suppliedState', []) + provenance.get('supplied', [])),
+                          ('created', owner.get('learnerOutputs', []) + provenance.get('created', []))]:
+        for entry in entries:
+            name = entry.get('name') if isinstance(entry, dict) else entry
+            if not isinstance(name, str) or not name:
+                continue
+            semantics[name] = {'role': 'file' if isinstance(entry, dict) and entry.get('type') == 'CSV file' else 'variable', 'kind': kind}
+    for name in owner.get('outputs', []):
+        semantics.setdefault(name, {'role': 'variable', 'kind': 'created'})
+    return {'semantics': semantics} if semantics else {}
+
+
 def worked_code(owner):
     """Read executable worked examples, not descriptive concept metadata."""
     if not isinstance(owner, dict):
@@ -94,6 +113,7 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
         input_columns = set(columns)
         columns = set(input_columns)
         derived_columns, output_columns, example_variables = set(), set(), set()
+        read_columns = set()
         functions, parameters, operations = set(), set(), set()
         keys = set()
         frames = {'df', 'X', 'X_train', 'X_test', 'X_valid', *supplied_tables}
@@ -171,6 +191,12 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
                         selected_columns = labels(node.slice.elts[1])
                         columns.update(selected_columns)
                         derived_columns.update(selected_columns)
+                if isinstance(node, ast.Subscript) and isinstance(node.ctx, ast.Load) and frame_expression(node.value):
+                    selection = node.slice
+                    if isinstance(node.value, ast.Attribute) and node.value.attr in ('loc', 'iloc'):
+                        selection = node.slice.elts[1] if node.value.attr == 'loc' and isinstance(node.slice, ast.Tuple) and len(node.slice.elts) == 2 else None
+                    read_columns.update(labels(selection))
+                    columns.update(labels(selection))
                 if isinstance(node, ast.Call):
                     if isinstance(node.func, ast.Attribute):
                         function = node.func.attr
@@ -197,6 +223,12 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
                         if function == 'melt' and keyword.arg in ('var_name', 'value_name'):
                             output_columns.update(labels(keyword.value))
                             columns.update(labels(keyword.value))
+                        if isinstance(node.func, ast.Attribute) and frame_expression(node.func.value) and keyword.arg in ('id_vars', 'value_vars', 'subset', 'by', 'on'):
+                            read_columns.update(labels(keyword.value))
+                            columns.update(labels(keyword.value))
+                        if isinstance(node.func, ast.Attribute) and isinstance(node.func.value, ast.Name) and node.func.value.id == 'sns' and keyword.arg in ('x', 'y', 'hue', 'style', 'size', 'row', 'col', 'vars', 'x_vars', 'y_vars'):
+                            read_columns.update(labels(keyword.value))
+                            columns.update(labels(keyword.value))
                         if function in ('to_frame', 'reset_index') and keyword.arg == 'name':
                             output_columns.update(labels(keyword.value))
                             columns.update(labels(keyword.value))
@@ -212,6 +244,9 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
                         operations.update(labels(node.args[0]))
                         if isinstance(node.args[0], ast.Dict):
                             operations.update(operation for value in node.args[0].values for operation in labels(value))
+                    if function == 'groupby' and node.args and isinstance(node.func, ast.Attribute) and frame_expression(node.func.value):
+                        read_columns.update(labels(node.args[0]))
+                        columns.update(labels(node.args[0]))
                     if function == 'insert' and len(node.args) >= 2 and isinstance(node.func, ast.Attribute) and frame_expression(node.func.value):
                         derived_columns.update(labels(node.args[1]))
                         columns.update(labels(node.args[1]))
@@ -227,8 +262,8 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
                         columns.update(containers.get(node.args[0].id, set()))
                     if node.args and isinstance(node.args[0], ast.ListComp) and isinstance(node.args[0].elt, ast.Dict):
                         columns.update(k.value for k in node.args[0].elt.keys if isinstance(k, ast.Constant) and isinstance(k.value, str))
-        output_columns.update(columns - input_columns - derived_columns)
-        metadata = merge_metadata(authored_metadata(lesson), authored_metadata(item))
+        output_columns.update(columns - input_columns - derived_columns - read_columns)
+        metadata = merge_metadata(provided_metadata(lesson), provided_metadata(item), authored_metadata(lesson), authored_metadata(item))
         # Observation units are authored descriptions of real-world entities,
         # not field references. A stone/sample/ticket ID can share that noun.
         # Preserve the structured row-unit phrase wherever a task uses it.

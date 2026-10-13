@@ -7,7 +7,7 @@
     "id": "V16-2",
     "label": "Change",
     "dataset": "weather",
-    "task": "Which transformed coordinate answers a Fahrenheit-versus-humidity question? Each row is one station observation. Use the rows specified below from df. Show temperature in degrees Fahrenheit horizontally against humidity vertically for every observation. Convert each temperature with °F = °C × 9/5 + 32 and keep its own humidity partner. Chart: title \"Weather diary\"; x \"Temperature (°F)\"; y \"Humidity (%)\".",
+    "task": "Show temperature in degrees Fahrenheit horizontally against humidity vertically for every observation. Convert each temperature with °F = °C × 9/5 + 32 and keep its own humidity partner. Chart: title \"Weather diary\"; x \"Temperature (°F)\"; y \"Humidity (%)\".",
     "solution": "sns.scatterplot(x=df[\"temperature\"] * 9 / 5 + 32, y=df[\"humidity\"], ax=ax)\nfig.tight_layout()\nplt.show()",
     "starter": "# Choose the data and chart operations from the brief\n",
     "hint": "Transform the whole temperature Series; use humidity from those same rows.",
@@ -30,8 +30,6 @@
     "requiredKeywords": [],
     "demand": "Transform a coordinate into the requested units while preserving row pairing.",
     "steps": [
-      "Which transformed coordinate answers a Fahrenheit-versus-humidity question?",
-      "Each row is one station observation. Use the rows specified below from df.",
       "Show temperature in degrees Fahrenheit horizontally against humidity vertically for every observation.",
       "Convert each temperature with °F = °C × 9/5 + 32 and keep its own humidity partner.",
       "Chart: title \"Weather diary\"; x \"Temperature (°F)\"; y \"Humidity (%)\"."
@@ -91,7 +89,7 @@
     "stageSummary": "Select a population.",
     "brief": {
       "question": "Which transformed coordinate answers a Fahrenheit-versus-humidity question?",
-      "rows": "Each row is one station observation. Use the rows specified below from df.",
+      "rows": "One row: one station observation.",
       "result": "Show temperature in degrees Fahrenheit horizontally against humidity vertically for every observation.",
       "constraints": [
         "Convert each temperature with °F = °C × 9/5 + 32 and keep its own humidity partner.",
@@ -144,7 +142,7 @@
       "reference": []
     },
     "workflow": {
-      "same": "Select the relevant rows, draw on the intended Axes, label the measurements, arrange and display the Figure.",
+      "same": "Select rows, draw, label and display.",
       "changed": "Select a population.",
       "why": "Transform a coordinate into the requested units while preserving row pairing.",
       "changedLines": [
@@ -208,7 +206,7 @@
       "West"
     ]
   },
-  "inputSHA256": "c30e93c71fd5259d9cfea2dece26284bf1e47e7cf6bf1f3c182d36c068db6e5a",
+  "inputSHA256": "72047b5fc3845b1dad1cccd2519b6590a17dacf947a9cbc99f4b501d533e19d4",
   "visibleWorkspaceSHA256": "e2cc68fe143a6a1526da6c941bd89602a6710181b6f600cc5ad6f305c27e461a",
   "visibleSetup": "import pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°F)\", ylabel=\"Humidity (%)\")",
   "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°F)\", ylabel=\"Humidity (%)\")\n\n# Your work\n# Choose the data and chart operations from the brief\n",
@@ -237,9 +235,9 @@
     "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
     "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
     "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
-    "foundations/content-guidance.js": "33343d2b3e820911ec3382536290826093210912113d3211b5ecd70866fc7982",
-    "foundations/visualise-guidance.js": "055e2cfa4e582200d9f2a15bb516e5625054d5900319857e049e923dd1de1cec",
-    "foundations/parameter-guide.js": "6b0883f526f647583346ba70566e7000ac3b3c92364c90994fb907e8a4b8abeb",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
     "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
     "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
     "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
@@ -257,7 +255,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.21,
+      "elapsedSeconds": 0.318,
       "response": {
         "passed": true,
         "checked": true,
@@ -292,7 +290,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.205,
+      "elapsedSeconds": 0.268,
       "response": {
         "passed": true,
         "checked": true,
@@ -328,7 +326,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.196,
+      "elapsedSeconds": 0.287,
       "response": {
         "passed": true,
         "checked": true,
@@ -364,7 +362,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.176,
+      "elapsedSeconds": 0.238,
       "response": {
         "passed": false,
         "checked": true,
@@ -399,7 +397,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.311,
+      "elapsedSeconds": 0.371,
       "response": {
         "passed": false,
         "checked": true,
@@ -434,7 +432,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.214,
+      "elapsedSeconds": 0.317,
       "response": {
         "passed": false,
         "checked": true,
@@ -469,7 +467,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.219,
+      "elapsedSeconds": 0.309,
       "response": {
         "passed": false,
         "checked": true,
@@ -504,7 +502,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.248,
+      "elapsedSeconds": 0.328,
       "response": {
         "passed": false,
         "checked": true,
@@ -539,7 +537,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.243,
+      "elapsedSeconds": 0.332,
       "response": {
         "passed": false,
         "checked": true,
@@ -574,7 +572,7 @@
       "figureCount": 2,
       "expectedFigureCount": 2,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.457,
+      "elapsedSeconds": 0.589,
       "response": {
         "passed": false,
         "checked": true,
@@ -621,7 +619,7 @@
       "figureCount": 1,
       "expectedFigureCount": 1,
       "inputsUnchanged": true,
-      "elapsedSeconds": 0.221,
+      "elapsedSeconds": 0.313,
       "response": {
         "passed": true,
         "checked": true,
