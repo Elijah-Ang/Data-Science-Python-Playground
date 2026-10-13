@@ -17,6 +17,16 @@ def pointer_click(page,locator):
     bounds=locator.bounding_box()
     assert bounds
     page.mouse.click(bounds['x']+bounds['width']/2,bounds['y']+bounds['height']/2)
+def keyboard_focus(page,locator):
+    # Real Tab traversal establishes keyboard modality in WebKit. Programmatic
+    # focus after a pointer click can retain its pointer :focus-visible policy.
+    for _ in range(20):
+        page.keyboard.press('Tab')
+        if locator.evaluate('e=>e===document.activeElement'):
+            assert locator.evaluate("e=>e.matches(':focus-visible')")
+            assert locator.evaluate("e=>getComputedStyle(e).outlineStyle!=='none'")
+            return
+    raise AssertionError('Keyboard traversal did not reach the blimp choice')
 def pose(page,name):
     page.wait_for_function("name=>document.querySelector('[data-mascot]').dataset.pose===name && document.querySelector('[data-mascot]').dataset.transition==='idle'",arg=name)
 def monitor(page):
@@ -61,12 +71,12 @@ with sync_playwright() as p:
                 assert page.evaluate('id=>document.activeElement.id===id',target)
                 request=page.evaluate('scrollRequests.at(-1)')
                 assert request=={'id':target,'behavior':'instant' if motion=='reduce' else 'smooth','block':'center'},request
-                link.focus();link.press('Enter');page.wait_for_timeout(350)
+                keyboard_focus(page,link);link.press('Enter');page.wait_for_timeout(350)
                 assert page.url==home and not navigation
                 assert page.evaluate('id=>document.activeElement.id===id',target)
-                assert page.locator('#'+target).evaluate("(e)=>getComputedStyle(e).outlineStyle!=='none'")
+                assert page.locator('#'+target).evaluate("(e)=>getComputedStyle(e).outlineStyle!=='none'"),{'target':target,'width':width,'motion':motion}
             for index in [0,1,0,1,0,1]:
-                link=page.locator('.blimp-choice').nth(index);link.focus();link.press('Enter')
+                link=page.locator('.blimp-choice').nth(index);keyboard_focus(page,link);link.press('Enter')
             assert page.evaluate("document.activeElement.id==='playground-gate'")
             assert page.locator('.is-wayfinding').evaluate_all('els=>els.map(e=>e.id)')==['playground-gate']
             page.wait_for_timeout(600);assert page.url==home and not navigation
@@ -81,7 +91,7 @@ with sync_playwright() as p:
         context=browser.new_context(java_script_enabled=False,reduced_motion='reduce',viewport={'width':width,'height':height})
         page=context.new_page();page.goto(base+'/index.html')
         for index,target in [(0,'learning-robot'),(1,'playground-gate')]:
-            link=page.locator('.blimp-choice').nth(index);link.focus();link.press('Enter')
+            link=page.locator('.blimp-choice').nth(index);keyboard_focus(page,link);link.press('Enter')
             page.wait_for_timeout(150)
             assert page.url==base+'/index.html#'+target
             assert page.evaluate('id=>document.activeElement.id===id',target)
