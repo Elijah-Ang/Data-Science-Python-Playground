@@ -1,4 +1,4 @@
-"""Discovery routing, real overlapping pose animation, lifecycle and visual evidence."""
+"""Discovery routing, exclusive pose animation, lifecycle and visual evidence."""
 import argparse,json,time
 from pathlib import Path
 from playwright.sync_api import sync_playwright
@@ -20,14 +20,14 @@ with sync_playwright() as pw:
   return page.locator('.mascot-viewport').evaluate('(e)=>{const r=e.getBoundingClientRect();return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height}}')
  bounds=document_bounds()
  # Hold the real WAAPI effects at their midpoint so software-rendered CI frames
- # cannot skip the brief overlap. Do not substitute the controller or its effects.
+ # cannot skip the brief single-pose motion. Do not substitute the controller.
  page.evaluate("""()=>{
   const animate=Element.prototype.animate;
   window.heldPoseAnimations=[];
   window.holdPoseAnimations=()=>{window.heldPoseAnimations=[];Element.prototype.animate=function(...args){
    const animation=animate.apply(this,args);
    if(this.matches('.mascot-layer')){
-    animation.pause();animation.currentTime=150;heldPoseAnimations.push(animation);
+    animation.pause();animation.currentTime=args[1].duration/2;heldPoseAnimations.push(animation);
    }
    return animation;
   };};
@@ -35,27 +35,27 @@ with sync_playwright() as pw:
   window.restorePoseAnimation=()=>{Element.prototype.animate=animate;heldPoseAnimations.forEach(a=>a.play());};
  }""")
  cta.focus()
- page.wait_for_function('heldPoseAnimations.length===2')
+ page.wait_for_function('heldPoseAnimations.length===1')
  evidence=page.locator('.mascot-layer').evaluate_all("""layers=>({
   opacity:layers.map(e=>+getComputedStyle(e).opacity),
   keys:layers.flatMap(e=>e.getAnimations().flatMap(a=>a.effect.getKeyframes().map(k=>Object.keys(k))))
  })""")
- assert sorted(evidence['opacity'])[1] == 1 and .15 < sorted(evidence['opacity'])[0] < .85, evidence
+ assert sorted(evidence['opacity']) == [0,1], evidence
  actual_bounds=document_bounds()
  assert all(abs(actual_bounds[k]-bounds[k])<1 for k in bounds),(bounds,actual_bounds)
- assert evidence['keys'] and all(not any(k in ['top','left','width','height'] for k in keys) for keys in evidence['keys'])
+ assert evidence['keys'] and all(not any(k in ['opacity','top','left','width','height'] for k in keys) for keys in evidence['keys'])
  page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="idle"')
  assert page.locator('[data-mascot]').get_attribute('data-pose')=='teach'
  assert 'none' != cta.evaluate('(e)=>getComputedStyle(e).outlineStyle')
- # A leave during a blend queues the return instead of snapping an active image.
+ # A leave interrupts the current motion; the latest request returns to book.
  page.locator('.tour-button').focus();page.mouse.move(0,0)
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
  page.evaluate('holdPoseAnimations()')
- cta.hover();page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="blending"');page.mouse.move(0,0)
+ cta.hover();page.wait_for_function('document.querySelector("[data-mascot]").dataset.transition==="moving"');page.mouse.move(0,0)
  page.evaluate('restorePoseAnimation()')
  page.wait_for_function('document.querySelector("[data-mascot]").dataset.pose==="book" && document.querySelector("[data-mascot]").dataset.transition==="idle"')
- report['checks'].append('Real overlapping layers, transform/opacity-only motion, fixed viewport, focus and queued hover reactions')
+ report['checks'].append('One visible pose, transform-only motion, fixed viewport, focus and latest-request hover reactions')
  # Observe one real cycle: WAAPI completion and image decoding run on the
  # browser's real timeline, independently of Playwright's virtual timers.
  seen=set();assets=set()

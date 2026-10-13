@@ -5,6 +5,7 @@
   if (!frame || !gate) return;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const isPlainClick = event => !event.defaultPrevented && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+  let wayfindingTarget = null, wayfindingTimer = null;
   document.querySelectorAll('.blimp-choice[href^="#"]').forEach(link => {
     link.addEventListener('click', event => {
       if (!isPlainClick(event)) return;
@@ -13,8 +14,11 @@
       event.preventDefault();
       target.scrollIntoView({behavior: reduced.matches ? 'instant' : 'smooth', block: 'center'});
       target.focus({preventScroll: true});
+      clearTimeout(wayfindingTimer);
+      wayfindingTarget?.classList.remove('is-wayfinding');
+      wayfindingTarget = target;
       target.classList.add('is-wayfinding');
-      setTimeout(() => target.classList.remove('is-wayfinding'), 2400);
+      wayfindingTimer = setTimeout(() => target.classList.remove('is-wayfinding'), 2400);
     });
   });
   gate.addEventListener('click', event => {

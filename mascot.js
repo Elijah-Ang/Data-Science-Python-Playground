@@ -1,4 +1,4 @@
-/* Two decoded pose layers, one anchored character. No tracking or stored state. */
+/* Decode offscreen, then swap one visible pose on the anchored character. */
 (() => {
   'use strict';
   const poses = {
@@ -15,7 +15,7 @@
   function mount(host) {
     const layers=[...host.querySelectorAll('.mascot-layer')], target=host.closest('a')||host;
     if(layers.length!==2)return;
-    let active=0,index=0,timer=null,transition=null,token=0,engaged=false,away=false,pending=null;
+    let active=0,index=0,timer=null,transition=null,token=0,engaged=false,away=false;
     const decoded=new Map();
     function load(name){
       if(!decoded.has(name)){
@@ -31,39 +31,44 @@
     function stopped(){return away||document.hidden||reduced.matches;}
     function clear(){clearTimeout(timer);timer=null;}
     function settle(){
-      token++;transition?.forEach(a=>a.cancel());transition=null;
+      token++;transition?.cancel();transition=null;
       layers.forEach((layer,i)=>{layer.style.opacity=i===active?'1':'0';layer.style.zIndex=i===active?'1':'0';layer.style.transform='none';});
       host.dataset.transition='idle';
+      host.dataset.pose=layers[active].dataset.pose;
     }
     function schedule(){clear();if(!stopped()&&!engaged)timer=setTimeout(()=>{index=(index+1)%sequence.length;show(sequence[index][0]);},sequence[index][1]);}
-    async function show(name){
-      clear();if(stopped())return;
-      if(transition){pending=name;return;}
+    async function show(name,stationary=false){
+      clear();settle();
+      const interrupted=()=>away||document.hidden||(reduced.matches&&!stationary);
+      if(interrupted())return;
       if(layers[active].dataset.pose===name){schedule();return;}
-      settle();const request=token;const image=await load(name);
-      if(!image||request!==token||stopped()){schedule();return;}
+      const request=token;const image=await load(name);
+      if(request!==token||interrupted())return;
+      if(!image){schedule();return;}
       const outgoing=layers[active],incoming=layers[1-active],pose=poses[name];apply(incoming,name);
       // Decoding a preload does not guarantee that the displayed layer is ready.
       // Keep the current pose intact if decoding is delayed or fails.
-      try { await incoming.decode(); } catch { schedule();return; }
-      if(request!==token||stopped()){schedule();return;}
-      outgoing.style.zIndex='0';incoming.style.zIndex='1';
-      // The image inside each layer carries its alignment; the layer itself only moves a few pixels.
-      const options={duration:300,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'};
-      host.dataset.transition='blending';host.dataset.pose=name;
-      // Retain the outgoing image underneath until the replacement is visible.
-      const fadeOut=outgoing.animate([{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'},{opacity:1,transform:`translate(0,${-pose.lift*.5}px) rotate(${-pose.lean*.5}deg) scale(.996)`}],options);
-      const fadeIn=incoming.animate([{opacity:0,transform:`translate(.5px,${pose.lift*.5}px) rotate(${pose.lean*.5}deg) scale(.996)`},{opacity:1,transform:'translate(0,0) rotate(0) scale(1)'}],options);
-      transition=[fadeOut,fadeIn];
-      await Promise.all(transition.map(a=>a.finished.catch(()=>{})));
+      try { await incoming.decode(); } catch { if(request===token&&!interrupted())schedule();return; }
+      if(request!==token||interrupted())return;
+      // Swap decoded artwork atomically. Motion belongs only to the new pose;
+      // a crossfade would draw two robots and queue stale interaction requests.
+      outgoing.style.opacity='0';outgoing.style.zIndex='0';
+      incoming.style.opacity='1';incoming.style.zIndex='1';active=1-active;
+      host.dataset.transition='moving';host.dataset.pose=name;
+      if(stationary){settle();return;}
+      transition=incoming.animate([
+        {transform:`translate(.5px,${pose.lift*.5}px) rotate(${pose.lean*.5}deg) scale(.996)`},
+        {transform:'none'}
+      ],{duration:180,easing:'cubic-bezier(.4,0,.2,1)'});
+      await transition.finished.catch(()=>{});
       if(request!==token)return;
-      active=1-active;settle();
-      if(pending){const next=pending;pending=null;show(next);}else schedule();
+      settle();schedule();
     }
     function sync(){
-      clear();pending=null;settle();host.dataset.paused=String(stopped());
-      if(reduced.matches){active=0;apply(layers[0],'book');layers[0].style.opacity='1';layers[1].style.opacity='0';host.dataset.pose='book';}
-      else if(!stopped())schedule();
+      clear();settle();host.dataset.paused=String(stopped());
+      engaged=target.matches(':hover,:focus-within');
+      if(reduced.matches)show('book',true);
+      else if(!stopped()){if(engaged)show('teach');else schedule();}
     }
     function react(){if(stopped()||engaged)return;engaged=true;show('teach');}
     function relax(){if(target.matches(':hover,:focus-within'))return;engaged=false;if(!stopped())show('book');}

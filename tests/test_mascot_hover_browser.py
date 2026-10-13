@@ -26,8 +26,9 @@ with sync_playwright() as p:
         page.evaluate('''()=>{
             window.visibleRobotFrames=[];
             function sample(){
-                visibleRobotFrames.push([...document.querySelectorAll('.mascot-layer')].some(image=>
-                    image.complete && image.naturalWidth>0 && Number(getComputedStyle(image).opacity)>.98));
+                const visible=[...document.querySelectorAll('.mascot-layer')].filter(image=>
+                    image.complete && image.naturalWidth>0 && Number(getComputedStyle(image).opacity)>.001);
+                visibleRobotFrames.push(visible.length===1 && visible[0].dataset.pose===document.querySelector('[data-mascot]').dataset.pose);
                 window.robotFrame=requestAnimationFrame(sample);
             }
             sample();
@@ -48,7 +49,7 @@ with sync_playwright() as p:
             page.wait_for_timeout(80)
         page.wait_for_timeout(1100)
         frames = page.evaluate('cancelAnimationFrame(robotFrame);visibleRobotFrames')
-        assert len(frames) > 30 and all(frames), (mode, len(frames), 'Robot disappeared during handoff')
+        assert len(frames) > 30 and all(frames), (mode, len(frames), 'Robot must have exactly one current decoded pose during handoff')
         print(args.engine, mode, len(frames), 'visible frames passed')
         page.close()
     browser.close()

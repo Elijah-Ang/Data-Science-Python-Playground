@@ -171,9 +171,15 @@ with sync_playwright() as p:
     for selector in ['.garden-cat', '.garden-slider', '.welcome-blimp', '.airship-rig', '.mascot-idle', '.garden-tire', '.garden-balloons', '.garden-flag']:
         assert page.locator(selector).evaluate('(e)=>getComputedStyle(e).animationName') == 'none'
     assert not page.locator('.garden-water').is_visible()
-    # Text choices enter the destinations directly; the art hotspots remain.
-    assert page.locator('.blimp-choice').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("href"))') == ['learn.html','playground.html']
-    page.locator('.blimp-choice').first.click();page.wait_for_url('**/learn.html');page.go_back()
+    # Text choices locate the on-page targets; only target activation navigates.
+    assert page.locator('.blimp-choice').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("href"))') == ['#learning-robot','#playground-gate']
+    home_url=page.url
+    for choice,target in [('.blimp-choice:first-child','#learning-robot'),('.blimp-choice:last-child','#playground-gate')]:
+        page.locator(choice).focus();page.locator(choice).press('Enter')
+        assert page.locator(target).evaluate('(e)=>e===document.activeElement')
+        page.wait_for_timeout(300)
+        assert page.url == home_url
+    page.locator('#learning-robot').click();page.wait_for_url('**/learn.html');page.go_back()
     page.locator('#playground-gate').click()
     page.wait_for_url('**/playground.html*')
     page.go_back()
