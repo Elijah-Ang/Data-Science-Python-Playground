@@ -102,7 +102,7 @@ def check_landing(page, width, height, failures, evidence_dir):
         Counter(hrefs) == Counter(expected_hrefs),
         f"landing {width}: expected blimp wayfinding, learning hub, tour, gate, and four review/support links ({hrefs!r})",
     )
-    check(failures, page.locator('.blimp-choice').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("href"))') == ['learn.html', 'playground.html'], f"landing {width}: text choices must enter their destinations directly")
+    check(failures, page.locator('.blimp-choice').evaluate_all('(nodes)=>nodes.map(n=>n.getAttribute("href"))') == ['#learning-robot', '#playground-gate'], f"landing {width}: text choices must locate their on-page targets")
     check(failures, page.locator('#learning-robot').get_attribute('href') == 'learn.html' and page.locator('#playground-gate').get_attribute('href') == 'playground.html', f"landing {width}: artwork hotspots must retain their destinations")
 
     tour = page.locator("a.tour-button")
