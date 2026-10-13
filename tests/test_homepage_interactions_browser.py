@@ -28,10 +28,31 @@ def keyboard_focus(page,locator):
             return
     raise AssertionError('Keyboard traversal did not reach the blimp choice')
 def pose(page,name):
-    page.wait_for_function("name=>document.querySelector('[data-mascot]').dataset.pose===name && document.querySelector('[data-mascot]').dataset.transition==='idle'",arg=name)
+    try:
+        page.wait_for_function("name=>document.querySelector('[data-mascot]').dataset.pose===name && document.querySelector('[data-mascot]').dataset.transition==='idle'",arg=name)
+    except Exception:
+        diagnostic={'expected':name,'width':width,'mode':mode}
+        try:
+            diagnostic.update(page.evaluate("""() => {
+              const host=document.querySelector('[data-mascot]'),target=host.closest('a');
+              return {host:{...host.dataset},focused:document.activeElement?.id,documentFocused:document.hasFocus(),hidden:document.hidden,
+                focusedTarget:target.matches(':focus-within'),hoveredTarget:target.matches(':hover'),reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,
+                layers:[...host.querySelectorAll('.mascot-layer')].map(i=>({pose:i.dataset.pose,complete:i.complete,width:i.naturalWidth,opacity:getComputedStyle(i).opacity,animations:i.getAnimations().map(a=>a.playState)})),
+                events:window.poseEvents,frames:window.poseFrames?.slice(-5)};
+            }"""))
+        except Exception as error:
+            diagnostic['observationError']=str(error)
+        print('Pose failure: '+json.dumps(diagnostic),flush=True)
+        try:
+            (out/f'{args.engine}-pose-failure.json').write_text(json.dumps(diagnostic,indent=2)+'\n')
+        except Exception as error:
+            print('Could not save pose diagnostics: '+str(error),flush=True)
+        raise
 def monitor(page):
     page.evaluate("""() => {
-      window.poseFrames=[];
+      window.poseFrames=[];window.poseEvents=[];
+      for(const type of ['focusin','focusout'])document.addEventListener(type,e=>poseEvents.push({type,target:e.target.id}));
+      matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',e=>poseEvents.push({type:'motion',reduced:e.matches,focused:document.activeElement?.id}));
       function sample(){
         const host=document.querySelector('[data-mascot]');
         const visible=[...host.querySelectorAll('.mascot-layer')].filter(i=>i.complete&&i.naturalWidth>0&&Number(getComputedStyle(i).opacity)>.001);
