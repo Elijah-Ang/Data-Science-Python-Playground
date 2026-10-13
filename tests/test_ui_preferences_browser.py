@@ -88,8 +88,8 @@ def check_landing(page, width, height, failures, evidence_dir):
     hrefs = [link.get_attribute("href") for link in links.all()]
     expected_hrefs = [
         "tutorial.html",
-        "learn.html",
-        "playground.html",
+        "#learning-robot",
+        "#playground-gate",
         "learn.html",
         "playground.html",
         "about.html",

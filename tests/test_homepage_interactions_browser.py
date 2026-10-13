@@ -144,4 +144,3 @@ with sync_playwright() as p:
     browser.close()
 (out/f'{args.engine}-homepage-interactions.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))
-
