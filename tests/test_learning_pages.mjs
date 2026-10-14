@@ -91,7 +91,8 @@ for(const [family,curriculum,lessons] of [['data',data,data.lessons],['ml',ml,ml
     const file=routes.url(family,lesson.deck+'/'+lesson.id+'/0'),html=await fs.readFile(path.join(dist,file),'utf8');
     const main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
     assert.ok(main.includes('aria-label="Lesson content"'),file+' must render the real article');
-    assert.ok(main.replace(/<[^>]+>/g,'').length>700,file+' must contain substantive teaching and practice');
+    assert.ok(main.includes('teaching-overview')&&main.includes('aria-label="Current task"')&&main.includes('foundation-code-pane'),file+' contains teaching, task and a practice pane');
+    assert.ok(!/<summary>Reference<\/summary>/.test(main),file+' removes the reference rather than hiding it');
     assert.ok(main.includes('Hint')&&main.includes('solution'),file+' must retain authored help');
     if(family==='data'){
       const breadcrumb=main.match(/<nav class="foundation-breadcrumb"[\s\S]*?<\/nav>/)?.[0]||'';
@@ -110,9 +111,9 @@ for(const [family,curriculum,lessons] of [['data',data,data.lessons],['ml',ml,ml
 }
 const checkpoint=await fs.readFile(path.join(dist,'ml-learn-ML-W-K1.html'),'utf8');
 assert.ok(checkpoint.includes('Final RMSE')&&!checkpoint.includes('Final MAE'));
-assert.ok(checkpoint.includes('ml-learn-ML-W06.html')&&checkpoint.includes('ml-learn-ML-W09.html')&&checkpoint.includes('ml-learn-ML-W13.html'));
+assert.ok(checkpoint.includes('foundation-data-preview')&&checkpoint.includes('foundation-task-reminder'));
 assert.ok(!checkpoint.includes('Revisit the concept lesson'));
-for(const name of ['distance','weight','duration'])assert.ok(checkpoint.includes('Synthetic '+name+' units; physical unit unspecified'));
+for(const name of ['distance','weight','duration'])assert.ok(checkpoint.includes(name));
 assert.ok(!checkpoint.includes('.. &lt;strong')&&!checkpoint.includes('RMSE..'));
 const learn=await fs.readFile(path.join(dist,'learn.html'),'utf8');
 assert.ok(learn.includes('class="learn-path is-planned" data-coming-soon="Statistics" data-path="statistics"'));

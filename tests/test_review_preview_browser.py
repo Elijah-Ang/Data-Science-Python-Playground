@@ -27,7 +27,7 @@ def visual_and_depth(page):
     assert page.locator('[data-learning-mode]').count() == 0
     assert page.locator('.foundation-practices li').count() == 3
     assert page.locator('.foundation-split > *').count() == 2
-    assert page.locator('.foundation-reference-content details').count() == 3
+    assert page.locator('.foundation-reference-content details').count() == 2
     assert page.locator('.foundation-reference-content details details').count() == 0
     assert editor.input_value().endswith("# Active preview work")
     page.locator("#resetExercise").click()
@@ -49,7 +49,7 @@ def switch_to_ml(page):
     page.wait_for_selector("#mlEditor")
     assert page.locator("h2").first.inner_text() == "Your first complete regression workflow"
     assert page.locator(".ml-workflow-outline li").count() == 8
-    assert page.locator(".foundation-reference-content details").count() == 3
+    assert page.locator(".foundation-reference-content details").count() == 2
 
 
 with sync_playwright() as pw:

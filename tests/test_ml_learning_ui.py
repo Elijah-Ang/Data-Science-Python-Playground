@@ -85,9 +85,9 @@ with sync_playwright() as p:
         assert page.locator('.foundation-practices a').count()==0
         assert page.locator('.foundation-practices button,.ml-exercise-tabs').count()==0
         assert page.locator('.foundation-lesson-heading .foundation-practices [aria-current="step"] strong').inner_text()==label
-        assert page.locator('.ml-reference').get_attribute('open') is None
+        assert page.locator('.ml-reference').count()==0
         assert not page.locator('details details,.learning-depth,.teaching-orientation').count()
-        assert page.locator('.foundation-reference-content > details > summary').all_text_contents()==['Reference','Hints','Explained solution']
+        assert page.locator('.foundation-reference-content > details > summary').all_text_contents()==['Hints','Explained solution']
         assert page.locator('#mlHighlight .py-comment,#mlHighlight .py-function').count()>0
 
     # A practice sentence appears once; long generated setup stays available on demand.
@@ -101,10 +101,8 @@ with sync_playwright() as p:
     card,ex=setup_case
     page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{card['exercises'].index(ex)}")
     page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=ex['id'])
-    assert page.locator('.ml-provided-state').count()==1
-    assert page.locator('.ml-provided-state pre').is_hidden()
-    open_details('.ml-reference')
-    assert ex['setup'] in page.locator('.ml-provided-state pre').last.inner_text()
+    assert page.locator('.ml-provided-state').count()==0
+    assert page.evaluate('MLLearning.activity.setup')==ex['setup']
 
     page.evaluate("location.hash='#foundations/ML-F08/1'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-F08-2'")
@@ -124,16 +122,12 @@ with sync_playwright() as p:
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=card['exercises'][0]['id'])
         assert page.get_by_role('heading',name=card['title'],exact=True).is_visible()
         if card['kind']=='teaching':
-            schematic=page.locator('.ml-schematic-reference')
-            if schematic.count():
-                assert schematic.is_hidden()
-                open_details('.ml-reference')
-            assert page.locator('.ml-concept svg').count()==1
-            caption=page.locator('.ml-concept figcaption').inner_text()
-            assert caption and ('schematic' in caption.lower() or card['visual']['caption'] in caption), (card['id'],caption)
-            clipped=page.locator('.ml-concept svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox();return b.x<0||b.y<0||b.x+b.width>560.5||b.y+b.height>235.5}).map(n=>n.textContent)')
+            visual=page.locator('.teaching-overview > .ml-concept,.teaching-overview > .teaching-explorer').first
+            assert visual.is_visible() and visual.locator('svg').count()==1
+            assert visual.locator('svg').get_attribute('aria-label')
+            assert page.locator('.ml-schematic-reference').count()==0
+            clipped=visual.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox(),v=n.ownerSVGElement.viewBox.baseVal;return b.x<0||b.y<0||b.x+b.width>v.width+.5||b.y+b.height>v.height+.5}).map(n=>n.textContent)')
             assert not clipped,(card['id'],clipped)
-            if schematic.count():page.locator('.ml-reference > summary').click()
         if card['id']=='ML-F-K1':
             # Both redesigned retrievals expose the full workflow and supported
             # choices, rather than the former fixed single-fit validation panel.
@@ -141,36 +135,11 @@ with sync_playwright() as p:
                 page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{index}")
                 page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=checkpoint['id'])
                 assert page.locator('.foundation-task-reminder').is_visible()
-                assert page.locator('.ml-contract').is_hidden()
-                open_details('.ml-reference')
-                contract=page.locator('.ml-contract')
-                assert contract.is_visible() and contract.locator('h3').inner_text()=='Outputs you create'
-                rows=contract.locator('.ml-evidence-names > div')
-                expected_contract=page.evaluate('(contract)=>contract.map(c=>[c.name,LearningLanguage.split(c.description)])',checkpoint['contract'])
-                assert rows.evaluate_all('(rows)=>rows.map(row=>[row.querySelector("dt").textContent,Array.from(row.querySelectorAll("dd li"),e=>e.textContent)])')==expected_contract
-                for row,item in zip(rows.all(),checkpoint['contract']):
-                    names=item['name'].split(' / ')
-                    variables=page.evaluate('(id)=>CodeIdentifiers.contextFor(LearningLanguage.context(id),"guide").variables',checkpoint['id'])
-                    grouped=len(names)>1 and all(name.isidentifier() and name in variables for name in names)
-                    assert row.locator('dt code').all_text_contents()==(names if grouped else [item['name']])
-                    if grouped:assert row.locator('dt code').evaluate_all('(nodes)=>nodes.every(n=>n.dataset.codeRole==="variable")')
-                assert all(row.is_visible() for row in rows.all())
-                design=contract.inner_text()
-                assert '15–30%' in design and '3–5-fold' in design
-                assert 'cross_validate' in design and 'cross_val_predict' in design
-                assert 'final_predictions / final_score' in design and 'No further selection after this call' in design
-                assert page.locator('.ml-workflow-help').is_visible()
-                assert page.get_by_role('heading',name='The question and data dictionary',exact=True).is_visible()
-                rubric=page.locator('.ml-rubric')
-                assert rubric.is_visible()
-                assert rubric.locator('li strong').all_text_contents()==[r['title'] for r in checkpoint['rubric']]
-                assert rubric.locator('li span').all_text_contents()==[r['description'] for r in checkpoint['rubric']]
-                assert all(row.is_visible() for row in rubric.locator('li').all())
-                assert 'Code checks cannot award these reasoning scores' in rubric.locator('..').inner_text()
-                workflow=page.locator('.ml-workflow-map')
-                assert workflow.is_visible()
-                assert workflow.locator('li strong').all_text_contents()==[step['title'] for step in checkpoint['workflowSteps']]
-                assert workflow.locator('li span').all_text_contents()==[step['question'] for step in checkpoint['workflowSteps']]
+                assert page.locator('.ml-reference,.ml-contract,.ml-workflow-help').count()==0
+                assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
+                assert page.locator('.foundation-code-pane .foundation-task-reminder').count()==0
+                assert page.locator('.ml-output-names code').all_text_contents()==checkpoint['outputs']
+                assert page.locator('#mlEditor').input_value()==checkpoint['starter']
     for challenge in registry['challenges']:
         page.evaluate('(hash)=>location.hash=hash','#workflows/challenges/'+challenge['id'])
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=challenge['id'])
@@ -205,14 +174,8 @@ with sync_playwright() as p:
         assert 'reserved final test' not in brief.inner_text()
         exercise=page.evaluate('MLLearning.activity')
         assert page.locator('.ml-output-names code').all_text_contents()==exercise['outputs']
-        assert page.locator('.ml-contract').is_hidden()
-        open_details('.ml-reference')
-        contract=page.locator('.ml-contract')
-        assert contract.is_visible() and all(name in contract.inner_text() for name in exercise['outputs'])
-        assert page.locator('.ml-model-guide').is_visible()
-        support=page.locator('.teaching-reference').filter(has_text='Guided application:').first
-        assert support.is_visible() and application in support.inner_text()
-        assert 'baseline, training validation' not in support.inner_text()
+        assert page.locator('.ml-reference,.ml-contract,.ml-model-guide,.teaching-reference').count()==0
+        assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
     for id in ['ML-X17','ML-X18','ML-X19']:
         page.evaluate('(hash)=>location.hash=hash','#workflows/challenges/'+id)
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=id)
@@ -262,16 +225,11 @@ with sync_playwright() as p:
     for route,id in [('#foundations/ML-F11/0','ML-F11-1'),('#foundations/ML-F11/1','ML-F11-2'),('#foundations/ML-F12/2','ML-F12-3'),('#workflow/ML-W15/1','ML-W15-2'),('#workflow/ML-W-K2/0','ML-W-K2-1'),('#workflow/ML-W-K3/0','ML-W-K3-1')]:
         page.evaluate('(hash)=>location.hash=hash',route)
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=id)
-        assert page.get_by_role('heading',name='The question and data dictionary',include_hidden=True).count()==1
-        assert page.locator('.ml-workflow-help').is_hidden()
-        open_details('.ml-reference')
-        assert page.locator('.ml-workflow-map li').count()==8
-        assert page.locator('.ml-workflow-map').is_visible()
-        assert page.locator('.ml-rubric > li').count()==5
-        assert page.locator('.ml-rubric > li').evaluate_all('(rows)=>rows.every(row=>row.querySelector("strong")?.textContent&&row.querySelector("span")?.textContent)')
+        assert page.locator('.ml-reference,.ml-workflow-help,.ml-rubric').count()==0
+        assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
         assert page.locator('#mlReflection').count()==1
         assert 'not machine-graded' in page.locator('#mlReflection + p').inner_text()
-        assert page.locator('.ml-concept svg').count()==1
+        assert page.locator('.teaching-overview svg').count()==1
         assert page.locator('.foundation-practices button').count()==0
         assert page.locator('.foundation-practices li').count()==len(next(c for c in registry['cards'] if any(e['id']==id for e in c['exercises']))['exercises'])
         if '-K' in id:assert 'fit(' not in page.locator('#mlEditor').input_value()
@@ -281,7 +239,6 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':width,'height':900})
         page.evaluate("location.hash='#foundations/ML-F11/0'")
         page.wait_for_function("window.MLLearning?.activity?.id==='ML-F11-1'")
-        open_details('.ml-reference')
         geometry=page.evaluate('''() => {
           const content=document.querySelector('.foundation-content');
           const editor=document.querySelector('.ml-code-pane');

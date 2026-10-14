@@ -1,0 +1,31 @@
+{
+  "build": {
+    "version": "1.0.0",
+    "commit": "3a4d0a60a07b",
+    "dirty": true,
+    "contentId": "de222618a40235594a02a84c12c072c8ef362e54b896118532d271c43ba6400a",
+    "builtAt": "2026-10-14T08:16:44.420Z",
+    "bytes": 37806552
+  },
+  "sourceSHA256": {
+    "foundations/app.js": "e379b7ae4ac0b76c574079413ba4657479a2b9d691ea86a59cf2250ffe4febb0",
+    "foundations/teaching.js": "4a2c97adceb72bece3cc5cdfd641a75262ce194ee44b42bba69c2375653ae70b",
+    "foundations/foundations.css": "6434d3af2fd6860411ad547c9ab40440a04cc5f7d540a084beaeb27b283943aa",
+    "ml-learning/app.js": "c202d2c9a5d3985d8c27ea61355aa04bfc3c6eda545cb8ff17d66a1709e0b017",
+    "challenges/experience.js": "f6b4b95cb040272c7bff7f8f7b3e6b3cc6bb50c8946868def29a1dfab49d524a"
+  },
+  "sourceMatchesBuilt": true,
+  "sourceCurriculumChanged": false,
+  "specificEdits": [
+    "No Reference disclosure or its contents",
+    "Dataframe visible, followed immediately by task in left pane",
+    "No Follow emphasis marks",
+    "16px syntax and argument snippets"
+  ],
+  "verification": [
+    "task-layout-data.json",
+    "task-layout-ml.json",
+    "task-layout-responsive.json",
+    "task-layout-preview.json"
+  ]
+}

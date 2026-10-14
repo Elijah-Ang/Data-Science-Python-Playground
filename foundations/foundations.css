@@ -410,7 +410,7 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 }
 
 /* Desktop has the original independent reading and Python panes. Supporting
-   material stays inside the left pane, behind one reference disclosure. */
+   help stays inside the left pane. */
 .foundation-reference-content { min-width:0; }
 .foundation-reference-content > h3 { margin:0; }
 .foundation-reference-content > details { margin:0; padding-bottom:6px; }
@@ -489,3 +489,10 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .teaching-syntax-parts :is(dt,dd) { min-width:0; }
 .teaching-syntax-parts dt { display:block; }
 @media(max-width:480px) { .teaching-syntax-parts > div { grid-template-columns:minmax(0,1fr); } }
+
+/* Lesson data and its task stay together in the independent reading pane. */
+.foundation-data-preview { margin-block:20px 12px; min-width:0; }
+.foundation-content > .foundation-task-reminder { margin-block:0 20px; padding:16px; border:1px solid var(--border-soft); border-left:3px solid var(--lesson-accent); border-radius:4px; }
+.foundation-content > .foundation-task-reminder .practice-question { font:700 18px/1.45 var(--body); text-transform:none; letter-spacing:normal; color:var(--ink); }
+.foundation-content > .foundation-task-reminder :is(p,li) { font-size:16px; }
+.foundation-content :is(.teaching-syntax-parts,.foundation-parameter-parts) dt > code { font:700 16px/1.6 var(--mono); }

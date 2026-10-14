@@ -75,7 +75,8 @@ assert.deepEqual(grouped.syntax.map(([code])=>code),['df.groupby("flavour", as_i
 assert(grouped.syntax.every(([,meaning])=>!/output name, source, operation/i.test(meaning)));
 assert(grouped.syntaxCode.includes('mean_amount=("price", "mean"),\n    records=("price", "size")'));
 assert(!teaching.syntax(grouped).includes('isolated-syntax'));
-assert(teaching.syntax(grouped).includes('data-focus="size"'));
+assert(teaching.syntax(grouped).includes('&quot;price&quot;, &quot;size&quot;'));
+assert(!teaching.syntax(grouped).includes('data-focus=')&&!teaching.syntax(grouped).includes('syntax-size-row'));
 assert(teaching.reference(curriculum,grouped,grouped.rounds[0]).includes('<code>size</code> or <code>count</code>'));
 assert(teaching.reference(curriculum,grouped,grouped.rounds[1]).includes('`size` counts rows; `count` counts known values.'));
 assert(!teaching.reference(curriculum,grouped,grouped.rounds[1]).includes('This exercise asks for records'));

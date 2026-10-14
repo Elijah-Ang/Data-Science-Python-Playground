@@ -113,8 +113,16 @@ with sync_playwright() as pw:
                 assert record['stageDescriptions'] and record['currentIndicators'] == 1, record
                 assert record['currentIndicatorText'] == 'Current exercise', record
                 assert record['referenceOpen'] == record['nestedSupportingControls'] == 0, record
-                assert record['supportingControls'][0] == 'Reference', record
-                assert len(record['supportingControls']) <= 3, record
+                assert record['supportingControls'][0] in ['Hint','Hints'], record
+                assert len(record['supportingControls']) == 2, record
+                assert page.locator('.foundation-reference,.ml-reference,.foundation-reference-body').count()==0
+                assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
+                assert page.locator('.foundation-code-pane .foundation-task-reminder').count()==0
+                assert page.locator('.teaching-worked mark').count()==0
+                snippet_sizes=page.locator('.teaching-syntax-parts dt > code,.foundation-parameter-parts dt > code').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).fontSize)')
+                assert all(size=='16px' for size in snippet_sizes),(item,snippet_sizes)
+                dataframe=page.locator('.foundation-data-preview')
+                if dataframe.count():assert dataframe.evaluate('(e)=>e.nextElementSibling.matches(".foundation-task-reminder")'),item
                 if width <= 800:
                     assert record['contentScroll'] == record['codeScroll'] == 'visible', record
                 else:
@@ -210,7 +218,7 @@ with sync_playwright() as pw:
 
     # Real wheel input must scroll only the hovered desktop pane. This also
     # verifies that the editor's own scrollbar does not replace pane scrolling.
-    page.set_viewport_size({'width':1440,'height':1000})
+    page.set_viewport_size({'width':1440,'height':768})
     for prefix, route in [('data-foundations','visualise/V04/0'),('ml-learn','foundations/ML-F11/0')]:
         page.goto(f'{args.base_url}/{prefix}.html#{route}')
         page.locator('.foundation-code-pane').wait_for()

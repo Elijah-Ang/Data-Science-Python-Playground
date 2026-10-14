@@ -103,13 +103,7 @@ with sync_playwright() as pw:
                           return {whiteSpace:getComputedStyle(node).whiteSpace,lines:new Set([...range.getClientRects()].map(rect=>rect.y.toFixed(1))).size};
                         }''')
                         assert header_lines==dict(whiteSpace='nowrap',lines=1),(origin,width,theme,'intact column name in worked table',header_lines)
-                        key=page.locator('.learning-name-key')
-                        reference=page.locator('.foundation-reference')
-                        assert reference.get_attribute('open') is None,'Reference starts collapsed as one optional section'
-                        reference.locator(':scope > summary').click()
-                        assert key.evaluate('(e)=>e.tagName')=='SECTION' and key.is_visible(),'Name key is flat within Reference'
-                        assert all(text in key.inner_text() for text in ['table columns','Python objects','Dotted rules']),key.inner_text()
-                        reference.locator(':scope > summary').click()
+                        assert page.locator('.foundation-reference,.learning-name-key').count()==0
                     page.screenshot(path=str(evidence / f'{args.engine}-{origin}-{width}-{theme}-{name}.png'))
                     records.append(record)
     browser.close()

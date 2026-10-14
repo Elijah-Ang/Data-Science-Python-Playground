@@ -69,7 +69,9 @@ def inspect_round(page, item, width):
         visibleParameterIds:current('.foundation-parameter-teaching [data-parameter]').filter(visible).map(e=>e.dataset.parameter),
         expectedParameterIds:[...new Set([...(round.parameterTeaching?.introduces||[]),...(round.parameterTeaching?.extends||[])])],
         hiddenSyntaxToken:current('.teaching-worked > .teaching-syntax-parts code span').some(e=>getComputedStyle(e).display==='none'),
-        referenceHasComparison:reference.querySelectorAll('.teaching-comparison').length,
+        referenceRemoved:!primary.querySelector('.foundation-reference,.foundation-reference-body,.teaching-recall,.foundation-parameter-reference'),
+        taskOnLeft:primary.contains(document.querySelector('.foundation-task-reminder')),
+        workedMarks:primary.querySelectorAll('.teaching-worked mark').length,
         forbiddenState:document.querySelectorAll('progress,[role="progressbar"],#forgetProgress,#resetLearningDialog,#storageStatus,.foundation-continue').length
       };
     }""", item)
@@ -80,7 +82,7 @@ def inspect_round(page, item, width):
         assert state["mobileOrder"], label
     assert state["details"] == [
         {"summary": title, "open": False, "nested": False}
-        for title in ("Reference", "Hint", "Reveal solution")
+        for title in ("Hint", "Reveal solution")
     ], label
     assert state["forbiddenModes"] == state["forbiddenState"] == 0, label
     assert state["actualCode"] == state["expectedCode"], label
@@ -106,13 +108,11 @@ def inspect_round(page, item, width):
         else:
             assert state["primaryOverview"] == 1 and state["svgCount"] >= 1, label
 
-    reference = page.locator(".foundation-reference-content > .foundation-reference")
-    assert state["referenceHasComparison"] == 1, label
-    assert not reference.locator(".teaching-comparison").is_visible(), label
+    assert state["referenceRemoved"] and state["taskOnLeft"] and state["workedMarks"] == 0, label
+    reference = page.locator("#foundationHint")
+    assert reference.count() == 1, label
     reference.locator(":scope > summary").click()
     assert reference.get_attribute("open") is not None, label
-    assert reference.locator(".teaching-comparison").is_visible(), label
-    assert reference.locator(".teaching-recall .syntax-choice-callout").is_visible(), label
     assert reference.locator("details").count() == 0, label
     assert page.locator("#foundationEditor").input_value() == state["expectedCode"], label
     no_overflow(page, (label, "reference open"))
@@ -134,7 +134,7 @@ def inspect_round(page, item, width):
         assert page.locator("#foundationEditor").input_value() == state["expectedCode"], label
         control.select_option(before)
     no_overflow(page, label)
-    return {"width": width, **item, "syntax": state["expectedSyntax"] if item["follow"] else state["expectedTransitionParts"], "explorerInteracted": bool(explorer.count()), "referenceOpenedAndClosed": True, "topLevelDisclosures": 3}
+    return {"width": width, **item, "syntax": state["expectedSyntax"] if item["follow"] else state["expectedTransitionParts"], "explorerInteracted": bool(explorer.count()), "hintOpenedAndClosed": True, "topLevelDisclosures": 2}
 
 
 def editor_interactions(page, width):
@@ -164,12 +164,11 @@ def editor_interactions(page, width):
     navigate(page, {"deck": "inspect", "id": "I17", "index": 2})
     note = "# Keep this work while checking the concept"
     editor.fill(note)
-    reference = page.locator(".foundation-reference-content > .foundation-reference")
+    reference = page.locator("#foundationHint")
     reference.locator("summary").focus()
     reference.locator("summary").press("Enter")
     assert reference.get_attribute("open") is not None
-    assert reference.locator(".teaching-comparison").is_visible()
-    assert "keep=False" in reference.inner_text() and "without quotes" in reference.inner_text()
+    assert reference.locator("p").inner_text()
     assert editor.input_value() == note
     reference.locator("summary").press("Enter")
     assert reference.get_attribute("open") is None
@@ -184,7 +183,7 @@ def editor_interactions(page, width):
     navigate(page, {"deck": "inspect", "id": "I02", "index": 0})
     assert page.locator('[data-learning-mode], .teaching-orientation').count() == 0
     no_overflow(page, (width, "editor and keyboard interactions"))
-    return {"width": width, "jumpToWork": True, "indentAndOutdent": True, "escapeTabLeavesEditor": True, "resetRestoresSetupAndStarter": True, "keyboardReferencePreservesEditor": True, "navigationAndReloadDiscardDraft": True, "noExplanationModes": True}
+    return {"width": width, "jumpToWork": True, "indentAndOutdent": True, "escapeTabLeavesEditor": True, "resetRestoresSetupAndStarter": True, "keyboardHintPreservesEditor": True, "navigationAndReloadDiscardDraft": True, "noExplanationModes": True}
 
 
 with sync_playwright() as pw:
@@ -217,4 +216,4 @@ with sync_playwright() as pw:
 out = Path(args.output)
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps({"engine": args.engine, "executable": executable, "buildInfo": build_info, "lessons": 110, "practices": len(rounds), "renderedStates": len(records), "states": records, "editorInteractions": interaction_records, "pageErrors": errors}, indent=2) + "\n")
-print(f"All {len(rounds)} teaching views at 1440px and 320px passed: authored syntax, two-column order, computed explorers, three flat disclosures, editor reset and keyboard interactions; zero page errors.")
+print(f"All {len(rounds)} teaching views at 1440px and 320px passed: authored syntax, two-column order, computed explorers, two help disclosures, editor reset and keyboard interactions; zero page errors.")

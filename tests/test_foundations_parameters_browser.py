@@ -27,7 +27,7 @@ def assert_no_overflow(page, state):
 
 
 def inspect_guidance(page, guidance, state):
-    """Current meanings stay visible; full contracts share one flat Reference."""
+    """Current meanings stay visible; reference contents are removed from lessons."""
     current = page.locator(".foundation-parameter-teaching")
     current_ids = [item["id"] for item in guidance["introduces"] + guidance["extends"]]
     reference_expected = guidance["reference"]
@@ -51,39 +51,11 @@ def inspect_guidance(page, guidance, state):
                 assert definition[key], (state, definition["id"], key)
 
     support = page.locator('.foundation-reference-content')
-    assert support.locator(":scope > details > summary").all_inner_texts() == ["Reference", "Hint", "Reveal solution"], state
+    assert support.locator(":scope > details > summary").all_inner_texts() == ["Hint", "Reveal solution"], state
     assert support.locator("details details").count() == 0, state
     assert support.locator("details[open]").count() == 0, state
-    reference = support.locator(":scope > .foundation-reference")
-    table = reference.locator(".foundation-parameter-reference")
-    assert table.count() == bool(reference_expected), state
-    entries = table.locator('tr[data-parameter]')
-    assert parameter_ids(entries) == [item["id"] for item in reference_expected], state
-    assert entries.locator(":visible").count() == 0, state
-    if reference_expected:
-        reference.locator(":scope > summary").click()
-        assert reference.get_attribute("open") is not None, state
-        rendered = entries.evaluate_all("""items=>{
-          const visible=e=>!!e.getClientRects().length && getComputedStyle(e).visibility!=='hidden';
-          return items.map(entry=>({
-            id:entry.dataset.parameter, level:entry.dataset.guidance, visible:visible(entry),
-            keyword:entry.querySelector('th code').textContent,
-            cells:Array.from(entry.querySelectorAll('td'),e=>e.textContent),
-            source:entry.querySelector('th a')?.getAttribute('href'),
-            nestedDetails:entry.querySelectorAll('details').length
-          }));
-        }""")
-        for actual, definition in zip(rendered, reference_expected, strict=True):
-            assert actual["id"] == definition["id"] and actual["level"] == "reference", state
-            assert actual["visible"], (state, definition["id"])
-            assert actual["keyword"] == definition["keyword"], state
-            assert actual["cells"] == [definition["purpose"] + " " + definition["forms"], definition["default"]], (state, definition["id"])
-            assert actual["source"] == definition["source"], (state, definition["id"])
-            assert actual["nestedDetails"] == 0, state
-        assert_no_overflow(page, (state, "reference open"))
-        reference.locator(":scope > summary").click()
-        assert reference.get_attribute("open") is None, state
-        assert entries.locator(":visible").count() == 0, state
+    assert page.locator('.foundation-reference,.foundation-parameter-reference,.foundation-reference-body').count() == 0, state
+    assert page.locator('.foundation-content > .foundation-task-reminder').count() == 1, state
     assert parameter_ids(page.locator('[data-parameter]:visible')) == current_ids, state
     assert support.locator("details[open]").count() == 0, state
     assert_no_overflow(page, (state, "help closed"))
@@ -92,8 +64,8 @@ def inspect_guidance(page, guidance, state):
         "extends": [item["id"] for item in guidance["extends"]],
         "reminders": [item["id"] for item in guidance["reminders"]],
         "reference": [item["id"] for item in reference_expected],
-        "referenceOpenedAndClosed": bool(reference_expected),
-        "flatDisclosures": 3,
+        "referenceRemoved": True,
+        "flatDisclosures": 2,
     }
 
 
@@ -155,4 +127,4 @@ record = {
     "noJavaScriptWidth": 320, "staticDisclosures": static_records
 }
 (out / f"{args.engine}-parameters.json").write_text(json.dumps(record, indent=2) + "\n")
-print(args.engine, len(records), "round/viewport states and 43 static 320px lessons verify concise current teaching, complete registry contracts, and a single flat reference")
+print(args.engine, len(records), "round/viewport states and 43 static 320px lessons verify concise current teaching, complete registry contracts, and visible data, task and two help disclosures")

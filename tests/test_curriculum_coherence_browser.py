@@ -65,7 +65,7 @@ with sync_playwright() as pw:
                     assert record['editorTop'] < 4200, record
                     assert page.locator('.foundation-split > .foundation-content .foundation-reference-content').count() == 1
                 assert page.locator('.foundation-split > *').count() == 2
-                assert page.locator('.foundation-reference-content details').count() == 3
+                assert page.locator('.foundation-reference-content details').count() == 2
                 assert page.locator('.foundation-reference-content details details').count() == 0
                 starter = page.locator('#'+editor_id).input_value()
                 page.locator('#'+editor_id).fill(starter+'\n# Temporary browser check')
@@ -96,11 +96,12 @@ with sync_playwright() as pw:
             for lesson, index, selector, required, familiar in focus_cases:
                 page.goto(f'{args.base_url}/data-foundations.html#visualise/{lesson}/{index}')
                 page.wait_for_selector('#foundationEditor')
-                marked = '\n'.join(page.locator(selector+' .workflow-code-change').all_inner_texts())
+                marked = '\n'.join(page.locator(selector+(' pre code' if selector=='.teaching-worked' else ' .workflow-code-change')).all_inner_texts())
+                if selector=='.teaching-worked':assert page.locator(selector+' mark').count()==0
                 assert all(part in marked for part in required), (lesson, index, marked)
-                assert all(part not in marked for part in familiar), (lesson, index, marked)
+                if selector!='.teaching-worked':assert all(part not in marked for part in familiar), (lesson, index, marked)
                 assert not page.evaluate('document.documentElement.scrollWidth > innerWidth + 2')
-                focus_records.append({'activity': f'{lesson}-{index+1}', 'width': width, 'emphasised': marked})
+                focus_records.append({'activity': f'{lesson}-{index+1}', 'width': width, 'shownCode': marked, 'followEmphasisRemoved': selector=='.teaching-worked'})
     browser.close()
 assert not errors, errors
 (out/f'{args.phase}-layout.json').write_text(json.dumps({'records': records, 'focusedCode': focus_records, 'pageErrors': errors}, indent=2)+'\n')

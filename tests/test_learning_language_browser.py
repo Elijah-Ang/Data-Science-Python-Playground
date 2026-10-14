@@ -83,18 +83,13 @@ with sync_playwright() as p:
                     assert panel.is_visible() and panel.locator('pre').is_visible()
                     assert panel.locator('a[href*="data-foundations-I19S.html"]').count()==1
                 if id in ['I06S','I13L','I19S','I19A']:
-                    assert page.locator('.teaching-example-output').count()>0,(file,width,theme,'worked-example table remains available')
+                    assert page.locator('.foundation-data-preview table').count()>0,(file,width,theme,'dataframe table is visible')
                     if index:
                         brief=page.locator('.foundation-task-reminder')
                         assert brief.is_visible() and brief.get_attribute('aria-label')=='Current task'
                         assert brief.locator('.learning-instructions > li').count()>=2
                         assert brief.locator('.foundation-eyebrow code').count()==0,'Dataset metadata remains prose'
-                        reference=page.locator('.foundation-reference')
-                        assert reference.count()==1 and reference.locator(':scope > summary').inner_text()=='Reference'
-                        reference.locator(':scope > summary').click()
-                        assert reference.get_by_role('heading',name='Related syntax',exact=True).is_visible(),(file,'flat syntax reference')
-                        assert reference.locator('details').count()==0,'Reference has flat support sections'
-                        reference.locator(':scope > summary').click()
+                        assert page.locator('.foundation-reference').count()==0
                 if id=='ML-M03':
                     evidence=page.locator('.ml-provided-evidence')
                     assert evidence.count()==1 and evidence.is_visible(),'Required reporting inputs appear beside the current task'
@@ -107,30 +102,18 @@ with sync_playwright() as p:
                             column=page.locator('.ml-syntax code[data-code-role="column"]').filter(has_text=re.compile("^['\"]?"+name+"['\"]?$"))
                             assert column.count()>0 and column.first.is_visible(),(file,name,'explicit column definition')
                 if id in ['ML-F11','ML-F12','ML-R01']:
-                    reference=page.locator('.ml-reference')
-                    assert reference.count()==1 and reference.locator(':scope > summary').inner_text()=='Reference'
-                    reference.locator(':scope > summary').click()
-                    assert reference.locator('details').count()==0,'Machine Learning Reference also has flat support sections'
-                    for name in ['X','y']:
-                        assert reference.locator('code[data-code-role="variable"]').filter(has_text=re.compile('^'+name+'$')).count()>0,(file,name,'aligned feature/target objects')
-                    if id in ['ML-F11','ML-F12'] or index==3:
-                        for name in ['candidates','cv_results']:
-                            objects=reference.locator('.ml-contract code[data-code-role="variable"]').filter(has_text=re.compile('^'+name+'$'))
-                            assert objects.count()>0 and objects.first.is_visible(),(file,name,'structured output inventory objects')
-                        assert reference.locator('code[data-code-role="parameter"]').filter(has_text=re.compile('^n_splits$')).count()>0,(file,'n_splits parameter explanation')
-                        dictionaries=reference.locator('[data-code-table="dictionary"]')
-                        assert dictionaries.count()>0 and dictionaries.locator('td:first-child code[data-code-role="column"]').count()>0,(file,'schema names in explanatory table')
-                    else:
+                    assert page.locator('.ml-reference,.ml-contract,.ml-provided-state').count()==0
+                    assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
+                    assert page.locator('.foundation-code-pane .foundation-task-reminder').count()==0
+                    if id=='ML-R01' and index!=3:
                         assert page.locator('.ml-provided-note code[data-code-role="variable"]').filter(has_text=re.compile('^model$')).is_visible(),(file,'supplied fitted model object')
-                    reference.locator(':scope > summary').click()
                 if id=='ML-M-K1':
-                    text=page.locator('.ml-choice').inner_text()
+                    text=page.locator('.foundation-task-reminder').inner_text()
                     assert all(value in text for value in ['0.81','0.1','.95','.2','.51','.52','500','569','90%','seven','two'])
-                if id=='I19S':
-                    if not index:
-                        for name in ['medians','ranked','order']:
-                            assert page.locator('.foundation-content code[data-code-role="variable"]').filter(has_text=name).count()>0,(id,name)
-                            assert page.locator('.teaching-example-output code[data-code-role="variable"]').filter(has_text=name).count()>0,(id,'object table',name)
+                if id=='I19S' and not index:
+                    assert page.locator('.teaching-worked pre').is_visible()
+                    assert all(name in page.locator('.teaching-worked pre').inner_text() for name in ['medians','ranked','order'])
+                    assert page.locator('[data-code-table="objects"]').count()==0,'The former reference object table is removed'
                 if id=='I19A' and index==1:
                     task=page.locator('.foundation-task-reminder')
                     assert task.locator('code[data-code-role="variable"]').filter(has_text='checks').count()>0
@@ -140,10 +123,7 @@ with sync_playwright() as p:
                         assert page.locator('.foundation-task-reminder code[data-code-role="column"]').filter(has_text=name).count()>0,(id,name)
                 if id=='W19' and index==1:
                     assert page.locator('.foundation-task-reminder code[data-code-role="column"]').filter(has_text='size').count()>0
-                    reference=page.locator('.foundation-reference')
-                    reference.locator(':scope > summary').click()
-                    reminder=page.locator('.foundation-reference-content')
-                    assert reminder.locator('code[data-code-role="operation"]').filter(has_text='size').count()>0
+                    assert page.locator('.foundation-reference').count()==0
                 if id=='V09':
                     task=page.locator('.foundation-task-reminder')
                     assert task.locator('code[data-code-role="column"]').filter(has_text='fare').count()>0

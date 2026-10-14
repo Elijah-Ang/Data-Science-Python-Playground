@@ -107,12 +107,13 @@ if(process.argv.includes('--built'))for(const lesson of visualise){
  require('../learning-routes.js');
  const routes=globalThis.LearningRoutes;
  const page=fs.readFileSync(new URL('../dist/'+routes.url('data',lesson.deck+'/'+lesson.id+'/0'),import.meta.url),'utf8');
- const expected=parameters.render(curriculum,lesson,lesson.rounds[0]);
+ const expected=parameters.renderCurrent(curriculum,lesson,lesson.rounds[0]);
  const unstyled=html=>html.replace(/<\/?code\b[^>]*>/g,'');
- for(const level of ['current','reference']){
+ for(const level of ['current']){
   const section=parameters.render(curriculum,lesson,lesson.rounds[0],{level});
   assert(unstyled(page).includes(unstyled(section)),lesson.id+' static page contains '+level+' shared parameter content, allowing inline identifier decoration');
  }
+ assert(!page.includes('foundation-parameter-reference'),lesson.id+' no removed reference content in static lesson');
  for(const block of expected.match(/<pre\b[\s\S]*?<\/pre>/g)||[])assert(page.includes(block),lesson.id+' retains each exact pre/code example, not only its text');
 }
 const unique=[...new Set(inventory.map(item=>item.entry))];

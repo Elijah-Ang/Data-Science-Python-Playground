@@ -2256,18 +2256,11 @@
     "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652",
     "ml-learning/visuals.js": "0507357cfc51909bbe0416ac57e0a0e9d4ce6c5d1c2eb3c96c38ab4560a3386a",
     "ml-learning/learning.css": "3acccfb6d1dc583089df09cfd3873f054cc18220b2f7e1b556614c5727868b9f",
-    "ml-learning/app.js": "a801f44eba7a6f7ab38db2647de02780d15371374b3a39a488f286d056635d9d",
-    "foundations/foundations.css": "cf4cf538e52e0291e2a8a8467ed4c2b0314d286a7befae6b914e7f1dbb951cd5",
+    "ml-learning/app.js": "c202d2c9a5d3985d8c27ea61355aa04bfc3c6eda545cb8ff17d66a1709e0b017",
+    "foundations/foundations.css": "6434d3af2fd6860411ad547c9ab40440a04cc5f7d540a084beaeb27b283943aa",
     "foundations/learning-ui.js": "703472bbab76ae4e254e7d9797994755348799f3be07d73114486dd673c36711",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
-    "challenges/experience.js": "6fc8bbea1eacd53a1ae7e6ed522545451fd05265098b8dc78ef06a56d9e2a695",
+    "challenges/experience.js": "f6b4b95cb040272c7bff7f8f7b3e6b3cc6bb50c8946868def29a1dfab49d524a",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
-  },
-  "reviewedBuild": {
-    "contentId": "3089e69bdcebdd83e8f2e3e0725472c4383c7b49db56c5b1e5de26fd4becf56a",
-    "baseUrl": "http://127.0.0.1:8000",
-    "runtime": "local",
-    "browserExecutable": "/usr/bin/chromium",
-    "reusedCaptures": false
   }
 }

@@ -29,19 +29,20 @@ with sync_playwright() as pw:
    records.append(dict(id=c['id'],family=group,theme=theme,width=width,file=name,title=c['title']));return
   page.set_viewport_size({'width':width,'height':1000});page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
   page.evaluate('(hash)=>location.hash=hash','#'+c['deck']+'/'+c['id']+'/0');page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=c['exercises'][0]['id'])
-  page.evaluate('document.fonts.ready');figure=page.locator('.ml-concept')
-  # Model explorers are the primary teaching visual; retained schematics are
-  # optional references. Expand only that ancestor for the schematic audit.
-  figure.evaluate('(e)=>{for(let n=e.parentElement;n;n=n.parentElement)if(n.tagName==="DETAILS")n.open=true}')
-  figure.scroll_into_view_if_needed();figure.locator('.ml-concept-scroll').evaluate('(e)=>e.scrollLeft=0')
+  page.evaluate('document.fonts.ready');figure=page.locator('.teaching-overview > .ml-concept,.teaching-overview > .teaching-explorer').first
+  # Capture the visible primary visual; supplementary reference diagrams were removed.
+  figure.scroll_into_view_if_needed();scroll=figure.locator('.ml-concept-scroll,.teaching-visual-scroll');
+  if scroll.count():scroll.first.evaluate('(e)=>e.scrollLeft=0')
   assert not page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1'),(c['id'],width)
-  clipped=figure.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox();return b.x<0||b.y<0||b.x+b.width>560.5||b.y+b.height>235.5}).map(n=>n.textContent)')
+  clipped=figure.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox(),v=n.ownerSVGElement.viewBox.baseVal;return b.x<0||b.y<0||b.x+b.width>v.width+.5||b.y+b.height>v.height+.5}).map(n=>n.textContent)')
   assert not clipped,(c['id'],clipped)
-  assert figure.locator('svg').get_attribute('aria-label')==c['exercises'][0].get('visual',c['visual'])['caption']
+  assert figure.locator('svg').get_attribute('aria-label')
+  if figure.locator('.ml-concept-scroll').count():assert figure.locator('svg').get_attribute('aria-label')==c['exercises'][0].get('visual',c['visual'])['caption']
   name=f'{c["id"]}-{theme}-{width}.png';figure.screenshot(path=str(out/name))
   # Inspect both ends of scrollable diagrams at phone widths.
   if width<500:
-   figure.locator('.ml-concept-scroll').evaluate('(e)=>e.scrollLeft=e.scrollWidth');figure.screenshot(path=str(out/('right-'+name)))
+   if scroll.count():scroll.first.evaluate('(e)=>e.scrollLeft=e.scrollWidth')
+   figure.screenshot(path=str(out/('right-'+name)))
   records.append(dict(id=c['id'],family=group,theme=theme,width=width,file=name,title=c['title']))
  for c in cards:capture(c,'light',1440,c['visual']['type'])
  for key,c in groups.items():

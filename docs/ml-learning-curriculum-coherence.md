@@ -4,7 +4,7 @@ The final registry retains 110 cards: 85 teaching cards, 14 reviews and 11 check
 
 ## Shared teaching and assembly
 
-`ml-learning/curriculum_coherence.py` runs after editorial, prerequisite/Python, mastery, transfer, guided-application and historical repair layers. It assigns authored concept origins, introduction/reuse/extension metadata, activity-specific current teaching, compact reminders and full references. The lesson renderer consumes this assembled registry. The later presentation correction preserves this teaching and replaces the added mode controls with the original stage indicators and one flat Reference.
+`ml-learning/curriculum_coherence.py` runs after editorial, prerequisite/Python, mastery, transfer, guided-application and historical repair layers. It assigns authored concept origins, introduction/reuse/extension metadata, activity-specific current teaching, compact reminders and full references. The lesson renderer consumes this assembled registry. The later presentation edits retain the original stage indicators and remove Reference contents as requested; the dataframe and task are visible in the left pane.
 
 New references contain purpose, accepted inputs, useful choices and examples. The first complete regression and classification workflows expose eight numbered teaching sections with the actual code belonging to each section. Repeated pipeline, fold, baseline, out-of-fold and final-fit explanations become reminders in F12. The renderer can disclose the detailed guidance beside the corresponding section instead of presenting another full syntax listing.
 

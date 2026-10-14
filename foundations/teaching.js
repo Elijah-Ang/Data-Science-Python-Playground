@@ -64,8 +64,7 @@
   function syntaxRows(lesson,items){
     return items.map((entry,i)=>{
       const [code,meaning]=Array.isArray(entry)?entry:[entry.code||entry.title,entry.meaning];
-      const size=lesson.id==='W19'&&code==='("price", "size")';
-      return '<div'+(size?' class="syntax-size-row"':'')+'><dt><span aria-hidden="true">'+(i+1)+'</span><code'+(size?' data-focus="size"':'')+'>'+esc(code)+'</code></dt><dd>'+esc(meaning)+'</dd></div>';
+      return '<div><dt><span aria-hidden="true">'+(i+1)+'</span><code>'+esc(code)+'</code></dt><dd>'+esc(meaning)+'</dd></div>';
     }).join('');
   }
   function syntax(lesson,round){
