@@ -18,7 +18,7 @@ variants = [
     ('foundation', key) for key in ['scatter', 'histogram', 'count-bars', 'mean-bars',
                                   'summary-order', 'boxplot', 'references', 'facets']
 ] + [('ml', key) for key in ['C08', 'C09', 'C14', 'R09', 'R10', 'C10', 'C11',
-                            'R07', 'R08', 'P01', 'P06']]
+                            'C11-gamma', 'R10-leaf', 'R07', 'R08', 'P01']]
 checks = []
 with sync_playwright() as pw:
     browser = pw.chromium.launch(executable_path=args.executable_path, args=['--no-sandbox'])
@@ -63,7 +63,7 @@ with sync_playwright() as pw:
                     }).map(n=>n.textContent);
                 }''')
                 assert not clipped, (kind, key, width, clipped)
-                if key in ['C14', 'R09', 'R10']:
+                if key in ['C14', 'R09']:
                     assert page.locator('.teaching-visual-scroll').evaluate('e=>e.scrollWidth<=e.clientWidth+1'), (key, width, 'tree panning')
                 select.focus()
                 assert select.evaluate('e=>e===document.activeElement')

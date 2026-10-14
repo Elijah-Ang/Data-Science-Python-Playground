@@ -1,0 +1,21 @@
+{
+  "repositoryChecks": {
+    "command": "npm run check",
+    "exitCode": 0
+  },
+  "activities": 676,
+  "responsiveRenders": 1352,
+  "dataTeachingRenders": 676,
+  "mlPresentationRenders": 676,
+  "visualInteractions": 120,
+  "argumentStates": 264,
+  "staticArgumentPages": 43,
+  "mlVisualCaptures": 277,
+  "browserPythonGrades": 33,
+  "productionRbfFits": 6,
+  "pageErrors": 0,
+  "engine": "Chromium",
+  "finalStyleCheck": "All argument labels, value examples and the mode-function code block use 16px; column, variable and syntax roles remain distinct.",
+  "buildContentId": "1b27bd62ffb517f0d07743481a0bf6cc102df01c3a6ab43278150099cad55107",
+  "finalFontRenders": 15
+}

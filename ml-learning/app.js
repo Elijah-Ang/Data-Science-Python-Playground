@@ -204,10 +204,32 @@
     }
     return html+esc(source.slice(start));
   }
+  const argumentValues={
+    n_neighbors:['1','3','5','9'], max_depth:['3','5','None'], min_samples_leaf:['1','5','10'],
+    C:['0.5','1','2','10'], gamma:['"scale"','"auto"','0.1','1','10'],
+    kernel:['"linear"','"rbf"','"poly"','"sigmoid"','"precomputed"','kernel_function'],
+    random_state:['42','None'], shuffle:['True','False'], stratify:['y','None'],
+    test_size:['0.2','0.25','6'], n_splits:['3','5'], n_components:['2','None','0.9'],
+    average:['"binary"','"micro"','"macro"','"weighted"','None'],
+    scoring:['"neg_root_mean_squared_error"','"neg_mean_absolute_error"','"f1_macro"','"balanced_accuracy"','score_function'],
+    cv:['5','folds','list_of_index_pairs'], method:['"predict"','"predict_proba"','"decision_function"'],
+    max_iter:['100','500','1000'], hidden_layer_sizes:['(24,)','(16, 8)'], alpha:['0.0001','0.01'],
+    early_stopping:['False','True'], fit_intercept:['True','False'], include_bias:['False','True'],
+    degree:['1','2','4'], reg_param:['0','0.1','0.5','1'], shrinkage:['None','"auto"','0.1'],
+    handle_unknown:['"error"','"ignore"','"infrequent_if_exist"'],
+    return_distance:['True','False'], fill_value:['0','None'],
+    bins:['3','5','8'], q:['2','4','[0, 0.25, 0.5, 1]']
+  };
+  function syntaxValues(part){
+    const source=part.code||'',names=Object.keys(argumentValues).filter(name=>new RegExp('\\b'+name+'\\s*=').test(source)||new RegExp("['\"](?:model__)?"+name+"['\"]").test(source));
+    const choices=names.map(name=>[name,argumentValues[name]]);
+    if(/strategy\s*=/.test(source))choices.push(['strategy',source.includes('DummyClassifier')?['"most_frequent"','"prior"','"stratified"','"uniform"','"constant"']:source.includes('SimpleImputer')?['"mean"','"median"','"most_frequent"','"constant"']:['"mean"','"median"','"quantile"','"constant"']]);
+    return choices.length?'<p class="foundation-argument-values"><strong>Accepts:</strong> '+choices.map(([name,values])=>'<code data-code-role="parameter">'+esc(name)+'</code>: '+values.map(value=>'<code data-code-role="'+(['y','folds','list_of_index_pairs'].includes(value)?'variable':'syntax')+'">'+esc(value)+'</code>').join(', ')).join('; ')+'.</p>':'';
+  }
   function syntaxParts(parts,full=true){
     return `<dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">${parts.map(p=>{
       const columnHead=view?.card?.id==='ML-M03'&&/^(['"])(cv_rmse|fold_sd)\1$/.test(p.code||'');
-      return `<div><dt><code${columnHead?' data-code-role="column"':''}>${esc(p.code||p.title)}</code></dt><dd>${syntaxProse(p.meaning,p)}${full&&(p.forms||p.choices)?`<p><strong>Values and choices:</strong> ${syntaxProse(p.forms||p.choices,p)}</p>`:''}${full&&p.example?code(p.example):''}</dd></div>`;
+      return `<div><dt><code${columnHead?' data-code-role="column"':''}>${esc(p.code||p.title)}</code></dt><dd>${syntaxProse(p.meaning,p)}${syntaxValues(p)}${(p.forms||p.choices)?`<p><strong>Values and choices:</strong> ${syntaxProse(p.forms||p.choices,p)}</p>`:''}${full&&p.example?code(p.example):''}</dd></div>`;
     }).join('')}</dl>`;
   }
   function syntaxSupport(card,ex,level='current'){
@@ -271,9 +293,10 @@
   function lessonPage(card,index){
     const ex=card.exercises[index],follow=card.kind==='teaching'&&index===0;
     const collection=collections.primary(card);
-    const visual=visualPresentation(ex.visual||card.visual);
+    const activityVisual={...(ex.visual||card.visual)};
+    const visual=visualPresentation(activityVisual);
     const idea=follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${visual.primary}</section>`:`<section class="teaching-overview"><h3>${esc(ex.milestone||ex.label)}</h3><p>${esc(ex.activityExplanation||ex.focusExplanation||ex.context||card.goal)}</p>${visual.primary}</section>`;
-    return LearningLanguage.render(`<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2>${follow?`<p>${esc(card.goal)}</p>`:''}${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">${idea}${lessonDataPreview(ex)}${taskDescriptor(ex)}${workflowSections(ex)}${ex.workflowSections?.length?'':syntaxSupport(card,ex)}${suppliedState(ex)}${ex.evidence?`<section class="ml-provided-evidence"><h3>Evidence to use</h3>${LearningLanguage.steps(ex.evidence,ex.id)}</section>`:''}<section class="foundation-reference-content" data-code-context="guide" aria-label="Hints and solution">${help(ex)}</section></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${branchNavigation(card,index)}${navigation(card,index)}</div>`,ex.id);
+    return LearningLanguage.render(`<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2>${follow?`<p>${esc(card.goal)}</p>`:''}${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">${idea}${workflowSections(ex)}${ex.workflowSections?.length?'':syntaxSupport(card,ex)}${suppliedState(ex)}${ex.evidence?`<section class="ml-provided-evidence"><h3>Evidence to use</h3>${LearningLanguage.steps(ex.evidence,ex.id)}</section>`:''}${lessonDataPreview(ex)}${taskDescriptor(ex)}<section class="foundation-reference-content" data-code-context="guide" aria-label="Hints and solution">${help(ex)}</section></article>${ex.kind==='python'?pythonPane(ex):conceptPane(ex)}</div>${branchNavigation(card,index)}${navigation(card,index)}</div>`,ex.id);
   }
   function evidenceContract(ex){
     const outputs=ex.assessment?ex.contract:ex.learnerOutputs||ex.contract;

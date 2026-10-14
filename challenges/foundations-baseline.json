@@ -1,6 +1,6 @@
 {
   "commit": "curriculum-coherence-2026-10-13",
-  "sha256": "bfaba355fa3205c835ea95380042b8eea1d91106070bca9512b5a222c589da13",
+  "sha256": "22b9e5d16d0e6a9da90adda82e96641cc71828f18f27e4ced9a89ee423afcdb9",
   "cards": 110,
   "lessons": 93,
   "reviews": 17,
@@ -1816,5 +1816,6 @@
     "sha256": "bf52cd47f9ec9c969d5db0a644b78ebadc4a93e4ad0cecb3570faf673464270c"
   },
   "review": "docs/curriculum-coherence.md",
-  "reviewedFromCommit": "8a72b291a3c4"
+  "reviewedFromCommit": "8a72b291a3c4",
+  "presentationReview": "2026-10-14: activity visual and argument-display corrections; existing task, Python and grading contract hashes unchanged."
 }

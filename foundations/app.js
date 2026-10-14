@@ -41,11 +41,11 @@ function lessonPage(lesson,roundIndex){
  <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${esc(lessonSequence(lesson))} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(follow?lesson.goal:round.label+' · '+(round.stageSummary||round.demand||'Apply what you learned'))}</p><button class="foundation-editor-jump" type="button">Go to editor ↓</button></div>${FoundationLearning.stages(lesson.rounds,roundIndex,i=>url(lesson,i))}</header>
  <div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">
 
- ${follow?FoundationTeaching.intro(C,lesson,round):round.teaching?FoundationTeaching.transition(round):`<section class="teaching-overview"><h3>Use the idea</h3><p>${esc(lesson.guide?.idea||C.lessons.find(l=>l.id===round.retrieves)?.guide?.idea||lesson.goal)}</p>${FoundationVisuals.interactive?.(round.visual)||FoundationVisuals.diagram(round.visual)}</section>`}
- ${round.id==='V01-1'?'':`<section class="foundation-data-preview" aria-label="Dataframe preview">${datasetTable(dataset)}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
- ${taskDescriptor(round)}
+ ${follow?FoundationTeaching.intro(C,lesson,round):round.teaching?FoundationTeaching.transition(round):`<section class="teaching-overview"><h3>Use the idea</h3><p>${esc(round.activityIdea||lesson.guide?.idea||C.lessons.find(l=>l.id===round.retrieves)?.guide?.idea||lesson.goal)}</p>${FoundationVisuals.interactive?.(round.visual)||FoundationVisuals.diagram(round.visual)}</section>`}
  ${work}
  ${FoundationParameters.render(C,lesson,round,{level:'current'})}
+ ${round.id==='V01-1'?'':`<section class="foundation-data-preview" aria-label="Dataframe preview">${datasetTable(dataset)}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
+ ${taskDescriptor(round)}
  <section class="foundation-reference-content" data-code-context="guide" aria-label="Hints and solution">
  <details id="foundationHint" data-code-context="task"><summary>Hint</summary><p>${esc(round.hint)}</p></details>
  <details id="foundationSolution"><summary>Reveal solution</summary><p>Keep the supplied setup and replace the Your work section with this example.</p><pre><code>${esc(round.solution)}</code></pre></details>

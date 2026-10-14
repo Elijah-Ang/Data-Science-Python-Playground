@@ -283,6 +283,7 @@ if(typeof process==='undefined'||!process.env.FOUNDATIONS_RAW_CODE){
  (typeof module!=='undefined'?require('./code-style.js'):root.styleFoundationsCode)(visualise);
 }
 (typeof module!=='undefined'?require('./visualise-guidance.js'):root.FoundationVisualiseGuidance).finalise(curriculum);
+(typeof module!=='undefined'?require('./visuals.js'):root.FoundationVisuals).align(curriculum);
 if(typeof module!=='undefined')module.exports=curriculum;
 else root.FoundationsCurriculum=curriculum;
 })(typeof window!=='undefined'?window:globalThis);

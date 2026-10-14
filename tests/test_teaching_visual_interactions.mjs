@@ -52,7 +52,7 @@ for(const [k,prediction] of [[1,'B'],[3,'A'],[5,'B']]){
   const result=ml.exploration('C08',String(k));
   assert.equal(result.data.prediction,prediction);
   assert.equal(result.data.votes.A+result.data.votes.B,k);
-  assert.equal(result.data.count,6);
+  assert.equal(result.data.count,9);
   assert.equal(result.data.neighbours.length,k);
   for(const neighbour of result.data.neighbours)close(neighbour.distance,Math.hypot(neighbour.x,neighbour.y));
   assert(result.code.includes(`n_neighbors=${k}`));
@@ -71,13 +71,17 @@ for(const row of ml.exampleRows.regression){
 
 // The analytic linear soft-margin solution minimises the SVM primal objective.
 for(const value of ['0.05','0.2','1']){
-  const {data}=ml.exploration('C10',value);
+  const {data}=ml.exploration('C10',value,{kernel:'linear'});
   close(data.margin,1/data.weight);
   const objective=w=>.5*w*w+data.C*data.rows.reduce((sum,r)=>sum+Math.max(0,1-w*Math.abs(r.x)),0);
   for(let w=0;w<=1.25;w+=.001)assert(objective(data.weight)<=objective(w)+1e-8);
   assert(data.rows.every(r=>(r.x<0?'A':'B')===r.group));
 }
-assert(ml.exploration('C11','1').summary.includes('does not simulate gamma or an RBF fit'));
+for(const [id,choices] of [['C10',['0.5','1','10']],['C11',['0.5','2','10']],['C11-gamma',['0.1','1','10']]])for(const choice of choices){
+ const result=ml.exploration(id,choice);assert.equal(result.data.kernel,'rbf');assert(result.code.includes('kernel="rbf"'));assert.equal(result.data.support.length,result.data.supportCounts.reduce((a,b)=>a+b));assert(!result.summary.includes('linear calculation'));
+}
+for(const [id,choices] of [['R10',['1','3','None']],['R10-leaf',['1','2','3']]])for(const choice of choices){const r=ml.exploration(id,choice);assert(r.code.includes(`${r.data.parameter}=${choice}`));assert(r.data.leaves>=1);}
+assert(!ml.interactive({id:'P06'}));
 
 // Known quadratic is recovered; displayed curves use their fitted coefficients.
 const exact=Array.from({length:8},(_,x)=>[x,2+3*x+.5*x*x]);
@@ -113,7 +117,7 @@ for(const [visuals,visual] of [[foundations,foundations.spec('histogram')],[ml,{
   const html=visuals.interactive(visual);
   assert(html.includes('<label'));
   assert(html.includes('<select'));
-  assert(html.includes('Starting view'));
+  assert(html.includes('Comparison baseline'));
   assert(html.includes('aria-live="polite"'));
   assert(html.includes('Illustrative'));
   const listeners=[];const container={addEventListener:(event,handler)=>listeners.push([event,handler])};
@@ -128,3 +132,18 @@ for(const [visuals,visual] of [[foundations,foundations.spec('histogram')],[ml,{
 assert.throws(()=>foundations.exploration('histogram','unknown'));
 assert.throws(()=>ml.exploration('C08','7'));
 console.log('Teaching visuals: data conservation, statistics, neighbour voting, tree paths, SVM margins, fitted curves, PCA transforms and accessible delegated interactions verified.');
+
+// A bin count passes the same integer to Python and uses the actual data range.
+for(const choice of ['2','4','8']){const r=foundations.exploration('histogram',choice);assert.equal(r.data.bins.length,Number(choice));assert.equal(r.data.count,9);assert.equal(r.data.edges[0],1);assert.equal(r.data.edges.at(-1),18);assert(r.code.includes(`bins=${choice}`));}
+const c=require('../foundations/curriculum.js');
+for(const [id,variant] of Object.entries(foundations.activityVariants))assert.equal(c.lessons.flatMap(l=>l.rounds).find(r=>r.id===id).visual.variant,variant,id);
+for(const [index,binMode] of [[0,'count'],[1,'count'],[2,'edges']]){const r=c.lessons.find(l=>l.id==='V04').rounds[index];assert.equal(r.visual.binMode,binMode);const html=foundations.interactive(r.visual);assert(!html.includes('Width '));assert.equal(html.includes('Number of bins'),index<2);}
+const count=c.lessons.find(l=>l.id==='V08').rounds[0];assert(foundations.interactive(count.visual).includes('value="count" selected'));
+const parameters=require('../foundations/parameter-guide.js');
+for(const l of c.lessons)for(const r of l.rounds){const g=parameters.guidanceFor(c,l,r);for(const entry of [...g.introduces,...g.extends])assert(parameters.valueChoices(entry).includes('Accepts:'),r.id+' '+entry.id);}
+const bins=parameters.renderCurrent(c,c.lessons.find(l=>l.id==='V04'),c.lessons.find(l=>l.id==='V04').rounds[0]);assert(bins.includes('[0, 2, 4, 6]'));assert(bins.includes('four equal-width bins'));
+const estimator=parameters.renderCurrent(c,c.lessons.find(l=>l.id==='V09'),c.lessons.find(l=>l.id==='V09').rounds[0]);assert(estimator.includes('mode_value'));assert(estimator.includes('pd.Series(values).mode().iloc[0]'));assert(!estimator.includes('estimator=&quot;mode&quot;'));
+
+assert(parameters.valueChoices({...parameters.registry.x,functions:['sns.scatterplot']}).includes('data-code-role="column"'));
+assert(parameters.valueChoices({...parameters.registry.ax,functions:['sns.scatterplot']}).includes('data-code-role="variable"'));
+assert(parameters.valueChoices({...parameters.registry.bins,functions:['sns.histplot']}).includes('data-code-role="syntax"'));

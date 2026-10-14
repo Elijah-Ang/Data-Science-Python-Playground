@@ -1,6 +1,6 @@
 {
   "teachingCount": 85,
-  "primitiveVariantCount": 57,
+  "primitiveVariantCount": 64,
   "thumbnailCount": 110,
   "thumbnailSignatures": {
     "ML-F01": "544b4d29fe7a6efc158b661b8b14ee43e2c66575b98be88ddfeb746eed4e1bf7",
@@ -16,7 +16,7 @@
     "ML-F10": "585ee164201f7949f19ad3be12af526ee714d43fbbcd05d6442f881e590d1b55",
     "ML-F-R2": "e192e849243df869e3a9af1195537793d8e13361b94badbf033cc93c2447dbfa",
     "ML-F-K1": "be696b2887d59634697d52dd945b1d6613e9b4c45f790ad89b23ba76467a2c22",
-    "ML-F11": "8e7d72c9a4164fa012481b204f22174348ce83b7cfe59b385d3710d37e097fed",
+    "ML-F11": "eaa88dfda2bf1530047977518cdab1f8113724a245f531f5e2e58d166f225a2c",
     "ML-F12": "a265891cdc508e7bdf5fed845fa5514a8f2ca143f5b9b083b9faf0afca684498",
     "ML-W01": "e9cb3fcb75cf846480f33f17852c3d8f15dc7d68d8a559083a8f1067a6be7077",
     "ML-W02": "57ff2460c3e28d10cb0d1829fc09f0c055fd4698b43153ae9918d1db0dfe631c",
@@ -868,6 +868,30 @@
       "title": "What fitting does"
     },
     {
+      "id": "ML-F04",
+      "family": "F04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-F04-dark-1440.png",
+      "title": "Predicting new rows"
+    },
+    {
+      "id": "ML-F04",
+      "family": "F04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-F04-light-320.png",
+      "title": "Predicting new rows"
+    },
+    {
+      "id": "ML-F04",
+      "family": "F04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-F04-light-390.png",
+      "title": "Predicting new rows"
+    },
+    {
       "id": "ML-F05",
       "family": "regression",
       "theme": "dark",
@@ -1180,6 +1204,30 @@
       "title": "Settings, learned values and fit quality"
     },
     {
+      "id": "ML-W12",
+      "family": "W12",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-W12-dark-1440.png",
+      "title": "Diagnose without opening the final test"
+    },
+    {
+      "id": "ML-W12",
+      "family": "W12",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-W12-light-320.png",
+      "title": "Diagnose without opening the final test"
+    },
+    {
+      "id": "ML-W12",
+      "family": "W12",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-W12-light-390.png",
+      "title": "Diagnose without opening the final test"
+    },
+    {
       "id": "ML-W14",
       "family": "time",
       "theme": "dark",
@@ -1226,6 +1274,30 @@
       "width": 390,
       "file": "ML-R02-light-390.png",
       "title": "RMSE and R² answer different questions"
+    },
+    {
+      "id": "ML-R03",
+      "family": "R03",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-R03-dark-1440.png",
+      "title": "Read residual patterns and limits"
+    },
+    {
+      "id": "ML-R03",
+      "family": "R03",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-R03-light-320.png",
+      "title": "Read residual patterns and limits"
+    },
+    {
+      "id": "ML-R03",
+      "family": "R03",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-R03-light-390.png",
+      "title": "Read residual patterns and limits"
     },
     {
       "id": "ML-R04",
@@ -1732,6 +1804,30 @@
       "title": "Gaussian Naive Bayes"
     },
     {
+      "id": "ML-C16",
+      "family": "C16",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-C16-dark-1440.png",
+      "title": "Match Naive Bayes to feature types"
+    },
+    {
+      "id": "ML-C16",
+      "family": "C16",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-C16-light-320.png",
+      "title": "Match Naive Bayes to feature types"
+    },
+    {
+      "id": "ML-C16",
+      "family": "C16",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-C16-light-390.png",
+      "title": "Match Naive Bayes to feature types"
+    },
+    {
       "id": "ML-C17",
       "family": "C17",
       "theme": "dark",
@@ -2068,6 +2164,54 @@
       "title": "New coordinates, not selected original columns"
     },
     {
+      "id": "ML-P03",
+      "family": "P03",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-P03-dark-1440.png",
+      "title": "Explained variance is not predictive accuracy"
+    },
+    {
+      "id": "ML-P03",
+      "family": "P03",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-P03-light-320.png",
+      "title": "Explained variance is not predictive accuracy"
+    },
+    {
+      "id": "ML-P03",
+      "family": "P03",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-P03-light-390.png",
+      "title": "Explained variance is not predictive accuracy"
+    },
+    {
+      "id": "ML-P04",
+      "family": "P04",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-P04-dark-1440.png",
+      "title": "Select a retained representation"
+    },
+    {
+      "id": "ML-P04",
+      "family": "P04",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-P04-light-320.png",
+      "title": "Select a retained representation"
+    },
+    {
+      "id": "ML-P04",
+      "family": "P04",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-P04-light-390.png",
+      "title": "Select a retained representation"
+    },
+    {
       "id": "ML-P05",
       "family": "P05",
       "theme": "dark",
@@ -2090,6 +2234,30 @@
       "width": 390,
       "file": "ML-P05-light-390.png",
       "title": "Component weights and scores"
+    },
+    {
+      "id": "ML-P06",
+      "family": "P06",
+      "theme": "dark",
+      "width": 1440,
+      "file": "ML-P06-dark-1440.png",
+      "title": "Two dimensions are a view"
+    },
+    {
+      "id": "ML-P06",
+      "family": "P06",
+      "theme": "light",
+      "width": 320,
+      "file": "ML-P06-light-320.png",
+      "title": "Two dimensions are a view"
+    },
+    {
+      "id": "ML-P06",
+      "family": "P06",
+      "theme": "light",
+      "width": 390,
+      "file": "ML-P06-light-390.png",
+      "title": "Two dimensions are a view"
     },
     {
       "id": "ML-P07",
@@ -2209,7 +2377,7 @@
     "ML-C07": "0915c6d7a696e374a93292b614767c7799f7b32d19f847f4060bc0a3ec21180a",
     "ML-C08": "baed70aaaf79aa228e050dfe1d7a9af6a73844cab21297fe4261bb72c98f722c",
     "ML-C09": "fd163f7067b84b108054ce4f138dd2bbdc2df11ebc1f9f29d0c995e7380fe1b1",
-    "ML-C10": "ee944f94148af1e1b319784b02fc1e6c5dafd4fc883b55e746b2df58b02d2199",
+    "ML-C10": "fc32837b8befcefc6b917fbce9920f5d1f24a8aa983f1d1419edd3f0a6a27dfa",
     "ML-C11": "0288400577c66239d2747bed12b504e073380b5a1f4ec33934f1bba3b9e02955",
     "ML-C12": "be25cd1559e3813485621c723c2b512ad14dbd743315bed2cc2155d375668ab2",
     "ML-C13": "3ca5cba135590baf8a44283726c800b5f78b2fb995f6ff6a9696efddc99a7649",
@@ -2254,10 +2422,10 @@
   "sourceHashes": {
     "code-identifiers.js": "71854dcf3826d8f0837a47a3910a108ffd747acb28f03ab0de289edf6bcacc39",
     "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652",
-    "ml-learning/visuals.js": "0507357cfc51909bbe0416ac57e0a0e9d4ce6c5d1c2eb3c96c38ab4560a3386a",
+    "ml-learning/visuals.js": "3fb3d502b34d3f4c5c21ecf3f285edf047c28676aa8a3ecf3ad5ebf935a95447",
     "ml-learning/learning.css": "3acccfb6d1dc583089df09cfd3873f054cc18220b2f7e1b556614c5727868b9f",
-    "ml-learning/app.js": "c202d2c9a5d3985d8c27ea61355aa04bfc3c6eda545cb8ff17d66a1709e0b017",
-    "foundations/foundations.css": "6434d3af2fd6860411ad547c9ab40440a04cc5f7d540a084beaeb27b283943aa",
+    "ml-learning/app.js": "15a59034e57daacda829be7e287194e4baac2346ea96d81f22da17dc3b0872b7",
+    "foundations/foundations.css": "fbf748f7f9d59072de21bddf1f903587e82d7b67f4d06465d6503dd4a82b4bbc",
     "foundations/learning-ui.js": "703472bbab76ae4e254e7d9797994755348799f3be07d73114486dd673c36711",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "f6b4b95cb040272c7bff7f8f7b3e6b3cc6bb50c8946868def29a1dfab49d524a",

@@ -98,7 +98,7 @@ for(const r of lesson('W25').rounds)assert(!(r.requiredKeywords||[]).includes('c
 for(const l of c.lessons)for(const r of l.rounds){
  assert(visuals.diagram(r.visual).includes('Concept sketch:'),r.id);
  if(r.retrieves){
-  const sourceVisual=c.lessons.find(x=>x.id===r.retrieves).rounds[2].visual;
+  const sourceVisual=visuals.activityVariants[r.id]?visuals.spec(visuals.activityVariants[r.id]):c.lessons.find(x=>x.id===r.retrieves).rounds[2].visual;
   assert.equal(r.visual.type,sourceVisual.type,r.id+' retrieves the same chart family');
   assert.equal(r.visual.variant,sourceVisual.variant,r.id+' retrieves the same chart technique');
   if(r.retrieves==='V09')assert.equal(r.visual.statistic,r.solution.includes('estimator="median"')?'median':'mean',r.id+' sketch follows this activity’s requested summary');

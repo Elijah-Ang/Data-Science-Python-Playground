@@ -42,6 +42,10 @@ def inspect_guidance(page, guidance, state):
             assert entry.get_attribute("data-guidance") == level, state
             assert entry.is_visible(), state
             assert entry.locator('dt code[data-code-role="parameter"]').inner_text() == definition["keyword"], state
+            choices=entry.locator('.foundation-argument-values')
+            assert choices.is_visible() and choices.inner_text().startswith('Accepts:'), state
+            assert choices.locator('code').count()>0, state
+            assert choices.locator('code').evaluate_all('nodes=>nodes.every(e=>getComputedStyle(e).fontSize==="16px")'), state
             meaning = entry.locator("dd").inner_text()
             assert meaning and len(meaning.split()) >= 3, (state, definition["id"])
             assert entry.locator("pre, details").count() == 0, state
@@ -49,6 +53,8 @@ def inspect_guidance(page, guidance, state):
             # explains this use without repeating every contract field.
             for key in ("forms", "range", "default", "effect", "example", "caveat", "source"):
                 assert definition[key], (state, definition["id"], key)
+
+    assert current.locator('pre code').evaluate_all('nodes=>nodes.every(e=>getComputedStyle(e).fontSize==="16px")'), state
 
     support = page.locator('.foundation-reference-content')
     assert support.locator(":scope > details > summary").all_inner_texts() == ["Hint", "Reveal solution"], state

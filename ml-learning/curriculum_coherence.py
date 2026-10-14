@@ -316,8 +316,8 @@ def _named_repairs(registry):
     lda['syntax']='\n'.join(p['code'] for p in lda['syntaxBreakdown'])
     lda['exercises'][2].update(depth='deeper',demand='Deeper investigation · affine decision scores',activityExplanation=CONCEPTS['lda-deeper']['meaning']+' '+CONCEPTS['lda-deeper']['choices'])
     svm=cards['ML-C10']
-    svm['explanation']+=' The straight-line margin drawing teaches linear-margin intuition; the RBF recipe can create a curved boundary through its kernel. This first activity inspects an already fitted model. Apply builds the complete recipe, validation and final evaluation.'
-    svm['visual']['caption']='Linear-margin intuition; the fitted RBF classifier can have a nonlinear boundary.'
+    svm['explanation']+=' An RBF kernel allows a curved boundary in measurement space. This activity inspects a supplied fitted classifier; Apply builds and evaluates the complete recipe.'
+    svm['visual']['caption']='Trace a fitted RBF decision boundary and its class-aligned support vectors.'
     n04=cards['ML-N04']
     n04['explanation']='Two different transformations serve two different roles. The outer StandardScaler prepares input measurements X. TransformedTargetRegressor learns a separate scale for y within each fitting population, then reverses that target scale automatically when predict returns. Wine quality predictions and RMSE use quality-score points; the Apply electricity workflow uses kWh.'
     # The old task-specific transfer reminder named minutes for a Wine target.
@@ -390,4 +390,10 @@ def apply(registry):
         _supply(e,CONTRACT_MEANINGS)
         e['teaching']=dict(introduces=[],reuses=['Features and target','Training-only validation','Final evaluation'] if ch['family'] not in ('clustering','pca') else DISCOVERY,extends=['Independent application'],prerequisites=ch['prerequisites'])
         e['syntaxGuidance']=dict(current=[],reminders=[],reference=[_guide(item) for item in CONCEPTS.values() if _used(e['solution'],item)])
+    cards={card['id']:card for card in registry['cards']}
+    for card_id,index,visual_id,choice in [
+        ('ML-C11',1,'C11-gamma','1'),('ML-R10',1,'R10-leaf','2'),
+        ('ML-C08',0,'C08','3'),('ML-C08',1,'C08','5'),('ML-C09',0,'C09','3')]:
+        card=cards[card_id]
+        card['exercises'][index]['visual']={**card['visual'],'id':visual_id,'choice':choice}
     return registry

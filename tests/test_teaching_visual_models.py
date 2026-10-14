@@ -20,8 +20,10 @@ console.log(JSON.stringify({rows:v.exampleRows,
   knn:['1','3','5'].map(n=>v.exploration('C08',n).data),
   trees:v.exampleRows.tree.map(r=>v.exploration('C14',r.id).data),
   regression:v.exampleRows.regression.map(r=>v.exploration('R09',r.id).data),
-  svm:['0.05','0.2','1'].map(n=>v.exploration('C10',n).data),
+  svm:['0.05','0.2','1'].map(n=>v.exploration('C10',n,{kernel:'linear'}).data),
   polynomial:['1','2','4'].map(n=>v.exploration('R07',n).data),
+  rbf:['0.5','2','10'].map(n=>v.exploration('C11',n).data).concat(['0.1','1','10'].map(n=>v.exploration('C11-gamma',n).data)),
+  complexity:['1','3','None'].map(n=>v.exploration('R10',n).data).concat(['1','2','3'].map(n=>v.exploration('R10-leaf',n).data)),
   pca:v.exploration('P01','p1').data}));'''
 examples = json.loads(subprocess.check_output(['node', '-e', script], cwd=ROOT))
 
@@ -79,3 +81,46 @@ np.testing.assert_allclose(model.components_ * signs[:, None], weights, atol=1e-
 np.testing.assert_allclose(model.transform(X) * signs, [[r['pc1'], r['pc2']] for r in example['scores']], atol=1e-8)
 np.testing.assert_allclose(model.explained_variance_ratio_[0], example['varianceShare'])
 print('Computed KNN votes, tree paths, linear SVM weights, training-only polynomial curves and every PCA score agree with scikit-learn fits.')
+
+for example in examples['rbf']:
+    rows=example['rows']
+    model=SVC(kernel='rbf',C=example['C'],gamma=example['gamma']).fit([[r['x'],r['y']] for r in rows],[r['group'] for r in rows])
+    assert model.support_.tolist()==example['support']
+    assert model.n_support_.tolist()==example['supportCounts']
+    np.testing.assert_allclose(model.decision_function([[r['x'],r['y']] for r in example['probes']]),[r['score'] for r in example['probes']],atol=1e-8)
+for example in examples['complexity']:
+    value=None if example['value']=='None' else int(example['value'])
+    model=DecisionTreeRegressor(random_state=42,**{example['parameter']:value}).fit([[r[0]] for r in example['rows']],[r[1] for r in example['rows']])
+    points=np.array(example['points'])
+    assert model.get_n_leaves()==example['leaves']
+    np.testing.assert_allclose(model.predict(points[:,:1]),points[:,1],atol=1e-8)
+print('Every RBF decision probe/support vector and tree-complexity prediction agrees with an independent sklearn fit.')
+
+# Values shown in the visible argument guidance must produce their stated statistics.
+import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
+values=np.array([2,4,6,3,7,1,2,3,18])
+for count in [2,4,8]:
+    fig,ax=plt.subplots()
+    sns.histplot(x=values,bins=count,ax=ax)
+    expected,edges=np.histogram(values,bins=count)
+    np.testing.assert_allclose([p.get_height() for p in ax.patches],expected)
+    np.testing.assert_allclose([p.get_x() for p in ax.patches],edges[:-1])
+    plt.close(fig)
+for edges in [[0,2,4,6],[0,2,5,20]]:
+    fig,ax=plt.subplots()
+    sns.histplot(x=values,bins=edges,ax=ax)
+    np.testing.assert_allclose([p.get_width() for p in ax.patches],np.diff(edges))
+    plt.close(fig)
+def mode_value(v):
+    return pd.Series(v).mode().iloc[0]
+for estimator in ['mean','median','sum','min','max','std',mode_value]:
+    fig,ax=plt.subplots()
+    sns.barplot(x=['A']*3,y=[2,2,8],estimator=estimator,errorbar=None,ax=ax)
+    expected=mode_value([2,2,8]) if callable(estimator) else pd.Series([2,2,8]).agg(estimator)
+    np.testing.assert_allclose(ax.patches[0].get_height(),expected)
+    plt.close(fig)
+print('Integer bins, explicit interval widths and all seven listed estimators produce the stated Python results.')

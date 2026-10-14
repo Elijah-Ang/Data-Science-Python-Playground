@@ -33,6 +33,7 @@ with sync_playwright() as p:
                 assert lesson.locator('.foundation-split > *').count() == 2, exercise['id']
                 task = lesson.locator('.foundation-content > .foundation-task-reminder')
                 assert task.count() == 1 and task.is_visible(), exercise['id']
+                assert task.evaluate('(task)=>[...task.parentElement.querySelectorAll(":scope>.ml-syntax,:scope>.ml-progressive-workflow,:scope>.ml-provided-note,:scope>.ml-provided-evidence")].every(e=>!!(e.compareDocumentPosition(task)&Node.DOCUMENT_POSITION_FOLLOWING))'), exercise['id']
                 assert not lesson.locator('.foundation-code-pane .foundation-task-reminder').count(), exercise['id']
                 expected_preview = exercise.get('showDatasetPreview') is not False and exercise.get('dataset') in datasets
                 preview = lesson.locator('.foundation-data-preview')
@@ -65,6 +66,7 @@ with sync_playwright() as p:
                     assert task.locator('.ml-output-names code').all_text_contents() == exercise['outputs']
                 fonts = lesson.locator('.teaching-syntax-parts dt > code').evaluate_all('nodes=>nodes.map(n=>getComputedStyle(n).fontSize)')
                 assert all(font == '16px' for font in fonts), (exercise['id'], fonts)
+                assert lesson.locator('.foundation-argument-values code').evaluate_all('nodes=>nodes.every(e=>getComputedStyle(e).fontSize==="16px")'), exercise['id']
                 records.append({'id': exercise['id'], 'width': width, 'dataframeVisible': expected_preview, 'taskOnLeft': True, 'disclosures': 2, 'referenceRemoved': True})
         print(f'{width}px: all 338 ML lesson layouts passed.', flush=True)
     assert len(records) == 676 and not errors, errors

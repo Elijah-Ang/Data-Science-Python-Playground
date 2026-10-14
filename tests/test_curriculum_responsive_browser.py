@@ -75,6 +75,7 @@ with sync_playwright() as pw:
                     style=editor&&getComputedStyle(editor), layerStyle=layer&&getComputedStyle(layer);
                   return {
                     overflow:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1,
+                    teachingBeforeTask:!!content&&[...content.querySelectorAll(':scope>.teaching-worked,:scope>.foundation-parameter-teaching,:scope>.teaching-transition,:scope>.ml-syntax,:scope>.ml-progressive-workflow,:scope>.ml-provided-note,:scope>.ml-provided-evidence')].every(e=>!!(e.compareDocumentPosition(content.querySelector(':scope>.foundation-task-reminder'))&Node.DOCUMENT_POSITION_FOLLOWING)),
                     order:!!(content&&code&&reference&&split.children.length===2&&content.nextElementSibling===code&&content.contains(reference)),
                     stageLinks:document.querySelectorAll('.foundation-practices a,.foundation-practices button').length,
                     modeControls:document.querySelectorAll('[data-learning-mode]').length,
@@ -107,6 +108,7 @@ with sync_playwright() as pw:
                   };
                 }''')
                 record.update(id=item['id'], family=family, width=width)
+                assert record['teachingBeforeTask'], record
                 assert not record['overflow'], record
                 assert record['order'] and record['mobileOrder'], record
                 assert record['stageLinks'] == record['modeControls'] == 0, record

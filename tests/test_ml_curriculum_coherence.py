@@ -86,7 +86,9 @@ assert 'midpoint' not in cards['ML-C17']['syntax']
 assert activities['ML-C17-3']['depth'] == 'deeper'
 assert 'lda-deeper' in {part.get('id') for part in activities['ML-C17-3']['syntaxGuidance']['current']}
 assert cards['ML-C06']['title'] == 'Tune logistic regularisation'
-assert 'Linear-margin intuition' in cards['ML-C10']['visual']['caption']
+assert 'RBF decision boundary' in cards['ML-C10']['visual']['caption']
+assert activities['ML-C11-2']['visual']['id']=='C11-gamma'
+assert activities['ML-R10-2']['visual']['id']=='R10-leaf'
 
 # A prefit inspection labels the fitted training population; checks may read its
 # state but must not present that provided model as a learner-created result.

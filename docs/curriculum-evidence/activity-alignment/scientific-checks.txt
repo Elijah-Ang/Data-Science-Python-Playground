@@ -1,0 +1,3 @@
+Computed KNN votes, tree paths, linear SVM weights, training-only polynomial curves and every PCA score agree with scikit-learn fits.
+Every RBF decision probe/support vector and tree-complexity prediction agrees with an independent sklearn fit.
+Integer bins, explicit interval widths and all seven listed estimators produce the stated Python results.

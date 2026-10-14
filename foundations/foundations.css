@@ -496,3 +496,8 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .foundation-content > .foundation-task-reminder .practice-question { font:700 18px/1.45 var(--body); text-transform:none; letter-spacing:normal; color:var(--ink); }
 .foundation-content > .foundation-task-reminder :is(p,li) { font-size:16px; }
 .foundation-content :is(.teaching-syntax-parts,.foundation-parameter-parts) dt > code { font:700 16px/1.6 var(--mono); }
+
+/* Argument alternatives stay visible and match the syntax-description type size. */
+.foundation-content :is(.foundation-syntax,.foundation-parameter-parts) .foundation-argument-values code,
+.foundation-content .foundation-parameter-teaching pre code { font-size: 16px; }
+.foundation-argument-values { margin: 6px 0 0; }

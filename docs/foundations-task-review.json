@@ -1,7 +1,7 @@
 {
   "baseSHA": "0ae290e6301d047dcc4b86977967c591eff786e2",
-  "reviewed": "2026-10-13",
-  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately.",
+  "reviewed": "2026-10-14",
+  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged.",
   "exercises": {
     "I01-1": {
       "sha256": "1d9395cf4a88ef5779e21b09b0b6ff8f98d05c9f10b475ea9e899f3f522dd3b9",
@@ -97,9 +97,10 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "88b12d3454281025381ee0b12d468aaa4bf30b39e26ee36168d73e3b84ca9f25",
+      "fullContractSHA256": "4274dceb38a6db6426f40d52c2fed5425d3f7c32e9210d0125e8d8955096d834",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "f603a2e473df85cde61b0dac6d7abdbcca5864437f6cb7917d1ad8151675503a"
+      "teachingMetadataSHA256": "f603a2e473df85cde61b0dac6d7abdbcca5864437f6cb7917d1ad8151675503a",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I02-3": {
       "sha256": "cbe93608066d3753979847421f0c92119f97ebce3b085bbec3ce078506761232",
@@ -119,9 +120,10 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "f6d32c77d749d69068328b11a208c21fc43202a8f64f477e4c2ccbb1a8f207a7",
+      "fullContractSHA256": "37455d671dcbcf6606f823dd226299e6dbc1c9c344528f1ddbca0a84b4135e5e",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "8142305f33e3b3732ad9215519fde077a2ddb1b71b9d14325ffa82d72f62f764"
+      "teachingMetadataSHA256": "8142305f33e3b3732ad9215519fde077a2ddb1b71b9d14325ffa82d72f62f764",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I01CSV-1": {
       "sha256": "30edda06bd2f2f7fa40148207c663c6ff5a385a445b03ee3aa19efc5382fc46e",
@@ -209,9 +211,10 @@
       ],
       "assessment": "reviewed",
       "note": "Rows then columns is the ordered shape tuple. Preview shape, full-table shape and eligible-row shape are kept distinct; wrong row counts are rejected.",
-      "fullContractSHA256": "74bdda9cf33f62e3d3591c6fa1bfcaef2b7392b85d192bff7d62ecee8e665cd1",
+      "fullContractSHA256": "dd9fb9b36847680600d380823b0464de598219086fff2c979af1cdb209bf2f79",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "9784ad349e8fdd75c960d92470d8ef3db6c7c717dbe4bb17a42f34c4077dd9c3"
+      "teachingMetadataSHA256": "9784ad349e8fdd75c960d92470d8ef3db6c7c717dbe4bb17a42f34c4077dd9c3",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I03-3": {
       "sha256": "1345796aac447604afe73eba3f3089a25ebca7137c94394e43a380563d3c2354",
@@ -263,9 +266,10 @@
       ],
       "assessment": "reviewed",
       "note": "Column names and row labels are semantic identifiers. Their spelling and case remain exact; displayed cosmetic chart text normalization cannot affect these checks.",
-      "fullContractSHA256": "85940aff4bdd0054759920d3966bdefa0c9db2faeeaa96fe53be1a74908f9385",
+      "fullContractSHA256": "4fa0750080b80bc8a2bdc96222a829d7783947e5d6fef5f793ed3d2608f91480",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "670caf60ae4f5b7f8b1c9f72af3fc103f41266bfa8c507185826acd9f4624cd7"
+      "teachingMetadataSHA256": "670caf60ae4f5b7f8b1c9f72af3fc103f41266bfa8c507185826acd9f4624cd7",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I04-3": {
       "sha256": "540cd37f17479ef7ff11038bd6d6c4e13808a638923ac7832295e5093765df79",
@@ -357,9 +361,10 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "84b51a9116c2ced17ea1da65277bdf40d604bb237eb6cf7701a938ce16e8d8dc",
+      "fullContractSHA256": "bba2c29155a816fa37303b78d50b72c1a6584bf79ad67eedd602353cc008d74a",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "e9885602ba88d381ce5179c8cbcd0caecae0cdfbfdd6dee9185853301c005d36"
+      "teachingMetadataSHA256": "e9885602ba88d381ce5179c8cbcd0caecae0cdfbfdd6dee9185853301c005d36",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "IR1-2": {
       "sha256": "1345796aac447604afe73eba3f3089a25ebca7137c94394e43a380563d3c2354",
@@ -609,9 +614,10 @@
       ],
       "assessment": "reviewed",
       "note": "Label slices are inclusive and label lists preserve their listed order. The supplied letter index makes the loc/iloc distinction visible and intentionally checked.",
-      "fullContractSHA256": "291db4bd77ca5a22f9857d8323c555fde16ef359f449407b13226d2ec6fed8ef",
+      "fullContractSHA256": "28e9702a70168ccd9454e4d8124528f88d7529268fc69da98d704dffa0fea26a",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "3801791528c53204940f837a9efabb8ca8f3229c72731f013f1a8b599bcaae4d"
+      "teachingMetadataSHA256": "3801791528c53204940f837a9efabb8ca8f3229c72731f013f1a8b599bcaae4d",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I09-3": {
       "sha256": "6b5d5d3e6cd41d15b865e62c99a03dde5f2d881c98c3d4c89e5345712428d80d",
@@ -627,9 +633,10 @@
       ],
       "assessment": "reviewed",
       "note": "Label slices are inclusive and label lists preserve their listed order. The supplied letter index makes the loc/iloc distinction visible and intentionally checked.",
-      "fullContractSHA256": "c6f37f1ff848faa541cef7db238e15f8a88e80b319057cb70c9c872b5a6c4ea0",
+      "fullContractSHA256": "ad0a0d66107058cd36b2e1db8dffbbd2a8f0f5adbc76ff750e9c41a03caab913",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "ec484573b739cdebe82c477d76027ef716cabbc0f8479f92673cdc98143f40b5"
+      "teachingMetadataSHA256": "ec484573b739cdebe82c477d76027ef716cabbc0f8479f92673cdc98143f40b5",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I10-1": {
       "sha256": "ad128d84de87a01910a2eb7a61eafb59617702edccd8342cdaae448c96f5bd9a",
@@ -717,9 +724,10 @@
       ],
       "assessment": "reviewed",
       "note": "Parenthesized comparisons and &, |, ~ express row masks. The fixtures distinguish combined eligibility from a single-condition answer.",
-      "fullContractSHA256": "09d37ad9860fab55aa80000afbe643af89d288df14754db3342975cbbfcc8a5d",
+      "fullContractSHA256": "42543078058822e4c91aa2e1450ac1165a5e6517a749931a10a0dc5ba4fcd8a8",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "14f4756bbb1175f5a5256e8166d6733a9d7932c5fd14c6d005f01eade54344b0"
+      "teachingMetadataSHA256": "14f4756bbb1175f5a5256e8166d6733a9d7932c5fd14c6d005f01eade54344b0",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I11-3": {
       "sha256": "be154036054648884cac5f7c004ed0672352ab1e125f88698e95e3e785f85d40",
@@ -771,9 +779,10 @@
       ],
       "assessment": "reviewed",
       "note": "Label slices are inclusive and label lists preserve their listed order. The supplied letter index makes the loc/iloc distinction visible and intentionally checked.",
-      "fullContractSHA256": "d06dfb7674b7c1ea779968cc5023d0479eeee281d618cc3cbd53a2545de75e05",
+      "fullContractSHA256": "60196ab001482455def6caeced2649bea8b4067b1434e044a54258ca852a78fb",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "438acea3aba513c24f3f8af08b29e2522f2104bf79301dbf974fa86df845b298"
+      "teachingMetadataSHA256": "438acea3aba513c24f3f8af08b29e2522f2104bf79301dbf974fa86df845b298",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "IR2-3": {
       "sha256": "be154036054648884cac5f7c004ed0672352ab1e125f88698e95e3e785f85d40",
@@ -879,9 +888,10 @@
       ],
       "assessment": "reviewed",
       "note": "The rank and requested number of extreme records matter. Ties and initial row identity stay paired; an arbitrary head slice fails the semantic answer.",
-      "fullContractSHA256": "20e16a6d077569418db5522b29fae16cbeaa6326e437545845dcd716f0dbc68f",
+      "fullContractSHA256": "e11196eda19ab1a4e10188d4ff690a9051da16555116382901bb56dc6869b19c",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "cd427765a4420c5c78de061917ddc3f5e7e1fe4dda8117c7f09df18eb012f1c2"
+      "teachingMetadataSHA256": "cd427765a4420c5c78de061917ddc3f5e7e1fe4dda8117c7f09df18eb012f1c2",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I13-3": {
       "sha256": "5d8320c834950df3f9c1434591ee2cca850480bba49cc349f8ce72b30399238b",
@@ -987,9 +997,10 @@
       ],
       "assessment": "reviewed",
       "note": "Counts, proportions and percentages retain their denominators and label/value pairs. Existing tie/category flexibility is appropriate; dropping a category remains wrong.",
-      "fullContractSHA256": "6cfe3fe388f416e164a529360e11a792c9cb715b77a30338c636e7e52ead6afa",
+      "fullContractSHA256": "6ec58e7654b75c6a270a9c3dcdf7d9368d92231aa3ab5bf5ae256adbe730c292",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "59df4cca4ffd9f0ea166bd74d4936c97321aae5e4304ff733aebb835eca3ffa8"
+      "teachingMetadataSHA256": "59df4cca4ffd9f0ea166bd74d4936c97321aae5e4304ff733aebb835eca3ffa8",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I15-3": {
       "sha256": "1817b97d876cd7c13aab652d08697bf6d1268aec51d8b311aa48f7fdc14ff2c7",
@@ -1059,9 +1070,10 @@
       ],
       "assessment": "reviewed",
       "note": "Missing-cell counts and percentages exclude present invalid text from missingness. Labelled summaries can reorder; the positional flags exercise keeps row order.",
-      "fullContractSHA256": "bb01b9be56849790a3294f2c6797d70c5dd64583eb630c7b3d23ab77901a004e",
+      "fullContractSHA256": "bf10f38bb3be6964b31304d645ab6a3db0c89a1f18bcc4ad33765e184f988ce1",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "f57aef05a0dcf83f2b16776bc349c315d264287bf72a289ce12aed30084bbe99"
+      "teachingMetadataSHA256": "f57aef05a0dcf83f2b16776bc349c315d264287bf72a289ce12aed30084bbe99",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I17-1": {
       "sha256": "1013512d9bb47b3832b42811502e24f643e1f2dfc708e10c25c98b3794fe707c",
@@ -1113,9 +1125,10 @@
       ],
       "assessment": "reviewed",
       "note": "Duplicated flags, counts and duplicate records are deliberately separate. The visible A/B example correctly explains first, last and keep=False without treating flags as deletion.",
-      "fullContractSHA256": "5b525937b8f33ac0f7b7fbc423edb6eb1ea42faf91ab36368bfae28ae3b80e3e",
+      "fullContractSHA256": "1fe07f3932cd433346932369bed438c4874674ae310fd51a6bcc96807ccb64da",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "c00a07f5ffb7d4d5617ff9edc65d197c94c6b9cc93b98aeb41728d20b16aa7eb"
+      "teachingMetadataSHA256": "c00a07f5ffb7d4d5617ff9edc65d197c94c6b9cc93b98aeb41728d20b16aa7eb",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "IR3-1": {
       "sha256": "8b5dbd0e763f4ca869ad7a445732b7036bef863d0e6fcac91cc763e824843bd9",
@@ -1167,9 +1180,10 @@
       ],
       "assessment": "reviewed",
       "note": "Missing-cell counts and percentages exclude present invalid text from missingness. Labelled summaries can reorder; the positional flags exercise keeps row order.",
-      "fullContractSHA256": "58ccebdf20af63a60b1a51946eca9450597efd30cb69c005913968306dffc3b2",
+      "fullContractSHA256": "a293ee92ffe3f01d8890e4a27808f66ebe11ddd3cecf3635a255481f7dc40251",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "89455a66379dfb7edf11676b04c0f4edf6dfd294aaaf4f01e12b5e32b74b4879"
+      "teachingMetadataSHA256": "89455a66379dfb7edf11676b04c0f4edf6dfd294aaaf4f01e12b5e32b74b4879",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "IR3-4": {
       "sha256": "1cbda69ebefdb9c7b9ee50a8ea83fe87b9255cd2ab68135aa9f7d19726b6d192",
@@ -1185,9 +1199,10 @@
       ],
       "assessment": "reviewed",
       "note": "Duplicated flags, counts and duplicate records are deliberately separate. The visible A/B example correctly explains first, last and keep=False without treating flags as deletion.",
-      "fullContractSHA256": "5167a6afa71df0d1fd0f15ea902b9f77c51c1678ab36a659ebbe20c4b85fe85b",
+      "fullContractSHA256": "36d5d96510cfea427a454f7afd86befcf586b76b63d047a57cf6b1b9ed331b91",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "013e05ffc8235baeb64e5d415d1ba47a6242a006903312c87876e2164b802ee0"
+      "teachingMetadataSHA256": "013e05ffc8235baeb64e5d415d1ba47a6242a006903312c87876e2164b802ee0",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I18-1": {
       "sha256": "e1b66219dfbe559199b20607bf7fbe873c8418b64d7861c6825a27bd4445d3eb",
@@ -1329,9 +1344,10 @@
       ],
       "assessment": "reviewed",
       "note": "Grouped mean, total and eligible-group summaries keep their category labels and selected population. Exact sums cannot substitute for means or counts.",
-      "fullContractSHA256": "c9f8671257522c1bb1012769763e4e74f330a1e00d7186acd3a127fa119946fc",
+      "fullContractSHA256": "a0250159baba21771e3040e06ea64dff7a62ff6cb3d3d519e5c41ebe68cc5e4b",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "9539ed410e75c514e4811f784c25516731e113e30f1c008ce103313e3c5205d7"
+      "teachingMetadataSHA256": "9539ed410e75c514e4811f784c25516731e113e30f1c008ce103313e3c5205d7",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I19-3": {
       "sha256": "2a195bef09898dff3011e293e033f4c1aa068ecd0e194b5bb3afadc44c171e79",
@@ -1761,9 +1777,10 @@
       ],
       "assessment": "reviewed",
       "note": "Stated inclusion rules update the working population. Threshold boundaries and full qualifying records remain required; sorting is only imposed where requested.",
-      "fullContractSHA256": "d5113a90fe3bfba8e257d5055cca59a8e23e7937c99d25c0428b3742a16ec761",
+      "fullContractSHA256": "bd518e8d95af5dfccd5579813cacf53fb7bb8eadb542acd249588243e99f3e38",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "367fed547b213445b34d49395e42303cd02bfcebef063af422b71c7f2569f31e"
+      "teachingMetadataSHA256": "367fed547b213445b34d49395e42303cd02bfcebef063af422b71c7f2569f31e",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W05-3": {
       "sha256": "70a0842556082fe632d5b3309582fdddfb8a502cbc206ba77636300fbe0f2082",
@@ -1815,9 +1832,10 @@
       ],
       "assessment": "reviewed",
       "note": "Sorting/filtering occurs before a requested index reset. Old labels and new consecutive labels are distinguishable and intentionally checked.",
-      "fullContractSHA256": "225e1e0e476015945c140130ac2b1deddf96e986d7022cb17b877e48ad458183",
+      "fullContractSHA256": "b71dcbe45be1f7b83b7ea7da4b8dbdfcb71c50650b6f9975d5020abaed92cd2f",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "f19d69d43a355b8563e5777a7e887b82af14f8855db7cc54a6b56231bdf54897"
+      "teachingMetadataSHA256": "f19d69d43a355b8563e5777a7e887b82af14f8855db7cc54a6b56231bdf54897",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W06-3": {
       "sha256": "1bce6634836f10257ed43e37e3798b9c975cd0160d3f9f5be1b4d5dc45592745",
@@ -1923,9 +1941,10 @@
       ],
       "assessment": "reviewed",
       "note": "Derived numeric columns preserve every original measurement and align row by row. Equivalent arithmetic and .assign methods are valid when the final table matches.",
-      "fullContractSHA256": "1537543818279611d44a099333107aeae0e88ad34092c41da201300b4589b78d",
+      "fullContractSHA256": "76fbc1dfb012d3aa230598e8c02cae90573a93b346e6d7cca729bf88e75f5002",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "5a38adf4a23961d7d49f468c20ac4fef3a7270be8eb5cc06056752e3a58efe67"
+      "teachingMetadataSHA256": "5a38adf4a23961d7d49f468c20ac4fef3a7270be8eb5cc06056752e3a58efe67",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W07-3": {
       "sha256": "df2837b1f9faef837c9df300380614e6a423645ef12913725b68203da621c1ad",
@@ -1941,9 +1960,10 @@
       ],
       "assessment": "reviewed",
       "note": "Derived numeric columns preserve every original measurement and align row by row. Equivalent arithmetic and .assign methods are valid when the final table matches.",
-      "fullContractSHA256": "d14ea93d127c8b97d0399b2fe678c4d3418539d38575040e57f0056fb1fa6831",
+      "fullContractSHA256": "b02388ed451697ca584058de69e01e98e83cd14ea4918dd7d4c1bf58298019b4",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "0c6a1c5d3a1f19095901c33f77303d7e01f29beca29d898ed84c494450a2c0f6"
+      "teachingMetadataSHA256": "0c6a1c5d3a1f19095901c33f77303d7e01f29beca29d898ed84c494450a2c0f6",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W08-1": {
       "sha256": "6702bb60ecd2429dd72a8c9fd73fa336dca054b430e59f3515c7a2b6999d2b76",
@@ -1977,9 +1997,10 @@
       ],
       "assessment": "reviewed",
       "note": "Conditional labels preserve threshold inclusivity and first-match rule precedence. The multi-case Change rule is taught explicitly; missing qualifying records are rejected.",
-      "fullContractSHA256": "c7a8683faac4adad65ca5a393eda0ba41333dddf10dcec0c11cba130e0cefeed",
+      "fullContractSHA256": "25b25956af83c6558c81354bd50ff8f7dfda8ad1711b9357f99d0966d271538b",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "4e820706af137aba7384b8805cb77c3c8a4b079ce7c451f4a451847b274daaf8"
+      "teachingMetadataSHA256": "4e820706af137aba7384b8805cb77c3c8a4b079ce7c451f4a451847b274daaf8",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W08-3": {
       "sha256": "020d627e59dcb18c19f58c215455e502af23cb5fcddf5646502768010cdd217e",
@@ -1995,9 +2016,10 @@
       ],
       "assessment": "reviewed",
       "note": "Conditional labels preserve threshold inclusivity and first-match rule precedence. The multi-case Change rule is taught explicitly; missing qualifying records are rejected.",
-      "fullContractSHA256": "88575eb60dea942758e336a1db5830ed2913d4ce65687e41bae2ca685d4eaf81",
+      "fullContractSHA256": "935687893a7e49cf9107a33f2812c6f702ee7f316922389b4f1925a3d1039f6e",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "8595a1ff9ae001603d507db4ab0ad3c16c7097e6a4d757f193afe1bd0c2dc7d3"
+      "teachingMetadataSHA256": "8595a1ff9ae001603d507db4ab0ad3c16c7097e6a4d757f193afe1bd0c2dc7d3",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W09-1": {
       "sha256": "c5ab9b2443100efd0622e35355dac5cc969cf184e403dfabf14ff46f9ce2fed0",
@@ -2031,9 +2053,10 @@
       ],
       "assessment": "reviewed",
       "note": "replace preserves unmatched labels while map makes unmatched codes missing. The Change transition demonstrates this distinction before asking the learner to use it.",
-      "fullContractSHA256": "05c5cbe1cb89bead2727fa80340bb8b08186dd4491f51071e6157624637e7f0b",
+      "fullContractSHA256": "0ea7559302b086cf76e093333f7eae54fc77dd672066d00652fe6ffb306e4991",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "6653e9f249e6e8f82ea9181b550687e0bd80eb078efe331deb0ea97863994afa"
+      "teachingMetadataSHA256": "6653e9f249e6e8f82ea9181b550687e0bd80eb078efe331deb0ea97863994afa",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W09-3": {
       "sha256": "b9791a1e35863d2108e2dadc630e232eeea3f3865d94c809b3e7390e804b9d66",
@@ -2103,9 +2126,10 @@
       ],
       "assessment": "reviewed",
       "note": "Spaces, case, literal replacement and extraction solve distinct text problems. Chaining keeps row alignment and missingness; source column references retain exact case.",
-      "fullContractSHA256": "a267c38c2ac94fba8d3cd117c12551490bb68f0b7a706bd00f5c493bd198808f",
+      "fullContractSHA256": "5e867368e6fb1d9c2307aa26ede6401e49f34abb956d6b9448398158bab444e2",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "8d44c48c53649702d71fade890e5a23df39d8494b054665fc9b621053bc1a4ba"
+      "teachingMetadataSHA256": "8d44c48c53649702d71fade890e5a23df39d8494b054665fc9b621053bc1a4ba",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W11-1": {
       "sha256": "4a281b422ffde25e6e10d00cb4660a02a806f903e881fdd9a7b5dfdb9cefc6ef",
@@ -2139,9 +2163,10 @@
       ],
       "assessment": "reviewed",
       "note": "Case-insensitive text search applies to values only, with na=False. The chosen output fields and all matching records must be present.",
-      "fullContractSHA256": "1f3372e454ab3d5dcba94f1c5b3a624646c73f16e5a82cb7533e78520d260ee7",
+      "fullContractSHA256": "7f936ee91157841815c4a2144e3050ddcf0f9a5bf63c64f29f78917fcd57c584",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "5c9ec68a21e9cafca4a60bbd0c59a087926f2373040400ed7d9b7a019872e950"
+      "teachingMetadataSHA256": "5c9ec68a21e9cafca4a60bbd0c59a087926f2373040400ed7d9b7a019872e950",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W11-3": {
       "sha256": "97bcfd8aa8cc718e0ed331b89576ba19b4cc7262a746ee28838ea1cb060f5c06",
@@ -2229,9 +2254,10 @@
       ],
       "assessment": "reviewed",
       "note": "Derived numeric columns preserve every original measurement and align row by row. Equivalent arithmetic and .assign methods are valid when the final table matches.",
-      "fullContractSHA256": "6cc202ecb0214225dfdc991153e9841e3c097987ea1993984dc8dbbdd84b31c7",
+      "fullContractSHA256": "46a9d0871dc6ae0131b07e47fe654fded0e16a2239e3ed376b0df5defa2ece3e",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "06457a38aa47ec854592855061fafd8a8384b554ea3c9599036c4b96351da632"
+      "teachingMetadataSHA256": "06457a38aa47ec854592855061fafd8a8384b554ea3c9599036c4b96351da632",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "WR2-2": {
       "sha256": "8546d5fe1c0236ba393f714cf6cdf4ada931fefbc9c36955ca8747dbda4b5dab",
@@ -2247,9 +2273,10 @@
       ],
       "assessment": "reviewed",
       "note": "Spaces, case, literal replacement and extraction solve distinct text problems. Chaining keeps row alignment and missingness; source column references retain exact case.",
-      "fullContractSHA256": "ae37a5b2fa0b1228cd222a96b5bd4b251f9e8182ae3a3916538b029b27f55fdb",
+      "fullContractSHA256": "3d8b7bf5e569657b75bcb06b789b3a792aae4448ffb8ea1a821666b8319377ca",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "925b8502f010be05ba241e6cc771e2bd8f715ccbed2bbf89bf12a3b44897f56b"
+      "teachingMetadataSHA256": "925b8502f010be05ba241e6cc771e2bd8f715ccbed2bbf89bf12a3b44897f56b",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "WR2-3": {
       "sha256": "08f43a46ed21436c8503b037d6ff1803e2520a6f00bff9879e5d974986a45a51",
@@ -2301,9 +2328,10 @@
       ],
       "assessment": "reviewed",
       "note": "These tasks intentionally teach specific storage dtypes. Validate category/string/nullable Int64 on the target column, allowing equivalent untouched-column storage representations.",
-      "fullContractSHA256": "2c6d80a1be6152eb49ab96912e23718e307adde5c86ebf94471c064675ef142a",
+      "fullContractSHA256": "21688b633526132518bbfdfc7e936e7e3de1bd8ccc4e40d17beba38a8d590832",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "e1dead2858350319e49c2ba71678f559141387a93f9f01c42be8581749496d2b"
+      "teachingMetadataSHA256": "e1dead2858350319e49c2ba71678f559141387a93f9f01c42be8581749496d2b",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W13-3": {
       "sha256": "1deacefa3bb3328c50855f965ef061327120f1862ef54a4520ba0dde6667997b",
@@ -2319,9 +2347,10 @@
       ],
       "assessment": "reviewed",
       "note": "These tasks intentionally teach specific storage dtypes. Validate category/string/nullable Int64 on the target column, allowing equivalent untouched-column storage representations.",
-      "fullContractSHA256": "10c1c61454f641c72f7d1d1d2104dd57bb3bb3d0028f24d85d0ad89bb89d553e",
+      "fullContractSHA256": "820a2f50c4697c6cf3ac3f763702bbbe3a6573bb61c1636fec1f758d4fc247c5",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "b56fd9ef2b3fde1df3df15e1b487091adadfbbdd0e8fcf0e59a34b92b791891f"
+      "teachingMetadataSHA256": "b56fd9ef2b3fde1df3df15e1b487091adadfbbdd0e8fcf0e59a34b92b791891f",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W14-1": {
       "sha256": "4cf17c828f18dedd8337156feb8970439f15d5d202b50c90c90805de7a9c7f76",
@@ -2409,9 +2438,10 @@
       ],
       "assessment": "reviewed",
       "note": "Calendar fields derive from parsed dates, with invalid dates remaining missing. Day-name call syntax is taught when introduced; January/zero replacements are wrong.",
-      "fullContractSHA256": "7078b6f38d4016daef88b902d67ff1fdf1f304c235a7f4e06f04d2ea34b04d82",
+      "fullContractSHA256": "f3e4235cde1fe6f3633e3659acc046aa7fb588e9a3fec774fadf76dbd82b1d7c",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "6d7ee6de9911d692e51a77d7b25caf8e5824e1c5b48ff75132a7a675eb388730"
+      "teachingMetadataSHA256": "6d7ee6de9911d692e51a77d7b25caf8e5824e1c5b48ff75132a7a675eb388730",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W15-3": {
       "sha256": "fa16909421fa332cc0889659038af8d9b10e6553dfedd74db0f8b84bdcd4712a",
@@ -2427,9 +2457,10 @@
       ],
       "assessment": "reviewed",
       "note": "Calendar fields derive from parsed dates, with invalid dates remaining missing. Day-name call syntax is taught when introduced; January/zero replacements are wrong.",
-      "fullContractSHA256": "2831ca0d501de144e9028b0fa7cef6060eba4ca5ab20be0cb740a65a3490753b",
+      "fullContractSHA256": "232a53ab21455cdb2535b82ff67dca136601651f58cce88b7f58b6f29c4608e3",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "b243bbf2621ac479f25b6f4caba6178e291ac47db5599bd966cc8bde9d0cf45b"
+      "teachingMetadataSHA256": "b243bbf2621ac479f25b6f4caba6178e291ac47db5599bd966cc8bde9d0cf45b",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W16-1": {
       "sha256": "3499a1f91b033aa15e6bf259b0d6d2dfd444f3e3d4fb42fee02db7e3494ff9fc",
@@ -2517,9 +2548,10 @@
       ],
       "assessment": "reviewed",
       "note": "The specified median/category fill changes gaps only and preserves known source values. A wrong imputation policy or replacing observed values fails.",
-      "fullContractSHA256": "24a9a7adbead3e9bdf5d72de494e238b0e663d4dee1eaac2f2a1e7ff356af2e3",
+      "fullContractSHA256": "5c16cc6929585b5d21a0eb1e695ab5c2f76c8cadc2ab91dc31b931831c140296",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "f0d606930bf3acb23861758d8f987ab130c9ee6d0d088ca1096eb7f765cf773c"
+      "teachingMetadataSHA256": "f0d606930bf3acb23861758d8f987ab130c9ee6d0d088ca1096eb7f765cf773c",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W17-3": {
       "sha256": "3e73aa8219b9a7d9eac61cca40570b1d50611ef0e8540ac3c633bcd91a07219c",
@@ -2571,9 +2603,10 @@
       ],
       "assessment": "reviewed",
       "note": "Confirmed accidental full-row copies are removed with the stated keep policy. Distinct rows remain; original labels stay until an explicit reset.",
-      "fullContractSHA256": "713807e0444a7ebd781e4a4e39928509db0c90ef825746a7fef31a19c9a96907",
+      "fullContractSHA256": "de490e41f9489d08c8fdfef096f3835a7dfd6a25d88d53c9590ad0421361d86d",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "9b7b954763696f42db2d1d93d217a4c32bbaeaef087b26fd308a11e9cf950ce9"
+      "teachingMetadataSHA256": "9b7b954763696f42db2d1d93d217a4c32bbaeaef087b26fd308a11e9cf950ce9",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W18-3": {
       "sha256": "95fb91a72cddd8fc35bd7de322d4a95c4cb3a492e7da25b4d0f050d27b0666f0",
@@ -2697,9 +2730,10 @@
       ],
       "assessment": "reviewed",
       "note": "Named aggregation explicitly explains input column, operation and output heading. size counts rows and count known values; the missing-price distinction and column order are intentional.",
-      "fullContractSHA256": "cff065b5729e1022f5592fde00113d7dad29cc3a7b6099613f004bc0d9b49de5",
+      "fullContractSHA256": "f68fa660dad86bf75481ae2d1a4f9deda3b7c56db7ee2bf1a85b9545bf2394b5",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "4ee8fec9b2dbf0612fa62870972e51c9d624724640b3dc1c8f24e3213a53565a"
+      "teachingMetadataSHA256": "4ee8fec9b2dbf0612fa62870972e51c9d624724640b3dc1c8f24e3213a53565a",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W19-3": {
       "sha256": "6ce1fc7230fed7cb43ac3f05631ddbdfc745ad50313901ee8542173eef27ef21",
@@ -2751,9 +2785,10 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "ee8c45f69d4ddfb6976b53444044663035f5ff500930b3194c6227722fd68af4",
+      "fullContractSHA256": "2f1c94750cbdd40cf9d049231b21ae280575e44cd87b633047228240705cbe04",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "fdf17f2e2d6641e07b983436cd9b871451bf386b890a86adb031e528f17f896c"
+      "teachingMetadataSHA256": "fdf17f2e2d6641e07b983436cd9b871451bf386b890a86adb031e528f17f896c",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W20-3": {
       "sha256": "209dc1a1ab480a23802940e7dfbca4c81e664a08c730a2ad15dcd32f1790f87b",
@@ -2769,9 +2804,10 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "b3570c6cd2d110ee294d91b6e0048efd545f6f77fbd81486851207bc61219f30",
+      "fullContractSHA256": "fda09f5dc224cca1786a44d15db4f7827e92e5dfb7efd8374a95481b4fc97152",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "5727b208c9b3786488e92ac21dbcc87a0e57c0de1c8d3497aba06c8e3577056e"
+      "teachingMetadataSHA256": "5727b208c9b3786488e92ac21dbcc87a0e57c0de1c8d3497aba06c8e3577056e",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W21-1": {
       "sha256": "e2df921f91e4ac8028f1acb7ee82ee210d0d81502c316f506f3dd1aca0b13aee",
@@ -2805,9 +2841,10 @@
       ],
       "assessment": "reviewed",
       "note": "The pivot table combines only eligible records with the requested mean/sum. Missing combinations remain missing; a count table is a different answer.",
-      "fullContractSHA256": "4690b946dfcd63a6566e1bdabd52da7e5b03ae76e7b2c4e3a5b254e6fe09f26a",
+      "fullContractSHA256": "1fd31b113a932bbc51c5337efadf6e43ed6ce6a1b5aadb9f208445b91c24c7eb",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "7a893fd3c581b52f605a875c3fe57b57272feea5daa999d168fcd9ab3c2ef5b0"
+      "teachingMetadataSHA256": "7a893fd3c581b52f605a875c3fe57b57272feea5daa999d168fcd9ab3c2ef5b0",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W21-3": {
       "sha256": "9bb22321c546975e8ca257c48005501795e803a6399d318aa479d3ae5ffc5db4",
@@ -2913,9 +2950,10 @@
       ],
       "assessment": "reviewed",
       "note": "Pivot rearranges the prepared long table without aggregation. Missing cells remain missing; an arbitrary fill or extra aggregation changes the deliverable.",
-      "fullContractSHA256": "8068dc4ff9127abe3bf0f1222c640071b60bc04c01bf194633fa77a06d965f42",
+      "fullContractSHA256": "f8cc8e40936ec389843af24add5eeb8aea09b2fc721cbe5f6bade30a639b4445",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "4cb3b8dd9af2dcf815942d864f46e9bfd5522f01a3b57047251b49373bfff2ca"
+      "teachingMetadataSHA256": "4cb3b8dd9af2dcf815942d864f46e9bfd5522f01a3b57047251b49373bfff2ca",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W23-3": {
       "sha256": "4c50b6cb1fb356a261135b528a6a151d18c117d91d44b806a9830b8c6991e240",
@@ -2985,9 +3023,10 @@
       ],
       "assessment": "reviewed",
       "note": "Join type and key relationship are intentional. Fixed the inner-join Change hint; validate=\"many_to_one\" remains required where stated, and unmatched-record diagnostics use the supplied lookup.",
-      "fullContractSHA256": "f5839c7d432aec02470cf2621e88b6170fcc634e079fc0b246553c99487969f9",
+      "fullContractSHA256": "c4548fe04da2ec9a7d0e133ccb4f0066198c173c3d21fec1c5a246c7575c8f26",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "bd0badefd7802ad243ce6fdd42c19d4e970cd86c8fee35fafbb4e5ad9b7625c1"
+      "teachingMetadataSHA256": "bd0badefd7802ad243ce6fdd42c19d4e970cd86c8fee35fafbb4e5ad9b7625c1",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "WR4-1": {
       "sha256": "6ce1fc7230fed7cb43ac3f05631ddbdfc745ad50313901ee8542173eef27ef21",
@@ -3021,9 +3060,10 @@
       ],
       "assessment": "reviewed",
       "note": "Groupwise transform returns values aligned to all original rows. A one-row-per-group agg output is a wrong shape and population.",
-      "fullContractSHA256": "d12338e030080bc1df5910376206b806e1afae598e97a1d293c66553daadcb24",
+      "fullContractSHA256": "985336ebb8974dfd5f5d4838fd0635472f69e7ac5dc17cd0a06c785a99f69079",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "bc2fee4f60fdeff5a0d34c4974c01a24f256db8787dddfd8a0d3b4072048cebc"
+      "teachingMetadataSHA256": "bc2fee4f60fdeff5a0d34c4974c01a24f256db8787dddfd8a0d3b4072048cebc",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "WR4-3": {
       "sha256": "9d3ae532b948adbb4a74619177aa13d8314ae1d680915f274d8dbe5b472950b8",
@@ -3057,9 +3097,10 @@
       ],
       "assessment": "reviewed",
       "note": "Join type and key relationship are intentional. Fixed the inner-join Change hint; validate=\"many_to_one\" remains required where stated, and unmatched-record diagnostics use the supplied lookup.",
-      "fullContractSHA256": "57d6bced38ef93d27932b081e27fc25ec72eed5635b471d1ece7abe3e2af7eea",
+      "fullContractSHA256": "a043a40b61ca2c3e432b553a4bcbb96f5eef5711c309de2fc1e13aa4c12d099d",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "55e0bf43dbce5330f417ad9af5a6216560fc743c89c8ddae6fd6a73a7077afb6"
+      "teachingMetadataSHA256": "55e0bf43dbce5330f417ad9af5a6216560fc743c89c8ddae6fd6a73a7077afb6",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W25-1": {
       "sha256": "b80e6a7e1d02c602a9e66bf50bd663b24af5f3208351129164a8934d20eec0b1",
@@ -3101,9 +3142,10 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "5490a1bf4a494ee566b1cf6ddcd51a5281a1bc7dff8e6b73f965e14dccaf341d",
+      "fullContractSHA256": "41c59da4099e2096d8426c1153249ac9f794d5d4566830f61a5b6f665aa1c6c4",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "1ac0b1c281e670c040946e941c5ab3684b5ef3e41aaaf9670e6c5f331054cb97"
+      "teachingMetadataSHA256": "1ac0b1c281e670c040946e941c5ab3684b5ef3e41aaaf9670e6c5f331054cb97",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W25-3": {
       "sha256": "1517e7d0d6e98d63197c9d031d0ed2acc42a6d2df034efc54625f55fc6ce6acc",
@@ -3141,9 +3183,10 @@
       ],
       "assessment": "reviewed",
       "note": "Fixed cut bins preserve endpoint inclusivity; Change teaches sample quantile bins explicitly. Equivalent bin-label storage is accepted without accepting incorrect boundaries or labels.",
-      "fullContractSHA256": "7279170cec91f5224dcd420d23ebe933619d034b6fee26d2184c5f0de2bdf213",
+      "fullContractSHA256": "9d5eda270aab9f35754c7659441b7df6752a4e86c91ead49969fc167d0b0ad9f",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "3627426a10d526cd3eeca7ff912b8100af5fdb2684093eb68b86fbf277fd2695"
+      "teachingMetadataSHA256": "3627426a10d526cd3eeca7ff912b8100af5fdb2684093eb68b86fbf277fd2695",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W26-2": {
       "sha256": "d5e35e8e82adf7fa3a08346d92e22ed9144ea5e7f1acac82a2d747ff81ed2dd4",
@@ -3159,9 +3202,10 @@
       ],
       "assessment": "reviewed",
       "note": "Fixed cut bins preserve endpoint inclusivity; Change teaches sample quantile bins explicitly. Equivalent bin-label storage is accepted without accepting incorrect boundaries or labels.",
-      "fullContractSHA256": "084c30960ecd6c68d6758eeb7b19bec2dbb03b472eaa8738ba2bd7ff63c49820",
+      "fullContractSHA256": "688edbc9cceb02a54b40d249791826ba8048aac850c25f9461c945025e492dfc",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "1683d88351a4fba98d6846850d32fcd85370dd83ecb0eb8e6bc7b222a29195f0"
+      "teachingMetadataSHA256": "1683d88351a4fba98d6846850d32fcd85370dd83ecb0eb8e6bc7b222a29195f0",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W26-3": {
       "sha256": "a34ca9126e440a9469cc6eaf5d68b61d54fa299551dac38dbc9d71abea027f2d",
@@ -3177,9 +3221,10 @@
       ],
       "assessment": "reviewed",
       "note": "Fixed cut bins preserve endpoint inclusivity; Change teaches sample quantile bins explicitly. Equivalent bin-label storage is accepted without accepting incorrect boundaries or labels.",
-      "fullContractSHA256": "220b7c2c010f8c219dfa757ab064d4d2742e5b105d180a7c9594c21783a7af06",
+      "fullContractSHA256": "4898aa86fd2f333786fd1eed070dc9acfa41a8fe5dbb3cffe8c41e4e2da2ec9f",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "79cb01b2b94cb0fc66773b3d6a96c4bcc38783f2ea9094b858630bdbf39870b0"
+      "teachingMetadataSHA256": "79cb01b2b94cb0fc66773b3d6a96c4bcc38783f2ea9094b858630bdbf39870b0",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "W27-1": {
       "sha256": "000bd206e31d9876f98b42b80b9f5e1bade4949dfa6786d03400f5bd0a1a4616",
@@ -3433,9 +3478,10 @@
       ],
       "assessment": "reviewed",
       "note": "Fixed cut bins preserve endpoint inclusivity; Change teaches sample quantile bins explicitly. Equivalent bin-label storage is accepted without accepting incorrect boundaries or labels.",
-      "fullContractSHA256": "582adc62cd0ead6a86a15284a0d2c0772ef4f64bee4ea8673e7a2aba7fe8e4e4",
+      "fullContractSHA256": "408755535569f6b3f2a7263f2c9a07da7f9cd576622d7b5b4f860610ae4a1cb1",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "f036ec8a4b2b64fabb3dc013fc0bace06755a89c539219d5228e1d683147fff2"
+      "teachingMetadataSHA256": "f036ec8a4b2b64fabb3dc013fc0bace06755a89c539219d5228e1d683147fff2",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "WR5-3": {
       "sha256": "97c4938855e53042e42efce8c809c5fc1e4b0571843a7360cc9c47bda44716b6",
@@ -3567,7 +3613,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
-      "fullContractSHA256": "c2d424bad1a7dbe4361e6e7d18a5b36fdde787a7c99f6ecf8a7b16a11f454bab",
+      "fullContractSHA256": "06e7fa4d277e0b7c75ab4c8e41d5e0f909255287a9c0d6579cef08fa29b3770d",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3577,7 +3623,8 @@
         "decision": "Choose a numeric distribution rather than association or category frequency.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "bf7e1ade1b618416a7d544e351672824e156c779c69d57a3dfb311171f84eae6"
+      "teachingMetadataSHA256": "bf7e1ade1b618416a7d544e351672824e156c779c69d57a3dfb311171f84eae6",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V35-3": {
       "sha256": "0968be1020ecd32726947845e563b3cbc5bdd9f79e6603363b0b9ccb8c67a346",
@@ -3593,7 +3640,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
-      "fullContractSHA256": "6fa59c62dbf4c0626a321ff4d21957d2670f5be9671c8a7e3b14f42ad1c0a8d1",
+      "fullContractSHA256": "5f51dd1f04f7fbd2b7190fc062b7a2965b310e6de5d9a975e47e42fe0c8e5124",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3603,7 +3650,8 @@
         "decision": "Choose category frequencies from a cinema question.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "bc05c161973b4c6bf582f4c05baa1af8a22ab4da833ee9bdb0e98faaa83a316a"
+      "teachingMetadataSHA256": "bc05c161973b4c6bf582f4c05baa1af8a22ab4da833ee9bdb0e98faaa83a316a",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V01-1": {
       "sha256": "3f4a0321680669fdcf79e9a4a79d8ffb88939ccaef176193db22eee8600d8714",
@@ -3807,7 +3855,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
-      "fullContractSHA256": "ff279880f5be6c120b67300671d3791f0099a5c2d15e1b9a606a284f3b2a0917",
+      "fullContractSHA256": "1ae1ee00a49d852480bc722cfd2c55bc04e311a4690d9ec23c3eb5f40ac9fa8c",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3817,7 +3865,8 @@
         "decision": "Count observations in numeric intervals without screening inconvenient extremes.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "271b10d7c0e2c37c7858d97108dee8a6f8026f2037c32f2fb83b6a129f33b748"
+      "teachingMetadataSHA256": "271b10d7c0e2c37c7858d97108dee8a6f8026f2037c32f2fb83b6a129f33b748",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V04-2": {
       "sha256": "56ae58f4324bc4846c4e97f64ab413b4dc01a4cd75fcd771b6bb106c3661fdaf",
@@ -3833,7 +3882,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
-      "fullContractSHA256": "9bd1b612337895db82e9cafb1d6b620980e31c73861e166d5c0a3b0de4007d94",
+      "fullContractSHA256": "e7003835c4e50f5dc47a676d22d8677a1729dd9b611ff54a01bd7b886ee1fd55",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3843,7 +3892,8 @@
         "decision": "Choose lower bin resolution for a broad summary; keep the evidence fixed.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "ce0452e720c7c5c4c5377cb5ac5d7737549cabe6b72df950bc3a7d3fbcc591f7"
+      "teachingMetadataSHA256": "ce0452e720c7c5c4c5377cb5ac5d7737549cabe6b72df950bc3a7d3fbcc591f7",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V04-3": {
       "sha256": "93e308449656350d06dbf42f356699d4c653cc77030d0f91b37359a2fce790b1",
@@ -3859,7 +3909,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the controlled integer-bin contrast in Change. Transfer now chooses unequal reporting intervals on tied/heavy-tailed evidence, and teaches list boundaries on a separate example. Count height does not imply histogram area represents frequency when widths differ.",
-      "fullContractSHA256": "85a74836a63fc0fed14d2b6f00c8fade5bf57a355ec474d72307adc46b9bb367",
+      "fullContractSHA256": "ed6120f3b56360767da09bd7b10a2a778c4b41104fdb9a8d76c4ec8f2e156ebc",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3869,7 +3919,8 @@
         "decision": "Choose meaningful unequal-width reporting intervals rather than another equal-bin count.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "75ab808e61dd2c4a741f007b0b3ca0b84bf5f1266d52e7fbeb3eed73de334fcf"
+      "teachingMetadataSHA256": "75ab808e61dd2c4a741f007b0b3ca0b84bf5f1266d52e7fbeb3eed73de334fcf",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V08-1": {
       "sha256": "03603f83e014038d90707d9086612653e3c453f1693b945b79442cd33d8dea21",
@@ -3885,7 +3936,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
-      "fullContractSHA256": "67dbf53c56cc521fa21b8e5523ff7d7e4ba29dda57130b64b21cbb2a0479e5a9",
+      "fullContractSHA256": "ff0c6e7bfe655e46e21a83ef14c29f783176e573c11a2bfe062d8d4bb5e095f9",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3895,7 +3946,8 @@
         "decision": "Distinguish category frequency from a measured amount.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "f05b9a52e4a0962c19eeabe36b168a90700f7caff57600ef8c5efaa1e8ed9fe8"
+      "teachingMetadataSHA256": "f05b9a52e4a0962c19eeabe36b168a90700f7caff57600ef8c5efaa1e8ed9fe8",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V08-2": {
       "sha256": "76b0513d7c9558d78082c465c914cec34844525dc0484fa57b69e412b58053ca",
@@ -3911,7 +3963,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
-      "fullContractSHA256": "ca0c0e612b4324aac609493b401a4b366145045321dd5874b23d292b0ff9cd43",
+      "fullContractSHA256": "37dfae15d5e530ff15b09d350f322da0f3f3d30df03679451392cbe46dfff2a6",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3921,7 +3973,8 @@
         "decision": "Choose a reporting order and retain an absent category without inventing a row.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "fb1c0f9af34217b6f33931dea9b1dbb3305bcba8750cba7ce0a3b46ce73aea1a"
+      "teachingMetadataSHA256": "fb1c0f9af34217b6f33931dea9b1dbb3305bcba8750cba7ce0a3b46ce73aea1a",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V08-3": {
       "sha256": "4ab5420c02730238fa667c281092029823d7af95938da391610519ddbb8c96ec",
@@ -3937,7 +3990,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
-      "fullContractSHA256": "7f2ad3d7c6f2f0991b12a4003ee403343707c2d2e01a706157decc760037b8c1",
+      "fullContractSHA256": "decd798c58d591509ac2a0a3f3991dfe0307cf93fe1d5e26a6c5f4d4a0a186c1",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3947,7 +4000,8 @@
         "decision": "Choose the eligible workload and rank its categories by the eligible counts.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "f691e4de8b603ac8949095ef584b7f30534caed76d37350d28efe015f2574cdc"
+      "teachingMetadataSHA256": "f691e4de8b603ac8949095ef584b7f30534caed76d37350d28efe015f2574cdc",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR1-1": {
       "sha256": "e5b673b4c2a5845134c3cdedb354976c014ba62bc0ddcfef48133fe67e4405eb",
@@ -3963,7 +4017,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "af1a6d5a1655ea6a03ee16f8db260cd0d04612a4d7ea6903aed9af843aa9b427",
+      "fullContractSHA256": "384ca8c1dc2a76e45b76ea9a3ebe6972c2ae174ca099218f4ba15292e8b55def",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3973,7 +4027,8 @@
         "decision": "Choose ordered change rather than association, distribution or frequency.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "3f167a416bdecaeab02c01108a12c1ee24949fda4926c675a29daabd82677b4e"
+      "teachingMetadataSHA256": "3f167a416bdecaeab02c01108a12c1ee24949fda4926c675a29daabd82677b4e",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR1-2": {
       "sha256": "3797471087ac773c477f97c0c678d086c1f2e832148e60554f500977b910d9ed",
@@ -4016,7 +4071,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "7bf0fb530c402514b1a8edd083ec166a58b9d543259ef1c54b16fd4ec00e791e",
+      "fullContractSHA256": "35dbd16c28b36039831219d35a7fd3f9277f296bc6c5af2f7daf117e3fa0d36f",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4026,7 +4081,8 @@
         "decision": "Retrieve numeric bin counts while preserving ties and rare heavy parcels.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "1e242fba394a6e48994246571616a5bea603fcb51d8022b3a8d646d9907668fd"
+      "teachingMetadataSHA256": "1e242fba394a6e48994246571616a5bea603fcb51d8022b3a8d646d9907668fd",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V18-1": {
       "sha256": "8d0591491a335d011e947046f50f0a266e90b1d51675de08ed88336da654868f",
@@ -4120,7 +4176,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch and nondiscriminating medians: the final Transfer uses Seaborn summaries, with median inferred from a typical-cost brief. Asymmetric Change data and a Transfer outlier make means observably wrong. Prepared, reordered equivalent median bars remain valid.",
-      "fullContractSHA256": "78fdb4c41c939dc6649ed8fd383666985460b476768ea31a83a5960a42685b6b",
+      "fullContractSHA256": "8068213d53fba8830808747ae6910d6efd5a3b17246ed133e4244f35b6d8f5ab",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4130,7 +4186,8 @@
         "decision": "Match a per-ticket average question to a group mean.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "86806fbef9f4514adcdb82b5f6591a774875b3c2d61714387a71bc432acd6b5a"
+      "teachingMetadataSHA256": "86806fbef9f4514adcdb82b5f6591a774875b3c2d61714387a71bc432acd6b5a",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V09-2": {
       "sha256": "45e481e45cc3711c65c0acbc51266786a350a6fa50674fd1e402e971522dd5c0",
@@ -4146,7 +4203,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch and nondiscriminating medians: the final Transfer uses Seaborn summaries, with median inferred from a typical-cost brief. Asymmetric Change data and a Transfer outlier make means observably wrong. Prepared, reordered equivalent median bars remain valid.",
-      "fullContractSHA256": "293c370fb2df0c7d6d8425ca53bc005336ab64a37b3978501775d86f3cb8e906",
+      "fullContractSHA256": "1799568e42a4bbf5663ed8dd47159093eed2e74dc245e0887cd1db78422513a5",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4156,7 +4213,8 @@
         "decision": "Choose the median from the meaning of typical, rather than exclude a costly receipt.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "1745c356e688ccbe16be055f7800cbe64f0b53740b899e7fee67d006e7ec0d87"
+      "teachingMetadataSHA256": "1745c356e688ccbe16be055f7800cbe64f0b53740b899e7fee67d006e7ec0d87",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V09-3": {
       "sha256": "f3e613f733815c3aa6c7bf271eeada65a3b5c34e8a60785682870cdba7b34c6d",
@@ -4172,7 +4230,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch and nondiscriminating medians: the final Transfer uses Seaborn summaries, with median inferred from a typical-cost brief. Asymmetric Change data and a Transfer outlier make means observably wrong. Prepared, reordered equivalent median bars remain valid.",
-      "fullContractSHA256": "a6dfaa2b5886ee594ebfc451c9783d52b5b221359d96d8be8f8d29f6e623646f",
+      "fullContractSHA256": "c6ccb085cfa6db98c6243d95ec79cff46eabcdec335bdf88ea90d553180a103d",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4182,7 +4240,8 @@
         "decision": "Infer median from the report meaning and distinguish it from mean and count.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "6820e6c69f6375513bc869dbb3be58ebe52dcebd2f9e745573bc5026e514e1e3"
+      "teachingMetadataSHA256": "6820e6c69f6375513bc869dbb3be58ebe52dcebd2f9e745573bc5026e514e1e3",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V13-1": {
       "sha256": "877a55b8f85a8af27a2fe975f81a8b20915e0944e73613259a9156608acb3377",
@@ -4224,7 +4283,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain raw-value/jitter versus coincident-point Change. Its new fixture actually contains repeated measurements. Transfer derives group order from medians while retaining every raw record, rather than using the common duration population.",
-      "fullContractSHA256": "76a46e38095ea2fa871ae6c93fdba2d9c5ed126388e6a386e516cc05e0e61f13",
+      "fullContractSHA256": "db7bd86a8743a958b2b01eaec1b496c448187ac3fdb28a19791e93d2c06f97c4",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4234,7 +4293,8 @@
         "decision": "Turn jitter off when exact coincidence is the question.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "d63bace2b8bb1c4fd5c72734b3aa766551dce0bea36819588c6cd4451bfeb6c3"
+      "teachingMetadataSHA256": "d63bace2b8bb1c4fd5c72734b3aa766551dce0bea36819588c6cd4451bfeb6c3",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V13-3": {
       "sha256": "bbda3d2c1822e8f7a3ff6f3290245ac76ec1c7f06c985bc8b2049ba0755bbdce",
@@ -4250,7 +4310,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain raw-value/jitter versus coincident-point Change. Its new fixture actually contains repeated measurements. Transfer derives group order from medians while retaining every raw record, rather than using the common duration population.",
-      "fullContractSHA256": "4be7073a86dd33f1e7bee6a57edc76581328a6de38716227b14084e8ea9bb3e3",
+      "fullContractSHA256": "c8e79d008f1d2cce7bb5d1c1b46d4c74c1d8d03a8569134685ddf650e676e76a",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4260,7 +4320,8 @@
         "decision": "Calculate a meaningful group order while keeping raw observation multiplicity.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "19b16c54264c133fab82eb89617799057ac42856dfe2dfda2ad2cc22784d91c0"
+      "teachingMetadataSHA256": "19b16c54264c133fab82eb89617799057ac42856dfe2dfda2ad2cc22784d91c0",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V11-1": {
       "sha256": "8171d244b1328d23406484b90052585c94b93f3e9cafc83a9010bfa3ef2d2903",
@@ -4358,7 +4419,7 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "8f418de9ec0b1717c89a6d448cf122f0e2a67b0bc8cbb6264359facb578d5f86",
+      "fullContractSHA256": "f51aab0d42032ce8033c56fe0fc1100ef13ce3b9449ec1a58cd922ec29491c56",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4368,7 +4429,8 @@
         "decision": "Use one category mapping to answer a grouping question.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "871811e383131381168cfb291cd4f6098e187394a6ac90a7a9518dcde063a970"
+      "teachingMetadataSHA256": "871811e383131381168cfb291cd4f6098e187394a6ac90a7a9518dcde063a970",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V03-2": {
       "sha256": "c173c36a177c28d2fcf0605a3bc168afb99cde41a0f92add2bb4381feb652f62",
@@ -4388,7 +4450,7 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "a1055cefa3512cfb592b7708f6121e0207f03abc3f53a35f2527c63a0de1a4d1",
+      "fullContractSHA256": "562d2167f2fcde72edf772ff4cc167d27ea23c7ce8e3a74a2621ce485119879c",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4398,7 +4460,8 @@
         "decision": "Encode a varying numeric measurement rather than a categorical group.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "90a9e1e394e770ff9a25cfb7c540b8b0aa7c7e8c3a3a6e2da97b142643b7cad5"
+      "teachingMetadataSHA256": "90a9e1e394e770ff9a25cfb7c540b8b0aa7c7e8c3a3a6e2da97b142643b7cad5",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V03-3": {
       "sha256": "83e8344c723c22f57f00f6dabbadc9a9b5b501517658fb2ae8dcea3b9bbf6cdc",
@@ -4418,7 +4481,7 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "a4987fc861e518c3ac0c4b9d468f091e828447ad2b0904e7180eaf902689b0fe",
+      "fullContractSHA256": "af74073b682db2b5d4bb558ccc157f013ca86e68433fdb8643a44a2b7e8b2871",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4428,7 +4491,8 @@
         "decision": "Remove unnecessary mappings while preserving all paired observations.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "b0ed02307fc6321f87d6efa639d874530359183123effff4484aea41869e5076"
+      "teachingMetadataSHA256": "b0ed02307fc6321f87d6efa639d874530359183123effff4484aea41869e5076",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V17-1": {
       "sha256": "e1e0b1a10cce291963cb6321559acc0cdfd9232496f870480ccffcac36058bbe",
@@ -4548,7 +4612,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "b63b795c06ed03a8a78d8d6d1c477eb29356337ada7ac45588b2dd267d114415",
+      "fullContractSHA256": "4b59c96a76537555cdc07eefde91095fbda4c72df5092aa5397b28cda330731e",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4558,7 +4622,8 @@
         "decision": "Choose a group measurement mean rather than a frequency or ratio.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "1d269c314efb7d6d89396300bfca207f5b59baceb691e58e5b0ddcff3c7485a8"
+      "teachingMetadataSHA256": "1d269c314efb7d6d89396300bfca207f5b59baceb691e58e5b0ddcff3c7485a8",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR2-3": {
       "sha256": "baba080090e2ba280a9c1b8b8f489ca06110054b365c5f604cec42f4f76237c1",
@@ -4861,7 +4926,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: logarithmic spacing over several orders of magnitude, dashboard limits and a stated outcome scale serve different purposes. All tasks preserve every observation; axes work remains separate from plotting.",
-      "fullContractSHA256": "0f489475bbf6727cb55cfb7f2ba7418b50ecbf0905c138837b7f8d51d700438d",
+      "fullContractSHA256": "81ee53342db5791156c5c61a87e1f1d30ae9cfcf2cf2e8983362a9441106f519",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -4872,7 +4937,8 @@
         "decision": "Apply common dashboard limits without hiding observations.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "0e34fb211554d080a088a96b603c224011f39fbbb6532672ef1ca06b92cb77c8"
+      "teachingMetadataSHA256": "0e34fb211554d080a088a96b603c224011f39fbbb6532672ef1ca06b92cb77c8",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V26-3": {
       "sha256": "992e87ee0858045727561175a17bc6d1d1e09a8ba0526d4c9d5276504515ad4f",
@@ -4888,7 +4954,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: logarithmic spacing over several orders of magnitude, dashboard limits and a stated outcome scale serve different purposes. All tasks preserve every observation; axes work remains separate from plotting.",
-      "fullContractSHA256": "03e30cd6206534bb8e9bd48525427ffc9bfd040efacd75d05ec8083253c88e2d",
+      "fullContractSHA256": "1c863f9d1e696772900f6e3e4d852645ed778b246c9fb0bbbe5eba13b65e4527",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -4899,7 +4965,8 @@
         "decision": "Use the stated rating scale while retaining the whole population.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "76be08066a2a9e2461feb9773656d4e1531b01c10710762f7505167609f0ed3f"
+      "teachingMetadataSHA256": "76be08066a2a9e2461feb9773656d4e1531b01c10710762f7505167609f0ed3f",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V27-1": {
       "sha256": "e7973d623d7edcb74146d425521944a7ded76e3b98d8ae11f83ad0a91d02e6cb",
@@ -4915,7 +4982,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: empirical median, empirical mean and a chosen policy threshold are scientifically different benchmarks. The review changes orientation to an external x-unit design limit that differs from the observed median.",
-      "fullContractSHA256": "de6d2d8803d6436e30e7288714554dd390fa8d68024accd0d92e5a3b7bc0748c",
+      "fullContractSHA256": "6b96bf38aceb0f553e0e6203cfe1c7e104b7ed8f463e339c052ef82fa6c803af",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -4926,7 +4993,8 @@
         "decision": "Orient each observed median by the measurement it summarizes.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "9f0c17da8354c55fe734e0b67575674d17ac111ee55c9f1f7f8f0864bee285e5"
+      "teachingMetadataSHA256": "9f0c17da8354c55fe734e0b67575674d17ac111ee55c9f1f7f8f0864bee285e5",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V27-2": {
       "sha256": "c45d8e576067a0f7b17e66f0a77db1cbfeb2a20d57381a3be729075c91180d92",
@@ -4942,7 +5010,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: empirical median, empirical mean and a chosen policy threshold are scientifically different benchmarks. The review changes orientation to an external x-unit design limit that differs from the observed median.",
-      "fullContractSHA256": "c5cf35f7d08e536fbde7c53cda585bd07d022947d9fb0a6168a946eefbf23e1d",
+      "fullContractSHA256": "208e9e3585ba5f3e7909178d104eeb402aabd861e2b84575cc9229088ef1000c",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -4953,7 +5021,8 @@
         "decision": "Infer the mean from the balance-point question and retain its y-axis units.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "ecbb32154d4d89a4fc75a5e41aacc12641132bfd53121b7aedfce1db2c044cbb"
+      "teachingMetadataSHA256": "ecbb32154d4d89a4fc75a5e41aacc12641132bfd53121b7aedfce1db2c044cbb",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V27-3": {
       "sha256": "3412ac3cd95602d63d8f539267f964036a52cbed59b74faae188f1afd09e3282",
@@ -4969,7 +5038,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: empirical median, empirical mean and a chosen policy threshold are scientifically different benchmarks. The review changes orientation to an external x-unit design limit that differs from the observed median.",
-      "fullContractSHA256": "54706a48e2e24af7d02dcac65d4beb4eff7b5ccfb3e6e1a3d96272ddc0022c3b",
+      "fullContractSHA256": "f8e7f57bd18ab0763c31bf7b3966e982f7881e6fecafefab1adc7407f4d32d43",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -4980,7 +5049,8 @@
         "decision": "Use a chosen rating benchmark without claiming it is an observed estimate.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "e6521a20551428ee95069d17e8aeff92d58f1606842d0186327b365d2e836029"
+      "teachingMetadataSHA256": "e6521a20551428ee95069d17e8aeff92d58f1606842d0186327b365d2e836029",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR3-1": {
       "sha256": "ca80e8aee910ec1d867e1ceb29aba71df6d3418975eeedab57e8dc2254e3bbb3",
@@ -5048,7 +5118,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "bf2fbc2c761f224d2ed690fd6bc67c5a672bba2453639d0227a482f053b05691",
+      "fullContractSHA256": "ab107913a71e56c090b1416f5dfff7469bccbf572c181acafe36afe01d6555c8",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5059,7 +5129,8 @@
         "decision": "Retrieve an x-oriented external benchmark rather than an estimated statistic.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "03bd479fb27f3040792f60429c8b630ca83a27cc8821560ad20ab02d9af922ad"
+      "teachingMetadataSHA256": "03bd479fb27f3040792f60429c8b630ca83a27cc8821560ad20ab02d9af922ad",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V29-1": {
       "sha256": "5def9fe8cb03f754e4a974ad6526dec68c54e34ee2e8c06facc949fe2a663ea1",
@@ -5261,7 +5332,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: restoring a truncated baseline, removing a logarithmic bar scale and applying a shared report range are different repairs. Graders preserve the prepared group quantities, including ranked Follow bars.",
-      "fullContractSHA256": "0209e47f7eaaf0f729d69a61490121939e8a571cd3d3b5baae7dc1f520671c34",
+      "fullContractSHA256": "fe169bce79b534fa6b134672283578171dbc5b6f29310a75f60ac8e7d8d9aefe",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5272,7 +5343,8 @@
         "decision": "Choose a linear, zero-based bar scale without altering the evidence.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "b203cdda22dc4531bb0e468ecbbe3766c532b17bd8c1c6035aaf09f4d5be421a"
+      "teachingMetadataSHA256": "b203cdda22dc4531bb0e468ecbbe3766c532b17bd8c1c6035aaf09f4d5be421a",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V36-3": {
       "sha256": "bd78f5c7a24c8d9ab0a519683cab47a768ee0c709b1784fa41ef287ff51104b4",
@@ -5288,7 +5360,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: restoring a truncated baseline, removing a logarithmic bar scale and applying a shared report range are different repairs. Graders preserve the prepared group quantities, including ranked Follow bars.",
-      "fullContractSHA256": "994b4ee6a45caa20d1aedf19e07b0ea8b12e607975a0034265dd2d5c5d5201bc",
+      "fullContractSHA256": "1ccc932728100f6552d2c3a33215e2af63fe5346fe1521a0654c25e8f4f40fc0",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5299,7 +5371,8 @@
         "decision": "Use a common zero-based comparison range while preserving group means.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "abe0713f713e808e68912d7148d3441b669426f93cc0a6dfdc68a45b3cbbd30f"
+      "teachingMetadataSHA256": "abe0713f713e808e68912d7148d3441b669426f93cc0a6dfdc68a45b3cbbd30f",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V37-1": {
       "sha256": "e45fba1c9b6e869e1e3d65650edfdac1312abc705fad9d51ba18190f6ca5f2f7",
@@ -5497,7 +5570,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain cumulative/tail probability semantics. Transfer uses strictly-above delays with ties at the boundary and observed zeros; the ordinary ECDF and >= interpretation differ.",
-      "fullContractSHA256": "5c2a90260f898539ed18e6d2b41915c3e8c251520a8d1f59d4fb68d956d5f911",
+      "fullContractSHA256": "de652a9fbace6e0455cc7bd5fe422da270a86df1637407a262520c59b7c2e629",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5507,7 +5580,8 @@
         "decision": "Choose the complementary direction from the threshold wording.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "40b31c8f50a2d4aac435b2290842b33808d2944c8b9f5ea4a80cb371834f8e28"
+      "teachingMetadataSHA256": "40b31c8f50a2d4aac435b2290842b33808d2944c8b9f5ea4a80cb371834f8e28",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V06-3": {
       "sha256": "19b5b080faacbcd12600239c9dbcc326a267fad1359f08022f672c271a401835",
@@ -5523,7 +5597,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain cumulative/tail probability semantics. Transfer uses strictly-above delays with ties at the boundary and observed zeros; the ordinary ECDF and >= interpretation differ.",
-      "fullContractSHA256": "66ba9d4f42cb2a8bc613f8c49f39362f6b913b5df0f417f207996bdc24cfd522",
+      "fullContractSHA256": "f51727c2a15435c6c655477fbde2fc959620937d8112746176c47544d8e4ac24",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5533,7 +5607,8 @@
         "decision": "Apply the complementary tail to tied boundary values without changing the denominator.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "2968607082ab0fd85793f7a710bf5c9d0532c91396057c9ea01c7907e2263dca"
+      "teachingMetadataSHA256": "2968607082ab0fd85793f7a710bf5c9d0532c91396057c9ea01c7907e2263dca",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V07-1": {
       "sha256": "28ee6c73e774227143b4a0b210b6b69d51baba14dd7a9a0b8488117fab3165c2",
@@ -5653,7 +5728,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain mean-plus-SD and median-without-interval contrasts. Transfer compares equal centres with different spreads against their raw observations on a shared scale; replacing SD with no interval or a different centre fails.",
-      "fullContractSHA256": "db22888f5afa95029ce2fe8c70490038de70af0bf8cb880a50c60d06f83d63e1",
+      "fullContractSHA256": "16394c73eb0fa4fdc24afc0e68c1c08c5cfba301abfcf7ab8b14f0a954149e3c",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5663,7 +5738,8 @@
         "decision": "Match the requested centre and omit an unsupported interval claim.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "58c7237ef5a84595f0cda356638f95c68b7b0598bd7c018af83881bcf8252465"
+      "teachingMetadataSHA256": "58c7237ef5a84595f0cda356638f95c68b7b0598bd7c018af83881bcf8252465",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V10-3": {
       "sha256": "5e5b491fed0ac8e2a91ac8e6e62cd740f6f5f9a168a858b56f9584068ef8df33",
@@ -5862,7 +5938,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the intentionally unsuitable tiny-sample draft repair. Transfer now repairs only one panel while preserving a valid paired chart, rather than repeating a single-Axes replacement under new nouns.",
-      "fullContractSHA256": "3477e99d4145875b85abe826397a630442eb8e32722877617437fc104bacdf64",
+      "fullContractSHA256": "9ab9e8840d260a918491c2bc62954229c1bf83cb07e47a31bdc8095a88f15f64",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5873,7 +5949,8 @@
         "decision": "Replace unsupported shape detail with the observed measurements.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "b4d3ddda101960962f4249ec103fd55420ec7c04a3f060c953963b7e7be8b4ad"
+      "teachingMetadataSHA256": "b4d3ddda101960962f4249ec103fd55420ec7c04a3f060c953963b7e7be8b4ad",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V15-2": {
       "sha256": "a19ae3aea9fc4d5495cf1822c225e6cfce4f7bcbdfa91ea837c1c06d337e5a4c",
@@ -5889,7 +5966,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the intentionally unsuitable tiny-sample draft repair. Transfer now repairs only one panel while preserving a valid paired chart, rather than repeating a single-Axes replacement under new nouns.",
-      "fullContractSHA256": "c6910d378709e2d471241c4be0d169619f8da1c46c8ac5065027680bec90ef12",
+      "fullContractSHA256": "3f3657e3174b820c7b2db6ca71b94682834f74cf3cd0e9816a2597bd73c212e9",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5900,7 +5977,8 @@
         "decision": "Choose the physical measurement axis when repairing the tiny-sample draft.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "b34d91f6967a91333049fc835c8e1ed88555bc1e2d8dd8c7e71529e2dd4821f1"
+      "teachingMetadataSHA256": "b34d91f6967a91333049fc835c8e1ed88555bc1e2d8dd8c7e71529e2dd4821f1",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V15-3": {
       "sha256": "607e33692ca05feed03dbff0b3292a86d76a85c3f60c6910901a8056c95057bd",
@@ -5916,7 +5994,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the intentionally unsuitable tiny-sample draft repair. Transfer now repairs only one panel while preserving a valid paired chart, rather than repeating a single-Axes replacement under new nouns.",
-      "fullContractSHA256": "b942f5895e5bd8f5216396a0aed70e57c5560dd40fc90d51033d5aae87accb2e",
+      "fullContractSHA256": "a68f364fd5e29939019d510d9f2f91f40a671c2c47fb65a15ce78c695a3b70bf",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5927,7 +6005,8 @@
         "decision": "Target a local repair and preserve an unaffected chart.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "8118cce4ffcbb0ab5e118c21a9308c9e850584d307566bdb0ef35dfa5f4d460c"
+      "teachingMetadataSHA256": "8118cce4ffcbb0ab5e118c21a9308c9e850584d307566bdb0ef35dfa5f4d460c",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR4-1": {
       "sha256": "8279ca2fd3a012ac4d26442fa22505a2e7d9a204e32b3acaeacafdf9dfa4bbb7",
@@ -5995,7 +6074,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "c923235092ac34d041f553bbb881b242426337f7115259d2ce104ae1c3d737f1",
+      "fullContractSHA256": "a64eb2e8046b759b26142f5620b178a778b9cefad8523c3fe2b2e2f9e6658dcd",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6005,7 +6084,8 @@
         "decision": "Retrieve a robust centre without claiming an uncertainty interval.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "f96b16221cf4e54f1ed3d392ce428b1db0465ebc07a18eed77fd1fabb80298cd"
+      "teachingMetadataSHA256": "f96b16221cf4e54f1ed3d392ce428b1db0465ebc07a18eed77fd1fabb80298cd",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR4-4": {
       "sha256": "6f723e00e92cd33d1bc54efdf508ff98562a17029b6fd31cc4438e8788b0e859",
@@ -6021,7 +6101,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "4b207130c08163f39e561e065a0d03c43472bd81969f7c7750bda3d51ee22bca",
+      "fullContractSHA256": "8457f15e951c138c32e534f297c6dbed01502334cc84438bebe906d540dfa7f2",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6032,7 +6112,8 @@
         "decision": "Retrieve draft replacement while changing the orientation and preserving duplicates.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "c4bf6fb10ce32b8bebbb1f11549e216fb97d546a941cd741e5710981c5040945"
+      "teachingMetadataSHA256": "c4bf6fb10ce32b8bebbb1f11549e216fb97d546a941cd741e5710981c5040945",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V19-1": {
       "sha256": "4de12b67521623661602896d7654d899b352903e47a8f8c97076bd1f3aeff7dc",
@@ -6074,7 +6155,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain within-time summaries versus one-replicate trajectories. Transfer explicitly compares both units of analysis in separate panels. Fresh review evidence has unequal daily observation counts and changing spreads.",
-      "fullContractSHA256": "fac24472d9b0cf800d8cc93a0efdfac0d6467b8133a86d6455b14730e0c4c5aa",
+      "fullContractSHA256": "c60b3f29a2a823aa924914efc3de05ca8a330c117706a2b6c90c4df1e46e3bc9",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6084,7 +6165,8 @@
         "decision": "Follow one replicate instead of aggregating across replicates.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "2a892d62fc67f5ca834a389b5fc8f7a7cd9a3833c0ffceedc6167af5229aa7b4"
+      "teachingMetadataSHA256": "2a892d62fc67f5ca834a389b5fc8f7a7cd9a3833c0ffceedc6167af5229aa7b4",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V19-3": {
       "sha256": "c7cf6c8c88efc5c76c559d1863c8f0acdd87196effd1a494eb9c5de933cfdce8",
@@ -6309,7 +6391,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair the Change crosstab noun swap with within-row proportions. Transfer preserves observed zeros versus absent measurement groups. Review calculates zero-occurrence proportions from Boolean flags instead of reusing the same measurement means.",
-      "fullContractSHA256": "0f4014491a17e554b9bbc04389777a979ee29a9c8fcc8f159dcaf59e3286eed2",
+      "fullContractSHA256": "5f2d7df2c564162eee7bd086ad2d82405957a69a02a738d467e7b3a6c5e0e6fb",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6319,7 +6401,8 @@
         "decision": "Choose a within-row denominator rather than raw counts or an overall proportion.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "508b3af32decd66137a82299c38b044feffa65febebd5eaef56fe3e06449440c"
+      "teachingMetadataSHA256": "508b3af32decd66137a82299c38b044feffa65febebd5eaef56fe3e06449440c",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V23-3": {
       "sha256": "1f3c7343d0011d67e25136c2d810e26e0332b3f87dbb7ab5c30c67178bdad74e",
@@ -6335,7 +6418,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair the Change crosstab noun swap with within-row proportions. Transfer preserves observed zeros versus absent measurement groups. Review calculates zero-occurrence proportions from Boolean flags instead of reusing the same measurement means.",
-      "fullContractSHA256": "9f7e013bee91deb0ea0eac8471c6d302bb9d6f1edbb21ce7b1994d862df70abf",
+      "fullContractSHA256": "0e60c138adc24ffeae8a8a4960b5bf938d413126f78f3af1f97c24190cbf6c31",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6345,7 +6428,8 @@
         "decision": "Distinguish counts, measured zero and absent measurement groups.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "789c6229c7c58d864fc546575a1d70ec3b634dff829bc650f5e06350a1f974e5"
+      "teachingMetadataSHA256": "789c6229c7c58d864fc546575a1d70ec3b634dff829bc650f5e06350a1f974e5",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR5-1": {
       "sha256": "2070cde4ff29957d121cdb3171b6b81c9026b56028a3e07a4c4b395fe15af078",
@@ -6439,7 +6523,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "ec2969ac7fedfb7536d211ab1b0ba69d2506f5f6a462cbb79c29fbf115875334",
+      "fullContractSHA256": "55d4aa0b0dfea4d61e2ece4e6ea622d2db67e2d5ae637b0b61ff97e37e03e8b1",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6449,7 +6533,8 @@
         "decision": "Retrieve matrix aggregation for a zero-occurrence rate rather than an average duration.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "1d38101848f581912053678799c527847ea48e5b9c9fd06ca352f1e5b0dac6bd"
+      "teachingMetadataSHA256": "1d38101848f581912053678799c527847ea48e5b9c9fd06ca352f1e5b0dac6bd",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V28-1": {
       "sha256": "9e343ff14e5f42664fe03ce570f3a1723bce73cb27b248cd85f978d96fb19e53",
@@ -6492,7 +6577,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain max/min annotation and paired coordinates. Repair the Transfer population fixture: global maximum is inactive and the plotted active maximum is a different record. Prepared marks/labels keep the learner focused on the annotation.",
-      "fullContractSHA256": "b5cbde0954b0cab81654f469446902d40867598f095c3a79286dbbb22795b542",
+      "fullContractSHA256": "aeb3a98d5ba3a2039c9314ba5eb2bfb8b3943ecb2535d0dd90e3aad47ff41856",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6503,7 +6588,8 @@
         "decision": "Choose the ranking field from the question rather than use the smallest output.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "152a11995051474e5c5ddd4886f6d50e16c0013c76080188dd4a97394007b50b"
+      "teachingMetadataSHA256": "152a11995051474e5c5ddd4886f6d50e16c0013c76080188dd4a97394007b50b",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "V28-3": {
       "sha256": "6359a1fbe7472487b6a87a8bbb7a2cd4d097535fd3c430b0584f87743c63a938",
@@ -6832,7 +6918,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair near-answer examples and prescribed-family repetition. Neutral examples teach categorical/distribution facets. Transfer chooses the already-taught relationship family from a paired question; review chooses distribution facets from a one-measurement question.",
-      "fullContractSHA256": "c5847df5874b1b96f8d71175547bdd16d15c128bdbb53b79c75c27677e295301",
+      "fullContractSHA256": "22fac7ce203e8781d1047a547fc5f2ea42fa945366c13b383e8719e85a42e60b",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6842,7 +6928,8 @@
         "decision": "Choose the facet family from a paired-relationship question rather than copying a distribution call.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "db8fd7de10a15bb1860748b8c00d4f3a70c554275a333d25ba115402d79940a3"
+      "teachingMetadataSHA256": "db8fd7de10a15bb1860748b8c00d4f3a70c554275a333d25ba115402d79940a3",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR6-1": {
       "sha256": "153d89287283a3a9b8fa235f4b313803dd678d0e274f49ff5356688cacd4826a",
@@ -6858,7 +6945,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "e077e1e00852bfd387e559ac1df4306385ac5c2b56e34a9b84815f89819515ae",
+      "fullContractSHA256": "ef79a632f841f484ecd54051ef42a64a85da94e581092cd6e87fd16202ced9d9",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -6869,7 +6956,8 @@
         "decision": "Retrieve an eligible minimum and its paired coordinates instead of an eligible maximum.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "e3807352bc89c1515d2647b16039b43d337fff779ff77a3fb1b10316fb0d8d4e"
+      "teachingMetadataSHA256": "e3807352bc89c1515d2647b16039b43d337fff779ff77a3fb1b10316fb0d8d4e",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR6-2": {
       "sha256": "7094d9a6212e0f555e8da5765d6d024ceffb4dc4fb44b9c032a0e713baff467e",
@@ -6962,7 +7050,7 @@
       ],
       "assessment": "reviewed",
       "sha256": "62e692a83fb45393b81edcd511329a34a2cf7b2a75017f4b86650c7133d93b53",
-      "fullContractSHA256": "eaf14da49c809e0217c48e8c1b90935c76ae97cbca596e35da85b60efd24f80b",
+      "fullContractSHA256": "b8b3034327bdcb27775b890cc4a1b1c816ed1f8f27350cb55c875078b59e2105",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
       "executionStatus": "passed",
       "varietyReview": {
@@ -6973,7 +7061,8 @@
         "decision": "Retrieve count semantics in a reporting order distinct from ranking and first appearance.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "b9abe65514b1ccc5cbf7ade4c986d08c23817bc5320e9d1e2740a1df57d2799b"
+      "teachingMetadataSHA256": "b9abe65514b1ccc5cbf7ade4c986d08c23817bc5320e9d1e2740a1df57d2799b",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "VR2-4": {
       "criteria": [
@@ -6988,7 +7077,7 @@
       ],
       "assessment": "reviewed",
       "sha256": "f55fd11b870a03d24b8acc9326d577fbead473e2691f51e2b194111d37b55ca5",
-      "fullContractSHA256": "22e6ed532bb7e85c0003a8cd33f678c1d0782b7c9cd3af974bb22bacaea6fdf6",
+      "fullContractSHA256": "9f741087a2697d7aefe0e3cb840a00e201ce38228a3ee6176b74689d9ff2f609",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
       "executionStatus": "passed",
       "varietyReview": {
@@ -6999,7 +7088,8 @@
         "decision": "Retrieve redundant category mappings with paired trial/standard evidence.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "b605e1ee286809fbb3a85a820e4c198eed2b0477c2f15059a5cfc11eda1b6470"
+      "teachingMetadataSHA256": "b605e1ee286809fbb3a85a820e4c198eed2b0477c2f15059a5cfc11eda1b6470",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I06S-1": {
       "criteria": [
@@ -7088,8 +7178,9 @@
       "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
       "executionStatus": "passed",
       "sha256": "e1290d73668f48340d9ab5d4c4f8797e8cf8dc78fe1a3d121cb0016a3b573539",
-      "fullContractSHA256": "a929f1da221294e1085149a3af1c2dfdd89fbe477b55bb06cec52dc9632acb43",
-      "teachingMetadataSHA256": "bfd61b71913e7718631a77f3282356d73bdf3cce1563ced54954dd02be6b7a1d"
+      "fullContractSHA256": "5f81a0bb6f1013edefab299d32e1a15a4165ffc24bd375a892dc084e4dbfe784",
+      "teachingMetadataSHA256": "bfd61b71913e7718631a77f3282356d73bdf3cce1563ced54954dd02be6b7a1d",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I13L-3": {
       "criteria": [
@@ -7124,8 +7215,9 @@
       "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
       "executionStatus": "passed",
       "sha256": "c7beaf5509b285b22e70dd01c3f3a8700f4b1d36b02d3964cf6d7fc757e3b302",
-      "fullContractSHA256": "dda28387e332bde2ab1dae64ae5f5b62497fe24139969a0a5268227b8e135ae9",
-      "teachingMetadataSHA256": "4c313652fefda31bb40b015e4ec3f67d8874a64ed69e70ff740b258baf7f8e06"
+      "fullContractSHA256": "0ac64eb69b1f63017f3f5eb7757c03af0645790a05357dbee14008184118e231",
+      "teachingMetadataSHA256": "4c313652fefda31bb40b015e4ec3f67d8874a64ed69e70ff740b258baf7f8e06",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I19S-2": {
       "criteria": [
@@ -7142,8 +7234,9 @@
       "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
       "executionStatus": "passed",
       "sha256": "52d227ce645598b1276c1b76bb499896d3fa9516d8b04a45c584296e512fdc85",
-      "fullContractSHA256": "5aab5407c46c947d821f5f8bb92f85527fbffd757e59ab283186859000958830",
-      "teachingMetadataSHA256": "d57479620853767a2b67be472ace7c23aad6784b7042e0ea69826fea84b56593"
+      "fullContractSHA256": "d1b83c5cb818b04b5fefb77894bf86ae2000d173de58a62554f9885824d0412c",
+      "teachingMetadataSHA256": "d57479620853767a2b67be472ace7c23aad6784b7042e0ea69826fea84b56593",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I19S-3": {
       "criteria": [
@@ -7160,8 +7253,9 @@
       "note": "Labels, measurements and positions are deliberately different; summaries preserve identity. Reference and meaningful alternatives/negative mutations are verified in the focused prerequisite audit.",
       "executionStatus": "passed",
       "sha256": "83bfcd9a47b41009579c8e1f6fc9943c124db1ae7c3f1b5aeaca6779077c6fae",
-      "fullContractSHA256": "b66b1611e46b36a1463cf08e5041e54793a298be3a0296580f003ed82f728d3c",
-      "teachingMetadataSHA256": "ddc143514c64bdd4c95556bc6c1dea9685af380f21a8d083c9db27c2568e6e9e"
+      "fullContractSHA256": "630874a717cc14f97585b3ca6f9f8ac9cce356a402d483d1daeb7f87cae091e5",
+      "teachingMetadataSHA256": "ddc143514c64bdd4c95556bc6c1dea9685af380f21a8d083c9db27c2568e6e9e",
+      "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
     },
     "I19A-1": {
       "criteria": [
