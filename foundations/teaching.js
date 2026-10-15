@@ -77,7 +77,7 @@
     const params=new Set([...(round?.parameterTeaching?.introduces||[]),...(round?.parameterTeaching?.extends||[])].map(name=>name.split('.').at(-1)));
     const current=round?.syntaxGuidance?.current || (lesson.syntax||[]).filter(([code])=>!(lesson.syntaxLater||[]).includes(code));
     const essential=current.filter(p=>!params.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1]));
-    return essential.length?'<h4>What the syntax does</h4><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,essential)+'</dl>':'';
+    return essential.length?'<h3 class="teaching-syntax-heading">What the syntax does</h3><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,essential)+'</dl>':'';
   }
   function syntaxReference(lesson,round){
     const guidance=round?.syntaxGuidance;

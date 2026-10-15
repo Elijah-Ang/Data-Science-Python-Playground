@@ -1,0 +1,637 @@
+{
+  "baseline": "b52d8600bd53d7f4592880944ed2e37577950892",
+  "passed": true,
+  "foundationsRounds": 338,
+  "identicalFoundationsRoundSHA256": "f425fb2f2796a1b6afe984ae1fbaab4ff3b47313e72ef2138a9510634489df46",
+  "identicalFoundationsDatasetsSHA256": "ccef199d603ee0cbdc3e90c5b6ddf603af500a26337dfc0b08311a820a686f64",
+  "mlExercises": 338,
+  "identicalMLContractSHA256": "03aed2f191c8c625ba9d9a4831166bce251f75b6a1c120abb0bb91e829431e14",
+  "unchangedChallengeContracts": 19,
+  "identicalChallengeContractSHA256": "5de5a7e87d45516e3a567fcbb0a8c1c7ca1103fa0c49bf0ca539325c8cfe2ba6",
+  "challengeProseChanges": {
+    "ML-X01": [
+      "syntaxGuidance"
+    ],
+    "ML-X02": [
+      "syntaxGuidance"
+    ],
+    "ML-X03": [
+      "syntaxGuidance"
+    ],
+    "ML-X04": [
+      "syntaxGuidance"
+    ],
+    "ML-X05": [
+      "syntaxGuidance"
+    ],
+    "ML-X06": [
+      "syntaxGuidance"
+    ],
+    "ML-X07": [
+      "syntaxGuidance"
+    ],
+    "ML-X08": [
+      "syntaxGuidance"
+    ],
+    "ML-X09": [
+      "syntaxGuidance"
+    ],
+    "ML-X10": [
+      "syntaxGuidance"
+    ],
+    "ML-X11": [
+      "syntaxGuidance"
+    ],
+    "ML-X12": [
+      "syntaxGuidance"
+    ],
+    "ML-X13": [
+      "syntaxGuidance"
+    ],
+    "ML-X14": [
+      "syntaxGuidance"
+    ],
+    "ML-X15": [
+      "syntaxGuidance"
+    ],
+    "ML-X16": [
+      "syntaxGuidance"
+    ],
+    "ML-X17": [
+      "syntaxGuidance"
+    ],
+    "ML-X18": [
+      "syntaxGuidance"
+    ],
+    "ML-X19": [
+      "syntaxGuidance"
+    ]
+  },
+  "mlProseChanges": {
+    "ML-F01-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F02-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F02-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F02-3": [
+      "syntaxGuidance"
+    ],
+    "ML-F03-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F03-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F03-3": [
+      "syntaxGuidance"
+    ],
+    "ML-F04-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F04-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F04-3": [
+      "syntaxGuidance"
+    ],
+    "ML-F05-2": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-F07-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F07-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F08-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F09-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F09-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F09-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W01-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W02-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W02-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W03-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W03-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W04-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W04-4": [
+      "syntaxGuidance"
+    ],
+    "ML-W05-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W05-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W05-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W06-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W06-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W06-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W07-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W07-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W07-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W08-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W08-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W09-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W09-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W11-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W11-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W12-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W12-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W13-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W13-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W14-3": [
+      "syntaxGuidance"
+    ],
+    "ML-R01-4": [
+      "syntaxGuidance"
+    ],
+    "ML-R02-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R03-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R04-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R04-4": [
+      "syntaxGuidance"
+    ],
+    "ML-R05-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R05-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R06-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R06-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R07-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R07-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R07-3": [
+      "syntaxGuidance"
+    ],
+    "ML-R07-4": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-R08-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R08-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R08-3": [
+      "syntaxGuidance"
+    ],
+    "ML-R09-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R09-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R09-3": [
+      "syntaxGuidance"
+    ],
+    "ML-R09-4": [
+      "syntaxGuidance"
+    ],
+    "ML-R10-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R10-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R10-3": [
+      "syntaxGuidance"
+    ],
+    "ML-R11-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C03-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C03-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C03-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C05-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C05-3": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-C06-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C06-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C06-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C06-4": [
+      "syntaxGuidance"
+    ],
+    "ML-C07-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C08-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C08-2": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-C08-4": [
+      "syntaxGuidance"
+    ],
+    "ML-C09-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C10-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C10-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C10-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C10-4": [
+      "syntaxGuidance"
+    ],
+    "ML-C11-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C12-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C12-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C12-4": [
+      "syntaxGuidance"
+    ],
+    "ML-C13-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C13-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C13-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C14-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C14-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C14-5": [
+      "syntaxGuidance"
+    ],
+    "ML-C15-4": [
+      "syntaxGuidance"
+    ],
+    "ML-C16-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C16-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C16-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C17-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C17-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C17-3": [
+      "activityExplanation",
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-C17-4": [
+      "syntaxGuidance"
+    ],
+    "ML-C18-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C18-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C18-5": [
+      "syntaxGuidance"
+    ],
+    "ML-N01-1": [
+      "syntaxGuidance"
+    ],
+    "ML-N01-2": [
+      "syntaxGuidance"
+    ],
+    "ML-N03-1": [
+      "syntaxGuidance"
+    ],
+    "ML-N03-2": [
+      "syntaxGuidance"
+    ],
+    "ML-N03-4": [
+      "syntaxGuidance"
+    ],
+    "ML-N04-1": [
+      "syntaxGuidance"
+    ],
+    "ML-N04-2": [
+      "syntaxGuidance"
+    ],
+    "ML-N04-3": [
+      "syntaxGuidance"
+    ],
+    "ML-N04-4": [
+      "syntaxGuidance"
+    ],
+    "ML-N04-5": [
+      "syntaxGuidance"
+    ],
+    "ML-N06-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U01-3": [
+      "syntaxGuidance"
+    ],
+    "ML-U02-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U02-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U03-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U03-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U03-3": [
+      "syntaxGuidance"
+    ],
+    "ML-U03-4": [
+      "syntaxGuidance"
+    ],
+    "ML-U04-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U04-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U04-3": [
+      "syntaxGuidance"
+    ],
+    "ML-U05-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U05-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U06-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U06-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U07-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U07-4": [
+      "syntaxGuidance"
+    ],
+    "ML-U08-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U08-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U09-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U09-2": [
+      "syntaxGuidance"
+    ],
+    "ML-U10-1": [
+      "syntaxGuidance"
+    ],
+    "ML-P01-1": [
+      "syntaxGuidance"
+    ],
+    "ML-P02-4": [
+      "syntaxGuidance"
+    ],
+    "ML-P03-2": [
+      "syntaxGuidance"
+    ],
+    "ML-P04-3": [
+      "syntaxGuidance"
+    ],
+    "ML-P05-1": [
+      "syntaxGuidance"
+    ],
+    "ML-P05-3": [
+      "syntaxGuidance"
+    ],
+    "ML-F-R1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F-R1-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F-R2-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W-R1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W-R1-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W-R2-3": [
+      "syntaxGuidance"
+    ],
+    "ML-R-R1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R-R2-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R-R2-2": [
+      "syntaxGuidance"
+    ],
+    "ML-R-R2-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C-R1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C-R1-3": [
+      "syntaxGuidance"
+    ],
+    "ML-C-R2-2": [
+      "syntaxGuidance"
+    ],
+    "ML-C-R2-3": [
+      "syntaxGuidance"
+    ],
+    "ML-N-R1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U-R1-3": [
+      "syntaxGuidance"
+    ],
+    "ML-U-R2-1": [
+      "syntaxGuidance"
+    ],
+    "ML-P-R1-2": [
+      "syntaxGuidance"
+    ],
+    "ML-F-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-R-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-C-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-N-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-N-K2-1": [
+      "syntaxGuidance"
+    ],
+    "ML-U-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-P-K1-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F11-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F11-2": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-F11-3": [
+      "syntaxGuidance"
+    ],
+    "ML-F12-1": [
+      "syntaxGuidance"
+    ],
+    "ML-F12-2": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-F12-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W15-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W15-2": [
+      "syntaxGuidance"
+    ],
+    "ML-W15-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W16-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W16-2": [
+      "newInTask",
+      "syntaxGuidance"
+    ],
+    "ML-W16-3": [
+      "syntaxGuidance"
+    ],
+    "ML-W-K2-1": [
+      "syntaxGuidance"
+    ],
+    "ML-W-K3-1": [
+      "syntaxGuidance"
+    ]
+  },
+  "scope": "All Data Foundations round fields and datasets are identical. ML changes are confined to meaning text in syntaxGuidance/newInTask and activityExplanation; code, accepted forms and concept identities match. Every other exercise field and all challenge contracts are identical; challenge syntaxGuidance meanings are simplified too."
+}

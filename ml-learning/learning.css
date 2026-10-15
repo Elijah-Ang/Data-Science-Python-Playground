@@ -165,3 +165,6 @@
 .concept-visual .cluster-1 { fill:var(--coral); stroke:var(--coral); }
 .concept-visual .cluster-2 { fill:var(--violet); stroke:var(--violet); }
 .concept-visual .cluster-3 { fill:var(--ink); stroke:var(--ink); }
+
+/* Match the shared Arguments reading size. */
+.foundation-content .ml-syntax-parts dd { font:400 16px/1.6 var(--body); }

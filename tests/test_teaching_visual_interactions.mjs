@@ -5,7 +5,7 @@ import vm from 'node:vm';
 
 const require=createRequire(import.meta.url);
 const foundations=require('../foundations/visuals.js');
-const context={window:{}};
+const context={window:{InlineCode:require('../foundations/inline-code.js')}};
 vm.runInNewContext(fs.readFileSync(new URL('../ml-learning/visuals.js',import.meta.url),'utf8'),context);
 const ml=context.window.MLLearningVisuals;
 const close=(actual,expected,epsilon=1e-8)=>assert(Math.abs(actual-expected)<epsilon,`${actual} ≈ ${expected}`);
@@ -39,7 +39,7 @@ for(const column of ['group','shift']){
 }
 assert.deepEqual(foundations.exploration('summary-order','descending').data.groups.map(g=>[g.group,g.value]),[['C',6],['B',5],['A',4]]);
 assert.deepEqual(foundations.exploration('summary-order','ascending',{statistic:'median'}).data.groups.map(g=>[g.group,g.value]),[['C',2.5],['A',4],['B',5]]);
-assert(foundations.interactive({...foundations.spec('mean-bars'),statistic:'median'}).includes('value="median" selected'));
+assert(foundations.interactive({...foundations.spec('mean-bars'),statistic:'median'}).includes('data-code-value="median"'));
 assert(foundations.diagram({...foundations.spec('scatter-dimensions'),sizeEncoding:false}).includes('constant point size'));
 assert(!foundations.diagram({...foundations.spec('scatter-dimensions'),sizeEncoding:false}).includes('magnitude = size'));
 assert(foundations.diagram({...foundations.spec('exact-bars'),summaryStatistic:'mean'}).includes('Mean value'));
@@ -171,22 +171,18 @@ for(const [visuals,specs] of [[foundations,foundations.explorerSpecs],[ml,ml.exp
  }
 }
 
-// Native controls remain labelled, keep one concise current result, and announce changes.
+// Inline buttons identify exactly the editable source and announce changes.
 for(const [visuals,visual] of [[foundations,foundations.spec('histogram')],[ml,{id:'C08'}]]){
   const html=visuals.interactive(visual);
-  assert(html.includes('<label'));
-  assert(html.includes('<select'));
-  assert(!html.includes('Comparison baseline'),'Keep one concise current result.');
+  assert(html.includes('data-code-key'));
+  assert(html.includes('aria-label="Change '));
+  assert(!html.includes('<select'));
+  assert(html.includes('inline-code-cue'));
   assert(html.includes('aria-live="polite"'));
   assert(html.includes('Illustrative'));
   const listeners=[];const container={addEventListener:(event,handler)=>listeners.push([event,handler])};
-  visuals.mount(container);visuals.mount(container);
-  assert.equal(listeners.length,1);
-  let result='';const output={set innerHTML(value){result=value;}};
-  const section={dataset:{foundationExplorer:'histogram',mlExplorer:'C08'},querySelector:()=>output};
-  const control={value:visuals===foundations?'wide':'5',closest:()=>section};
-  listeners[0][1]({target:{closest:()=>control}});
-  assert(result.includes(visuals===foundations?'[0, 4)':'3 A + 2 B'));
+  visuals.mount(container);visuals.mount(container);assert.equal(listeners.length,1);
+  assert.equal(listeners[0][0],'illustrative-code-change');
 }
 assert.throws(()=>foundations.exploration('histogram','unknown'));
 assert.throws(()=>ml.exploration('C08','7'));
@@ -196,8 +192,8 @@ console.log('Teaching visuals: data conservation, statistics, neighbour voting, 
 for(const choice of ['2','4','8']){const r=foundations.exploration('histogram',choice);assert.equal(r.data.bins.length,Number(choice));assert.equal(r.data.count,9);assert.equal(r.data.edges[0],1);assert.equal(r.data.edges.at(-1),18);assert(r.code.includes(`bins=${choice}`));}
 const c=require('../foundations/curriculum.js');
 for(const [id,variant] of Object.entries(foundations.activityVariants))assert.equal(c.lessons.flatMap(l=>l.rounds).find(r=>r.id===id).visual.variant,variant,id);
-for(const [index,binMode] of [[0,'count'],[1,'count'],[2,'edges']]){const r=c.lessons.find(l=>l.id==='V04').rounds[index];assert.equal(r.visual.binMode,binMode);const html=foundations.interactive(r.visual);assert(!html.includes('Width '));assert.equal(html.includes('Number of bins'),index<2);}
-const count=c.lessons.find(l=>l.id==='V08').rounds[0];assert(foundations.interactive(count.visual).includes('value="group" selected'));
+for(const [index,binMode] of [[0,'count'],[1,'count'],[2,'edges']]){const r=c.lessons.find(l=>l.id==='V04').rounds[index];assert.equal(r.visual.binMode,binMode);const html=foundations.interactive(r.visual);assert(!html.includes('Width '));assert.equal(html.includes('data-code-key="bins"'),true);}
+const count=c.lessons.find(l=>l.id==='V08').rounds[0];assert(foundations.interactive(count.visual).includes('data-code-value="group"'));
 assert.deepEqual(count.visual.choices,['group','shift']);
 assert(!foundations.interactive(count.visual).includes('order='),'Follow count interaction does not teach the Change order argument early.');
 const parameters=require('../foundations/parameter-guide.js');

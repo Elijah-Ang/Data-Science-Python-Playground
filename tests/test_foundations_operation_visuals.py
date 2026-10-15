@@ -15,8 +15,9 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = """
 const v=require('./foundations/operation-visuals.js');
-console.log(JSON.stringify(v.ids.flatMap(id=>v.evaluate(id).choices.map(([choice])=>({
-  ...v.evaluate(id,choice), setup:v.pythonSetup(id,choice)
+function expand(fields,state={},at=0){if(at===fields.length)return [state];return fields[at].options.flatMap(([value])=>expand(fields,{...state,[fields[at].key]:value},at+1));}
+console.log(JSON.stringify(v.ids.flatMap(id=>expand(v.operationArguments(id)).map(args=>({
+  ...v.evaluate(id,args.choice,args), setup:v.pythonSetup(id,args.choice,args), arguments:args
 })))));
 """
 states = json.loads(subprocess.check_output(['node', '-e', SCRIPT], cwd=ROOT))

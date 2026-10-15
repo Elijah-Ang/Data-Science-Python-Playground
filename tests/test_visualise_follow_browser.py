@@ -3,6 +3,7 @@ import argparse,json,hashlib
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 from PIL import Image,ImageDraw
+from inline_code_browser import controls as code_controls, choose
 parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--base-url',default='http://127.0.0.1:8015');parser.add_argument('--evidence-dir',default='docs/curriculum-evidence/stage-visuals');args=parser.parse_args()
 root=Path(__file__).resolve().parents[1];out=root/args.evidence_dir;out.mkdir(parents=True,exist_ok=True);raw=root/'tests/evidence/stage-visuals/visualise';raw.mkdir(parents=True,exist_ok=True)
 records=[];states=[];images=[];errors=[]
@@ -18,12 +19,14 @@ with sync_playwright() as pw:
     overflow=p.evaluate('document.documentElement.scrollWidth>innerWidth+1');assert not overflow,(item['id'],width,theme)
     controls=p.locator('.foundation-content [data-foundation-explorer]');control_records=[]
     for section in controls.all():
-     choice=section.locator('select');initial=choice.input_value();options=choice.locator('option').evaluate_all('(items)=>items.map(i=>i.value)');fixed=section.locator('.teaching-visual-data').inner_text()
-     for value in options:
-      choice.select_option(value);assert section.locator('.teaching-visual-data').inner_text()==fixed,(item['id'],'data changed')
-      r=section.evaluate('''section=>{const select=section.querySelector('select'),variant=section.dataset.foundationExplorer,expected=FoundationVisuals.exploration(variant,select.value,{statistic:section.dataset.visualStatistic});return {variant,expectedCode:expected.code,shownCode:section.querySelector('.teaching-visual-result pre')?.textContent||'',live:section.querySelector('.teaching-visual-result').getAttribute('aria-live'),clipped:[...section.querySelectorAll('svg text')].filter(n=>{const z=n.ownerSVGElement.viewBox.baseVal,b=n.getBBox();return b.x<-.5||b.y<-.5||b.x+b.width>z.width+.5||b.y+b.height>z.height+.5}).map(n=>n.textContent)}}''')
-      assert r['shownCode']==r['expectedCode'],(item['id'],value,r);assert not r['clipped'],(item['id'],value,r);assert r['live']=='polite';states.append({'id':item['id'],'width':width,'theme':theme,'value':value,'variant':r['variant']})
-     choice.select_option(initial);control_records.append({'variant':r['variant'],'values':options,'initial':initial})
+     fixed=section.locator('.teaching-visual-data').inner_text()
+     for control in code_controls(section):
+      key=control['key'];initial=control['value'];options=[o['value'] for o in control['options']]
+      for value in options:
+       choose(p,section,key,value);assert section.locator('.teaching-visual-data').inner_text()==fixed,(item['id'],'data changed')
+       r=section.evaluate("""section=>{const variant=section.dataset.foundationExplorer,expected=FoundationVisuals.plotArgumentModel(variant,JSON.parse(section.dataset.visualState),JSON.parse(section.dataset.visualSettings));return {variant,expectedCode:expected.code,shownCode:section.querySelector('.inline-code-source')?.textContent||'',live:section.querySelector('.teaching-visual-result').getAttribute('aria-live'),clipped:[...section.querySelectorAll('svg text')].filter(n=>{const z=n.ownerSVGElement.viewBox.baseVal,b=n.getBBox();return b.x<-.5||b.y<-.5||b.x+b.width>z.width+.5||b.y+b.height>z.height+.5}).map(n=>n.textContent)}}""")
+       assert r['shownCode']==r['expectedCode'],(item['id'],value,r);assert not r['clipped'],(item['id'],value,r);assert r['live']=='polite';states.append({'id':item['id'],'width':width,'theme':theme,'key':key,'value':value,'variant':r['variant']})
+      choose(p,section,key,initial);control_records.append({'variant':r['variant'],'key':key,'values':options,'initial':initial})
     records.append({'id':item['id'],'title':item['title'],'width':width,'theme':theme,'controls':control_records,'passed':True})
     figure=p.locator('.foundation-content .teaching-overview').first
     if theme=='light' and figure.count() and item['id'] in ['V03','V05','V08','V13','V14','V17','V18','V10','V12','V19','V30','V16','V26','V29']:

@@ -523,6 +523,37 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .foundation-content .foundation-parameter-teaching pre code { font-size: 16px; }
 .foundation-argument-values { margin: 6px 0 0; }
 
+/* Syntax and argument explanations use the same reading hierarchy. */
+.foundation-content .teaching-syntax-heading,
+.foundation-content .foundation-parameter-teaching > h3 { font:700 18px/1.5 var(--body); color:var(--ink); margin:20px 0 8px; }
+.foundation-content .foundation-syntax.teaching-syntax-parts dd { font:400 16px/1.6 var(--body); }
+.foundation-content .foundation-syntax.teaching-syntax-parts dt { color:var(--ink); }
+
+/* Clickable code is the control; there is no separate settings form. */
+.inline-code-editor { margin:14px 0; min-width:0; }
+.foundation-content .inline-code-cue { display:flex; align-items:center; gap:10px; font:400 14px/1.5 var(--body); margin:0 0 8px; color:var(--ink-muted); }
+.inline-code-mouse { display:inline-block; flex:0 0 26px; width:26px; height:32px; background:url('../assets/teaching/pixel-pointer.png') center/contain no-repeat; image-rendering:pixelated; }
+.foundation-content pre.inline-code-program { white-space:pre-wrap; overflow:visible; overflow-wrap:anywhere; padding:12px; }
+.foundation-content .inline-code-source { font:14px/2.8 var(--mono); white-space:pre-wrap; }
+.foundation-content .inline-code-value { --slot-color:#147763; display:inline; min-height:44px; padding:8px 3px; margin:0 1px; border:1px solid var(--slot-color); border-bottom:3px solid var(--slot-color); border-radius:3px; background:color-mix(in srgb,var(--slot-color) 12%,var(--panel)); color:var(--ink); font:700 14px/1.5 var(--mono); cursor:pointer; white-space:pre-wrap; overflow-wrap:anywhere; }
+.inline-code-value.code-slot-1 { --slot-color:#7952a5; }
+.inline-code-value.code-slot-2 { --slot-color:#ac4b35; }
+.inline-code-value.code-slot-3 { --slot-color:#8b6814; }
+.inline-code-value.code-slot-4 { --slot-color:#276c9d; }
+.inline-code-value.code-slot-5 { --slot-color:#a24878; }
+.inline-code-value:is(:hover,[aria-expanded="true"]) { background:color-mix(in srgb,var(--slot-color) 24%,var(--panel)); }
+.inline-code-value:focus-visible,.inline-code-options button:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:3px; }
+.inline-code-options { position:fixed; inset:auto; margin:0; z-index:10000; padding:6px; overflow-y:auto; border:1px solid var(--border); border-radius:5px; box-shadow:0 4px 18px #0003; background:var(--panel); color:var(--ink); }
+.inline-code-options [role="option"] { display:block; width:100%; min-height:44px; padding:9px 12px; border:0; border-radius:3px; background:transparent; color:inherit; text-align:left; font:16px/1.5 var(--body); cursor:pointer; overflow-wrap:anywhere; }
+.inline-code-options [aria-selected="true"] { background:color-mix(in srgb,var(--lesson-accent) 15%,var(--panel)); font-weight:700; }
+.inline-code-options [role="option"]:hover { background:color-mix(in srgb,var(--lesson-accent) 10%,var(--panel)); }
+[data-theme="dark"] .foundation-content .inline-code-value { --slot-color:#66bda6; }
+[data-theme="dark"] .inline-code-value.code-slot-1 { --slot-color:#bc99df; }
+[data-theme="dark"] .inline-code-value.code-slot-2 { --slot-color:#ee9d83; }
+[data-theme="dark"] .inline-code-value.code-slot-3 { --slot-color:#dfc068; }
+[data-theme="dark"] .inline-code-value.code-slot-4 { --slot-color:#88bce0; }
+[data-theme="dark"] .inline-code-value.code-slot-5 { --slot-color:#e69cc4; }
+
 /* Keep explanatory diagrams readable inside narrow reading panes. */
 .foundation-concept-scroll { max-width:100%; overflow-x:auto; }
 .foundation-content .foundation-concept-scroll .concept-visual { min-width:390px; }

@@ -3,10 +3,11 @@ import argparse
 import json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from inline_code_browser import controls as code_controls, choose
 
 ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
-parser.add_argument('--base-url', default='http://127.0.0.1:8137')
+parser.add_argument('--base-url', default='http://127.0.0.1:8015')
 parser.add_argument('--executable-path', default='/usr/bin/chromium')
 parser.add_argument('--family', choices=['all', 'foundation', 'ml'], default='all')
 args = parser.parse_args()
@@ -37,6 +38,7 @@ with sync_playwright() as pw:
         pre{{white-space:pre-wrap;overflow-wrap:anywhere}}</style></head>
         <body data-foundations data-playground data-deck="visualise" data-theme="light">
         <main class="foundation-content" id="explorer"></main></body></html>''')
+    page.add_script_tag(path=str(ROOT / 'foundations/inline-code.js'))
     page.add_script_tag(path=str(ROOT / 'foundations/visuals.js'))
     page.add_script_tag(path=str(ROOT / 'ml-learning/visuals.js'))
     page.evaluate('FoundationVisuals.mount(document);MLLearningVisuals.mount(document)')
@@ -50,28 +52,21 @@ with sync_playwright() as pw:
                   const visual=kind==='foundation'?api.spec(key):{id:key};
                   document.getElementById('explorer').innerHTML=api.interactive(visual);
                 }''', [kind, key])
-                select = page.locator('select')
-                if key == 'N02':
-                    assert not select.count(), 'Loss-history reading is a static explanation'
-                    assert page.locator('.teaching-static-example svg').count() == 1
-                    checks.append({'kind': kind, 'concept': key, 'theme': theme, 'width': width, 'static': True})
+                section=page.locator('.teaching-explorer')
+                if key=='N02':
+                    assert not section.locator('[data-code-key]').count()
+                    checks.append({'kind':kind,'concept':key,'theme':theme,'width':width,'static':True})
                     continue
-                assert select.evaluate('e=>e.labels.length') == 1, (kind, key, 'label')
-                assert select.evaluate('e=>e.getBoundingClientRect().height') >= 44, (kind, key, 'touch size')
-                select.select_option(select.locator('option').first.get_attribute('value'))
-                fixed = ((page.locator('.ml-example-observations').first
-                          if page.locator('.ml-example-observations').count()
-                          else page.locator('.teaching-explorer > p').first) if kind == 'ml'
-                         else page.locator('.teaching-visual-data').first)
-                baseline = fixed.inner_text()
-                before = page.locator('.teaching-visual-result').inner_text()
-                before_code = page.locator('.teaching-visual-result pre').inner_text()
-                value = select.locator('option').last.get_attribute('value')
-                select.select_option(value)
-                assert page.locator('.teaching-visual-result').inner_text() != before, (kind, key, 'result changed')
-                assert page.locator('.teaching-visual-result pre').inner_text() != before_code, (kind, key, 'Python changed')
-                assert fixed.inner_text() == baseline, (kind, key, 'observations or comparison retained')
-                assert page.locator('.teaching-visual-result').get_attribute('aria-live') == 'polite'
+                for control in code_controls(section):
+                    button=section.locator('[data-code-key="'+control['key']+'"]').first
+                    assert control['label']
+                    assert button.bounding_box()['height']>=44
+                    before=section.locator('.inline-code-source').inner_text()
+                    choose(page,section,control['key'],control['options'][-1]['value'])
+                    if control['options'][-1]['value']!=control['value']:
+                        assert section.locator('.inline-code-source').inner_text()!=before,(kind,key,'Python changed')
+                    choose(page,section,control['key'],control['value'])
+                assert page.locator('.teaching-visual-result').get_attribute('aria-live')=='polite'
                 overflow = page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1')
                 assert not overflow, (kind, key, width, 'page overflow')
                 clipped = page.locator('.data-teaching-visual').evaluate_all('''svgs=>svgs.flatMap(svg=>{
@@ -83,8 +78,8 @@ with sync_playwright() as pw:
                 assert not clipped, (kind, key, width, clipped)
                 if key in ['C14', 'R09']:
                     assert page.locator('.teaching-visual-scroll').evaluate('e=>e.scrollWidth<=e.clientWidth+1'), (key, width, 'tree panning')
-                select.focus()
-                assert select.evaluate('e=>e===document.activeElement')
+                button.focus()
+                assert button.evaluate('e=>e===document.activeElement')
                 if key in ['histogram', 'C14', 'C08', 'R07', 'P01', 'F03', 'W03', 'U06', 'U09', 'N02', 'R08-expansion']:
                     page.locator('#explorer').screenshot(path=str(out / f'{kind}-{key}-{theme}-{width}.png'))
                 checks.append({'kind': kind, 'concept': key, 'theme': theme, 'width': width})

@@ -32,7 +32,7 @@ CURRENT_STEP_GUIDES = {
     },
     "ML-C05-3": {
         "step": "model",
-        "meaning": "The model step is the fitted classifier. Its coef_ rows belong to the supplied fitted class order, and columns follow the input feature order. Reading these coefficients does not fit the pipeline again."
+        "meaning": "Read the fitted classifier inside the pipeline. Its coef_ rows follow class order; columns follow input feature order. Reading them does not fit again."
     },
     "ML-C10-2": {
         "step": "model",

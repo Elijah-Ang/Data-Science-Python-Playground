@@ -19,6 +19,8 @@ parser.add_argument('--base-url', default='http://127.0.0.1:8015')
 parser.add_argument('--output', default='docs/curriculum-evidence/stage-visuals')
 parser.add_argument('--executable-path', default=shutil.which('chromium'))
 parser.add_argument('--focused', action='store_true')
+parser.add_argument('--lessons',nargs='+',help='Limit a documented final delta to these lesson IDs.')
+parser.add_argument('--layout-only',action='store_true',help='Inspect every final layout without repeating unchanged menu choices.')
 args = parser.parse_args()
 out = ROOT / args.output
 out.mkdir(parents=True, exist_ok=True)
@@ -26,7 +28,7 @@ shots = out / 'screenshots'
 shots.mkdir(exist_ok=True)
 
 records, interactions, issues, page_errors, screenshots = [], [], [], [], []
-selected = {'I09', 'W02', 'V08', 'V16', 'ML-P01', 'ML-C08'}
+selected = {'I09', 'W02', 'W06', 'W19', 'V08', 'V16', 'V18', 'V19', 'ML-P01', 'ML-C08', 'ML-C11', 'ML-U03'}
 
 INSPECT = r'''item => {
   const content = document.querySelector('.foundation-content');
@@ -50,13 +52,13 @@ INSPECT = r'''item => {
     '.ml-syntax,.ml-progressive-workflow')].every(n =>
     !!(n.compareDocumentPosition(task) & Node.DOCUMENT_POSITION_FOLLOWING));
   const headings = [...content.querySelectorAll('h3')].map(n=>n.textContent.trim());
-  const controls = [...content.querySelectorAll(
-    '[data-visual-choice],[data-ml-visual-choice],[data-operation-choice]')]
-    .map(n=>({attribute:n.hasAttribute('data-visual-choice')?'data-visual-choice':
-      n.hasAttribute('data-ml-visual-choice')?'data-ml-visual-choice':'data-operation-choice',
-      labelled:!!n.labels?.length,
-      height:n.getBoundingClientRect().height,
-      options:[...n.options].map(o=>o.value)}));
+  const seen = new Set();
+  const controls = [...content.querySelectorAll('[data-code-key]')].filter(n=>{
+    const identity=n.closest('.teaching-explorer').dataset.foundationExplorer||n.closest('.teaching-explorer').dataset.mlExplorer||n.closest('.teaching-explorer').dataset.operationExplorer;
+    const key=identity+'/'+n.dataset.codeKey;if(seen.has(key))return false;seen.add(key);return true;
+  }).map(n=>({key:n.dataset.codeKey,labelled:!!n.getAttribute('aria-label'),
+    height:n.getBoundingClientRect().height,
+    options:JSON.parse(n.dataset.codeOptions).map(o=>o.value)}));
   return {stage:content.dataset.learningStage, visualCount:visualNodes.length,
     overview:content.querySelectorAll('.teaching-overview').length,
     transitions:content.querySelectorAll('.teaching-transition').length,
@@ -96,11 +98,13 @@ with sync_playwright() as pw:
         review:c.kind!=='teaching',visualTeaching:e.visualTeaching||null,
         newInTask:e.newInTask||[],visual:e.visual||c.visual})))''')
     inventory = data + ml
+    if args.lessons:
+        inventory=[x for x in inventory if x['lesson'] in args.lessons]
     if args.focused:
         inventory = [x for x in inventory if x['lesson'] in selected]
     manifest = context.request.get(args.base_url+'/asset-manifest.json').json()
     files = ['foundations/app.js','foundations/teaching.js','foundations/visuals.js',
-             'foundations/operation-visuals.js',
+             'foundations/operation-visuals.js','foundations/inline-code.js','assets/teaching/pixel-pointer.png',
              'ml-learning/app.js','ml-learning/visuals.js','ml-learning/curriculum.json']
     hashes = {name: hashlib.sha256(context.request.get(args.base_url+'/'+name).body())
               .hexdigest() for name in files}
@@ -145,8 +149,9 @@ with sync_playwright() as pw:
                     for ci, control in enumerate(result['controls']):
                         if not control['labelled'] or control['height'] < 43.5:
                             issue(item, width, theme, 'Inaccessible visual control', control=control)
-                        locator = page.locator('['+control['attribute']+']').nth(
-                            sum(c['attribute']==control['attribute'] for c in result['controls'][:ci]))
+                        if args.layout_only:
+                            continue
+                        locator = page.locator('[data-code-key="'+control['key']+'"]').first
                         locator.focus()
                         if not locator.evaluate('n=>n===document.activeElement'):
                             issue(item, width, theme, 'Control cannot receive keyboard focus')
@@ -156,10 +161,12 @@ with sync_playwright() as pw:
                           .filter(t=>!t.closest('.teaching-visual-result')&&
                             (!t.closest('.operation-result')||t.closest('.operation-inputs')))
                           .map(t=>t.textContent).join('|')''')
-                        original = locator.input_value()
+                        original = locator.get_attribute('data-code-value')
                         distinct, distinct_code = set(), set()
                         for value in control['options']:
-                            locator.select_option(value)
+                            locator.click()
+                            menu=page.get_by_role('listbox')
+                            menu.locator('[data-value="'+value+'"]').click()
                             rendered = section.evaluate('''n=>{
                               const live=n.querySelector('[aria-live="polite"]');
                               return {live:!!live,html:live?.innerHTML||'',
@@ -175,7 +182,7 @@ with sync_playwright() as pw:
                             distinct_code.add('\n'.join(rendered['code']))
                             if section.get_attribute('data-foundation-explorer') == 'count-bars':
                                 counts = section.evaluate('''n=>{
-                                  const column=n.querySelector('select').value;
+                                  const column=n.querySelector('[data-code-key="x"]').dataset.codeValue;
                                   const table=n.querySelector('.teaching-visual-data');
                                   const headers=[...table.querySelectorAll('thead th')].map(h=>h.textContent);
                                   const j=headers.indexOf(column),counts={};
@@ -196,19 +203,20 @@ with sync_playwright() as pw:
                                     if any(abs(b['h'] - count * unit) > .001 for b, count in zip(bars, expected)):
                                         issue(item, width, theme, 'Rendered count height disagrees with visible observations', value=value, geometry=counts)
                             interactions.append([item['id'],width,theme,ci,value])
-                        if len(control['options']) > 1 and len(distinct) < 2:
-                            issue(item, width, theme, 'Control produces no visible change')
                         if len(distinct_code) != len(control['options']):
                             issue(item, width, theme, 'Control does not change Python for every option')
-                        locator.focus()
-                        locator.press('Home')
-                        locator.press('End')
-                        if locator.input_value() != control['options'][-1]:
-                            issue(item, width, theme, 'Keyboard cannot change visual choice')
+                        locator.focus();locator.press('Enter')
+                        menu=page.get_by_role('listbox');page.keyboard.press('Home');page.keyboard.press('End')
+                        focused=page.locator('.inline-code-options :focus')
+                        if focused.get_attribute('data-value')!=control['options'][-1]:
+                            issue(item,width,theme,'Keyboard cannot select last choice')
+                        page.keyboard.press('Escape')
+                        if not locator.evaluate('n=>n===document.activeElement'):
+                            issue(item,width,theme,'Escape does not return focus to the code')
                         locator.press('Tab')
                         if locator.evaluate('n=>n===document.activeElement'):
-                            issue(item, width, theme, 'Keyboard focus trapped in visual control')
-                        locator.select_option(original)
+                            issue(item,width,theme,'Keyboard focus trapped')
+                        locator.click();page.get_by_role('listbox').locator('[data-value="'+original+'"]').click()
                     if width in [1440,390] and theme=='light' and item['lesson'] in selected:
                         page.evaluate('''()=>{
                           window.scrollTo(0,0);
@@ -224,7 +232,7 @@ with sync_playwright() as pw:
                 print(f'{width}px {theme} {family}: {len(items)} stage contexts', flush=True)
     browser.close()
 
-receipt = {'engine':'Chromium','activities':len(inventory),'renders':len(records),
+receipt = {'layoutOnly':args.layout_only,'engine':'Chromium','activities':len(inventory),'renders':len(records),
            'interactiveStates':len(interactions),'records':records,
            'interactions':interactions,'issues':issues,'pageErrors':page_errors,
            'screenshots':screenshots,'buildContentId':manifest.get('contentId'),

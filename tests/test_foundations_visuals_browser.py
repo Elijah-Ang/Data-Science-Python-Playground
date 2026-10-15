@@ -2,6 +2,7 @@
 import argparse,json
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from inline_code_browser import choose
 p=argparse.ArgumentParser();p.add_argument('--base-url',default='http://127.0.0.1:8010');p.add_argument('--engine',default='chromium');p.add_argument('--executable-path',help='Use an installed browser executable.');args=p.parse_args()
 out=Path('tests/evidence/foundations/visual-audit');out.mkdir(parents=True,exist_ok=True)
 with sync_playwright() as pw:
@@ -48,37 +49,37 @@ with sync_playwright() as pw:
  # Check every native option through the mounted app at all existing audit widths
  # and themes, including exact data-linked results and readable SVG text.
  explorer_checks=[]
- cases=[('#visualise/V04/0','histogram','8 bins'),
-        ('#visualise/V08/0','count-bars','AM: 5'),
-        ('#visualise/V09/0','mean-bars','middle value after sorting'),
-        ('#visualise/V11/0','boxplot','Whiskers: 1–7'),
-        ('#visualise/V16/0','scatter','Horizontal: cost'),
-        ('#visualise/V27/0','references','x median is 3'),
-        ('#visualise/V33/0','facets','One panel per group')]
+ cases=[('#visualise/V04/0','histogram','bins','8 bins'),
+        ('#visualise/V08/0','count-bars','x','AM: 5'),
+        ('#visualise/V09/0','mean-bars','estimator','C: 24'),
+        ('#visualise/V11/0','boxplot','axis','Whiskers: 1–7'),
+        ('#visualise/V16/0','scatter','x','Horizontal: cost'),
+        ('#visualise/V27/0','references','choice','x median is 3'),
+        ('#visualise/V33/0','facets','col','AM: 5')]
  for width in [1400,834,320]:
   page.set_viewport_size({'width':width,'height':1000})
   for theme in ['light','dark']:
    page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
-   for route,variant,expected in cases:
+   for route,variant,key,expected in cases:
     page.evaluate('(route)=>location.hash=route',route)
     page.wait_for_function('''([route,variant])=>LearningRoutes.route('data',location,document.body)===route.replace(/^#/,'')&&!!document.querySelector('[data-foundation-explorer="'+variant+'"]')''',arg=[route,variant])
     explorer=page.locator('[data-foundation-explorer="'+variant+'"]')
     assert explorer.is_visible()
-    control=explorer.locator('[data-visual-choice]')
-    assert control.evaluate('e=>e.labels.length')==1
+    control=explorer.locator('[data-code-key="'+key+'"]').first
+    assert control.get_attribute('aria-label')
     height=control.evaluate('e=>e.getBoundingClientRect().height')
     if height<44:failures.append({'route':route,'width':width,'theme':theme,'touchTargetHeight':height})
-    options=control.locator('option').evaluate_all('(items)=>items.map(e=>e.value)')
+    options=control.evaluate('e=>JSON.parse(e.dataset.codeOptions).map(o=>o.value)')
     baseline=explorer.locator('.teaching-visual-data').inner_text()
-    summaries=[]
+    summaries=[];geometries=[]
     for option in options:
-     control.select_option(option)
-     summaries.append(explorer.locator('.teaching-visual-result').inner_text())
+     choose(page,explorer,key,option)
+     summaries.append(explorer.locator('.teaching-visual-result').inner_text());geometries.append(explorer.locator('.teaching-visual-result svg').inner_html())
      assert explorer.locator('.teaching-visual-data').inner_text()==baseline
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
      bad=explorer.locator('svg').evaluate('''svg=>{const b=svg.viewBox.baseVal;return [...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>b.width+.5||r.y<0||r.y+r.height>b.height+.5}).map(t=>t.textContent)}''')
      assert not bad,(route,width,theme,bad)
-    assert len(set(summaries))==len(options),(route,'every option has a distinct result')
+    assert len(set(geometries))==len(options),(route,'every option has a distinct result')
     assert expected in summaries[-1],(route,summaries[-1])
     assert explorer.locator('.teaching-visual-result').get_attribute('aria-live')=='polite'
     # Canvas resolves CSS color-mix and named colors to actual RGB pixels.

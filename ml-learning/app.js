@@ -169,10 +169,10 @@
     const guidance=ex.syntaxGuidance;
     if(guidance){
       const current=guidance.current||[];
-      return current.length?`<section class="teaching-essential ml-syntax${ex.newInTask?.length?' teaching-transition':''}"><h3>${ex.newInTask?.length?"What's new in this task":'Python for this practice'}</h3>${syntaxParts(current,false)}</section>`:'';
+      return current.length?`<section class="teaching-essential ml-syntax${ex.newInTask?.length?' teaching-transition':''}"><h3 class="teaching-syntax-heading">${ex.newInTask?.length?"What's new in this task":'What the syntax does'}</h3>${syntaxParts(current,false)}</section>`:'';
     }
     const parts=Array.isArray(card.syntaxBreakdown)?card.syntaxBreakdown:[];
-    return `<section class="teaching-essential ml-syntax"><h3>Python for this practice</h3>${code(card.syntax)}${syntaxParts(parts,false)}</section>`;
+    return `<section class="teaching-essential ml-syntax"><h3 class="teaching-syntax-heading">What the syntax does</h3>${code(card.syntax)}${syntaxParts(parts,false)}</section>`;
   }
   function suppliedState(ex){
     const objects=(ex.suppliedState||[]).filter(p=>p.name!=='df');

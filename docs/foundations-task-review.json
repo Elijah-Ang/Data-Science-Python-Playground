@@ -1,7 +1,7 @@
 {
   "baseSHA": "0ae290e6301d047dcc4b86977967c591eff786e2",
   "reviewed": "2026-10-15",
-  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged. Presentation refinement on 2026-10-15 replaces arbitrary statistical marks with computed observations, aligns representations and preserves all 338 executable contracts. Stage visual refinement on 2026-10-15 limits introductory illustrations to Follow, adds native-checked table interactions and concise genuinely new later-stage syntax; executable contract hashes are unchanged. Current rendering evidence lives in docs/curriculum-evidence/stage-visuals. Code-linked visual correction checks drawn geometry against native Python, removes passive highlight controls and keeps the exercise contracts unchanged. Current evidence: docs/curriculum-evidence/code-linked-visuals.",
+  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged. Presentation refinement on 2026-10-15 replaces arbitrary statistical marks with computed observations, aligns representations and preserves all 338 executable contracts. Stage visual refinement on 2026-10-15 limits introductory illustrations to Follow, adds native-checked table interactions and concise genuinely new later-stage syntax; executable contract hashes are unchanged. Current rendering evidence lives in docs/curriculum-evidence/stage-visuals. Code-linked visual correction checks drawn geometry against native Python, removes passive highlight controls and keeps the exercise contracts unchanged. Current evidence: docs/curriculum-evidence/code-linked-visuals. Clickable-code refinement on 2026-10-15 adds independent illustrative arguments and matching plain-language syntax/argument typography. Exercise programs and grading contracts remain unchanged; current evidence: docs/curriculum-evidence/inline-code-controls.",
   "exercises": {
     "I01-1": {
       "sha256": "1d9395cf4a88ef5779e21b09b0b6ff8f98d05c9f10b475ea9e899f3f522dd3b9",
@@ -4101,7 +4101,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain Follow ordered raw observations and Change time-window eligibility. Transfer now sorts scrambled time, identifies the chronological baseline and derives changes relative to it, instead of another interval filter.",
-      "fullContractSHA256": "43cdebcfcb8c3a4d66731e21f240c95f08d64a2096b74fb603859d030c99f028",
+      "fullContractSHA256": "2aa27b62bce8cf62634b45c73a0526d2988f5c7d918848e7215edf43a572edcb",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4127,7 +4127,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain Follow ordered raw observations and Change time-window eligibility. Transfer now sorts scrambled time, identifies the chronological baseline and derives changes relative to it, instead of another interval filter.",
-      "fullContractSHA256": "7bfb96994dca57b8eb9baada767f98fbd97356e5578f514ebf8acb342f5c7eda",
+      "fullContractSHA256": "87f7fec71a116ee5c3f97af04791fea90a5e18e698e9fffa575c12056072f5db",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4153,7 +4153,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain Follow ordered raw observations and Change time-window eligibility. Transfer now sorts scrambled time, identifies the chronological baseline and derives changes relative to it, instead of another interval filter.",
-      "fullContractSHA256": "dc843f92971b3989cf29b26233d361c3651cb43005d370420b6a920a361babae",
+      "fullContractSHA256": "2270f681a3f79ec58e9b89115e6b47df0308bae4ce9f2f288c28d10f0265f113",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4589,7 +4589,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "0d9fc3a1f8694ff5b80f31c99721a2fb8b67d5fc4ee811106e0cbf82df748019",
+      "fullContractSHA256": "8558d8b56acee373ca5e51bd06b26822e714bd3c19b4d2122b81f0e86241ab1b",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",

@@ -63,7 +63,7 @@
   function highlightContent(element,context){
     root.CodeIdentifiers?.decorate(element,context);
     element.querySelectorAll('.foundation-content code, .foundation-reference-content code, .ml-contract code, .ml-output-names code').forEach(code=>{
-      if(code.querySelector('.workflow-code-change'))return;
+      if(code.matches('.inline-code-source')||code.querySelector('.workflow-code-change'))return;
       const value=code.textContent, token=code.dataset.focus?`"${code.dataset.focus}"`:null;
       const at=token?value.indexOf(token):-1;
       if(code.closest('pre'))code.innerHTML=highlightPython(value);

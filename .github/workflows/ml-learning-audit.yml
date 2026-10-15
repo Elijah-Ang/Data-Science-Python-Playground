@@ -28,6 +28,7 @@ jobs:
       - run: python tests/test_teaching_visual_models.py
       - run: python tests/test_ml_visual_progression.py
       - run: python tests/test_model_family_visuals.py
+      - run: python tests/test_inline_code_models.py
       - run: python scripts/build-teaching-model-fixtures.py --check
       - run: python tests/test_ml_learning_semantics.py
       - run: python tests/test_ml_reporting_evidence.py

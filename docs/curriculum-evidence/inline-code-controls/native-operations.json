@@ -1,0 +1,10 @@
+{
+  "lessons": 47,
+  "native_operation_states": 159,
+  "oracles": [
+    "pandas labelled operations",
+    "NumPy array values",
+    "sklearn StandardScaler"
+  ],
+  "passed": true
+}

@@ -28,6 +28,7 @@ jobs:
       - run: python tests/test_foundations_prerequisites_runtime.py
       - run: python tests/test_visual_scientific_scenes.py
       - run: python tests/test_visual_code_geometry.py
+      - run: python tests/test_inline_code_models.py
       - run: python tests/test_foundations_operation_visuals.py
       - run: python tests/test_foundations_concise_examples.py
       - run: node tests/test_foundations_parameters.mjs

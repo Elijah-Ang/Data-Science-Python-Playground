@@ -122,6 +122,7 @@ assert(all.find(e=>e.id==='ML-W01-1').packages.includes('matplotlib'));
 
 // Fitting precedes residuals: its schematic must show the learning transition.
 const visualContext={window:{}};
+vm.runInNewContext(readFileSync('foundations/inline-code.js','utf8'),visualContext);
 vm.runInNewContext(readFileSync('ml-learning/visuals.js','utf8'),visualContext);
 const fitting=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F03').visual);
 const residuals=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F05').visual);

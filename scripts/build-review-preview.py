@@ -96,6 +96,11 @@ def page_template(file_name):
     def replace_script(match):
         attrs, source = match.group(1), match.group(2)
         code = (DIST / source).read_text()
+        if source == "dataset-dictionary.js":
+            # document.open replaces the page without replacing its global lexical
+            # environment. Only the dictionary's window export is shared; keep its
+            # local fixture table scoped so returning to ML can initialise it again.
+            code = "(() => {\n" + code + "\n})();"
         if source == "foundations/learning-ui.js":
             code = code.replace("root.location.href", "root.document.baseURI")
         if source == "learning-routes.js":

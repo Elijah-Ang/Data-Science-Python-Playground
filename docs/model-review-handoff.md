@@ -4,7 +4,13 @@ Review branch: `curriculum-coherence-2026-10-13`.
 Baseline: `8a72b291a3c47cd6db5e825cfb4902a4df1578bb` (the original `work` checkout and current remote `main` when this handoff was written).
 Review the current branch HEAD, including the implementation reviewed at `22dd968` and the subsequent review repairs, Python exercise replacements and scientific visual refinement.
 
-The latest [code-linked visual corrections](curriculum-code-linked-visuals.md)
+The latest [clickable-code refinement](curriculum-inline-code-controls.md) replaces
+standalone illustration dropdowns with independently editable Python values. Review
+the shared menu, argument combinations, fixed observations, native Python comparisons,
+conditional controls, keyboard use, plain explanations and matching syntax/argument
+typography. Its evidence is in `curriculum-evidence/inline-code-controls/`.
+
+The preceding [code-linked visual corrections](curriculum-code-linked-visuals.md)
 fix the count-bar selection overlay missed by the earlier checks, replace passive
 highlight controls with real Python changes, and refine thumbnail geometry and
 wording. Their evidence is in `curriculum-evidence/code-linked-visuals/`.
@@ -36,12 +42,12 @@ The user requested a committed, pushed review candidate before deciding whether 
 | Area | Read in full, including dependencies |
 | --- | --- |
 | Data curriculum composition | `foundations/curriculum.js`, `content-guidance.js`, `visualise-guidance.js`, `teaching.js`, `clarity.js`, `variety.js`, `refinements.js`, `progression.js`, `practical.js` |
-| Data lesson rendering and visuals | `foundations/app.js`, `learning-ui.js`, `parameter-guide.js`, `visuals.js`, `code-style.js`, `foundations.css`, `data-foundations.html` |
+| Data lesson rendering and visuals | `foundations/app.js`, `inline-code.js`, `operation-visuals.js`, `learning-ui.js`, `parameter-guide.js`, `visuals.js`, `code-style.js`, `foundations.css`, `data-foundations.html` |
 | ML authoring and generated curriculum | `ml-learning/authoring.py`, `code_practice.py`, `curriculum_coherence.py`, `model_bridges.py`, `mastery.py`, the other authoring modules, `manifest.json`, `scripts/build-ml-learning.mjs` |
 | ML rendering and runtime | `ml-learning/app.js`, `visuals.js`, `learning.css`, `runtime.py`, `worker.js`, shared worker/editor dependencies |
 | Semantic identifiers and shared layout | `code-identifiers.js`, `learning-identifiers.js`, `learning-language.js`, `scripts/build-learning-identifiers.py`, `route-slider.css`, `challenges/experience.js` |
 | Build, preview and checks | `package.json`, `scripts/build-web.mjs`, `build-learning-pages.mjs`, `build-review-preview.py`, changed audit scripts/workflows and all changed tests |
-| Scientific visual evidence | `scripts/build-teaching-model-fixtures.py`, `tests/test_visual_scientific_scenes.py`, `test_teaching_visual_models.py`, `test_model_family_visuals.py`, `test_visual_context_audit.py`, `test_ml_code_practice.py`, `test_ml_code_practice_browser.py` |
+| Scientific visual evidence | `scripts/build-teaching-model-fixtures.py`, `scripts/build-visual-argument-fits.py`, `tests/test_inline_code_models.py`, `tests/test_inline_code_controls.mjs`, `tests/test_visual_scientific_scenes.py`, `test_teaching_visual_models.py`, `test_model_family_visuals.py`, `test_visual_context_audit.py`, `test_ml_code_practice.py`, `test_ml_code_practice_browser.py` |
 
 Paths in the table are repository relative; filenames abbreviated within a row share its first directory. Generated `dist/` is ignored: build it to inspect the assembled curricula and actual served assets. Review authoring inputs as well as generated output. Large JSON receipts and screenshots account for much of the diff; they are evidence, not a substitute for source review.
 
@@ -67,4 +73,4 @@ All 338 Data exercise program-contract hashes are preserved by this follow-up. M
 
 ## Prompt for the reviewing model
 
-> Review the full current code on `curriculum-coherence-2026-10-13` and every cumulative change since `8a72b291a3c47cd6db5e825cfb4902a4df1578bb`. Read `docs/model-review-handoff.md`, `docs/curriculum-code-linked-visuals.md`, `docs/curriculum-review-refinement.md`, `foundations/AGENTS.md`, the complete relevant source and its dependencies, and inspect the built curricula. Independently recheck the supplied `22dd968` review findings. Check the 112 Python replacements for meaningful progression, scientific validity, actual computation, visible supplied state and fair grading. Check every visual family against its data, fitted method, code, labels, scales and interactive states. Inspect actual filled geometry for overlays, and verify that controls change executable Python rather than only highlighting a row. Also check concise teaching, lesson/visual/task agreement, valid argument alternatives, semantic identifiers, independent scrolling, mobile layout, accessibility, editor/runtime behaviour, build reproducibility and unrelated regressions. Treat receipts and screenshots as supporting evidence; independently inspect the assertions and source. Report actionable findings with severity, file/line, reproducible example and recommended correction. Distinguish confirmed defects from untested risks, identify coverage gaps, and say explicitly if there are no findings. Do not modify, merge or deploy anything during this review.
+> Review the full current code on `curriculum-coherence-2026-10-13` and every cumulative change since `8a72b291a3c47cd6db5e825cfb4902a4df1578bb`. Read `docs/model-review-handoff.md`, `docs/curriculum-inline-code-controls.md`, `docs/curriculum-code-linked-visuals.md`, `docs/curriculum-review-refinement.md`, `foundations/AGENTS.md`, the complete relevant source and its dependencies, and inspect the built curricula. Independently recheck the supplied `22dd968` review findings. Check the 112 Python replacements for meaningful progression, scientific validity, actual computation, visible supplied state and fair grading. Check every visual family against its data, fitted method, code, labels, scales and interactive states. Inspect actual filled geometry for overlays, and verify that controls change executable Python rather than only highlighting a row. Check independent combinations of highlighted code values, conditional fields, menu focus/scroll behaviour and exact code/result agreement. Also check concise teaching, lesson/visual/task agreement, valid argument alternatives, semantic identifiers, independent scrolling, mobile layout, accessibility, editor/runtime behaviour, build reproducibility and unrelated regressions. Treat receipts and screenshots as supporting evidence; independently inspect the assertions and source. Report actionable findings with severity, file/line, reproducible example and recommended correction. Distinguish confirmed defects from untested risks, identify coverage gaps, and say explicitly if there are no findings. Do not modify, merge or deploy anything during this review.

@@ -2,6 +2,7 @@
    supplies the displayed Python and the result; no learner work is retained. */
 (function (root) {
 'use strict';
+if(!root.InlineCode&&typeof module!=='undefined')root.InlineCode=require('./inline-code.js');
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const py = value => value === null ? 'None' : typeof value === 'boolean' ? (value ? 'True' : 'False') : typeof value === 'string' ? JSON.stringify(value) : Array.isArray(value) ? '[' + value.map(py).join(', ') + ']' : String(value);
 const frame = (columns, rows, index = rows.map((_, i) => i), name = 'df') => ({kind:'table', columns, rows, index, name});
@@ -36,6 +37,7 @@ const rows = frame(['candy','flavour','price','rating','shelf'], [
   ['Berry','fruity',2,8,'A'], ['Mint','mint',4,6,'B'], ['Apple','fruity',6,9,'B'], ['Cocoa','chocolate',3,7,'A']
 ]);
 const basic = (...names) => select(rows,names);
+const groupedExample=()=>frame(['flavour','shelf','price'],[['fruity','A',2],['mint','B',4],['fruity','B',6],['chocolate','A',3],['fruity','A',12]]);
 const specs = {};
 function define(id, label, choices, input, operation, options={}) {
   specs[id] = {id, label, choices:choices.map(choice=>Array.isArray(choice)?choice:[String(choice),String(choice)]), input, operation, ...options};
@@ -47,13 +49,13 @@ define('I06','Column to read',['price','rating'],()=>basic('candy','price','rati
 define('I07','Column order',[['rating,price','rating, price'],['price,rating','price, rating']],()=>basic('candy','price','rating'),(t,v)=>({code:`df[[${v.split(',').map(py).join(', ')}]]`, result:select(t,v.split(',')), summary:'The list controls which columns appear and their order.'}));
 define('I08','Stop before position',[1,2,3],()=>basic('candy','price','rating'),(t,v)=>({code:`df.iloc[:${v}, :2]`, result:select(subset(t,(_,i)=>i<Number(v)),t.columns.slice(0,2)), summary:`Take row positions 0 through ${Number(v)-1}, and column positions 0 and 1. The stop position is excluded.`}));
 define('I09','Last row label',['B','C','D'],()=>({...basic('candy','price'),index:['A','B','C','D']}),(t,v)=>({code:`df.loc["B":${py(v)}, ["price"]]`, result:select(subset(t,(_,i)=>i>=1&&i<=t.index.indexOf(v)),['price']), summary:`Label slicing includes both B and ${v}. Only price is returned.`}));
-define('I10','Keep prices greater than',[2,3,4],()=>basic('candy','price'),(t,v)=>({code:`df[df["price"] > ${v}]`, result:subset(t,row=>row[1]>Number(v)), summary:`Only prices strictly above ${v} remain. A price equal to ${v} is excluded.`}));
+define('I10','Keep prices greater than',[2,3,4],()=>basic('candy','price','rating'),(t,v)=>({code:`df[df["price"] > ${v}]`, result:subset(t,row=>row[1]>Number(v)), summary:`Only prices strictly above ${v} remain. A price equal to ${v} is excluded.`}));
 define('I11','Required flavour',['fruity','mint'],()=>basic('flavour','price'),(t,v)=>({code:`df[(df["price"] > 2) & (df["flavour"] == ${py(v)})]`, result:subset(t,row=>row[1]>2&&row[0]===v), summary:`Both tests must pass: price above 2 and flavour equal to ${v}.`}));
 define('I12','Sort direction',[['False','Largest first'],['True','Smallest first']],()=>basic('candy','price','rating'),(t,v)=>{
   const filtered=subset(t,row=>row[1]>2), positions=filtered.rows.map((_,i)=>i).sort((a,b)=>(filtered.rows[a][2]-filtered.rows[b][2])*(v==='True'?1:-1));
   return {code:`filtered = df[df["price"] > 2]\nfiltered.sort_values("rating", ascending=${v})`, result:frame(t.columns,positions.map(i=>filtered.rows[i]),positions.map(i=>filtered.index[i])), summary:'First filter on price; then sort the remaining rows by rating. Each row keeps its label and values.'};
 });
-define('I13','How many largest rows',[1,2,3],()=>basic('candy','price'),(t,v)=>{
+define('I13','How many largest rows',[1,2,3],()=>basic('candy','price','rating'),(t,v)=>{
   const positions=t.rows.map((_,i)=>i).sort((a,b)=>t.rows[b][1]-t.rows[a][1]).slice(0,Number(v));
   return {code:`df.nlargest(${v}, "price")`,result:frame(t.columns,positions.map(i=>t.rows[i]),positions.map(i=>t.index[i])),summary:`Return the ${v} highest-price row${v==='1'?'':'s'}, ordered from largest to smallest.`};
 });
@@ -75,7 +77,7 @@ define('I18','Numeric column',['price','rating'],()=>basic('price','rating'),(t,
   return {code:`df[[${py(v)}]].describe()`,result:frame([v],[[values.length],[mean(values)],[standardDeviation(values)],[Math.min(...values)],[quantile(values,.25)],[quantile(values,.5)],[quantile(values,.75)],[Math.max(...values)]],['count','mean','std','min','25%','50%','75%','max']),summary:'One column supplies every summary. std uses the sample standard deviation; 50% is the median.'};
 });
 define('I18S','Column to average',['price','rating'],()=>basic('price','rating'),(t,v)=>({code:`df[${py(v)}].mean()`,result:scalar(mean(column(t,v))),summary:`Add the ${v} values, then divide by their count.`}));
-define('I19','Group labels come from',['flavour','shelf'],()=>basic('flavour','shelf','price'),(t,v)=>{
+define('I19','Group labels come from',['flavour','shelf'],groupedExample,(t,v)=>{
   const groups=group(t,v,'price');
   return {code:`df.groupby(${py(v)})["price"].agg("mean")`,result:series('price',groups.map(g=>g.label),groups.map(g=>mean(g.values)),v),summary:`Rows with the same ${v} label contribute to one mean price. Each group becomes one output row.`};
 });
@@ -118,15 +120,15 @@ define('W15','Date field',[['year','Year'],['month','Month number'],['weekday','
   return {code:`df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")\ndf[${py(v)}] = df["date"].dt.${v==='weekday'?'day_name()':v}\ndf`,result:addColumn(t,v,column(t,'date').map(extract)),summary:'Read the selected calendar field from each parsed date. Dates and row order remain the same.'};
 });
 define('W16','Require a value in',['price','tip'],()=>frame(['price','tip'],[[2,null],[null,1],[4,null],[3,2]]),(t,v)=>({code:`df = df.dropna(subset=[${py(v)}])\ndf`,result:subset(t,row=>row[t.columns.indexOf(v)]!==null),summary:`Drop rows missing ${v}. A missing value in the other column does not remove a row.`}),{note:'Here price and tip are already numeric, so the visual isolates dropna.'});
-define('W17','Fill gaps in',['tip','price'],()=>frame(['price','tip'],[[2,null],[null,1],[4,3],[6,2]]),(t,v)=>{
+define('W17','Fill gaps in',['tip','price'],()=>frame(['price','tip'],[[2,null],[null,1],[4,3],[12,8]]),(t,v)=>{
   const middle=quantile(column(t,v),.5);
   return {code:`df[${py(v)}] = df[${py(v)}].fillna(df[${py(v)}].median())\ndf`,result:addColumn(t,v,column(t,v).map(value=>value===null?middle:value)),summary:`The known ${v} values have median ${middle}; fill only their missing cells with ${middle}.`};
 });
-define('W19','Group by',['flavour','shelf'],()=>basic('flavour','shelf','price'),(t,v)=>{
+define('W19','Group by',['flavour','shelf'],groupedExample,(t,v)=>{
   const groups=group(t,v,'price');
   return {code:`df.groupby(${py(v)}, as_index=False).agg(\n    mean_amount=("price", "mean"), records=("price", "size")\n)`,result:frame([v,'mean_amount','records'],groups.map(g=>[g.label,mean(g.values),g.values.length])),summary:'Each group becomes one row: mean_amount averages price; records counts observations.'};
 });
-define('W20','Group by',['flavour','shelf'],()=>basic('flavour','shelf','price'),(t,v)=>{
+define('W20','Group by',['flavour','shelf'],groupedExample,(t,v)=>{
   const means=new Map(group(t,v,'price').map(g=>[g.label,mean(g.values)]));
   return {code:`df["group_mean"] = df.groupby(${py(v)})["price"].transform("mean")\ndf`,result:addColumn(t,'group_mean',column(t,v).map(label=>means.get(label))),summary:'Every original row remains. Rows in the same group receive the same group mean.'};
 });
@@ -150,7 +152,7 @@ define('W24','Lookup field to bring in',['priority','label'],()=>({inputs:[basic
   }));
   return {code:`df.merge(lookup[["flavour", ${py(v)}]], on="flavour", how="left", validate="many_to_one")`,result,summary:`Match equal flavour keys to add ${v}. Every left row remains; chocolate has no lookup match, so its new value is NaN.`};
 });
-define('W25','Table order',[['first,second','first, then second'],['second,first','second, then first']],()=>({inputs:[frame(['candy','price'],[['Berry',2],['Mint',4]],[0,1],'first'),frame(['candy','price'],[['Apple',6]],[2],'second')]}),(t,v)=>{
+define('W25','Table order',[['first,second','first, then second'],['second,first','second, then first']],()=>({inputs:[frame(['candy','price'],[['Berry',2],['Mint',4]],[0,1],'first'),frame(['candy','price'],[['Apple',6]],[0],'second')]}),(t,v)=>{
   const tables=v.split(',').map(name=>t.inputs.find(input=>input.name===name));
   return {code:`pd.concat([${v.split(',').join(', ')}], ignore_index=True)`,result:frame(tables[0].columns,tables.flatMap(table=>table.rows)),summary:'Tables stack in list order. ignore_index=True numbers the combined rows from zero.'};
 });
@@ -175,16 +177,71 @@ function format(value) {
   if (typeof value === 'number') return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(3)));
   return String(value);
 }
-function evaluate(id, value) {
+const extraArguments={
+ I09:[['start','First row label',['A','B'],'B'],['column','Column to return',['price','candy'],'price']],
+ W26:[['include_lowest','Include the first lower edge',[['True','True · include zero'],['False','False · exclude zero']],'True']],
+ I08:[['columns','Columns to read',['1','2','3'],'2']],
+ I10:[['column','Column to compare',['price','rating'],'price']],
+ I11:[['threshold','Minimum price',['1','2','4'],'2']],
+ I12:[['column','Column to sort',['rating','price'],'rating']],
+ I13:[['column','Column for largest values',['price','rating'],'price']],
+ I19:[['method','Group calculation',['mean','median','sum'],'mean']],
+ W06:[['ascending','Sort direction',[['True','True · smallest first'],['False','False · largest first']],'True']],
+ W11:[['case','Match letter case',[['False','False · ignore case'],['True','True · match case']],'False']],
+ W17:[['method','Value to fill gaps',['median','mean'],'median']],
+ W19:[['method','Group calculation',['mean','median','sum'],'mean']],
+ W20:[['method','Group calculation',['mean','median'],'mean']],
+ W21:[['method','Calculation for repeated pairs',['mean','sum'],'mean']],
+ W24:[['how','Rows to keep',[['left','left · all source rows'],['inner','inner · matching rows']],'left']],
+ W25:[['ignore_index','Row labels',[['True','True · new row numbers'],['False','False · original labels']],'True']]
+};
+function operationArguments(id,state={}){
+ const spec=specs[id];if(!spec)return [];
+ return [{key:'choice',label:spec.label,value:state.choice??spec.choices[0][0],options:spec.choices},...(extraArguments[id]||[]).map(([key,label,values,fallback])=>({key,label,value:state[key]??fallback,options:values.map(v=>Array.isArray(v)?v:[v,v])}))];
+}
+function argumentOutcome(id,t,v,state,outcome){
+ const args=Object.fromEntries(operationArguments(id,state).map(a=>[a.key,String(a.value)]));
+ if(id==='I08'){const n=Number(args.columns);return {code:`df.iloc[:${v}, :${n}]`,result:select(subset(t,(_,i)=>i<Number(v)),t.columns.slice(0,n)),summary:`Read the first ${v} rows and ${n} columns. Stop positions are excluded.`};}
+ if(id==='I09'){const start=args.start,name=args.column;return {code:`df.loc[${py(start)}:${py(v)}, [${py(name)}]]`,result:select(subset(t,(_,i)=>i>=t.index.indexOf(start)&&i<=t.index.indexOf(v)),[name]),summary:`Read ${name} from row ${start} through ${v}. Both end labels are included.`};}
+ if(id==='W26'){const include=args.include_lowest==='True';return {code:`df["half"] = pd.cut(
+    df["price"], bins=[0, ${v}, 8], labels=["lower", "upper"], include_lowest=${args.include_lowest}
+)
+df`,result:addColumn(t,'half',column(t,'price').map(value=>value===0&&!include?null:value<=Number(v)?'lower':'upper')),summary:include?`Lower includes zero through ${v}; upper includes values above ${v} through 8.`:`Zero is outside the first interval and becomes missing. Lower includes values above zero through ${v}.`};}
+ if(id==='I10'){const name=args.column;return {code:`df[df[${py(name)}] > ${v}]`,result:subset(t,row=>row[t.columns.indexOf(name)]>Number(v)),summary:`Keep rows where ${name} is greater than ${v}.`};}
+ if(id==='I11'){const threshold=Number(args.threshold);return {code:`df[(df["price"] > ${threshold}) & (df["flavour"] == ${py(v)})]`,result:subset(t,row=>row[1]>threshold&&row[0]===v),summary:`Keep rows passing both tests: price above ${threshold} and flavour ${v}.`};}
+ if(id==='I12'||id==='I13'){
+  const name=args.column,source=id==='I12'?subset(t,row=>row[1]>2):t,position=source.columns.indexOf(name),order=source.rows.map((_,i)=>i).sort((a,b)=>(source.rows[a][position]-source.rows[b][position])*(id==='I12'&&v==='True'?1:-1)),indices=id==='I13'?order.slice(0,Number(v)):order;
+  return {code:id==='I12'?`filtered = df[df["price"] > 2]\nfiltered.sort_values(${py(name)}, ascending=${v})`:`df.nlargest(${v}, ${py(name)})`,result:frame(source.columns,indices.map(i=>source.rows[i]),indices.map(i=>source.index[i])),summary:id==='I13'?`Read the ${v} largest ${name} values, largest first.`:`Filter price above 2, then sort ${name} ${v==='True'?'smallest':'largest'} first.`};
+ }
+ if(id==='I19'){const method=args.method,groups=group(t,v,'price');return {code:`df.groupby(${py(v)})["price"].agg("${method}")`,result:series('price',groups.map(g=>g.label),groups.map(g=>summarise(g.values,method)),v),summary:`For each ${v}, calculate the ${method} of price.`};}
+ if(id==='W06'){const ascending=args.ascending==='True',j=t.columns.indexOf(v),order=t.rows.map((_,i)=>i).sort((a,b)=>(t.rows[a][j]-t.rows[b][j])*(ascending?1:-1));return {code:`df = df.sort_values(${py(v)}, ascending=${args.ascending}).reset_index(drop=True)\ndf`,result:{...frame(t.columns,order.map(i=>t.rows[i])),sourceRows:order},summary:`Sort ${v} ${ascending?'smallest':'largest'} first, then number rows from zero.`};}
+ if(id==='W11'){const exact=args.case==='True';return {code:`df[df["candy"].str.contains(${py(v)}, case=${args.case}, na=False, regex=False)]`,result:subset(t,row=>(exact?row[0]:row[0].toLowerCase()).includes(exact?v:v.toLowerCase())),summary:exact?'Keep names containing this exact text, including its letter case.':'Keep names containing this text, ignoring letter case.'};}
+ if(id==='W17'){const method=args.method,fill=method==='mean'?mean(column(t,v)):quantile(column(t,v),.5);return {code:`df[${py(v)}] = df[${py(v)}].fillna(df[${py(v)}].${method}())\ndf`,result:addColumn(t,v,column(t,v).map(x=>x===null?fill:x)),summary:`Fill missing ${v} with its ${method}: ${format(fill)}. Other values stay the same.`};}
+ if(id==='W19'){const method=args.method,groups=group(t,v,'price');return {code:`df.groupby(${py(v)}, as_index=False).agg(\n    amount=("price", "${method}"), records=("price", "size")\n)`,result:frame([v,'amount','records'],groups.map(g=>[g.label,summarise(g.values,method),g.values.length])),summary:`One row per ${v}: ${method} price and number of rows.`};}
+ if(id==='W20'){const method=args.method,values=new Map(group(t,v,'price').map(g=>[g.label,summarise(g.values,method)]));return {code:`df["group_value"] = df.groupby(${py(v)})["price"].transform("${method}")\ndf`,result:addColumn(t,'group_value',column(t,v).map(label=>values.get(label))),summary:`Each row gets its group’s ${method} price. All original rows remain.`};}
+ if(id==='W21'&&args.method==='sum'){
+  const result=clone(outcome.result),[rowName,colName]=v.split(','),ri=t.columns.indexOf(rowName),ci=t.columns.indexOf(colName),vi=t.columns.indexOf('price');
+  result.rows=result.index.map(label=>result.columns.map(header=>((values)=>values.length?values.reduce((sum,row)=>sum+row[vi],0):null)(t.rows.filter(row=>row[ri]===label&&row[ci]===header))));
+  return {...outcome,code:outcome.code.replace('aggfunc="mean"','aggfunc="sum"'),result,summary:'Add prices for each row/column pair. Pairs with no rows stay missing.'};
+ }
+ if(id==='W24'&&args.how==='inner'){
+  const [source,lookup]=t.inputs,keep=source.rows.map((row,i)=>lookup.rows.some(other=>other[0]===row[1])?i:-1).filter(i=>i>=0);
+  return {...outcome,code:outcome.code.replace('how="left"','how="inner"'),result:frame(outcome.result.columns,keep.map(i=>outcome.result.rows[i])),summary:'Keep source rows with a matching flavour in the lookup.'};
+ }
+ if(id==='W25'&&args.ignore_index==='False'){const tables=v.split(',').map(name=>t.inputs.find(input=>input.name===name));return {...outcome,code:outcome.code.replace('ignore_index=True','ignore_index=False'),result:frame(outcome.result.columns,outcome.result.rows,tables.flatMap(x=>x.index)),summary:'Stack in the chosen order and keep the original row labels.'};}
+ return outcome;
+}
+function evaluate(id, value, state={}) {
   const specification=specs[id];
   if (!specification) return null;
   const choice=value === undefined ? specification.choices[0][0] : String(value);
   if (!specification.choices.some(option=>option[0]===choice)) throw new Error('Unknown operation choice: '+id+'/'+choice);
-  const input=specification.input(), outcome=specification.operation(input,choice);
+  for(const argument of operationArguments(id,state))if(!argument.options.some(([v])=>v===String(argument.value)))throw Error("Unknown argument: "+argument.key);
+  const input=specification.input(), outcome=argumentOutcome(id,input,choice,state,specification.operation(input,choice));
   return {id, choice, label:specification.label, choices:clone(specification.choices), inputs:input.inputs||[input], ...outcome, note:specification.note||''};
 }
-function pythonSetup(id, value) {
-  const example=evaluate(id,value);
+function pythonSetup(id, value, state={}) {
+  const example=evaluate(id,value,state);
   if (!example) return '';
   return 'import pandas as pd\n\n'+example.inputs.map(input=>{
     const data='{'+input.columns.map((name,i)=>py(name)+': '+py(input.rows.map(row=>row[i]))).join(', ')+'}';
@@ -231,24 +288,28 @@ function model(curriculum, lesson, round) {
   if (!lesson||lesson.review||round!==lesson.rounds?.[0]||!specs[lesson.id]) return null;
   return evaluate(lesson.id);
 }
+function codeControls(id,state){
+ const example=evaluate(id,state.choice,state),controls=operationArguments(id,state).map(argument=>root.InlineCode.choices(argument.key,argument.label,argument.value,argument.options,value=>{const next={...state,[argument.key]:value};return evaluate(id,next.choice,next);}));
+ return root.InlineCode.render(example.code,controls);
+}
 function render(curriculum, lesson, round) {
-  const example=model(curriculum,lesson,round);
-  if (!example) return '';
-  return '<section class="teaching-explorer operation-explorer" data-operation-explorer="'+esc(example.id)+'" data-code-context="teaching" aria-label="Interactive '+esc(lesson.title)+' example"><p class="operation-example-label">Illustrative data</p><label class="teaching-visual-controls">'+esc(example.label)+' <select data-operation-choice>'+example.choices.map(([value,label],i)=>'<option value="'+esc(value)+'"'+(i===0?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select></label>'+(example.note?'<p class="operation-note">'+proseMarkup(example.note,example)+'</p>':'')+'<div class="operation-result" aria-live="polite" aria-atomic="true">'+resultMarkup(example)+'</div></section>';
+ const example=model(curriculum,lesson,round);if(!example)return '';
+ const state={choice:example.choice};
+ return '<section class="teaching-explorer operation-explorer" data-operation-explorer="'+esc(example.id)+'" data-operation-state="'+esc(JSON.stringify(state))+'" data-code-context="teaching" aria-label="Interactive '+esc(lesson.title)+' example"><p class="operation-example-label">Illustrative data</p><div class="illustrative-code-controls">'+codeControls(example.id,state)+'</div>'+(example.note?'<p class="operation-note">'+proseMarkup(example.note,example)+'</p>':'')+'<div class="operation-result" aria-live="polite" aria-atomic="true">'+resultMarkup(example)+'</div></section>';
 }
 const mounted = new WeakSet();
 function mount(container=root.document) {
-  if (!container||mounted.has(container)) return;
-  mounted.add(container);
-  container.addEventListener('change',event=>{
-    const control=event.target.closest?.('[data-operation-choice]'), section=control?.closest('[data-operation-explorer]');
-    if (!section) return;
-    const example=evaluate(section.dataset.operationExplorer,control.value), result=section.querySelector('.operation-result');
-    result.innerHTML=resultMarkup(example);
-    root.FoundationLearning?.highlightContent?.(result,identifierContext(example));
-  });
+ if(!container||mounted.has(container))return;mounted.add(container);
+ container.addEventListener('illustrative-code-change',event=>{
+  const section=event.target.closest?.('[data-operation-explorer]');if(!section)return;
+  const state={...JSON.parse(section.dataset.operationState),[event.detail.key]:event.detail.value},id=section.dataset.operationExplorer,example=evaluate(id,state.choice,state);
+  section.dataset.operationState=JSON.stringify(state);
+  section.querySelector('.illustrative-code-controls').innerHTML=codeControls(id,state);
+  const result=section.querySelector('.operation-result');result.innerHTML=resultMarkup(example);
+  root.FoundationLearning?.highlightContent?.(result,identifierContext(example));
+ });
 }
-const api={render,mount,model,evaluate,pythonSetup,ids:Object.freeze(Object.keys(specs))};
+const api={render,mount,model,evaluate,pythonSetup,operationArguments,codeControls,ids:Object.freeze(Object.keys(specs))};
 root.FoundationOperationVisuals=api;
 if (typeof module!=='undefined') module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

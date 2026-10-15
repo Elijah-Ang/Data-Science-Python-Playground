@@ -195,20 +195,34 @@ function guidanceFor(curriculum,lesson,round){
 }
 function parameterCode(item){return `<code data-code-role="parameter">${esc(item.keyword)}</code>`;}
 const conciseMeanings={
- data:'The table containing the named columns; here, df.',
- x:'Column-name text or an aligned vector for the horizontal axis.',
- y:'Column-name text or an aligned vector for the vertical axis.',
- ax:'The Axes returned by plt.subplots; receives this chart.',
- figsize:'(width, height) in inches; changes canvas space.',
- bins:'A positive bin count, increasing interval edges, or a rule such as "auto".',
- hue:'A column mapped to colour; categories get distinct colours.',
- style:'A column mapped to marker shapes or line patterns.',
- size:'A numeric column mapped to marker area; categories get distinct sizes.',
- order:'Category labels in the intended display order; accepts a list or Index.',
- estimator:'"mean" averages, "median" takes the middle value, and "sum" totals each group.',
- 'lineplot.estimator':'"mean" combines repeated x values; None keeps individual observations.',
- palette:'A palette name, colour list, or category-to-colour mapping.',
- alpha:'Transparency from 0 (invisible) to 1 (opaque).'
+ data:'The table the plot reads from.',
+ x:'Choose the column shown along the horizontal axis.',
+ y:'Choose the column shown along the vertical axis.',
+ ax:'The plotting area where this chart is drawn.',
+ figsize:'Set the picture’s width and height in inches.',
+ bins:'Choose how values are divided into intervals. Use a number of bins or a list of their edges.',
+ hue:'Give each category a different colour, or show a number using a colour scale.',
+ style:'Give each category a different marker shape or line pattern.',
+ size:'Use a column to set the sizes of the dots. Larger numbers give larger dot areas.',
+ order:'List the categories in the order you want them to appear.',
+ estimator:'Choose one result per group: the average, middle value, total, or another calculation.',
+ 'lineplot.estimator':'Choose one result at each x value. None keeps every observation; "mean" averages them; "median" takes their middle value.',
+ palette:'Choose the colours used for the groups or colour scale.',
+ alpha:'Set how see-through the marks are: 0 hides them; 1 makes them solid.',
+ marker:'Choose a shape for each point on the line. None draws the line without markers.',
+ errorbar:'Show how spread out the observations are, or how uncertain the calculated result is. None hides the interval.',
+ bw_adjust:'Choose how smooth the density curve looks. Larger numbers make it smoother.',
+ cut:'Choose how far the density curve extends beyond the observed values. Use 0 to stop at the smallest and largest observations.',
+ jitter:'Move dots sideways to separate values that overlap. Their measured heights stay the same.',
+ inner:'Choose the marks drawn inside each violin: quartiles, individual observations, or no marks.',
+ ascending:'True puts smaller values first; False puts larger values first.',
+ subset:'Choose the columns to check for missing values.',
+ aggfunc:'Choose how repeated row/column pairs are combined, such as their average or total.',
+ values:'Choose the measurement column to calculate with.',
+ 'pivot_table.index':'Choose the column whose categories become row labels.',
+ columns:'Choose the column whose categories become column headings.',
+ numeric_only:'True calculates using only number and True/False columns.',
+ sort:'True puts x values in order before joining them with a line.'
 };
 // Visible alternatives accompany each current argument, rather than a hidden reference.
 const acceptedValues={
@@ -245,7 +259,7 @@ const acceptedValues={
  color:[['"blue"','colour name'],['"#3366cc"','hex colour'],['(0.2, 0.4, 0.8)','RGB channels from 0 to 1']],
  palette:[['"deep"','named palette'],['["blue", "orange"]','colour list'],['{"A": "blue", "B": "orange"}','category mapping']],
  alpha:[['0','invisible'],['0.5','half transparent'],['1','opaque'],['None','artist default']],
- marker:[['"o"','circle'],['"s"','square'],['"^"','triangle'],['"x"','cross']],
+ marker:[['"o"','circle'],['"s"','square'],['"*"','star'],['"^"','triangle'],['"x"','cross'],['None','no marker']],
  capsize:[['0','no caps'],['0.15','cap width relative to category spacing']],
  inner:[['"box"','mini box plot'],['"quart"','quartiles'],['"point"','observations'],['"stick"','observation lines'],['None','no interior marks']],
  annot:[['True','write matrix values'],['False','omit labels'],['labels','same-shape array of custom labels']],
@@ -305,7 +319,7 @@ function valueChoices(item){
 function currentDefinition(item,lesson,round,level){
  let meaning=level==='extend'&&extensionNotes[round.id]?.[item.id] || conciseMeanings[item.id] || item.purpose+' '+item.forms;
  if(item.id==='errorbar'&&lesson.id==='V09')meaning='None hides intervals; the mean or median bar height stays unchanged.';
- if(item.id==='lineplot.estimator'&&lesson.id==='V18')meaning='None keeps each observed time point; "mean" would combine repeated times.';
+ if(item.id==='lineplot.estimator'&&lesson.id==='V18')meaning='None keeps every observation. "mean" averages observations at the same x value; "median" takes their middle value.';
  return `<div class="foundation-parameter-row" data-parameter="${esc(item.id)}" data-guidance="${level}"><dt>${parameterCode(item)}</dt><dd>${esc(meaning)}${valueChoices(item)}</dd></div>`;
 }
 // Teach both members of a related pair, while sharing their accepted forms and

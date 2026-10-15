@@ -43,6 +43,7 @@ const files = [
   "challenges/runtime.py",
   "foundations/editor.js",
   "foundations/learning-ui.js",
+  "foundations/inline-code.js",
   "foundations/parameter-guide.js",
   "foundations/teaching.js",
   "foundations/operation-visuals.js",
@@ -98,7 +99,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data", "assets/tour-snapshots", "assets/workflow-icons-generated"];
+const directories = ["data", "assets/tour-snapshots", "assets/workflow-icons-generated", "assets/teaching"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",

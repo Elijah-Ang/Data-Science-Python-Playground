@@ -2,6 +2,7 @@
    Values illustrate the operation; they are not the exercise's answer. */
 (function(root){
 'use strict';
+if(!root.InlineCode&&typeof module!=='undefined')root.InlineCode=require('./inline-code.js');
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rect=(x,y,w,h,c='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="${c}"/>`;
 const path=(d,c='')=>`<path d="${d}" class="${c}"/>`;
@@ -271,11 +272,12 @@ function smallPlot(xlo,xhi,ylo,yhi,xlabel='value',ylabel='count'){
  return {px,py,art:axes(35,20,207,60)+[xlo,xhi].map(v=>text(px(v)-5,92,fmt(v))).join('')+[ylo,yhi].map(v=>text(2,py(v)+3,fmt(v))).join('')+text(182,12,xlabel)+text(36,12,ylabel)};
 }
 function scientificPlot(id,v={}){
- const values=exampleRows.map(r=>r.value);let art='',data={},description=scene[id]?.label||id;
+ const observations=v.rows||exampleRows;
+ const values=observations.map(r=>r.value);let art='',data={},description=scene[id]?.label||id;
  if(id==='density'){
-  const model=kde(values,v.bandwidth||1),curve=Array.from({length:81},(_,i)=>{const x=1+17*i/80;return [x,model.at(x)];});
+  const model=kde(values,v.bandwidth||1),curve=Array.from({length:81},(_,i)=>{const x=Math.min(...values)+(Math.max(...values)-Math.min(...values))*i/80;return [x,model.at(x)];});
   // A bandwidth comparison must not silently rescale the density axis.
-  const yMax=.2,p=smallPlot(1,18,0,yMax,'value','density');
+  const yMax=v.yMax||.2,p=smallPlot(Math.min(...values),Math.max(...values),0,yMax,'value','density');
   art=p.art+path(curve.map(([x,y],i)=>`${i?'L':'M'}${p.px(x)} ${p.py(y)}`).join(''),'visual-bold');data={values,bandwidth:model.bandwidth,bwAdjust:v.bandwidth||1,curve,yDomain:[0,yMax]};description=`Gaussian KDE; bw_adjust=${v.bandwidth||1}; area, not height, represents probability`;
  }else if(id==='ecdf'||id==='ecdf-complement'){
   const complement=id==='ecdf-complement',unique=[...new Set(values)].sort((a,b)=>a-b),p=smallPlot(0,20,0,1,'value',complement?'fraction > x':'fraction ≤ x');
@@ -285,17 +287,17 @@ function scientificPlot(id,v={}){
   const edges=[0,4,8,12,16,20],counts=edges.slice(0,-1).map((lo,i)=>values.filter(n=>n>=lo&&(i===4?n<=edges[i+1]:n<edges[i+1])).length),p=smallPlot(0,20,0,6);
   art=p.art+counts.map((n,i)=>rect(p.px(edges[i]),p.py(n),p.px(edges[i+1])-p.px(edges[i]),p.py(0)-p.py(n),'visual-wash')).join('')+values.map(n=>path(`M${p.px(n)} 76v9`,'visual-bold')).join('');data={values,edges,counts};
  }else if(['point-interval','median-points','violin'].includes(id)){
-  const groups=['A','B','C'].map(group=>{const vals=exampleRows.filter(r=>r.group===group).map(r=>r.value);return {group,values:vals,mean:mean(vals),median:q(vals,.5),sd:spread(vals)};}),p=smallPlot(0,4,-3,20,'group','value');
-  art=axes(35,20,207,60)+text(2,p.py(0)+3,'0')+text(2,p.py(20)+3,'20')+text(36,12,'value');
+  const groups=[...new Set(observations.map(row=>row.group))].map(group=>{const vals=observations.filter(r=>r.group===group).map(r=>r.value);return {group,values:vals,mean:mean(vals),median:q(vals,.5),sd:spread(vals)};}),center=g=>v.estimator==='median'?g.median:v.estimator==='sum'?g.values.reduce((n,x)=>n+x,0):g.mean,lowest=Math.min(...groups.map(g=>center(g)-g.sd)),yBottom=id==='point-interval'&&lowest < -3?Math.floor(lowest)-1:-3,yTop=v.estimator==='sum'?Math.max(20,...observations.map(row=>row.value))*3:20,p=smallPlot(0,4,yBottom,yTop,'group','value');
+  art=axes(35,20,207,60)+text(2,p.py(0)+3,'0')+text(2,p.py(yTop)+3,fmt(yTop))+(yBottom < -3?text(2,p.py(yBottom)+3,fmt(yBottom)):'')+text(36,12,'value');
   for(const [i,g] of groups.entries()){
    const x=p.px(i+1);art+=text(x-3,92,g.group);
    if(id==='violin'){
     const density=kde(g.values),ys=Array.from({length:41},(_,j)=>Math.min(...g.values)+(Math.max(...g.values)-Math.min(...g.values))*j/40),ownPeak=Math.max(...ys.map(density.at)),globalPeak=Math.max(...groups.flatMap(other=>{const fit=kde(other.values);return Array.from({length:41},(_,i)=>fit.at(Math.min(...other.values)+(Math.max(...other.values)-Math.min(...other.values))*i/40));})),peak=v.densityNorm==='width'?ownPeak:v.densityNorm==='count'?ownPeak*Math.max(...groups.map(g=>g.values.length))/g.values.length:globalPeak;
     const side=ys.map(y=>[x+density.at(y)/peak*17,p.py(y)]),other=[...ys].reverse().map(y=>[x-density.at(y)/peak*17,p.py(y)]);
     art+=path([...side,...other].map(([a,b],j)=>`${j?'L':'M'}${a} ${b}`).join('')+'Z','visual-wash')+(v.inner==='quart'?[.25,.5,.75].map(t=>path(`M${x-9} ${p.py(q(g.values,t))}h18`,'visual-dashed')).join(''):g.values.map(y=>dot(x,p.py(y),1.7)).join(''));
-   }else if(id==='point-interval')art+=(v.showInterval===false?'':path(`M${x} ${p.py(g.mean-g.sd)}V${p.py(g.mean+g.sd)}m-4 0h8m-8 ${p.py(g.mean-g.sd)-p.py(g.mean+g.sd)}h8`))+dot(x,p.py(g.mean),3);
+   }else if(id==='point-interval'){const center=v.estimator==='median'?g.median:v.estimator==='sum'?g.values.reduce((n,x)=>n+x,0):g.mean;art+=(v.showInterval===false?'':path(`M${x} ${p.py(center-g.sd)}V${p.py(center+g.sd)}m-4 0h8m-8 ${p.py(center-g.sd)-p.py(center+g.sd)}h8`))+dot(x,p.py(center),3);}
    else art+=dot(x,p.py(g.median),3);
-  }data={groups};description=id==='point-interval'?(v.showInterval===false?'Group means; intervals omitted':'Mean and ±1 sample SD, computed within each group'):id==='violin'?(v.inner==='quart'?'Gaussian density within endpoints; lines mark quartiles':'Gaussian density within observed endpoints; dots show every value'):description;
+  }data={groups,yDomain:[yBottom,yTop]};description=id==='point-interval'?(v.showInterval===false?'Group means; intervals omitted':'Mean and ±1 sample SD, computed within each group'):id==='violin'?(v.inner==='quart'?'Gaussian density within endpoints; lines mark quartiles':'Gaussian density within observed endpoints; dots show every value'):description;
  }else if(id==='boxplot'){
   const q1=q(values,.25),median=q(values,.5),q3=q(values,.75),iqr=q3-q1,fences=[q1-1.5*iqr,q3+1.5*iqr],inside=values.filter(n=>n>=fences[0]&&n<=fences[1]),whiskers=[Math.min(...inside),Math.max(...inside)],outliers=values.filter(n=>n<fences[0]||n>fences[1]),p=smallPlot(0,20,0,1,'value','');
   art=p.art+path(`M${p.px(whiskers[0])} 48H${p.px(whiskers[1])}M${p.px(whiskers[0])} 40v16M${p.px(whiskers[1])} 40v16`)+rect(p.px(q1),34,p.px(q3)-p.px(q1),28,'visual-wash')+path(`M${p.px(median)} 34v28`,'visual-bold')+outliers.map(n=>dot(p.px(n),48,3)).join('');data={values,q1,median,q3,fences,whiskers,outliers};
@@ -333,7 +335,7 @@ function scientificPlot(id,v={}){
   const cols=[0,1,2].map(i=>pairObservations.map(row=>row[i])),values=cols.map(a=>cols.map(b=>a.reduce((s,n,i)=>s+(n-mean(a))*(b[i]-mean(b)),0)/Math.sqrt(a.reduce((s,n)=>s+(n-mean(a))**2,0)*b.reduce((s,n)=>s+(n-mean(b))**2,0))));
   art=matrix(values,{correlation:true,decimals:2});data={rows:pairObservations,columns:['x','y','z'],values};
  }else{
-  const groups=['A','B'].map(group=>({group,values:exampleRows.filter(r=>r.group===group).map(r=>r.value)}));
+  const groups=['A','B'].map(group=>({group,values:observations.filter(r=>r.group===group).map(r=>r.value)}));
   art=groups.map((g,j)=>{const x=25+j*122,w=90,py=v=>78-v/8*55;let a=text(x+25,12,'group '+g.group)+axes(x,20,w,58);if(id==='facet-hist'){const counts=[0,0,0,0];for(const value of g.values)counts[Math.min(3,Math.floor(value/2))]++;a+=counts.map((n,i)=>rect(x+i*w/4,78-n*18,w/4,n*18,'visual-fill')).join('');}else{const q1=q(g.values,.25),q3=q(g.values,.75),median=q(g.values,.5);a+=path(`M${x+45} ${py(Math.min(...g.values))}V${py(Math.max(...g.values))}`)+rect(x+30,py(q3),30,py(q1)-py(q3),'visual-wash')+path(`M${x+30} ${py(median)}h30`,'visual-bold');}return a+text(x,92,id==='facet-hist'?'0 → 8':'value: 0 → 8');}).join('');data={groups};
  }
  return {art,data,description};
@@ -496,12 +498,176 @@ function exampleTable(variant){
  const rows=numeric?[['value',observations.map(r=>r.value).join(', ')]]:[...new Set(observations.map(row=>row.group))].map(group=>[group,observations.filter(r=>r.group===group).map(r=>variant==='count-bars'?r.id:coordinates?`(${r.x},${r.value})`:r.value).join(', ')]);
  return `<table class="teaching-example-output teaching-visual-data" data-code-table="${numeric?'dictionary':'teaching'}"><caption class="sr-only">Example observations</caption><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(([group,values])=>`<tr><th scope="row">${numeric?`<code data-code-role="column">${esc(group)}</code>`:esc(group)}</th><td>${esc(values)}</td></tr>`).join('')}</tbody></table>`;
 }
-function resultHtml(result,variant,choice){return result.svg+`<p>${esc(shortResult(result,variant,choice))}</p>${result.code?`<pre><code>${esc(result.code)}</code></pre>`:''}`;}
+const lineExampleRows=Object.freeze([
+ [1,2,8],[1,4,3],[1,9,6],[2,3,2],[2,7,5],[2,8,9],[3,6,1],[3,8,7],[3,10,4]
+].map(([day,value,cost],i)=>Object.freeze({id:'l'+(i+1),day,value,cost})));
+const dailyExampleRows=Object.freeze([
+ [1,1,2,8],[2,1,4,3],[3,1,9,6],[4,2,3,2],[5,2,7,5],[6,2,8,9]
+].map(([day,period,value,cost],i)=>Object.freeze({id:'d'+(i+1),day,period,value,cost})));
+const numerical=['x','value','cost'],categories=['group','shift'];
+const stringOptions=values=>values.map(v=>[v,JSON.stringify(v)]);
+function plotArguments(variant,state={},settings={}){
+ const fields=[],add=(key,label,values,fallback)=>fields.push({key,label,value:String(state[key]??fallback),options:values.map(v=>Array.isArray(v)?v:[String(v),String(v)])});
+ const numeric=(key,fallback,values=numerical)=>add(key,key+' · '+(key==='x'?'horizontal':'vertical')+' column',stringOptions(values),fallback);
+ if(['scatter','encoding','scatter-dimensions'].includes(variant)){
+  numeric('x','x');numeric('y','value');
+  if(variant!=='scatter')add('hue','Colour by column',[['None','None · one colour'],...stringOptions(categories)],'group');
+  if(variant==='scatter-dimensions'){
+   add('style','Marker shape by column',[['None','None · one shape'],...stringOptions(categories)],'group');
+   if(settings.sizeEncoding!==false)add('size','Marker size by column',[['None','None · one size'],...stringOptions(numerical)],'None');
+  }
+ }else if(variant==='facets'){
+  numeric('x','x');numeric('y','value');add('col','One panel per category',[['None','None · one panel'],...stringOptions(categories)],'group');
+ }else if(['line','line-band'].includes(variant)){
+  if(variant==='line')add('x','Horizontal time column',[['day','"day" · individual days'],['period','"period" · three-day groups']],'day');else numeric('x','day',['day','cost','value']);numeric('y','value',['value','cost']);
+  add('estimator','Combine values at the same x',[["None","None · keep every row"],['mean','"mean" · average'],['median','"median" · middle value'],...(variant==='line'?[['sum','"sum" · total']]:[])],variant==='line'?'None':'mean');
+  add('marker','Point marker',[["None","None · no marker"],['o','"o" · circle'],['s','"s" · square'],['*','"*" · star'],['^','"^" · triangle'],['x','"x" · cross']],'o');
+  if(variant==='line-band')add('errorbar','Spread around the summary',[["None","None · no band"],['sd','"sd" · one standard deviation']],'sd');
+ }else if(['mean-bars','point-interval','violin','exact-bars'].includes(variant)){
+  add('x','Group column',stringOptions(categories),'group');numeric('y','value');
+  if(['mean-bars','point-interval','exact-bars'].includes(variant))add('estimator','Calculation per group',stringOptions(variant==='point-interval'?['mean','median']:['mean','median','sum']),settings.statistic||'mean');
+  if(variant==='point-interval')add('errorbar','Spread around the summary',[["None","None · no interval"],['sd','"sd" · one standard deviation']],'sd');
+  if(variant==='violin')add('inner','Marks inside each violin',stringOptions(['quart','point']),'quart');
+ }else if(variant==='strip')add('jitter','Separate overlapping dots',[['False','False · no sideways spread'],['0.15','0.15 · add sideways spread']],'0.15');
+ else if(variant==='swarm')add('size','Dot size',[3,5,7],'5');
+ else if(variant==='histogram'){
+  numeric('x','value');add('bins','Number of bins',(settings.choices||['2','4','8']).map(v=>[v,explorerSpecs.histogram.options.find(o=>o[0]===v)?.[1]||v]),settings.choices?.includes('4')||!settings.choices?'4':settings.choices[0]);
+ }else if(variant==='density'){
+  numeric('x','value');add('bw_adjust','How much to smooth',[.5,1,2],String(settings.bandwidth||1));
+ }else if(variant==='count-bars')add('x','Category column',stringOptions(categories),'group');
+ else if(variant==='boxplot'){add('axis','Measurement axis',[['x','x · horizontal'],['y','y · vertical']],settings.choice||'y');add('column','Measurement column',stringOptions(numerical),'value');}
+ else{
+  const available=explorerSpecs[variant].options.filter(([v])=>!settings.choices||settings.choices.includes(v));
+  add('choice',explorerSpecs[variant].label,available,settings.choice??available[1]?.[0]??available[0][0]);
+ }
+ for(const f of fields)if(!f.options.some(([v])=>String(v)===f.value))throw Error('Unknown plot argument '+variant+'/'+f.key+'/'+f.value);
+ return fields;
+}
+const pyValue=value=>value==='None'?'None':JSON.stringify(value);
+function plotArgumentModel(variant,state={},settings={}){
+ const args=Object.fromEntries(plotArguments(variant,state,settings).map(f=>[f.key,f.value]));
+ if('choice' in args)return exploration(variant,args.choice,{statistic:settings.statistic});
+ const rows=variant==='line'?dailyExampleRows:variant==='line-band'?lineExampleRows:variant==='strip'||variant==='swarm'?rawRows:exampleRows;
+ let art='',code='',summary='',data={rows,args,count:rows.length};
+ const wrap=()=>({code,summary,data,svg:`<div class="teaching-visual-scroll" tabindex="0" role="region" aria-label="Teaching chart; scroll if needed"><svg class="concept-visual data-teaching-visual" viewBox="0 0 520 245" role="img" aria-label="${esc(summary)}"><title>${esc(summary)}</title><g>${art}</g></svg></div>`});
+ const domain=name=>name==='x'?7:name==='cost'?10:name==='day'?(variant==='line'?7:4):name==='period'?3:20;
+ const marker=(x,y,shape,r=4,style='')=>{
+  const attr=style?` style="${style}"`:'';
+  if(shape==='None')return '';
+  if(shape==='s')return `<rect x="${x-r}" y="${y-r}" width="${r*2}" height="${r*2}" class="visual-fill"${attr}/>`;
+  if(shape==='^')return `<path d="M${x} ${y-r}l${r} ${r*2}h${-r*2}Z" class="visual-fill"${attr}/>`;
+  if(shape==='x')return `<path d="M${x-r} ${y-r}l${2*r} ${2*r}m${-2*r} 0l${2*r} ${-2*r}" class="visual-bold"${attr}/>`;
+  if(shape==='*')return `<path d="${Array.from({length:10},(_,i)=>{const a=-Math.PI/2+i*Math.PI/5,rad=i%2?r*.38196601125:r;return `${i?'L':'M'}${x+Math.cos(a)*rad} ${y+Math.sin(a)*rad}`;}).join('')}Z" class="visual-fill"${attr}/>`;
+  return `<circle cx="${x}" cy="${y}" r="${r}" class="visual-fill"${attr}/>`;
+ };
+ if(['scatter','encoding','scatter-dimensions','line','line-band'].includes(variant)){
+  const linePlot=variant==='line'||variant==='line-band',xKey=args.x,yKey=args.y,xMax=domain(xKey),yMax=linePlot?Math.ceil((variant==='line'&&args.estimator==='sum'?Math.max(...[...new Set(rows.map(r=>r[xKey]))].map(x=>rows.filter(r=>r[xKey]===x).reduce((total,r)=>total+r[yKey],0))):Math.max(...rows.map(r=>r[yKey])))*(variant==='line-band'?1.2:1.1)):domain(yKey),px=x=>55+x/xMax*410,py=y=>190-y/yMax*150;
+  art=axes(55,40,410,150)+(linePlot&&xKey==='period'?[1,2]:linePlot&&xKey==='day'&&variant==='line'?[1,3,6]:[0,xMax/2,xMax]).map(n=>et(px(n)-7,210,fmt(n))).join('')+[0,yMax/2,yMax].map(n=>et(15,py(n)+4,fmt(n))).join('')+et(425,232,xKey)+et(55,30,yKey);
+  if(linePlot){
+   const aggregate=vals=>args.estimator==='sum'?vals.reduce((s,v)=>s+v,0):args.estimator==='median'?q(vals,.5):mean(vals);
+   const groups=[...new Set(rows.map(r=>r[xKey]))].sort((a,b)=>a-b).map(x=>{const values=rows.filter(r=>r[xKey]===x).map(r=>r[yKey]);return {x,value:aggregate(values),sd:values.length>1?spread(values):null,values};});
+   const points=args.estimator==='None'?rows.map(row=>[row[xKey],row[yKey]]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]):groups.map(g=>[g.x,g.value]);
+   const intervals=args.estimator!=='None'&&args.errorbar==='sd'?groups.filter(g=>g.sd!==null):[];
+   const bands=[];let band=[];
+   if(intervals.length)for(const group of groups){if(group.sd!==null)band.push(group);else if(band.length){bands.push(band);band=[];}}if(band.length)bands.push(band);
+   for(const segment of bands)art+=path(segment.map((g,i)=>`${i?'L':'M'}${px(g.x)} ${py(g.value+g.sd)}`).join('')+[...segment].reverse().map(g=>`L${px(g.x)} ${py(g.value-g.sd)}`).join('')+'Z','visual-wash');
+   art+=path(points.map(([x,y],i)=>`${i?'L':'M'}${px(x)} ${py(y)}`).join(''),'visual-bold')+points.map(([x,y])=>marker(px(x),py(y),args.marker)).join('');
+   code=`sns.lineplot(data=example, x="${xKey}", y="${yKey}",\n    estimator=${pyValue(args.estimator)}, marker=${pyValue(args.marker)},\n    errorbar=${pyValue(args.errorbar||'None')}, ax=ax)`;
+   if(variant==='line')code+='  # hide the interval band';
+   summary=args.estimator==='None'?(variant==='line'&&xKey==='day'?'One observation per day; select period to group three days.':groups.some(g=>g.values.length>1)?`Repeated ${xKey} values are joined directly; choose a summary to combine them.`:'Keep every observation and connect them in x order.'):groups.every(g=>g.values.length===1)?`One row per ${xKey}: ${yKey} stays unchanged.`:`${args.estimator==='mean'?'Average':args.estimator==='median'?'Middle value of':'Total'} ${yKey} at each ${xKey}.`;
+   if(args.errorbar==='sd')summary+=args.estimator==='None'?' No band is calculated when estimator=None.':!intervals.length?` SD needs at least two observations per ${xKey}.`:intervals.every(g=>g.sd===0)?` SD is zero at repeated ${xKey} values; these intervals lie on the line.`:` Band: the chosen summary ± one sample SD at repeated ${xKey} values.`;
+   data={...data,xKey,yKey,groups,points,intervals,bands,yDomain:[0,yMax],xDomain:[0,xMax]};
+  }else{
+   const colours=['var(--lesson-accent)','var(--coral)','var(--ink)'],hues=args.hue&&args.hue!=='None'?[...new Set(rows.map(r=>r[args.hue]))]:[],styles=args.style&&args.style!=='None'?[...new Set(rows.map(r=>r[args.style]))]:[],sizes=args.size&&args.size!=='None'?rows.map(r=>r[args.size]):null;
+   const marks=rows.map(row=>{const hi=hues.indexOf(row[args.hue]),si=styles.indexOf(row[args.style]),radius=sizes?Math.sqrt((18+(row[args.size]-Math.min(...sizes))/(Math.max(...sizes)-Math.min(...sizes))*54)/Math.PI):4;const mark={id:row.id,x:row[xKey],y:row[yKey],cx:px(row[xKey]),cy:py(row[yKey]),radius};art+=`<g data-row="${row.id}"><title>${esc(row.id+': '+xKey+'='+mark.x+', '+yKey+'='+mark.y)}</title>`+marker(mark.cx,mark.cy,si===1?'s':si===2?'^':'o',radius,`fill:${colours[Math.max(0,hi)]}`)+'</g>';return mark;});
+   hues.forEach((group,i)=>{art+=marker(260+i*75,15,'o',3,`fill:${colours[i]}`)+et(269+i*75,20,group);});
+   if(styles.length)styles.forEach((group,i)=>{art+=marker(60+i*65,15,i===1?'s':i===2?'^':'o',3)+et(70+i*65,20,group);});
+   code=`sns.scatterplot(data=example, x="${xKey}", y="${yKey}"${args.hue?', hue='+pyValue(args.hue):''}${args.style?', style='+pyValue(args.style):''}${args.size?', size='+pyValue(args.size):''}, ax=ax)`;
+   summary=`Horizontal: ${xKey}. Vertical: ${yKey}.`+(args.hue&&args.hue!=='None'?` Colour: ${args.hue}.`:'')+(args.style&&args.style!=='None'?` Shape: ${args.style}.`:'')+(sizes?` Size: ${args.size}.`:'');data={...data,xKey,yKey,marks,xDomain:[0,xMax],yDomain:[0,yMax]};
+  }
+ }else if(variant==='facets'){
+  const labels=args.col==='None'?['All']:[...new Set(rows.map(r=>r[args.col]))],panels=labels.map(group=>({group,rows:args.col==='None'?rows:rows.filter(row=>row[args.col]===group)})),width=panels.length===1?410:panels.length===2?190:130,gap=panels.length===3?32:30;
+  panels.forEach((panel,i)=>{const left=50+i*(width+gap),px=x=>left+x/domain(args.x)*width,py=y=>190-y/domain(args.y)*150;art+=axes(left,40,width,150)+et(left,34,panel.group)+[0,domain(args.x)].map(n=>et(px(n)-(n?12:0),212,n)).join('')+(i===0?[0,domain(args.y)].map(n=>et(18,py(n)+4,n)).join('')+et(50,16,args.y):'')+et(left+width-40,235,args.x)+panel.rows.map(row=>`<g data-row="${row.id}">`+dot(px(row[args.x]),py(row[args.y]),4)+'</g>').join('');});
+  code=`g = sns.relplot(data=example, x="${args.x}", y="${args.y}",
+    col=${pyValue(args.col)}, kind="scatter")`;
+  summary=args.col==='None'?'One panel.':`Panels by ${args.col}: `+panels.map(p=>`${p.group}: ${p.rows.length}`).join(' · ')+'.';
+  data={...data,panels,xKey:args.x,yKey:args.y};
+ }else if(['mean-bars','exact-bars','point-interval','violin'].includes(variant)){
+  const groups=[...new Set(rows.map(r=>r[args.x]))].map(group=>{const members=rows.filter(r=>r[args.x]===group),values=members.map(r=>r[args.y]),value=args.estimator==='sum'?values.reduce((s,v)=>s+v,0):args.estimator==='median'?q(values,.5):mean(values);return {group,values,rows:members.map(r=>r.id),value,sd:spread(values)};});
+  if(variant==='mean-bars'||variant==='exact-bars'){
+   art=summaryBars(groups,args.estimator+' of '+args.y,args.estimator==='sum'?rows.reduce((n,row)=>n+row[args.y],0):Math.max(9,...rows.map(row=>row[args.y])))+et(430,215,args.x);
+   code=variant==='exact-bars'?`summary = example.groupby("${args.x}")["${args.y}"].${args.estimator}()\nax.bar(summary.index, summary.values)`:`sns.barplot(data=example, x="${args.x}", y="${args.y}",\n    estimator="${args.estimator}", errorbar=None, ax=ax)`;
+  }else{
+   const model=scientificPlot(variant,{rows:rows.map(r=>({...r,group:r[args.x],value:r[args.y]})),showInterval:args.errorbar==='sd',inner:args.inner,densityNorm:'area',estimator:args.estimator});
+   art=`<g transform="translate(0 6) scale(2)">${model.art.replaceAll('>value<','>'+esc(args.y)+'<')}</g>`;data.yDomain=model.data.yDomain;
+   code=variant==='violin'?`sns.violinplot(data=example, x="${args.x}", y="${args.y}",\n    inner="${args.inner}", cut=0, ax=ax)`:`sns.pointplot(data=example, x="${args.x}", y="${args.y}",\n    estimator="${args.estimator}", errorbar=${pyValue(args.errorbar)}, capsize=0.15, ax=ax)`;
+  }
+  summary=groups.map(g=>`${g.group}: ${fmt(g.value)}`).join(' · ');if(variant==='violin')summary=args.inner==='quart'?'Lines mark the middle value and the two quartiles.':'Dots show the observations inside each density shape.';
+  data={...data,groups,kind:args.estimator};
+ }else if(variant==='histogram'||variant==='density'){
+  const values=rows.map(r=>r[args.x]);
+  if(variant==='density'){
+   const model=scientificPlot('density',{rows:rows.map(r=>({...r,value:r[args.x]})),bandwidth:Number(args.bw_adjust),yMax:args.x==='x'?.5:.2});art=`<g transform="translate(0 6) scale(2)">${model.art.replaceAll('>value<','>'+esc(args.x)+'<')}</g>`;
+   code=`sns.kdeplot(data=example, x="${args.x}", bw_adjust=${args.bw_adjust}, cut=0, ax=ax)`;summary='A larger bw_adjust smooths the curve more. The observations stay the same.';data={...data,...model.data};
+  }else{
+   const number=/^\d+$/.test(args.bins),lo=Math.min(...values),hi=Math.max(...values),edges=number?Array.from({length:Number(args.bins)+1},(_,i)=>lo+(hi-lo)*i/Number(args.bins)):args.bins==='wide'?[0,4,8,12,16,20]:args.bins==='narrow'?Array.from({length:11},(_,i)=>i*2):args.bins==='unequal'?[0,2,5,20]:[0,3,6,9,12,15,18,21];
+   const bins=edges.slice(0,-1).map((lo,i)=>({lo,hi:edges[i+1],rows:rows.filter(r=>r[args.x]>=lo&&(i===edges.length-2?r[args.x]<=edges[i+1]:r[args.x]<edges[i+1])).map(r=>r.id)})),px=x=>55+(x-edges[0])/(edges.at(-1)-edges[0])*410;
+   art=axes(55,25,410,150)+et(55,17,'count')+et(25,194,'0')+et(25,44,'9')+bins.map(b=>rect(px(b.lo),190-b.rows.length/9*150,px(b.hi)-px(b.lo),b.rows.length/9*150,'visual-fill')+et(px(b.lo)+4,183-b.rows.length/9*150,b.rows.length)+et(px(b.lo),212,fmt(b.lo))).join('')+et(450,212,fmt(edges.at(-1)))+et(420,235,args.x);
+   code=`sns.histplot(data=example, x="${args.x}", bins=${number?args.bins:'['+edges.join(', ')+']'}, ax=ax)`;summary=`${bins.length} bins. Heights count observations in each interval.`;data={...data,edges,bins,mode:number?'count':'edges'};
+  }
+ }else if(variant==='count-bars'){
+  const model=exploration(variant,args.x);return {...model,data:{...model.data,args,rows}};
+ }else if(variant==='boxplot'){
+  const model=scientificPlot('boxplot',{rows:rows.map(r=>({...r,value:r[args.column]}))});
+  // Reuse the exact Tukey calculation, then orient its measured coordinates.
+  const d=model.data,px=n=>55+n/20*410,py=n=>190-n/20*150;
+  art=axes(55,40,410,150)+[0,10,20].map(n=>args.axis==='x'?et(px(n)-4,213,n):et(20,py(n)+4,n)).join('');
+  if(args.axis==='x')art+=et(420,235,args.column)+path(`M${px(d.whiskers[0])} 115H${px(d.whiskers[1])}M${px(d.whiskers[0])} 105v20M${px(d.whiskers[1])} 105v20`)+rect(px(d.q1),95,px(d.q3)-px(d.q1),40,'visual-wash')+path(`M${px(d.median)} 95v40`,'visual-bold')+d.outliers.map(n=>dot(px(n),115,4)).join('');
+  else art+=et(55,30,args.column)+path(`M260 ${py(d.whiskers[0])}V${py(d.whiskers[1])}M248 ${py(d.whiskers[0])}h24M248 ${py(d.whiskers[1])}h24`)+rect(240,py(d.q3),40,py(d.q1)-py(d.q3),'visual-wash')+path(`M240 ${py(d.median)}h40`,'visual-bold')+d.outliers.map(n=>dot(260,py(n),4)).join('');
+  summary=`Quartiles: ${d.q1}, ${d.median}, ${d.q3}. Whiskers: ${d.whiskers.join('–')}.`;code=`sns.boxplot(data=example, ${args.axis}="${args.column}", ax=ax)`;data={...data,...d};
+ }else if(variant==='strip'||variant==='swarm'){
+  // Swarm/strip examples have only group/value fields; keep those coordinates.
+  const original=exploration(variant,variant==='strip'?args.jitter:args.size);return {...original,data:{...original.data,args}};
+ }
+ return wrap();
+}
+function plotCode(variant,state,settings){
+ const model=plotArgumentModel(variant,state,settings),controls=plotArguments(variant,state,settings).map(arg=>root.InlineCode.choices(arg.key,arg.label,arg.value,arg.options,value=>plotArgumentModel(variant,{...state,[arg.key]:value},settings)));
+ if(variant==='boxplot'){const axis=controls.find(c=>c.key==='axis'),value=plotArguments(variant,state,settings).find(a=>a.key==='axis').value,start=model.code.indexOf(value+'=');axis.ranges=[{start,end:start+1}];}
+ return root.InlineCode.render(model.code,controls,'plot');
+}
+function plotDataTable(variant){
+ if(!['scatter','encoding','scatter-dimensions','line','line-band','mean-bars','exact-bars','point-interval','violin','histogram','density','count-bars','boxplot','strip','swarm','facets'].includes(variant))return exampleTable(variant);
+ const rows=variant==='line'?dailyExampleRows:variant==='line-band'?lineExampleRows:variant==='strip'||variant==='swarm'?rawRows:exampleRows,heads=variant==='line'?['day','period','value','cost']:variant==='line-band'?['day','value','cost']:variant==='strip'||variant==='swarm'?['group','value']:variant==='count-bars'?['group','shift']:['scatter','histogram','density','boxplot'].includes(variant)?['x','value','cost']:['group','shift','x','value','cost'];
+ return `<div class="operation-table-scroll" tabindex="0" role="region" aria-label="Illustrative observations"><table class="teaching-example-output teaching-visual-data"><thead><tr>${heads.map(h=>`<th scope="col"><code data-code-role="column">${h}</code></th>`).join('')}</tr></thead><tbody>${rows.map(row=>`<tr>${heads.map(h=>`<td>${esc(row[h])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function plotSummaryMarkup(result){
+ const name=value=>'<code data-code-role="column">'+esc(value)+'</code>',args=result.data.args||{};let html=esc(result.summary);
+ const anchored=(prefix,value)=>{if(value&&value!=='None')html=html.replaceAll(esc(prefix+value),esc(prefix)+name(value));};
+ if(html.startsWith('One row per ')&&args.x&&args.y)html=html.replace(esc('One row per '+args.x+': '+args.y),'One row per '+name(args.x)+': '+name(args.y));
+ if(result.data.rows?.[0]?.period!==undefined)html=html.replace('select period','select '+name('period'));
+ anchored('Repeated ',args.x);anchored('repeated ',args.x);anchored(' per ',args.x);
+ anchored('Horizontal: ',args.x);anchored('Vertical: ',args.y);anchored(' at each ',args.x);anchored('Average ',args.y);anchored('Total ',args.y);anchored('Middle value of ',args.y);
+ anchored('Panels by ',args.col);anchored('Colour: ',args.hue);anchored('Shape: ',args.style);anchored('Size: ',args.size);
+ html=html.replace(/\bbw_adjust\b/g,'<code data-code-role="parameter">bw_adjust</code>');
+ if(!args.x&&!args.y)html=html.replace(/\b(x|value) median\b/g,(_,column)=>name(column)+' median');
+ return html;
+}
+function resultHtml(result){return result.svg+`<p>${plotSummaryMarkup(result)}</p>`;}
 function interactive(v){
- const spec=explorerSpecs[v.variant];if(!spec)return '';
- const options={statistic:v.summaryStatistic},available=spec.options.filter(([value])=>(!v.choices||v.choices.includes(value))&&(v.variant!=='scatter-dimensions'||value!=='size'||v.sizeEncoding!==false)),choices=available.map(([value,label])=>[value,v.variant==='summary-order'&&v.summaryStatistic==='median'?label.replace('Mean','Median'):label]);
- const preferred=v.choice||v.statistic||(v.variant==='density'?String(v.bandwidth||1):v.variant==='violin'?v.inner:null),baseline=available[0][0],current=preferred&&available.some(([value])=>value===preferred)?preferred:available[1]?.[0]||baseline;
- return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-statistic="${esc(v.summaryStatistic||'')}"><p>Illustrative data</p>${exampleTable(v.variant)}<label class="teaching-visual-controls">${esc(v.binMode==='edges'?'Bin edges':spec.label)} <select data-visual-choice>${choices.map(([value,label])=>`<option value="${esc(value)}"${value===current?' selected':''}>${esc(label)}</option>`).join('')}</select></label><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(exploration(v.variant,current,options),v.variant,current)}</div></section>`;
+ if(!explorerSpecs[v.variant])return '';
+ const settings={...v,statistic:v.summaryStatistic||v.statistic},state={};
+ const key={histogram:'bins','count-bars':'x',boxplot:'axis',density:'bw_adjust',strip:'jitter',swarm:'size',violin:'inner','mean-bars':'estimator','exact-bars':'estimator'}[v.variant];
+ if(key&&v.choice)state[key]=v.choice;
+ if(v.variant==='scatter'&&v.choice)[state.x,state.y]=v.choice.split(':');
+ if(v.variant==='encoding'&&v.choice)state.hue=v.choice==='plain'?'None':'group';
+ if(v.variant==='line'&&v.choice)state.marker=v.choice==='none'?'None':v.choice;
+ if(['line-band','point-interval'].includes(v.variant)&&v.choice)state.errorbar=v.choice==='none'?'None':v.choice;
+ if(v.variant==='facets'&&v.choice)state.col=v.choice==='pooled'?'None':'group';
+
+ if(v.variant==='histogram'&&!state.bins&&v.choices?.length)state.bins=v.choices.includes('4')?'4':v.choices[0];
+ const model=plotArgumentModel(v.variant,state,settings);
+ return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-settings="${esc(JSON.stringify(settings))}" data-visual-state="${esc(JSON.stringify(state))}"><p>Illustrative data</p>${plotDataTable(v.variant)}<div class="illustrative-code-controls">${plotCode(v.variant,state,settings)}</div><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(model)}</div></section>`;
 }
 // Explicit teaching alignment, applied after all curriculum overlays. Reviews
 // reuse the matching operation, rather than blindly taking the Transfer sketch.
@@ -562,7 +728,15 @@ function align(curriculum){
  for(const lesson of curriculum.lessons)if(!lesson.review&&lesson.rounds[0]?.visual)lesson.visual={...lesson.rounds[0].visual};
 }
 const mounted=new WeakSet();
-function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-visual-choice]'),section=control?.closest('[data-foundation-explorer]');if(!section)return;const variant=section.dataset.foundationExplorer,result=section.querySelector('.teaching-visual-result');result.innerHTML=resultHtml(exploration(variant,control.value,{statistic:section.dataset.visualStatistic}),variant,control.value);root.FoundationLearning?.highlightContent?.(result);});}
-const api={explorerSpecs,diagram,configure,align,activityVariants,spec,mapping,scene,sceneLabel,scientificPlot,scientificEvidence,scienceIds,interactive,mount,exploration,exampleRows,types:new Set([...Object.keys(scene),'review']),families:new Set(Object.values(scene).map(s=>s.type))};
+function mount(container=root.document){
+ if(!container||mounted.has(container))return;mounted.add(container);
+ container.addEventListener('illustrative-code-change',event=>{
+  const section=event.target.closest?.('[data-foundation-explorer]');if(!section)return;
+  const variant=section.dataset.foundationExplorer,settings=JSON.parse(section.dataset.visualSettings),state={...JSON.parse(section.dataset.visualState),[event.detail.key]:event.detail.value};
+  section.dataset.visualState=JSON.stringify(state);section.querySelector('.illustrative-code-controls').innerHTML=plotCode(variant,state,settings);
+  const result=section.querySelector('.teaching-visual-result');result.innerHTML=resultHtml(plotArgumentModel(variant,state,settings));root.FoundationLearning?.highlightContent?.(result);
+ });
+}
+const api={plotArguments,plotArgumentModel,plotCode,lineExampleRows,explorerSpecs,diagram,configure,align,activityVariants,spec,mapping,scene,sceneLabel,scientificPlot,scientificEvidence,scienceIds,interactive,mount,exploration,exampleRows,types:new Set([...Object.keys(scene),'review']),families:new Set(Object.values(scene).map(s=>s.type))};
 if(typeof module!=='undefined')module.exports=api;else root.FoundationVisuals=api;
 })(typeof window!=='undefined'?window:globalThis);

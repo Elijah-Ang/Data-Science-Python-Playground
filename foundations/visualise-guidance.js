@@ -133,7 +133,7 @@ const conciseGuides={
  V16:['A scatter point pairs two numeric measurements from the same row.','`volume_ml=9` and `pressure_kpa=20` give the point (9, 20).','Keep coordinates paired when selecting rows. Association does not establish causation.'],
  V04:['A histogram counts numeric observations in intervals called bins.','Values [1, 2, 3, 7] in intervals [0, 4, 8] give counts 3 and 1.','Interior boundaries enter the right bin; the last bin includes its upper edge.'],
  V08:['A count plot shows the number of records per category.','A, A, B gives counts A: 2 and B: 1.','`order` changes category positions, not counts; an empty listed category has count zero.'],
- V18:['A line connects observations along a meaningful sequence, such as time.','One row per day gives one observed sales total per marker.','`estimator=None` retains observations. Repeated times need an explicit replicate or summary choice.'],
+ V18:['A line connects observations along a meaningful sequence, such as time.','One row per day gives one observed sales total per marker.','The exercise has one row per day. In the illustration, period groups three days so you can compare summaries.'],
  V09:['A summary bar shows a numeric statistic for each category.','Fares [2, 2, 3, 9]: mean 4, median 2.5, count 4.','Choose the statistic requested; a summary bar is not a record count.'],
  V13:['A strip plot shows every measurement within its category.','Readings [2, 2, 7] produce three points; two may overlap.','`jitter` separates category positions without changing measured values.'],
  V11:['A box covers the middle half of ordered values; its line marks the median.','Values [2, 4, 6] have median 4.','Points beyond whiskers need review; they are not proven errors.'],

@@ -1,0 +1,220 @@
+{
+  "status": "passed",
+  "baseline": "b52d8600bd53d7f4592880944ed2e37577950892",
+  "sourceAndServedDigests": "final-build.json",
+  "finalBuildContentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+  "scope": "Clickable illustrative Python, independent relevant arguments, plain explanations, matched typography and generated pixel arrow pointer across both curricula.",
+  "nativePython": {
+    "chartCombinations": 444,
+    "fittedModelCombinations": 129,
+    "tableOperationStates": 159,
+    "receipts": [
+      "native-models.json",
+      "native-operations.json"
+    ],
+    "checks": "Actual displayed Python is executed using pinned pandas, NumPy, Seaborn, SciPy and sklearn; artist coordinates, bounds and fitted results are compared."
+  },
+  "editablePrograms": {
+    "combinations": 1148,
+    "command": "node tests/test_inline_code_controls.mjs",
+    "checks": "Every applicable independent or conditional argument stays clickable, comments are not controls, later concepts remain scoped, and no standalone select is rendered."
+  },
+  "renderingPhases": [
+    {
+      "receipt": "stages/rendering.json",
+      "purpose": "Full initial interaction sweep of every Data and ML activity.",
+      "buildContentId": "681ac0a6dfcb7f5812a97f619c48731479805c089d34cd5fd91d8cd607585c50",
+      "activities": 676,
+      "renders": 4056,
+      "interactiveStates": 2256,
+      "screenshots": 76,
+      "issues": 0,
+      "pageErrors": 0
+    },
+    {
+      "receipt": "final-layout/rendering.json",
+      "purpose": "Full layout sweep after matching headings and explanations.",
+      "buildContentId": "dc5e997b0fefbb5f0e86ff3e5672ee7632288db48d0afe18f12a53d020eae46b",
+      "activities": 676,
+      "renders": 4056,
+      "interactiveStates": 0,
+      "screenshots": 76,
+      "issues": 0,
+      "pageErrors": 0
+    },
+    {
+      "receipt": "final-plot-delta/rendering.json",
+      "purpose": "All Visualise activities plus revised SVM lessons after independent facets, SD bounds and column emphasis.",
+      "buildContentId": "ec80797328015e1f1571032fe10d5829638bf8c7634fe96be4077acd30a2d15e",
+      "activities": 139,
+      "renders": 834,
+      "interactiveStates": 858,
+      "screenshots": 30,
+      "issues": 0,
+      "pageErrors": 0
+    },
+    {
+      "receipt": "final-defaults-delta/rendering.json",
+      "purpose": "Changed Data defaults, meaningful aggregation/fill inputs, labelled slicing and lowest-edge controls.",
+      "buildContentId": "e2d8f07416b5ef7ba70469bfb88902e6bdcb08f71b0c70c64b27dcd891e0e0d1",
+      "activities": 51,
+      "renders": 306,
+      "interactiveStates": 720,
+      "screenshots": 36,
+      "issues": 0,
+      "pageErrors": 0
+    },
+    {
+      "receipt": "final-line-delta/rendering.json",
+      "purpose": "Final line demonstrations: unique daily observations, optional three-day groups, interval scope and axes.",
+      "buildContentId": "7021bd7699868c39d342cbb6beccb3789632b86834df508a8e9d484b602f8507",
+      "activities": 6,
+      "renders": 36,
+      "interactiveStates": 180,
+      "screenshots": 12,
+      "issues": 0,
+      "pageErrors": 0
+    },
+    {
+      "receipt": "final-facet-delta/rendering.json",
+      "purpose": "Final facet label spacing; all three stages, widths and themes.",
+      "buildContentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+      "activities": 3,
+      "renders": 18,
+      "interactiveStates": 54,
+      "screenshots": 0,
+      "issues": 0,
+      "pageErrors": 0
+    }
+  ],
+  "renderingInterpretation": "The full 4056-context interaction and layout sweeps are separate recorded builds. Later bounded delta sweeps cover the actual changed lessons. They are not presented as one final-build exhaustive interaction run. Final current-build Visualise and combined-menu checks accompany those phase records.",
+  "finalVisualise": {
+    "receipt": "visualise-rendered.json",
+    "buildContentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+    "lessons": 37,
+    "followViews": 148,
+    "interactiveStates": 516,
+    "errors": []
+  },
+  "combinedMenus": {
+    "receipt": "multiple-arguments.json",
+    "contexts": 48,
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "checks": [
+      "Independent argument retention",
+      "Code before plot/result",
+      "Exactly one displayed program",
+      "44px targets",
+      "Menu bounds",
+      "Escape/focus return",
+      "Distinct argument colours",
+      "Contrast at least 4.5:1",
+      "Matching syntax/argument font sizes and heading font/colour"
+    ],
+    "pageErrors": [],
+    "buildContentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+    "minimumMeasuredContrast": 10.307113939187614
+  },
+  "legacyChecks": {
+    "foundationsVisualBrowser": {
+      "command": "python3 tests/test_foundations_visuals_browser.py --base-url http://127.0.0.1:8015 --executable-path /usr/bin/chromium",
+      "roundDiagrams": 338,
+      "primaryViews": 42,
+      "passed": true,
+      "receipt": "foundations-rendered.json"
+    },
+    "teachingExplorerBrowser": {
+      "command": "python3 tests/test_teaching_visual_browser.py --base-url http://127.0.0.1:8015",
+      "interactions": 300,
+      "passed": true
+    },
+    "catalog": {
+      "receipt": "catalog/catalog-rendering.json",
+      "views": 324
+    },
+    "editorPanes": {
+      "receipt": "editor-panes.json",
+      "views": 15,
+      "wheelChecks": 4,
+      "touchChecks": 2
+    }
+  },
+  "exerciseContracts": {
+    "receipt": "exercise-contracts.json",
+    "command": "python3 tests/test_inline_code_exercise_contracts.py",
+    "dataRounds": 338,
+    "mlActivities": 338,
+    "mlWorkflows": 19,
+    "result": "Data rounds/datasets identical; ML executable contracts identical; only reviewed explanatory metadata changes."
+  },
+  "staticAndScientificChecks": [
+    "npm run check:js",
+    "npm run check:routes",
+    "npm run check:app-shell",
+    "python3 scripts/format-foundations.py --check",
+    "python3 tests/test_ml_learning_visual_audit.py",
+    "python tests/test_visual_scientific_scenes.py",
+    "python tests/test_visual_code_geometry.py",
+    "python tests/test_teaching_visual_models.py",
+    "python tests/test_model_family_visuals.py",
+    "python tests/test_ml_visual_progression.py",
+    "python scripts/build-teaching-model-fixtures.py --check"
+  ],
+  "mlContactSheets": {
+    "receipt": "../../ml-learning-visual-review.json",
+    "concepts": 85,
+    "primitiveVariants": 65,
+    "cardThumbnails": 110,
+    "captures": 280,
+    "realFittedFigures": 4,
+    "collectionTiles": 19
+  },
+  "preview": {
+    "receipt": "preview.json",
+    "command": "python3 scripts/build-review-preview.py --output /workspace/curriculum-preview.html && python3 tests/test_review_preview_browser.py --output docs/curriculum-evidence/inline-code-controls/preview.json",
+    "checks": [
+      "No required sibling assets",
+      "Bundled generated pointer",
+      "Data and ML Python run/grading",
+      "Stateless editor/navigation",
+      "Opaque HTML sandbox navigation",
+      "Repeated curriculum switching",
+      "Independent C/gamma code menus after switching"
+    ]
+  },
+  "runtimes": {
+    "node": "24.19.0",
+    "nativePython": "3.10.21",
+    "browserHarnessPython": "3.12.14",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "scipy": "1.12.0",
+    "sklearn": "1.4.2",
+    "seaborn": "0.13.2",
+    "matplotlib": "3.5.2",
+    "chromium": "151.0.7922.173"
+  },
+  "limits": [
+    "Chromium, not physical Safari/WebKit or physical phones.",
+    "Readable plots retain labelled local horizontal panning on narrow phones; the page does not overflow.",
+    "Browser states cover every offered value and selected multi-argument combinations; exhaustive offered model combinations are checked in structural/native tests.",
+    "The preview needs internet for the pinned Python runtime; file presentation and navigation are bundled."
+  ],
+  "publication": "Feature branch review only. No merge or production deployment.",
+  "recordedEvidenceSHA256": {
+    "multiple-arguments.json": "8c2d06fe8d753d078a45b0a335e1404391d2875d1a664a831ebb90cf0046df71",
+    "native-models.json": "7c4069319af5b6a4a3a532eec61be2bc49b9adb058dc6d11957cf428de5952b3",
+    "native-operations.json": "0d309555d6656fc6a97ae111bd8d8bef7aec3df2eb374919f359606886124fff",
+    "foundations-rendered.json": "4e736ceacaec8841a4cd120670cd8d7e6837234a1867e151f10e8ff66f295b2c",
+    "exercise-contracts.json": "d316fe783f4f3feaf6783edd997a8e9b33ac1ab4bb47ed3edf61286246e741e3",
+    "visualise-rendered.json": "5baefaba8a59648a59c15bb9ce022086de376ae786f931ba4a8bfdaa5b75a398"
+  }
+}
