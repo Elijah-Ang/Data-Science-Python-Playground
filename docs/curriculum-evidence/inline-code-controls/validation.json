@@ -188,7 +188,8 @@
       "Opaque HTML sandbox navigation",
       "Repeated curriculum switching",
       "Independent C/gamma code menus after switching"
-    ]
+    ],
+    "artifactSHA256": "8c044a5aca02cc2fc75537fd4c14679d997126c58483fe030ecf37f24c0d70d5"
   },
   "runtimes": {
     "node": "24.19.0",
@@ -216,5 +217,6 @@
     "foundations-rendered.json": "4e736ceacaec8841a4cd120670cd8d7e6837234a1867e151f10e8ff66f295b2c",
     "exercise-contracts.json": "d316fe783f4f3feaf6783edd997a8e9b33ac1ab4bb47ed3edf61286246e741e3",
     "visualise-rendered.json": "5baefaba8a59648a59c15bb9ce022086de376ae786f931ba4a8bfdaa5b75a398"
-  }
+  },
+  "packagedArtifact": "packaged-build.json"
 }

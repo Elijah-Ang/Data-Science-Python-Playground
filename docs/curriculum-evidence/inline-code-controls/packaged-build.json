@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "48929d24668c06ba4e5df10abb6fa263e7df0e89",
+  "cleanBuild": {
+    "version": "1.0.0",
+    "commit": "48929d24668c",
+    "dirty": false,
+    "contentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+    "builtAt": "2026-10-15T10:59:35.250Z",
+    "bytes": 39398436
+  },
+  "archive": "docs/curriculum-evidence/review-refinement/curriculum-preview.zip",
+  "archiveBytes": 3872229,
+  "archiveSHA256": "173af6914594d4147171620cd24f3364b75be506b442afdd48a41bb182b3828a",
+  "htmlBytes": 6957189,
+  "htmlSHA256": "8c044a5aca02cc2fc75537fd4c14679d997126c58483fe030ecf37f24c0d70d5",
+  "entries": [
+    "curriculum-preview/OPEN-IN-BROWSER.html",
+    "curriculum-preview/READ-ME.txt"
+  ],
+  "previewTest": "preview.json",
+  "note": "Rebuilt from a clean source commit. Content ID and tested source asset hashes match final-build.json. The ZIP contains the exact HTML checked by the final preview browser test."
+}

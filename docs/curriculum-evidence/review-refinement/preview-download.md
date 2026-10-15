@@ -1,24 +1,27 @@
 # Downloadable review preview
 
 This archive contains Data Foundations and Machine Learning from source commit
-`33dc91eb4fcd2aad0be7fd9610302bc364ca0800`. It includes the [code-linked visual corrections](../../curriculum-code-linked-visuals.md).
+`48929d24668c06ba4e5df10abb6fa263e7df0e89`. It includes the [clickable-code controls and presentation refinements](../../curriculum-inline-code-controls.md).
 
-Download `curriculum-preview.zip`, unzip it in Finder, then open
+Download [curriculum-preview.zip](curriculum-preview.zip), unzip it in Finder, then open
 `curriculum-preview/OPEN-IN-BROWSER.html` with Safari or Chrome.
+Use **Open With** if an editor displays the file's source text.
 The buttons at the top switch between both curricula.
 
 No server is required. Running Python needs internet access for the pinned
 runtime packages. The archive includes these instructions.
 
 The packaged HTML is tested with isolated assets, opaque-file-viewer navigation,
-and real Data/ML Python grading. See the [validation receipt](../code-linked-visuals/validation.json)
-and [preview checks](../code-linked-visuals/preview.json).
+repeated curriculum switching, editable ML arguments, and real Data/ML Python grading.
+See the [validation receipt](../inline-code-controls/validation.json),
+[preview checks](../inline-code-controls/preview.json) and
+[clean-build package receipt](../inline-code-controls/packaged-build.json).
 Safari on a physical Mac has not been independently tested here.
 
-Archive SHA-256: `1e4e7583b5c5c0ee6e946a11d2cccbac2e5c864fde981b7f99a6b7c290312b71`
+Archive SHA-256: `173af6914594d4147171620cd24f3364b75be506b442afdd48a41bb182b3828a`
 
-HTML SHA-256: `0074337939c44fb651ae9149cd6b7f31fbe3088e7a287cf0a2f6697bd1d05dbe`
+HTML SHA-256: `8c044a5aca02cc2fc75537fd4c14679d997126c58483fe030ecf37f24c0d70d5`
 
-Build content ID: `7def961f5f3c944711d538793e8b5378baa504152910cb53ea53125cd02daafd`
+Build content ID: `06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc`
 
 This is a feature-branch review artifact. No merge or production deployment.
