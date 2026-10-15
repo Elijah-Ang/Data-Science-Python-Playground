@@ -7,6 +7,8 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures, StandardScaler
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,18 +52,38 @@ for state in states:
         assert encoder.categories_[0].tolist() == d['categories']
     elif id == 'W07':
         raw = np.array([[np.nan if row[0] is None else row[0]] for row in d['rows']])
-        imputer = SimpleImputer(strategy='median').fit(raw)
-        np.testing.assert_allclose(imputer.statistics_, [d['median']])
+        imputer = SimpleImputer(strategy=choice).fit(raw)
+        np.testing.assert_allclose(imputer.statistics_, [d['fillValue']])
         np.testing.assert_allclose(imputer.transform(raw), d['filled'])
+        namespace = {'SimpleImputer': SimpleImputer,
+                     'example_train': pd.DataFrame(raw, columns=['distance'])}
+        exec(state['code'], namespace)
+        np.testing.assert_allclose(namespace['answer'], d['filled'])
     elif id == 'R08-expansion':
         raw = np.array(d['rows'])[:, :1]
         expanded = PolynomialFeatures(degree=d['degree'], include_bias=False).fit_transform(raw)
         np.testing.assert_allclose(expanded, np.array(d['rows'])[:, 1:])
         assert '.fit(example_X' not in state['code'] and 'root_mean_squared_error' not in state['code']
     elif id == 'C08-neighbours':
-        assert d['k'] == 5 and d['selected']['id'] == choice
-        assert 'n_neighbors=5' in state['code'] and 'kneighbors' in state['code']
+        assert d['k'] == 5 and d['query'] == [int(v) for v in choice.split(',')]
+        assert 'kneighbors' in state['code']
         assert 'named_steps["scale"]' in state['code']
+        raw = np.array([[row['x'], row['y']] for row in d['rows']])
+        scaler = StandardScaler().fit(raw)
+        model = KNeighborsClassifier(n_neighbors=5).fit(scaler.transform(raw), [row['group'] for row in d['rows']])
+        query = scaler.transform([d['query']])
+        distances, positions = model.kneighbors(query)
+        assert [d['rows'][i]['id'] for i in positions[0]] == [row['id'] for row in d['neighbours']]
+        np.testing.assert_allclose(distances[0], [row['distance'] for row in d['neighbours']])
+        assert model.predict(query)[0] == d['prediction']
+        example_X = pd.DataFrame(raw, columns=['x', 'y'])
+        example_y = pd.Series([row['group'] for row in d['rows']])
+        fitted = Pipeline([('scale', StandardScaler()),
+                           ('model', KNeighborsClassifier(n_neighbors=5))]).fit(example_X, example_y)
+        namespace = {'pd': pd, 'model': fitted, 'example_y': example_y}
+        exec(state['code'], namespace)
+        np.testing.assert_array_equal(namespace['positions'][0], positions[0])
+        assert namespace['votes'].to_dict() == d['votes']
 
 registry = json.loads(subprocess.check_output(['python3', 'ml-learning/authoring.py'], cwd=ROOT))
 exceptions, transitions = [], []

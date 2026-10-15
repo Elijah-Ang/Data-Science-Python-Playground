@@ -35,7 +35,7 @@ with sync_playwright() as pw:
   page.wait_for_function('''(route)=>LearningRoutes.route('data',location,document.body)===route.replace(/^#/,'')
    && document.querySelector('.foundation-practices [aria-current=step] strong')?.textContent===FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])].label
    && !!document.querySelector('.foundation-task-reminder')''',arg=route)
-  round_data=page.evaluate('''route=>{const r=FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])];return {variant:r.visual.variant,teaching:r.teaching||null}}''',route)
+  round_data=page.evaluate('''route=>{const r=FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])];return {variant:r.visual.variant,teaching:r.stageTeaching||null}}''',route)
   assert round_data['variant']==variant
   reference=page.locator('.foundation-reference-content .teaching-reference')
   assert reference.count()==0
@@ -43,22 +43,18 @@ with sync_playwright() as pw:
    transition=page.locator('.foundation-content:not(.foundation-reference-content) .teaching-transition')
    assert transition.is_visible()
    assert transition.locator('pre').first.inner_text()==round_data['teaching']['code']
-   assert transition.locator('.teaching-example-output' if round_data['teaching'].get('output') else '.teaching-example-result').is_visible()
-  else:
-   visual=page.locator('.foundation-content:not(.foundation-reference-content) .concept-visual')
-   assert visual.is_visible() and visual.get_attribute('data-visual')==variant
+  assert not page.locator('.foundation-content .concept-visual,.foundation-content .teaching-overview').count(), 'Later stages omit inherited introductions'
  # The same source-backed example replaces a miniature on these primary views.
  # Check every native option through the mounted app at all existing audit widths
  # and themes, including exact data-linked results and readable SVG text.
  explorer_checks=[]
- cases=[('#inspect/I19S/0','summary-order','means move together'),
-        ('#visualise/V04/0','histogram','8 bins'),
-        ('#visualise/V08/0','count-bars','Count rows'),
+ cases=[('#visualise/V04/0','histogram','8 bins'),
+        ('#visualise/V08/0','count-bars','AM: 5'),
         ('#visualise/V09/0','mean-bars','middle value after sorting'),
-        ('#visualise/V11/0','boxplot','Q1=2, median=3, Q3=6'),
-        ('#visualise/V16/0','scatter','x=6, value=18'),
+        ('#visualise/V11/0','boxplot','Whiskers: 1–7'),
+        ('#visualise/V16/0','scatter','Horizontal: cost'),
         ('#visualise/V27/0','references','x median is 3'),
-        ('#visualise/V33/0','facets','Each of 9 rows')]
+        ('#visualise/V33/0','facets','One panel per group')]
  for width in [1400,834,320]:
   page.set_viewport_size({'width':width,'height':1000})
   for theme in ['light','dark']:

@@ -1,7 +1,7 @@
 {
   "baseSHA": "0ae290e6301d047dcc4b86977967c591eff786e2",
   "reviewed": "2026-10-15",
-  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged. Presentation refinement on 2026-10-15 replaces arbitrary statistical marks with computed observations, aligns representations and preserves all 338 executable contracts. Stage visual refinement on 2026-10-15 limits introductory illustrations to Follow, adds native-checked table interactions and concise genuinely new later-stage syntax; executable contract hashes are unchanged. Current rendering evidence lives in docs/curriculum-evidence/stage-visuals.",
+  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged. Presentation refinement on 2026-10-15 replaces arbitrary statistical marks with computed observations, aligns representations and preserves all 338 executable contracts. Stage visual refinement on 2026-10-15 limits introductory illustrations to Follow, adds native-checked table interactions and concise genuinely new later-stage syntax; executable contract hashes are unchanged. Current rendering evidence lives in docs/curriculum-evidence/stage-visuals. Code-linked visual correction checks drawn geometry against native Python, removes passive highlight controls and keeps the exercise contracts unchanged. Current evidence: docs/curriculum-evidence/code-linked-visuals.",
   "exercises": {
     "I01-1": {
       "sha256": "1d9395cf4a88ef5779e21b09b0b6ff8f98d05c9f10b475ea9e899f3f522dd3b9",
@@ -3589,7 +3589,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
-      "fullContractSHA256": "f682ab51bb1784fea82162e32896c7b883370c42d6b0f01656621954a942db9c",
+      "fullContractSHA256": "afc8bd0cbb51a4d3f35ac68d22f792f1b84add2644b1cac85e0a2ac667e8e7df",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3642,7 +3642,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: association, one-variable distribution and category frequency are different scientific questions, even though the answers are short chart names. Review adds ordered change over time.",
-      "fullContractSHA256": "7dfec5973b15e6f6162e6db3423c283867342fd291353ef43ded3e79fc048b2e",
+      "fullContractSHA256": "494b806c7f7685b5f57a7f2e1bdbad5da481f9efc11bba814ffa9b3848da1235",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3695,7 +3695,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
-      "fullContractSHA256": "e9d49b0bedd4fea6f9977849a780d41020e9d0f37cd7013c20b1dae30cc3b28e",
+      "fullContractSHA256": "39c2b114fdbba3f82213e2f554df1820f56b4005048023b1f967c46ca5b9bdfb",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -3722,7 +3722,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
-      "fullContractSHA256": "fc0f84548f1992fb7614df3365139065f5ddab38ccaf29be0f40edb9c615419a",
+      "fullContractSHA256": "160b179787122a688afd9993cf1f68c58e0f01e931ca57f7af0f40f63834d989",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -3750,7 +3750,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
-      "fullContractSHA256": "250f459df1766d3fbdbc78c187db76ae221c091af31a6e18df1a4917f6c05138",
+      "fullContractSHA256": "7055328a9e2b06e496a2bc30ac792d4d4c0ef1350403d96c277169b00ab14b1e",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -3939,7 +3939,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
-      "fullContractSHA256": "ec3bbdb164a01ef5c2b5c68406bbeb1b329d60c1716eeeb2440401a4302fa1ee",
+      "fullContractSHA256": "c4031d517ff16f741e289c39ffa8838063bf107d06431c698d9a84aced578700",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3966,7 +3966,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
-      "fullContractSHA256": "0b293d02c0a8197fca736cb2aa79ca0beb5e7cfe9d6e718154e7bd2d6f1d43ce",
+      "fullContractSHA256": "08d06247dc7546b63fe7b2da84d8c495bbc66295d5a64ee57daad00cf8432d2a",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -3993,7 +3993,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair method mismatch: teach and use countplot for raw-row counts throughout. Change keeps an absent category in a stated order; Transfer derives eligible-count ranking. Prepared counts/bar alternatives are accepted through labelled zero-count semantics, without introducing V29 as the required route.",
-      "fullContractSHA256": "0dddccfa9bb62ebf9f45280b782f0247a7c1f8c4aad52ca7cae981c62f3046dc",
+      "fullContractSHA256": "2c15e5bb419f70a76d0a91bd799c915ff75e18541fd4729680008c9d087dd1f9",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4047,7 +4047,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "02ba5eb268fdcd32028065e9d5d3a0c51cac7beeff3966d40229872d41658433",
+      "fullContractSHA256": "5ea6f39b3bd06337dfa69ea699d503a5fc429438e25d3250ec43d31d2068a932",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -4340,7 +4340,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the box-summary concept and horizontal category/measurement orientation. Transfer ranks groups by their medians and preserves a legitimate extreme; unlike V13 it displays quartiles/whiskers rather than individual records.",
-      "fullContractSHA256": "80493b75e3ced799c4ac03889f1ac54a14bc47a2a4d8b843f8ccef456cb9c14a",
+      "fullContractSHA256": "9eb16df590469c099256113c92c1d8de832e596bc43bbff20e214e007216a025",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4366,7 +4366,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the box-summary concept and horizontal category/measurement orientation. Transfer ranks groups by their medians and preserves a legitimate extreme; unlike V13 it displays quartiles/whiskers rather than individual records.",
-      "fullContractSHA256": "d2de617313db48ac269a914f4e3611f93af621a1b7f808b674c642567e74636e",
+      "fullContractSHA256": "3a81031a32565fbc1e4ac5bddde6e87c5d5e78297aa4cc348c3f9cd0181b47d5",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4392,7 +4392,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain the box-summary concept and horizontal category/measurement orientation. Transfer ranks groups by their medians and preserves a legitimate extreme; unlike V13 it displays quartiles/whiskers rather than individual records.",
-      "fullContractSHA256": "1afcdcc473f912bf1b42f5448c57d0dcf9d201d0e7dff3e8c04e922f1cf01e88",
+      "fullContractSHA256": "282b8d13be750bcbbbd3d4adc703a45507420171e746622b55b59a26de8addcc",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4484,7 +4484,7 @@
         "scope": "Task prose reviewed against the unchanged input, solution and grader; actions, displayed output and success clarified.",
         "reviewed": "2026-10-04"
       },
-      "fullContractSHA256": "b15f2eaf13f9e6abbdcc512ca13b5068a6e6a54a84ce8d532f7b4404f4242a20",
+      "fullContractSHA256": "83ee915da42a33ee52537a14c359c21bacf687f7de6c9ebdb91bb151b5452e63",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -4902,7 +4902,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain: logarithmic spacing over several orders of magnitude, dashboard limits and a stated outcome scale serve different purposes. All tasks preserve every observation; axes work remains separate from plotting.",
-      "fullContractSHA256": "b82267cbc2fd2dc8c7c8a29bf625dc2116be1825114ac86fc8fb54335a495218",
+      "fullContractSHA256": "eaae0f2fc5458c67387eafcf0f5deb508c90b46efdee61fe926b2285931a2b4a",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -5149,7 +5149,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
-      "fullContractSHA256": "13221174844cade57b1ca8db08ca223eb11a3e72f9a828b225a2f7cd9385d641",
+      "fullContractSHA256": "16cdfeb740064c1d28c0d51e0c9aea899a1e3de039f081766c23330f05924099",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5175,7 +5175,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
-      "fullContractSHA256": "2e157cb04ae98337f40cab26eeb1d7b3954e6de980a3e383619036423d642d68",
+      "fullContractSHA256": "cd45edf4b5d525ab98f171276687fa6fc163fa6ba6d06c51a8422ab711532f3e",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5201,7 +5201,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain prepared-height ownership and Change group totals. Transfer replaces another mean→bar recipe with a pooled resolution percentage. Unequal shift workloads distinguish ratio-of-totals from average percentages.",
-      "fullContractSHA256": "fbf4a6f56eb4a672520df9c9822a70dabe9dd510d1df3ca67b6932af57990c60",
+      "fullContractSHA256": "8ac1ed8d05428cce42c5c983fc0843531f6c1a918051bd9abe2dc6ac64e6f962",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -7066,7 +7066,7 @@
       ],
       "assessment": "reviewed",
       "sha256": "62e692a83fb45393b81edcd511329a34a2cf7b2a75017f4b86650c7133d93b53",
-      "fullContractSHA256": "4d308fed36b707d4157c6c2c1a53eedf31c623c1b15dc030b3ab04ad67b15b7b",
+      "fullContractSHA256": "afbd105876c4a1a50469174f03be6e3f68ba12d1595872400091048c029b80d0",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
       "executionStatus": "passed",
       "varietyReview": {

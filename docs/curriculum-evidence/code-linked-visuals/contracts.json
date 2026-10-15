@@ -1,0 +1,16 @@
+{
+  "baseline": "64c2909bf144fb6e416782eb83fecac563dce0cb",
+  "dataActivities": 338,
+  "mlActivities": 338,
+  "dataChangedFieldCounts": {
+    "visual": 18
+  },
+  "mlChangedFieldCounts": {
+    "syntaxGuidance": 5,
+    "visualTeaching": 1,
+    "visual": 1
+  },
+  "exerciseDatasetsUnchanged": true,
+  "mlChallengesUnchanged": 19,
+  "unexpectedContractChanges": []
+}

@@ -42,9 +42,9 @@ function define(id, label, choices, input, operation, options={}) {
 }
 
 // Inspect: queries change the result, never the underlying observations.
-define('I02','Rows to read',[1,2,3],()=>basic('candy','price'),(t,v)=>({code:`df.head(${v})`, result:subset(t,(_,i)=>i<Number(v)), summary:`The first ${v} row${v==='1'?'':'s'}; df still contains all four rows.`}));
+define('I02','Rows to read',[1,2,3],()=>basic('candy','price'),(t,v)=>({code:`df.head(${v})`, result:subset(t,(_,i)=>i<Number(v)), summary:`The first ${v} row${v==='1'?'':'s'}.`}));
 define('I06','Column to read',['price','rating'],()=>basic('candy','price','rating'),(t,v)=>({code:`df[${py(v)}]`, result:series(v,t.index,column(t,v)), summary:`One labelled Series of ${v} values; no rows change.`}));
-define('I07','Column order',[['rating,price','rating, price'],['price,rating','price, rating']],()=>basic('candy','price','rating'),(t,v)=>({code:`df[[${v.split(',').map(py).join(', ')}]]`, result:select(t,v.split(',')), summary:'The list controls which columns appear and their order. All four rows remain.'}));
+define('I07','Column order',[['rating,price','rating, price'],['price,rating','price, rating']],()=>basic('candy','price','rating'),(t,v)=>({code:`df[[${v.split(',').map(py).join(', ')}]]`, result:select(t,v.split(',')), summary:'The list controls which columns appear and their order.'}));
 define('I08','Stop before position',[1,2,3],()=>basic('candy','price','rating'),(t,v)=>({code:`df.iloc[:${v}, :2]`, result:select(subset(t,(_,i)=>i<Number(v)),t.columns.slice(0,2)), summary:`Take row positions 0 through ${Number(v)-1}, and column positions 0 and 1. The stop position is excluded.`}));
 define('I09','Last row label',['B','C','D'],()=>({...basic('candy','price'),index:['A','B','C','D']}),(t,v)=>({code:`df.loc["B":${py(v)}, ["price"]]`, result:select(subset(t,(_,i)=>i>=1&&i<=t.index.indexOf(v)),['price']), summary:`Label slicing includes both B and ${v}. Only price is returned.`}));
 define('I10','Keep prices greater than',[2,3,4],()=>basic('candy','price'),(t,v)=>({code:`df[df["price"] > ${v}]`, result:subset(t,row=>row[1]>Number(v)), summary:`Only prices strictly above ${v} remain. A price equal to ${v} is excluded.`}));
@@ -56,6 +56,10 @@ define('I12','Sort direction',[['False','Largest first'],['True','Smallest first
 define('I13','How many largest rows',[1,2,3],()=>basic('candy','price'),(t,v)=>{
   const positions=t.rows.map((_,i)=>i).sort((a,b)=>t.rows[b][1]-t.rows[a][1]).slice(0,Number(v));
   return {code:`df.nlargest(${v}, "price")`,result:frame(t.columns,positions.map(i=>t.rows[i]),positions.map(i=>t.index[i])),summary:`Return the ${v} highest-price row${v==='1'?'':'s'}, ordered from largest to smallest.`};
+});
+define('I13L','Column to find the maximum',['reading','temperature'],()=>frame(['reading','temperature'],[[12,22],[15,25],[19,24],[13,20]],[101,106,103,109]),(t,v)=>{
+  const values=column(t,v),maximum=Math.max(...values),position=values.indexOf(maximum),label=t.index[position];
+  return {code:`df[${py(v)}].idxmax()`,result:scalar(label),summary:`Largest ${v}: ${maximum}. Its row label is ${label}; its position is ${position}.`};
 });
 define('I14','Category column',['flavour','shelf'],()=>basic('flavour','shelf'),(t,v)=>({code:`df[${py(v)}].nunique()`,result:scalar(unique(column(t,v)).length),summary:`Count distinct ${v} labels, rather than observations.`}));
 define('I15','Display the category frequency',[['True','Proportions'],['False','Counts']],()=>frame(['flavour'],[['fruity'],['mint'],['fruity'],['chocolate']]),(t,v)=>{
@@ -70,7 +74,7 @@ define('I18','Numeric column',['price','rating'],()=>basic('price','rating'),(t,
   const values=column(t,v);
   return {code:`df[[${py(v)}]].describe()`,result:frame([v],[[values.length],[mean(values)],[standardDeviation(values)],[Math.min(...values)],[quantile(values,.25)],[quantile(values,.5)],[quantile(values,.75)],[Math.max(...values)]],['count','mean','std','min','25%','50%','75%','max']),summary:'One column supplies every summary. std uses the sample standard deviation; 50% is the median.'};
 });
-define('I18S','Column to average',['price','rating'],()=>basic('price','rating'),(t,v)=>({code:`df[${py(v)}].mean()`,result:scalar(mean(column(t,v))),summary:`Add the four ${v} values and divide by four. The source table is unchanged.`}));
+define('I18S','Column to average',['price','rating'],()=>basic('price','rating'),(t,v)=>({code:`df[${py(v)}].mean()`,result:scalar(mean(column(t,v))),summary:`Add the ${v} values, then divide by their count.`}));
 define('I19','Group labels come from',['flavour','shelf'],()=>basic('flavour','shelf','price'),(t,v)=>{
   const groups=group(t,v,'price');
   return {code:`df.groupby(${py(v)})["price"].agg("mean")`,result:series('price',groups.map(g=>g.label),groups.map(g=>mean(g.values)),v),summary:`Rows with the same ${v} label contribute to one mean price. Each group becomes one output row.`};
@@ -89,15 +93,21 @@ define('I21','Numeric columns',[['price,rating','price and rating'],['price','pr
 });
 
 // Wrangle: one taught operation at a time, with before/after row labels visible.
+define('W01','Columns in the copy',[['candy,price','candy, price'],['candy,rating','candy, rating']],()=>basic('candy','price','rating'),(t,v)=>({code:`clean = df.copy()\nclean = clean[[${v.split(',').map(py).join(', ')}]]\nclean`,result:{...select(t,v.split(',')),name:'clean'},summary:'Selecting columns in clean leaves df intact.'}));
+define('W14','format',[['%Y-%m-%d','%Y-%m-%d'],['%d/%m/%Y','%d/%m/%Y']],()=>frame(['date'],[['2026-06-01'],['03/07/2026'],['invalid']]),(t,v)=>{
+ const values=column(t,'date').map(value=>v==='%Y-%m-%d'&&/^\d{4}-\d{2}-\d{2}$/.test(value)?value:v==='%d/%m/%Y'&&/^\d{2}\/\d{2}\/\d{4}$/.test(value)?value.split('/').reverse().join('-'):null);
+ return {code:`df["date"] = pd.to_datetime(df["date"], format=${py(v)}, errors="coerce")\ndf`,result:{...addColumn(t,'date',values),missingValue:'NaT'},summary:'Matching text becomes a date; other values become NaT.'};
+});
+
 define('W02','New heading',['amount','cost'],()=>basic('candy','price'),(t,v)=>({code:`df = df.rename(columns={"price": ${py(v)}})\ndf`,result:frame(['candy',v],clone(t.rows),t.index.slice()),summary:`Only the heading changes: price becomes ${v}. Every value and row stays in place.`}));
 define('W03','Columns in the result',[['candy,rating,price','candy, rating, price'],['candy,price','candy, price']],()=>basic('candy','price','rating'),(t,v)=>({code:`df = df[[${v.split(',').map(py).join(', ')}]]\ndf`,result:select(t,v.split(',')),summary:'The list sets both the retained columns and their order; it does not reorder rows.'}));
-define('W04','Column to drop',['shelf','rating'],()=>basic('candy','rating','shelf'),(t,v)=>({code:`df = df.drop(columns=[${py(v)}])\ndf`,result:select(t,t.columns.filter(name=>name!==v)),summary:`Remove ${v}. All four observations remain, with their original row labels.`}));
+define('W04','Column to drop',['shelf','rating'],()=>basic('candy','rating','shelf'),(t,v)=>({code:`df = df.drop(columns=[${py(v)}])\ndf`,result:select(t,t.columns.filter(name=>name!==v)),summary:`Remove the ${v} column.`}));
 define('W05','Keep this flavour',['fruity','mint','chocolate'],()=>basic('candy','flavour','price'),(t,v)=>({code:`df = df[df["flavour"] == ${py(v)}]\ndf`,result:subset(t,row=>row[1]===v),summary:`Keep only ${v} rows; retain their existing labels and values.`}));
 define('W06','Column to sort',['price','rating'],()=>basic('candy','price','rating'),(t,v)=>{
   const position=t.columns.indexOf(v), positions=t.rows.map((_,i)=>i).sort((a,b)=>t.rows[a][position]-t.rows[b][position]);
   return {code:`df = df.sort_values(${py(v)}).reset_index(drop=True)\ndf`,result:{...frame(t.columns,positions.map(i=>t.rows[i])),sourceRows:positions},summary:`Sort by ${v}, smallest first. Then replace the old row labels with 0, 1, 2, 3.`};
 });
-define('W07','Multiply each price by',[2,3,4],()=>basic('candy','price'),(t,v)=>({code:`df["pair_price"] = df["price"] * ${v}\ndf`,result:addColumn(t,'pair_price',column(t,'price').map(value=>value*Number(v))),summary:`Every price is multiplied by ${v}. The original price column is retained.`}));
+define('W07','Multiply each price by',[2,3,4],()=>basic('candy','price'),(t,v)=>({code:`df["pair_price"] = df["price"] * ${v}\ndf`,result:addColumn(t,'pair_price',column(t,'price').map(value=>value*Number(v))),summary:`Every price is multiplied by ${v}.`}));
 define('W08','High means price above',[2,3,4],()=>basic('candy','price'),(t,v)=>({code:`import numpy as np\n\ndf["band"] = np.where(df["price"] > ${v}, "high", "low")\ndf`,result:addColumn(t,'band',column(t,'price').map(value=>value>Number(v)?'high':'low')),summary:`True gives high; False gives low. A price equal to ${v} is low.`}));
 define('W09','Replace fruity with',['fruit','fresh'],()=>basic('candy','flavour'),(t,v)=>({code:`df["flavour"] = df["flavour"].replace({"fruity": ${py(v)}})\ndf`,result:addColumn(t,'flavour',column(t,'flavour').map(value=>value==='fruity'?v:value)),summary:`Only complete labels equal to fruity become ${v}. All other labels remain unchanged.`}));
 define('W10','Case for the drink names',[['lower','lower()'],['title','title()']],()=>frame(['drink','size'],[[' latte ','LARGE'],['TEA','small'],[' mocha ','LARGE']]),(t,v)=>({code:`df["drink"] = df["drink"].str.strip().str.${v}()\ndf["size"] = df["size"].str.strip().str.title()\ndf`,result:frame(t.columns,t.rows.map(([drink,size])=>[v==='lower'?drink.trim().toLowerCase():drink.trim().toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()),size.trim().toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())])),summary:'Strip removes surrounding spaces; the selected case method changes drink names. Size always uses title case.'}));
@@ -157,7 +167,7 @@ define('W29','Measurement to screen',['price','rating'],()=>frame(['price','rati
   const values=column(t,v), q1=quantile(values,.25), q3=quantile(values,.75), spread=q3-q1, lower=q1-1.5*spread, upper=q3+1.5*spread;
   return {code:`q1 = df[${py(v)}].quantile(0.25)\nq3 = df[${py(v)}].quantile(0.75)\niqr = q3 - q1\nlower = q1 - 1.5 * iqr\nupper = q3 + 1.5 * iqr\ndf["needs_review"] = (df[${py(v)}] < lower) | (df[${py(v)}] > upper)\ndf`,result:addColumn(t,'needs_review',values.map(value=>value<lower||value>upper)),summary:`Q1=${format(q1)}, Q3=${format(q3)}; flag outside [${format(lower)}, ${format(upper)}]. Flags retain every original measurement.`};
 });
-define('W30','Multiply each price by',[1.1,1.2,1.5],()=>basic('candy','price'),(t,v)=>({code:`df["adjusted"] = (df["price"] * ${v}).round(2)\ndf`,result:addColumn(t,'adjusted',column(t,'price').map(value=>Math.round((value*Number(v)+Number.EPSILON)*100)/100)),summary:`Multiply every price by ${v}, then round to two decimal places. This is one direct column operation.`}));
+define('W30','Multiply each price by',[1.1,1.2,1.5],()=>basic('candy','price'),(t,v)=>({code:`df["adjusted"] = (df["price"] * ${v}).round(2)\ndf`,result:addColumn(t,'adjusted',column(t,'price').map(value=>Math.round((value*Number(v)+Number.EPSILON)*100)/100)),summary:`Multiply every price by ${v}, then round to two decimal places.`}));
 
 function format(value) {
   if (value === null) return 'NaN';
@@ -183,7 +193,7 @@ function pythonSetup(id, value) {
 }
 function identifierContext(example) {
   const columns=unique([...example.inputs.flatMap(input=>input.columns),...(example.result.columns||[])]);
-  return {columns,variables:unique([...example.inputs.map(input=>input.name),'df','means','filtered','scaler','q1','q3','iqr','lower','upper'])};
+  return {columns,variables:unique([...example.inputs.map(input=>input.name),example.result.name||'df','df','clean','means','filtered','scaler','q1','q3','iqr','lower','upper'])};
 }
 function proseMarkup(text, example) {
   const context=identifierContext(example);
@@ -206,13 +216,13 @@ function tableMarkup(table, label, input=null) {
     return rowIndex>=0&&input.rows[rowIndex][columnIndex]!==table.rows[i][j];
   };
   const caption=label.startsWith('Source ')?'Source <code data-code-role="variable">'+esc(table.name)+'</code>':label==='Computed means Series'?'Computed <code data-code-role="variable">means</code> Series':esc(label);
-  return '<div class="operation-table-scroll" tabindex="0" role="region" aria-label="'+esc(label)+'; scroll table if needed"><table class="teaching-example-output operation-table" data-code-table="teaching"><caption>'+caption+'</caption><thead><tr><th scope="col">'+(table.indexName?'<code data-code-role="column">'+esc(table.indexName)+'</code>':'row')+'</th>'+table.columns.map(name=>'<th scope="col"'+(changedHeader(name)?' class="operation-changed"':'')+'><code data-code-role="column">'+esc(name)+'</code></th>').join('')+'</tr></thead><tbody>'+table.rows.map((row,i)=>'<tr><th scope="row">'+esc(table.index[i])+'</th>'+row.map((value,j)=>'<td'+(changedCell(i,j)?' class="operation-changed"':'')+'>'+esc(typeof value==='string'&&(value.trim()!==value||/^[-+]?\d+(\.\d+)?$/.test(value))?JSON.stringify(value):format(value))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+  return '<div class="operation-table-scroll" tabindex="0" role="region" aria-label="'+esc(label)+'; scroll table if needed"><table class="teaching-example-output operation-table" data-code-table="teaching"><caption>'+caption+'</caption><thead><tr><th scope="col">'+(table.indexName?'<code data-code-role="column">'+esc(table.indexName)+'</code>':'row')+'</th>'+table.columns.map(name=>'<th scope="col"'+(changedHeader(name)?' class="operation-changed"':'')+'><code data-code-role="column">'+esc(name)+'</code></th>').join('')+'</tr></thead><tbody>'+table.rows.map((row,i)=>'<tr><th scope="row">'+esc(table.index[i])+'</th>'+row.map((value,j)=>'<td'+(changedCell(i,j)?' class="operation-changed"':'')+'>'+esc(typeof value==='string'&&(value.trim()!==value||/^[-+]?\d+(\.\d+)?$/.test(value))?JSON.stringify(value):value===null?(table.missingValue||'NaN'):format(value))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
 }
 function outputMarkup(example) {
   const result=example.result;
   if (result.kind==='scalar') return '<div class="operation-scalar"><span>Result</span><output>'+esc(format(result.value))+'</output></div>';
   if (result.kind==='list') return '<div class="operation-list-result">'+(example.intermediate?tableMarkup(example.intermediate,'Computed means Series'):'')+'<div class="operation-scalar"><span>Result</span><output><code>'+esc(py(result.values))+'</code></output></div></div>';
-  return tableMarkup(result,result.kind==='array'?'Result array · row order preserved':'Result',example.inputs[0]);
+  return tableMarkup(result,result.kind==='array'?'Result array':'Result',example.inputs[0]);
 }
 function resultMarkup(example) {
   return '<pre class="operation-code"><code>'+esc(example.code)+'</code></pre><div class="operation-tables"><div class="operation-inputs">'+example.inputs.map(input=>tableMarkup(input,'Source '+input.name)).join('')+'</div><span class="operation-arrow" role="img" aria-label="produces">&rarr;</span>'+outputMarkup(example)+'</div><p class="operation-summary">'+proseMarkup(example.summary,example)+'</p>';
@@ -224,7 +234,7 @@ function model(curriculum, lesson, round) {
 function render(curriculum, lesson, round) {
   const example=model(curriculum,lesson,round);
   if (!example) return '';
-  return '<section class="teaching-explorer operation-explorer" data-operation-explorer="'+esc(example.id)+'" data-code-context="teaching" aria-label="Interactive '+esc(lesson.title)+' example"><p class="operation-example-label">Small illustrative data · separate from your exercise</p><label class="teaching-visual-controls">'+esc(example.label)+' <select data-operation-choice>'+example.choices.map(([value,label],i)=>'<option value="'+esc(value)+'"'+(i===0?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select></label>'+(example.note?'<p class="operation-note">'+proseMarkup(example.note,example)+'</p>':'')+'<div class="operation-result" aria-live="polite" aria-atomic="true">'+resultMarkup(example)+'</div></section>';
+  return '<section class="teaching-explorer operation-explorer" data-operation-explorer="'+esc(example.id)+'" data-code-context="teaching" aria-label="Interactive '+esc(lesson.title)+' example"><p class="operation-example-label">Illustrative data</p><label class="teaching-visual-controls">'+esc(example.label)+' <select data-operation-choice>'+example.choices.map(([value,label],i)=>'<option value="'+esc(value)+'"'+(i===0?' selected':'')+'>'+esc(label)+'</option>').join('')+'</select></label>'+(example.note?'<p class="operation-note">'+proseMarkup(example.note,example)+'</p>':'')+'<div class="operation-result" aria-live="polite" aria-atomic="true">'+resultMarkup(example)+'</div></section>';
 }
 const mounted = new WeakSet();
 function mount(container=root.document) {

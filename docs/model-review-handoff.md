@@ -4,7 +4,14 @@ Review branch: `curriculum-coherence-2026-10-13`.
 Baseline: `8a72b291a3c47cd6db5e825cfb4902a4df1578bb` (the original `work` checkout and current remote `main` when this handoff was written).
 Review the current branch HEAD, including the implementation reviewed at `22dd968` and the subsequent review repairs, Python exercise replacements and scientific visual refinement.
 
-The latest [stage-specific visual refinement](curriculum-stage-visual-review.md)
+The latest [code-linked visual corrections](curriculum-code-linked-visuals.md)
+fix the count-bar selection overlay missed by the earlier checks, replace passive
+highlight controls with real Python changes, and refine thumbnail geometry and
+wording. Their evidence is in `curriculum-evidence/code-linked-visuals/`.
+Read `tests/test_visual_code_geometry.py` alongside the native model oracles:
+correct stored data alone do not prove correct visible geometry.
+
+The preceding [stage-specific visual refinement](curriculum-stage-visual-review.md)
 removes repeated introductions from later practice, adds fixed-data table
 interactions and narrows new-task teaching to genuine additions. Its evidence is
 in `curriculum-evidence/stage-visuals/`. Review `foundations/operation-visuals.js`
@@ -60,4 +67,4 @@ All 338 Data exercise program-contract hashes are preserved by this follow-up. M
 
 ## Prompt for the reviewing model
 
-> Review the full current code on `curriculum-coherence-2026-10-13` and every cumulative change since `8a72b291a3c47cd6db5e825cfb4902a4df1578bb`. Read `docs/model-review-handoff.md`, `docs/curriculum-review-refinement.md`, `foundations/AGENTS.md`, the complete relevant source and its dependencies, and inspect the built curricula. Independently recheck the supplied `22dd968` review findings. Check the 112 Python replacements for meaningful progression, scientific validity, actual computation, visible supplied state and fair grading. Check every visual family against its data, fitted method, code, labels, scales and interactive states. Also check concise teaching, lesson/visual/task agreement, valid argument alternatives, semantic identifiers, independent scrolling, mobile layout, accessibility, editor/runtime behaviour, build reproducibility and unrelated regressions. Treat receipts and screenshots as supporting evidence; independently inspect the assertions and source. Report actionable findings with severity, file/line, reproducible example and recommended correction. Distinguish confirmed defects from untested risks, identify coverage gaps, and say explicitly if there are no findings. Do not modify, merge or deploy anything during this review.
+> Review the full current code on `curriculum-coherence-2026-10-13` and every cumulative change since `8a72b291a3c47cd6db5e825cfb4902a4df1578bb`. Read `docs/model-review-handoff.md`, `docs/curriculum-code-linked-visuals.md`, `docs/curriculum-review-refinement.md`, `foundations/AGENTS.md`, the complete relevant source and its dependencies, and inspect the built curricula. Independently recheck the supplied `22dd968` review findings. Check the 112 Python replacements for meaningful progression, scientific validity, actual computation, visible supplied state and fair grading. Check every visual family against its data, fitted method, code, labels, scales and interactive states. Inspect actual filled geometry for overlays, and verify that controls change executable Python rather than only highlighting a row. Also check concise teaching, lesson/visual/task agreement, valid argument alternatives, semantic identifiers, independent scrolling, mobile layout, accessibility, editor/runtime behaviour, build reproducibility and unrelated regressions. Treat receipts and screenshots as supporting evidence; independently inspect the assertions and source. Report actionable findings with severity, file/line, reproducible example and recommended correction. Distinguish confirmed defects from untested risks, identify coverage gaps, and say explicitly if there are no findings. Do not modify, merge or deploy anything during this review.

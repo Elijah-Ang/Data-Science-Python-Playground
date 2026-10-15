@@ -26,7 +26,7 @@ shots = out / 'screenshots'
 shots.mkdir(exist_ok=True)
 
 records, interactions, issues, page_errors, screenshots = [], [], [], [], []
-selected = {'I09', 'W02', 'V04', 'ML-F11', 'ML-C08'}
+selected = {'I09', 'W02', 'V08', 'V16', 'ML-P01', 'ML-C08'}
 
 INSPECT = r'''item => {
   const content = document.querySelector('.foundation-content');
@@ -157,7 +157,7 @@ with sync_playwright() as pw:
                             (!t.closest('.operation-result')||t.closest('.operation-inputs')))
                           .map(t=>t.textContent).join('|')''')
                         original = locator.input_value()
-                        distinct = set()
+                        distinct, distinct_code = set(), set()
                         for value in control['options']:
                             locator.select_option(value)
                             rendered = section.evaluate('''n=>{
@@ -172,9 +172,34 @@ with sync_playwright() as pw:
                             if not rendered['live'] or rendered['fixed'] != fixed:
                                 issue(item, width, theme, 'Visual feedback or fixed observations', value=value)
                             distinct.add(rendered['html'])
+                            distinct_code.add('\n'.join(rendered['code']))
+                            if section.get_attribute('data-foundation-explorer') == 'count-bars':
+                                counts = section.evaluate('''n=>{
+                                  const column=n.querySelector('select').value;
+                                  const table=n.querySelector('.teaching-visual-data');
+                                  const headers=[...table.querySelectorAll('thead th')].map(h=>h.textContent);
+                                  const j=headers.indexOf(column),counts={};
+                                  for(const tr of table.querySelectorAll('tbody tr')){
+                                    const key=tr.children[j].textContent;counts[key]=(counts[key]||0)+1;
+                                  }
+                                  const bars=[...n.querySelectorAll('svg rect')].map(r=>({
+                                    h:r.height.baseVal.value,y:r.y.baseVal.value,
+                                    visible:getComputedStyle(r).display!=='none'&&getComputedStyle(r).fill!=='none'
+                                  }));
+                                  return {values:Object.values(counts),bars};
+                                }''')
+                                bars, expected = counts['bars'], counts['values']
+                                if len(bars) != len(expected) or not all(b['visible'] for b in bars):
+                                    issue(item, width, theme, 'Count plot has missing/extra filled shapes', value=value, geometry=counts)
+                                else:
+                                    unit = sum(b['h'] for b in bars) / sum(expected)
+                                    if any(abs(b['h'] - count * unit) > .001 for b, count in zip(bars, expected)):
+                                        issue(item, width, theme, 'Rendered count height disagrees with visible observations', value=value, geometry=counts)
                             interactions.append([item['id'],width,theme,ci,value])
                         if len(control['options']) > 1 and len(distinct) < 2:
                             issue(item, width, theme, 'Control produces no visible change')
+                        if len(distinct_code) != len(control['options']):
+                            issue(item, width, theme, 'Control does not change Python for every option')
                         locator.focus()
                         locator.press('Home')
                         locator.press('End')

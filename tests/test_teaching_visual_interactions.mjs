@@ -21,19 +21,21 @@ for(const choice of ['wide','narrow','shifted']){
 }
 assert.deepEqual(foundations.exploration('histogram','wide').data.bins.map(b=>b.rows.length),[5,3,0,0,1]);
 assert.deepEqual(foundations.exploration('histogram','narrow').data.bins.map(b=>b.rows.length),[1,4,1,2,0,0,0,0,0,1]);
-for(const row of foundations.exampleRows){
-  const result=foundations.exploration('scatter',row.id);
-  assert.deepEqual(result.data.point,[row.x,row.value]);
+for(const choice of ['x:value','value:x','cost:value']){
+  const result=foundations.exploration('scatter',choice),[x,y]=choice.split(':');
+  assert.deepEqual(result.data.marks.map(mark=>[mark.x,mark.y]),foundations.exampleRows.map(row=>[row[x],row[y]]));
   assert.equal(result.data.count,9);
-  assert(result.svg.includes(`data-row="${row.id}"`));
+  for(const row of foundations.exampleRows)assert(result.svg.includes(`data-row="${row.id}"`));
+  assert(result.code.includes(`x="${x}", y="${y}"`));
 }
-assert.deepEqual(foundations.exploration('count-bars','count').data.groups.map(g=>g.value),[3,2,4]);
+assert.deepEqual(foundations.exploration('count-bars','group').data.groups.map(g=>g.value),[3,2,4]);
+assert.deepEqual(foundations.exploration('count-bars','shift').data.groups.map(g=>g.value),[5,4]);
 assert.deepEqual(foundations.exploration('mean-bars','mean').data.groups.map(g=>g.value),[4,5,6]);
-for(const group of ['A','B','C']){
- const result=foundations.exploration('count-bars','count-'+group);
- assert.equal(result.data.trace,group);
- assert.deepEqual(result.data.groups.map(g=>g.value),[3,2,4]);
- assert(!result.code.includes('order='),'Count tracing does not introduce ordering.');
+for(const column of ['group','shift']){
+ const result=foundations.exploration('count-bars',column);
+ assert.equal(result.data.column,column);
+ assert(!result.code.includes('order='),'Counting another column does not introduce ordering.');
+ assert(!result.svg.includes('visual-selected'),'Selection cannot cover the true bar heights.');
 }
 assert.deepEqual(foundations.exploration('summary-order','descending').data.groups.map(g=>[g.group,g.value]),[['C',6],['B',5],['A',4]]);
 assert.deepEqual(foundations.exploration('summary-order','ascending',{statistic:'median'}).data.groups.map(g=>[g.group,g.value]),[['C',2.5],['A',4],['B',5]]);
@@ -41,7 +43,7 @@ assert(foundations.interactive({...foundations.spec('mean-bars'),statistic:'medi
 assert(foundations.diagram({...foundations.spec('scatter-dimensions'),sizeEncoding:false}).includes('constant point size'));
 assert(!foundations.diagram({...foundations.spec('scatter-dimensions'),sizeEncoding:false}).includes('magnitude = size'));
 assert(foundations.diagram({...foundations.spec('exact-bars'),summaryStatistic:'mean'}).includes('Mean value'));
-const box=foundations.exploration('boxplot','box').data;
+const box=foundations.exploration('boxplot','y').data;
 assert.deepEqual([box.q1,box.median,box.q3],[2,3,6]);
 assert.deepEqual(box.whiskers,[1,7]);
 assert.deepEqual(box.fences,[-4,12]);
@@ -143,17 +145,30 @@ for(const degree of [1,2,4]){
 }
 
 // All PCA coordinates use one orthonormal rotation after the Follow scaler.
-for(const row of ml.exampleRows.pca){
-  const {data}=ml.exploration('P01',row.id);
+for(const components of [1,2]){
+  const {data,code}=ml.exploration('P01',String(components));
   assert.equal(data.scores.length,6);
-  assert.equal(data.score.id,row.id);
+  assert.equal(data.weights.length,components);
+  assert(code.includes(`n_components=${components}`));
   const [u,v]=data.weights;
-  close(u[0]**2+u[1]**2,1);close(v[0]**2+v[1]**2,1);close(u[0]*v[0]+u[1]*v[1],0);
+  close(u[0]**2+u[1]**2,1);
+  if(v){close(v[0]**2+v[1]**2,1);close(u[0]*v[0]+u[1]*v[1],0);}
   for(const original of ml.exampleRows.pca){
     const score=data.scores.find(r=>r.id===original.id),cx=(original.x-data.means[0])/data.scales[0],cy=(original.y-data.means[1])/data.scales[1];
-    close(score.pc1,cx*u[0]+cy*u[1]);close(score.pc2,cx*v[0]+cy*v[1]);
-    close(score.pc1**2+score.pc2**2,cx**2+cy**2);
+    close(score.pc1,cx*u[0]+cy*u[1]);
+    if(v){close(score.pc2,cx*v[0]+cy*v[1]);close(score.pc1**2+score.pc2**2,cx**2+cy**2);}
+    else assert.equal(score.pc2,undefined);
   }
+}
+assert(!ml.interactive({id:'N02'}).includes('<select'),'A fixed loss-history explanation needs no control.');
+
+// Every offered control changes executable Python, rather than just row emphasis.
+for(const [visuals,specs] of [[foundations,foundations.explorerSpecs],[ml,ml.explorerSpecs]]){
+ for(const [id,spec] of Object.entries(specs)){
+  if(spec.static)continue;
+  const codes=spec.options.map(([choice])=>visuals.exploration(id,choice).code);
+  assert.equal(new Set(codes).size,codes.length,id+' must change Python for every option');
+ }
 }
 
 // Native controls remain labelled, keep one concise current result, and announce changes.
@@ -171,7 +186,7 @@ for(const [visuals,visual] of [[foundations,foundations.spec('histogram')],[ml,{
   const section={dataset:{foundationExplorer:'histogram',mlExplorer:'C08'},querySelector:()=>output};
   const control={value:visuals===foundations?'wide':'5',closest:()=>section};
   listeners[0][1]({target:{closest:()=>control}});
-  assert(result.includes(visuals===foundations?'[0, 4)':'predicted class A'));
+  assert(result.includes(visuals===foundations?'[0, 4)':'3 A + 2 B'));
 }
 assert.throws(()=>foundations.exploration('histogram','unknown'));
 assert.throws(()=>ml.exploration('C08','7'));
@@ -182,8 +197,8 @@ for(const choice of ['2','4','8']){const r=foundations.exploration('histogram',c
 const c=require('../foundations/curriculum.js');
 for(const [id,variant] of Object.entries(foundations.activityVariants))assert.equal(c.lessons.flatMap(l=>l.rounds).find(r=>r.id===id).visual.variant,variant,id);
 for(const [index,binMode] of [[0,'count'],[1,'count'],[2,'edges']]){const r=c.lessons.find(l=>l.id==='V04').rounds[index];assert.equal(r.visual.binMode,binMode);const html=foundations.interactive(r.visual);assert(!html.includes('Width '));assert.equal(html.includes('Number of bins'),index<2);}
-const count=c.lessons.find(l=>l.id==='V08').rounds[0];assert(foundations.interactive(count.visual).includes('value="count-A" selected'));
-assert.deepEqual(count.visual.choices,['count-A','count-B','count-C']);
+const count=c.lessons.find(l=>l.id==='V08').rounds[0];assert(foundations.interactive(count.visual).includes('value="group" selected'));
+assert.deepEqual(count.visual.choices,['group','shift']);
 assert(!foundations.interactive(count.visual).includes('order='),'Follow count interaction does not teach the Change order argument early.');
 const parameters=require('../foundations/parameter-guide.js');
 for(const l of c.lessons)for(const r of l.rounds){const g=parameters.guidanceFor(c,l,r);for(const entry of [...g.introduces,...g.extends])assert(parameters.valueChoices(entry).includes('Accepts:'),r.id+' '+entry.id);}
@@ -197,5 +212,5 @@ assert(parameters.valueChoices({...parameters.registry.bins,functions:['sns.hist
 for(const degree of [1,2,3,4]){const r=ml.exploration('R07',String(degree));assert(!r.code.includes('Ridge'));assert(!r.code.includes('LinearRegression'));assert(!r.code.includes('make_pipeline'));assert(r.data.rows.every(row=>row.slice(1).every((v,i)=>Math.abs(v-row[0]**(i+1))<1e-9)));}
 assert(!foundations.exploration('mean-bars','mean').code.includes('ax.bar'));
 assert(foundations.exploration('mean-bars','mean').code.includes('sns.barplot'));
-assert(!foundations.exploration('boxplot','box').code.includes('subplots'));
-assert(!foundations.exploration('boxplot','raw').code.includes('stripplot'));
+assert(!foundations.exploration('boxplot','y').code.includes('subplots'));
+assert(foundations.exploration('boxplot','x').code.includes('x="value"'));

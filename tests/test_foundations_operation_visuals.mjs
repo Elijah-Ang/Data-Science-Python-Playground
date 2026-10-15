@@ -38,6 +38,8 @@ for(const [id,forbidden] of [['I02',/tail|sample/],['I10',/isin|between/],['I19S
 // The important row/column semantics are visible without decorative duplicates.
 assert.deepEqual(visuals.evaluate('W02','cost').result.rows,visuals.evaluate('W02').inputs[0].rows);
 assert.deepEqual(visuals.evaluate('I09','C').result.index,['B','C']);
+assert.equal(visuals.evaluate('I13L','reading').result.value,103,'idxmax returns the original label, not the largest value or position');
+assert.equal(visuals.evaluate('I13L','temperature').result.value,106);
 assert.deepEqual(visuals.evaluate('W16','price').result.index,[0,2,3]);
 assert.deepEqual(visuals.evaluate('W24','priority').result.rows.at(-1),['Cocoa','chocolate',null]);
 assert.deepEqual(visuals.evaluate('W26','3').result.rows,[[0,'lower'],[2,'lower'],[3,'lower'],[4,'upper'],[5,'upper'],[7,'upper']]);

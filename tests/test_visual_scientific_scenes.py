@@ -50,7 +50,7 @@ assert scenes['pair-grid']['rows']==[[1,2],[2,4],[3,3],[4,6],[5,5]]
 
 # Execute the displayed Python for every new Follow control. This catches
 # snippets that look plausible but do not produce the operation being shown.
-script="""const v=require('./foundations/visuals.js'),cases=[];for(const [variant,choices] of Object.entries({density:['0.5','1','2'],line:['none','o'],'line-band':['none','sd'],'point-interval':['none','sd'],violin:['quart','point'],strip:['False','0.15'],swarm:['3','5','7'],encoding:['plain','hue'],'scatter-dimensions':['colour','shape','size'],stacked:['zero','first'],'count-bars':['count-A','count-B','count-C']}))for(const choice of choices){const result=v.exploration(variant,choice);cases.push({variant,choice,code:result.code,data:result.data});}console.log(JSON.stringify(cases));"""
+script="""const v=require('./foundations/visuals.js'),cases=[];for(const [variant,choices] of Object.entries({density:['0.5','1','2'],line:['none','o'],'line-band':['none','sd'],'point-interval':['none','sd'],violin:['quart','point'],strip:['False','0.15'],swarm:['3','5','7'],encoding:['plain','hue'],'scatter-dimensions':['colour','shape','size'],stacked:['zero','first'],'count-bars':['group','shift']}))for(const choice of choices){const result=v.exploration(variant,choice);cases.push({variant,choice,code:result.code,data:result.data});}console.log(JSON.stringify(cases));"""
 controls=json.loads(subprocess.check_output(['node','-e',script],cwd=ROOT))
 for control in controls:
     variant,choice,d=control['variant'],control['choice'],control['data']

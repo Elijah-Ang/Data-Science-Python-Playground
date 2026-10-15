@@ -24,7 +24,7 @@ console.log(JSON.stringify({rows:v.exampleRows,
   polynomial:['1','2','3','4'].map(n=>v.exploration('R08',n).data),
   rbf:[v.exploration('C10','1').data].concat(['0.5','2','10'].map(n=>v.exploration('C11',n).data)).concat(['0.1','1','10'].map(n=>v.exploration('C11-gamma',n).data)),
   complexity:['3','5','None'].map(n=>v.exploration('R10',n).data).concat(['1','5','10'].map(n=>v.exploration('R10-leaf',n).data)),
-  pca:v.exploration('P01','p1').data}));'''
+  pca:['1','2'].map(n=>v.exploration('P01',n).data)}));'''
 examples = json.loads(subprocess.check_output(['node', '-e', script], cwd=ROOT))
 
 scaling = examples['rows']['scaling']
@@ -83,17 +83,19 @@ for example in examples['polynomial']:
 rows = examples['rows']['pca']
 X = np.array([[r['x'], r['y']] for r in rows])
 prepared_X = StandardScaler().fit_transform(X)
-model = PCA(n_components=2).fit(prepared_X)
-example = examples['pca']
-weights = np.array(example['weights'])
-# SVD sign conventions differ across sklearn versions; the basis and scores
-# must reverse together. The example matches the product's 1.4.2 convention.
-signs = np.sign(np.sum(model.components_ * weights, axis=1))
-np.testing.assert_allclose(model.components_ * signs[:, None], weights, atol=1e-8)
-np.testing.assert_allclose(example['prepared'], prepared_X)
-np.testing.assert_allclose(example['scales'], StandardScaler().fit(X).scale_)
-np.testing.assert_allclose(model.transform(prepared_X) * signs, [[r['pc1'], r['pc2']] for r in example['scores']], atol=1e-8)
-np.testing.assert_allclose(model.explained_variance_ratio_[0], example['varianceShare'])
+for example in examples['pca']:
+    model = PCA(n_components=example['components']).fit(prepared_X)
+    weights = np.array(example['weights'])
+    # Basis signs may differ across sklearn versions, but scores must use the
+    # identical signed rotation and retain precisely the chosen dimensions.
+    signs = np.sign(np.sum(model.components_ * weights, axis=1))
+    np.testing.assert_allclose(model.components_ * signs[:, None], weights, atol=1e-8)
+    np.testing.assert_allclose(example['prepared'], prepared_X)
+    np.testing.assert_allclose(example['scales'], StandardScaler().fit(X).scale_)
+    score_columns = ['pc1', 'pc2'][:example['components']]
+    np.testing.assert_allclose(model.transform(prepared_X) * signs, [[r[key] for key in score_columns] for r in example['scores']], atol=1e-8)
+    np.testing.assert_allclose(model.explained_variance_ratio_[0], example['varianceShare'])
+    np.testing.assert_allclose(model.explained_variance_ratio_.sum(), example['retainedVariance'])
 print('Computed KNN votes, tree paths, linear SVM weights, training-only polynomial curves and every PCA score agree with scikit-learn fits.')
 
 for example in examples['rbf']:

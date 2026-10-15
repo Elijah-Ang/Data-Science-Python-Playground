@@ -1,0 +1,68 @@
+[
+  {
+    "id": "I13L",
+    "width": 1440,
+    "file": "I13L-1440.png"
+  },
+  {
+    "id": "W01",
+    "width": 1440,
+    "file": "W01-1440.png"
+  },
+  {
+    "id": "W14",
+    "width": 1440,
+    "file": "W14-1440.png"
+  },
+  {
+    "id": "I13L",
+    "width": 320,
+    "file": "I13L-320.png"
+  },
+  {
+    "id": "W01",
+    "width": 320,
+    "file": "W01-320.png"
+  },
+  {
+    "id": "W14",
+    "width": 320,
+    "file": "W14-320.png"
+  },
+  {
+    "id": "ML-C08-2",
+    "width": 1440,
+    "query": "0,0",
+    "code": "query = pd.DataFrame({\"x\": [0], \"y\": [0]})\nprepared_query = model.named_steps[\"scale\"].transform(query)\npositions = model.named_steps[\"model\"].kneighbors(\n    prepared_query, return_distance=False\n)\nvotes = example_y.iloc[positions[0]].value_counts()",
+    "result": "Query (0, 0): 3 A + 2 B \u2192 A. Neighbours: n1, n2, n7, n4, n3.",
+    "label": "Query coordinates\nx=0, y=0\nx=1, y=0\nx=0, y=1",
+    "file": "ML-C08-2-q0-1440.png"
+  },
+  {
+    "id": "ML-C08-2",
+    "width": 1440,
+    "query": "1,0",
+    "code": "query = pd.DataFrame({\"x\": [1], \"y\": [0]})\nprepared_query = model.named_steps[\"scale\"].transform(query)\npositions = model.named_steps[\"model\"].kneighbors(\n    prepared_query, return_distance=False\n)\nvotes = example_y.iloc[positions[0]].value_counts()",
+    "result": "Query (1, 0): 2 A + 3 B \u2192 B. Neighbours: n2, n1, n4, n8, n3.",
+    "label": "Query coordinates\nx=0, y=0\nx=1, y=0\nx=0, y=1",
+    "file": "ML-C08-2-q1-1440.png"
+  },
+  {
+    "id": "ML-C08-2",
+    "width": 320,
+    "query": "0,0",
+    "code": "query = pd.DataFrame({\"x\": [0], \"y\": [0]})\nprepared_query = model.named_steps[\"scale\"].transform(query)\npositions = model.named_steps[\"model\"].kneighbors(\n    prepared_query, return_distance=False\n)\nvotes = example_y.iloc[positions[0]].value_counts()",
+    "result": "Query (0, 0): 3 A + 2 B \u2192 A. Neighbours: n1, n2, n7, n4, n3.",
+    "label": "Query coordinates\nx=0, y=0\nx=1, y=0\nx=0, y=1",
+    "file": "ML-C08-2-q0-320.png"
+  },
+  {
+    "id": "ML-C08-2",
+    "width": 320,
+    "query": "1,0",
+    "code": "query = pd.DataFrame({\"x\": [1], \"y\": [0]})\nprepared_query = model.named_steps[\"scale\"].transform(query)\npositions = model.named_steps[\"model\"].kneighbors(\n    prepared_query, return_distance=False\n)\nvotes = example_y.iloc[positions[0]].value_counts()",
+    "result": "Query (1, 0): 2 A + 3 B \u2192 B. Neighbours: n2, n1, n4, n8, n3.",
+    "label": "Query coordinates\nx=0, y=0\nx=1, y=0\nx=0, y=1",
+    "file": "ML-C08-2-q1-320.png"
+  }
+]

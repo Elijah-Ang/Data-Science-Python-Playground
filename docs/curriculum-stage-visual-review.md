@@ -5,6 +5,11 @@ the wrong operation, and unnecessary or missing later-stage explanations. Review
 it alongside the cumulative [model handoff](model-review-handoff.md). Nothing is
 merged or deployed.
 
+This report records the earlier stage revision. The subsequent
+[code-linked correction](curriculum-code-linked-visuals.md) fixes the count overlay
+that its numerical checks missed and replaces passive highlight controls. Use
+the newer report and evidence when reviewing the current branch.
+
 ## Result
 
 Data Foundations introduces each main illustration in Follow. Change, Transfer

@@ -26,7 +26,7 @@ with sync_playwright() as pw:
      choice.select_option(initial);control_records.append({'variant':r['variant'],'values':options,'initial':initial})
     records.append({'id':item['id'],'title':item['title'],'width':width,'theme':theme,'controls':control_records,'passed':True})
     figure=p.locator('.foundation-content .teaching-overview').first
-    if theme=='light' and figure.count() and item['id'] in ['V03','V05','V08','V13','V14','V17','V18','V10','V12','V19','V30']:
+    if theme=='light' and figure.count() and item['id'] in ['V03','V05','V08','V13','V14','V17','V18','V10','V12','V19','V30','V16','V26','V29']:
      size=figure.bounding_box();p.set_viewport_size({'width':width,'height':max(1100,round(size['height']+300))});figure.scroll_into_view_if_needed();name=f'{item["id"]}-{width}.png';figure.screenshot(path=str(raw/name));images.append({'id':item['id'],'width':width,'path':str(raw/name)});p.set_viewport_size({'width':width,'height':1100})
  b.close()
 assert not errors,errors

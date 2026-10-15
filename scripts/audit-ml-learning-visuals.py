@@ -42,12 +42,18 @@ with sync_playwright() as pw:
    assert figure.locator('.teaching-example-output').count()
    assert all(figure.locator('table').nth(i).locator('caption').inner_text() for i in range(figure.locator('table').count()))
   if figure.locator('.ml-concept-scroll').count():assert figure.locator('svg').get_attribute('aria-label')==c['exercises'][0].get('visual',c['visual'])['caption']
+  # A widget can be taller than the independently scrolling reading pane.
+  # Grow the capture viewport so its data, chart and Python are all visible.
+  full_height=max(1000,math.ceil(figure.bounding_box()['height'])+500)
+  page.set_viewport_size({'width':width,'height':full_height})
+  figure.scroll_into_view_if_needed()
   name=f'{c["id"]}-{theme}-{width}.png';figure.screenshot(path=str(out/name))
   # Inspect both ends of scrollable diagrams at phone widths.
   if width<500:
    if scroll.count():scroll.first.evaluate('(e)=>e.scrollLeft=e.scrollWidth')
    figure.screenshot(path=str(out/('right-'+name)))
   records.append(dict(id=c['id'],family=group,theme=theme,width=width,file=name,title=c['title']))
+  page.set_viewport_size({'width':width,'height':1000})
  for c in cards:capture(c,'light',1440,c['visual']['type'])
  for key,c in groups.items():
   for theme,width in [('dark',1440),('light',320),('light',390)]:capture(c,theme,width,key)

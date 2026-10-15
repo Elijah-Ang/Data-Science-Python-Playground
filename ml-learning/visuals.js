@@ -30,7 +30,7 @@
   // Variants share geometry but teach the particular card's concept.
   function variant(v){
     const id=v.id||'';
-    if(id==='W07')return box(15,55,150,65,'Fitting rows: 2, ?, 6')+arrow(172,88,208,88)+box(215,55,155,65,'Learn median = 4','accent')+arrow(378,88,411,88)+box(418,55,128,65,'Reuse to fill ?')+text(280,208,'Fit replacements inside training folds; keep known values.','text-anchor="middle"');
+    if(id==='W07')return box(15,55,150,65,'Rows: 2, ?, 6, 20')+arrow(172,88,208,88)+box(215,55,155,65,'Learn median = 6','accent')+arrow(378,88,411,88)+box(418,55,128,65,'Reuse to fill ?')+text(280,208,'Fit replacements inside training folds; keep known values.','text-anchor="middle"');
     if(id==='W10')return box(15,55,165,65,'Before fit: settings')+box(196,55,165,65,'After fit: learned','accent')+box(377,55,168,65,'Held-away scores')+text(280,170,'max_depth ≠ fitted coefficients ≠ validation evidence','text-anchor="middle"')+text(280,212,'A setting or learned value alone does not prove generalisation.','text-anchor="middle"');
     if(id==='R06')return box(15,55,250,65,'Near-copy inputs: shared signal')+box(300,55,245,65,'Coefficients can shift','accent')+text(280,167,'Compare predictions as well as fitted coefficients.','text-anchor="middle"')+text(280,211,'Predictive stability does not establish a unique feature effect.','text-anchor="middle"');
     if(id==='P02')return [0,1].map((r)=>box(10,25+r*95,155,55,r?'Incoming rows':'Fitting rows')+arrow(170,52+r*95,199,52+r*95)+box(205,25+r*95,150,55,r?'Reuse fitted scale':'Fit scale','accent')+arrow(360,52+r*95,389,52+r*95)+box(395,25+r*95,155,55,r?'Reuse fitted axes':'Fit PCA axes','accent')).join('')+text(280,223,'Learn scale and axes once; transform preserves their fitting boundary.','text-anchor="middle"');
@@ -67,7 +67,7 @@
     if(id==='M04')return box(20,30,230,60,'Original setting')+arrow(257,60,300,60)+box(310,30,230,60,'Proposed new setting','accent')+text(278,138,'Same variable definitions and availability?','text-anchor="middle"')+text(278,174,'Comparable population, horizon and costs?','text-anchor="middle"')+text(278,214,'Seek validation evidence for the intended use.','text-anchor="middle"');
     if(id==='R11')return box(20,25,520,65,'Observed: predictive error under this evaluation','accent')+arrow(278,95,278,124)+box(20,132,520,65,'Qualify: population, model, inputs and uncertainty')+text(278,227,'Prediction evidence alone does not identify causal effects.','text-anchor="middle"');
     if(id==='F10')return box(10,70,155,60,'Available inputs','accent')+arrow(170,100,200,100)+box(207,70,145,60,'Prediction time')+arrow(357,100,391,100)+box(398,70,152,60,'Later outcome')+text(278,205,'Could this input be known when the prediction is made?','text-anchor="middle"');
-    if(id==='W07')return box(10,40,150,65,'Training: 2, ?, 6')+arrow(165,73,207,73)+box(215,40,145,65,'Learn median: 4','accent')+arrow(365,73,393,73)+box(400,40,150,65,'Filled: 2, 4, 6')+text(278,161,'Reuse that replacement for later missing values.','text-anchor="middle"')+text(278,205,'Fit the replacement inside each training boundary.','text-anchor="middle"');
+    if(id==='W07')return box(10,40,150,65,'Train: 2, ?, 6, 20')+arrow(165,73,207,73)+box(215,40,145,65,'Learn median: 6','accent')+arrow(365,73,393,73)+box(400,40,150,65,'Fill gap with 6')+text(278,161,'Reuse that replacement for later missing values.','text-anchor="middle"')+text(278,205,'Fit the replacement inside each training boundary.','text-anchor="middle"');
     if(id==='W10')return box(20,30,225,65,'Before fit: settings','accent')+box(315,30,225,65,'After fit: learned values')+text(133,125,'get_params()','text-anchor="middle"')+text(428,125,'coef_, intercept_','text-anchor="middle"')+arrow(248,63,308,63)+text(278,207,'Choose settings; fitting estimates parameters from data.','text-anchor="middle"');
     if(id==='R02')return box(20,35,240,70,'RMSE: outcome units','accent')+box(300,35,240,70,'R²: relative squared error')+text(140,150,'How large are errors?','text-anchor="middle"')+text(420,150,'Compared with a mean?','text-anchor="middle"')+text(278,211,'Use the same aligned outcomes and predictions.','text-anchor="middle"');
     if(id==='R04')return [['Row','Distance','Weight'],['A',5,2],['B',5,4]].map((row,r)=>row.map((x,c)=>box(20+c*180,20+r*43,170,35,x,c===2?'accent':'')).join('')).join('')+text(278,179,'Predicted difference = 2 × fitted weight coefficient','text-anchor="middle"')+text(278,214,'Change one input while holding the other fixed.','text-anchor="middle"');
@@ -229,7 +229,7 @@
     U03:'cluster|Assign point|Move centroid|Repeat',
     U04:'choice|Inertia|Silhouette|Inspect profiles too',
     U05:'table|Cluster label|Original units|Group profile',
-    U06:'cluster|Elongated shape|Centroid limit|Check geometry',
+    U06:'cluster|Same measurements|Different seed|Different fit',
     U07:'hierarchy|Small merges|Larger merges|Dendrogram',
     U08:'hierarchy|Cut height|Group count|Describe groups',
     U09:'hierarchy|Sample rows|Keep row IDs|Interpret sample',
@@ -257,7 +257,7 @@
     F02:[['row 01','distance','minutes'],['row 02','weight','minutes']],
     W01:[['row 01','numeric','check range'],['row 02','category','check gaps']],
     W04:[['express','0 · 1 · 0','aligned'],['economy','1 · 0 · 0','aligned']],
-    W07:[['missing','learn 4','fill with 4'],['new row','reuse 4','no refit']],
+    W07:[['2, ?, 6, 20','median 6','fill with 6'],['new missing','reuse 6','no refit']],
     R05:[['economy','0 · 0','reference'],['express','1 · 0','effect']],
     C16:[['binary','0 / 1','Bernoulli'],['measured','real value','Gaussian']],
     U05:[['group 0','mean length','n rows'],['group 1','mean length','n rows']],
@@ -288,37 +288,24 @@
       [[97,100],[161,151],[224,55],[310,90]].map(([x,y])=>'<path d="M'+x+' '+y+'V'+(153-(x-50)*109/275)+'" class="mini-cut"/><circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('')+miniAside(parts);
     if(key==='W05')return miniBox(25,25,188,55,a,true)+miniBox(25,115,188,55,b,true)+
       '<path d="M215 52H310V95H345M215 142H310V95" class="mini-feature"/>'+miniBox(350,65,180,62,c);
-    if(key==='W03')return '<path d="M25 152H235M320 152H535" class="mini-axis"/>'+
-      [52,74,103,177,211].map(x=>'<circle cx="'+x+'" cy="135" r="6" class="mini-dot"/>').join('')+
-      [356,386,415,444,475].map(x=>'<circle cx="'+x+'" cy="135" r="6" class="mini-dot"/>').join('')+
-      '<path d="M130 35V155M415 35V155" class="mini-cut"/>'+miniArrow(245,100,306,100)+
-      miniLabel(130,28,'Train: fit μ, σ','main')+miniLabel(427,28,'New X: reuse','main')+miniLabel(280,187,'No test-row fit','main');
-    if(key==='U02')return '<path d="M35 155H245M35 155V35M310 155H530M310 155V35" class="mini-axis"/>'+
-      [[70,63],[95,110],[168,83],[205,128]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('')+
-      [[358,72],[380,99],[409,84],[431,111]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>').join('')+
-      miniLabel(140,29,'Raw units','main')+miniLabel(420,29,'Scaled space','main')+miniLabel(280,181,'Distances change','main');
-    if(key==='C08')return '<path d="M25 170H350M25 170V25" class="mini-axis"/>'+
-      [[87,65],[113,95],[125,54],[218,113],[245,136],[265,104]].map(([x,y],i)=>i<3?'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>':'<rect x="'+x+'" y="'+y+'" width="12" height="12" class="mini-dot"/>').join('')+
-      '<circle cx="154" cy="100" r="58" class="mini-ring"/><circle cx="154" cy="100" r="8" class="accent"/>'+miniAside(parts);
+    if(key==='W03'){
+      const raw=x=>30+x/40*210,scaled=z=>420+z*55;
+      return '<path d="M25 152H235M320 152H535" class="mini-axis"/>'+scaleExample.rows.map(row=>'<circle cx="'+raw(row[0])+'" cy="135" r="6" class="mini-dot"/>').join('')+scaleExample.prepared.map(row=>'<circle cx="'+scaled(row[0])+'" cy="135" r="6" class="mini-dot"/>').join('')+'<path d="M135 35V155M420 35V155" class="mini-cut"/>'+miniArrow(245,100,306,100)+miniLabel(130,28,'Mean 20 km','main')+miniLabel(427,28,'Mean 0; SD 1','main')+miniLabel(280,187,'(value − mean) / SD','main');
+    }
+    if(key==='U02'){
+      const raw=x=>45+x*4,scaled=z=>420+z*40;
+      return '<path d="M45 155H180M45 155V20M360 155H495M360 155V20" class="mini-axis"/>'+scaleExample.rows.map(([x,y])=>'<circle cx="'+raw(x)+'" cy="'+(155-y*4)+'" r="5" class="mini-dot"/>').join('')+scaleExample.prepared.map(([x,y])=>'<circle cx="'+scaled(x)+'" cy="'+(95-y*40)+'" r="5" class="mini-dot"/>').join('')+miniArrow(220,95,310,95)+miniLabel(115,183,'km and min','main')+miniLabel(420,183,'Both in SD units','main');
+    }
+    if(['C08','U03','U06','N02','N05','R08'].includes(key)){
+      const choice={C08:'3',U03:'3',U06:'2',N02:'300',N05:'300',R08:'2'}[key],art=mlExploration(key,choice).svg.match(/<g>([\s\S]*)<\/g>/)[1].replace(/<text[\s\S]*?<\/text>/g,'');
+      const scale=['C08','U03','U06'].includes(key)?'.59 .54':'.65 .65';
+      return '<g transform="translate(5 2) scale('+scale+')">'+art+'</g>'+miniAside(parts)+miniLabel(180,194,key==='N05'?'Loss / validation F1':key==='N02'?'Training loss':key==='C08'?'k = 3: 2 A + 1 B':key==='R08'?'Fitted degree 2':'Fitted centroids','main');
+    }
+    if(key==='U09')return miniBox(20,50,145,65,'8 source rows')+miniArrow(168,82,198,82)+miniBox(202,50,155,65,'sample(n=4)',true)+miniArrow(360,82,389,82)+miniBox(393,50,150,65,'w2, w6, w1, w8')+miniLabel(280,174,'Seed 42; original row IDs','main');
     if(key==='C10'||key==='C11'){
       const art=mlExploration(key,key==='C10'?'1':'2').svg.match(/<g>([\s\S]*)<\/g>/)[1].replace(/<text[\s\S]*?<\/text>/g,'');
       return '<g transform="translate(-15 -7) scale(.7)">'+art+'</g>'+miniAside(parts)+miniLabel(180,194,'Fitted RBF regions','main');
     }
-    if(key==='U03')return '<circle cx="93" cy="77.333" r="55" class="mini-ring"/><circle cx="267" cy="93" r="55" class="mini-ring"/>'+
-      [[68,69],[95,59],[116,104],[235,79],[276,77],[290,123]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+
-      '<path d="M85 69.333l16 16m0 -16l-16 16M259 85l16 16m0 -16l-16 16" class="mini-feature"/>'+miniAside(parts);
-    if(key==='U06')return '<ellipse cx="130" cy="100" rx="110" ry="32" transform="rotate(-25 130 100)" class="mini-ring"/>'+
-      '<circle cx="275" cy="103" r="60" class="mini-ring"/>'+
-      [[70,119],[100,105],[135,91],[170,71],[246,84],[277,120],[300,88]].map(([x,y])=>'<circle cx="'+x+'" cy="'+y+'" r="5" class="mini-dot"/>').join('')+miniAside(parts);
-    if(key==='R08'||key==='N05')return '<path d="M30 25V170H350" class="mini-axis"/>'+
-      '<path d="M45 37Q130 150 330 154" class="mini-feature"/>'+
-      '<path d="M45 42Q180 171 330 65" class="mini-cut"/>'+miniAside(parts);
-    if(key==='N02')return '<path d="M30 25V170H350" class="mini-axis"/>'+
-      '<path d="M45 45C92 100 147 133 205 144S290 150 330 152" class="mini-feature"/>'+
-      [45,95,150,205,265,330].map((x,i)=>'<circle cx="'+x+'" cy="'+[45,100,133,144,150,152][i]+'" r="4" class="mini-dot"/>').join('')+miniAside(parts);
-    if(key==='C11')return '<path d="M25 170H350M25 170V25" class="mini-axis"/>'+
-      '<path d="M45 49Q120 171 200 102T330 145" class="mini-feature"/>'+
-      [[68,87],[105,111],[171,44],[239,67],[289,94]].map(([x,y],i)=>i<3?'<circle cx="'+x+'" cy="'+y+'" r="6" class="mini-dot"/>':'<rect x="'+x+'" y="'+y+'" width="12" height="12" class="mini-dot"/>').join('')+miniAside(parts);
     if(key==='C15')return '<path d="M35 155H345" class="mini-axis"/>'+
       '<path d="M45 153Q115 20 177 153M181 153Q260 15 335 153" class="mini-feature"/>'+
       miniLabel(114,174,'Class A','aside-main')+miniLabel(260,174,'Class B','aside-main')+miniAside(parts);
@@ -339,7 +326,7 @@
         outputs.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="10" class="mini-dot"/>').join('')+miniAside(parts);
     }
     if(mode==='hierarchy'){
-      const art=mlExploration(key==='U07'?'U07':'U08',key==='U07'?'1':'3').svg.match(/<g>([\s\S]*)<\/g>/)[1].replace(/<text[\s\S]*?<\/text>/g,'');
+      const art=mlExploration(key==='U07'?'U07':'U08',key==='U07'?'scaled':'3').svg.match(/<g>([\s\S]*)<\/g>/)[1].replace(/<text[\s\S]*?<\/text>/g,'');
       return '<g transform="translate(5 2) scale(.65 .6)">'+art+'</g>'+miniAside(parts);
     }
     if(key==='P04')return '<path d="M30 158H345" class="mini-axis"/>'+[60,25,10,5].map((share,i)=>'<rect x="'+(42+i*56)+'" y="'+(158-share*2)+'" width="38" height="'+(share*2)+'" class="'+(i<3?'accent':'mini-wash')+'"/>'+miniLabel(61+i*56,149-share*2,share+'%','minor')).join('')+'<path d="M201 24V175" class="mini-cut"/>'+miniAside(parts);
@@ -418,20 +405,20 @@
     W03:{title:'Apply the learned scale',label:'Displayed values',options:[['original','Original measurements'],['scaled','scaler.transform(X_train)']]},
     U02:{title:'See the distance scale change',label:'Displayed values',options:[['original','Original measurements'],['scaled','scaler.transform(X)']]},
     W04:{title:'Reuse a fixed one-hot schema',label:'Service value',options:[['economy','economy'],['express','express'],['standard','standard'],['overnight','overnight · unseen']]},
-    W07:{title:'Fill a gap with the training median',label:'Highlighted fitting row',options:[['1','Row 1 · 2'],['2','Row 2 · missing'],['3','Row 3 · 6']]},
+    W07:{title:'Fill missing values',label:'strategy',options:[['median','median'],['mean','mean']]},
     U03:{title:'Follow the fitted centres and assignments',label:'Number of groups',options:[['2','2 groups'],['3','3 groups'],['4','4 groups']]},
     U06:{title:'Compare starts on the same observations',label:'random_state · four groups, one start',options:[['1','Seed 1'],['2','Seed 2'],['3','Seed 3']]},
-    U07:{title:'Read a computed Ward merge',label:'Highlighted merge',options:Array.from({length:7},(_,i)=>[String(i+1),'Merge '+(i+1)])},
+    U07:{title:'Ward clustering and feature scales',label:'Feature coordinates',options:[['scaled','Standardised'],['raw','Original units']]},
     U08:{title:'Cut the same fitted hierarchy',label:'Number of groups',options:[['2','2 groups'],['3','3 groups'],['4','4 groups']]},
     U09:{title:'Keep sampled values and row identities',label:'Number of sampled rows · seed 42',options:[['2','2 rows'],['4','4 rows'],['6','6 rows']]},
     'U07-scale':{title:'Compare the same observations under two geometries',label:'Feature coordinates',options:[['scaled','Standardised'],['raw','Original units']]},
-    N02:{title:'Read the same fitted loss history',label:'Highlighted iteration',options:[['1','Iteration 1'],['50','Iteration 50'],['100','Iteration 100'],['300','Iteration 300']]},
+    N02:{title:'Training-loss history',static:true,options:[['300','Full history']]},
     N05:{title:'Keep loss separate from held-away performance',label:'Iteration budget',options:[['20','20'],['100','100'],['300','300'],['600','600']]},
     C08:{title:'Change the neighbour vote',label:'Number of neighbours',options:[['1','k = 1'],['3','k = 3'],['5','k = 5']]},
-    'C08-neighbours':{title:'Inspect a fixed five-neighbour vote',label:'Highlighted training observation',options:knnRows.map(r=>[r.id,r.id+' · class '+r.group])},
+    'C08-neighbours':{title:'Inspect five-neighbour predictions',label:'Query coordinates',options:[['0,0','x=0, y=0'],['1,0','x=1, y=0'],['0,1','x=0, y=1']]},
     C09:{title:'Compare neighbourhood sizes',label:'Number of neighbours',options:[['3','k = 3'],['5','k = 5'],['9','k = 9']]},
-    C14:{title:'Trace a row through the tree',label:'Observation',options:treeRows.map(r=>[r.id,`${r.id}: width ${r.width}, length ${r.length}`])},
-    R09:{title:'Trace a leaf prediction',label:'Observation',options:regressionRows.map(r=>[r.id,`${r.id}: x ${r.x}, actual y ${r.y}`])},
+    C14:{title:'Predict with a tree',label:'Prediction input',options:treeRows.map(r=>[r.id,`${r.id}: width ${r.width}, length ${r.length}`])},
+    R09:{title:'Predict a leaf mean',label:'Prediction input',options:regressionRows.map(r=>[r.id,`${r.id}: x ${r.x}, actual y ${r.y}`])},
     R10:{title:'Change tree complexity',label:'Maximum depth',options:[['3','Depth 3'],['5','Depth 5'],['None','No depth cap']]},
     'R10-leaf':{title:'Change minimum leaf support',label:'Minimum fitting rows per leaf',options:[['1','1 row'],['5','5 rows'],['10','10 rows']]} ,
     C10:{title:'Trace an RBF boundary and support vectors',label:'Penalty C',options:[['0.5','C = 0.5'],['1','C = 1'],['10','C = 10']]},
@@ -440,8 +427,8 @@
     R07:{title:'See how powers expand one measurement',label:'Polynomial degree',options:[['1','Degree 1'],['2','Degree 2'],['3','Degree 3'],['4','Degree 4']]},
     R08:{title:'Compare flexibility using validation',label:'Polynomial degree',options:[['1','Degree 1'],['2','Degree 2'],['3','Degree 3'],['4','Degree 4']]},
     'R08-expansion':{title:'Inspect the polynomial step before fitting the model',label:'Polynomial degree',options:[['1','Degree 1'],['2','Degree 2'],['3','Degree 3'],['4','Degree 4']]},
-    P01:{title:'Track every row into new axes',label:'Highlighted observation',options:pcaRows.map(r=>[r.id,`${r.id}: (${r.x}, ${r.y})`])},
-    P06:{title:'Track every row into new axes',label:'Highlighted observation',options:pcaRows.map(r=>[r.id,`${r.id}: (${r.x}, ${r.y})`])}
+    P01:{title:'Choose the retained dimensions',label:'n_components',options:[['1','1 · PC1'],['2','2 · PC1 and PC2']]},
+    P06:{title:'Choose the retained dimensions',label:'n_components',options:[['1','1 · PC1'],['2','2 · PC1 and PC2']]}
   };
   // Small least-squares example. The degree changes a fit to the same training
   // rows, and validation rows are never used to learn its coefficients.
@@ -467,42 +454,42 @@
     if(id==='F02'){
       const j=choice==='distance'?0:1,features=coreRows.map(r=>[r[j]]),target=coreRows.map(r=>[r[2]]);
       svg=exampleTable(['distance','weight','duration'],coreRows,'Illustrative observations')+'<p aria-hidden="true">↓</p>'+exampleTable([choice],features,'X · input measurements')+exampleTable(['duration'],target,'y · aligned outcome');
-      summary=`X contains ${choice}; y contains duration. All three row identities and outcome values stay aligned. Selecting weight changes the input column, not the outcome.`;
+      summary=`X contains ${choice}; y contains duration. Their row labels stay aligned.`;
       code=`X = example[["${choice}"]]\ny = example["duration"]`;data={rows:coreRows,feature:choice,features,target};
     }else if(id==='F03'){
       const fitted=choice==='fitted',rows=coreRows.map(r=>[r[0],r[2]]),px=x=>50+x*75,py=y=>195-y*22;
       svg='<svg class="concept-visual data-teaching-visual" viewBox="0 0 340 235" style="max-width:360px" role="img" aria-label="'+(fitted?'Fitted estimator: learned line through the supplied observations':'Unfitted estimator: observations alone, no learned line')+'"><g>'+line(40,195,315,195)+line(40,195,40,30)+rows.map(([x,y])=>teachingCircle(px(x),py(y),5)+label(px(x),213,x,'middle')+label(30,py(y)+4,y,'end')).join('')+(fitted?line(px(1),py(3),px(3),py(7),'class="accent-stroke"'):'')+label(45,18,fitted?'Fitted estimator · learned line':'Unfitted estimator · no learned line')+label(205,229,'distance')+text(13,145,'duration','transform="rotate(-90 13 145)" style="font-size:13px"')+'</g></svg>';
-      summary=fitted?'fit learns slope 2 and intercept 1 from the same three observations. The learned line is duration = 1 + 2 × distance.':'LinearRegression() creates the recipe. The three observations are visible, but no line has been learned until fit runs.';
+      summary=fitted?'fit learns duration = 1 + 2 × distance.':'LinearRegression() creates an unfitted model. fit learns its line from the observations.';
       code='model = LinearRegression()'+(fitted?'\nmodel.fit(example[["distance"]], example["duration"])':'');data={rows,fitted,slope:fitted?2:null,intercept:fitted?1:null};
     }else if(id==='F04'){
       const distance=Number(choice),prediction=1+2*distance;
-      svg=exampleTable(['distance'],[[distance]],'New row · same feature name and units')+'<p aria-hidden="true">↓</p>'+exampleTable(['predicted duration'],[[prediction]],'Fitted line: duration = 1 + 2 × distance');
-      summary=`Distance ${distance} → predicted duration ${prediction}. The fitted slope 2 and intercept 1 stay fixed; only the incoming distance changes.`;
+      svg=exampleTable(['distance'],[[distance]],'New input')+'<p aria-hidden="true">↓</p>'+exampleTable(['predicted duration'],[[prediction]],'Fitted line: duration = 1 + 2 × distance');
+      summary=`Distance ${distance} → predicted duration ${prediction}, using duration = 1 + 2 × distance.`;
       code=`new_rows = pd.DataFrame({"distance": [${distance}]})\nanswer = model.predict(new_rows)`;data={distance,prediction,slope:2,intercept:1,rows:coreRows};
     }else if(id==='F07'){
       const testSize=Number(choice),order=[8,1,5,0,7,2,9,4,3,6],count=Math.ceil(10*testSize),test=order.slice(0,count),train=order.slice(count),rows=Array.from({length:10},(_,i)=>[i,i+1,2*(i+1)+1,test.includes(i)?'test':'train']);
-      svg=exampleTable(['row index','distance','duration','partition'],rows,'Same ten X/y pairs · random_state=42');
-      summary=`${train.length} training rows and ${test.length} test rows. Test row indices: ${test.join(', ')}. Each feature row and its matching target move together; seed 42 stays fixed.`;
+      svg=exampleTable(['row index','distance','duration','partition'],rows,'Partitions');
+      summary=`${train.length} training rows; ${test.length} test rows. X and y retain matching row labels.`;
       code=`X = example[["distance"]]\ny = example["duration"]\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=${choice}, random_state=42\n)`;data={testSize,seed:42,train,test,rows};
     }else if(id==='W03'||id==='U02'){
       const scaled=choice==='scaled',rows=scaled?scaleExample.prepared:scaleExample.rows;
-      svg=exampleTable(['length (km)','time (min)'],scaleExample.rows,'Before · fixed fitting observations')+'<p aria-hidden="true">↓</p>'+exampleTable(scaled?['length z','time z']:['length (km)','time (min)'],rows,scaled?'After transform · unitless coordinates':'Original values · transform not displayed');
-      summary=scaled?'Each value becomes (value − fitting mean) / fitting SD. Means stay 20 km and 4 min; SDs stay 8.165 km and 1.633 min. The observations retain their row order.':'These columns use different units and ranges. Fit learns the fixed column means and SDs; transform reuses them to put both columns on comparable scales.';
+      svg=exampleTable(['length (km)','time (min)'],scaleExample.rows,'Before')+'<p aria-hidden="true">↓</p>'+exampleTable(scaled?['length z','time z']:['length (km)','time (min)'],rows,scaled?'After transform · unitless coordinates':'Original values');
+      summary=scaled?'Subtract the fitting mean, then divide by its SD. Means: 20 km and 4 min. SDs: 8.165 km and 1.633 min.':'These columns have different units. fit learns their means and SDs; transform applies the scale.';
       code='scaler = StandardScaler().fit(example_X)'+(scaled?'\nanswer = scaler.transform(example_X)':'');data={rows,original:scaleExample.rows,scaled,mean:scaleExample.mean,scale:scaleExample.scale};
     }else if(id==='W04'){
       const categories=['economy','express','standard'],row=categories.map(v=>v===choice?1:0);
-      svg=exampleTable(['service'],categories.map(v=>[v]),'Fitting categories · schema stays fixed')+'<p aria-hidden="true">↓</p>'+exampleTable(['input service',...categories.map(v=>'service_'+v)],[[choice,...row]],'Transform · same three indicator columns');
-      summary=choice==='overnight'?'overnight was absent during fit. handle_unknown="ignore" produces three zeros and preserves the fitted column order. No fourth column is created.':`${choice} sets its own indicator to 1 and the other two to 0. Columns stay in fitted alphabetical order: economy, express, standard.`;
+      svg=exampleTable(['service'],categories.map(v=>[v]),'Fitting categories')+'<p aria-hidden="true">↓</p>'+exampleTable(['input service',...categories.map(v=>'service_'+v)],[[choice,...row]],'Encoded values');
+      summary=choice==='overnight'?'overnight is unseen. handle_unknown="ignore" produces zeros in all three fitted columns.':`${choice} gets 1; the other categories get 0.`;
       code='encoder = OneHotEncoder(handle_unknown="ignore", sparse_output=False)\nencoder.fit(example_train[["service"]])\nanswer = encoder.transform(pd.DataFrame({"service": ["'+choice+'"]}))';data={choice,categories,row};
     }else if(id==='W07'){
-      const selected=Number(choice)-1,rows=[[2],[null],[6]],filled=[[2],[4],[6]];
-      svg=exampleTable(['distance'],rows,'Before · fitting values',selected)+'<p aria-hidden="true">↓</p>'+exampleTable(['distance'],filled,'After · median 4 fills only the gap',selected);
-      summary=`Row ${choice}: ${selected===1?'missing → 4, the median of observed fitting values 2 and 6':'known value '+filled[selected][0]+' stays unchanged'}. Highlighting a row does not change the observations or the learned median.`;
-      code='imputer = SimpleImputer(strategy="median")\nimputer.fit(example_train[["distance"]])\nanswer = imputer.transform(example_train[["distance"]])';data={rows,filled,median:4,selected};
+      const rows=[[2],[null],[6],[20]],strategy=choice,fillValue=strategy==='median'?6:28/3,filled=rows.map(([value])=>[value===null?fillValue:value]);
+      svg=exampleTable(['distance'],rows,'Before')+'<p aria-hidden="true">↓</p>'+exampleTable(['distance'],filled,'After · '+strategy,1);
+      summary=`${strategy==='median'?'Median':'Mean'} = ${number(fillValue)}. Only the missing cell is filled.`;
+      code=`imputer = SimpleImputer(strategy="${strategy}")\nimputer.fit(example_train[["distance"]])\nanswer = imputer.transform(example_train[["distance"]])`;data={rows,filled,strategy,fillValue,median:6};
     }else if(id==='U09'){
       const count=Number(choice),order=[1,5,0,7,2,4,3,6],indices=order.slice(0,count),rows=teachingFits.ward.rows;
-      svg=exampleTable(['original row','length_mm','width_cm'],rows.map((row,i)=>['w'+(i+1),...row]),'Before · eight fixed observations')+'<p aria-hidden="true">↓</p>'+exampleTable(['original row','length_mm','width_cm'],indices.map(i=>['w'+(i+1),...rows[i]]),'After sample · original identities and values');
-      summary=`Sample ${count} of eight observations with seed 42. Retained row IDs: ${indices.map(i=>'w'+(i+1)).join(', ')}. Values and original indices are preserved; only the selected subset changes. No hierarchy is fitted here.`;
+      svg=exampleTable(['original row','length_mm','width_cm'],rows.map((row,i)=>['w'+(i+1),...row]),'Before')+'<p aria-hidden="true">↓</p>'+exampleTable(['original row','length_mm','width_cm'],indices.map(i=>['w'+(i+1),...rows[i]]),'Sample');
+      summary=`Sample ${count} rows with seed 42, preserving their values and original indices.`;
       code=`sample = example.sample(${count}, random_state=42)`;data={count,indices,rows,seed:42};
     }else return null;
     return {summary,code,svg,data};
@@ -519,21 +506,21 @@
       code=`scaled = StandardScaler().fit_transform(example[["x", "y"]])\nexample_model = KMeans(n_clusters=${k}, n_init=${id==='U06'?1:20}, random_state=${id==='U06'?choice:42})\nexample_model.fit(scaled)\n${id==='U06'?'inertia = example_model.inertia_':'centres = example_model.cluster_centers_'}`;
       data={...fit,k,seed:id==='U06'?Number(choice):42,n_init:id==='U06'?1:20,rows:example.rows,prepared:example.prepared,mean:example.mean,scale:example.scale};
     }else if(['U07','U08','U09','U07-scale'].includes(id)){
-      tallSpace=true;const example=teachingFits.ward,geometry=id==='U07-scale'?choice:'scaled',fit=example.fits[geometry],z=fit.linkage,n=example.rows.length,k=id==='U08'||id==='U09'?Number(choice):3,labels=fit.cuts[k],order=[];
+      tallSpace=true;const example=teachingFits.ward,geometry=id==='U07-scale'||id==='U07'?choice:'scaled',fit=example.fits[geometry],z=fit.linkage,n=example.rows.length,k=id==='U08'||id==='U09'?Number(choice):3,labels=fit.cuts[k],order=[];
       const leaves=node=>node<n?order.push(node):(leaves(z[node-n][0]),leaves(z[node-n][1]));leaves(n+z.length-1);
-      const positions=new Map(order.map((leaf,i)=>[leaf,{x:55+i*410/(n-1),y:255}])),max=z.at(-1)[2],py=d=>255-d/max*205,highlight=id==='U07'?Number(choice)-1:-1;
+      const positions=new Map(order.map((leaf,i)=>[leaf,{x:55+i*410/(n-1),y:255}])),max=z.at(-1)[2],py=d=>255-d/max*205,highlight=-1;
       art=line(45,255,478,255)+line(45,50,45,255)+label(40,25,'Ward distance · '+(geometry==='scaled'?'standardised coordinates':'original coordinates'))+label(5,54,Number(max.toFixed(1)))+label(20,259,'0');
       z.forEach(([left,right,height,count],i)=>{const a=positions.get(left),b=positions.get(right),y=py(height);art+='<path d="M'+a.x+' '+a.y+'V'+y+'H'+b.x+'V'+b.y+'" fill="none"'+(i===highlight?' class="accent-stroke"':'')+'/>';positions.set(n+i,{x:(a.x+b.x)/2,y});});
       art+=order.map((leaf,i)=>label(55+i*410/(n-1),276,'w'+(leaf+1),'middle')).join('');
       const lower=z[n-k-1][2],upper=z[n-k][2],cut=(lower+upper)/2;
       if(id==='U08'||id==='U09')art+=line(45,py(cut),478,py(cut),'class="accent-stroke" stroke-dasharray="5 4"')+order.map((leaf,i)=>label(55+i*410/(n-1),296,'g'+labels[leaf],'middle')).join('');
-      summary=id==='U07-scale'?`Same eight observations in ${geometry} coordinates. Final Ward merge distance ${number(z.at(-1)[2])}. Changing scale changes the distance geometry; the two height scales use different coordinate units.`:id==='U07'?`Merge ${choice}: Ward distance ${number(z[highlight][2])}; ${z[highlight][3]} observations combined. Heights come from the fixed eight-row fit; highlighting does not refit it.`:`${geometry==='scaled'?'Standardised':'Original'} coordinates: ${k} groups at cut distance ${number(cut)}. All eight row identities remain aligned. The hierarchy describes these observations, not known natural classes.`;
-      code=id==='U07'?`scaled = StandardScaler().fit_transform(example[["length_mm", "width_cm"]])\nlinkage_matrix = linkage(scaled, method="ward")\nlinkage_matrix[${highlight}]`:id==='U07-scale'?`${geometry==='scaled'?'coordinates = StandardScaler().fit_transform(example[["length_mm", "width_cm"]])':'coordinates = example[["length_mm", "width_cm"]]'}\nlinkage_matrix = linkage(coordinates, method="ward")`:`scaled = StandardScaler().fit_transform(example[["length_mm", "width_cm"]])\nlinkage_matrix = linkage(scaled, method="ward")\nlabels = cut_tree(linkage_matrix, n_clusters=${k}).ravel()`;
+      summary=id==='U07'||id==='U07-scale'?`${geometry==='scaled'?'Standardised':'Original'} coordinates: final Ward merge distance ${number(z.at(-1)[2])}. Scaling changes the distance calculation.`:`${k} groups at Ward distance ${number(cut)}.`;
+      code=id==='U07'||id==='U07-scale'?`${geometry==='scaled'?'coordinates = StandardScaler().fit_transform(example[["length_mm", "width_cm"]])':'coordinates = example[["length_mm", "width_cm"]]'}\nlinkage_matrix = linkage(coordinates, method="ward")`:`scaled = StandardScaler().fit_transform(example[["length_mm", "width_cm"]])\nlinkage_matrix = linkage(scaled, method="ward")\nlabels = cut_tree(linkage_matrix, n_clusters=${k}).ravel()`;
       data={rows:example.rows,prepared:fit.prepared,linkage:z,geometry,k,labels,cut,highlight};
     }else if(id==='N02'){
       const fit=teachingFits.network.fits['300'],iteration=Number(choice),loss=fit.loss[iteration-1],maxLoss=Math.max(...fit.loss)*1.1,px=i=>45+i/(fit.loss.length-1)*420,py=l=>185-l/maxLoss*150;
-      art=line(45,185,470,185)+line(45,35,45,185)+label(45,18,'Same fitted training-loss history')+label(15,189,'0')+label(10,39,number(maxLoss))+'<path d="'+fit.loss.map((l,i)=>`${i?'L':'M'}${px(i)} ${py(l)}`).join('')+'" fill="none" class="accent-stroke"/>'+line(px(iteration-1),185,px(iteration-1),py(loss),'stroke-dasharray="4 3"')+teachingCircle(px(iteration-1),py(loss),6,'accent')+label(45,205,'1')+label(470,205,fit.iterations,'end')+label(165,227,'Iteration · selected '+iteration);
-      summary=`Iteration ${iteration}: training loss ${number(loss)}. All ${fit.iterations} stored loss values come from one already fitted network. Highlighting changes neither the fitted weights, observations, seed nor iteration budget. Training loss is not a validation score.`;
+      art=line(45,185,470,185)+line(45,35,45,185)+label(45,18,'Training-loss history')+label(15,189,'0')+label(10,39,number(maxLoss))+'<path d="'+fit.loss.map((l,i)=>`${i?'L':'M'}${px(i)} ${py(l)}`).join('')+'" fill="none" class="accent-stroke"/>'+label(45,205,'1')+label(470,205,fit.iterations,'end')+label(165,227,'Iteration');
+      summary=`Final training loss: ${number(fit.loss.at(-1))}. Training loss measures the fitting objective, not validation performance.`;
       code='answer = pd.Series(network.loss_curve_, name="training_loss")\nanswer.index = answer.index + 1\nanswer.index.name = "iteration"';data={...fit,iteration,selectedLoss:loss,budget:300,training:teachingFits.network.training,labels:teachingFits.network.labels};
     }else if(id==='N05'){
       const budget=choice,fit=teachingFits.network.fits[budget],maxLoss=Math.max(...fit.loss)*1.1,px=i=>45+i/Math.max(1,fit.loss.length-1)*(id==='N02'?420:190),py=loss=>185-loss/maxLoss*150;
@@ -545,13 +532,11 @@
       code=`scaler = StandardScaler().fit(example_X_train)\nexample_network = MLPClassifier(hidden_layer_sizes=(8,), max_iter=${budget}, random_state=42)\nexample_network.fit(scaler.transform(example_X_train), example_y_train)\nloss = example_network.loss_curve_`+(id==='N05'?'\nvalidation_predictions = example_network.predict(scaler.transform(example_X_validation))\nvalidation_f1 = f1_score(example_y_validation, validation_predictions, average="macro")':'');data={...fit,budget:Number(budget),training:teachingFits.network.training,labels:teachingFits.network.labels,validation:teachingFits.network.validation,validationLabels:teachingFits.network.validationLabels};
     }else if(id==='C08'||id==='C09'||id==='C08-neighbours'){
       tallSpace=true;const mean=[0,1].map((_,j)=>knnRows.reduce((sum,r)=>sum+(j?r.y:r.x),0)/knnRows.length),scale=[0,1].map((_,j)=>Math.sqrt(knnRows.reduce((sum,r)=>sum+((j?r.y:r.x)-mean[j])**2,0)/knnRows.length));
-      const k=id==='C08-neighbours'?5:Number(choice),neighbours=knnRows.map(r=>({...r,distance:Math.hypot(r.x/scale[0],r.y/scale[1])})).sort((a,b)=>a.distance-b.distance).slice(0,k),votes={A:neighbours.filter(r=>r.group==='A').length,B:neighbours.filter(r=>r.group==='B').length},prediction=votes.A>votes.B?'A':'B',selected=id==='C08-neighbours'?knnRows.find(r=>r.id===choice):null,px=x=>220+x/scale[0]*65,py=y=>255-y/scale[1]*65;
-      art=line(25,255,490,255)+line(220,25,220,295)+label(25,17,'Offsets from query in training SDs · ○ A  □ B')+
-        [-2,-1,0,1,2,3].map(n=>label(220+n*65,274,n,'middle')).join('')+label(28,190,'y offset = 1 SD')+neighbours.map(r=>line(px(0),py(0),px(r.x),py(r.y),'stroke-dasharray="4 3"')).join('')+
-        knnRows.map(r=>'<g><title>'+esc(`${r.id}: (${r.x}, ${r.y}), class ${r.group}`)+'</title>'+(r.group==='A'?teachingCircle(px(r.x),py(r.y),5,r===selected?'accent':''):'<rect x="'+(px(r.x)-5)+'" y="'+(py(r.y)-5)+'" width="10" height="10"'+(r===selected?' class="accent"':'')+'/>')+(neighbours.some(n=>n.id===r.id)?teachingCircle(px(r.x),py(r.y),10,'accent-stroke'):'')+label(px(r.x)+(r.id==='n1'||r.id==='n5'||r.id==='n7'?-23:10),py(r.y)+(r.id==='n6'||r.id==='n9'?-6:4),r.id)+'</g>').join('')+teachingCircle(px(0),py(0),7,'accent')+label(30,306,'Original query: (0, 0)')+label(30,329,`${k} neighbours: ${votes.A} A + ${votes.B} B → ${prediction}`);
-      summary=`k=${k}: ${neighbours.map(r=>`${r.id} (${r.group}), distance ${number(r.distance)}`).join('; ')}. Votes A=${votes.A}, B=${votes.B}; predicted class ${prediction}. All nine training observations and the query stay fixed. The same scaler is fitted to these nine training rows. Distances divide each coordinate difference by its fitting standard deviation; centring cancels in the differences. Only k changes.`;
-      if(selected)summary=`${selected.id}: class ${selected.group}, distance ${number(Math.hypot(selected.x/scale[0],selected.y/scale[1]))}; ${neighbours.some(r=>r.id===selected.id)?'one of the five voters':'outside the five-neighbour vote'}. k=5, the query, fitting observations and learned scale stay fixed. Votes: ${votes.A} A + ${votes.B} B → ${prediction}.`;
-      code=selected?'# model is fitted with n_neighbors=5 on these illustrative rows\nquery = pd.DataFrame({"x": [0.0], "y": [0.0]})\nprepared_query = model.named_steps["scale"].transform(query)\npositions = model.named_steps["model"].kneighbors(\n    prepared_query, return_distance=False\n)\nvotes = example_y.iloc[positions[0]].value_counts()':`example_model = Pipeline([\n    ("prepare", StandardScaler()),\n    ("model", KNeighborsClassifier(n_neighbors=${k})),\n])\nexample_model.fit(example_X, example_y)\nexample_model.predict(pd.DataFrame({"x": [0.0], "y": [0.0]}))  # ${prediction}`;data={k,neighbours,votes,prediction,mean,scale,count:knnRows.length,selected};
+      const query=id==='C08-neighbours'?choice.split(',').map(Number):[0,0],k=id==='C08-neighbours'?5:Number(choice),neighbours=knnRows.map(row=>({...row,distance:Math.hypot((row.x-query[0])/scale[0],(row.y-query[1])/scale[1])})).sort((a,b)=>a.distance-b.distance).slice(0,k),votes={A:neighbours.filter(row=>row.group==='A').length,B:neighbours.filter(row=>row.group==='B').length},prediction=votes.A>votes.B?'A':'B',px=x=>220+x/scale[0]*65,py=y=>255-y/scale[1]*65;
+      art=line(25,255,490,255)+line(220,25,220,295)+label(25,17,'Training-SD units · ○ A  □ B')+[-2,-1,0,1,2,3].map(n=>label(220+n*65,274,n,'middle')).join('')+label(28,190,'y / SD = 1')+neighbours.map(row=>line(px(query[0]),py(query[1]),px(row.x),py(row.y),'stroke-dasharray="4 3"')).join('')+knnRows.map(row=>'<g><title>'+esc(`${row.id}: (${row.x}, ${row.y}), class ${row.group}`)+'</title>'+(row.group==='A'?teachingCircle(px(row.x),py(row.y),5):'<rect x="'+(px(row.x)-5)+'" y="'+(py(row.y)-5)+'" width="10" height="10"/>')+(neighbours.some(n=>n.id===row.id)?teachingCircle(px(row.x),py(row.y),10,'accent-stroke'):'')+label(px(row.x)+(row.id==='n1'||row.id==='n5'||row.id==='n7'?-23:10),py(row.y)+(row.id==='n6'||row.id==='n9'?-6:4),row.id)+'</g>').join('')+teachingCircle(px(query[0]),py(query[1]),7,'accent')+label(30,306,`Query: (${query.join(', ')})`)+label(30,329,`${k} neighbours: ${votes.A} A + ${votes.B} B → ${prediction}`);
+      summary=`Query (${query.join(', ')}): ${votes.A} A + ${votes.B} B → ${prediction}. Neighbours: ${neighbours.map(row=>row.id).join(', ')}.`;
+      code=id==='C08-neighbours'?`query = pd.DataFrame({"x": [${query[0]}], "y": [${query[1]}]})\nprepared_query = model.named_steps["scale"].transform(query)\npositions = model.named_steps["model"].kneighbors(\n    prepared_query, return_distance=False\n)\nvotes = example_y.iloc[positions[0]].value_counts()`:`example_model = Pipeline([\n    ("prepare", StandardScaler()),\n    ("model", KNeighborsClassifier(n_neighbors=${k})),\n])\nexample_model.fit(example_X, example_y)\nexample_model.predict(pd.DataFrame({"x": [0.0], "y": [0.0]}))`;
+      data={k,neighbours,votes,prediction,mean,scale,rows:knnRows,count:knnRows.length,query};
     }else if(id==='C14'){
       smallTree=true;const row=treeRows.find(r=>r.id===choice),left=row.width<=5,lower=row.length<=7,prediction=left?'A':lower?'B':'A',conditions=[`width ${row.width} ≤ 5: ${left?'yes':'no'}`,...(left?[]:[`length ${row.length} ≤ 7: ${lower?'yes':'no'}`])];
       const node=(x,y,w,value,active=false)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="40" rx="4" class="'+(active?'accent':'')+'"/>'+text(x+w/2,y+25,value,'style="font-size:14px" text-anchor="middle"');
@@ -560,7 +545,7 @@
       code=`example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[["width", "length"]], example["class"])\nrow = pd.DataFrame([{"width": ${row.width}, "length": ${row.length}}])\nexample_model.predict(row)  # ${prediction}`;data={row,conditions,prediction,count:treeRows.length};
     }else if(id==='R10'||id==='R10-leaf'){
       const leafMode=id==='R10-leaf',key=`${leafMode?'leaf':'depth'}/${choice}`,fit=treeComplexityFits[key],px=x=>45+x/15*425,py=y=>185-y/20*155;
-      art=line(45,185,470,185)+line(45,185,45,25)+label(45,17,'Fitted training predictions · same 16 rows')+'<path d="'+fit.segments.map(([lo,hi,y],i)=>`${i?'L':'M'}${px(lo)} ${py(y)}H${px(hi)}`).join('')+'" fill="none" class="accent-stroke"/>'+treeComplexityRows.map(([x,y])=>teachingCircle(px(x),py(y),4)).join('')+[0,5,10,15].map(x=>label(px(x),203,x,'middle')).join('')+[0,10,20].map(y=>label(12,py(y)+4,y)).join('')+label(45,231,`${leafMode?'min_samples_leaf':'max_depth'}=${choice}: ${fit.leaves} leaves`);
+      art=line(45,185,470,185)+line(45,185,45,25)+label(45,17,'Fitted predictions')+'<path d="'+fit.segments.map(([lo,hi,y],i)=>`${i?'L':'M'}${px(lo)} ${py(y)}H${px(hi)}`).join('')+'" fill="none" class="accent-stroke"/>'+treeComplexityRows.map(([x,y])=>teachingCircle(px(x),py(y),4)).join('')+[0,5,10,15].map(x=>label(px(x),203,x,'middle')).join('')+[0,10,20].map(y=>label(12,py(y)+4,y)).join('')+label(45,231,`${leafMode?'min_samples_leaf':'max_depth'}=${choice}: ${fit.leaves} leaves`);
       summary=`${leafMode?'min_samples_leaf':'max_depth'}=${choice}: ${fit.leaves} leaves. Each leaf predicts its fitting-target mean. ${leafMode?'Larger leaf support limits tiny partitions.':'More depth permits finer partitions.'} This training fit does not establish better validation performance.`;
       code=`example_model = DecisionTreeRegressor(${leafMode?'min_samples_leaf':'max_depth'}=${choice}, random_state=42)\nexample_model.fit(example_X_train, example_y_train)`;data={...fit,parameter:leafMode?'min_samples_leaf':'max_depth',value:choice,rows:treeComplexityRows};
     }else if(id==='R09'){
@@ -590,8 +575,8 @@
       const degree=Number(choice),rows=polynomialTrain.map(([x])=>[x,...Array.from({length:degree},(_,i)=>x**(i+1))]);
       const headers=['x',...Array.from({length:degree},(_,i)=>i?'x^'+(i+1):'x')];
       art=headers.map((h,j)=>label(40+j*98,25,j?'feature '+h:'input x')).join('')+rows.map((row,i)=>row.map((n,j)=>label(40+j*98,53+i*25,number(n))).join('')).join('');
-      summary=`Degree ${degree} maps the same six x values into powers 1 through ${degree}. There is no fitted prediction curve yet; the next lesson combines these terms with a model.`;
-      if(id==='R08-expansion')summary=`The polynomial step maps the same six fitting x values into ${degree} power columns. The prediction model has not been fitted. This is the column expansion requested in Follow; validation comes after fitting the complete recipe.`;
+      summary=`Degree ${degree} creates powers 1 through ${degree}. The next lesson fits a model to these columns.`;
+      if(id==='R08-expansion')summary=`The polynomial step creates ${degree} power columns. This expands the inputs; it does not fit the prediction model.`;
       code=id==='R08-expansion'?`model = Pipeline([\n    ("polynomial", PolynomialFeatures(degree=${degree}, include_bias=False)),\n    ("scale", StandardScaler()),\n    ("model", Ridge()),\n])\nanswer = model.named_steps["polynomial"].fit_transform(example[["x"]])`:`expander = PolynomialFeatures(degree=${degree}, include_bias=False)\nexpanded = expander.fit_transform(example[["x"]])`;data={degree,rows,trainingCount:polynomialTrain.length};
     }else if(id==='R08'){
       const degree=Number(choice),coefficients=polynomialFit(polynomialTrain,degree,{alpha:1,scale:true}),predict=x=>polynomialPrediction(coefficients,x),rmse=rows=>Math.sqrt(rows.reduce((sum,[x,y])=>sum+(y-predict(x))**2,0)/rows.length),trainRMSE=rmse(polynomialTrain),validationRMSE=rmse(polynomialValidation),px=x=>45+x*85,py=y=>185-y/20*155;
@@ -599,25 +584,24 @@
       summary=`Degree ${degree}: training RMSE ${number(trainRMSE)}; validation RMSE ${number(validationRMSE)}. The scaled Ridge curve (alpha=1) is fitted only to the same six training rows. Five fixed validation rows measure how it generalises; a smaller training error alone does not justify a degree. No final test rows are used.`;
       code=`example_model = Pipeline([\n    ("polynomial", PolynomialFeatures(degree=${degree}, include_bias=False)),\n    ("scale", StandardScaler()),\n    ("model", Ridge(alpha=1.0)),\n])\nexample_model.fit(example_X_train, example_y_train)\npredictions = example_model.predict(example_X_validation)\nvalidation_rmse = root_mean_squared_error(example_y_validation, predictions)`;data={degree,alpha:1,scaled:true,coefficients,trainRMSE,validationRMSE,trainingCount:polynomialTrain.length,validationCount:polynomialValidation.length,points:Array.from({length:61},(_,i)=>[i/12,predict(i/12)])};
     }else{
-      const means=[pcaRows.reduce((sum,r)=>sum+r.x,0)/pcaRows.length,pcaRows.reduce((sum,r)=>sum+r.y,0)/pcaRows.length],scales=[Math.sqrt(pcaRows.reduce((sum,r)=>sum+(r.x-means[0])**2,0)/pcaRows.length),Math.sqrt(pcaRows.reduce((sum,r)=>sum+(r.y-means[1])**2,0)/pcaRows.length)],centered=pcaRows.map(r=>({...r,x:(r.x-means[0])/scales[0],y:(r.y-means[1])/scales[1]})),xx=centered.reduce((sum,r)=>sum+r.x*r.x,0),yy=centered.reduce((sum,r)=>sum+r.y*r.y,0),xy=centered.reduce((sum,r)=>sum+r.x*r.y,0),angle=.5*Math.atan2(2*xy,xx-yy),c=Math.cos(angle),s=Math.sin(angle),scores=centered.map(r=>({id:r.id,pc1:-c*r.x-s*r.y,pc2:-s*r.x+c*r.y})),row=pcaRows.find(r=>r.id===choice),score=scores.find(r=>r.id===choice),share=(xx+yy+Math.hypot(xx-yy,2*xy))/(2*(xx+yy));
+      const components=Number(choice),means=[pcaRows.reduce((sum,row)=>sum+row.x,0)/pcaRows.length,pcaRows.reduce((sum,row)=>sum+row.y,0)/pcaRows.length],scales=[Math.sqrt(pcaRows.reduce((sum,row)=>sum+(row.x-means[0])**2,0)/pcaRows.length),Math.sqrt(pcaRows.reduce((sum,row)=>sum+(row.y-means[1])**2,0)/pcaRows.length)],centered=pcaRows.map(row=>({...row,x:(row.x-means[0])/scales[0],y:(row.y-means[1])/scales[1]})),xx=centered.reduce((sum,row)=>sum+row.x**2,0),yy=centered.reduce((sum,row)=>sum+row.y**2,0),xy=centered.reduce((sum,row)=>sum+row.x*row.y,0),angle=.5*Math.atan2(2*xy,xx-yy),c=Math.cos(angle),sn=Math.sin(angle),scores=centered.map(row=>({id:row.id,pc1:-c*row.x-sn*row.y,...(components===2?{pc2:-sn*row.x+c*row.y}:{})})),share=(xx+yy+Math.hypot(xx-yy,2*xy))/(2*(xx+yy));
       const px=x=>40+x*20,py=y=>185-y*20,sx=x=>390+x*21,sy=y=>112-y*21;
-      art=line(40,185,180,185)+line(40,185,40,45)+label(40,17,'Original features')+[0,3,6].map(n=>label(px(n),202,n,'middle')+label(26,py(n)+4,n,'end')).join('')+line(px(means[0]),py(means[1]),px(means[0]-c*2.6),py(means[1]-s*2.6),'class="accent-stroke"')+line(px(means[0]),py(means[1]),px(means[0]-s*2.6),py(means[1]+c*2.6),'class="accent-stroke"')+label(56,169,'PC1')+label(49,65,'PC2')+line(280,112,500,112)+line(390,30,390,185)+[-4,0,4].map(n=>label(sx(n),130,n,'middle')).join('')+[-2,2].map(n=>label(380,sy(n)+4,n,'end')).join('')+label(295,17,'PCA coordinates')+pcaRows.map(r=>teachingCircle(px(r.x),py(r.y),r.id===choice?7:4,r.id===choice?'accent':'')+label(px(r.x)+5,py(r.y)-7,r.id)).join('')+scores.map(r=>teachingCircle(sx(r.pc1),sy(r.pc2),r.id===choice?7:4,r.id===choice?'accent':'')+label(sx(r.pc1)+6,sy(r.pc2)-6,r.id)).join('')+label(75,209,'features: x and y')+label(345,209,'PC1 and PC2');
-      summary=`${row.id}: original (${row.x}, ${row.y}) → standardised (${number((row.x-means[0])/scales[0])}, ${number((row.y-means[1])/scales[1])}) → scores (${number(score.pc1)}, ${number(score.pc2)}). The fixed fitting mean is (${means.join(', ')}); each fitting SD is ${number(scales[0])}. PC1 combines the standardised columns with weights (${number(-c)}, ${number(-s)}) and retains ${number(share*100)}% of variance. Highlighting a row changes neither the scale nor the fitted axes.`;
-      code=`scaled = StandardScaler().fit_transform(example[["x", "y"]])\nexample_pca = PCA(n_components=2)\nscores = example_pca.fit_transform(scaled)`;data={row,score,scores,means,scales,prepared:centered.map(r=>[r.x,r.y]),weights:[[-c,-s],[-s,c]],varianceShare:share,count:pcaRows.length};
+      art=line(40,185,180,185)+line(40,185,40,45)+label(40,17,'Original features')+[0,3,6].map(n=>label(px(n),202,n,'middle')+label(26,py(n)+4,n,'end')).join('')+line(px(means[0]),py(means[1]),px(means[0]-c*2.6),py(means[1]-sn*2.6),'class="accent-stroke"')+(components===2?line(px(means[0]),py(means[1]),px(means[0]-sn*2.6),py(means[1]+c*2.6),'class="accent-stroke"')+label(49,65,'PC2'):'')+label(78,174,'PC1')+line(280,112,500,112)+(components===2?line(390,30,390,185)+[-2,2].map(n=>label(380,sy(n)+4,n,'end')).join(''):'')+[-4,0,4].map(n=>label(sx(n),130,n,'middle')).join('')+label(295,17,components+' component'+(components===1?'':'s'))+pcaRows.map(row=>teachingCircle(px(row.x),py(row.y),4)).join('')+scores.map(row=>teachingCircle(sx(row.pc1),components===2?sy(row.pc2):112,4)).join('')+label(170,222,'x')+label(30,40,'y')+label(345,209,'PC1')+(components===2?label(402,44,'PC2'):'');
+      summary=`${components} component${components===1?'':'s'} retain${components===1?'s':''} ${number((components===1?share:1)*100)}% of variance. Output: ${pcaRows.length} rows × ${components} column${components===1?'':'s'}.`;
+      code=`scaled = StandardScaler().fit_transform(example[["x", "y"]])\nexample_pca = PCA(n_components=${components})\nscores = example_pca.fit_transform(scaled)`;data={components,scores,means,scales,prepared:centered.map(row=>[row.x,row.y]),weights:[[-c,-sn],[-sn,c]].slice(0,components),varianceShare:share,retainedVariance:components===1?share:1,count:pcaRows.length};
     }
     const svg='<div class="teaching-visual-scroll" tabindex="0" role="region" aria-label="'+(smallTree?'Tree path':'Teaching chart; scroll if needed')+'"><svg class="concept-visual data-teaching-visual'+(smallTree?' is-tree':'')+'" viewBox="0 0 '+(smallTree?'340 235':tallSpace?'520 340':'520 235')+'" role="img" aria-label="'+esc(summary)+'"><title>'+esc(summary)+'</title><g>'+art+'</g></svg></div>';
     return {summary,code,svg,data};
   }
-  function mlResult(result){return result.svg+'<p>'+esc(result.summary)+'</p><pre><code>'+esc(result.code)+'</code></pre>';}
   function comparisonSummary(id,result){
     const d=result.data;
     if(['F02','F03','F04','F07','W03','U02','W04','W07','U09'].includes(id))return result.summary;
     if(id==='U03')return `${d.k} groups · inertia ${number(d.inertia)} · silhouette ${number(d.silhouette)}; crosses are fitted centroids.`;
     if(id==='U06')return `Seed ${d.seed} · four groups, one start · inertia ${number(d.inertia)}.`;
-    if(id==='U07')return `Merge ${d.highlight+1}: distance ${number(d.linkage[d.highlight][2])}; ${d.linkage[d.highlight][3]} rows.`;
+    if(id==='U07')return result.summary;
     if(id==='U07-scale')return `${d.geometry} coordinates · final merge distance ${number(d.linkage.at(-1)[2])}.`;
     if(id==='U08')return `${d.geometry} geometry · ${d.k} groups · cut distance ${number(d.cut)}.`;
-    if(id==='N02')return `Iteration ${d.iteration}: loss ${number(d.selectedLoss)} · the fitted history stays fixed.`;
+    if(id==='N02')return result.summary;
     if(id==='N05')return `Budget ${d.budget}: loss ${number(d.loss.at(-1))}; validation macro F1 ${number(d.validationF1)}.`;
     if(id==='C08-neighbours')return result.summary;
     if(id==='C08'||id==='C09')return `k=${d.k}: ${d.votes.A} A + ${d.votes.B} B → ${d.prediction}; nearest rows ${d.neighbours.map(r=>r.id).join(', ')}.`;
@@ -628,19 +612,10 @@
     if(id==='C10'||id==='C11')return `C=${d.C}: margins x=±${number(d.margin)}, boundary x=0, ${d.support.length} support candidates.`;
     if(id==='R07'||id==='R08-expansion')return `Degree ${d.degree}: six rows → ${d.degree} power columns.`;
     if(id==='R08')return `Degree ${d.degree}: training RMSE ${number(d.trainRMSE)}, validation RMSE ${number(d.validationRMSE)}.`;
-    return `${d.row.id}: (${d.row.x}, ${d.row.y}) → (${number(d.score.pc1)}, ${number(d.score.pc2)}).`;
-  }
-  function observations(id){
-    if(id==='C08'||id==='C09')return knnRows.map(r=>`${r.id}: (${r.x}, ${r.y}), class ${r.group}`).join('; ')+'. Query: (0, 0).';
-    if(id==='C14')return treeRows.map(r=>`${r.id}: width ${r.width}, length ${r.length}, class ${r.group}`).join('; ')+'.';
-    if(id==='R10'||id==='R10-leaf')return treeComplexityRows.map(([x,y])=>`(${x}, ${y})`).join('; ')+'. Same 16 fitting rows.';
-    if(id==='R09')return regressionRows.map(r=>`${r.id}: x=${r.x}, target=${r.y}`).join('; ')+'.';
-    if(id==='R07'||id==='R08')return `Training (x, y): ${polynomialTrain.map(p=>`(${p.join(', ')})`).join(', ')}. Validation: ${polynomialValidation.map(p=>`(${p.join(', ')})`).join(', ')}.`;
-    if(['C10','C11','C11-gamma'].includes(id))return rbfRows.map(r=>`${r.id}: (${r.x}, ${r.y}), class ${r.group}`).join('; ')+'. Prepared coordinates stay fixed.';
-    return pcaRows.map(r=>`${r.id}: (${r.x}, ${r.y})`).join('; ')+'. All six rows fit the same mean and PCA axes.';
+    return result.summary;
   }
   function observationsTable(id){
-    let columns=['Column','Values in row order'],rows;
+    let columns=['Column','Values'],rows;
     if(['F02','F03','F04','F07','W03','U02','W04','W07','U09'].includes(id))return '';
     if(id==='U03'||id==='U06')rows=[['x',teachingFits[id].rows.map(r=>r[0]).join(', ')],['y',teachingFits[id].rows.map(r=>r[1]).join(', ')]];
     else if(['U07','U08','U09','U07-scale'].includes(id))rows=[['length_mm',teachingFits.ward.rows.map(r=>r[0]).join(', ')],['width_cm',teachingFits.ward.rows.map(r=>r[1]).join(', ')]];
@@ -650,23 +625,24 @@
     else if(id==='R10'||id==='R10-leaf')rows=[['x',treeComplexityRows.map(r=>r[0]).join(', ')],['target',treeComplexityRows.map(r=>r[1]).join(', ')]];
     else if(['C10','C11','C11-gamma'].includes(id))rows=['A','B'].map(group=>['Class '+group,rbfRows.filter(r=>r.group===group).map(r=>`(${r.x}, ${r.y})`).join('; ')]);
     else if(id==='C08'||id==='C09'||id==='C08-neighbours')rows=['A','B'].map(group=>['Class '+group,knnRows.filter(r=>r.group===group).map(r=>`${r.id}: (${r.x}, ${r.y})`).join('; ')]);
-    else if(id==='C14')rows=['A','B'].map(group=>['Class '+group,treeRows.filter(r=>r.group===group).map(r=>`${r.id}: (${r.width}, ${r.length})`).join('; ')]);
+    else if(id==='C14'){columns=['Class','(width, length)'];rows=['A','B'].map(group=>['Class '+group,treeRows.filter(r=>r.group===group).map(r=>`${r.id}: (${r.width}, ${r.length})`).join('; ')]);}
     else if(id==='R09')rows=[['x',regressionRows.map(r=>r.x).join(', ')],['target',regressionRows.map(r=>r.y).join(', ')]];
     else rows=[['x',pcaRows.map(r=>r.x).join(', ')],['y',pcaRows.map(r=>r.y).join(', ')]];
-    return '<table class="teaching-example-output ml-example-observations"><caption>Fixed illustrative observations'+(id==='C14'?' · (width, length)':'')+'</caption><thead><tr>'+columns.map(x=>'<th scope="col">'+esc(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr><th scope="row">'+(['x','y','target','length_mm','width_cm'].includes(row[0])?'<code data-code-role="column">'+esc(row[0])+'</code>':esc(row[0]))+'</th><td>'+esc(row[1])+'</td></tr>').join('')+'</tbody></table>';
+    return '<table class="teaching-example-output ml-example-observations"><caption class="sr-only">Illustrative data</caption><thead><tr>'+columns.map(x=>'<th scope="col">'+esc(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr><th scope="row">'+(['x','y','target','length_mm','width_cm'].includes(row[0])?'<code data-code-role="column">'+esc(row[0])+'</code>':esc(row[0]))+'</th><td>'+esc(row[1])+'</td></tr>').join('')+'</tbody></table>';
   }
   function visibleResult(id,result){
     const d=result.data;
-    let explanation=id==='U03'||id==='U06'?'Assignments and centroids are fitted to the same scaled observations. IDs identify groups, not known classes.':id==='U09'?'':id.startsWith('U0')?'The observations and their row identities stay fixed. Read the merge distances before interpreting groups.':id==='N02'?'Only the highlighted stored iteration changes; no model is refitted.':id==='N05'?'The architecture, seed and fitting/validation observations stay fixed; only the iteration budget changes.':id==='R07'||id==='R08-expansion'?'Expansion creates power columns; no prediction model has been fitted.':id==='R08'?'Fit expansion, scaling and Ridge only on training rows. Validation observations stay fixed.':id==='C08'||id==='C09'?'Distances use the same nine training rows and their fixed scale; only k changes.':d.kernel==='rbf'?'The zero contour separates predicted regions. Rings identify the fitted support vectors; decision scores are not probabilities.':id==='P01'?'Every row uses the same fitted scale and orthogonal axes; highlighting does not refit PCA.':'';
+    let explanation=id==='U03'||id==='U06'?'Crosses mark centroids; group IDs are not known classes.':id==='U09'?'':id.startsWith('U0')?'':id==='N02'?'':id==='N05'?'':id==='R07'||id==='R08-expansion'?'':id==='R08'?'Fit expansion, scaling and Ridge on training rows; score on validation rows.':id==='C08'||id==='C09'?'Distances use training standard deviations.':d.kernel==='rbf'?'The zero contour separates predicted regions. Rings identify the fitted support vectors; decision scores are not probabilities.':id==='P01'?'':'';
     if(d.kernel==='rbf'&&result.summary.includes('no zero boundary'))explanation+=' No zero contour lies inside this window.';
-    if(d.varianceShare)explanation+=' PC1 retains '+number(d.varianceShare*100)+'% of variance.';
+
     const detail=['U03','U06','U07','U08','U07-scale','N02','N05','C08','C09','C10','C11','C11-gamma','C14','R09','R10','R10-leaf','P01'].includes(id)?comparisonSummary(id,result)+' '+explanation:result.summary;
     return result.svg+'<p>'+esc(detail)+'</p><pre><code>'+esc(result.code)+'</code></pre>';
   }
   function interactive(visual){
     const id=(visual.id||'').replace(/^ML-/,''),spec=mlExplorerSpecs[id];if(!spec||id==='P06')return '';
     const baseline=spec.options[0][0],current=spec.options.some(([value])=>value===visual.choice)?visual.choice:spec.options[1]?.[0]||baseline;
-    return '<section class="teaching-explorer" data-ml-explorer="'+id+'"><h4>'+esc(spec.title)+'</h4><p>Illustrative example · separate from your exercise data.</p>'+observationsTable(id)+'<label class="teaching-visual-controls">'+esc(spec.label)+' <select data-ml-visual-choice>'+spec.options.map(([value,title])=>'<option value="'+value+'"'+(value===current?' selected':'')+'>'+esc(title)+'</option>').join('')+'</select></label><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">'+visibleResult(id,mlExploration(id,current))+'</div></section>';
+    if(spec.static)return '<section class="teaching-explorer teaching-static-example" data-ml-example="'+id+'"><p>Illustrative data</p>'+visibleResult(id,mlExploration(id,current))+'</section>';
+    return '<section class="teaching-explorer" data-ml-explorer="'+id+'"><p>Illustrative data</p>'+observationsTable(id)+'<label class="teaching-visual-controls">'+esc(spec.label)+' <select data-ml-visual-choice>'+spec.options.map(([value,title])=>'<option value="'+value+'"'+(value===current?' selected':'')+'>'+esc(title)+'</option>').join('')+'</select></label><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">'+visibleResult(id,mlExploration(id,current))+'</div></section>';
   }
   const mounted=new WeakSet();
   function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-ml-visual-choice]'),section=control?.closest('[data-ml-explorer]');if(section){const result=section.querySelector('.teaching-visual-result');result.innerHTML=visibleResult(section.dataset.mlExplorer,mlExploration(section.dataset.mlExplorer,control.value));root.FoundationLearning?.highlightContent?.(result);}});}
@@ -674,7 +650,7 @@
     if(visual?.type==='exercise-data')return '';
     const explorer=interactive(visual);if(explorer)return explorer;
     const kind=visual?.type||'tasks',id='ml-arrow-'+(++diagramId),content=(variant(visual)||(types[kind]||types.tasks)()).replaceAll('url(#ml-arrow)','url(#'+id+')');
-    const schematic='<figure class="teaching-illustration ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="'+id+'" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>Schematic · '+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
+    const schematic='<figure class="teaching-illustration ml-concept"><div class="ml-concept-scroll" tabindex="0" role="region" aria-label="'+esc(visual.caption)+'"><svg viewBox="0 0 560 235" role="img" aria-label="'+esc(visual.caption)+'"><title>'+esc(visual.caption)+'</title><defs><marker id="'+id+'" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0L7 3.5L0 7z"/></marker></defs>'+content+'</svg></div><figcaption>'+esc(visual.caption)+'<span class="ml-diagram-scroll-note">Scroll the diagram horizontally if needed.</span></figcaption></figure>';
     return schematic;
   }
   root.MLLearningVisuals={render,thumbnail,interactive,mount,fixtures:teachingFits,explorerSpecs:mlExplorerSpecs,exploration:mlExploration,polynomialFit,exampleRows:{knn:knnRows,tree:treeRows,regression:regressionRows,pca:pcaRows,rbf:rbfRows,treeComplexity:treeComplexityRows,polynomialTrain,polynomialValidation,scaling:scaleExample,residualLine:{rows:dots,coefficients:polynomialFit(dots,1)}},types:[...Object.keys(types),'exercise-data'],family:v=>variant(v)?v.id:v.type};

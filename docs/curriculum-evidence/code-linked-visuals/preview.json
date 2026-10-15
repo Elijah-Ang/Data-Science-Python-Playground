@@ -1,0 +1,22 @@
+{
+  "records": [
+    {
+      "context": "isolated HTTP file",
+      "activity": "V04-1",
+      "pythonGrade": "passed"
+    },
+    {
+      "context": "isolated HTTP file",
+      "activity": "ML-F11-1",
+      "pythonGrade": "passed"
+    },
+    {
+      "context": "opaque HTML-file sandbox",
+      "navigation": "Data to ML",
+      "visualsAndOriginalIndicators": "passed"
+    }
+  ],
+  "pageErrors": [],
+  "requiredSiblingAssets": [],
+  "artifactBytes": 5112724
+}

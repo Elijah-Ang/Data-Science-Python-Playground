@@ -19,7 +19,8 @@ variants = [
     ('foundation', key) for key in ['scatter', 'histogram', 'count-bars', 'mean-bars',
                                   'summary-order', 'boxplot', 'references', 'facets',
                                   'encoding', 'scatter-dimensions', 'density', 'strip',
-                                  'swarm', 'line', 'line-band', 'point-interval', 'violin', 'stacked']
+                                  'swarm', 'line', 'line-band', 'point-interval', 'violin', 'stacked',
+                                  'log-scale', 'exact-bars']
 ] + [('ml', key) for key in ['F02', 'F03', 'F04', 'F07', 'W03', 'U02', 'W04', 'W07',
                             'C08-neighbours', 'R08-expansion', 'C08', 'C09', 'C14', 'R09', 'R10', 'C10', 'C11',
                             'C11-gamma', 'R10-leaf', 'R07', 'R08', 'P01', 'U03', 'U06', 'U07', 'U08', 'U09', 'U07-scale', 'N02', 'N05']]
@@ -50,6 +51,11 @@ with sync_playwright() as pw:
                   document.getElementById('explorer').innerHTML=api.interactive(visual);
                 }''', [kind, key])
                 select = page.locator('select')
+                if key == 'N02':
+                    assert not select.count(), 'Loss-history reading is a static explanation'
+                    assert page.locator('.teaching-static-example svg').count() == 1
+                    checks.append({'kind': kind, 'concept': key, 'theme': theme, 'width': width, 'static': True})
+                    continue
                 assert select.evaluate('e=>e.labels.length') == 1, (kind, key, 'label')
                 assert select.evaluate('e=>e.getBoundingClientRect().height') >= 44, (kind, key, 'touch size')
                 select.select_option(select.locator('option').first.get_attribute('value'))
@@ -59,9 +65,11 @@ with sync_playwright() as pw:
                          else page.locator('.teaching-visual-data').first)
                 baseline = fixed.inner_text()
                 before = page.locator('.teaching-visual-result').inner_text()
+                before_code = page.locator('.teaching-visual-result pre').inner_text()
                 value = select.locator('option').last.get_attribute('value')
                 select.select_option(value)
                 assert page.locator('.teaching-visual-result').inner_text() != before, (kind, key, 'result changed')
+                assert page.locator('.teaching-visual-result pre').inner_text() != before_code, (kind, key, 'Python changed')
                 assert fixed.inner_text() == baseline, (kind, key, 'observations or comparison retained')
                 assert page.locator('.teaching-visual-result').get_attribute('aria-live') == 'polite'
                 overflow = page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1')

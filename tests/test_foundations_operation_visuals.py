@@ -72,7 +72,7 @@ def check_result(actual, expected, context):
             same([clean(value) for value in actual.index], expected['index'], context + ' index')
             if expected.get('indexName'):
                 same(actual.index.name, expected['indexName'], context + ' index name')
-            cells = actual.to_numpy().tolist()
+            cells = actual.to_numpy(dtype=object).tolist()
         same([[clean(value) for value in row] for row in cells], expected['rows'], context + ' cells')
 
 

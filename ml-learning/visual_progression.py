@@ -8,7 +8,7 @@ visible inputs and Python outputs instead of inheriting an introduction.
 EXCEPTIONS = {
     'ML-C08-2': dict(
         concept='Inspect the five-neighbour vote',
-        reason='This task first retrieves neighbour positions through fitted pipeline steps and counts their labels. The diagram fixes k at five and lets learners inspect those rows.'),
+        reason='This task retrieves fitted neighbour positions and counts their labels. The visual keeps k at five while a changed prediction input updates those neighbours and votes.'),
     'ML-R10-2': dict(
         concept='Constrain the number of fitting rows in each leaf',
         reason='The preceding task changes maximum depth. This task introduces minimum leaf support, so its control changes only min_samples_leaf on the same observations.'),
@@ -72,11 +72,12 @@ def apply(registry):
     cards['ML-R08']['exercises'][0]['visual'] = {
         **cards['ML-R08']['visual'], 'id': 'R08-expansion', 'choice': '2'}
     cards['ML-C08']['exercises'][1]['visual'] = {
-        **cards['ML-C08']['visual'], 'id': 'C08-neighbours', 'choice': 'n1'}
+        **cards['ML-C08']['visual'], 'id': 'C08-neighbours', 'choice': '0,0'}
     for guide in cards['ML-C08']['exercises'][1]['syntaxGuidance']['current']:
         if guide.get('id') == 'pipeline-internals':
             guide['code'] = "model.named_steps['scale']"
             guide['meaning'] = 'named_steps accesses the fitted steps by their authored names: scale standardises the query; model contains the five-neighbour classifier. Ordinary Pipeline.predict performs these steps automatically.'
+            guide['example'] = guide['example'].replace("named_steps['prepare']", "named_steps['scale']")
     cards['ML-C08']['exercises'][1]['newInTask'] = [
         dict(code=part.get('code', part.get('title')), title=part.get('title', part.get('code')), meaning=part['meaning'])
         for part in cards['ML-C08']['exercises'][1]['syntaxGuidance']['current']]
