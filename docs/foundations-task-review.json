@@ -1,7 +1,7 @@
 {
   "baseSHA": "0ae290e6301d047dcc4b86977967c591eff786e2",
-  "reviewed": "2026-10-14",
-  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged.",
+  "reviewed": "2026-10-15",
+  "scope": "All 338 Foundations practices across 110 assembled cards retain their existing identities and executable contracts. Authored concept progression, concise briefs, object provenance, explicit identifier roles, new/reused syntax and parameter disclosure are reviewed in final assembly. All 338 reference solutions and targeted equivalent/negative cases were executed with the project scientific-library pins; browser evidence is recorded separately. Presentation review on 2026-10-14 corrected operation-specific visuals and explanations; executable contract hashes remain unchanged. Presentation refinement on 2026-10-15 replaces arbitrary statistical marks with computed observations, aligns representations and preserves all 338 executable contracts.",
   "exercises": {
     "I01-1": {
       "sha256": "1d9395cf4a88ef5779e21b09b0b6ff8f98d05c9f10b475ea9e899f3f522dd3b9",
@@ -2145,9 +2145,10 @@
       ],
       "assessment": "reviewed",
       "note": "Case-insensitive text search applies to values only, with na=False. The chosen output fields and all matching records must be present.",
-      "fullContractSHA256": "4210b34bb7eb0986359a18c87d1fdf6512246bb9d02827464386cbf6ae758ba3",
+      "fullContractSHA256": "6e002358aae584a404f20a5b2c65c1f3dfcac628e9b6a25fecd695fded909011",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "9e5dd3ebf066a71dd5bab1d3c893b1c9cf5c502368e4ae183ebd4177f2dd28b4"
+      "teachingMetadataSHA256": "9e5dd3ebf066a71dd5bab1d3c893b1c9cf5c502368e4ae183ebd4177f2dd28b4",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "W11-2": {
       "sha256": "2b0e222d593039ef2cc3758c6aa0291f6899bf365d4341cdc5070135fa18d3b0",
@@ -2182,9 +2183,10 @@
       ],
       "assessment": "reviewed",
       "note": "Case-insensitive text search applies to values only, with na=False. The chosen output fields and all matching records must be present.",
-      "fullContractSHA256": "cf65388054a9763afe43517cba82d9041467ad751dfecc4c8261ab252e6d26db",
+      "fullContractSHA256": "8d5be01a2c4cf190b0b6f0d9b4982ab3b2df11f904a950b79614fa434ef620df",
       "executionStatus": "passed",
-      "teachingMetadataSHA256": "311ee3084eb5c29e87a8a3b4222baa25b19ba225d50766bacbbcd6fbc802d753"
+      "teachingMetadataSHA256": "311ee3084eb5c29e87a8a3b4222baa25b19ba225d50766bacbbcd6fbc802d753",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "W12-1": {
       "sha256": "ade6ead3c8d1d2b48cd9f97102d22b1f85468a3b9776fb4dd6990a4092c456fc",
@@ -2457,7 +2459,7 @@
       ],
       "assessment": "reviewed",
       "note": "Calendar fields derive from parsed dates, with invalid dates remaining missing. Day-name call syntax is taught when introduced; January/zero replacements are wrong.",
-      "fullContractSHA256": "232a53ab21455cdb2535b82ff67dca136601651f58cce88b7f58b6f29c4608e3",
+      "fullContractSHA256": "bdd7c351d09aa1e04ba4c2463200f201de10433a860a4f2eebb3ca40801b0758",
       "executionStatus": "passed",
       "teachingMetadataSHA256": "b243bbf2621ac479f25b6f4caba6178e291ac47db5599bd966cc8bde9d0cf45b",
       "presentationReview": "2026-10-14: activity visual and explanation aligned to the existing task and solution."
@@ -3720,7 +3722,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair: axis/name substitution and the repeated duration filter were weak. Change converts a coordinate to the required unit while maintaining pairs; Transfer distinguishes pairwise completeness from whole-row completeness. Prepared canvas/labels preserve the focal responsibility.",
-      "fullContractSHA256": "d75a7cfd893bb04f37aa6bae54e8a1fd5c9169c95e210cef60c64ed4628c6b47",
+      "fullContractSHA256": "2cb153c63239fd10085af8f801a5d631144e05c02487119ac18e28ab405090ae",
       "executionStatus": "passed",
       "reviewEvidence": "lesson-responsibilities/audit/responsibility-ledger.json",
       "varietyReview": {
@@ -3731,7 +3733,8 @@
         "decision": "Transform a coordinate into the requested units while preserving row pairing.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "f034a19688d5ec1325ecc36fc43db6a26cb2aeb97d5ac7c0f39f852bc8a518e8"
+      "teachingMetadataSHA256": "f034a19688d5ec1325ecc36fc43db6a26cb2aeb97d5ac7c0f39f852bc8a518e8",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V16-3": {
       "sha256": "ce8c323743e43b6fec0f1f01386e05b6dc627b306b1ada84d478ab10b194708e",
@@ -5466,7 +5469,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain a focused smoothing adaptation. Transfer now makes a controlled two-panel smoothing comparison with the same rows and common limits, rather than repeatedly filtering games.",
-      "fullContractSHA256": "1d4237acc4a7d0a93b44ee8fb9fd0a3c27ff97303274dd95f42707101a211909",
+      "fullContractSHA256": "7643e9cba810867241da04c70531a20164abee9a6fdac17ec7e781e01ce2fe27",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5476,7 +5479,8 @@
         "decision": "Illustrate smoothing on the observed range without inventing further evidence.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "6f28341ff3bcedea206919774e219e7ccc9460a7ca14f301c238571b02bbc328"
+      "teachingMetadataSHA256": "6f28341ff3bcedea206919774e219e7ccc9460a7ca14f301c238571b02bbc328",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V05-2": {
       "sha256": "0eff52067c86847da6e35bae8bcd69e721068793cb31e4113b81c8d9679766c1",
@@ -5492,7 +5496,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain a focused smoothing adaptation. Transfer now makes a controlled two-panel smoothing comparison with the same rows and common limits, rather than repeatedly filtering games.",
-      "fullContractSHA256": "8653240268d1456be4f12c93c24ece2f00a459561c85b9a52be15fe2d4afd81a",
+      "fullContractSHA256": "f807c5d7314463eb6cd6d03c703072e230de0ef232fdb5126550efef78a36c8d",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5502,7 +5506,8 @@
         "decision": "Choose stronger smoothing without changing the sample.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "f49b53ce7ec2d163d40943160d12300efed9653d560d4d1ed9c5f5008384c8b5"
+      "teachingMetadataSHA256": "f49b53ce7ec2d163d40943160d12300efed9653d560d4d1ed9c5f5008384c8b5",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V05-3": {
       "sha256": "cbc5eeb5d111b4991ccbbcc27b6eb403e4d6fa944eaa09db0c92363139e424c7",
@@ -5518,7 +5523,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain a focused smoothing adaptation. Transfer now makes a controlled two-panel smoothing comparison with the same rows and common limits, rather than repeatedly filtering games.",
-      "fullContractSHA256": "26cefd0489520d7ea67a7e72472606bcdc1677527265d2e687afc5f8d78b490c",
+      "fullContractSHA256": "7b0b05274f88d94390ec615b7c4fb1358a802e2690e26d5d3e712ed65629d07d",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5528,7 +5533,8 @@
         "decision": "Control evidence and axis range while comparing a display assumption.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "0cab3a2e3a996903eaa817ebfd1e751844d740d56df1524d319eec22093d27aa"
+      "teachingMetadataSHA256": "0cab3a2e3a996903eaa817ebfd1e751844d740d56df1524d319eec22093d27aa",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V06-1": {
       "sha256": "cd8315e903b63f6ff2028d8cd67fe8cde0ef19a0d9ad56eadb7795411832a941",
@@ -5782,7 +5788,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain exploratory group density and inner observed points. Transfer supplies a separate raw-point evidence layer after suppressing the built-in inner summary. This keeps tiny-sample density claims cautious and makes deleting evidence observable.",
-      "fullContractSHA256": "e5d56a65ea4a66d943d5741297d743c9efd5b5d617fdad0609ec83b624532842",
+      "fullContractSHA256": "7e121f2d83510ee111e0d31a8889ee1115be089634bd5a38e28622d076a61a20",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5792,7 +5798,8 @@
         "decision": "Draw an exploratory density while acknowledging the tiny sample.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "9ac9aec966536243d669a408692d9066b31b4ef731615e8107aa5515842681f0"
+      "teachingMetadataSHA256": "9ac9aec966536243d669a408692d9066b31b4ef731615e8107aa5515842681f0",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V12-2": {
       "sha256": "73a12f7abf3074a5708db89a698b586e3539a17ecc9005d8ee5f219964b3f01f",
@@ -5808,7 +5815,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain exploratory group density and inner observed points. Transfer supplies a separate raw-point evidence layer after suppressing the built-in inner summary. This keeps tiny-sample density claims cautious and makes deleting evidence observable.",
-      "fullContractSHA256": "f6a79eddc0e66c2d52c1eebf23b87c81268ccd2a64b880af0a4c17ac98925073",
+      "fullContractSHA256": "10f2e6ccced14cf16559f06399da88bfb148a869d25f6a3b215d287db404406d",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5818,7 +5825,8 @@
         "decision": "Choose observed-value markers rather than quartile-only markers.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "0b01f0904af19eee1b150b65001bea10527d036a36e40aa0fe92dae22f5bb049"
+      "teachingMetadataSHA256": "0b01f0904af19eee1b150b65001bea10527d036a36e40aa0fe92dae22f5bb049",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V12-3": {
       "sha256": "39190f84bbbb75ad52284e102182d7945f8f2eeb4eacc89500d2f6d045cb281a",
@@ -5834,7 +5842,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain exploratory group density and inner observed points. Transfer supplies a separate raw-point evidence layer after suppressing the built-in inner summary. This keeps tiny-sample density claims cautious and makes deleting evidence observable.",
-      "fullContractSHA256": "2dfb2b2174bfc3ec3a20f1e0dfd262d854b817694daa34db2ce0b407674819ff",
+      "fullContractSHA256": "f4677bdbad7b7773536115addc4ac3c4c6f9d20c81821278d4e30f2c650cdb84",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -5844,7 +5852,8 @@
         "decision": "Combine an exploratory density with a separate auditable raw-evidence layer.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "60bb1824afd8c8bf1315af2d8a963bed10ff424f14911ebf47e89aac50e338e2"
+      "teachingMetadataSHA256": "60bb1824afd8c8bf1315af2d8a963bed10ff424f14911ebf47e89aac50e338e2",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V14-1": {
       "sha256": "1686d9d45b1df2ea573a338ba79fd3e515a35e01fb17559b9c510ba7e71db2e0",
@@ -6022,7 +6031,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "c8e868609a661a2d6061be2903736a024fbc2d008b7513372d78772f66518400",
+      "fullContractSHA256": "f25c9504edd8177214d6fce16fd7a4c1983acff117a5c40426532284d7e70e97",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6032,7 +6041,8 @@
         "decision": "Retrieve smoothing and its raw-evidence overlay with repeated real zeros.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "bb014226f37d10de9ba4bd0bc323ea5e73a0ad9657ac18c7ba004eaf93ce53b8"
+      "teachingMetadataSHA256": "bb014226f37d10de9ba4bd0bc323ea5e73a0ad9657ac18c7ba004eaf93ce53b8",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "VR4-2": {
       "sha256": "05e78365a0fb415c2ccd77484e7e48eb35cb52a0d52b846703641b4e2c904044",
@@ -6658,7 +6668,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
-      "fullContractSHA256": "2df0c7572cd72b691e87820c8d22939c612d4b7d7f0faf2d0da603409ac10a2e",
+      "fullContractSHA256": "424ec0d9c081ab789ccdc12c0bfcdc7420fa55d532868455bdf987e963785823",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6668,7 +6678,8 @@
         "decision": "Choose complementary views for total composition and a precise component comparison.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "6746f4852c3778906dfe90d2dd0ac050c18f25f609a7eae23dc54797d844ad96"
+      "teachingMetadataSHA256": "6746f4852c3778906dfe90d2dd0ac050c18f25f609a7eae23dc54797d844ad96",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V30-3": {
       "sha256": "aafe623d511b68e197c60dcf423b5bcc9232c91bc25096500a811852cc0f3453",
@@ -6684,7 +6695,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain actual component counts and correct bottoms. Change now contrasts composition with a precise component comparison. Transfer computes within-item 100% composition, so it does not repeat Change’s common-baseline panel.",
-      "fullContractSHA256": "3ec31011bbbad991c8cb038e84954e63577f610d4d4a0377fab960b275e34cc9",
+      "fullContractSHA256": "9cfa75d9d9f8d89277333709d4d9989bf5e622d48c712dd5c844b3e782a3d9fa",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6694,7 +6705,8 @@
         "decision": "Normalize components by their own total to compare relative composition.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "ca0a3bd503f7714623d96db20ae26cc8cb3052a78c8f5f40cb904c30e2c71c57"
+      "teachingMetadataSHA256": "ca0a3bd503f7714623d96db20ae26cc8cb3052a78c8f5f40cb904c30e2c71c57",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V31-1": {
       "sha256": "b64992e90efdbae6826d3817898dc1dada405e1a06eeb355a964910a1a1a70ee",
@@ -6710,7 +6722,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain grid ownership and corner-panel reduction. Transfer selects three genuine measurements, excludes a numeric identifier and retains category context instead of repeating a filtered two-variable grid.",
-      "fullContractSHA256": "c5d0390c5c3683b41adb380491c4bd0d0763a9ee560c47e185ddc0ffc4b35371",
+      "fullContractSHA256": "b48c5b1eaecc5c0eef38e5e416d027a6c4a7693cf99316d7da9b3bf27ea2ae7b",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6720,7 +6732,8 @@
         "decision": "Inspect selected pair relationships and observed marginal distributions.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "dd1d7fa4e8bf91e4ff6ac182cc84f13821372a6865fb31ac9c59a20bbd1bc54e"
+      "teachingMetadataSHA256": "dd1d7fa4e8bf91e4ff6ac182cc84f13821372a6865fb31ac9c59a20bbd1bc54e",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V31-2": {
       "sha256": "5e46e9f449324d020030973a882a050641b94a5c2cb3a6c97de04ba6b9acf0d3",
@@ -6736,7 +6749,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain grid ownership and corner-panel reduction. Transfer selects three genuine measurements, excludes a numeric identifier and retains category context instead of repeating a filtered two-variable grid.",
-      "fullContractSHA256": "a8da9a68cf231a40387b95b5eda4028c8bbd6ac3ef889c9f1fd77a6743020639",
+      "fullContractSHA256": "d36c61a5e861dfe187c4f9e328a18c2ff897ac9b2c8633879b5476c0c118aa66",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6746,7 +6759,8 @@
         "decision": "Choose measurements and remove duplicated panels from a focused question.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "18346b404663ede6b4992ef3d07c954309950e3f5225085bff7a979a50ae3005"
+      "teachingMetadataSHA256": "18346b404663ede6b4992ef3d07c954309950e3f5225085bff7a979a50ae3005",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V31-3": {
       "sha256": "8b92deb652760584c38c6b76e758cac180d3aeb05421c9641fcddf963c20fb1f",
@@ -6762,7 +6776,7 @@
       ],
       "assessment": "reviewed",
       "note": "Retain grid ownership and corner-panel reduction. Transfer selects three genuine measurements, excludes a numeric identifier and retains category context instead of repeating a filtered two-variable grid.",
-      "fullContractSHA256": "fd04e0db11056a680d9010b9e2baaf62bc208aab4525e7b8312bb55ea6349295",
+      "fullContractSHA256": "af4f7d4d92b37f0d01ea388a24ffd9a248e295b66aec038dce7409ac3ff2b734",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -6772,7 +6786,8 @@
         "decision": "Select measurements and remove redundant pair panels while retaining category context.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "66ba38bbf834cd91cc1d7b36c826eaeff10769ce8e67906d932dcc09c8f7f8e6"
+      "teachingMetadataSHA256": "66ba38bbf834cd91cc1d7b36c826eaeff10769ce8e67906d932dcc09c8f7f8e6",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "V32-1": {
       "sha256": "963be318c183bec305ee567062aa208da461ee8ba830f94b2e33c94cabb278f7",
@@ -6999,7 +7014,7 @@
       ],
       "assessment": "reviewed",
       "note": "Repair exact Transfer clones while preserving intentional retrieval. Author fresh question/evidence contracts from the full intended source list; VR1 and VR2 restore their silently omitted fourth skills. Reviews require already-taught methods, and their independent task/data/negative cases are inspectable below.",
-      "fullContractSHA256": "3c15980dd4d0502880bf3ba79031ee1ad038ad49402587efd702fe19ef96acc0",
+      "fullContractSHA256": "0a0a0535798df711a4d0886eb5b8be95bb5e75f68fd1d4a2e2353cc2ac87d3d3",
       "executionStatus": "passed",
       "varietyReview": {
         "reviewed": "2026-10-11",
@@ -7009,7 +7024,8 @@
         "decision": "Retrieve multivariable selection and panel redundancy reduction without category grouping.",
         "verification": "Pinned native reference and semantic mutation audits passed; actual Chromium teaching/parameter panels and diagrams reviewed across desktop/mobile, including 320px. Independent final source and representative rendered review recorded separately. Hosted exact-head validation remains a draft-PR gate."
       },
-      "teachingMetadataSHA256": "8ecd15f9de4069198619831a39dbe9f147c9b12ad73915c892de63f22c613586"
+      "teachingMetadataSHA256": "8ecd15f9de4069198619831a39dbe9f147c9b12ad73915c892de63f22c613586",
+      "presentationReview": "2026-10-15: computed statistical visuals, stage labels and parameter introduction reviewed against unchanged executable contracts; see review-refinement evidence."
     },
     "VR6-4": {
       "sha256": "4f934cce7628a0d66aac11d229b1dd362bb032e1f77b32c3bbe739052b1c589f",

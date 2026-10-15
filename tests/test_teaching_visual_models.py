@@ -4,11 +4,11 @@ import subprocess
 from pathlib import Path
 import numpy as np
 from sklearn.decomposition import PCA
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import mean_squared_error
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
@@ -17,23 +17,34 @@ script = '''const fs=require('fs'),vm=require('vm'),context={window:{}};
 vm.runInNewContext(fs.readFileSync('ml-learning/visuals.js','utf8'),context);
 const v=context.window.MLLearningVisuals;
 console.log(JSON.stringify({rows:v.exampleRows,
-  knn:['1','3','5'].map(n=>v.exploration('C08',n).data),
+  knn:['1','3','5'].map(n=>v.exploration('C08',n).data).concat([v.exploration('C09','9').data]),
   trees:v.exampleRows.tree.map(r=>v.exploration('C14',r.id).data),
   regression:v.exampleRows.regression.map(r=>v.exploration('R09',r.id).data),
   svm:['0.05','0.2','1'].map(n=>v.exploration('C10',n,{kernel:'linear'}).data),
-  polynomial:['1','2','4'].map(n=>v.exploration('R07',n).data),
-  rbf:['0.5','2','10'].map(n=>v.exploration('C11',n).data).concat(['0.1','1','10'].map(n=>v.exploration('C11-gamma',n).data)),
-  complexity:['1','3','None'].map(n=>v.exploration('R10',n).data).concat(['1','2','3'].map(n=>v.exploration('R10-leaf',n).data)),
+  polynomial:['1','2','3','4'].map(n=>v.exploration('R08',n).data),
+  rbf:[v.exploration('C10','1').data].concat(['0.5','2','10'].map(n=>v.exploration('C11',n).data)).concat(['0.1','1','10'].map(n=>v.exploration('C11-gamma',n).data)),
+  complexity:['3','5','None'].map(n=>v.exploration('R10',n).data).concat(['1','5','10'].map(n=>v.exploration('R10-leaf',n).data)),
   pca:v.exploration('P01','p1').data}));'''
 examples = json.loads(subprocess.check_output(['node', '-e', script], cwd=ROOT))
+
+scaling = examples['rows']['scaling']
+scaler = StandardScaler().fit(scaling['rows'])
+np.testing.assert_allclose(scaling['mean'], scaler.mean_)
+np.testing.assert_allclose(scaling['scale'], scaler.scale_)
+np.testing.assert_allclose(scaling['prepared'], scaler.transform(scaling['rows']))
+residual_line = examples['rows']['residualLine']
+line_rows = np.array(residual_line['rows'])
+line_model = LinearRegression().fit(line_rows[:, :1], line_rows[:, 1])
+np.testing.assert_allclose(residual_line['coefficients'], [line_model.intercept_, line_model.coef_[0]])
 
 rows = examples['rows']['knn']
 X = np.array([[r['x'], r['y']] for r in rows])
 y = [r['group'] for r in rows]
 for example in examples['knn']:
-    model = KNeighborsClassifier(n_neighbors=example['k']).fit(X, y)
-    assert model.predict([[0, 0]])[0] == example['prediction']
-    distances, indices = model.kneighbors([[0, 0]])
+    prepared = StandardScaler().fit(X)
+    model = KNeighborsClassifier(n_neighbors=example['k']).fit(prepared.transform(X), y)
+    assert model.predict(prepared.transform([[0, 0]]))[0] == example['prediction']
+    distances, indices = model.kneighbors(prepared.transform([[0, 0]]))
     assert [rows[i]['id'] for i in indices[0]] == [r['id'] for r in example['neighbours']]
     np.testing.assert_allclose(distances[0], [r['distance'] for r in example['neighbours']])
 
@@ -62,7 +73,7 @@ for example in examples['svm']:
 train = np.array(examples['rows']['polynomialTrain'])
 validation = np.array(examples['rows']['polynomialValidation'])
 for example in examples['polynomial']:
-    model = make_pipeline(PolynomialFeatures(degree=example['degree'], include_bias=False), LinearRegression())
+    model = make_pipeline(PolynomialFeatures(degree=example['degree'], include_bias=False), StandardScaler(), Ridge(alpha=1))
     model.fit(train[:, :1], train[:, 1])
     curve = np.array(example['points'])
     np.testing.assert_allclose(model.predict(curve[:, :1]), curve[:, 1], atol=1e-7)

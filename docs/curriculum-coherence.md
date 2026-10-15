@@ -1,5 +1,7 @@
 # Lesson order, argument values and visual alignment
 
+This report describes the earlier presentation revision. See [the current review repairs and scientific visual audit](curriculum-review-refinement.md) for the follow-up to the `22dd968` review, including the 112 Python replacements and current validation evidence.
+
 The reading pane now places Follow code, syntax descriptions and current arguments before the exercise dataframe and task. ML follows the same order for its workflow, current syntax and essential supplied-state/evidence notes. The task remains immediately below the visible dataframe. Hint and Solution remain the two closed help rows; the two desktop panes scroll independently.
 
 Histogram Follow and Change now demonstrate integer bin counts (`bins=4`, then `bins=2`). Transfer demonstrates explicit interval edges with bars whose numeric widths match those edges. The argument row visibly contrasts a count, `[0, 2, 4, 6]`, unequal intervals and automatic rules.

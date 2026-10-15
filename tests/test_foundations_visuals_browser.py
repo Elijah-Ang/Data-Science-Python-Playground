@@ -29,9 +29,8 @@ with sync_playwright() as pw:
     })''')
     failures.extend([{'width':width,'theme':theme,'deck':deck,**b} for b in bad])
     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
- # Essential stage teaching remains visible. The source concept is retained in
- # an optional closed reference; expand it only when inspecting that reference.
- for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facet-hist'),('#inspect/IR2/1','loc')]:
+ # Essential stage teaching remains visible and the Reference panel stays absent.
+ for route,variant in [('#inspect/I10/1','membership'),('#wrangle/W24/1','inner-merge'),('#visualise/V33/2','facets'),('#inspect/IR2/1','loc-list')]:
   page.evaluate('(route)=>{location.hash=route}',route)
   page.wait_for_function('''(route)=>LearningRoutes.route('data',location,document.body)===route.replace(/^#/,'')
    && document.querySelector('.foundation-practices [aria-current=step] strong')?.textContent===FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])].label
@@ -39,7 +38,7 @@ with sync_playwright() as pw:
   round_data=page.evaluate('''route=>{const r=FoundationsCurriculum.lessons.find(l=>l.id===route.split('/')[1]).rounds[Number(route.split('/')[2])];return {variant:r.visual.variant,teaching:r.teaching||null}}''',route)
   assert round_data['variant']==variant
   reference=page.locator('.foundation-reference-content .teaching-reference')
-  assert reference.count()==1 and reference.get_attribute('open') is None
+  assert reference.count()==0
   if round_data['teaching']:
    transition=page.locator('.foundation-content:not(.foundation-reference-content) .teaching-transition')
    assert transition.is_visible()
@@ -48,23 +47,18 @@ with sync_playwright() as pw:
   else:
    visual=page.locator('.foundation-content:not(.foundation-reference-content) .concept-visual')
    assert visual.is_visible() and visual.get_attribute('data-visual')==variant
-  reference.locator('summary').first.click()
-  visual=reference.locator('.concept-visual')
-  assert visual.is_visible() and visual.get_attribute('data-visual')==variant
-  reference.locator('summary').first.click()
-  assert not visual.is_visible()
  # The same source-backed example replaces a miniature on these primary views.
  # Check every native option through the mounted app at all existing audit widths
  # and themes, including exact data-linked results and readable SVG text.
  explorer_checks=[]
- cases=[('#inspect/I19S/0','summary-order','medians move together'),
-        ('#visualise/V04/0','histogram','[18, 21]: 1'),
-        ('#visualise/V08/0','count-bars','C: 24'),
-        ('#visualise/V09/0','mean-bars','C: 2.5'),
+ cases=[('#inspect/I19S/0','summary-order','means move together'),
+        ('#visualise/V04/0','histogram','8 bins'),
+        ('#visualise/V08/0','count-bars','Count rows'),
+        ('#visualise/V09/0','mean-bars','middle value after sorting'),
         ('#visualise/V11/0','boxplot','Q1=2, median=3, Q3=6'),
-        ('#visualise/V16/0','scatter','x=6 and value=18'),
+        ('#visualise/V16/0','scatter','x=6, value=18'),
         ('#visualise/V27/0','references','x median is 3'),
-        ('#visualise/V33/0','facets','C: r6, r7, r8, r9')]
+        ('#visualise/V33/0','facets','Each of 9 rows')]
  for width in [1400,834,320]:
   page.set_viewport_size({'width':width,'height':1000})
   for theme in ['light','dark']:
@@ -103,7 +97,7 @@ with sync_playwright() as pw:
     assert contrast>=4.5,(route,theme,'SVG text contrast',contrast)
     if route.startswith('#visualise/'):
      workflow=page.locator('.foundation-reference-content .teaching-full-workflow')
-     assert workflow.count()==1 and workflow.get_attribute('open') is None
+     assert workflow.count()==0
     explorer_checks.append({'route':route,'width':width,'theme':theme,'options':len(options),'contrast':round(contrast,2)})
  # Contact sheets contain every card at a consistent readable size in both themes.
  page.set_viewport_size({'width':1280,'height':1000})
@@ -138,15 +132,22 @@ with sync_playwright() as pw:
    if(!svg.includes('Concept sketch:'))failures.push(r.id);
    if(r.retrieves){
     const source=FoundationsCurriculum.lessons.find(x=>x.id===r.retrieves).rounds[2];
-    if(source.visual.type!==r.visual.type||source.visual.variant!==r.visual.variant)failures.push(r.id);
+    const expected=({"VR6-2":"stacked"})[r.id]||FoundationVisuals.activityVariants[r.id]||source.visual.variant;
+    if(r.visual.variant!==expected)failures.push(r.id+' operation');
     // Retrieval asks a fresh question: V09's mean review and median Transfer
     // share a summary-bar concept but legitimately use different statistics.
-    if(r.visual.statistic&&!r.solution.includes('estimator="'+r.visual.statistic+'"')&&!r.solution.includes('.'+r.visual.statistic+'('))failures.push(r.id+' statistic');
+    if(r.visual.statistic&&!(r.visual.statistic==='count'&&r.solution.includes('sns.countplot'))&&!r.solution.includes('estimator="'+r.visual.statistic+'"')&&!r.solution.includes('.'+r.visual.statistic+'('))failures.push(r.id+' statistic');
    }
   }
   return {count,failures};
  }''')
  assert result['count']==len(inventory) and not result['failures'],result
+ # A queued editor scroll can arrive after route navigation removes its nodes.
+ page.goto(args.base_url+'/data-foundations.html#inspect/I01/0')
+ page.wait_for_selector('#foundationEditor')
+ page.evaluate('window.retiredAuditEditor=document.getElementById("foundationEditor");location.hash="#inspect"')
+ page.wait_for_selector('#foundationEditor',state='detached')
+ page.evaluate('retiredAuditEditor.dispatchEvent(new Event("scroll"));delete window.retiredAuditEditor')
  (out/f'{args.engine}-report.json').write_text(json.dumps({'rounds':result,'clipping':failures,'explorers':explorer_checks,'pageErrors':errors},indent=2))
  assert not failures,failures
  assert not errors,errors

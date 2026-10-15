@@ -501,3 +501,10 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .foundation-content :is(.foundation-syntax,.foundation-parameter-parts) .foundation-argument-values code,
 .foundation-content .foundation-parameter-teaching pre code { font-size: 16px; }
 .foundation-argument-values { margin: 6px 0 0; }
+
+/* Keep explanatory diagrams readable inside narrow reading panes. */
+.foundation-concept-scroll { max-width:100%; overflow-x:auto; }
+.foundation-content .foundation-concept-scroll .concept-visual { min-width:390px; }
+.foundation-concept-scroll:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
+.foundation-content .teaching-illustration figcaption { font-size:14px; color:var(--ink); margin:8px 0; }
+.foundation-content .teaching-illustration .teaching-example-output { font-size:14px; }

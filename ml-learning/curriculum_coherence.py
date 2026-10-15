@@ -130,10 +130,23 @@ concept('polynomial','R07','Add powers and interactions',r'PolynomialFeatures', 
     'PolynomialFeatures transforms the existing measurements into powers and interactions, while the prediction recipe still uses the familiar fitting and validation workflow.',
     'degree is a nonnegative integer; the default is 2. include_bias=False omits the all-ones feature when the later estimator supplies an intercept. Greater degree adds flexibility and terms; use matching training folds and inspect extrapolation risk.',
     "model = Pipeline([('polynomial', PolynomialFeatures(degree=2, include_bias=False)), ('prepare', StandardScaler()), ('model', Ridge(alpha=1.0))])")
-concept('ward','U07','Build and cut a Ward hierarchy',r'linkage\(|cut_tree', "linkage(scaled, method='ward')",
-    'Ward linkage repeatedly merges groups to minimise the increase in within-group squared distance. A cut reads group assignments from that stored hierarchy; it is not a supervised prediction.',
-    'Use Euclidean measurement geometry for Ward. cut_tree(..., n_clusters=k) asks for a positive group count and returns a one-column array; ravel produces one aligned label per fitted row. Sampling and scale change the represented population and merges.',
-    "linkage_matrix = linkage(scaled, method='ward')\nlabels = cut_tree(linkage_matrix, n_clusters=3).ravel()")
+concept('ridge','R07','Regularise the expanded model',r'\bRidge\(', 'Ridge(alpha=1.0)',
+    'Ridge fits a linear prediction rule with a penalty on squared coefficients. PolynomialFeatures supplies its curved input terms; scaling those terms makes their penalties comparable.',
+    'alpha is a nonnegative number, with default 1.0. Try 0.1, 1.0 or 10.0: larger values penalise large coefficients more strongly. Choose using training validation, not the final test.',
+    "model = Pipeline([('powers', PolynomialFeatures(degree=2, include_bias=False)), ('prepare', StandardScaler()), ('model', Ridge(alpha=1.0))])")
+concept('ward','U07','Build a Ward hierarchy',r'linkage\(', "linkage(scaled, method='ward')",
+    'Ward linkage repeatedly merges groups to minimise the increase in within-group squared distance. The stored hierarchy records the merge order and heights; it does not predict a target.',
+    'Use Euclidean measurement geometry for Ward. method=ward chooses this merge rule; other methods use different distances between groups. Sampling and scale change the represented population and merges.',
+    "linkage_matrix = linkage(scaled, method='ward')")
+concept('hierarchy-cut','U08','Read groups from a stored hierarchy',r'cut_tree|\.ravel\(', 'cut_tree(linkage_matrix, n_clusters=3).ravel()',
+    'cut_tree reads group assignments from the previously fitted hierarchy. It returns one label per observation in the original input order; changing the cut does not refit the merges.',
+    'n_clusters is a positive integer no larger than the number of observations. cut_tree returns a one-column array; ravel turns it into the one-dimensional label array used to group the original rows.',
+    'labels = cut_tree(linkage_matrix, n_clusters=3).ravel()')
+concept('candidate-comparison','W16','Repeat a comparison across named candidates',r'for name, candidate in candidates\.items\(\)|key=lambda',
+    "cv_results = {name: cross_validate(candidate, X_train, y_train, cv=folds, scoring=metric) for name, candidate in candidates.items()}",
+    'The dictionary comprehension repeats the same validation operation for each named recipe. items() supplies each name and estimator together; the result keeps the scores under that name.',
+    'max(cv_results, key=lambda name: cv_results[name]["test_score"].mean()) returns the name with the largest mean score. lambda defines this small scoring rule. Negative-error scorers also use larger-is-better; close scores still need judgement.',
+    "chosen_name = max(cv_results, key=lambda name: cv_results[name]['test_score'].mean())")
 
 # Explicit extensions retain the first introduction on each intended pathway.
 AUTHORED_EXTENDS={'W03':['Input scaling and training boundaries'],'W08':['Stratified training folds'],'W09':['Score direction and returned evidence'],'W12':['Training-only class-error diagnosis'],'W14':['Forward validation for chronological observations'],'C05':['Class-labelled coefficients and probabilities'],'C08':['Distance queries through fitted pipeline steps'],'C17':['Affine scores and midpoint identities'],'N04':['Input versus target transformations'],'P04':['Variance-based dimension retention']}
@@ -242,7 +255,7 @@ def _supply(exercise, meanings):
         inherited=next((state[n.id] for n in ast.walk(value) if isinstance(n,ast.Name) and isinstance(n.ctx,ast.Load) and n.id in state and state[n.id]['fitted']),None) if alias else None
         fitted=bool(fit) or bool(inherited)
         if inherited and not training:training=inherited['training']
-        description=meanings.get(name,'Supplied '+name+'; inspect its read-only setup for its exact values and role.')
+        description=meanings.get(name,'Supplied '+name+'; its definition below specifies the values and role.')
         if fitted:description='Already fitted on '+str(training)+'. '+description
         # A declared constructor is an unfitted recipe, not a trained model.
         if name in ('model','network','classifier','pca','scaler') and not fitted:description='An unfitted recipe is supplied; construction has not learned parameters. Fit it here only when the task requests fitting.'
@@ -363,10 +376,19 @@ def apply(registry):
             sections=_sections(e)
             if sections:e['workflowSections']=sections
             e['teaching']=dict(introduces=list(dict.fromkeys(p['title'] for p in current)),reuses=list(dict.fromkeys(p['title'] for p in reminders)),extends=ACTIVITY_TEACHING.get(e['id'],[]),prerequisites=card['prerequisites'])
+            current.extend(e.get('practiceSyntax',[]))
             e['syntaxGuidance']=dict(current=current,reminders=reminders,reference=[dict(code=p['code'],meaning=p['meaning'],title=p['code'],lesson=card['id']) for p in parts]+[_guide(item) for key,item in CONCEPTS.items() if _used(source,item) or (i==0 and MODEL_FIRST.get(short)==key)])
+            if card['kind']!='teaching':
+                # Retrieval/checkpoint evidence is the visual. A generic mixed-
+                # input or comparison picture can imply steps absent from its
+                # actual recipe, especially for clustering and PCA.
+                e['visual']=dict(type='exercise-data',id=e['id'],caption='Inspect the supplied exercise evidence below.')
             e['milestone']='Apply' if e.get('modelBridge') else 'Fit' if i==0 and '.fit(' in source else 'Inspect' if i==0 else 'Experiment' if e.get('label')=='Change' else 'Apply independently' if e.get('label')=='Transfer' else e.get('label','Practise')
+            if short in ('R07','R08') and not e.get('replacement'):
+                degrees=re.findall(r'PolynomialFeatures\(degree=(\d+)',e.get('solution',''))
+                if degrees:e['visual']={**card['visual'],'choice':degrees[0]}
             if e['kind']=='python':
-                _supply(e,CONTRACT_MEANINGS)
+                _supply(e,{**CONTRACT_MEANINGS,**e.get('inputMeanings',{})})
                 if e.get('protect') and not e.get('validationDesign'):
                     p=e['protect'];e['validationDesign']='Reserve the final 20% '+('in chronological order' if p.get('time') else 'with random_state=42'+(', stratified by '+p['target'] if p.get('stratified') else ''))+'; use training rows for all model decisions.'
                 e['taskBrief']=dict(question=e.get('question') or card['goal'],rows='Use '+str(e.get('dataset') or card.get('dataset'))+' and the population named in the task.',result=e['task'],constraints=[e['validationDesign']] if e.get('validationDesign') else [])
@@ -387,12 +409,12 @@ def apply(registry):
         if card['id'] in ('ML-C10','ML-C14'):card['modelComparison']=copy.deepcopy(TREE_SVM_COMPARISON)
     for ch in registry['challenges']:
         e=ch['exercise']
-        _supply(e,CONTRACT_MEANINGS)
+        _supply(e,{**CONTRACT_MEANINGS,**e.get('inputMeanings',{})})
         e['teaching']=dict(introduces=[],reuses=['Features and target','Training-only validation','Final evaluation'] if ch['family'] not in ('clustering','pca') else DISCOVERY,extends=['Independent application'],prerequisites=ch['prerequisites'])
         e['syntaxGuidance']=dict(current=[],reminders=[],reference=[_guide(item) for item in CONCEPTS.values() if _used(e['solution'],item)])
     cards={card['id']:card for card in registry['cards']}
     for card_id,index,visual_id,choice in [
-        ('ML-C11',1,'C11-gamma','1'),('ML-R10',1,'R10-leaf','2'),
+        ('ML-U07',3,'U07-scale','scaled'),('ML-C11',1,'C11-gamma','1'),('ML-R10',1,'R10-leaf','5'),
         ('ML-C08',0,'C08','3'),('ML-C08',1,'C08','5'),('ML-C09',0,'C09','3')]:
         card=cards[card_id]
         card['exercises'][index]['visual']={**card['visual'],'id':visual_id,'choice':choice}

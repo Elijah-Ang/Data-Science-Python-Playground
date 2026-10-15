@@ -18,7 +18,7 @@ variants = [
     ('foundation', key) for key in ['scatter', 'histogram', 'count-bars', 'mean-bars',
                                   'summary-order', 'boxplot', 'references', 'facets']
 ] + [('ml', key) for key in ['C08', 'C09', 'C14', 'R09', 'R10', 'C10', 'C11',
-                            'C11-gamma', 'R10-leaf', 'R07', 'R08', 'P01']]
+                            'C11-gamma', 'R10-leaf', 'R07', 'R08', 'P01', 'U03', 'U06', 'U07', 'U08', 'U09', 'U07-scale', 'N02', 'N05']]
 checks = []
 with sync_playwright() as pw:
     browser = pw.chromium.launch(executable_path=args.executable_path, args=['--no-sandbox'])

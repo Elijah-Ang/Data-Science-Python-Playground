@@ -29,35 +29,50 @@ with sync_playwright() as p:
                 page.wait_for_function('(id)=>MLLearning.activity.id===id', arg=exercise['id'])
                 lesson = page.locator('.ml-lesson')
                 assert lesson.locator('details > summary').all_text_contents() == ['Hints', 'Explained solution'], exercise['id']
-                assert not lesson.locator('details details,.ml-reference,.foundation-reference-body,.ml-workflow-detail,.ml-model-comparison,.ml-provided-state,.ml-contract,.ml-model-guide,.ml-syntax-reference,.ml-sources,.learning-depth,[data-learning-mode],.teaching-orientation').count(), exercise['id']
+                assert not lesson.locator('details details,.ml-reference,.foundation-reference-body,.ml-workflow-detail,.ml-model-guide,.ml-syntax-reference,.ml-sources,.learning-depth,[data-learning-mode],.teaching-orientation').count(), exercise['id']
                 assert lesson.locator('.foundation-split > *').count() == 2, exercise['id']
                 task = lesson.locator('.foundation-content > .foundation-task-reminder')
                 assert task.count() == 1 and task.is_visible(), exercise['id']
                 assert task.evaluate('(task)=>[...task.parentElement.querySelectorAll(":scope>.ml-syntax,:scope>.ml-progressive-workflow,:scope>.ml-provided-note,:scope>.ml-provided-evidence")].every(e=>!!(e.compareDocumentPosition(task)&Node.DOCUMENT_POSITION_FOLLOWING))'), exercise['id']
                 assert not lesson.locator('.foundation-code-pane .foundation-task-reminder').count(), exercise['id']
-                expected_preview = exercise.get('showDatasetPreview') is not False and exercise.get('dataset') in datasets
+                expected_preview = bool(exercise.get('inputPreview')) or (exercise.get('showDatasetPreview') is not False and exercise.get('dataset') in datasets)
                 preview = lesson.locator('.foundation-data-preview')
                 assert bool(preview.count()) == expected_preview, exercise['id']
                 if expected_preview:
                     assert preview.is_visible() and preview.locator('table').count() == 1
                     assert preview.evaluate('(e)=>e.nextElementSibling.matches(".foundation-task-reminder")'), exercise['id']
-                    d = datasets[exercise['dataset']]
-                    columns = [c for c in d['columns'] if card['deck'] not in ['clustering', 'pca'] or c not in ['species', 'diagnosis']]
+                    d = exercise.get('inputPreview') or datasets[exercise['dataset']]
+                    columns = d['columns'] if exercise.get('inputPreview') else [c for c in d['columns'] if card['deck'] not in ['clustering', 'pca'] or c not in ['species', 'diagnosis']]
                     assert preview.locator('thead th').all_text_contents() == columns, exercise['id']
-                    assert preview.locator('tbody tr').count() == len(d['preview']), exercise['id']
+                    assert preview.locator('tbody tr').count() == len(d.get('preview',d.get('rows',[]))), exercise['id']
                 stages = lesson.locator('.foundation-practices li')
                 assert stages.count() == len(card['exercises'])
                 assert not lesson.locator('.foundation-practices a,.foundation-practices button').count()
-                assert lesson.locator('.foundation-practices [aria-current="step"] strong').inner_text() == exercise['label']
+                assert lesson.locator('.foundation-practices [aria-current="step"] strong').inner_text() == exercise['label'], (exercise['id'],exercise['label'],lesson.locator('.foundation-practices [aria-current="step"] strong').inner_text())
                 assert not page.evaluate('document.documentElement.scrollWidth>innerWidth+1'), (exercise['id'], width)
                 expected_task=page.evaluate('(e)=>{const d=document.createElement("div");d.innerHTML=LearningLanguage.activity(e);return d.textContent}',exercise)
                 assert normalize(task.locator('.learning-instructions').text_content())==normalize(expected_task),exercise['id']
                 assert normalize(exercise['explanation']) in normalize(lesson.locator('.ml-explained-solution').text_content()), exercise['id']
-                note = lesson.locator('.ml-provided-note')
-                fitted = [item for item in exercise.get('suppliedState', []) if item.get('fitted')]
-                assert bool(note.count()) == bool(fitted)
-                if fitted:
-                    assert note.is_visible() and all(item['name'] in note.locator('code').all_text_contents() for item in fitted)
+                supplied = [item for item in exercise.get('suppliedState', []) if item['name']!='df']
+                note = lesson.locator('.ml-provided-state')
+                assert bool(note.count()) == bool(supplied), exercise['id']
+                for item in supplied:
+                    assert item['name'] in note.locator('dt code').all_text_contents(), (exercise['id'],item['name'])
+                    if item.get('fitted'):assert 'Fitted' in note.inner_text()
+                if exercise.get('dictionary'):
+                    assert lesson.locator('.ml-activity-context table tbody tr').count()==len(exercise['dictionary']),exercise['id']
+                if exercise.get('bug'):
+                    assert lesson.locator('.ml-fault pre code').text_content()==exercise['bug'],exercise['id']
+                if exercise.get('readiness'):
+                    assert lesson.locator('.ml-rubric li').count()==len(exercise['rubric']),exercise['id']
+                if exercise.get('modelBridge') and card.get('modelComparison'):
+                    assert lesson.locator('.ml-model-comparison').count()==1,exercise['id']
+                    assert not lesson.locator('.ml-model-comparison mark').count(),exercise['id']
+                contract=exercise['contract'] if exercise.get('assessment') else exercise.get('learnerOutputs') or exercise.get('contract',[])
+                assert lesson.locator('.ml-contract .ml-evidence-names>div').count()==len(contract),exercise['id']
+                current=exercise.get('syntaxGuidance',{}).get('current',[])
+                visible_codes=lesson.locator('.ml-syntax-parts dt>code').all_text_contents()
+                assert all(p.get('code',p.get('title')) in visible_codes for p in current),(exercise['id'],current,visible_codes)
                 if exercise.get('workflowSections'):
                     outline = lesson.locator('.ml-workflow-outline')
                     assert outline.is_visible() and outline.locator('li').count() == len(exercise['workflowSections'])

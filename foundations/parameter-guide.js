@@ -346,7 +346,7 @@ const extensionNotes={
 function renderCurrent(curriculum,lesson,round){
  const g=guidanceFor(curriculum,lesson,round);if(!g.introduces.length&&!g.extends.length)return '';
  const rows=g.introduces.map(item=>currentDefinition(item,lesson,round,'introduce')).join('')+g.extends.map(item=>currentDefinition(item,lesson,round,'extend')).join('');
- const mode=g.introduces.concat(g.extends).some(item=>['estimator','lineplot.estimator'].includes(item.id))?'<p>For mode, pass a function that returns one value. Here ties choose the smallest mode:</p><pre><code>def mode_value(values):\n    return pd.Series(values).mode().iloc[0]</code></pre>':'';
+ const mode=g.introduces.some(item=>item.id==='estimator')?'<p>For mode, pass a function that returns one value. def names the function; values receives a group and return sends one summary back. mode() finds the most frequent values; iloc[0] chooses the smallest when tied:</p><pre><code>def mode_value(values):\n    return pd.Series(values).mode().iloc[0]</code></pre>':'';
  const estimator=g.introduces.some(item=>item.id==='estimator')?'<table class="teaching-example-output"><caption>Same measurements: 2, 2, 8</caption><thead><tr><th scope="col">Summary</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Mean</th><td>4</td></tr><tr><th scope="row">Median</th><td>2</td></tr><tr><th scope="row">Sum</th><td>12</td></tr></tbody></table>':'';
  return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>Arguments</h3><dl class="foundation-parameter-parts">${rows}</dl>${estimator}${mode}</section>`;
 }

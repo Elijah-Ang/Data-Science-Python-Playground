@@ -48,13 +48,13 @@ assert.deepEqual(facets.panels.flatMap(p=>p.rows).sort(),ids(foundations.example
 assert.deepEqual(facets.panels.map(p=>p.rows.length),[3,2,4]);
 
 // Actual Euclidean distances change neighbourhood membership and the winning vote.
-for(const [k,prediction] of [[1,'B'],[3,'A'],[5,'B']]){
+for(const [k,prediction] of [[1,'B'],[3,'A'],[5,'A']]){
   const result=ml.exploration('C08',String(k));
   assert.equal(result.data.prediction,prediction);
   assert.equal(result.data.votes.A+result.data.votes.B,k);
   assert.equal(result.data.count,9);
   assert.equal(result.data.neighbours.length,k);
-  for(const neighbour of result.data.neighbours)close(neighbour.distance,Math.hypot(neighbour.x,neighbour.y));
+  for(const neighbour of result.data.neighbours)close(neighbour.distance,Math.hypot(neighbour.x/result.data.scale[0],neighbour.y/result.data.scale[1]));
   assert(result.code.includes(`n_neighbors=${k}`));
 }
 for(const row of ml.exampleRows.tree){
@@ -80,7 +80,7 @@ for(const value of ['0.05','0.2','1']){
 for(const [id,choices] of [['C10',['0.5','1','10']],['C11',['0.5','2','10']],['C11-gamma',['0.1','1','10']]])for(const choice of choices){
  const result=ml.exploration(id,choice);assert.equal(result.data.kernel,'rbf');assert(result.code.includes('kernel="rbf"'));assert.equal(result.data.support.length,result.data.supportCounts.reduce((a,b)=>a+b));assert(!result.summary.includes('linear calculation'));
 }
-for(const [id,choices] of [['R10',['1','3','None']],['R10-leaf',['1','2','3']]])for(const choice of choices){const r=ml.exploration(id,choice);assert(r.code.includes(`${r.data.parameter}=${choice}`));assert(r.data.leaves>=1);}
+for(const [id,choices] of [['R10',['3','5','None']],['R10-leaf',['1','5','10']]])for(const choice of choices){const r=ml.exploration(id,choice);assert(r.code.includes(`${r.data.parameter}=${choice}`));assert(r.data.leaves>=1);}
 assert(!ml.interactive({id:'P06'}));
 
 // Known quadratic is recovered; displayed curves use their fitted coefficients.
@@ -89,8 +89,8 @@ const coefficients=ml.polynomialFit(exact,2);
 coefficients.forEach((c,i)=>close(c,[2,3,.5][i]));
 let previousError=Infinity;
 for(const degree of [1,2,4]){
-  const {data,summary}=ml.exploration('R07',String(degree));
-  assert(data.trainRMSE<=previousError+1e-8);
+  const {data,summary}=ml.exploration('R08',String(degree));
+  assert(data.alpha===1&&data.scaled);
   previousError=data.trainRMSE;
   for(const [x,y] of data.points)close(y,data.coefficients.reduce((sum,c,i)=>sum+c*x**i,0));
   const validation=Math.sqrt(ml.exampleRows.polynomialValidation.reduce((sum,[x,y])=>sum+(y-data.coefficients.reduce((s,c,i)=>s+c*x**i,0))**2,0)/5);
@@ -127,7 +127,7 @@ for(const [visuals,visual] of [[foundations,foundations.spec('histogram')],[ml,{
   const section={dataset:{foundationExplorer:'histogram',mlExplorer:'C08'},querySelector:()=>output};
   const control={value:visuals===foundations?'wide':'5',closest:()=>section};
   listeners[0][1]({target:{closest:()=>control}});
-  assert(result.includes(visuals===foundations?'[0, 4)':'predicted class B'));
+  assert(result.includes(visuals===foundations?'[0, 4)':'predicted class A'));
 }
 assert.throws(()=>foundations.exploration('histogram','unknown'));
 assert.throws(()=>ml.exploration('C08','7'));
@@ -147,3 +147,9 @@ const estimator=parameters.renderCurrent(c,c.lessons.find(l=>l.id==='V09'),c.les
 assert(parameters.valueChoices({...parameters.registry.x,functions:['sns.scatterplot']}).includes('data-code-role="column"'));
 assert(parameters.valueChoices({...parameters.registry.ax,functions:['sns.scatterplot']}).includes('data-code-role="variable"'));
 assert(parameters.valueChoices({...parameters.registry.bins,functions:['sns.histplot']}).includes('data-code-role="syntax"'));
+
+for(const degree of [1,2,3,4]){const r=ml.exploration('R07',String(degree));assert(!r.code.includes('Ridge'));assert(!r.code.includes('LinearRegression'));assert(!r.code.includes('make_pipeline'));assert(r.data.rows.every(row=>row.slice(1).every((v,i)=>Math.abs(v-row[0]**(i+1))<1e-9)));}
+assert(!foundations.exploration('mean-bars','mean').code.includes('ax.bar'));
+assert(foundations.exploration('mean-bars','mean').code.includes('sns.barplot'));
+assert(!foundations.exploration('boxplot','box').code.includes('subplots'));
+assert(!foundations.exploration('boxplot','raw').code.includes('stripplot'));

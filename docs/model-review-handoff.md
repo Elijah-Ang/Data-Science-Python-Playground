@@ -2,7 +2,7 @@
 
 Review branch: `curriculum-coherence-2026-10-13`.
 Baseline: `8a72b291a3c47cd6db5e825cfb4902a4df1578bb` (the original `work` checkout and current remote `main` when this handoff was written).
-Implementation through: `cf945b1`; the subsequent handoff commit changes documentation only.
+Review the current branch HEAD, including the implementation reviewed at `22dd968` and the subsequent review repairs, Python exercise replacements and scientific visual refinement.
 
 The user requested a committed, pushed review candidate before deciding whether to merge or deploy. Neither action is authorized at this stage. Review the entire cumulative branch, including the full current source and unchanged dependencies it calls. Reviewing only the last commit or screenshots misses earlier curriculum, editor and identifier changes.
 
@@ -15,6 +15,8 @@ The user requested a committed, pushed review candidate before deciding whether 
 - Distinguish column names, variables and syntax in prose and tables; keep syntax/argument code at the same size in both themes.
 - List valid argument forms and concrete values visibly. Histogram Follow/Change teach bin counts; Transfer teaches explicit edges, including unequal intervals with proportional bar widths. Estimators list supported summaries and a scalar mode function rather than an unsupported scalar `"mode"` string.
 - Keep illustrations, explanations, starters, solutions, tasks and grading consistent across all 338 Data and 338 ML activities. Check the nonlinear RBF SVM, tree complexity, KNN and PCA illustrations against the actual methods they claim to teach.
+- All 338 ML lesson/review/checkpoint activities and 19 independent challenges use Python. The 112 replacements retain stable IDs and reasoning objectives while requiring computed evidence; Change and Transfer must differ meaningfully within each lesson.
+- Inspect every conceptual and quantitative illustration, including retrieval, decks and workflow collections. Check fixed observations, scale, uncertainty, model behaviour and controls; illustrations must not introduce future Python APIs without explanation.
 
 ## Source map
 
@@ -22,10 +24,11 @@ The user requested a committed, pushed review candidate before deciding whether 
 | --- | --- |
 | Data curriculum composition | `foundations/curriculum.js`, `content-guidance.js`, `visualise-guidance.js`, `teaching.js`, `clarity.js`, `variety.js`, `refinements.js`, `progression.js`, `practical.js` |
 | Data lesson rendering and visuals | `foundations/app.js`, `learning-ui.js`, `parameter-guide.js`, `visuals.js`, `code-style.js`, `foundations.css`, `data-foundations.html` |
-| ML authoring and generated curriculum | `ml-learning/authoring.py`, `curriculum_coherence.py`, `model_bridges.py`, the other authoring modules, `manifest.json`, `scripts/build-ml-learning.mjs` |
+| ML authoring and generated curriculum | `ml-learning/authoring.py`, `code_practice.py`, `curriculum_coherence.py`, `model_bridges.py`, `mastery.py`, the other authoring modules, `manifest.json`, `scripts/build-ml-learning.mjs` |
 | ML rendering and runtime | `ml-learning/app.js`, `visuals.js`, `learning.css`, `runtime.py`, `worker.js`, shared worker/editor dependencies |
 | Semantic identifiers and shared layout | `code-identifiers.js`, `learning-identifiers.js`, `learning-language.js`, `scripts/build-learning-identifiers.py`, `route-slider.css`, `challenges/experience.js` |
 | Build, preview and checks | `package.json`, `scripts/build-web.mjs`, `build-learning-pages.mjs`, `build-review-preview.py`, changed audit scripts/workflows and all changed tests |
+| Scientific visual evidence | `scripts/build-teaching-model-fixtures.py`, `tests/test_visual_scientific_scenes.py`, `test_teaching_visual_models.py`, `test_model_family_visuals.py`, `test_visual_context_audit.py`, `test_ml_code_practice.py`, `test_ml_code_practice_browser.py` |
 
 Paths in the table are repository relative; filenames abbreviated within a row share its first directory. Generated `dist/` is ignored: build it to inspect the assembled curricula and actual served assets. Review authoring inputs as well as generated output. Large JSON receipts and screenshots account for much of the diff; they are evidence, not a substitute for source review.
 
@@ -43,12 +46,12 @@ python3 -m http.server 8000 -d dist
 
 `npm run check` builds the site and runs JavaScript, route and app-shell checks. Browser checks are separate; consult each changed browser test's `--help` for its runtime, browser and URL options. `scripts/build-review-preview.py --help` explains how to regenerate the single-file HTML preview from `dist/`. The preview bundles site assets but Python still requires its pinned runtime downloads.
 
-[The latest presentation report](curriculum-coherence.md) links current screenshots and detailed receipts in `curriculum-evidence/activity-alignment/`: all 676 activities, 1,352 phone/desktop renders, argument and font checks, independent scrolling/editor interactions, numerical checks, production sklearn RBF checks and 33 selected production-browser Python runs. The ML visual audit has 277 captures. Repository checks passed; the final code-size correction received additional font/browser and JavaScript checks.
+[The current refinement report](curriculum-review-refinement.md) traces the supplied `22dd968` findings to repairs and describes the replacement plan and scientific changes. Current evidence is in `curriculum-evidence/review-refinement/`: the complete 112-activity replacement map, rendered inventory, desktop/mobile contact sheets, all-activity presentation checks, Python grading and numerical-oracle results. Read `validation.json` for precise counts, commands, runtime versions and source digests. The earlier [presentation report](curriculum-coherence.md) and its `activity-alignment/` evidence are historical context.
 
 Earlier evidence directories contain historical revisions. In particular, older reports of 583 Python runs describe the earlier implementation, not a fresh rerun of all those programs after the latest presentation changes. Chromium evidence does not establish WebKit or physical-device behaviour.
 
-Latest contract comparisons verify the final presentation corrections preserved Data exercise program contracts and ML task, setup, starter, grader, output and supplied-state contracts relative to the preceding presentation revision. Do not interpret that narrow comparison as proof that the entire branch made no executable changes: inspect the cumulative diff from the baseline, including earlier ML authoring/runtime work.
+All 338 Data exercise program-contract hashes are preserved by this follow-up. ML has intentional executable changes: the 112 replacements and clearer faded workflow starters. Inspect their inputs, outputs and graders rather than assuming the previous presentation-only comparison applies. Review the cumulative diff from the baseline, including earlier ML authoring/runtime work.
 
 ## Prompt for the reviewing model
 
-> Review the full current code on `curriculum-coherence-2026-10-13` and every cumulative change since `8a72b291a3c47cd6db5e825cfb4902a4df1578bb`. Read `docs/model-review-handoff.md`, `foundations/AGENTS.md`, the complete relevant source and its dependencies, and inspect the built curricula. Check scientific correctness, concise teaching, lesson/visual/task agreement, valid argument alternatives, semantic identifier accuracy, independent scrolling, mobile layout, accessibility, editor/runtime/grader behaviour, build reproducibility and unrelated regressions. Treat test receipts and screenshots as supporting evidence; independently inspect the assertions and source. Report actionable findings with severity, file/line, reproducible example and recommended correction. Distinguish confirmed defects from untested risks, identify coverage gaps, and say explicitly if there are no findings. Do not modify, merge or deploy anything during this review.
+> Review the full current code on `curriculum-coherence-2026-10-13` and every cumulative change since `8a72b291a3c47cd6db5e825cfb4902a4df1578bb`. Read `docs/model-review-handoff.md`, `docs/curriculum-review-refinement.md`, `foundations/AGENTS.md`, the complete relevant source and its dependencies, and inspect the built curricula. Independently recheck the supplied `22dd968` review findings. Check the 112 Python replacements for meaningful progression, scientific validity, actual computation, visible supplied state and fair grading. Check every visual family against its data, fitted method, code, labels, scales and interactive states. Also check concise teaching, lesson/visual/task agreement, valid argument alternatives, semantic identifiers, independent scrolling, mobile layout, accessibility, editor/runtime behaviour, build reproducibility and unrelated regressions. Treat receipts and screenshots as supporting evidence; independently inspect the assertions and source. Report actionable findings with severity, file/line, reproducible example and recommended correction. Distinguish confirmed defects from untested risks, identify coverage gaps, and say explicitly if there are no findings. Do not modify, merge or deploy anything during this review.

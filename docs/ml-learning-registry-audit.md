@@ -12,7 +12,7 @@ checkpoint | 11 | 11 | 11
 
 There are 110 cards and 338 card exercises. The 19 independently runnable Workflow Challenges are additional briefs, not included in card-exercise totals. Teaching retains the original short rounds and adds a guided full application where needed (up to five rounds).
 
-Card exercise modes: 226 python, 44 decision, 68 reflection. The challenge collection adds 19 Python activities.
+Card exercise modes: 338 python, 0 decision, 0 reflection. The challenge collection adds 19 Python activities.
 
 ## Independent routes and intentional joins
 

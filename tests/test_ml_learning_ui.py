@@ -101,14 +101,14 @@ with sync_playwright() as p:
     card,ex=setup_case
     page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{card['exercises'].index(ex)}")
     page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=ex['id'])
-    assert page.locator('.ml-provided-state').count()==0
+    assert page.locator('.ml-provided-state').count()==bool([x for x in ex['suppliedState'] if x['name']!='df'])
     assert page.evaluate('MLLearning.activity.setup')==ex['setup']
 
     page.evaluate("location.hash='#foundations/ML-F08/1'")
     page.wait_for_function("window.MLLearning?.activity?.id==='ML-F08-2'")
-    page.locator('input[name="mlChoice"]').first.check()
-    page.locator('#mlConceptCheck').click()
-    assert page.locator('#mlConceptResult').inner_text()
+    assert page.locator('#mlEditor').input_value()==page.evaluate('MLLearning.activity.starter')
+    assert page.evaluate('MLLearning.activity.kind')=='python'
+    assert not page.locator('#mlConceptCheck,#mlConceptResult,#mlExplain').count()
     assert page.evaluate('__mlWorkerCount')==0
     for deck in registry['decks']:
         page.evaluate('(hash)=>location.hash=hash','#'+deck['id'])
@@ -135,7 +135,7 @@ with sync_playwright() as p:
                 page.evaluate('(hash)=>location.hash=hash',f"#{card['deck']}/{card['id']}/{index}")
                 page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=checkpoint['id'])
                 assert page.locator('.foundation-task-reminder').is_visible()
-                assert page.locator('.ml-reference,.ml-contract,.ml-workflow-help').count()==0
+                assert page.locator('.ml-reference,.ml-workflow-help').count()==0
                 assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
                 assert page.locator('.foundation-code-pane .foundation-task-reminder').count()==0
                 assert page.locator('.ml-output-names code').all_text_contents()==checkpoint['outputs']
@@ -174,7 +174,7 @@ with sync_playwright() as p:
         assert 'reserved final test' not in brief.inner_text()
         exercise=page.evaluate('MLLearning.activity')
         assert page.locator('.ml-output-names code').all_text_contents()==exercise['outputs']
-        assert page.locator('.ml-reference,.ml-contract,.ml-model-guide,.teaching-reference').count()==0
+        assert page.locator('.ml-reference,.ml-model-guide,.teaching-reference').count()==0
         assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
     for id in ['ML-X17','ML-X18','ML-X19']:
         page.evaluate('(hash)=>location.hash=hash','#workflows/challenges/'+id)
@@ -197,12 +197,8 @@ with sync_playwright() as p:
     ]:
         page.evaluate('(hash)=>location.hash=hash',route)
         page.wait_for_function('(activity)=>window.MLLearning?.activity?.id===activity',arg=id)
-        assert bool(page.locator('#mlReflection').count())==question,id
-        if question:
-            assert page.locator('#mlReflectionQuestion').inner_text().strip().endswith('?'),id
-            authored=page.evaluate('MLLearning.activity.interpretationQuestion')
-            if authored:assert page.locator('#mlReflectionQuestion').inner_text().strip()==authored,id
-            assert 'not machine-graded or saved' in page.locator('#mlReflectionHelp').inner_text(),id
+        assert page.locator('#mlReflection,#mlExplain,#mlConceptCheck').count()==0,id
+        assert page.locator('#mlEditor').input_value()==page.evaluate('MLLearning.activity.starter'),id
     for width in [1440,1280,1024,768,390,320]:
         page.set_viewport_size({'width':width,'height':960})
         for theme in ['light','dark']:
@@ -225,11 +221,13 @@ with sync_playwright() as p:
     for route,id in [('#foundations/ML-F11/0','ML-F11-1'),('#foundations/ML-F11/1','ML-F11-2'),('#foundations/ML-F12/2','ML-F12-3'),('#workflow/ML-W15/1','ML-W15-2'),('#workflow/ML-W-K2/0','ML-W-K2-1'),('#workflow/ML-W-K3/0','ML-W-K3-1')]:
         page.evaluate('(hash)=>location.hash=hash',route)
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id',arg=id)
-        assert page.locator('.ml-reference,.ml-workflow-help,.ml-rubric').count()==0
+        assert page.locator('.ml-reference,.ml-workflow-help').count()==0
+        assert page.locator('.ml-rubric').count()==bool(page.evaluate('MLLearning.activity.readiness'))
         assert page.locator('.foundation-content > .foundation-task-reminder').count()==1
-        assert page.locator('#mlReflection').count()==1
-        assert 'not machine-graded' in page.locator('#mlReflection + p').inner_text()
-        assert page.locator('.teaching-overview svg').count()==1
+        assert page.locator('#mlReflection').count()==0
+        uses_data=page.evaluate('MLLearning.activity.visual?.type==="exercise-data"')
+        assert page.locator('.teaching-overview svg').count()==(0 if uses_data else 1)
+        if uses_data:assert page.locator('.foundation-data-preview table').is_visible()
         assert page.locator('.foundation-practices button').count()==0
         assert page.locator('.foundation-practices li').count()==len(next(c for c in registry['cards'] if any(e['id']==id for e in c['exercises']))['exercises'])
         if '-K' in id:assert 'fit(' not in page.locator('#mlEditor').input_value()
@@ -353,7 +351,7 @@ with sync_playwright() as p:
     assert page.locator('#mlResults .needs-attention,#mlResults .unavailable').count()==0
     assert page.locator('#mlResults .self-review').count()==1
     assert 'not automatically verified' in page.locator('#mlResults .self-review').inner_text()
-    page.locator('#mlReflection').fill('My interpretation is self-review, not an automatic pass.')
+    assert page.locator('#mlReflection').count()==0
     page.locator('#mlEditor').fill(readiness.replace("['jobs_waiting', 'device_age_years']", "['jobs_waiting', 'invoice_labor_hours']"))
     phase='Boundary negative Run'
     page.locator('#mlRun').click()
@@ -362,8 +360,8 @@ with sync_playwright() as p:
     assert 'Critical boundary' in page.locator('#mlResults .needs-attention').inner_text()
     phase='Final reload'
     page.reload();page.wait_for_function("window.MLLearning?.activity?.id==='ML-W-K2-1'")
-    page.locator('#mlReflection').wait_for()
-    assert page.locator('#mlReflection').input_value()==''
+    assert page.locator('#mlReflection').count()==0
+    assert page.locator('#mlEditor').input_value()==page.evaluate('MLLearning.activity.starter')
     writes=page.evaluate('__mlWrites')
     assert not any(any(term in key.lower() for term in ['learning','foundation','progress','completion','draft','resume']) for key in writes),writes
     assert page.locator('progress,[role="progressbar"],#forgetProgress,#resetLearningDialog,#storageStatus,.foundation-continue').count()==0

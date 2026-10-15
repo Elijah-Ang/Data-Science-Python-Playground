@@ -56,7 +56,7 @@
     // miniature for table concepts. No second abstract Input/Operation/Result strip.
     const diagram = m.source.id === 'V35'
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
-      : (explorer||'<figure class="teaching-illustration">'+visuals.diagram(round.visual)+'<figcaption>Illustration · not the exercise output</figcaption></figure>');
+      : (explorer||'<figure class="teaching-illustration"><div class="foundation-concept-scroll" tabindex="0" role="region" aria-label="Illustration; scroll if needed">'+visuals.diagram(round.visual)+'</div><figcaption>'+esc(visuals.sceneLabel(round.visual))+'</figcaption>'+visuals.scientificEvidence(round.visual)+'</figure>');
     const plottingIntro=m.source.id==='V02'?'<aside class="syntax-choice-callout"><strong>Two plotting tools, one Figure</strong><p>Matplotlib creates fig and ax and handles labels and layout. Seaborn draws on ax. Equivalent Matplotlib code is welcome.</p></aside>':'';
     const detailedExample=explorer||m.source.deck==='visualise'&&m.source.id!=='V35';
     return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+(detailedExample?'':example(g,m.source.id))+'</section>';

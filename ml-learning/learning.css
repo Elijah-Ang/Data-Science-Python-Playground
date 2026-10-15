@@ -83,7 +83,7 @@
 .ml-thumbnail text.tight { font-size:14px; font-weight:700; }
 .ml-thumbnail text.bar-label { font-size:15px; font-weight:700; }
 .ml-thumbnail text.aside-main { font-size:16px; font-weight:700; }
-.ml-thumbnail text.cell { font-size:14px; }
+.ml-thumbnail text.mini-cell { font-size:14px; }
 .ml-thumbnail text.minor { font-size:13px; fill:var(--muted); }
 .ml-thumbnail .accent { fill:color-mix(in srgb,var(--lesson-accent) 24%,var(--panel)); stroke:var(--lesson-accent); }
 .ml-thumbnail .mini-wash { fill:color-mix(in srgb,var(--lesson-accent) 11%,var(--panel)); stroke:var(--border-soft); }
@@ -149,3 +149,19 @@
   .ml-editor-reference { padding:10px 14px; }
   .ml-editor-reference-head { flex-wrap:wrap; }
 }
+
+/* Class shape and region colour encode the same fitted RBF prediction. */
+.concept-visual .ml-region-a { fill:color-mix(in srgb,var(--lesson-accent) 18%,var(--panel)); stroke:none; }
+.concept-visual .ml-region-b { fill:color-mix(in srgb,var(--coral) 12%,var(--panel)); stroke:none; }
+.ml-example-observations { table-layout:fixed; width:100%; font-size:14px; }
+.ml-example-observations th:first-child { width:30%; }
+.ml-example-observations td { white-space:normal; overflow-wrap:anywhere; }
+.ml-provided-state dl>div { padding:8px 0; border-bottom:1px solid var(--border-soft); }
+.ml-provided-state dt { display:flex; flex-wrap:wrap; gap:5px; }
+.ml-provided-state dd { margin:5px 0 0; font-size:14px; line-height:1.6; }
+.ml-workflow-outline .ml-syntax-parts { margin-block:8px; }
+
+.concept-visual .cluster-0 { fill:var(--lesson-accent); stroke:var(--lesson-accent); }
+.concept-visual .cluster-1 { fill:var(--coral); stroke:var(--coral); }
+.concept-visual .cluster-2 { fill:var(--violet); stroke:var(--violet); }
+.concept-visual .cluster-3 { fill:var(--ink); stroke:var(--ink); }

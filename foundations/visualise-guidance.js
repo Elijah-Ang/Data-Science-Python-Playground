@@ -67,7 +67,7 @@ const extensions={
 const summaries={
  V35:['Choose a paired view.','Choose a distribution.','Choose category counts.'],
  V01:['Create an empty canvas.'],V02:['Label the chart.','Adapt the labels.','Finish a new chart.'],
- V16:['Plot paired measurements.','Select a population.','Handle missing pairs.'],
+ V16:['Plot paired measurements.','Convert Celsius to Fahrenheit.','Handle missing pairs.'],
  V04:['Count values in bins.','Compare fewer bins.','Use specified bin edges.'],
  V08:['Count category records.','Choose category order.','Count open requests.'],
  V18:['Connect one observation per day.','Select a time window.','Plot change from a baseline.'],

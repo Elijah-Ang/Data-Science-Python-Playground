@@ -351,6 +351,8 @@ def assemble():
     for repair in (audit_repair_core, audit_repair_classification, audit_repair_discovery, audit_repair_challenges):
         registry=repair.apply(registry)
     registry=model_bridges.complete_coverage(registry)
+    import code_practice
+    registry=code_practice.apply(registry)
     for exercise in [e for c in registry['cards'] for e in c['exercises']]+[c['exercise'] for c in registry['challenges']]:
         if exercise['kind']=='python' and exercise.get('label')=='Follow':
             exercise['starter']=exercise['solution']

@@ -309,7 +309,7 @@ console.log(JSON.stringify({curriculum:require('./foundations/curriculum.js'),ch
     for card in ml['cards']:
         for item in card['exercises']:
             dataset = datasets.get(item.get('dataset') or card.get('dataset'), {})
-            cols = dataset.get('columns', [])
+            cols = item.get('inputPreview',{}).get('columns',dataset.get('columns', []))
             cols = list(cols) if isinstance(cols, dict) else cols
             cols += [entry[0] for entry in item.get('dictionary', [])]
             add(item, cols, lesson=card)

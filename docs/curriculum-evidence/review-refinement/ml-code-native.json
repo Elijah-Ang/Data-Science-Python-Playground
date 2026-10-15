@@ -1,0 +1,678 @@
+{
+  "activities": 338,
+  "replacements": 112,
+  "results": [
+    {
+      "id": "ML-F01-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F01-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F03-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F05-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F06-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F06-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F08-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F08-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F10-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F10-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W01-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W02-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W04-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W08-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W09-4",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W10-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W10-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W11-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W11-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W13-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W14-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R01-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R02-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R03-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R03-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R04-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R05-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R06-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R08-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R10-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R11-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R11-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C02-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C05-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C07-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C07-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C07-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C08-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C09-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C09-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C10-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C11-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C11-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C12-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C14-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C14-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C15-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C15-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C16-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C16-4",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C18-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C18-4",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C19-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C19-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N01-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N01-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N02-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N02-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N03-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N05-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N05-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N05-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N06-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N06-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U01-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U01-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U02-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U04-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U05-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U06-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U06-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U07-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U08-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U09-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U10-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U10-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P01-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P01-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P03-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P05-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P06-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P07-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M01-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M01-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M01-4",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M02-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M02-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M03-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M03-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M04-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M04-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-F-R2-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W-R2-1",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-W-R2-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-R-R1-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C-R2-1",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C-R2-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C-R3-1",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C-R3-2",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-C-R3-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N-R1-1",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N-R1-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-N-R1-3",
+      "previousKind": "decision",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U-R1-1",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U-R1-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U-R2-1",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-U-R2-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-P-R1-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M-R1-1",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M-R1-2",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M-R1-3",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    },
+    {
+      "id": "ML-M-K1-1",
+      "previousKind": "reflection",
+      "referencePassed": true,
+      "fabricatedRejected": true
+    }
+  ]
+}

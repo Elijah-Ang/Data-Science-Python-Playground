@@ -130,7 +130,7 @@ labels = cut_tree(linkage_matrix, n_clusters=chosen_k).ravel()
 profiles = sample.groupby(labels).mean()
 print('Cut evidence:', cut_scores)
 print('Original-unit profiles:', profiles)
-# 8. Explain sampling, scale and cut limits in the interpretation field.
+# 8. Inspect the printed profiles within this sample, scale and cut.
 '''
 HIERARCHY_STARTER='''from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, cut_tree

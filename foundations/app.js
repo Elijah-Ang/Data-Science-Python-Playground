@@ -113,11 +113,12 @@ function render(){
 }
 function bindEditor(){
  const editor=document.getElementById('foundationEditor'),{round}=view;
+ const lineNumbers=document.querySelector('.foundation-line-numbers'),highlight=document.getElementById('foundationHighlight');
  document.querySelector('.foundation-editor-jump')?.addEventListener('click',()=>{editor.scrollIntoView({block:'start',behavior:'instant'});editor.focus({preventScroll:true});});
  editor.value=view.challenge?view.challenge.starter:FoundationWorkspace.code(C,round);
  document.getElementById('jumpToWork').onclick=()=>{const marker=editor.value.indexOf('# Your work\n');const position=marker<0?0:marker+'# Your work\n'.length;editor.focus();editor.setSelectionRange(position,position);editor.scrollTop=editor.value.slice(0,position).split('\n').length*parseFloat(getComputedStyle(editor).lineHeight)-40;editor.dispatchEvent(new Event('scroll'));};
- function numbers(){document.querySelector('.foundation-line-numbers').textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');document.getElementById('foundationHighlight').innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
- function syncScroll(){document.querySelector('.foundation-line-numbers').scrollTop=editor.scrollTop;const layer=document.getElementById('foundationHighlight');layer.scrollTop=editor.scrollTop;layer.scrollLeft=editor.scrollLeft;}
+ function numbers(){lineNumbers.textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');highlight.innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
+ function syncScroll(){if(!editor.isConnected)return;lineNumbers.scrollTop=editor.scrollTop;highlight.scrollTop=editor.scrollTop;highlight.scrollLeft=editor.scrollLeft;}
  editor.addEventListener('input',()=>{numbers();if(view?.challenge&&view.lastCheck){document.getElementById('challengeResults').innerHTML=ChallengeExperience.results(view.lastCheck,true);}const feedback=document.getElementById('foundationFeedback');feedback.textContent='Code changed. Run or Check to see the new result.';feedback.dataset.state='';});
  editor.addEventListener('scroll',syncScroll);
  FoundationEditor.attach(editor,()=>execute(false),backwards=>{

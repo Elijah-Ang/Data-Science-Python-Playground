@@ -25,7 +25,8 @@ for exercise in [e for c in registry['cards'] for e in c['exercises'] if e['kind
     if not exercise.get('setup'):continue
     key=(exercise['dataset'],exercise['setup'])
     if key not in cache:
-        ns={'np':np,'pd':pd,'df':fixtures['learning_fixture'](exercise['dataset'])}
+        ns={'np':np,'pd':pd}
+        if exercise.get('preload',True):ns['df']=fixtures['learning_fixture'](exercise['dataset'])
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             exec(exercise['setup'],ns)
