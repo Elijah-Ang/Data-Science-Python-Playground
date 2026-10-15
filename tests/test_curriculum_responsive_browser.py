@@ -147,7 +147,7 @@ with sync_playwright() as pw:
                         assert editor_record['selection'] == editor_record['marker']+len('# Your work\n'), record
                 records.append(record)
                 if args.focused_only and item['lesson'] == 'W19':
-                    headers = page.locator('.teaching-example-table-scroll .teaching-example-output thead code')
+                    headers = page.locator('.operation-tables > .operation-table-scroll thead code')
                     assert headers.count() == 3
                     assert all(header.evaluate('(element)=>element.getClientRects().length') == 1 for header in headers.all())
                     assert all(header.evaluate('(element)=>getComputedStyle(element).whiteSpace') == 'nowrap' for header in headers.all())

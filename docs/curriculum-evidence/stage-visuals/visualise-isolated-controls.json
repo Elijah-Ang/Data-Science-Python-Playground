@@ -1,0 +1,672 @@
+{
+  "contexts": 108,
+  "families": 18,
+  "widths": [
+    320,
+    390,
+    1440
+  ],
+  "themes": [
+    "dark",
+    "light"
+  ],
+  "checks": [
+    "native labelled selectors",
+    "44px minimum target",
+    "result changes",
+    "fixed observations",
+    "aria-live result",
+    "no page overflow",
+    "no clipped SVG labels"
+  ],
+  "records": [
+    {
+      "kind": "foundation",
+      "concept": "scatter",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "histogram",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "count-bars",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "mean-bars",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "summary-order",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "boxplot",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "references",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "facets",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "encoding",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter-dimensions",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "density",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "strip",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "swarm",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "line",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "line-band",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "point-interval",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "violin",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "stacked",
+      "theme": "light",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "histogram",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "count-bars",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "mean-bars",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "summary-order",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "boxplot",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "references",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "facets",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "encoding",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter-dimensions",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "density",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "strip",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "swarm",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "line",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "line-band",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "point-interval",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "violin",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "stacked",
+      "theme": "dark",
+      "width": 1440
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "histogram",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "count-bars",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "mean-bars",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "summary-order",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "boxplot",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "references",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "facets",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "encoding",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter-dimensions",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "density",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "strip",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "swarm",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "line",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "line-band",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "point-interval",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "violin",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "stacked",
+      "theme": "light",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "histogram",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "count-bars",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "mean-bars",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "summary-order",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "boxplot",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "references",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "facets",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "encoding",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter-dimensions",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "density",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "strip",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "swarm",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "line",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "line-band",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "point-interval",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "violin",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "stacked",
+      "theme": "dark",
+      "width": 390
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "histogram",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "count-bars",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "mean-bars",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "summary-order",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "boxplot",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "references",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "facets",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "encoding",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter-dimensions",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "density",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "strip",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "swarm",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "line",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "line-band",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "point-interval",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "violin",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "stacked",
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "histogram",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "count-bars",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "mean-bars",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "summary-order",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "boxplot",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "references",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "facets",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "encoding",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "scatter-dimensions",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "density",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "strip",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "swarm",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "line",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "line-band",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "point-interval",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "violin",
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "kind": "foundation",
+      "concept": "stacked",
+      "theme": "dark",
+      "width": 320
+    }
+  ]
+}

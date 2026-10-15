@@ -466,6 +466,27 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .teaching-visual-result { font-size:14px; line-height:1.6; overflow-wrap:anywhere; }
 .teaching-visual-result p { margin-block:8px; }
 
+/* Small operations retain the same observations while showing what the current
+   pandas call changes. Tables scroll locally instead of widening the lesson. */
+.operation-explorer { margin-block:16px; }
+.operation-tables { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:start; gap:10px; }
+.operation-inputs,.operation-table-scroll { min-width:0; max-width:100%; }
+.operation-table-scroll { overflow-x:auto; }
+.operation-table { width:100%; margin:0; font-size:14px; }
+.operation-table :is(th,td) { padding:7px 9px; white-space:nowrap; }
+.foundation-content .operation-table thead code.code-identifier { white-space:nowrap; overflow-wrap:normal; }
+.operation-table caption { text-align:left; font-weight:700; margin-bottom:8px; }
+.operation-arrow { align-self:center; color:var(--lesson-accent); font-size:24px; }
+.operation-changed { background:color-mix(in srgb,var(--lesson-accent) 15%,var(--panel)); font-weight:700; box-shadow:inset 0 -2px var(--lesson-accent); }
+.operation-explorer :is(select,input):focus-visible,.operation-table-scroll:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
+.operation-scalar { display:grid; gap:8px; min-width:0; padding:8px 12px; border-left:3px solid var(--lesson-accent); }
+.operation-scalar output { overflow-wrap:anywhere; font-size:16px; }
+.operation-explorer pre { max-width:100%; overflow-x:auto; }
+@media(max-width:1100px) {
+  .operation-tables { grid-template-columns:minmax(0,1fr); }
+  .operation-arrow { justify-self:center; transform:rotate(90deg); }
+}
+
 .teaching-orientation { padding:12px 14px; border-left:3px solid var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 5%,var(--panel)); }
 .teaching-orientation p + p { margin-top:8px; }
 .teaching-workflow { min-width:0; }

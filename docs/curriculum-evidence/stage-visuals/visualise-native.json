@@ -1,0 +1,12 @@
+{
+  "scenes": 26,
+  "displayed_python_states": 26,
+  "oracles": [
+    "SciPy Gaussian KDE",
+    "NumPy histogram/quantiles/correlation",
+    "pandas sample SD/aggregation",
+    "sklearn least squares",
+    "native seaborn/Matplotlib output"
+  ],
+  "passed": true
+}

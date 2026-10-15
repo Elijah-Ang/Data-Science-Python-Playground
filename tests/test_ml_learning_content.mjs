@@ -125,7 +125,10 @@ const visualContext={window:{}};
 vm.runInNewContext(readFileSync('ml-learning/visuals.js','utf8'),visualContext);
 const fitting=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F03').visual);
 const residuals=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F05').visual);
-for(const label of ['Observations X, y','Unfitted estimator','Fitted estimator','Learned line'])assert(fitting.includes(label));
+assert(fitting.includes('Fitted estimator')&&fitting.includes('learned line'));
+const unfitted=visualContext.window.MLLearningVisuals.exploration('F03','unfitted');
+assert(unfitted.svg.includes('Unfitted estimator')&&unfitted.code==='model = LinearRegression()');
+assert(!unfitted.svg.includes('accent-stroke'),'A constructor must not draw a learned line');
 assert(!/residual|actual −|predicted/i.test(fitting));
 assert(residuals.includes('actual −')&&residuals.includes('Residuals measure signed vertical differences.'));
 

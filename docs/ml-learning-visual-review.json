@@ -2446,13 +2446,19 @@
   "sourceHashes": {
     "code-identifiers.js": "71854dcf3826d8f0837a47a3910a108ffd747acb28f03ab0de289edf6bcacc39",
     "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652",
-    "ml-learning/visuals.js": "fb41fda26b66633aa32982e336897330a48094ada2f584cf64de812b9d19a216",
+    "ml-learning/visuals.js": "f7c6f4b36228304c052e3d88f79b3bb14b2fa15d14df52c6e5ea65bf58035a96",
     "ml-learning/learning.css": "82961d1877f6e016a5338ddd67219c75e1f76928ec062d64870c66efdac5eeb8",
-    "ml-learning/app.js": "83a5ea145dcbb1cbf0f54228192d2c9e1835374101015151b4f03be96121eb68",
-    "foundations/foundations.css": "f53dcfc311d1b211e993eb30b05690c63442585877e8d52ead3714515bbf3c4b",
+    "ml-learning/app.js": "7fae0ec079927c8c7ec0f07fbe035e23a7d6d03341ac422f40508aa6b6301852",
+    "foundations/foundations.css": "1d5091aef3c2f850a9fbae81245cdbfe7e188764b941f74d561d88eb3a43dbb2",
     "foundations/learning-ui.js": "703472bbab76ae4e254e7d9797994755348799f3be07d73114486dd673c36711",
     "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
     "challenges/experience.js": "f6b4b95cb040272c7bff7f8f7b3e6b3cc6bb50c8946868def29a1dfab49d524a",
     "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
+  },
+  "scopedCSSFollowup": {
+    "scope": ".foundation-content .operation-table thead code.code-identifier",
+    "reason": "Keep new Data Foundations operation-table column headings intact at mobile widths. No ML article contains an operation-table.",
+    "evidence": "curriculum-evidence/stage-visuals/css-followup.json",
+    "visualsAndMLSelectorsUnchanged": true
   }
 }

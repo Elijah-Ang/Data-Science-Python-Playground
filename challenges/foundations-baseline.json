@@ -1,6 +1,6 @@
 {
   "commit": "curriculum-coherence-2026-10-13",
-  "sha256": "1f9cdacf847be50d139f88230e6ae6c2f3e918da0bafb1d5a8d41ad0c1d35824",
+  "sha256": "009de6453b1817a633ae66db410e345e13ea3a5656db1f6225ee4dd1845f1ba8",
   "cards": 110,
   "lessons": 93,
   "reviews": 17,
@@ -1817,5 +1817,11 @@
   },
   "review": "docs/curriculum-coherence.md",
   "reviewedFromCommit": "8a72b291a3c4",
-  "presentationReview": "2026-10-14: activity visual and argument-display corrections; existing task, Python and grading contract hashes unchanged."
+  "presentationReview": "2026-10-14: activity visual and argument-display corrections; existing task, Python and grading contract hashes unchanged.",
+  "previousStageVisualSHA256": "1f9cdacf847be50d139f88230e6ae6c2f3e918da0bafb1d5a8d41ad0c1d35824",
+  "stageVisualReview": {
+    "baselineCommit": "97ca093eb9e838924fddb5c3f6208d3e88f88dae",
+    "scope": "Follow-only concept introductions, focused fixed-data interactions and explicit concise later-stage teaching. Tasks, Python, datasets and checks are unchanged.",
+    "evidence": "docs/curriculum-evidence/stage-visuals"
+  }
 }

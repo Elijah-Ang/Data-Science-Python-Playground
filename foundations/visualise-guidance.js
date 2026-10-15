@@ -57,12 +57,12 @@ const parameterPlan={
  V10:[['capsize']],V12:[['inner']],V14:[['swarmplot.size']],V15:[[]],
  V19:[[]],V20:[['ci']],V21:[[]],V23:[['fmt']],
  V28:[['xy','xytext','textcoords','arrowprops']],V30:[['label','bar.bottom']],
- V31:[['vars','diag_kind','corner']],V32:[['kind']],V33:[['col','height']]
+ V31:[['vars','diag_kind'],['corner']],V32:[['kind']],V33:[['col','height']]
 };
 const extensions={
  'V04-3':['bins'], 'V13-3':['order'], 'V11-2':['order'], 'V17-3':['size'],
  'V19-1':['lineplot.estimator','errorbar'], 'V10-1':['errorbar'],
- 'V12-1':['cut'], 'V23-2':['axis'], 'V23-3':['aggfunc'], 'V33-1':['kind'], 'V33-2':['kind'], 'V33-3':['kind']
+ 'V12-1':['cut'], 'V23-2':['axis'], 'V23-3':['aggfunc'], 'V33-1':['kind'], 'V33-2':['kind']
 };
 const summaries={
  V35:['Choose a paired view.','Choose a distribution.','Choose category counts.'],
@@ -101,6 +101,26 @@ const summaries={
  V31:['Choose numeric measurements.','Remove duplicate panels.','Apply a pairwise view.'],
  V32:['Read pairs and margins.','Add a central reference.','Use a new joint view.'],
  V33:['Facet paired relationships.','Facet category distributions.','Choose the facet family.']
+};
+// Changes of observations, labels, filters or already taught settings need no
+// repeated introduction. These short additions name only a genuinely new form
+// or analytical decision in the current exercise; full historical worked
+// examples remain available to source reviewers without occupying the page.
+const stageTeaching={
+ 'V04-3':{idea:'A list passed to `bins` specifies interval edges instead of a bin count.',code:'bins=[0, 2, 5, 10]',parts:[['[0, 2, 5, 10]','Four edges define three bins: 0–2, 2–5 and 5–10. Interior edges go in the bin on their right; the last bin includes 10.']],note:'These widths differ. Counts are read from bar heights; bar area does not represent frequency.'},
+ 'V08-2':{idea:'`order` sets category positions and can retain a listed category with no observations.',code:'order=["Sun", "Cloud", "Rain", "Snow"]',parts:[['order=[...]','Use this displayed order. A missing Snow category gets a zero count, not an invented row.']]},
+ 'V09-2':{idea:'Change the summary from mean to median while keeping the same observations.',code:'estimator="median"',parts:[['estimator="median"','Calculate each route’s middle known fare instead of its average.']]},
+ 'V17-2':{idea:'`size` maps a numeric measurement to marker area. Keep instrument colour and shape.',code:'size="area_cm2"',parts:[['size="area_cm2"','Greater collecting area produces a larger mark; the legend gives its scale.']]},
+ 'V17-3':{idea:'Reuse column arithmetic to prepare speed, then map that new measurement to marker area.',code:'plotted["speed_kmh"] = plotted["distance_km"] / plotted["minutes"] * 60',parts:[['distance_km / minutes * 60','Convert km/min to km/h; the supplied durations are positive.'],['size="speed_kmh"','Encode speed while position still shows distance and duration.']]},
+ 'V25-2':{idea:'Set the colour and shape category orders together so both encodings agree.',code:'hue_order=["South", "North"], style_order=["South", "North"], alpha=0.6',parts:[['hue_order, style_order','List the same categories in the same order.'],['alpha=0.6','Use partial opacity to reveal overlapping observations.']]},
+ 'V25-3':{idea:'`ax.clear()` removes the draft from one Axes. Redraw the observations and restore its labels.',code:'ax.clear()',parts:[['ax.clear()','Remove this Axes’ marks and labels; leave the source data intact.']]},
+ 'V29-3':{idea:'A pooled percentage divides the total resolved by the total received. It is not an average of shift percentages.',code:'totals = df.groupby("team")[["resolved", "received"]].sum()\nrates = totals["resolved"] / totals["received"] * 100',parts:[['totals["resolved"] / totals["received"]','Use each team’s combined numerator and denominator before converting to percent.']]},
+ 'V06-2':{idea:'`complementary=True` reverses the cumulative question: what proportion is strictly above each x?',code:'complementary=True',parts:[['complementary=True','Plot 1 − the proportion at or below x, using the same observations.']]},
+ 'V23-2':{idea:'Divide each count row by its own total to compare within-group proportions.',code:'totals = matrix.sum(axis=1)\nmatrix = matrix.div(totals, axis=0)',parts:[['sum(axis=1)','Add across columns to find each row total.'],['div(totals, axis=0)','Match totals to row labels, then divide every row by its total.']]},
+ 'V30-3':{idea:'Within-item percentages give every item a total height of 100 while preserving its component shares.',code:'total = df["Online"] + df["Shop"]\nonline = df["Online"] / total * 100\nshop = df["Shop"] / total * 100',parts:[['component / total * 100','Calculate both components from the same item total before stacking.']]},
+ 'V31-2':{idea:'`corner=True` removes the duplicate upper-triangle relationships from the pairplot.',code:'corner=True',parts:[['corner=True','Keep the diagonal distributions and lower relationship panels; observations stay unchanged.']]},
+ 'V32-2':{idea:'Use `g.ax_joint` to add a benchmark only to the central relationship panel.',code:'g.ax_joint.axhline(df["humidity"].median(), linestyle="--")',parts:[['g.ax_joint','Select the grid’s central Axes; leave both margins unchanged.']]},
+ 'V33-2':{idea:'`catplot` reuses the faceting pattern for categorical charts, including the familiar box plot.',code:'g = sns.catplot(data=df, x="sky", y="temperature", col="station", kind="box", height=3)',parts:[['sns.catplot(..., kind="box")','Make box-plot panels; col chooses the group for each panel.']]}
 };
 const expandedOrder=(code)=>code.replace(/order = df\.groupby\(("[^"]+")\)\[("[^"]+")\]\.median\(\)\.sort_values\(([^)]*)\)\.index/g,
  (_,category,measurement,args)=>`medians = df.groupby(${category})[${measurement}].median()\nranked = medians.sort_values(${args})\norder = ranked.index`);
@@ -288,12 +308,18 @@ function apply(c){
   if(l.id==='V31')l.concepts.introduces.push('seaborn.figure-grid');
   if(l.guide)l.guide.prerequisiteLessons=l.concepts.prerequisites.filter(id=>byId[id]).map(id=>({id,title:byId[id].title}));
   for(const [index,r]of l.rounds.entries()){
+   r.stageTeaching=!l.review&&index>0?stageTeaching[r.id]||null:null;
    const intro=parameterPlan[l.id]?.[index]||[],extend=extensions[r.id]||[];
    const parameterPrerequisites=l.concepts.prerequisites;
    r.parameterTeaching={introduces:intro,extends:extend,reuses:[...parameterKnown].filter(id=>!intro.includes(id)&&!extend.includes(id)),prerequisites:parameterPrerequisites};
    intro.forEach(id=>parameterKnown.add(id));
    r.concepts={introduces:index===0?[...l.concepts.introduces]:[],reuses:index===0?[...l.concepts.reuses]:[...l.concepts.reuses,...l.concepts.introduces],extends:[],prerequisites:parameterPrerequisites};
    if(r.id==='V17-2')r.concepts.introduces.push('seaborn.size-mapping');
+   if(r.id==='V25-3')r.concepts.introduces.push('matplotlib.clear');
+   if(r.id==='V23-2')r.concepts.introduces.push('pandas.div');
+   if(r.id==='V33-2')r.concepts.introduces.push('seaborn.catplot');
+   if(r.id==='V29-3')r.concepts.extends.push('statistics.pooled-percentage');
+   if(r.id==='V30-3')r.concepts.extends.push('chart.within-item-shares');
    if(r.id==='V17-3')r.concepts.extends.push('pandas.derived-column','seaborn.size-mapping');
    if(r.id==='V13-3')r.concepts.extends.push('pandas.series-labels');
    if(r.retrieves)r.concepts={introduces:[],reuses:[...(byId[r.retrieves]?.concepts?.introduces||[])],extends:[],prerequisites:[r.retrieves]};
@@ -318,7 +344,7 @@ function apply(c){
    r.identifiers={...r.identifiers,inputColumns:Object.keys(c.datasets[r.dataset].columns),variables:[...new Set([...supplied,...created])],...(r.id==='V17-3'?{derivedColumns:['speed_kmh']}:{}),...(r.id==='V18-3'?{derivedColumns:['change']}:{}),...(r.id==='V13-3'?{exampleVariables:['sample','medians','ranked','order']}:{}),occurrences:[...(r.identifiers?.occurrences||[]),...(chart?[{text:chart[1],role:'literal'}]:[]),...(l.id==='V04'?[{text:'stone',role:'prose',before:'measured '},{text:'stone',role:'prose',before:'largest '}]:[])]};
    const familiar=/^(?:fig, ax\s*=|fig\.tight_layout|plt\.show|data=|ax=ax|x=|y=|hue=)/;
    const isFamiliar=code=>familiar.test(code)&&l.id!=='V01'&&!intro.some(id=>code.includes(id+'='));
-   const syntax=index===0&&!l.review?l.syntax:(r.teaching?.parts||[]);
+   const syntax=index===0&&!l.review?l.syntax:(r.stageTeaching?.parts||[]);
    r.syntaxGuidance={current:syntax.filter(([code])=>!isFamiliar(code)),reminders:syntax.filter(([code])=>isFamiliar(code)),reference:[]};
    r.workflow={same:'Select rows, draw, label and display.',changed:r.stageSummary,why:r.decision||l.goal,changedLines:r.solution.split('\n').flatMap((line,i)=>/sns\.\w+\(|ax\.(?:bar|hist|plot|scatter|annotate|axvline|axhline|set_[xy]scale|set_[xy]lim)\(|^\s*(?:bins|estimator|errorbar|jitter|style|size|col|kind)=/.test(line)?[i+1]:[])};
    if(['V31','V32','V33'].includes(l.id))r.workflow.same='Choose mappings, then finish the grid’s Figure.';

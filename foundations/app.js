@@ -39,9 +39,9 @@ function lessonPage(lesson,roundIndex){
  const work=follow?`<section class="teaching-worked" data-code-context="example"><h3>Follow the code</h3><pre><code>${highlightPython(workSource)}</code></pre>${FoundationTeaching.syntax(lesson,round)}</section>`:'';
  return LearningLanguage.render(`<nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Data Foundations</a><span aria-hidden="true">/</span><span>${esc(deck.title)}</span><span aria-hidden="true">/</span><span>${esc(lessonSequence(lesson))}</span></nav>
  <header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(deck.chapters[lesson.chapter])} · ${esc(lessonSequence(lesson))} · ${lesson.minutes} MIN</span><h2>${esc(lesson.title)}</h2><p>${esc(follow?lesson.goal:round.label+' · '+(round.stageSummary||round.demand||'Apply what you learned'))}</p><button class="foundation-editor-jump" type="button">Go to editor ↓</button></div>${FoundationLearning.stages(lesson.rounds,roundIndex,i=>url(lesson,i))}</header>
- <div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">
+ <div class="foundation-split"><article class="foundation-content" data-code-context="guide" data-learning-stage="${lesson.review?'review':roundIndex===0?'follow':roundIndex===1?'change':'transfer'}" aria-label="Lesson content">
 
- ${follow?FoundationTeaching.intro(C,lesson,round):round.teaching?FoundationTeaching.transition(round):`<section class="teaching-overview"><h3>Use the idea</h3><p>${esc(round.activityIdea||lesson.guide?.idea||C.lessons.find(l=>l.id===round.retrieves)?.guide?.idea||lesson.goal)}</p>${FoundationVisuals.interactive?.(round.visual)||FoundationVisuals.diagram(round.visual)}</section>`}
+ ${follow?FoundationTeaching.intro(C,lesson,round):FoundationTeaching.newInTask(C,lesson,round)}
  ${work}
  ${FoundationParameters.render(C,lesson,round,{level:'current'})}
  ${round.id==='V01-1'?'':`<section class="foundation-data-preview" aria-label="Dataframe preview">${datasetTable(dataset)}${round.setup?auxiliaryTables(round,dataset):''}</section>`}
@@ -107,6 +107,7 @@ function render(){
  LearningRoutes.enhance('data',main);LearningRoutes.canonical('data',currentRoute);
  FoundationLearning.highlightContent(main,LearningLanguage.context(view?.round?.id));
  FoundationVisuals.mount?.(main);
+ window.FoundationOperationVisuals?.mount(main);
  document.title=view?`${view.challenge?"Workflow challenge "+view.challenge.id:lessonSequence(view.lesson)} · ${view.lesson.title} · Data Foundations`:'Data Foundations · Data Playground';
  main.focus({preventScroll:true});window.scrollTo({top:0,behavior:'instant'});FoundationLearning.bindPanels(main);
  if(deck&&id==='chapter'){const chapter=document.getElementById('chapter-'+roundValue);chapter?.focus({preventScroll:true});chapter?.scrollIntoView({block:'start'});}

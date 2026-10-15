@@ -4,6 +4,12 @@ Review branch: `curriculum-coherence-2026-10-13`.
 Baseline: `8a72b291a3c47cd6db5e825cfb4902a4df1578bb` (the original `work` checkout and current remote `main` when this handoff was written).
 Review the current branch HEAD, including the implementation reviewed at `22dd968` and the subsequent review repairs, Python exercise replacements and scientific visual refinement.
 
+The latest [stage-specific visual refinement](curriculum-stage-visual-review.md)
+removes repeated introductions from later practice, adds fixed-data table
+interactions and narrows new-task teaching to genuine additions. Its evidence is
+in `curriculum-evidence/stage-visuals/`. Review `foundations/operation-visuals.js`
+and `ml-learning/visual_progression.py` alongside the renderers and curricula.
+
 The user requested a committed, pushed review candidate before deciding whether to merge or deploy. Neither action is authorized at this stage. Review the entire cumulative branch, including the full current source and unchanged dependencies it calls. Reviewing only the last commit or screenshots misses earlier curriculum, editor and identifier changes.
 
 ## Scope and acceptance criteria

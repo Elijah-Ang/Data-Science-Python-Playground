@@ -85,10 +85,12 @@ const byId=Object.fromEntries(curriculum.lessons.map(lesson=>[lesson.id,lesson])
 const language=context.window.LearningLanguage;
 const ordering=language.context('I19S-1');
 const orderingNote=identifiers.decorateHTML('<p>'+byId.I19S.guide.example+'</p>',ordering);
-for(const name of ['medians','ranked','order']){
+for(const name of ['means']){
  assert(ordering.exampleVariables.includes(name),'I19S worked-example object '+name+' is registered');
  assert(orderingNote.includes('data-code-role="variable" title="Python object">'+name+'</code>'),'I19S explanatory object '+name+' is correctly rendered');
 }
+const changedOrdering=language.context('I19S-2');
+for(const name of ['medians','ranked'])assert(changedOrdering.exampleVariables.includes(name),'I19S later sorting object '+name+' stays registered in its teaching stage');
 for(const [id,names] of [['W19',['mean_amount','records']],['W22',['measure','value']]]){
  const authored=language.context(id+'-1'),activity=language.activity(byId[id].rounds[0]);
  for(const name of names){

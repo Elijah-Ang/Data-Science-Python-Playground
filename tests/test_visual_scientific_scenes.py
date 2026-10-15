@@ -4,6 +4,10 @@ import subprocess
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import seaborn as sns
 from scipy.stats import gaussian_kde
 from sklearn.linear_model import LinearRegression
 ROOT=Path(__file__).resolve().parents[1]
@@ -43,4 +47,45 @@ for key in ['crosstab','count-heatmap','proportion-heatmap','mean-heatmap','rate
     else:expected=pd.crosstab(frame['group'],frame['column'],normalize='index' if key=='proportion-heatmap' else False)
     np.testing.assert_allclose(d['values'],expected.reindex(index=d['names'],columns=d['columns'],fill_value=0))
 assert scenes['pair-grid']['rows']==[[1,2],[2,4],[3,3],[4,6],[5,5]]
-print(json.dumps({'scenes':len(scenes),'oracles':['SciPy Gaussian KDE','NumPy histogram/quantiles/correlation','pandas sample SD/aggregation','sklearn least squares'],'passed':True},indent=2))
+
+# Execute the displayed Python for every new Follow control. This catches
+# snippets that look plausible but do not produce the operation being shown.
+script="""const v=require('./foundations/visuals.js'),cases=[];for(const [variant,choices] of Object.entries({density:['0.5','1','2'],line:['none','o'],'line-band':['none','sd'],'point-interval':['none','sd'],violin:['quart','point'],strip:['False','0.15'],swarm:['3','5','7'],encoding:['plain','hue'],'scatter-dimensions':['colour','shape','size'],stacked:['zero','first'],'count-bars':['count-A','count-B','count-C']}))for(const choice of choices){const result=v.exploration(variant,choice);cases.push({variant,choice,code:result.code,data:result.data});}console.log(JSON.stringify(cases));"""
+controls=json.loads(subprocess.check_output(['node','-e',script],cwd=ROOT))
+for control in controls:
+    variant,choice,d=control['variant'],control['choice'],control['data']
+    if variant in ['line','line-band']:example=pd.DataFrame(d['rows'],columns=['day','value'])
+    elif variant in ['strip','swarm']:example=pd.DataFrame(d['rows'])
+    elif variant=='stacked':example=pd.DataFrame({key:d[key] for key in ['first','second']},index=d['groups']).reset_index(names='group')
+    else:example=df.copy()
+    fig,ax=plt.subplots()
+    exec(control['code'],{'sns':sns,'pd':pd,'plt':plt,'example':example,'ax':ax})
+    if variant=='density':
+        xy=ax.lines[0].get_xydata();reference=gaussian_kde(values,bw_method=lambda fit:fit.scotts_factor()*float(choice))
+        np.testing.assert_allclose(xy[:,1],reference(xy[:,0]),rtol=1e-12)
+        np.testing.assert_allclose([xy[:,0].min(),xy[:,0].max()],[values.min(),values.max()])
+        assert d['yDomain']==[0,.2]
+    elif variant in ['line','line-band']:
+        expected=d['rows'] if variant=='line' else [[group['x'],group['mean']] for group in d['groups']]
+        np.testing.assert_allclose(ax.lines[0].get_xydata(),expected)
+        assert ax.lines[0].get_marker()==('o' if choice=='o' or variant=='line-band' else 'None')
+    elif variant in ['strip','swarm']:
+        plotted=np.concatenate([np.asarray(collection.get_offsets())[:,1] for collection in ax.collections])
+        np.testing.assert_allclose(np.sort(plotted),np.sort(example.value))
+    elif variant in ['encoding','scatter-dimensions']:
+        np.testing.assert_allclose(ax.collections[0].get_offsets(),example[['x','value']])
+        if choice=='size':np.testing.assert_allclose(ax.collections[0].get_sizes(),[row['area'] for row in d['marks']])
+    elif variant=='stacked':
+        np.testing.assert_allclose([patch.get_height() for patch in ax.patches[:3]],d['first'])
+        np.testing.assert_allclose([patch.get_height() for patch in ax.patches[3:]],d['second'])
+        np.testing.assert_allclose([patch.get_y() for patch in ax.patches[3:]],d['bottom'])
+    elif variant=='count-bars':
+        np.testing.assert_allclose([patch.get_height() for patch in ax.patches],[group['value'] for group in d['groups']])
+    elif variant=='point-interval':
+        np.testing.assert_allclose(ax.lines[0].get_ydata(),[group['mean'] for group in d['groups']])
+    elif variant=='violin':
+        for collection,group in zip([collection for collection in ax.collections if collection.__class__.__name__=='PolyCollection'],d['groups']):
+            ys=collection.get_paths()[0].vertices[:,1]
+            np.testing.assert_allclose([ys.min(),ys.max()],[min(group['values']),max(group['values'])])
+    plt.close(fig)
+print(json.dumps({'scenes':len(scenes),'displayed_python_states':len(controls),'oracles':['SciPy Gaussian KDE','NumPy histogram/quantiles/correlation','pandas sample SD/aggregation','sklearn least squares','native seaborn/Matplotlib output'],'passed':True},indent=2))

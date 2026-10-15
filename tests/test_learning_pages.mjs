@@ -91,7 +91,8 @@ for(const [family,curriculum,lessons] of [['data',data,data.lessons],['ml',ml,ml
     const file=routes.url(family,lesson.deck+'/'+lesson.id+'/0'),html=await fs.readFile(path.join(dist,file),'utf8');
     const main=html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)[1];
     assert.ok(main.includes('aria-label="Lesson content"'),file+' must render the real article');
-    assert.ok(main.includes('teaching-overview')&&main.includes('aria-label="Current task"')&&main.includes('foundation-code-pane'),file+' contains teaching, task and a practice pane');
+    assert.ok(main.includes('aria-label="Current task"')&&main.includes('foundation-code-pane'),file+' contains the task and a practice pane');
+    if(family==='data'?!lesson.review:lesson.kind==='teaching')assert.ok(main.includes('teaching-overview'),file+' contains its first concept introduction');
     assert.ok(!/<summary>Reference<\/summary>/.test(main),file+' removes the reference rather than hiding it');
     assert.ok(main.includes('Hint')&&main.includes('solution'),file+' must retain authored help');
     if(family==='data'){

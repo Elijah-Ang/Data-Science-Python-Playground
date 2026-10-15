@@ -19,7 +19,7 @@ for(const lesson of curriculum.lessons){
     assert(model.guide.noteTitle,round.id+' has a named teaching callout');
     const html=teaching.intro(curriculum,lesson,round);
     assert(model.source.guide,round.id+' has an authored guide');
-    assert((html.includes('A small example')||html.includes('teaching-explorer')||html.includes('teaching-chart-choices')||model.source.deck==='visualise'&&html.includes('concept-visual'))&&!html.includes('What each choice does'),round.id);
+    assert((html.includes('A small example')||html.includes('teaching-explorer')||html.includes('teaching-chart-choices')||html.includes('teaching-illustration'))&&!html.includes('What each choice does'),round.id);
     assert(!html.includes('<details')&&!html.includes('>undefined<'),round.id+' essential explanations are visible');
     assert(!html.includes('teaching-route')&&!html.includes('teaching-tools'),round.id+' one reading path');
     assert(model.source.guide.choices.length>=2 && model.source.guide.choices.length<=4,round.id);
@@ -58,8 +58,9 @@ console.log(`Visual teaching: all ${count} exercises, retrieval links, authored 
 
 const duplicates=curriculum.lessons.find(l=>l.id==='I17');
 const html=teaching.intro(curriculum,duplicates,duplicates.rounds[0]);
-assert(html.includes('Same rows, different keep choices'));
-assert(html.includes('B · unique') && html.includes('flag-false'));
+assert(!html.includes('Same rows, different keep choices'));
+assert(!html.includes('teaching-flags') && !html.includes('keep=False'),'Follow shows its default duplicate policy; later policies have their own teaching');
+assert(html.includes('data-visual="duplicates"'));
 assert((teaching.syntax(duplicates)+teaching.syntaxReference(duplicates)).includes('keep=False'));
 assert(teaching.reference(curriculum,duplicates,duplicates.rounds[1]).includes('including the first'));
 const bridge=curriculum.lessons.find(l=>l.id==='WR2');

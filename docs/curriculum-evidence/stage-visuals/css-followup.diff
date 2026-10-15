@@ -1,0 +1,10 @@
+--- 534512 foundations.css
++++ 49bebfce3141 foundations.css
+@@ -474,6 +474,7 @@
+ .operation-table-scroll { overflow-x:auto; }
+ .operation-table { width:100%; margin:0; font-size:14px; }
+ .operation-table :is(th,td) { padding:7px 9px; white-space:nowrap; }
++.foundation-content .operation-table thead code.code-identifier { white-space:nowrap; overflow-wrap:normal; }
+ .operation-table caption { text-align:left; font-weight:700; margin-bottom:8px; }
+ .operation-arrow { align-self:center; color:var(--lesson-accent); font-size:24px; }
+ .operation-changed { background:color-mix(in srgb,var(--lesson-accent) 15%,var(--panel)); font-weight:700; box-shadow:inset 0 -2px var(--lesson-accent); }

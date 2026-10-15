@@ -94,7 +94,7 @@ def worked_code(owner):
     for field in ('example', 'exampleCode', 'syntaxCode', 'code', 'referenceCode'):
         if isinstance(owner.get(field), str):
             result.append(owner[field])
-    for field in ('guide', 'teaching'):
+    for field in ('guide', 'teaching', 'stageTeaching'):
         result.extend(worked_code(owner.get(field)))
     return result
 

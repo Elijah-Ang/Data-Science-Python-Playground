@@ -154,7 +154,7 @@ define('facet-box','panels','same box plot, one panel per subset',()=>facets('bo
 define('facet-hist','panels','same histogram bins, one panel per subset',()=>facets('hist'));
 define('export','figure','save this Figure as a PNG file',()=>axes(12,15,105,63)+[[26,64],[49,42],[72,53],[98,26]].map(([x,y])=>dot(x,y)).join('')+arrow(127)+rect(171,12,71,69)+text(179,39,'chart.png')+text(184,58,'150 dpi'));
 define('choose-chart','panels','relationship / distribution / categories',()=>[8,94,180].map(x=>axes(x,23,71,53)).join('')+[[18,64],[35,43],[59,32]].map(([x,y])=>dot(x,y)).join('')+[22,41,29].map((h,i)=>rect(100+i*21,76-h,21,h,'visual-fill')).join('')+[38,19,28].map((h,i)=>rect(187+i*22,76-h,15,h,'visual-fill')).join('')+text(19,15,'Pairs')+text(104,15,'Spread')+text(189,15,'Counts'));
-define('honest-bars','bars','zero baseline; deliberate category order',()=>bars([9,6,3],{kind:'Mean, descending'}));
+define('honest-bars','bars','zero baseline; preserve the same values and order',()=>bars([9,6,3],{kind:'Mean value'}));
 define('ordered-counts','bars','zero baseline; explicit category order',()=>bars([3,5,2],{kind:'Count',labels:['A','B','C']}));
 // Checkpoints have their own operations, rather than a generic plot collage.
 define('profile','table-transform','column types and missing counts; original unchanged',()=>table(6,16,93,['name','price'],[['A',2],['B','NaN']])+arrow()+table(149,16,106,['field','dtype','miss'],[['name','object',0],['price','float64',1]]));
@@ -243,6 +243,9 @@ const exampleRows=Object.freeze([
  ['r1','A',1,2],['r2','A',2,4],['r3','A',3,6],['r4','B',2,3],
  ['r5','B',4,7],['r6','C',1,1],['r7','C',3,2],['r8','C',5,3],['r9','C',6,18]
 ].map(([id,group,x,value])=>Object.freeze({id,group,x,value})));
+// Repeated measurements make the effect of category-direction jitter visible.
+// They stay fixed when either the offset or marker size changes.
+const rawRows=Object.freeze([['s1','A',2],['s2','A',2],['s3','A',7],['s4','B',3],['s5','B',3],['s6','B',8]].map(([id,group,value])=>Object.freeze({id,group,value})));
 const q=(values,p)=>{const sorted=[...values].sort((a,b)=>a-b),at=(sorted.length-1)*p,lo=Math.floor(at);return sorted[lo]+(sorted[Math.ceil(at)]-sorted[lo])*(at-lo);};
 const fmt=n=>Number(n.toFixed(2)).toString();
 const et=(x,y,s)=>`<text x="${x}" y="${y}" style="font-size:12px">${esc(s)}</text>`;
@@ -270,15 +273,17 @@ function smallPlot(xlo,xhi,ylo,yhi,xlabel='value',ylabel='count'){
 function scientificPlot(id,v={}){
  const values=exampleRows.map(r=>r.value);let art='',data={},description=scene[id]?.label||id;
  if(id==='density'){
-  const model=kde(values,v.bandwidth||1),curve=Array.from({length:81},(_,i)=>{const x=1+17*i/80;return [x,model.at(x)];}),p=smallPlot(1,18,0,Math.max(...curve.map(r=>r[1]))*1.12,'value','density');
-  art=p.art+path(curve.map(([x,y],i)=>`${i?'L':'M'}${p.px(x)} ${p.py(y)}`).join(''),'visual-bold');data={values,bandwidth:model.bandwidth,bwAdjust:v.bandwidth||1,curve};description=`Gaussian KDE; bw_adjust=${v.bandwidth||1}; area, not height, represents probability`;
+  const model=kde(values,v.bandwidth||1),curve=Array.from({length:81},(_,i)=>{const x=1+17*i/80;return [x,model.at(x)];});
+  // A bandwidth comparison must not silently rescale the density axis.
+  const yMax=.2,p=smallPlot(1,18,0,yMax,'value','density');
+  art=p.art+path(curve.map(([x,y],i)=>`${i?'L':'M'}${p.px(x)} ${p.py(y)}`).join(''),'visual-bold');data={values,bandwidth:model.bandwidth,bwAdjust:v.bandwidth||1,curve,yDomain:[0,yMax]};description=`Gaussian KDE; bw_adjust=${v.bandwidth||1}; area, not height, represents probability`;
  }else if(id==='ecdf'||id==='ecdf-complement'){
   const complement=id==='ecdf-complement',unique=[...new Set(values)].sort((a,b)=>a-b),p=smallPlot(0,20,0,1,'value',complement?'fraction > x':'fraction ≤ x');
   let d=`M${p.px(0)} ${p.py(complement?1:0)}`;const steps=unique.map(x=>({x,share:values.filter(n=>complement?n>x:n<=x).length/values.length}));
   for(const step of steps)d+=`H${p.px(step.x)}V${p.py(step.share)}`;d+=`H${p.px(20)}`;art=p.art+path(d,'visual-bold');data={values,steps};
  }else if(id==='rug'){
   const edges=[0,4,8,12,16,20],counts=edges.slice(0,-1).map((lo,i)=>values.filter(n=>n>=lo&&(i===4?n<=edges[i+1]:n<edges[i+1])).length),p=smallPlot(0,20,0,6);
-  art=p.art+counts.map((n,i)=>rect(p.px(edges[i]),p.py(n),p.px(edges[i+1])-p.px(edges[i]),p.py(0)-p.py(n),'visual-wash')).join('')+values.map((n,i)=>path(`M${p.px(n)} ${76-(i%2)*5}v9`,'visual-bold')).join('');data={values,edges,counts};
+  art=p.art+counts.map((n,i)=>rect(p.px(edges[i]),p.py(n),p.px(edges[i+1])-p.px(edges[i]),p.py(0)-p.py(n),'visual-wash')).join('')+values.map(n=>path(`M${p.px(n)} 76v9`,'visual-bold')).join('');data={values,edges,counts};
  }else if(['point-interval','median-points','violin'].includes(id)){
   const groups=['A','B','C'].map(group=>{const vals=exampleRows.filter(r=>r.group===group).map(r=>r.value);return {group,values:vals,mean:mean(vals),median:q(vals,.5),sd:spread(vals)};}),p=smallPlot(0,4,-3,20,'group','value');
   art=axes(35,20,207,60)+text(2,p.py(0)+3,'0')+text(2,p.py(20)+3,'20')+text(36,12,'value');
@@ -288,16 +293,16 @@ function scientificPlot(id,v={}){
     const density=kde(g.values),ys=Array.from({length:41},(_,j)=>Math.min(...g.values)+(Math.max(...g.values)-Math.min(...g.values))*j/40),ownPeak=Math.max(...ys.map(density.at)),globalPeak=Math.max(...groups.flatMap(other=>{const fit=kde(other.values);return Array.from({length:41},(_,i)=>fit.at(Math.min(...other.values)+(Math.max(...other.values)-Math.min(...other.values))*i/40));})),peak=v.densityNorm==='width'?ownPeak:v.densityNorm==='count'?ownPeak*Math.max(...groups.map(g=>g.values.length))/g.values.length:globalPeak;
     const side=ys.map(y=>[x+density.at(y)/peak*17,p.py(y)]),other=[...ys].reverse().map(y=>[x-density.at(y)/peak*17,p.py(y)]);
     art+=path([...side,...other].map(([a,b],j)=>`${j?'L':'M'}${a} ${b}`).join('')+'Z','visual-wash')+(v.inner==='quart'?[.25,.5,.75].map(t=>path(`M${x-9} ${p.py(q(g.values,t))}h18`,'visual-dashed')).join(''):g.values.map(y=>dot(x,p.py(y),1.7)).join(''));
-   }else if(id==='point-interval')art+=path(`M${x} ${p.py(g.mean-g.sd)}V${p.py(g.mean+g.sd)}m-4 0h8m-8 ${p.py(g.mean-g.sd)-p.py(g.mean+g.sd)}h8`)+dot(x,p.py(g.mean),3);
+   }else if(id==='point-interval')art+=(v.showInterval===false?'':path(`M${x} ${p.py(g.mean-g.sd)}V${p.py(g.mean+g.sd)}m-4 0h8m-8 ${p.py(g.mean-g.sd)-p.py(g.mean+g.sd)}h8`))+dot(x,p.py(g.mean),3);
    else art+=dot(x,p.py(g.median),3);
-  }data={groups};description=id==='point-interval'?'Mean and ±1 sample SD, computed within each group':id==='violin'?(v.inner==='quart'?'Gaussian density within endpoints; lines mark quartiles':'Gaussian density within observed endpoints; dots show every value'):description;
+  }data={groups};description=id==='point-interval'?(v.showInterval===false?'Group means; intervals omitted':'Mean and ±1 sample SD, computed within each group'):id==='violin'?(v.inner==='quart'?'Gaussian density within endpoints; lines mark quartiles':'Gaussian density within observed endpoints; dots show every value'):description;
  }else if(id==='boxplot'){
   const q1=q(values,.25),median=q(values,.5),q3=q(values,.75),iqr=q3-q1,fences=[q1-1.5*iqr,q3+1.5*iqr],inside=values.filter(n=>n>=fences[0]&&n<=fences[1]),whiskers=[Math.min(...inside),Math.max(...inside)],outliers=values.filter(n=>n<fences[0]||n>fences[1]),p=smallPlot(0,20,0,1,'value','');
   art=p.art+path(`M${p.px(whiskers[0])} 48H${p.px(whiskers[1])}M${p.px(whiskers[0])} 40v16M${p.px(whiskers[1])} 40v16`)+rect(p.px(q1),34,p.px(q3)-p.px(q1),28,'visual-wash')+path(`M${p.px(median)} 34v28`,'visual-bold')+outliers.map(n=>dot(p.px(n),48,3)).join('');data={values,q1,median,q3,fences,whiskers,outliers};
  }else if(id==='line'||id==='line-band'){
   const band=id==='line-band',rows=band?repeatedObservations:lineObservations,groups=[...new Set(rows.map(r=>r[0]))].map(x=>{const vals=rows.filter(r=>r[0]===x).map(r=>r[1]);return {x,mean:mean(vals),sd:vals.length>1?spread(vals):0};}),p=smallPlot(1,band?3:4,0,11,'day','value');
-  art=p.art;if(band)art+=path(groups.map((g,i)=>`${i?'L':'M'}${p.px(g.x)} ${p.py(g.mean+g.sd)}`).join('')+[...groups].reverse().map(g=>`L${p.px(g.x)} ${p.py(g.mean-g.sd)}`).join('')+'Z','visual-wash');
-  art+=path(groups.map((g,i)=>`${i?'L':'M'}${p.px(g.x)} ${p.py(g.mean)}`).join(''),'visual-bold')+groups.map(g=>dot(p.px(g.x),p.py(g.mean),2)).join('');data={rows,groups};description=band?'Mean with ±1 sample SD at each day':'One observation per day; connect in time order';
+  art=p.art;if(band&&v.showInterval!==false)art+=path(groups.map((g,i)=>`${i?'L':'M'}${p.px(g.x)} ${p.py(g.mean+g.sd)}`).join('')+[...groups].reverse().map(g=>`L${p.px(g.x)} ${p.py(g.mean-g.sd)}`).join('')+'Z','visual-wash');
+  art+=path(groups.map((g,i)=>`${i?'L':'M'}${p.px(g.x)} ${p.py(g.mean)}`).join(''),'visual-bold')+(v.showMarkers===false?'':groups.map(g=>dot(p.px(g.x),p.py(g.mean),2)).join(''));data={rows,groups};description=band?'Mean with ±1 sample SD at each day':'One observation per day; connect in time order';
  }else if(id==='regression'||id==='residual'){
   const rows=id==='residual'?[[1,8],[2,3],[3,2],[4,3],[5,8]]:pairObservations.map(r=>r.slice(0,2)),fit=leastSquares(rows),residuals=rows.map(([x,y])=>[x,y-fit.intercept-fit.slope*x]),resid=id==='residual',p=smallPlot(1,5,resid?-4:0,resid?4:7,'x',resid?'residual':'y');
   art=p.art+path(resid?`M${p.px(1)} ${p.py(0)}H${p.px(5)}`:`M${p.px(1)} ${p.py(fit.intercept+fit.slope)}L${p.px(5)} ${p.py(fit.intercept+5*fit.slope)}`,resid?'visual-dashed':'visual-bold')+(resid?residuals:rows).map(([x,y])=>dot(p.px(x),p.py(y),2.7)).join('');data={rows,fit,residuals};description=resid?'Actual y minus the fitted line, on the same observations':'Least-squares line fitted to the five displayed pairs';
@@ -348,8 +353,18 @@ function scientificEvidence(v){
 
 const explorerSpecs={
  scatter:{label:'Trace an observation',options:exampleRows.map(r=>[r.id,`${r.id} · ${r.group}: (${r.x}, ${r.value})`])},
+ encoding:{label:'Category colour',options:[['plain','One colour'],['hue','hue="group"']]},
+ 'scatter-dimensions':{label:'Category markers',options:[['colour','Colour only'],['shape','Colour + style="group"'],['size','Add size="value"']]},
+ density:{label:'Smoothing · bw_adjust',options:[['0.5','0.5 · less smoothing'],['1','1 · default smoothing'],['2','2 · more smoothing']]},
+ strip:{label:'Category displacement · jitter',options:[['False','False · exact category position'],['0.15','0.15 · separate repeated values']]},
+ swarm:{label:'Fixed marker size',options:[['3','size=3'],['5','size=5'],['7','size=7']]},
+ line:{label:'Observation markers',options:[['none','marker=None'],['o','marker="o"']]},
+ 'line-band':{label:'Spread around each day’s mean',options:[['none','errorbar=None'],['sd','errorbar="sd"']]},
+ 'point-interval':{label:'Observed spread · errorbar',options:[['none','None · means only'],['sd','"sd" · mean ± one SD']]},
+ violin:{label:'Inner marks',options:[['quart','inner="quart" · quartiles'],['point','inner="point" · observations']]},
+ stacked:{label:'Upper component starts at',options:[['zero','bottom=0 · components overlap'],['first','bottom=first · stack components']]},
  histogram:{label:'Number of bins',options:[['2','2 bins'],['4','4 bins'],['8','8 bins'],['wide','Edges: 0, 4, 8, 12, 16, 20'],['narrow','Edges: 0, 2, 4, …, 20'],['shifted','Edges: 0, 3, 6, …, 21'],['unequal','Edges: 0, 2, 5, 20']]},
- 'count-bars':{label:'Height represents',options:[['count','Record count'],['mean','Mean value'],['sum','Sum of values'],['count-ascending','Counts: smallest first'],['count-descending','Counts: largest first']]},
+ 'count-bars':{label:'Trace a category',options:[['count-A','A · matching records'],['count-B','B · matching records'],['count-C','C · matching records'],['count','All record counts'],['count-ascending','Counts: smallest first'],['count-descending','Counts: largest first']]},
  'mean-bars':{label:'Height represents',options:[['count','Record count'],['mean','Mean value'],['median','Median value']]},
  'summary-order':{label:'Group summary order',options:[['original','A, B, C'],['ascending','Mean: smallest first'],['descending','Mean: largest first']]},
  boxplot:{label:'Display of the same values',options:[['raw','Raw observations'],['box','Raw observations + box plot']]},
@@ -359,7 +374,49 @@ const explorerSpecs={
 function exploration(variant,choice,options={}){
  const spec=explorerSpecs[variant];if(!spec||!spec.options.some(([value])=>value===choice))throw Error('Unknown teaching visual choice');
  let art='',summary='',code='',data;
- if(variant==='scatter'){
+ if(['density','line','line-band','point-interval','violin'].includes(variant)){
+  const settings=variant==='density'?{bandwidth:Number(choice)}:variant==='line'?{showMarkers:choice==='o'}:['point-interval','line-band'].includes(variant)?{showInterval:choice==='sd'}:{inner:choice,densityNorm:'area'};
+  const model=scientificPlot(variant,settings);art=`<g transform="translate(0 6) scale(2)">${model.art}</g>`;data={...model.data,choice,count:model.data.rows?.length||exampleRows.length};
+  if(variant==='density'){
+   summary=`The same nine values and fixed density scale; bw_adjust=${choice} changes only smoothing. cut=0 keeps the displayed endpoints fixed.`;
+   code=`sns.kdeplot(data=example, x="value", bw_adjust=${choice}, cut=0, ax=ax)`;
+  }else if(variant==='line'){
+   summary=choice==='o'?'Markers show each of the four observations; the connecting line is unchanged.':'The same four observations are connected without point markers.';
+   code=`sns.lineplot(data=example, x="day", y="value", estimator=None, marker=${choice==='o'?'"o"':'None'}, ax=ax)`;
+  }else if(variant==='line-band'){
+   summary=choice==='sd'?'The line stays at each day’s mean; the band shows one sample SD above and below it.':'The same daily means are connected without a band; all repeated observations stay fixed.';
+   code=`sns.lineplot(data=example, x="day", y="value", estimator="mean", errorbar=${choice==='sd'?'"sd"':'None'}, marker="o", ax=ax)`;
+  }else if(variant==='point-interval'){
+   summary=choice==='sd'?'Each dot stays at its group mean; intervals show one sample SD above and below it.':'The same group means are shown without intervals; the observations are unchanged.';
+   code=`sns.pointplot(data=example, x="group", y="value", estimator="mean", errorbar=${choice==='sd'?'"sd"':'None'}, capsize=0.15, ax=ax)`;
+  }else{
+   summary=choice==='quart'?'Inner lines show each group’s quartiles; density outlines and observations stay fixed.':'Inner dots show every observed value; density outlines and quartiles stay fixed.';
+   code=`sns.violinplot(data=example, x="group", y="value", cut=0, inner="${choice}", ax=ax)`;
+  }
+ }else if(variant==='strip'||variant==='swarm'){
+  const jitter=variant==='strip'&&choice!=='False'?.15:0,size=variant==='swarm'?Number(choice):5,px=group=>group==='A'?160:370,py=value=>175-value/10*145;
+  const marks=rawRows.map((row,i)=>{const same=rawRows.filter(other=>other.group===row.group&&other.value===row.value),rank=same.findIndex(other=>other.id===row.id),offset=variant==='swarm'?(rank-(same.length-1)/2)*(size*2+2):jitter?[-18,18,0,-18,18,0][i]:0;return {...row,x:px(row.group)+offset,y:py(row.value)};});
+  art=axes(50,25,420,150)+[0,5,10].map(n=>et(24,py(n)+4,n)).join('')+et(50,17,'value')+et(155,195,'A')+et(365,195,'B')+marks.map(row=>`<g data-row="${row.id}"><title>${esc(`${row.id}: ${row.group}, value=${row.value}`)}</title>`+dot(row.x,row.y,variant==='swarm'?size:5)+'</g>').join('');
+  summary=variant==='swarm'?`All six observations remain at their measured values; size=${choice} changes marker size and the packing space needed.`:jitter?'jitter=0.15 separates repeated values only along the category axis; measured values stay fixed.':'jitter=False keeps exact category positions; repeated values overlap, but all six records remain.';
+  code=`sns.${variant==='swarm'?'swarmplot':'stripplot'}(data=example, x="group", y="value", ${variant==='swarm'?'size='+choice:'jitter='+choice}, ax=ax)`;data={rows:rawRows,marks,count:rawRows.length,jitter,size};
+ }else if(variant==='encoding'||variant==='scatter-dimensions'){
+  const coloured=variant==='scatter-dimensions'||choice==='hue',shaped=variant==='scatter-dimensions'&&choice!=='colour',sized=choice==='size';
+  const categories=['A','B','C'],colours=['var(--lesson-accent)','var(--coral)','var(--ink)'];
+  const marker=(x,y,radius,group)=>{const style=`fill:${coloured?colours[group]:colours[0]};stroke:var(--ink);stroke-width:1`,side=radius*Math.sqrt(Math.PI),triangle=radius*Math.sqrt(4*Math.PI/Math.sqrt(3)),height=triangle*Math.sqrt(3)/2;
+   return shaped&&group===1?`<rect x="${x-side/2}" y="${y-side/2}" width="${side}" height="${side}" style="${style}"/>`:shaped&&group===2?`<path d="M${x} ${y-height*2/3}l${triangle/2} ${height}h${-triangle}Z" style="${style}"/>`:`<circle cx="${x}" cy="${y}" r="${radius}" style="${style}"/>`;};
+  art=axes(40,25,435,150)+[0,2,4,6].map(n=>et(40+n/7*435-3,192,n)).join('')+[0,10,20].map(n=>et(14,175-n/20*150+4,n)).join('')+et(460,213,'x')+et(14,17,'value');
+  // Seaborn's default six-point marker maps numeric size to 18–72 pt².
+  const marks=exampleRows.map(row=>{const group=categories.indexOf(row.group),radius=sized?Math.sqrt((18+(row.value-1)/17*54)/Math.PI):4,x=40+row.x/7*435,y=175-row.value/20*150;
+   art+=`<g data-row="${row.id}"><title>${esc(`${row.id}: group ${row.group}, x=${row.x}, value=${row.value}`)}</title>${marker(x,y,radius,group)}</g>`;return {id:row.id,x:row.x,value:row.value,group:row.group,radius,area:Math.PI*radius*radius};});
+  if(coloured)art+=categories.map((group,i)=>marker(260+i*70,12,3,i)+et(270+i*70,16,group)).join('');
+  summary=sized?'Colour and shape still identify groups; only marker area now maps value. The nine point coordinates stay fixed.':shaped?'Colour and shape both identify the same group; all marker sizes and coordinates stay fixed.':coloured?'hue="group" assigns a colour to each group; the nine point coordinates stay fixed.':'One fixed colour shows the same nine points; group identity is not encoded.';
+  code=`sns.scatterplot(data=example, x="x", y="value"${coloured?', hue="group"':''}${shaped?', style="group"':''}${sized?', size="value"':''}, ax=ax)`;data={marks,count:exampleRows.length,coloured,shaped,sized};
+ }else if(variant==='stacked'){
+  const first=[2,3,1],second=[3,1,4],groups=['A','B','C'],stack=choice==='first',px=i=>100+i*140,py=value=>175-value/6*140;
+  art=axes(50,25,420,150)+[0,3,6].map(n=>et(25,py(n)+4,n)).join('')+et(50,17,'count')+first.map((n,i)=>rect(px(i),py(n),60,175-py(n),'visual-fill')+rect(px(i),py(second[i]+(stack?n:0)),60,second[i]/6*140,'visual-hatch')+et(px(i)+24,197,groups[i])).join('')+rect(280,5,12,12,'visual-fill')+et(298,16,'Part 1')+rect(380,5,12,12,'visual-hatch')+et(398,16,'Part 2');
+  summary=stack?'bottom=first puts each upper component above its matching lower component. Totals: A=5, B=4, C=5.':'bottom=0 starts both components at zero, so they overlap. Component values stay unchanged.';
+  code='ax.bar(example["group"], example["first"], label="Part 1")\n'+`ax.bar(example["group"], example["second"], bottom=${stack?'example["first"]':'0'}, label="Part 2")\nax.legend()`;data={groups,first,second,bottom:stack?first:[0,0,0],totals:first.map((n,i)=>n+second[i]),count:3};
+ }else if(variant==='scatter'){
   const row=exampleRows.find(r=>r.id===choice),px=40+row.x/7*435,py=175-row.value/20*150;
   art=plotRows(exampleRows,40,25,435,150,row.id)+path(`M40 ${py}H${px}V175`,'visual-dashed');
   summary=`${row.id}: x=${row.x} and value=${row.value} place this one observation at (${row.x}, ${row.value}). All nine rows remain plotted.`;
@@ -373,10 +430,12 @@ function exploration(variant,choice,options={}){
   code=`sns.histplot(data=example, x="value", bins=${countChoice?choice:`[${edges.join(', ')}]`}, ax=ax)`;data={mode:countChoice?'count':'edges',edges,bins,count:bins.reduce((n,b)=>n+b.rows.length,0)};
  }else if(['count-bars','mean-bars','summary-order'].includes(variant)){
   const kind=variant==='summary-order'?(options.statistic==='median'?'median':'mean'):choice.startsWith('count')?'count':choice,groups=summaries(kind);
+  const trace=/^count-[ABC]$/.test(choice)?choice.at(-1):null;
   if(choice==='count-ascending'||choice==='count-descending')groups.sort((a,b)=>choice==='count-ascending'?a.value-b.value:b.value-a.value);
   if(variant==='summary-order'&&choice!=='original')groups.sort((a,b)=>choice==='ascending'?a.value-b.value:b.value-a.value);
-  art=summaryBars(groups,kind==='count'?'Record count':`${kind} of value`);summary=`${groups.map(g=>`${g.group}: ${fmt(g.value)} from ${g.rows.join(', ')}`).join('; ')}. ${variant==='summary-order'?`Labels and their ${kind==='median'?'medians':'means'} move together.`:'Counting rows and calculating a value summary answer different questions.'} Original observations stay unchanged.`;
-  code=kind==='count'?`sns.countplot(data=example, x="group"${choice.startsWith('count-')?', order='+JSON.stringify(groups.map(g=>g.group)):''}, ax=ax)`:variant==='summary-order'?`summary = example.groupby("group")["value"].${kind}()\n${choice!=='original'?`summary = summary.sort_values(ascending=${choice==='ascending'?'True':'False'})\n`:''}print(summary)`:`sns.barplot(data=example, x="group", y="value", estimator="${kind}", errorbar=None, ax=ax)`;data={kind,groups};
+  art=summaryBars(groups,kind==='count'?'Record count':`${kind} of value`);if(trace){const i=groups.findIndex(g=>g.group===trace);art+=rect(99+i*130,26,77,147,'visual-selected');}
+  summary=`${groups.map(g=>`${g.group}: ${fmt(g.value)} from ${g.rows.join(', ')}`).join('; ')}. ${variant==='summary-order'?`Labels and their ${kind==='median'?'medians':'means'} move together.`:trace?`Highlight ${trace}: matching records produce that bar’s count.`:'Counting rows and calculating a value summary answer different questions.'} Original observations stay unchanged.`;
+  code=kind==='count'?`sns.countplot(data=example, x="group"${['count-ascending','count-descending'].includes(choice)?', order='+JSON.stringify(groups.map(g=>g.group)):''}, ax=ax)`:variant==='summary-order'?`summary = example.groupby("group")["value"].${kind}()\n${choice!=='original'?`summary = summary.sort_values(ascending=${choice==='ascending'?'True':'False'})\n`:''}print(summary)`:`sns.barplot(data=example, x="group", y="value", estimator="${kind}", errorbar=None, ax=ax)`;data={kind,groups,trace};
  }else if(variant==='boxplot'){
   const values=exampleRows.map(r=>r.value),q1=q(values,.25),median=q(values,.5),q3=q(values,.75),iqr=q3-q1,fences=[q1-1.5*iqr,q3+1.5*iqr],inside=values.filter(v=>v>=fences[0]&&v<=fences[1]),outliers=exampleRows.filter(r=>r.value<fences[0]||r.value>fences[1]);
   const px=v=>45+v/20*425;art=axes(45,25,425,145)+[0,5,10,15,20].map(n=>et(px(n)-3,192,n)).join('')+et(50,18,'value · same nine observations')+exampleRows.map((r,i)=>dot(px(r.value),66+(i%5)*12,4)+et(px(r.value)-6,58+(i%5)*12,r.id)).join('');
@@ -399,35 +458,31 @@ function exploration(variant,choice,options={}){
 }
 function shortResult(result,variant,choice){
  const d=result.data;
+ if(['density','line','line-band','point-interval','violin','strip','swarm','encoding','scatter-dimensions','stacked'].includes(variant))return result.summary;
  if(variant==='scatter')return `${d.row.id}: x=${d.row.x}, value=${d.row.value} → point (${d.row.x}, ${d.row.value}).`;
  if(variant==='histogram')return `Count the same nine values in ${d.bins.length} bins on the fixed 0–9 count scale. ${choice==='unequal'?'Widths follow the edges; height still counts rows.':'Include left edges and the final right edge.'}`;
  if(variant==='summary-order')return `Labels and ${d.kind==='median'?'medians':'means'} move together; observations stay unchanged.`;
- if(d.groups)return `${d.kind==='count'?'Count rows':d.kind==='mean'?'Average values':d.kind==='median'?'Take the middle value after sorting':'Add values'} within each group.`;
+ if(d.groups)return d.trace?`Count rows in ${d.trace}: ${d.groups.find(g=>g.group===d.trace).rows.join(', ')} → ${d.groups.find(g=>g.group===d.trace).value}. Every bar and observation stays fixed.`:`${d.kind==='count'?'Count rows':d.kind==='mean'?'Average values':d.kind==='median'?'Take the middle value after sorting':'Add values'} within each group.`;
  if(variant==='boxplot')return choice==='raw'?'One mark per value; jitter separates repeats.':`Q1=${d.q1}, median=${d.median}, Q3=${d.q3}. Whiskers: ${d.whiskers.join('–')}; ${d.outliers.join(', ')} lies beyond the ${d.fences[1]} fence. Keep the flagged row.`;
  if(variant==='references')return [choice!=='value'?`x median is ${d.medianX} → vertical`:null,choice!=='x'?`value median is ${d.medianValue} → horizontal`:null].filter(Boolean).join('; ')+'.';
  return choice==='pooled'?`All ${d.count} rows in one panel.`:`Each of ${d.count} rows appears once; panels share scales.`;
 }
-function shortComparison(result,variant){
- const d=result.data;
- if(variant==='scatter')return `${d.row.id}: (${d.row.x}, ${d.row.value})`;
- if(variant==='histogram')return `${d.bins.length} bins · counts ${d.bins.map(b=>b.rows.length).join(', ')}`;
- if(d.groups)return `${d.kind==='count'?'Counts':d.kind==='sum'?'Totals':d.kind==='median'?'Medians':'Means'} · ${d.groups.map(g=>`${g.group}: ${fmt(g.value)}`).join(' · ')}`;
- if(variant==='boxplot')return `${d.count} raw values`;
- if(variant==='references')return `x median: ${d.medianX}`;
- return `All ${d.count} rows`;
-}
 function exampleTable(variant){
- const numeric=['histogram','boxplot'].includes(variant),coordinates=['scatter','references','facets'].includes(variant);
- const heads=numeric?['Column','Values']:['Group',coordinates?'(x, value)':'Values'];
- const rows=numeric?[['value',exampleRows.map(r=>r.value).join(', ')]]:['A','B','C'].map(group=>[group,exampleRows.filter(r=>r.group===group).map(r=>coordinates?`(${r.x},${r.value})`:r.value).join(', ')]);
+ if(variant==='line'||variant==='line-band')return `<table class="teaching-example-output teaching-visual-data" data-code-table="teaching"><caption class="sr-only">Example observations</caption><thead><tr><th scope="col"><code data-code-role="column">day</code></th><th scope="col"><code data-code-role="column">value</code></th></tr></thead><tbody>${(variant==='line'?lineObservations:repeatedObservations).map(row=>`<tr>${row.map(value=>`<td>${value}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+ if(variant==='stacked')return '<table class="teaching-example-output teaching-visual-data" data-code-table="teaching"><caption class="sr-only">Example component counts</caption><thead><tr><th scope="col"><code data-code-role="column">group</code></th><th scope="col"><code data-code-role="column">first</code></th><th scope="col"><code data-code-role="column">second</code></th></tr></thead><tbody>'+['A','B','C'].map((group,i)=>`<tr><th scope="row">${group}</th><td>${[2,3,1][i]}</td><td>${[3,1,4][i]}</td></tr>`).join('')+'</tbody></table>';
+ const observations=['strip','swarm'].includes(variant)?rawRows:exampleRows;
+ const numeric=['histogram','boxplot','density'].includes(variant),coordinates=['scatter','references','facets','encoding','scatter-dimensions'].includes(variant);
+ const heads=numeric?['Column','Values']:['Group',variant==='count-bars'?'Records':coordinates?'(x, value)':'Values'];
+ const rows=numeric?[['value',observations.map(r=>r.value).join(', ')]]:[...new Set(observations.map(row=>row.group))].map(group=>[group,observations.filter(r=>r.group===group).map(r=>variant==='count-bars'?r.id:coordinates?`(${r.x},${r.value})`:r.value).join(', ')]);
  return `<table class="teaching-example-output teaching-visual-data" data-code-table="${numeric?'dictionary':'teaching'}"><caption class="sr-only">Example observations</caption><thead><tr>${heads.map(h=>`<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(([group,values])=>`<tr><th scope="row">${numeric?`<code data-code-role="column">${esc(group)}</code>`:esc(group)}</th><td>${esc(values)}</td></tr>`).join('')}</tbody></table>`;
 }
 function resultHtml(result,variant,choice){return result.svg+`<p>${esc(shortResult(result,variant,choice))}</p>${result.code?`<pre><code>${esc(result.code)}</code></pre>`:''}`;}
 function interactive(v){
  const spec=explorerSpecs[v.variant];if(!spec)return '';
- const options={statistic:v.summaryStatistic},available=spec.options.filter(([value])=>!v.choices||v.choices.includes(value)),choices=available.map(([value,label])=>[value,v.variant==='summary-order'&&v.summaryStatistic==='median'?label.replace('Mean','Median'):label]);
- const baseline=available[0][0],current=v.choice&&available.some(([value])=>value===v.choice)?v.choice:v.statistic&&available.some(([value])=>value===v.statistic)?v.statistic:available[1]?.[0]||baseline;
- return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-statistic="${esc(v.summaryStatistic||'')}"><p>Illustrative data · nine rows</p>${exampleTable(v.variant)}<label class="teaching-visual-controls">${esc(v.binMode==='edges'?'Bin edges':spec.label)} <select data-visual-choice>${choices.map(([value,label])=>`<option value="${esc(value)}"${value===current?' selected':''}>${esc(label)}</option>`).join('')}</select></label><p><strong>Comparison baseline</strong> · ${esc(shortComparison(exploration(v.variant,baseline,options),v.variant))}</p><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(exploration(v.variant,current,options),v.variant,current)}</div></section>`;
+ const options={statistic:v.summaryStatistic},available=spec.options.filter(([value])=>(!v.choices||v.choices.includes(value))&&(v.variant!=='scatter-dimensions'||value!=='size'||v.sizeEncoding!==false)),choices=available.map(([value,label])=>[value,v.variant==='summary-order'&&v.summaryStatistic==='median'?label.replace('Mean','Median'):label]);
+ const preferred=v.choice||v.statistic||(v.variant==='density'?String(v.bandwidth||1):v.variant==='violin'?v.inner:null),baseline=available[0][0],current=preferred&&available.some(([value])=>value===preferred)?preferred:available[1]?.[0]||baseline;
+ const observationLabel=v.variant==='line'?'four rows':['strip','swarm','line-band'].includes(v.variant)?'six rows':v.variant==='stacked'?'three component pairs':'nine rows';
+ return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-statistic="${esc(v.summaryStatistic||'')}"><p>Illustrative data · ${observationLabel} · separate from the exercise</p>${exampleTable(v.variant)}<label class="teaching-visual-controls">${esc(v.binMode==='edges'?'Bin edges':spec.label)} <select data-visual-choice>${choices.map(([value,label])=>`<option value="${esc(value)}"${value===current?' selected':''}>${esc(label)}</option>`).join('')}</select></label><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(exploration(v.variant,current,options),v.variant,current)}</div></section>`;
 }
 // Explicit teaching alignment, applied after all curriculum overlays. Reviews
 // reuse the matching operation, rather than blindly taking the Transfer sketch.
@@ -469,16 +524,19 @@ function align(curriculum){
   if(activityIdeas[round.id])round.activityIdea=activityIdeas[round.id];
   const v=round.visual;
   if(v.variant==='histogram')Object.assign(v,{choices:round.id==='V04-3'?['wide','narrow','unequal']:['2','4','8'],choice:round.id==='V04-3'?'unequal':round.id==='V04-2'?'2':'4',binMode:round.id==='V04-3'?'edges':'count'});
-  if(v.variant==='count-bars')Object.assign(v,{statistic:'count',choice:'count',choices:['count','count-ascending','count-descending']});
+  if(v.variant==='count-bars')Object.assign(v,{statistic:'count',choice:'count-A',choices:['count-A','count-B','count-C']});
   if(v.variant==='references')v.choice='both';
   if(v.variant==='mean-bars')v.choices=['mean','median'];
   if(v.variant==='summary-order')Object.assign(v,{summaryStatistic:round.id==='I19S-1'?'mean':'median',choice:round.id==='I19S-1'?'original':round.id==='I19S-3'?'descending':'ascending'});
+  if(v.variant==='scatter-dimensions')v.sizeEncoding=!!round.solution.match(/\bsize\s*=/);
   if(round.id==='VR2-4')v.sizeEncoding=false;
   if(v.variant==='violin')v.densityNorm=round.solution.match(/density_norm\s*=\s*["'](\w+)/)?.[1]||'area';
   if(v.variant==='violin')v.inner=/inner\s*=\s*["']quart/.test(round.solution)?'quart':'point';
   if(v.variant==='density')v.bandwidth=/bw_adjust\s*=\s*2/.test(round.solution)?2:1;
   if(v.variant==='pair-grid'){const vars=round.solution.match(/vars\s*=\s*\[([^\]]+)/);v.variableCount=vars?(vars[1].match(/["'][A-Za-z_]/g)||[]).length:2;v.corner=/corner\s*=\s*True/.test(round.solution);}
  }
+ // Catalogue thumbnails introduce the Follow concept, without later stage cues.
+ for(const lesson of curriculum.lessons)if(!lesson.review&&lesson.rounds[0]?.visual)lesson.visual={...lesson.rounds[0].visual};
 }
 const mounted=new WeakSet();
 function mount(container=root.document){if(!container||mounted.has(container))return;mounted.add(container);container.addEventListener('change',event=>{const control=event.target.closest?.('[data-visual-choice]'),section=control?.closest('[data-foundation-explorer]');if(!section)return;const variant=section.dataset.foundationExplorer,result=section.querySelector('.teaching-visual-result');result.innerHTML=resultHtml(exploration(variant,control.value,{statistic:section.dataset.visualStatistic}),variant,control.value);root.FoundationLearning?.highlightContent?.(result);});}

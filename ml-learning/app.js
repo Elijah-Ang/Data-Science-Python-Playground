@@ -169,7 +169,7 @@
     const guidance=ex.syntaxGuidance;
     if(guidance){
       const current=guidance.current||[];
-      return current.length?`<section class="teaching-essential ml-syntax"><h3>Python for this practice</h3>${syntaxParts(current,false)}</section>`:'';
+      return current.length?`<section class="teaching-essential ml-syntax${ex.newInTask?.length?' teaching-transition':''}"><h3>${ex.newInTask?.length?"What's new in this task":'Python for this practice'}</h3>${syntaxParts(current,false)}</section>`:'';
     }
     const parts=Array.isArray(card.syntaxBreakdown)?card.syntaxBreakdown:[];
     return `<section class="teaching-essential ml-syntax"><h3>Python for this practice</h3>${code(card.syntax)}${syntaxParts(parts,false)}</section>`;
@@ -184,9 +184,9 @@
   function workflowSections(ex){
     if(!ex.workflowSections?.length)return '';
     const stepFor={assignment:1,'features-target':1,split:2,stratify:2,pipeline:4,scale:4,logistic:4,knn:4,tree:4,svm:4,lda:4,qda:4,neural:4,polynomial:4,ridge:4,'target-transform':4,'balanced-accuracy':7,baseline:5,folds:5,'cross-validation':5,'candidate-comparison':5,oof:6,clone:7,mae:7,rmse:7,'macro-f1':7};
-    return `<section class="ml-progressive-workflow" aria-label="Complete workflow explained"><h3>The workflow</h3><ol class="ml-workflow-outline">${ex.workflowSections.map((s,i)=>{
+    return `${ex.newInTask?.length?`<section class="teaching-transition"><h3>What's new in this task</h3>${syntaxParts(ex.syntaxGuidance.current,false)}</section>`:''}<section class="ml-progressive-workflow" aria-label="Complete workflow explained"><h3>The workflow</h3><ol class="ml-workflow-outline">${ex.workflowSections.map((s,i)=>{
       const current=(ex.syntaxGuidance?.current||[]).filter(p=>(stepFor[p.id]||8)===(s.number||i+1));
-      return `<li data-workflow-step="${s.number||i+1}"><strong>${esc(s.title)}</strong><p>${esc(s.meaning||s.question)}</p>${current.length?syntaxParts(current,false):''}</li>`;
+      return `<li data-workflow-step="${s.number||i+1}"><strong>${esc(s.title)}</strong><p>${esc(s.meaning||s.question)}</p>${current.length&&!ex.newInTask?.length?syntaxParts(current,false):''}</li>`;
     }).join('')}</ol></section>`;
   }
   function modelComparison(card){
@@ -214,10 +214,13 @@
   function lessonPage(card,index){
     const ex=card.exercises[index],follow=card.kind==='teaching'&&index===0;
     const collection=collections.primary(card);
-    const activityVisual={...(ex.visual||card.visual)};
-    const visual=visualPresentation(activityVisual);
-    const idea=follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${visual.primary}</section>`:`<section class="teaching-overview"><h3>${esc(ex.milestone||ex.label)}</h3><p>${esc(ex.activityExplanation||ex.focusExplanation||ex.context||card.goal)}</p>${visual.primary}</section>`;
-    return LearningLanguage.render(`<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2>${follow?`<p>${esc(card.goal)}</p>`:''}${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" data-code-context="guide" aria-label="Lesson content">${idea}${workflowSections(ex)}${ex.workflowSections?.length?'':syntaxSupport(card,ex)}${suppliedState(ex)}${masterySupport(ex)}${ex.modelBridge?modelComparison(card):''}${evidenceContract(ex)}${ex.evidence?`<section class="ml-provided-evidence"><h3>Evidence to use</h3>${LearningLanguage.steps(ex.evidence,ex.id)}</section>`:''}${lessonDataPreview(ex)}${taskDescriptor(ex)}<section class="foundation-reference-content" data-code-context="guide" aria-label="Hints and solution">${help(ex)}</section></article>${pythonPane(ex)}</div>${branchNavigation(card,index)}${navigation(card,index)}</div>`,ex.id);
+    const stage=card.kind!=='teaching'?'review':follow?'follow':ex.label==='Transfer'?'transfer':'change';
+    // A lesson introduces its picture once. Later practice receives a picture
+    // only when the authored activity names the genuinely new visual concept.
+    const activityVisual=(follow||ex.visualTeaching)?{...(ex.visual||card.visual)}:null;
+    const visual=activityVisual?visualPresentation(activityVisual).primary:'';
+    const idea=follow?`<section class="teaching-overview"><h3>Understand the idea</h3><p class="teaching-summary">${esc(card.explanation)}</p>${visual}</section>`:(visual?`<section class="teaching-task-visual" aria-label="${esc(ex.visualTeaching.concept)}"><h3>${esc(ex.visualTeaching.concept)}</h3>${visual}</section>`:'');
+    return LearningLanguage.render(`<div class="ml-lesson"><nav class="foundation-breadcrumb" aria-label="Learning breadcrumb"><a href="#">Machine Learning</a><span>/</span><a href="#${card.deck}">${esc(C.decks.find(d=>d.id===card.deck).title)}</a>${collection?`<span>/</span><a href="#${collections.route(collection)}">${esc(collection.title)}</a>`:''}<span>/</span><span>${esc(card.id)}</span></nav><header class="foundation-lesson-heading"><div class="foundation-lesson-copy"><span class="foundation-eyebrow">${esc(card.chapter)} · ${esc(card.id)} · ${esc(card.minutes)} MIN</span><h2>${esc(card.title)}</h2>${follow?`<p>${esc(card.goal)}</p>`:''}${ex.kind==='python'?'<button class="foundation-editor-jump" type="button">Go to editor ↓</button>':''}</div>${FoundationLearning.stages(card.exercises,index)}</header><div class="foundation-split"><article class="foundation-content" data-code-context="guide" data-learning-stage="${stage}" aria-label="Lesson content">${idea}${workflowSections(ex)}${ex.workflowSections?.length?'':syntaxSupport(card,ex)}${suppliedState(ex)}${masterySupport(ex)}${ex.modelBridge?modelComparison(card):''}${evidenceContract(ex)}${ex.evidence?`<section class="ml-provided-evidence"><h3>Evidence to use</h3>${LearningLanguage.steps(ex.evidence,ex.id)}</section>`:''}${lessonDataPreview(ex)}${taskDescriptor(ex)}<section class="foundation-reference-content" data-code-context="guide" aria-label="Hints and solution">${help(ex)}</section></article>${pythonPane(ex)}</div>${branchNavigation(card,index)}${navigation(card,index)}</div>`,ex.id);
   }
   function evidenceContract(ex){
     const outputs=ex.assessment?ex.contract:ex.learnerOutputs||ex.contract;

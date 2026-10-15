@@ -45,6 +45,7 @@ const files = [
   "foundations/learning-ui.js",
   "foundations/parameter-guide.js",
   "foundations/teaching.js",
+  "foundations/operation-visuals.js",
   "foundations/clarity.js",
   "foundations/variety.js",
   "foundations/prerequisites.js",

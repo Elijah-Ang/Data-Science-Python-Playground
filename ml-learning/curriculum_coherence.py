@@ -199,7 +199,7 @@ ACTIVITY_TEACHING = {
  'ML-C08-2': ['pipeline-internals','neighbours'],
  'ML-C17-3': ['lda-deeper'],
 }
-MODEL_FIRST={'C10':'svm','C17':'lda','N04':'target-transform'}
+MODEL_FIRST={'C10':'svm','C17':'lda','N04':'target-transform','U07':'ward'}
 
 
 def _bindings(source):

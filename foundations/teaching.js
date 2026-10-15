@@ -50,16 +50,22 @@
   function intro(curriculum, lesson, round) {
     const m = model(curriculum, lesson, round), g=m.source.guide;
     const visuals = root.FoundationVisuals;
+    const operation = root.FoundationOperationVisuals?.render(curriculum,lesson,round)||'';
     const explorer=m.source.id==='V35'?'':visuals.interactive?.(round.visual);
     const chartChoices = [['scatter','Two numeric variables'],['histogram','One numeric distribution'],['count-bars','Category frequencies'],['line','Change over time']];
     // One explanatory visual: charts for visual concepts, a concrete worked
     // miniature for table concepts. No second abstract Input/Operation/Result strip.
-    const diagram = m.source.id === 'V35'
+    const diagram = operation || (m.source.id === 'V35'
       ? '<div class="teaching-chart-choices">' + chartChoices.map(([id,label]) => '<figure>' + visuals.diagram(visuals.spec(id)) + '<figcaption>' + esc(label) + '</figcaption></figure>').join('') + '</div>'
-      : (explorer||'<figure class="teaching-illustration"><div class="foundation-concept-scroll" tabindex="0" role="region" aria-label="Illustration; scroll if needed">'+visuals.diagram(round.visual)+'</div><figcaption>'+esc(visuals.sceneLabel(round.visual))+'</figcaption>'+visuals.scientificEvidence(round.visual)+'</figure>');
+      : (explorer||'<figure class="teaching-illustration"><div class="foundation-concept-scroll" tabindex="0" role="region" aria-label="Illustration; scroll if needed">'+visuals.diagram(round.visual)+'</div><figcaption>'+esc(visuals.sceneLabel(round.visual))+'</figcaption>'+visuals.scientificEvidence(round.visual)+'</figure>'));
     const plottingIntro=m.source.id==='V02'?'<aside class="syntax-choice-callout"><strong>Two plotting tools, one Figure</strong><p>Matplotlib creates fig and ax and handles labels and layout. Seaborn draws on ax. Equivalent Matplotlib code is welcome.</p></aside>':'';
-    const detailedExample=explorer||m.source.deck==='visualise'&&m.source.id!=='V35';
+    const detailedExample=operation||explorer||m.source.id==='I17'||m.source.deck==='visualise'&&m.source.id!=='V35';
     return '<section class="teaching-overview" data-teaching-source="'+esc(m.source.id)+'">'+plottingIntro+'<h3>Understand the idea</h3><p class="teaching-summary">'+esc(g.idea)+'</p>'+diagram+(detailedExample?'':example(g,m.source.id))+'</section>';
+  }
+  function newInTask(curriculum,lesson,round){
+    const g=round.stageTeaching;
+    if(!g||lesson.review||round.retrieves||round===lesson.rounds[0])return '';
+    return '<section class="teaching-transition teaching-stage-addition" data-code-context="teaching" data-teaching-stage="'+esc(round.id)+'" aria-label="What is new in this task"><h3>What’s new in this task</h3><p>'+esc(g.idea)+'</p>'+(g.code?'<pre><code>'+esc(g.code)+'</code></pre>':'')+(g.parts?.length?'<dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,g.parts)+'</dl>':'')+(g.note?'<p class="teaching-excerpt-note">'+esc(g.note)+'</p>':'')+'</section>';
   }
   function syntaxRows(lesson,items){
     return items.map((entry,i)=>{
@@ -78,7 +84,7 @@
     const entries=guidance?[...guidance.reminders,...guidance.reference]:(lesson.syntax||[]).filter(([code])=>(lesson.syntaxLater||[]).includes(code));
     return entries.length?'<section><h3>Related syntax</h3><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,entries)+'</dl></section>':'';
   }
-  const api = {model, intro, syntax, syntaxReference, reference, transition, example};
+  const api = {model, intro, newInTask, syntax, syntaxReference, reference, transition, example};
   root.FoundationTeaching = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -362,8 +362,8 @@ def assemble():
                     check['message']='Check the requested values, labels, row and feature order, and fitted evidence against this task. Reuse supplied fitted state when the task asks for a transform.'
         if exercise['kind']=='python' and not exercise.get('assessment'):
             workflow_contract(exercise)
-    import curriculum_coherence
-    return curriculum_coherence.apply(registry)
+    import curriculum_coherence, visual_progression
+    return visual_progression.apply(curriculum_coherence.apply(registry))
 
 if __name__=='__main__':
     # Imported author modules use this same registry rather than a second __main__.

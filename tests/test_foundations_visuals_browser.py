@@ -73,12 +73,12 @@ with sync_playwright() as pw:
     height=control.evaluate('e=>e.getBoundingClientRect().height')
     if height<44:failures.append({'route':route,'width':width,'theme':theme,'touchTargetHeight':height})
     options=control.locator('option').evaluate_all('(items)=>items.map(e=>e.value)')
-    baseline=explorer.locator(':scope > p').nth(1).inner_text()
+    baseline=explorer.locator('.teaching-visual-data').inner_text()
     summaries=[]
     for option in options:
      control.select_option(option)
      summaries.append(explorer.locator('.teaching-visual-result').inner_text())
-     assert explorer.locator(':scope > p').nth(1).inner_text()==baseline
+     assert explorer.locator('.teaching-visual-data').inner_text()==baseline
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
      bad=explorer.locator('svg').evaluate('''svg=>{const b=svg.viewBox.baseVal;return [...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>b.width+.5||r.y<0||r.y+r.height>b.height+.5}).map(t=>t.textContent)}''')
      assert not bad,(route,width,theme,bad)

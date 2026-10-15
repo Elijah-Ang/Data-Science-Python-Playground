@@ -1,0 +1,158 @@
+{
+  "recordedAtUTC": "2026-10-15T06:35:42.111509+00:00",
+  "reviewBaselineCommit": "97ca093eb9e838924fddb5c3f6208d3e88f88dae",
+  "mainCommitUnchanged": "8a72b291a3c47cd6db5e825cfb4902a4df1578bb",
+  "finalBuildContentId": "49bebfce31415248f7f80cb29b8ca4f84976378dafea59abe01156fcfd5266e1",
+  "sourceHashes": {
+    ".github/workflows/foundations-audit.yml": "3677dbc6b434b5ddee5177d1ad92346f5f14a08a2248861d16454ca4cb3d8792",
+    ".github/workflows/ml-learning-audit.yml": "d3925288ca1cfef9abc072447a9f490436b8dba9421e349160e8ade8ec944753",
+    "challenges/foundations-baseline.json": "791c733a6325c42e4777a65f5a23eec13fa09a539fae160461e7873fd25cb974",
+    "data-foundations.html": "50bf15b2b5c0a0aa547a6ed9d85422593fc206c1175a8259472a4d63dc2a352a",
+    "foundations/app.js": "4eefffc4cec7589200a684d17a642a8d7bb02707b0ff13b5b9523eb2512e09ed",
+    "foundations/content-guidance.js": "e87e9ef69fa0faf19cff6964f12a889c03c3450287e08fa06b22b02523542419",
+    "foundations/foundations.css": "1d5091aef3c2f850a9fbae81245cdbfe7e188764b941f74d561d88eb3a43dbb2",
+    "foundations/operation-visuals.js": "ef10bf32bedef208caa111738a9b6403d6efb65b75846708abd0f2df5c08d103",
+    "foundations/teaching.js": "6afa38be80d3ed6dfd274333aced7411bf535b05bbc8c13e7fb535c183669aa8",
+    "foundations/visualise-guidance.js": "e2ef818004c479fa0cf1302ed513a81f01f9e2ed451a36faf677d8ed07c63625",
+    "foundations/visuals.js": "12663718cf827d0c99ac24f188f61afd0b8d391e06e5053affb98bb1510e4496",
+    "learning-identifiers.js": "1a2a3252d223d40ab3a686560cf50ae8a4b2692c19b359ae5dd947a81ec7f86d",
+    "ml-learning/app.js": "7fae0ec079927c8c7ec0f07fbe035e23a7d6d03341ac422f40508aa6b6301852",
+    "ml-learning/authoring.py": "01dbca4759fd279518e1c4b1d881b30184d790d3f2e9eda2dabb7240ea9bfe75",
+    "ml-learning/curriculum_coherence.py": "d38f0851224c84a92ae59fd2ddb02405896e8735f71826859ce4e6723b40d280",
+    "ml-learning/visual_progression.py": "a10a82720182d1f0e17d73b8a70d28322ff004f74befa2cc01c148be5d3c863b",
+    "ml-learning/visuals.js": "f7c6f4b36228304c052e3d88f79b3bb14b2fa15d14df52c6e5ea65bf58035a96",
+    "package.json": "790dd6d67936ed2c2d2707ee90158a1504fed0957b17c4785f2ab5361d039e61",
+    "scripts/audit-ml-learning-visuals.py": "5d8b8780f2ec799d01e601df4c115086890820a42d2661280de4e9c0625059f6",
+    "scripts/build-learning-identifiers.py": "fc601bfd23db565844f81ac943a0faee01c24c4a859409f7ea6008b5cf20348f",
+    "scripts/build-learning-pages.mjs": "fed6509dfec5325ac30b834fcc34340693abebaa5e34535191448d3fb1359635",
+    "scripts/build-web.mjs": "c512095c9536471258330bbf0ecc514a8efff9150e38435267edeba41caf84fd",
+    "tests/test_code_identifiers.mjs": "ccba39715c779a080130a2950a48bb8fc7e49916ab9305192943c0414e8e4898",
+    "tests/test_curriculum_responsive_browser.py": "45240806e40bc2eca9181b1688870f87adc54b929eab6b2adc9e6aeb29282589",
+    "tests/test_foundations_operation_visuals.mjs": "08d4dac86eccbdab584fcab3696aedae869453df693711cd8fae4b7cd4594ac9",
+    "tests/test_foundations_operation_visuals.py": "ae0350844a4efff9e6a805698a670aa999f679c1b03c282b8374c33135aa98c9",
+    "tests/test_foundations_stage_teaching.mjs": "dea1973dc53a0c20e98bc1cecedca4d0d145179446a63a6ef8e9b93b7f36feaa",
+    "tests/test_foundations_teaching.mjs": "d902019906f42c0249e63b621960046e273b878bbba91b9da73af425eaeeb293",
+    "tests/test_foundations_visuals_browser.py": "2a4aa7b29d0a0d5ed9e5af4750d50fc0d830308be9f59ad98dc6092575127ac0",
+    "tests/test_learning_pages.mjs": "95d27875c13527716efe8d3bb0e1a176c4daa286e869e9e0a6da3278baa05cba",
+    "tests/test_ml_learning_content.mjs": "0fa2783bde4c43a44f2dc2a8f9533324973240ba7262c2f70ce0ee5fe841a15a",
+    "tests/test_ml_visual_progression.py": "0d7651c3e89e4baa31047a095538a887f2c41b38d191f0c5c92350425dae323e",
+    "tests/test_model_family_visuals.py": "8b93cc49cbd75c709037bb5b90292fde75a1036b47648a806896793a7d0eb526",
+    "tests/test_operation_header_css_browser.py": "4c52063d374ef62579bac68d69bca80fbc6fbf8472f48db183f94412530eb533",
+    "tests/test_stage_visual_dom_delta.py": "1ed7f0dfb50af3625506a327f06bc37482501f1501cbd4ed5de1bb45dfefed09",
+    "tests/test_stage_visual_progression_browser.py": "7ade0d78654b7b245fd839b415c12abca81d066a7a61680412f1746c04ca125c",
+    "tests/test_teaching_visual_browser.py": "67396c81c67336d7fbe3c9a46832c77a09a7fbf8e31b772a7d1973e14f39019d",
+    "tests/test_teaching_visual_interactions.mjs": "eb5e4af4fb469db77ad5d961ad12d2c9a11c18bce3ea47cd7f2aa0d290b9c741",
+    "tests/test_teaching_visual_models.py": "8a827c0975fffe546a88db05efeedaf51d7a13e5dbd71d7d8d4db614de3d5ecd",
+    "tests/test_visual_scientific_scenes.py": "f9a7a871165b62798936f9ace0b929eb2f466a8249ef3d9577c247e83b770768",
+    "tests/test_visualise_follow_browser.py": "b3ce7aa5867c71964aaf3c36a03dfce4d577c5e8c50ed6f43c1f139880e80d0d"
+  },
+  "coverage": {
+    "activities": 676,
+    "followIntroductions": 178,
+    "interactiveFollowIntroductions": 86,
+    "explicitLaterVisuals": [
+      "ML-C08-2",
+      "ML-R10-2"
+    ],
+    "dataNewTaskIntroductions": 45,
+    "mlNewTaskIntroductions": 17,
+    "fullActivityRenders": 4056,
+    "fullInteractiveStates": 1482,
+    "finalTextCorrectionPages": 8,
+    "otherArticleDOMsExactlyUnchanged": 668,
+    "finalTextCorrectionRenders": 48,
+    "finalCSSAffectedActivities": 44,
+    "finalCSSRenders": 264,
+    "finalCSSInteractiveStates": 600,
+    "finalEditorFocusedRenders": 15
+  },
+  "nativeVersions": {
+    "python": "3.10.21",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "scipy": "1.12.0",
+    "scikit-learn": "1.4.2",
+    "matplotlib": "3.5.2"
+  },
+  "nativeOracles": {
+    "inspectWrangleStates": 100,
+    "visualiseScientificScenes": 26,
+    "visualiseDisplayedPythonStates": 26,
+    "mlNewOperationStates": 33,
+    "mlModelStates": 29,
+    "existingModelOracles": "KNN, fitted RBF SVM, trees, Ridge, scaled PCA"
+  },
+  "checks": [
+    {
+      "command": "npm run check",
+      "result": "passed on final source and final 49bebf build"
+    },
+    {
+      "command": "PYTHONPATH=/tmp/stage-black python3 scripts/format-foundations.py --check",
+      "result": "passed with Black 25.1.0"
+    },
+    {
+      "command": "node tests/test_foundations_operation_visuals.mjs",
+      "result": "44 lessons / 100 states passed"
+    },
+    {
+      "command": "python tests/test_foundations_operation_visuals.py",
+      "result": "100 native states passed in pinned environment"
+    },
+    {
+      "command": "node tests/test_foundations_stage_teaching.mjs",
+      "result": "338 activities / 45 focused additions passed"
+    },
+    {
+      "command": "python tests/test_ml_visual_progression.py",
+      "result": "33 native states and exact current pipeline guide names passed"
+    },
+    {
+      "command": "python tests/test_visual_scientific_scenes.py",
+      "result": "26 scenes and 26 displayed Python states passed"
+    },
+    {
+      "command": "python tests/test_teaching_visual_models.py; python tests/test_model_family_visuals.py",
+      "result": "native fitted-model oracles passed"
+    },
+    {
+      "command": "python tests/test_stage_visual_progression_browser.py",
+      "result": "4056 actual contexts / 1482 choices passed; final-delta and CSS receipts establish current coverage"
+    },
+    {
+      "command": "python tests/test_curriculum_responsive_browser.py --base-url http://127.0.0.1:8015 --focused-only",
+      "result": "15 final views and independent editor/pane interactions passed"
+    },
+    {
+      "command": "python tests/test_review_preview_browser.py",
+      "result": "isolated preview, opaque sandbox, navigation, two real Python solutions passed"
+    },
+    {
+      "command": "python tests/test_stage_visual_dom_delta.py before / after --expected-changed I01CSV-1 I17-1 W13-1 ML-R08-1 ML-C05-3 ML-C10-2 ML-C12-1 ML-N04-1",
+      "result": "676 before/after article DOMs; 668 unchanged, 48 targeted views passed. The before snapshot was recorded from bfd834."
+    },
+    {
+      "command": "python tests/test_operation_header_css_browser.py --before-manifest /tmp/stage-css-before-manifest.json --before-css /tmp/stage-css-before-foundations.css",
+      "result": "264 affected views and 600 states passed against saved pre-fix assets; exact scoped CSS diff is retained."
+    }
+  ],
+  "limits": [
+    "Chromium renders do not establish WebKit or physical-device results.",
+    "Some charts preserve labelled local panning for readable axes.",
+    "The full sweep and two final focused followups are separate receipts with exact source/build hashes.",
+    "Existing assessment programs were compared rather than all reexecuted: all 338 Data and 338 ML programs/data remain unchanged relative to the review baseline."
+  ],
+  "receipts": [
+    "rendering.json",
+    "final-delta.json",
+    "final-delta.diff",
+    "css-followup.json",
+    "css-followup.diff",
+    "responsive.json",
+    "contracts.json",
+    "preview.json",
+    "visualise-native.json",
+    "visualise-rendered.json",
+    "ml-progression.json"
+  ]
+}

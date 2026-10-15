@@ -22,9 +22,12 @@ jobs:
       - run: node tests/test_foundations_curriculum.mjs
       - run: node tests/test_foundations_guidance.mjs
       - run: node tests/test_foundations_teaching.mjs
+      - run: node tests/test_foundations_stage_teaching.mjs
+      - run: node tests/test_foundations_operation_visuals.mjs
       - run: node tests/test_foundations_prerequisites.mjs && node tests/test_learning_language.mjs && python scripts/build-learning-identifiers.py --check
       - run: python tests/test_foundations_prerequisites_runtime.py
       - run: python tests/test_visual_scientific_scenes.py
+      - run: python tests/test_foundations_operation_visuals.py
       - run: python tests/test_foundations_concise_examples.py
       - run: node tests/test_foundations_parameters.mjs
       - run: python tests/test_foundations_parameters_runtime.py

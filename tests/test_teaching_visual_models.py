@@ -82,14 +82,17 @@ for example in examples['polynomial']:
 
 rows = examples['rows']['pca']
 X = np.array([[r['x'], r['y']] for r in rows])
-model = PCA(n_components=2).fit(X)
+prepared_X = StandardScaler().fit_transform(X)
+model = PCA(n_components=2).fit(prepared_X)
 example = examples['pca']
 weights = np.array(example['weights'])
 # SVD sign conventions differ across sklearn versions; the basis and scores
 # must reverse together. The example matches the product's 1.4.2 convention.
 signs = np.sign(np.sum(model.components_ * weights, axis=1))
 np.testing.assert_allclose(model.components_ * signs[:, None], weights, atol=1e-8)
-np.testing.assert_allclose(model.transform(X) * signs, [[r['pc1'], r['pc2']] for r in example['scores']], atol=1e-8)
+np.testing.assert_allclose(example['prepared'], prepared_X)
+np.testing.assert_allclose(example['scales'], StandardScaler().fit(X).scale_)
+np.testing.assert_allclose(model.transform(prepared_X) * signs, [[r['pc1'], r['pc2']] for r in example['scores']], atol=1e-8)
 np.testing.assert_allclose(model.explained_variance_ratio_[0], example['varianceShare'])
 print('Computed KNN votes, tree paths, linear SVM weights, training-only polynomial curves and every PCA score agree with scikit-learn fits.')
 

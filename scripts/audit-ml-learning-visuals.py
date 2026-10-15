@@ -36,7 +36,11 @@ with sync_playwright() as pw:
   assert not page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1'),(c['id'],width)
   clipped=figure.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox(),v=n.ownerSVGElement.viewBox.baseVal;return b.x<0||b.y<0||b.x+b.width>v.width+.5||b.y+b.height>v.height+.5}).map(n=>n.textContent)')
   assert not clipped,(c['id'],clipped)
-  assert figure.locator('svg').get_attribute('aria-label')
+  if figure.locator('svg').count():assert figure.locator('svg').get_attribute('aria-label')
+  else:
+   # Operation examples may use a live before/after table rather than a chart.
+   assert figure.locator('.teaching-example-output').count()
+   assert all(figure.locator('table').nth(i).locator('caption').inner_text() for i in range(figure.locator('table').count()))
   if figure.locator('.ml-concept-scroll').count():assert figure.locator('svg').get_attribute('aria-label')==c['exercises'][0].get('visual',c['visual'])['caption']
   name=f'{c["id"]}-{theme}-{width}.png';figure.screenshot(path=str(out/name))
   # Inspect both ends of scrollable diagrams at phone widths.
