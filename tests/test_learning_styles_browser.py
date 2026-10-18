@@ -88,9 +88,9 @@ with sync_playwright() as pw:
                         object_style=identifier_style(objects)
                         syntax_style=identifier_style(syntax)
                         record['identifiers']=dict(column=column_style,variable=object_style,syntax=syntax_style)
-                        assert column_style['border']=='solid' and object_style['border']=='double',(column_style,object_style)
-                        assert syntax_style['top']=='dotted' and syntax_style['bottom']=='dotted',syntax_style
-                        assert column_style['background']!=object_style['background'],'Shape and tint both distinguish column/object roles'
+                        assert column_style['border']==object_style['border']=='solid',(column_style,object_style)
+                        assert syntax_style['top']==syntax_style['bottom']=='solid',syntax_style
+                        assert column_style['background']!=object_style['background'],'Soft tints distinguish column/object roles within one shape'
                         for role in [column_style,object_style,syntax_style]:
                             assert role['display']=='inline' and role['shadow']=='none' and not role['underline'],role
                             assert role['weight']>=600 and 'monospace' in role['font'],role

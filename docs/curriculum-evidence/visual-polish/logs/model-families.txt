@@ -1,0 +1,21 @@
+/workspace/Data-Science-Python-Playground/tests/test_model_family_visuals.py:7: DeprecationWarning: 
+Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
+(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
+but was not found to be installed on your system.
+If this would cause problems for you,
+please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
+        
+  import pandas as pd
+{
+  "states": 21,
+  "families": 8,
+  "passed": true,
+  "checks": [
+    "native fitted coordinates/centroids",
+    "actual Ward heights and horizontal cuts",
+    "fixed observation identities",
+    "training-only neural scale",
+    "real loss curves and held-away macro F1",
+    "code/figure settings"
+  ]
+}

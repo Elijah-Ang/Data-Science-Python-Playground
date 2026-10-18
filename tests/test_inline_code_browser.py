@@ -95,6 +95,10 @@ with sync_playwright() as w:
                         == "18px"
                     )
                 if route.endswith("V18/0"):
+                    assert (
+                        page.locator(".teaching-syntax-parts dd").first.inner_text()
+                        == "Creates a line plot."
+                    )
                     sizes = page.evaluate(
                         """()=>{const description=document.querySelector('.teaching-syntax-parts dd'),argument=document.querySelector('.foundation-parameter-row dd');const heading=document.querySelector('.teaching-syntax-heading'),args=document.querySelector('.foundation-parameter-teaching>h3');return [getComputedStyle(description).fontSize,getComputedStyle(argument).fontSize,getComputedStyle(heading).font,getComputedStyle(args).font,getComputedStyle(heading).color,getComputedStyle(args).color];}"""
                     )

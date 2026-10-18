@@ -48,7 +48,7 @@ def visual_and_depth(page):
     assert editor.input_value() == starter
     explorer = page.locator(".foundation-visual-explorer")
     control = explorer.locator('[data-code-key="bins"]').first
-    before = explorer.locator(".teaching-visual-result > p").inner_text()
+    before = explorer.locator(".teaching-visual-result svg").get_attribute("aria-label")
     values = control.evaluate("e=>JSON.parse(e.dataset.codeOptions).map(o=>o.value)")
     current = control.get_attribute("data-code-value")
     choose(page, explorer, "bins", next(v for v in values if v != current))
@@ -57,7 +57,8 @@ def visual_and_depth(page):
     assert uri.startswith(
         'url("data:image/png;'
     ), "Pointer must be bundled without a sibling asset"
-    assert explorer.locator(".teaching-visual-result > p").inner_text() != before
+    assert explorer.locator(".teaching-visual-result svg").get_attribute("aria-label") != before
+    assert not explorer.locator("table").count()
     assert not page.evaluate("document.documentElement.scrollWidth > innerWidth + 2")
 
 

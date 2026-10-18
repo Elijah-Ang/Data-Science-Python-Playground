@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "staticExamples": 10,
+  "records": [
+    {
+      "id": "I01",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I01CSV",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I03",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I04",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I05",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I06S",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I17",
+      "nativePython": "passed"
+    },
+    {
+      "id": "I19A",
+      "nativePython": "passed"
+    },
+    {
+      "id": "W13",
+      "nativePython": "passed"
+    },
+    {
+      "id": "W18",
+      "nativePython": "passed"
+    }
+  ]
+}

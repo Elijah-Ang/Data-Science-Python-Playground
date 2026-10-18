@@ -60,7 +60,7 @@ const duplicates=curriculum.lessons.find(l=>l.id==='I17');
 const html=teaching.intro(curriculum,duplicates,duplicates.rounds[0]);
 assert(!html.includes('Same rows, different keep choices'));
 assert(!html.includes('teaching-flags') && !html.includes('keep=False'),'Follow shows its default duplicate policy; later policies have their own teaching');
-assert(html.includes('data-visual="duplicates"'));
+assert(html.includes('Duplicate flags')&&html.includes('df.duplicated()'));
 assert((teaching.syntax(duplicates)+teaching.syntaxReference(duplicates)).includes('keep=False'));
 assert(teaching.reference(curriculum,duplicates,duplicates.rounds[1]).includes('including the first'));
 const bridge=curriculum.lessons.find(l=>l.id==='WR2');

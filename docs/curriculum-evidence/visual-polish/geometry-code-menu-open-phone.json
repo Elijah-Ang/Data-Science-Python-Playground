@@ -1,0 +1,104 @@
+{
+  "ok": true,
+  "scene": "code-menu",
+  "state": "open",
+  "viewport": "phone",
+  "observed_viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "usable_viewport": {
+    "left": 0,
+    "top": 0,
+    "right": 390,
+    "bottom": 836
+  },
+  "declared_viewport": {
+    "id": "phone",
+    "width": 390,
+    "height": 844,
+    "full_visual": true
+  },
+  "scene_rect": {
+    "left": 12,
+    "top": 450.078125,
+    "right": 332,
+    "bottom": 728.078125,
+    "width": 320,
+    "height": 278
+  },
+  "essential": [
+    {
+      "id": "button",
+      "rect": {
+        "left": 19,
+        "top": 457.078125,
+        "right": 325,
+        "bottom": 501.078125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 19,
+        "top": 501.078125,
+        "right": 325,
+        "bottom": 545.078125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 19,
+        "top": 545.078125,
+        "right": 325,
+        "bottom": 589.078125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 19,
+        "top": 589.078125,
+        "right": 325,
+        "bottom": 633.078125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 19,
+        "top": 633.078125,
+        "right": 325,
+        "bottom": 677.078125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 19,
+        "top": 677.078125,
+        "right": 325,
+        "bottom": 721.078125,
+        "width": 306,
+        "height": 44
+      }
+    }
+  ],
+  "scrollers": [],
+  "overlaps": [],
+  "text": [],
+  "issues": [],
+  "notes": [],
+  "limits": "Geometry observations only. Review screenshots and motion for legibility, meaning, scientific truth, intentional composition, and visual quality. Declared essentials must be visible unless a selector explicitly allows dormant elements; hidden alternate roots and incidental marks are ignored."
+}

@@ -1,0 +1,36 @@
+{
+  "buildContentId": "06d714d3831d500d87be3d392ebe5b0d5d110a6146c4cb2edfccff3db9aecfc5",
+  "sourceSHA256": {
+    "app/code-menu-position.js": "cf2096b3827d915202ef203aa25989fcd77fdc7af89be4556232a35c86a8f5d8",
+    "foundations/inline-code.js": "7df0d28d0eab04d631749f46733b1fdc762ba7bb7cc4cc24b3582c8aa9989721",
+    "foundations/learning-ui.js": "625bcceb68094d863b3621759fb950a7c38d7ea31891eea30452e92e0554f107",
+    "foundations/visuals.js": "6f336b9d801d7b6787c7d6e4a07dc8a8d3122837ac2a6730d441c949318df2a2",
+    "foundations/operation-visuals.js": "853a284c2cc510b2ff3bfe9bf6bc4f044e1ee5670184b0d5ca4cd1c01b000e53",
+    "foundations/teaching.js": "dfca924ce9da78b7162911a4b7a4cb594db2b25b4296a903580ebcaed6b472ac",
+    "foundations/parameter-guide.js": "0baf0c9dba919c885447923dceaba763451f15e5a5e05ea967ed7130764fbe38",
+    "foundations/foundations.css": "577961e7b4d6e592423c34d525412055f3a635f486339dead818d123b9c6db11",
+    "route-slider.css": "00bb1b398d4f684e9c80653029715e3d5252ad2f1db38f77b88063be8c092123",
+    "ml-learning/app.js": "d413a98ae6e3d840df45268314e6545e4d781998763bd1592f6ad95290f67d59",
+    "ml-learning/curriculum_coherence.py": "336fc4bd7237a10e6a23f8508f254386083d07dbf6750853963b475a9c136c5f",
+    "scripts/build-web.mjs": "1578ae27498297f30755cd2af7a1b755c84d03c0576b9c74003e5bf394ac5c08",
+    "data-foundations.html": "969c0eb70ea80b55f350d95a089fe7cbdeee45928b985fc82844b62e42b25d6a",
+    "ml-learn.html": "faf2c72f077d971057ab908e14e10318d17bc5468e5264edbe5b96d1ccadb7cb",
+    "package-lock.json": "003ab156f2cbcbac79d88f7ed3dd4d08b3040ac4c0f6adf849fe844fda79381d"
+  },
+  "servedSHA256": {
+    "foundations/code-menu-position.js": "d924756de5e428e65004b854ecb8c5cba7ba3c650d11a36ed048fb40c7f5cd8a",
+    "foundations/inline-code.js": "7df0d28d0eab04d631749f46733b1fdc762ba7bb7cc4cc24b3582c8aa9989721",
+    "foundations/learning-ui.js": "625bcceb68094d863b3621759fb950a7c38d7ea31891eea30452e92e0554f107",
+    "foundations/visuals.js": "6f336b9d801d7b6787c7d6e4a07dc8a8d3122837ac2a6730d441c949318df2a2",
+    "foundations/operation-visuals.js": "853a284c2cc510b2ff3bfe9bf6bc4f044e1ee5670184b0d5ca4cd1c01b000e53",
+    "foundations/teaching.js": "dfca924ce9da78b7162911a4b7a4cb594db2b25b4296a903580ebcaed6b472ac",
+    "foundations/parameter-guide.js": "0baf0c9dba919c885447923dceaba763451f15e5a5e05ea967ed7130764fbe38",
+    "foundations/foundations.css": "577961e7b4d6e592423c34d525412055f3a635f486339dead818d123b9c6db11",
+    "route-slider.css": "00bb1b398d4f684e9c80653029715e3d5252ad2f1db38f77b88063be8c092123",
+    "ml-learning/app.js": "d413a98ae6e3d840df45268314e6545e4d781998763bd1592f6ad95290f67d59",
+    "ml-learning/curriculum.json": "3b9afbd74f8211956274e8d3864f294b63d96246aecdbe08f895264fc68ca252",
+    "data-foundations.html": "80e83df775d28824390e29c72950c6288445b00157bd1986d040ee4e3c78f1d4",
+    "ml-learn.html": "a3268116c042da786976b2093dd8bc85277f0d50da97729085e1af16c4d93ec6"
+  },
+  "note": "Source includes authoring/build inputs. HTML, curriculum and Floating UI are assembled; direct JS/CSS copies must match their source bytes. Recorded after the final long-expression width repair."
+}

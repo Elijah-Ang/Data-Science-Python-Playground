@@ -18,6 +18,9 @@ const remoteLicenses = [
 ];
 
 const localPackageLicenses = [
+  "@floating-ui/dom",
+  "@floating-ui/core",
+  "@floating-ui/utils",
   "@capacitor/core",
   "@capacitor/browser",
   "@capacitor/filesystem",

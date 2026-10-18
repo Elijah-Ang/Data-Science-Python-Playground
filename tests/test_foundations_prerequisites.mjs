@@ -22,7 +22,7 @@ for(const id of inserted){
  for(const r of l.rounds){
   const html=teaching.intro(c,l,r)+teaching.syntax(l)+teaching.transition(r);
   assert(!html.includes('<details'),r.id+' required teaching remains visible');
-  assert((html.includes('A small example')&&html.includes('Concept sketch:'))||html.includes('data-foundation-explorer="summary-order"'),r.id+' retains a concrete example or a computed teaching explorer');
+  assert((html.includes('A small example')&&html.includes('Concept sketch:'))||html.includes('teaching-table-illustration')||html.includes('data-foundation-explorer="summary-order"'),r.id+' retains a concrete example or a computed teaching explorer');
  }
 }
 const bridge=lesson('V13').rounds[2];

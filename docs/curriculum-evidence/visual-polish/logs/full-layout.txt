@@ -1,0 +1,13 @@
+1440px light data: 338 stage contexts
+1440px light ml: 338 stage contexts
+1440px dark data: 338 stage contexts
+1440px dark ml: 338 stage contexts
+390px light data: 338 stage contexts
+390px light ml: 338 stage contexts
+390px dark data: 338 stage contexts
+390px dark ml: 338 stage contexts
+320px light data: 338 stage contexts
+320px light ml: 338 stage contexts
+320px dark data: 338 stage contexts
+320px dark ml: 338 stage contexts
+4056 actual lesson renders; 0 interactive states; 76 screenshots; no stage or rendering discrepancies.

@@ -157,12 +157,13 @@
     const source=part.code||'',names=Object.keys(argumentValues).filter(name=>new RegExp('\\b'+name+'\\s*=').test(source)||new RegExp("['\"](?:model__)?"+name+"['\"]").test(source));
     const choices=names.map(name=>[name,name==='method'&&/\blinkage\s*\(/.test(source)?['"single"','"complete"','"average"','"weighted"','"centroid"','"median"','"ward"']:argumentValues[name]]);
     if(/strategy\s*=/.test(source))choices.push(['strategy',source.includes('DummyClassifier')?['"most_frequent"','"prior"','"stratified"','"uniform"','"constant"']:source.includes('SimpleImputer')?['"mean"','"median"','"most_frequent"','"constant"']:['"mean"','"median"','"quantile"','"constant"']]);
-    return choices.length?'<p class="foundation-argument-values"><strong>Accepts:</strong> '+choices.map(([name,values])=>'<code data-code-role="parameter">'+esc(name)+'</code>: '+values.map(value=>'<code data-code-role="'+(['y','folds','list_of_index_pairs'].includes(value)?'variable':'syntax')+'">'+esc(value)+'</code>').join(', ')).join('; ')+'.</p>':'';
+    return choices.length?'<ul class="foundation-argument-values" aria-label="Accepted values">'+choices.map(([name,values])=>'<li><code data-code-role="parameter">'+esc(name)+'</code>: '+values.map(value=>'<code data-code-role="'+(['y','folds','list_of_index_pairs'].includes(value)?'variable':'syntax')+'">'+esc(value)+'</code>').join(', ')+'</li>').join('')+'</ul>':'';
   }
   function syntaxParts(parts,full=true){
+    const points=(value,part)=>'<ul class="argument-points">'+String(value).replace(/([.!?])\s+(?=[A-Z])/g,'$1\n').split('\n').filter(Boolean).map(item=>'<li>'+syntaxProse(item,part)+'</li>').join('')+'</ul>';
     return `<dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">${parts.map(p=>{
       const columnHead=view?.card?.id==='ML-M03'&&/^(['"])(cv_rmse|fold_sd)\1$/.test(p.code||'');
-      return `<div><dt><code${columnHead?' data-code-role="column"':''}>${esc(p.code||p.title)}</code></dt><dd>${syntaxProse(p.meaning,p)}${syntaxValues(p)}${(p.forms||p.choices)?`<p><strong>Values and choices:</strong> ${syntaxProse(p.forms||p.choices,p)}</p>`:''}${full&&p.example?code(p.example):''}</dd></div>`;
+      return `<div><dt><code${columnHead?' data-code-role="column"':''}>${esc(p.code||p.title)}</code></dt><dd>${points(p.meaning,p)}${syntaxValues(p)}${(p.forms||p.choices)?points(p.forms||p.choices,p):''}${full&&p.example?code(p.example):''}</dd></div>`;
     }).join('')}</dl>`;
   }
   function syntaxSupport(card,ex){

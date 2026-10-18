@@ -469,19 +469,28 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 /* Small operations retain the same observations while showing what the current
    pandas call changes. Tables scroll locally instead of widening the lesson. */
 .operation-explorer { margin-block:16px; }
-.operation-tables { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:start; gap:10px; }
+.operation-tables { display:grid; grid-template-columns:minmax(0,1fr); align-items:start; gap:12px; }
 .operation-inputs,.operation-table-scroll { min-width:0; max-width:100%; }
-.operation-table-scroll { overflow-x:auto; }
-.operation-table { width:100%; margin:0; font-size:14px; }
-.operation-table :is(th,td) { padding:7px 9px; white-space:nowrap; }
+.operation-inputs { display:grid; gap:12px; }
+.operation-table-scroll { overflow-x:auto; padding:12px; border:1px solid var(--border-soft); border-radius:8px; background:color-mix(in srgb,var(--panel) 75%,transparent); }
+.operation-table { width:100%; margin:0; font-size:14px; table-layout:auto; border-collapse:collapse; }
+.operation-table :is(th,td) { padding:9px 12px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.operation-table thead th { background:color-mix(in srgb,var(--ink) 3%,var(--panel)); }
+.operation-table tbody tr:last-child :is(th,td) { border-bottom:0; }
 .foundation-content .operation-table thead code.code-identifier { white-space:nowrap; overflow-wrap:normal; }
-.operation-table caption { text-align:left; font-weight:700; margin-bottom:8px; }
-.operation-arrow { align-self:center; color:var(--lesson-accent); font-size:24px; }
-.operation-changed { background:color-mix(in srgb,var(--lesson-accent) 15%,var(--panel)); font-weight:700; box-shadow:inset 0 -2px var(--lesson-accent); }
+.operation-table caption { text-align:left; font-weight:700; margin-bottom:10px; font-size:13px; color:var(--ink-muted); }
+.operation-arrow { justify-self:center; color:var(--lesson-accent); font-size:24px; transform:rotate(90deg); }
+.operation-changed { background:color-mix(in srgb,var(--lesson-accent) 9%,var(--panel)); font-weight:600; box-shadow:none; }
 .operation-explorer :is(select,input):focus-visible,.operation-table-scroll:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
 .operation-scalar { display:grid; gap:8px; min-width:0; padding:8px 12px; border-left:3px solid var(--lesson-accent); }
 .operation-scalar output { overflow-wrap:anywhere; font-size:16px; }
 .operation-explorer pre { max-width:100%; overflow-x:auto; }
+.foundation-content .teaching-table-illustration { margin:18px 0; padding:16px; border:1px solid var(--border-soft); border-radius:8px; }
+.teaching-table-illustration>pre { margin-top:0; }
+.illustration-file { margin:12px 0; }
+.illustration-file strong { font:600 13px/1.5 var(--body); }
+.illustration-file pre { margin-top:6px; }
+.illustration-file samp { font:14px/1.7 var(--mono); }
 @media(max-width:1100px) {
   .operation-tables { grid-template-columns:minmax(0,1fr); }
   .operation-arrow { justify-self:center; transform:rotate(90deg); }
@@ -529,19 +538,40 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .foundation-content .foundation-syntax.teaching-syntax-parts dd { font:400 16px/1.6 var(--body); }
 .foundation-content .foundation-syntax.teaching-syntax-parts dt { color:var(--ink); }
 
+/* Aligned teaching rows; bullet points make alternatives easy to scan. */
+.foundation-parameter-teaching { gap:0; }
+.argument-table-heading,.foundation-parameter-row { display:grid; grid-template-columns:minmax(7rem,1fr) minmax(0,2.5fr); gap:18px; }
+.argument-table-heading { padding:10px 14px; border:1px solid var(--border-soft); border-bottom:0; border-radius:8px 8px 0 0; background:color-mix(in srgb,var(--ink) 3%,var(--panel)); font:700 13px/1.5 var(--body); color:var(--ink-muted); }
+.foundation-parameter-parts { margin:0; border:1px solid var(--border-soft); border-radius:0 0 8px 8px; overflow:hidden; }
+.foundation-parameter-row { padding:14px; }
+.foundation-content :is(.argument-points,.foundation-argument-values) { margin:0; padding-left:18px; font:400 16px/1.6 var(--body); }
+.foundation-content :is(.argument-points,.foundation-argument-values) li { margin:0; padding-left:2px; }
+.foundation-content :is(.argument-points,.foundation-argument-values) li+li { margin-top:5px; }
+.foundation-content :is(.argument-points,.foundation-argument-values)+:is(.argument-points,.foundation-argument-values) { margin-top:7px; }
+.foundation-content .ml-syntax-parts { border:1px solid var(--border-soft); border-radius:8px; overflow:hidden; }
+.foundation-content .ml-syntax-parts>div { padding:14px; gap:18px; }
+.foundation-content .ml-syntax-parts>div:last-child { border-bottom:0; }
+@media(max-width:480px) {
+ .argument-table-heading { display:none; }
+ .foundation-parameter-parts { border-radius:8px; }
+ .foundation-parameter-row,.foundation-content .ml-syntax-parts>div { grid-template-columns:minmax(0,1fr); gap:8px; padding:14px 12px; }
+}
+
 /* Clickable code is the control; there is no separate settings form. */
 .inline-code-editor { margin:14px 0; min-width:0; }
 .foundation-content .inline-code-cue { display:flex; align-items:center; gap:10px; font:400 14px/1.5 var(--body); margin:0 0 8px; color:var(--ink-muted); }
 .inline-code-mouse { display:inline-block; flex:0 0 26px; width:26px; height:32px; background:url('../assets/teaching/pixel-pointer.png') center/contain no-repeat; image-rendering:pixelated; }
 .foundation-content pre.inline-code-program { white-space:pre-wrap; overflow:visible; overflow-wrap:anywhere; padding:12px; }
 .foundation-content .inline-code-source { font:14px/2.8 var(--mono); white-space:pre-wrap; }
-.foundation-content .inline-code-value { --slot-color:#147763; display:inline; min-height:44px; padding:8px 3px; margin:0 1px; border:1px solid var(--slot-color); border-bottom:3px solid var(--slot-color); border-radius:3px; background:color-mix(in srgb,var(--slot-color) 12%,var(--panel)); color:var(--ink); font:700 14px/1.5 var(--mono); cursor:pointer; white-space:pre-wrap; overflow-wrap:anywhere; }
-.inline-code-value.code-slot-1 { --slot-color:#7952a5; }
-.inline-code-value.code-slot-2 { --slot-color:#ac4b35; }
-.inline-code-value.code-slot-3 { --slot-color:#8b6814; }
-.inline-code-value.code-slot-4 { --slot-color:#276c9d; }
-.inline-code-value.code-slot-5 { --slot-color:#a24878; }
-.inline-code-value:is(:hover,[aria-expanded="true"]) { background:color-mix(in srgb,var(--slot-color) 24%,var(--panel)); }
+.inline-code-argument { display:inline-block; max-width:100%; white-space:normal; }
+.foundation-content .inline-code-value { max-width:100%; }
+.foundation-content .inline-code-value { --slot-color:#69b8a5; display:inline; min-height:44px; padding:8px 5px; margin:0 1px; border:1px solid color-mix(in srgb,var(--slot-color) 45%,transparent); border-bottom:2px solid var(--slot-color); border-radius:5px; background:color-mix(in srgb,var(--slot-color) 10%,#25272a); color:#f5f2e9; font:600 14px/1.5 var(--mono); cursor:pointer; white-space:pre-wrap; overflow-wrap:anywhere; }
+.inline-code-value.code-slot-1 { --slot-color:#b598d0; }
+.inline-code-value.code-slot-2 { --slot-color:#df9c86; }
+.inline-code-value.code-slot-3 { --slot-color:#d4b769; }
+.inline-code-value.code-slot-4 { --slot-color:#85b3d2; }
+.inline-code-value.code-slot-5 { --slot-color:#d39bbc; }
+.inline-code-value:is(:hover,[aria-expanded="true"]) { background:color-mix(in srgb,var(--slot-color) 22%,#25272a); }
 .inline-code-value:focus-visible,.inline-code-options button:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:3px; }
 .inline-code-options { position:fixed; inset:auto; margin:0; z-index:10000; padding:6px; overflow-y:auto; border:1px solid var(--border); border-radius:5px; box-shadow:0 4px 18px #0003; background:var(--panel); color:var(--ink); }
 .inline-code-options [role="option"] { display:block; width:100%; min-height:44px; padding:9px 12px; border:0; border-radius:3px; background:transparent; color:inherit; text-align:left; font:16px/1.5 var(--body); cursor:pointer; overflow-wrap:anywhere; }

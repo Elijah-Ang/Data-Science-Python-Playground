@@ -71,5 +71,42 @@
     });
   }
   const deckIcon='<svg class="deck-icon" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4h25v5H7zM10 9h25v5H10zM5 14h26v22H5zM10 21h16M10 27h10"/></svg>';
-  root.FoundationLearning={esc,highlightPython,highlightContent,stages,deckIcon,orientation,changedCode,bindPanels};
+  const plotMeanings={
+    scatterplot:'Creates a scatter plot.',histplot:'Creates a histogram.',
+    lineplot:'Creates a line plot.',countplot:'Creates a count plot.',
+    barplot:'Creates a bar plot.',pointplot:'Creates a point plot.',
+    boxplot:'Creates a box plot.',violinplot:'Creates a violin plot.',
+    stripplot:'Creates a strip plot.',swarmplot:'Creates a swarm plot.',
+    kdeplot:'Creates a density plot.',ecdfplot:'Creates a cumulative distribution plot.',
+    rugplot:'Creates a rug plot.',regplot:'Creates a scatter plot with a fitted line.',
+    residplot:'Creates a residual plot.',heatmap:'Creates a heatmap.',
+    pairplot:'Creates a grid of pairwise plots.',jointplot:'Creates a joint plot.',
+    relplot:'Creates a grid of scatter or line plots.',catplot:'Creates a grid of category plots.',
+    displot:'Creates a grid of distribution plots.'
+  };
+  function syntaxMeaning(code,meaning){
+    const call=String(code).match(/^(?:g\s*=\s*)?sns\.(\w+)/);
+    if(call&&plotMeanings[call[1]])return plotMeanings[call[1]];
+    const methods={
+      read_csv:'Reads a CSV file into a DataFrame.',head:'Returns the first rows.',
+      tail:'Returns the last rows.',copy:'Creates a separate copy of the table.',
+      rename:'Renames columns.',drop:'Removes the named rows or columns.',
+      nlargest:'Returns the rows with the largest values.',nsmallest:'Returns the rows with the smallest values.',
+      idxmax:'Returns the row label of the largest value.',idxmin:'Returns the row label of the smallest value.',
+      nunique:'Counts distinct known values.',value_counts:'Counts occurrences of each value.',
+      describe:'Summarises numeric columns.',info:'Prints a table summary.',
+      duplicated:'Flags duplicate rows.',drop_duplicates:'Removes duplicate rows.',
+      dropna:'Removes rows with missing values.',fillna:'Replaces missing values.',
+      to_numeric:'Converts text to numbers.',to_datetime:'Converts text to dates.',
+      get_dummies:'Creates 0/1 columns for categories.',strip:'Removes spaces at both ends.',
+      lower:'Converts text to lowercase.',astype:'Converts values to the chosen type.',
+      sort_values:'Sorts values.',reset_index:'Resets the row labels.',
+      mean:'Calculates the average.',median:'Finds the middle value.',
+      groupby:'Groups rows by matching labels.',crosstab:'Counts pairs of categories.',
+      corr:'Calculates correlations between numeric columns.',concat:'Joins tables in the listed order.'
+    };
+    const simple=String(code).trim().replace(/^(?:df|pd)\./,'').match(/^([a-z_]\w*)\([^()]*\)$/);
+    return simple&&methods[simple[1]]||meaning;
+  }
+  root.FoundationLearning={esc,highlightPython,highlightContent,syntaxMeaning,stages,deckIcon,orientation,changedCode,bindPanels};
 })(window);

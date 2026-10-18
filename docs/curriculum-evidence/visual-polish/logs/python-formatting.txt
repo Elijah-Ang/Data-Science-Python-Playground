@@ -1,0 +1,1 @@
+Consistent Python formatting: 597 snippets checked; 178 formatted without AST changes.

@@ -311,16 +311,16 @@ function valueChoices(item){
  if(item.id==='kind')choices=[...new Set(item.functions.flatMap(fn=>chartKinds[method(fn)]||[]))].map(value=>[JSON.stringify(value),'']);
  if(!choices?.length)throw Error('Missing visible argument values: '+item.id);
  const columnArguments=new Set(['x','y','hue','style','size','col','row','vars','subset','values','pivot_table.index','columns']);
- return '<p class="foundation-argument-values"><strong>Accepts:</strong> '+choices.map(([value,meaning])=>{
+ return '<ul class="foundation-argument-values" aria-label="Accepted values">'+choices.map(([value,meaning])=>{
   const role=columnArguments.has(item.id)&&/^(?:[\"']|\[[\"'])/.test(value)?'column':/^(?:df|ax|axes\[[^\]]+\]|first|labels|bbox)$/.test(value)?'variable':'syntax';
-  return '<code data-code-role="'+role+'">'+esc(value)+'</code>'+(meaning?' — '+esc(meaning):'');
- }).join('; ')+'.</p>';
+  return '<li><code data-code-role="'+role+'">'+esc(value)+'</code>'+(meaning?' — '+esc(meaning):'')+'</li>';
+ }).join('')+'</ul>';
 }
 function currentDefinition(item,lesson,round,level){
  let meaning=level==='extend'&&extensionNotes[round.id]?.[item.id] || conciseMeanings[item.id] || item.purpose+' '+item.forms;
  if(item.id==='errorbar'&&lesson.id==='V09')meaning='None hides intervals; the mean or median bar height stays unchanged.';
  if(item.id==='lineplot.estimator'&&lesson.id==='V18')meaning='None keeps every observation. "mean" averages observations at the same x value; "median" takes their middle value.';
- return `<div class="foundation-parameter-row" data-parameter="${esc(item.id)}" data-guidance="${level}"><dt>${parameterCode(item)}</dt><dd>${esc(meaning)}${valueChoices(item)}</dd></div>`;
+ return `<div class="foundation-parameter-row" data-parameter="${esc(item.id)}" data-guidance="${level}"><dt>${parameterCode(item)}</dt><dd><ul class="argument-points"><li>${esc(meaning)}</li></ul>${valueChoices(item)}</dd></div>`;
 }
 // Teach both members of a related pair, while sharing their accepted forms and
 // example. This applies to authored introductions wherever that pair is used.
@@ -362,7 +362,7 @@ function renderCurrent(curriculum,lesson,round){
  const rows=g.introduces.map(item=>currentDefinition(item,lesson,round,'introduce')).join('')+g.extends.map(item=>currentDefinition(item,lesson,round,'extend')).join('');
  const mode=g.introduces.some(item=>item.id==='estimator')?'<p>For mode, pass a function that returns one value. def names the function; values receives a group and return sends one summary back. mode() finds the most frequent values; iloc[0] chooses the smallest when tied:</p><pre><code>def mode_value(values):\n    return pd.Series(values).mode().iloc[0]</code></pre>':'';
  const estimator=g.introduces.some(item=>item.id==='estimator')?'<table class="teaching-example-output"><caption>Same measurements: 2, 2, 8</caption><thead><tr><th scope="col">Summary</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Mean</th><td>4</td></tr><tr><th scope="row">Median</th><td>2</td></tr><tr><th scope="row">Sum</th><td>12</td></tr></tbody></table>':'';
- return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>Arguments</h3><dl class="foundation-parameter-parts">${rows}</dl>${estimator}${mode}</section>`;
+ return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>Arguments</h3><div class="argument-table-heading" aria-hidden="true"><span>Argument</span><span>Meaning and values</span></div><dl class="foundation-parameter-parts">${rows}</dl>${estimator}${mode}</section>`;
 }
 function renderReference(curriculum,lesson,round){
  const g=guidanceFor(curriculum,lesson,round);if(!g.reference.length)return '';

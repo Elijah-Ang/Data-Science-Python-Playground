@@ -612,7 +612,7 @@ function plotArgumentModel(variant,state={},settings={}){
   }else{
    const number=/^\d+$/.test(args.bins),lo=Math.min(...values),hi=Math.max(...values),edges=number?Array.from({length:Number(args.bins)+1},(_,i)=>lo+(hi-lo)*i/Number(args.bins)):args.bins==='wide'?[0,4,8,12,16,20]:args.bins==='narrow'?Array.from({length:11},(_,i)=>i*2):args.bins==='unequal'?[0,2,5,20]:[0,3,6,9,12,15,18,21];
    const bins=edges.slice(0,-1).map((lo,i)=>({lo,hi:edges[i+1],rows:rows.filter(r=>r[args.x]>=lo&&(i===edges.length-2?r[args.x]<=edges[i+1]:r[args.x]<edges[i+1])).map(r=>r.id)})),px=x=>55+(x-edges[0])/(edges.at(-1)-edges[0])*410;
-   art=axes(55,25,410,150)+et(55,17,'count')+et(25,194,'0')+et(25,44,'9')+bins.map(b=>rect(px(b.lo),190-b.rows.length/9*150,px(b.hi)-px(b.lo),b.rows.length/9*150,'visual-fill')+et(px(b.lo)+4,183-b.rows.length/9*150,b.rows.length)+et(px(b.lo),212,fmt(b.lo))).join('')+et(450,212,fmt(edges.at(-1)))+et(420,235,args.x);
+   art=axes(55,40,410,150)+et(55,24,'count')+et(25,194,'0')+et(25,44,'9')+bins.map(b=>rect(px(b.lo),190-b.rows.length/9*150,px(b.hi)-px(b.lo),b.rows.length/9*150,'visual-fill')+et(px(b.lo)+4,183-b.rows.length/9*150,b.rows.length)+et(px(b.lo),212,fmt(b.lo))).join('')+et(450,212,fmt(edges.at(-1)))+et(420,235,args.x);
    code=`sns.histplot(data=example, x="${args.x}", bins=${number?args.bins:'['+edges.join(', ')+']'}, ax=ax)`;summary=`${bins.length} bins. Heights count observations in each interval.`;data={...data,edges,bins,mode:number?'count':'edges'};
   }
  }else if(variant==='count-bars'){
@@ -653,7 +653,7 @@ function plotSummaryMarkup(result){
  if(!args.x&&!args.y)html=html.replace(/\b(x|value) median\b/g,(_,column)=>name(column)+' median');
  return html;
 }
-function resultHtml(result){return result.svg+`<p>${plotSummaryMarkup(result)}</p>`;}
+function resultHtml(result){return result.svg;}
 function interactive(v){
  if(!explorerSpecs[v.variant])return '';
  const settings={...v,statistic:v.summaryStatistic||v.statistic},state={};
@@ -667,7 +667,7 @@ function interactive(v){
 
  if(v.variant==='histogram'&&!state.bins&&v.choices?.length)state.bins=v.choices.includes('4')?'4':v.choices[0];
  const model=plotArgumentModel(v.variant,state,settings);
- return `<section class="teaching-explorer foundation-visual-explorer" data-foundation-explorer="${esc(v.variant)}" data-visual-settings="${esc(JSON.stringify(settings))}" data-visual-state="${esc(JSON.stringify(state))}"><p>Illustrative data</p>${plotDataTable(v.variant)}<div class="illustrative-code-controls">${plotCode(v.variant,state,settings)}</div><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(model)}</div></section>`;
+ return `<section class="teaching-explorer foundation-visual-explorer" aria-label="Interactive plot example" data-foundation-explorer="${esc(v.variant)}" data-visual-settings="${esc(JSON.stringify(settings))}" data-visual-state="${esc(JSON.stringify(state))}"><div class="illustrative-code-controls">${plotCode(v.variant,state,settings)}</div><div class="teaching-visual-result" aria-live="polite" aria-atomic="true">${resultHtml(model)}</div></section>`;
 }
 // Explicit teaching alignment, applied after all curriculum overlays. Reviews
 // reuse the matching operation, rather than blindly taking the Transfer sketch.

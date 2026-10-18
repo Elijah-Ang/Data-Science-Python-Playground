@@ -19,11 +19,12 @@ with sync_playwright() as pw:
     overflow=p.evaluate('document.documentElement.scrollWidth>innerWidth+1');assert not overflow,(item['id'],width,theme)
     controls=p.locator('.foundation-content [data-foundation-explorer]');control_records=[]
     for section in controls.all():
-     fixed=section.locator('.teaching-visual-data').inner_text()
+     assert not section.locator('table').count()
+     fixed=p.evaluate('JSON.stringify(FoundationVisuals.exampleRows)')
      for control in code_controls(section):
       key=control['key'];initial=control['value'];options=[o['value'] for o in control['options']]
       for value in options:
-       choose(p,section,key,value);assert section.locator('.teaching-visual-data').inner_text()==fixed,(item['id'],'data changed')
+       choose(p,section,key,value);assert p.evaluate('JSON.stringify(FoundationVisuals.exampleRows)')==fixed,(item['id'],'data changed')
        r=section.evaluate("""section=>{const variant=section.dataset.foundationExplorer,expected=FoundationVisuals.plotArgumentModel(variant,JSON.parse(section.dataset.visualState),JSON.parse(section.dataset.visualSettings));return {variant,expectedCode:expected.code,shownCode:section.querySelector('.inline-code-source')?.textContent||'',live:section.querySelector('.teaching-visual-result').getAttribute('aria-live'),clipped:[...section.querySelectorAll('svg text')].filter(n=>{const z=n.ownerSVGElement.viewBox.baseVal,b=n.getBBox();return b.x<-.5||b.y<-.5||b.x+b.width>z.width+.5||b.y+b.height>z.height+.5}).map(n=>n.textContent)}}""")
        assert r['shownCode']==r['expectedCode'],(item['id'],value,r);assert not r['clipped'],(item['id'],value,r);assert r['live']=='polite';states.append({'id':item['id'],'width':width,'theme':theme,'key':key,'value':value,'variant':r['variant']})
       choose(p,section,key,initial);control_records.append({'variant':r['variant'],'key':key,'values':options,'initial':initial})

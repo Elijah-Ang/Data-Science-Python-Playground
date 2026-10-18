@@ -183,12 +183,8 @@ with sync_playwright() as pw:
                             if section.get_attribute('data-foundation-explorer') == 'count-bars':
                                 counts = section.evaluate('''n=>{
                                   const column=n.querySelector('[data-code-key="x"]').dataset.codeValue;
-                                  const table=n.querySelector('.teaching-visual-data');
-                                  const headers=[...table.querySelectorAll('thead th')].map(h=>h.textContent);
-                                  const j=headers.indexOf(column),counts={};
-                                  for(const tr of table.querySelectorAll('tbody tr')){
-                                    const key=tr.children[j].textContent;counts[key]=(counts[key]||0)+1;
-                                  }
+                                  const counts={};
+                                  for(const row of FoundationVisuals.exampleRows){const key=row[column];counts[key]=(counts[key]||0)+1;}
                                   const bars=[...n.querySelectorAll('svg rect')].map(r=>({
                                     h:r.height.baseVal.value,y:r.y.baseVal.value,
                                     visible:getComputedStyle(r).display!=='none'&&getComputedStyle(r).fill!=='none'

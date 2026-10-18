@@ -213,8 +213,7 @@ with sync_playwright() as pw:
         for style in styles:
             assert style['contrast']>=4.5, (theme,style)
             assert style['underline']=='none' and style['shadow']=='none', (theme,style)
-        assert styles[0]['borderStyle']=='solid' and styles[1]['borderStyle']=='double', (theme,styles)
-        assert styles[2]['topBorderStyle']==styles[2]['bottomBorderStyle']=='dotted', (theme,styles)
+        assert all(s['borderStyle']==s['topBorderStyle']==s['bottomBorderStyle']=='solid' for s in styles), (theme,styles)
         assert all(style['cursor']!='pointer' for style in styles), (theme,styles)
         identifier_styles.append({'theme':theme,'roles':styles})
 

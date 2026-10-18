@@ -6,6 +6,8 @@ not a second copy of the JavaScript plotting formulas.
 
 import json
 import subprocess
+import re
+import xml.etree.ElementTree as ET
 from pathlib import Path
 import matplotlib
 
@@ -32,8 +34,8 @@ SCRIPT = r"""
 const fs=require('fs'),vm=require('vm'),v=require('./foundations/visuals.js');
 const context={window:{}};vm.runInNewContext(fs.readFileSync('ml-learning/visuals.js','utf8'),context);const ml=context.window.MLLearningVisuals;
 function expand(fields,state={},at=0){if(at===fields.length)return [state];return fields[at].options.flatMap(([value])=>expand(fields,{...state,[fields[at].key]:String(value)},at+1));}
-const chartIds=['scatter','line','line-band','mean-bars','exact-bars','point-interval','histogram','density','boxplot','violin','facets'];
-const charts=chartIds.flatMap(id=>expand(v.plotArguments(id)).map(state=>({id,state,...v.plotArgumentModel(id,state)})));
+const chartIds=['scatter','line','line-band','count-bars','mean-bars','exact-bars','point-interval','histogram','density','boxplot','violin','facets'];
+const charts=chartIds.flatMap(id=>{const settings=id==='histogram'?{choices:v.explorerSpecs.histogram.options.map(o=>o[0])}:{};return expand(v.plotArguments(id,{},settings)).map(state=>({id,state,...v.plotArgumentModel(id,state,settings)}));});
 const models=['F07','W07','C08','C09','C08-neighbours','C11','C11-gamma','R08','C14','U03','U06','U08','R10-leaf'].flatMap(id=>expand(ml.modelArguments(id)).flatMap(state=>{
  const fields=ml.modelArguments(id,state);return expand(fields.filter(f=>!(f.key in state)),state).map(s=>({id,state:s,...ml.modelArgumentModel(id,s)}));
 }));
@@ -47,6 +49,7 @@ for state in states["charts"]:
     fig, ax = plt.subplots()
     namespace = dict(sns=sns, ax=ax, example=example)
     exec(state["code"], namespace)
+    svg = ET.fromstring(state["svg"]).find("svg")
     if identifier in ("line", "line-band"):
         np.testing.assert_allclose(
             ax.lines[0].get_xydata(),
@@ -56,6 +59,12 @@ for state in states["charts"]:
             err_msg=str(state["state"]),
         )
         assert ax.lines[0].get_marker() == state["state"]["marker"]
+        line = next(p for p in svg.findall('.//path') if p.get('class') == 'visual-bold')
+        pixels = np.array([float(n) for n in re.findall(r'[-+]?\d*\.?\d+(?:e[-+]?\d+)?', line.get('d'), re.I)]).reshape(-1, 2)
+        native_points = ax.lines[0].get_xydata()
+        projected = np.column_stack((55 + native_points[:, 0] / data['xDomain'][1] * 410,
+                                     190 - native_points[:, 1] / data['yDomain'][1] * 150))
+        np.testing.assert_allclose(pixels, projected, atol=1e-10)
         if data["intervals"]:
             for group in data["intervals"]:
                 assert (
@@ -76,7 +85,7 @@ for state in states["charts"]:
         np.testing.assert_allclose(
             ax.collections[0].get_offsets(), [[r["x"], r["y"]] for r in data["marks"]]
         )
-    elif identifier in ("mean-bars", "exact-bars"):
+    elif identifier in ("count-bars", "mean-bars", "exact-bars"):
         np.testing.assert_allclose(
             [p.get_height() for p in ax.patches], [g["value"] for g in data["groups"]]
         )
@@ -96,7 +105,29 @@ for state in states["charts"]:
         np.testing.assert_allclose(
             [p.get_width() for p in ax.patches], np.diff(data["edges"])
         )
-    elif identifier == "facets":
+        bars = svg.findall('.//rect')
+        lo, hi = data['edges'][0], data['edges'][-1]
+        expected = [[55+(b.get_x()-lo)/(hi-lo)*410,
+                     190-b.get_height()/len(example)*150,
+                     b.get_width()/(hi-lo)*410,
+                     b.get_height()/len(example)*150] for b in ax.patches]
+        actual = [[float(b.get(a)) for a in ['x','y','width','height']] for b in bars]
+        np.testing.assert_allclose(actual, expected, atol=1e-10)
+    if identifier in ('histogram','count-bars','mean-bars','exact-bars'):
+        axis = next(p for p in svg.findall('.//path') if re.fullmatch(r'M[\d. -]+v[\d.]+h[\d.]+',p.get('d','')))
+        left, top, height, width = map(float,re.findall(r'[-+]?\d*\.?\d+',axis.get('d')))
+        bars = svg.findall('.//rect')
+        ticks = [(float(t.text),float(t.get('y'))-4) for t in svg.findall('.//text')
+                 if float(t.get('x'))<left and re.fullmatch(r'\d+(?:\.\d+)?',t.text or '')]
+        ticks.sort()
+        assert len(ticks)==2 and ticks[0][0]==0
+        baseline=top+height
+        assert abs(ticks[0][1]-baseline)<1e-8
+        unit=(ticks[0][1]-ticks[-1][1])/ticks[-1][0]
+        for bar,native in zip(bars,ax.patches):
+            assert abs(float(bar.get('y'))+float(bar.get('height'))-baseline)<1e-8
+            assert abs(float(bar.get('height'))-native.get_height()*unit)<1e-8
+    if identifier == "facets":
         native = namespace["g"]
         for axis, panel in zip(native.axes.flat, data["panels"]):
             np.testing.assert_allclose(

@@ -70,12 +70,13 @@ with sync_playwright() as pw:
     height=control.evaluate('e=>e.getBoundingClientRect().height')
     if height<44:failures.append({'route':route,'width':width,'theme':theme,'touchTargetHeight':height})
     options=control.evaluate('e=>JSON.parse(e.dataset.codeOptions).map(o=>o.value)')
-    baseline=explorer.locator('.teaching-visual-data').inner_text()
+    assert not explorer.locator('table').count()
+    baseline=page.evaluate('JSON.stringify(FoundationVisuals.exampleRows)')
     summaries=[];geometries=[]
     for option in options:
      choose(page,explorer,key,option)
-     summaries.append(explorer.locator('.teaching-visual-result').inner_text());geometries.append(explorer.locator('.teaching-visual-result svg').inner_html())
-     assert explorer.locator('.teaching-visual-data').inner_text()==baseline
+     summaries.append(explorer.locator('.teaching-visual-result svg').get_attribute('aria-label'));geometries.append(explorer.locator('.teaching-visual-result svg').inner_html())
+     assert page.evaluate('JSON.stringify(FoundationVisuals.exampleRows)')==baseline
      assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
      bad=explorer.locator('svg').evaluate('''svg=>{const b=svg.viewBox.baseVal;return [...svg.querySelectorAll('text')].filter(t=>{const r=t.getBBox();return r.x<0||r.x+r.width>b.width+.5||r.y<0||r.y+r.height>b.height+.5}).map(t=>t.textContent)}''')
      assert not bad,(route,width,theme,bad)

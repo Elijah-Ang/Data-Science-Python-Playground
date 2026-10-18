@@ -164,6 +164,13 @@ if (process.env.DSPP_NATIVE_RUNTIME === "1") {
 }
 
 await build({
+  entryPoints: [path.join(root, 'app', 'code-menu-position.js')],
+  outfile: path.join(output, 'foundations', 'code-menu-position.js'),
+  bundle: true, format: 'iife', globalName: 'CodeMenuPosition',
+  platform: 'browser', target: ['safari16'], minify: true, legalComments: 'eof'
+});
+
+await build({
   entryPoints: [path.join(root, "app", "app-platform.js")],
   outfile: path.join(output, "app-platform.js"),
   bundle: true,

@@ -1,0 +1,225 @@
+{
+  "ok": true,
+  "scene": "table-transform",
+  "state": "result",
+  "viewport": "short-desktop",
+  "observed_viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "usable_viewport": {
+    "left": 0,
+    "top": 0,
+    "right": 1280,
+    "bottom": 712
+  },
+  "declared_viewport": {
+    "id": "short-desktop",
+    "width": 1280,
+    "height": 720,
+    "full_visual": true
+  },
+  "scene_rect": {
+    "left": 55,
+    "top": 227.53125,
+    "right": 587.5,
+    "bottom": 493.109375,
+    "width": 532.5,
+    "height": 265.578125
+  },
+  "essential": [
+    {
+      "id": "table",
+      "rect": {
+        "left": 68,
+        "top": 240.53125,
+        "right": 574.5,
+        "bottom": 480.109375,
+        "width": 506.5,
+        "height": 239.578125
+      }
+    },
+    {
+      "id": "caption",
+      "rect": {
+        "left": 68,
+        "top": 240.53125,
+        "right": 574.5,
+        "bottom": 267.671875,
+        "width": 506.5,
+        "height": 27.140625
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 68,
+        "top": 277.671875,
+        "right": 188.453125,
+        "bottom": 317.859375,
+        "width": 120.453125,
+        "height": 40.1875
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 188.453125,
+        "top": 277.671875,
+        "right": 371.1875,
+        "bottom": 317.859375,
+        "width": 182.734375,
+        "height": 40.1875
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 371.1875,
+        "top": 277.671875,
+        "right": 574.5,
+        "bottom": 317.859375,
+        "width": 203.3125,
+        "height": 40.1875
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 68,
+        "top": 317.859375,
+        "right": 188.453125,
+        "bottom": 358.546875,
+        "width": 120.453125,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 68,
+        "top": 358.546875,
+        "right": 188.453125,
+        "bottom": 399.234375,
+        "width": 120.453125,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 68,
+        "top": 399.234375,
+        "right": 188.453125,
+        "bottom": 439.921875,
+        "width": 120.453125,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "th",
+      "rect": {
+        "left": 68,
+        "top": 439.921875,
+        "right": 188.453125,
+        "bottom": 480.109375,
+        "width": 120.453125,
+        "height": 40.1875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 188.453125,
+        "top": 317.859375,
+        "right": 371.1875,
+        "bottom": 358.546875,
+        "width": 182.734375,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 371.1875,
+        "top": 317.859375,
+        "right": 574.5,
+        "bottom": 358.546875,
+        "width": 203.3125,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 188.453125,
+        "top": 358.546875,
+        "right": 371.1875,
+        "bottom": 399.234375,
+        "width": 182.734375,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 371.1875,
+        "top": 358.546875,
+        "right": 574.5,
+        "bottom": 399.234375,
+        "width": 203.3125,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 188.453125,
+        "top": 399.234375,
+        "right": 371.1875,
+        "bottom": 439.921875,
+        "width": 182.734375,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 371.1875,
+        "top": 399.234375,
+        "right": 574.5,
+        "bottom": 439.921875,
+        "width": 203.3125,
+        "height": 40.6875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 188.453125,
+        "top": 439.921875,
+        "right": 371.1875,
+        "bottom": 480.109375,
+        "width": 182.734375,
+        "height": 40.1875
+      }
+    },
+    {
+      "id": "td",
+      "rect": {
+        "left": 371.1875,
+        "top": 439.921875,
+        "right": 574.5,
+        "bottom": 480.109375,
+        "width": 203.3125,
+        "height": 40.1875
+      }
+    }
+  ],
+  "scrollers": [],
+  "overlaps": [],
+  "text": [],
+  "issues": [],
+  "notes": [],
+  "limits": "Geometry observations only. Review screenshots and motion for legibility, meaning, scientific truth, intentional composition, and visual quality. Declared essentials must be visible unless a selector explicitly allows dormant elements; hidden alternate roots and incidental marks are ignored."
+}

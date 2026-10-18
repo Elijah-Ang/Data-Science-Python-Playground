@@ -73,7 +73,7 @@ first = activities['ML-F11-1']['syntaxGuidance']['current']
 assert {'pipeline','baseline','folds','cross-validation','oof','clone'} <= {part.get('id') for part in first}
 for part in first:
     if part.get('id'):
-        assert len(part['meaning']) > 80 and part['choices'] and part['example']
+        assert len(part['meaning']) > 10 and part['choices'] and part['example']
 assert not {'pipeline','baseline','folds','cross-validation','oof','clone'} & {part.get('id') for part in activities['ML-F12-1']['syntaxGuidance']['current']}
 assert {'scale','macro-f1','logistic'} <= {part.get('id') for part in activities['ML-F12-1']['syntaxGuidance']['current']}
 

@@ -282,7 +282,7 @@ function outputMarkup(example) {
   return tableMarkup(result,result.kind==='array'?'Result array':'Result',example.inputs[0]);
 }
 function resultMarkup(example) {
-  return '<pre class="operation-code"><code>'+esc(example.code)+'</code></pre><div class="operation-tables"><div class="operation-inputs">'+example.inputs.map(input=>tableMarkup(input,'Source '+input.name)).join('')+'</div><span class="operation-arrow" role="img" aria-label="produces">&rarr;</span>'+outputMarkup(example)+'</div><p class="operation-summary">'+proseMarkup(example.summary,example)+'</p>';
+  return '<div class="operation-tables"><div class="operation-inputs">'+example.inputs.map(input=>tableMarkup(input,'Source '+input.name)).join('')+'</div><span class="operation-arrow" role="img" aria-label="produces">&rarr;</span>'+outputMarkup(example)+'</div><p class="operation-summary">'+proseMarkup(example.summary,example)+'</p>';
 }
 function model(curriculum, lesson, round) {
   if (!lesson||lesson.review||round!==lesson.rounds?.[0]||!specs[lesson.id]) return null;

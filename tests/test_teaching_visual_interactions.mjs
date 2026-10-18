@@ -179,7 +179,7 @@ for(const [visuals,visual] of [[foundations,foundations.spec('histogram')],[ml,{
   assert(!html.includes('<select'));
   assert(html.includes('inline-code-cue'));
   assert(html.includes('aria-live="polite"'));
-  assert(html.includes('Illustrative'));
+  assert(html.includes('role="img"'));
   const listeners=[];const container={addEventListener:(event,handler)=>listeners.push([event,handler])};
   visuals.mount(container);visuals.mount(container);assert.equal(listeners.length,1);
   assert.equal(listeners[0][0],'illustrative-code-change');
@@ -197,7 +197,7 @@ const count=c.lessons.find(l=>l.id==='V08').rounds[0];assert(foundations.interac
 assert.deepEqual(count.visual.choices,['group','shift']);
 assert(!foundations.interactive(count.visual).includes('order='),'Follow count interaction does not teach the Change order argument early.');
 const parameters=require('../foundations/parameter-guide.js');
-for(const l of c.lessons)for(const r of l.rounds){const g=parameters.guidanceFor(c,l,r);for(const entry of [...g.introduces,...g.extends])assert(parameters.valueChoices(entry).includes('Accepts:'),r.id+' '+entry.id);}
+for(const l of c.lessons)for(const r of l.rounds){const g=parameters.guidanceFor(c,l,r);for(const entry of [...g.introduces,...g.extends])assert(parameters.valueChoices(entry).includes('aria-label="Accepted values"'),r.id+' '+entry.id);}
 const bins=parameters.renderCurrent(c,c.lessons.find(l=>l.id==='V04'),c.lessons.find(l=>l.id==='V04').rounds[0]);assert(bins.includes('[0, 2, 4, 6]'));assert(bins.includes('four equal-width bins'));
 const estimator=parameters.renderCurrent(c,c.lessons.find(l=>l.id==='V09'),c.lessons.find(l=>l.id==='V09').rounds[0]);assert(estimator.includes('mode_value'));assert(estimator.includes('pd.Series(values).mode().iloc[0]'));assert(!estimator.includes('estimator=&quot;mode&quot;'));
 

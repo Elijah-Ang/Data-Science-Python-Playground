@@ -43,7 +43,8 @@ def inspect_guidance(page, guidance, state):
             assert entry.is_visible(), state
             assert entry.locator('dt code[data-code-role="parameter"]').inner_text() == definition["keyword"], state
             choices=entry.locator('.foundation-argument-values')
-            assert choices.is_visible() and choices.inner_text().startswith('Accepts:'), state
+            assert choices.is_visible() and choices.get_attribute('aria-label')=='Accepted values', state
+            assert choices.locator('li').count()>0 and entry.locator('dd>.argument-points>li').count(), state
             assert choices.locator('code').count()>0, state
             assert choices.locator('code').evaluate_all('nodes=>nodes.every(e=>getComputedStyle(e).fontSize==="16px")'), state
             meaning = entry.locator("dd").inner_text()

@@ -1,0 +1,75 @@
+/workspace/Data-Science-Python-Playground/tests/test_visual_code_geometry.py:17: DeprecationWarning: 
+Pyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),
+(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)
+but was not found to be installed on your system.
+If this would cause problems for you,
+please provide us feedback at https://github.com/pandas-dev/pandas/issues/54466
+        
+  import pandas as pd
+{
+  "controls_with_distinct_python_ASTs": 97,
+  "code_states": 253,
+  "native_artist_and_SVG_geometry_states": [
+    [
+      "scatter",
+      "x:value"
+    ],
+    [
+      "scatter",
+      "value:x"
+    ],
+    [
+      "scatter",
+      "cost:value"
+    ],
+    [
+      "count-bars",
+      "group"
+    ],
+    [
+      "count-bars",
+      "shift"
+    ],
+    [
+      "mean-bars",
+      "count"
+    ],
+    [
+      "mean-bars",
+      "mean"
+    ],
+    [
+      "mean-bars",
+      "median"
+    ],
+    [
+      "boxplot",
+      "x"
+    ],
+    [
+      "boxplot",
+      "y"
+    ],
+    [
+      "log-scale",
+      "linear"
+    ],
+    [
+      "log-scale",
+      "log"
+    ],
+    [
+      "exact-bars",
+      "mean"
+    ],
+    [
+      "exact-bars",
+      "sum"
+    ],
+    [
+      "exact-bars",
+      "median"
+    ]
+  ],
+  "passed": true
+}

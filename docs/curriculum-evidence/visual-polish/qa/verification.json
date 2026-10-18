@@ -1,0 +1,1074 @@
+{
+  "version": 1,
+  "revision": "visual-polish-2026-10-18",
+  "checks": [
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "plot-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-histogram-default-desktop.json",
+        "docs/curriculum-evidence/visual-polish/histogram-default-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-default-desktop.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "desktop",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "desktop",
+      "check": "plot-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-histogram-two-bins-desktop.json",
+        "docs/curriculum-evidence/visual-polish/histogram-two-bins-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "desktop",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-two-bins-desktop.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "desktop",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "desktop",
+      "check": "plot-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-histogram-other-column-desktop.json",
+        "docs/curriculum-evidence/visual-polish/histogram-other-column-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "desktop",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-other-column-desktop.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "plot-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-histogram-default-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/histogram-default-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-default-short-desktop.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "short-desktop",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "short-desktop",
+      "check": "plot-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-histogram-two-bins-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/histogram-two-bins-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "short-desktop",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-two-bins-short-desktop.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "short-desktop",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "short-desktop",
+      "check": "plot-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-histogram-other-column-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/histogram-other-column-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "short-desktop",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-other-column-short-desktop.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "phone",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "phone",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-default-phone.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "phone",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "phone",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-two-bins-phone.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "phone",
+      "check": "native-bins",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "phone",
+      "check": "plot-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/histogram-other-column-phone.png"
+      ],
+      "details": "Inspected default, two-bin and changed-column screenshots at all three viewports. Bar bottoms meet the axis; displayed counts and edge labels change with the selected code. On phones the inherited local horizontal pan remains; this verdict does not claim the entire wide plot fits simultaneously."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "desktop",
+      "check": "native-rename",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-operations.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "desktop",
+      "check": "table-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-table-transform-source-desktop.json",
+        "docs/curriculum-evidence/visual-polish/table-transform-source-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "desktop",
+      "check": "table-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/table-transform-source-desktop.png"
+      ],
+      "details": "Inspected source and result at desktop, short desktop and phone. Native table text is readable and aligned; row order and values stay fixed while the renamed heading changes. Source, down arrow and result form one reading flow, with no duplicate illustration program."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "desktop",
+      "check": "native-rename",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-operations.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "desktop",
+      "check": "table-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-table-transform-result-desktop.json",
+        "docs/curriculum-evidence/visual-polish/table-transform-result-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "desktop",
+      "check": "table-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/table-transform-result-desktop.png"
+      ],
+      "details": "Inspected source and result at desktop, short desktop and phone. Native table text is readable and aligned; row order and values stay fixed while the renamed heading changes. Source, down arrow and result form one reading flow, with no duplicate illustration program."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "short-desktop",
+      "check": "native-rename",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-operations.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "short-desktop",
+      "check": "table-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-table-transform-source-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/table-transform-source-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "short-desktop",
+      "check": "table-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/table-transform-source-short-desktop.png"
+      ],
+      "details": "Inspected source and result at desktop, short desktop and phone. Native table text is readable and aligned; row order and values stay fixed while the renamed heading changes. Source, down arrow and result form one reading flow, with no duplicate illustration program."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "short-desktop",
+      "check": "native-rename",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-operations.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "short-desktop",
+      "check": "table-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-table-transform-result-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/table-transform-result-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "short-desktop",
+      "check": "table-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/table-transform-result-short-desktop.png"
+      ],
+      "details": "Inspected source and result at desktop, short desktop and phone. Native table text is readable and aligned; row order and values stay fixed while the renamed heading changes. Source, down arrow and result form one reading flow, with no duplicate illustration program."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "phone",
+      "check": "native-rename",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-operations.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "phone",
+      "check": "table-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-table-transform-source-phone.json",
+        "docs/curriculum-evidence/visual-polish/table-transform-source-phone.png"
+      ],
+      "details": "Observed 390\u00d7844; 0 geometry issues."
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "phone",
+      "check": "table-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/table-transform-source-phone.png"
+      ],
+      "details": "Inspected source and result at desktop, short desktop and phone. Native table text is readable and aligned; row order and values stay fixed while the renamed heading changes. Source, down arrow and result form one reading flow, with no duplicate illustration program."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "phone",
+      "check": "native-rename",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-operations.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "phone",
+      "check": "table-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-table-transform-result-phone.json",
+        "docs/curriculum-evidence/visual-polish/table-transform-result-phone.png"
+      ],
+      "details": "Observed 390\u00d7844; 0 geometry issues."
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "phone",
+      "check": "table-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/table-transform-result-phone.png"
+      ],
+      "details": "Inspected source and result at desktop, short desktop and phone. Native table text is readable and aligned; row order and values stay fixed while the renamed heading changes. Source, down arrow and result form one reading flow, with no duplicate illustration program."
+    },
+    {
+      "scene": "argument-row",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "arguments",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/argument-row-default-desktop.png"
+      ],
+      "details": "Inspected the rendered histogram argument row at all three viewports. Meaning and alternatives are separate bullet points, the desktop columns align, mobile labels stack above their explanation, and the exercise dataframe follows the teaching section."
+    },
+    {
+      "scene": "argument-row",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "argument-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/argument-row-default-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "argument-row",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "arguments",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/argument-row-default-short-desktop.png"
+      ],
+      "details": "Inspected the rendered histogram argument row at all three viewports. Meaning and alternatives are separate bullet points, the desktop columns align, mobile labels stack above their explanation, and the exercise dataframe follows the teaching section."
+    },
+    {
+      "scene": "argument-row",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "argument-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/argument-row-default-short-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "argument-row",
+      "state": "default",
+      "viewport": "phone",
+      "check": "arguments",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/argument-row-default-phone.png"
+      ],
+      "details": "Inspected the rendered histogram argument row at all three viewports. Meaning and alternatives are separate bullet points, the desktop columns align, mobile labels stack above their explanation, and the exercise dataframe follows the teaching section."
+    },
+    {
+      "scene": "argument-row",
+      "state": "default",
+      "viewport": "phone",
+      "check": "argument-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/argument-row-default-phone.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "desktop",
+      "check": "menu-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-code-menu-open-desktop.json",
+        "docs/curriculum-evidence/visual-polish/code-menu-open-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "desktop",
+      "check": "menu-keys",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-open-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "desktop",
+      "check": "menu-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-open-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "desktop",
+      "check": "menu-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-code-menu-changed-desktop.json",
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "desktop",
+      "check": "menu-keys",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "desktop",
+      "check": "menu-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "short-desktop",
+      "check": "menu-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-code-menu-open-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/code-menu-open-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "short-desktop",
+      "check": "menu-keys",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-open-short-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "short-desktop",
+      "check": "menu-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-open-short-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "check": "menu-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-code-menu-changed-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "check": "menu-keys",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-short-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "check": "menu-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-short-desktop.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "phone",
+      "check": "menu-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-code-menu-open-phone.json",
+        "docs/curriculum-evidence/visual-polish/code-menu-open-phone.png"
+      ],
+      "details": "Observed 390\u00d7844; 0 geometry issues."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "phone",
+      "check": "menu-keys",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-open-phone.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "phone",
+      "check": "menu-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-open-phone.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "phone",
+      "check": "menu-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-code-menu-changed-phone.json",
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-phone.png"
+      ],
+      "details": "Observed 390\u00d7844; 0 geometry issues."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "phone",
+      "check": "menu-keys",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-phone.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "phone",
+      "check": "menu-access",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/code-menu-changed-phone.png"
+      ],
+      "details": "Browser assertions and captured actual lesson state; visual verdict remains subject to inspection of these screenshots."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "native-svm",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "ml-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-ml-plot-default-desktop.json",
+        "docs/curriculum-evidence/visual-polish/ml-plot-default-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "desktop",
+      "check": "ml-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/ml-plot-default-desktop.png"
+      ],
+      "details": "Inspected default and changed SVM states at all three viewports. The same observations and axes remain fixed while the fitted boundary and support-vector rings update. The visible counts match the native fitted model receipt. Mobile preserves labelled local plot pan."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "desktop",
+      "check": "native-svm",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "desktop",
+      "check": "ml-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-ml-plot-changed-desktop.json",
+        "docs/curriculum-evidence/visual-polish/ml-plot-changed-desktop.png"
+      ],
+      "details": "Observed 1440\u00d7900; 0 geometry issues."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "desktop",
+      "check": "ml-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/ml-plot-changed-desktop.png"
+      ],
+      "details": "Inspected default and changed SVM states at all three viewports. The same observations and axes remain fixed while the fitted boundary and support-vector rings update. The visible counts match the native fitted model receipt. Mobile preserves labelled local plot pan."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "native-svm",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "ml-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-ml-plot-default-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/ml-plot-default-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "short-desktop",
+      "check": "ml-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/ml-plot-default-short-desktop.png"
+      ],
+      "details": "Inspected default and changed SVM states at all three viewports. The same observations and axes remain fixed while the fitted boundary and support-vector rings update. The visible counts match the native fitted model receipt. Mobile preserves labelled local plot pan."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "check": "native-svm",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "check": "ml-fit",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/geometry-ml-plot-changed-short-desktop.json",
+        "docs/curriculum-evidence/visual-polish/ml-plot-changed-short-desktop.png"
+      ],
+      "details": "Observed 1280\u00d7720; 0 geometry issues."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "check": "ml-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/ml-plot-changed-short-desktop.png"
+      ],
+      "details": "Inspected default and changed SVM states at all three viewports. The same observations and axes remain fixed while the fitted boundary and support-vector rings update. The visible counts match the native fitted model receipt. Mobile preserves labelled local plot pan."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "phone",
+      "check": "native-svm",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "phone",
+      "check": "ml-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/ml-plot-default-phone.png"
+      ],
+      "details": "Inspected default and changed SVM states at all three viewports. The same observations and axes remain fixed while the fitted boundary and support-vector rings update. The visible counts match the native fitted model receipt. Mobile preserves labelled local plot pan."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "phone",
+      "check": "native-svm",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/native-models.json"
+      ],
+      "details": "Native calculation receipt independently checks the displayed operation and all offered numerical alternatives."
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "phone",
+      "check": "ml-review",
+      "verdict": "pass",
+      "evidence": [
+        "docs/curriculum-evidence/visual-polish/ml-plot-changed-phone.png"
+      ],
+      "details": "Inspected default and changed SVM states at all three viewports. The same observations and axes remain fixed while the fitted boundary and support-vector rings update. The visible counts match the native fitted model receipt. Mobile preserves labelled local plot pan."
+    }
+  ],
+  "geometry_reports": [
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-histogram-default-desktop.json"
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-histogram-two-bins-desktop.json"
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-histogram-other-column-desktop.json"
+    },
+    {
+      "scene": "histogram",
+      "state": "default",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-histogram-default-short-desktop.json"
+    },
+    {
+      "scene": "histogram",
+      "state": "two-bins",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-histogram-two-bins-short-desktop.json"
+    },
+    {
+      "scene": "histogram",
+      "state": "other-column",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-histogram-other-column-short-desktop.json"
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-table-transform-source-desktop.json"
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-table-transform-result-desktop.json"
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-table-transform-source-short-desktop.json"
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-table-transform-result-short-desktop.json"
+    },
+    {
+      "scene": "table-transform",
+      "state": "source",
+      "viewport": "phone",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-table-transform-source-phone.json"
+    },
+    {
+      "scene": "table-transform",
+      "state": "result",
+      "viewport": "phone",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-table-transform-result-phone.json"
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-code-menu-open-desktop.json"
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-code-menu-changed-desktop.json"
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-code-menu-open-short-desktop.json"
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-code-menu-changed-short-desktop.json"
+    },
+    {
+      "scene": "code-menu",
+      "state": "open",
+      "viewport": "phone",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-code-menu-open-phone.json"
+    },
+    {
+      "scene": "code-menu",
+      "state": "changed",
+      "viewport": "phone",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-code-menu-changed-phone.json"
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-ml-plot-default-desktop.json"
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-ml-plot-changed-desktop.json"
+    },
+    {
+      "scene": "ml-plot",
+      "state": "default",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-ml-plot-default-short-desktop.json"
+    },
+    {
+      "scene": "ml-plot",
+      "state": "changed",
+      "viewport": "short-desktop",
+      "evidence": "docs/curriculum-evidence/visual-polish/geometry-ml-plot-changed-short-desktop.json"
+    }
+  ],
+  "pageErrors": [],
+  "visualReview": {
+    "method": "Direct inspection of all 30 captured scene/state/viewport screenshots; contact sheets plus the original-size captures. Scientific agreement is supported separately by native Python receipts, not inferred from screenshots.",
+    "screenshots": 30,
+    "reviewedOn": "2026-10-18",
+    "limitations": [
+      "Chromium only; WebKit and a physical Mac were not exercised.",
+      "Wide plots retain the existing labelled horizontal pan on phones."
+    ]
+  }
+}

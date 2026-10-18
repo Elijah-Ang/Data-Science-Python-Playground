@@ -26,18 +26,21 @@
     let html='',start=0;
     const highlight=value=>root.FoundationLearning?.highlightPython?.(value)||esc(value);
     for(const span of spans){
-      html+=highlight(code.slice(start,span.start));
+      const preceding=code.slice(start,span.start),prefix=preceding.match(/(?:\b[A-Za-z_]\w*\s*=\s*|"[^"\n]+"\s*:\s*)$/);
+      html+=highlight(prefix?preceding.slice(0,-prefix[0].length):preceding);
+      if(prefix)html+='<span class="inline-code-argument">'+highlight(prefix[0]);
       html+='<button type="button" class="inline-code-value code-slot-'+span.index%6+'" data-code-key="'+esc(span.control.key)+'" data-code-options="'+esc(JSON.stringify(span.control.options.map(o=>({value:String(o.value),label:o.label}))))+'" data-code-value="'+esc(span.control.value)+'" aria-label="Change '+esc(span.control.label)+'; current value '+esc(code.slice(span.start,span.end))+'" aria-haspopup="listbox" aria-expanded="false">'+esc(code.slice(span.start,span.end))+'</button>';
+      if(prefix)html+='</span>';
       start=span.end;
     }
     html+=highlight(code.slice(start));
     return '<div class="inline-code-editor"><p class="inline-code-cue"><span class="inline-code-mouse" aria-hidden="true"></span>Click the highlighted code to change the '+esc(kind)+'.</p><pre class="inline-code-program"><code class="inline-code-source">'+html+'</code></pre></div>';
   }
   function choices(key,label,value,options,evaluate){return {key,label,value:String(value),options:options.map(([v,title])=>({value:String(v),label:title,code:evaluate(String(v)).code}))};}
-  let popup,owner;
+  let popup,owner,stopPosition;
   function close(focus=false){
     if(!popup)return;
-    const previous=owner;popup.remove();popup=null;owner=null;
+    const previous=owner;stopPosition?.();stopPosition=null;popup.remove();popup=null;owner=null;
     previous?.setAttribute('aria-expanded','false');
     if(focus)previous?.focus();
   }
@@ -61,6 +64,7 @@
     popup.setAttribute('popover','manual');root.document.body.append(popup);
     popup.showPopover?.();
     position();
+    if(root.CodeMenuPosition)stopPosition=root.CodeMenuPosition.follow(button,popup);
     popup.querySelector('[aria-selected="true"]')?.focus();
   }
   function mount(){
@@ -86,7 +90,7 @@
     });
     root.addEventListener?.('resize',()=>close());
     root.addEventListener?.('hashchange',()=>close());
-    root.document.addEventListener('scroll',event=>{if(popup&&!popup.contains(event.target))position();},true);
+    root.document.addEventListener('scroll',event=>{if(popup&&!popup.contains(event.target)&&!stopPosition)position();},true);
   }
   const api={render,choices,changedTokens,close};root.InlineCode=api;
   if(typeof module!=='undefined')module.exports=api;

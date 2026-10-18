@@ -1,0 +1,197 @@
+{
+  "status": "passed",
+  "baseline": "5cec626d1a381b2a325d6a226db78c3b4697752e",
+  "scope": "Repair histogram geometry and refine syntax/argument, identifier, menu and table presentation across both curricula.",
+  "sourceAndServedDigests": "final-build.json",
+  "finalBuildContentId": "06d714d3831d500d87be3d392ebe5b0d5d110a6146c4cb2edfccff3db9aecfc5",
+  "nativePython": {
+    "chartCombinations": 458,
+    "fittedModelCombinations": 129,
+    "tableOperationStates": 159,
+    "tableLessons": 47,
+    "staticTableExamples": 10,
+    "receipts": [
+      "native-models.json",
+      "native-operations.json",
+      "native-static-tables.json"
+    ]
+  },
+  "renderedSVG": {
+    "receipt": "plot-bounds.json",
+    "states": 6024,
+    "distinctRendererFamilies": 51,
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "failures": 0,
+    "checks": "Actual SVG mark/text bounds, transforms, histogram baselines and bar bounds. Shared models rendered in a real lesson plot container; whole-activity context checked separately."
+  },
+  "tableLayouts": {
+    "receipt": "table-layouts.json",
+    "contexts": 466,
+    "introductoryLessons": 57,
+    "widths": [
+      1440,
+      1280,
+      390,
+      320
+    ],
+    "checks": "Native readable cell size, no transformed tables, no duplicate program, no inner vertical clipping, accessible local horizontal pan, selected enlarged text."
+  },
+  "combinedMenus": {
+    "receipt": "multiple-arguments.json",
+    "contexts": 48,
+    "checks": "Independent code values, conditional controls, 44px targets, viewport positioning, keyboard focus/return, contrast >=4.5:1 and matching syntax/argument typography."
+  },
+  "skillAcceptance": {
+    "contract": "qa/lesson-contract.json",
+    "evidence": "qa/verification.json",
+    "validator": "qa/contract-validation.json",
+    "checks": 82,
+    "complete": true,
+    "directlyInspectedSceneScreenshots": 30,
+    "scope": "Affected repair scenes only; collector does not certify full mobile plot fit. Scientific agreement and quality inspection are separate from schema validation."
+  },
+  "renderingPhases": [
+    {
+      "receipt": "before-width-repair.json",
+      "purpose": "Initial full layout sweep found four page-overflow contexts (two scaling lessons at 320px in light/dark). This is retained failure evidence, not the final result."
+    },
+    {
+      "receipt": "width-repair/rendering.json",
+      "purpose": "36 targeted contexts passed after the long-expression wrapping repair."
+    },
+    {
+      "receipt": "stages/rendering.json",
+      "purpose": "Final complete activity layout sweep after the wrapping repair.",
+      "activities": 676,
+      "renders": 4056,
+      "interactiveStates": 0,
+      "screenshots": 76,
+      "issues": 0,
+      "pageErrors": 0,
+      "buildContentId": "06d714d3831d500d87be3d392ebe5b0d5d110a6146c4cb2edfccff3db9aecfc5"
+    }
+  ],
+  "earlierPresentationReceipts": [
+    {
+      "receipt": "visualise-rendered.json",
+      "lessons": 37,
+      "views": 148,
+      "interactiveStates": 516,
+      "phase": "Before the final long-expression wrapping repair; unchanged visual models."
+    },
+    {
+      "receipt": "editor-panes.json",
+      "views": 15,
+      "wheelChecks": 4,
+      "touchChecks": 2,
+      "phase": "Before the wrapping repair; independent-pane mechanics unchanged."
+    },
+    {
+      "receipt": "arguments/chromium-parameters.json",
+      "renderedRounds": 264,
+      "static320pxLessons": 43,
+      "phase": "Visible bullets and accepted forms, before the wrapping-only repair."
+    }
+  ],
+  "mlVisualInventory": {
+    "receipt": "../../ml-learning-visual-review.json",
+    "concepts": 85,
+    "primitiveVariants": 65,
+    "cardThumbnails": 110,
+    "captures": 280,
+    "realFittedFigures": 4,
+    "collectionTiles": 19
+  },
+  "exerciseContracts": {
+    "receipt": "exercise-contracts.json",
+    "dataRounds": 338,
+    "mlExercises": 338,
+    "workflows": 19,
+    "result": "All Data round fields/datasets unchanged; all ML executable and workflow contracts unchanged. Only explanatory metadata simplified."
+  },
+  "checks": [
+    {
+      "command": "npm run check:js",
+      "passed": true,
+      "log": "logs/javascript.txt"
+    },
+    {
+      "command": "npm run check:routes",
+      "passed": true,
+      "log": "logs/routes.txt"
+    },
+    {
+      "command": "npm run check:app-shell",
+      "passed": true,
+      "log": "logs/app-shell.txt"
+    },
+    {
+      "command": "/workspace/.dspp-venv/bin/python tests/test_visual_scientific_scenes.py",
+      "passed": true,
+      "log": "logs/scientific-scenes.txt"
+    },
+    {
+      "command": "/workspace/.dspp-venv/bin/python tests/test_visual_code_geometry.py",
+      "passed": true,
+      "log": "logs/visible-geometry.txt"
+    },
+    {
+      "command": "/workspace/.dspp-venv/bin/python tests/test_teaching_visual_models.py",
+      "passed": true,
+      "log": "logs/teaching-models.txt"
+    },
+    {
+      "command": "/workspace/.dspp-venv/bin/python tests/test_model_family_visuals.py",
+      "passed": true,
+      "log": "logs/model-families.txt"
+    },
+    {
+      "command": "PYTHONPATH=<Black 25.1.0> python3 scripts/format-foundations.py --check",
+      "passed": true,
+      "log": "logs/python-formatting.txt"
+    }
+  ],
+  "runtimes": {
+    "node": "24.19.0",
+    "nativePython": "3.10.21",
+    "browserHarnessPython": "3.12.14",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "scipy": "1.12.0",
+    "sklearn": "1.4.2",
+    "seaborn": "0.13.2",
+    "matplotlib": "3.5.2",
+    "chromium": "151.0.7922.173"
+  },
+  "limits": [
+    "Chromium only; physical Safari/WebKit and physical phones were not tested.",
+    "Wide plots preserve the existing labelled local horizontal pan on phones.",
+    "SVG permutation checks use the shared renderer in a lesson plot container; the 4056 activity layouts and focused menus are separate checks.",
+    "The standalone preview requires internet to run its pinned Python runtime."
+  ],
+  "publication": "Feature branch for review; no merge or production deployment.",
+  "packagedArtifact": "packaged-build.json",
+  "recordedEvidenceSHA256": {
+    "native-models.json": "ac241902fbab93a1c1c2512a831bab49eac320846e2a12f58983a773873084bc",
+    "native-operations.json": "0d309555d6656fc6a97ae111bd8d8bef7aec3df2eb374919f359606886124fff",
+    "native-static-tables.json": "7aa3f50d684aa194edac7c1a8335f98dcc0c34304c774bc356b0ed3d3831bc3b",
+    "plot-bounds.json": "e76e227412c6746ef2c3c9e0dc7c74e898ba22bb66c1725607bb6348bf246a64",
+    "table-layouts.json": "47d97e6eeca1e9d729eaf0c2d3af07262278c2bc3b951a4c42ca731515fb1cd5",
+    "multiple-arguments.json": "7b368f64451a0b572fdb385fbfac1231338001bed150b4593b5fb80fa193641b",
+    "exercise-contracts.json": "291ab70f49327293f491bcecb4df33bd64a6f62f6e644a58a816fdb8de79176f",
+    "visualise-rendered.json": "5b9a20606a5584f7bf94aa9bd9d38b1a48f8781252e3119c302d98455f74526e",
+    "editor-panes.json": "a1700ea1aedc53a0d424d9a1124c3f58f56ac5daffb2c825c7a73a40f90ae1f6",
+    "arguments/chromium-parameters.json": "2fb5892bed62bf92989f27fac861dbf0d7a7643c64be88fb643eec039e91ad4c",
+    "qa/verification.json": "1021960d96258c513c99d6462ee807ef06c96ddc01004d7f84f6dd1623bfe335",
+    "qa/contract-validation.json": "98f80c60429e72de401aa5bcb1aa915718ac55e100331576a682655c2bdda8f7",
+    "stages/rendering.json": "fd902b36f2bac87cde4c4a93208b553c1bd82c67dfd1eb5143bce979439855d1"
+  }
+}
