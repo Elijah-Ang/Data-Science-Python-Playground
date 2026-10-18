@@ -1,7 +1,7 @@
 # Downloadable review preview
 
 This archive contains Data Foundations and Machine Learning from source commit
-`48929d24668c06ba4e5df10abb6fa263e7df0e89`. It includes the [clickable-code controls and presentation refinements](../../curriculum-inline-code-controls.md).
+`19c9a1b7de998a774420c5c691cc9a6a95deb7a5`. It includes the [geometry and presentation repairs](../../curriculum-visual-polish.md).
 
 Download [curriculum-preview.zip](curriculum-preview.zip), unzip it in Finder, then open
 `curriculum-preview/OPEN-IN-BROWSER.html` with Safari or Chrome.
@@ -12,16 +12,16 @@ No server is required. Running Python needs internet access for the pinned
 runtime packages. The archive includes these instructions.
 
 The packaged HTML is tested with isolated assets, opaque-file-viewer navigation,
-repeated curriculum switching, editable ML arguments, and real Data/ML Python grading.
-See the [validation receipt](../inline-code-controls/validation.json),
-[preview checks](../inline-code-controls/preview.json) and
-[clean-build package receipt](../inline-code-controls/packaged-build.json).
+repeated curriculum switching, editable ML arguments and real Data/ML Python grading.
+See the [validation receipt](../visual-polish/validation.json),
+[preview checks](../visual-polish/preview.json) and
+[clean-build package receipt](../visual-polish/packaged-build.json).
 Safari on a physical Mac has not been independently tested here.
 
-Archive SHA-256: `173af6914594d4147171620cd24f3364b75be506b442afdd48a41bb182b3828a`
+Archive SHA-256: `767497e8e283c574c7f0cdc8aab4b6c20538adb866b8137da894ebb99c65ddbf`
 
-HTML SHA-256: `8c044a5aca02cc2fc75537fd4c14679d997126c58483fe030ecf37f24c0d70d5`
+HTML SHA-256: `600ea829b2bdea3d5f6082e4e8437747b66335081e012301cc1534ebaffa9d86`
 
-Build content ID: `06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc`
+Build content ID: `06d714d3831d500d87be3d392ebe5b0d5d110a6146c4cb2edfccff3db9aecfc5`
 
 This is a feature-branch review artifact. No merge or production deployment.

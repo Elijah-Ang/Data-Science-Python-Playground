@@ -75,7 +75,7 @@ with sync_playwright() as p:
                 assert all(p.get('code',p.get('title')) in visible_codes for p in current),(exercise['id'],current,visible_codes)
                 if exercise.get('workflowSections'):
                     outline = lesson.locator('.ml-workflow-outline')
-                    assert outline.is_visible() and outline.locator('li').count() == len(exercise['workflowSections'])
+                    assert outline.is_visible() and outline.locator(':scope > li').count() == len(exercise['workflowSections'])
                 if exercise['kind'] == 'python':
                     assert page.locator('#mlEditor').input_value() == exercise['starter']
                     assert task.locator('.ml-output-names code').all_text_contents() == exercise['outputs']

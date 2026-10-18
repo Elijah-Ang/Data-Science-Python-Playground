@@ -74,7 +74,7 @@ def switch_to_ml(page):
         page.locator("h2").first.inner_text()
         == "Your first complete regression workflow"
     )
-    assert page.locator(".ml-workflow-outline li").count() == 8
+    assert page.locator(".ml-workflow-outline > li").count() == 8
     assert page.locator(".foundation-reference-content details").count() == 2
 
 

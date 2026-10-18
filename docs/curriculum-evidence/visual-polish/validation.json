@@ -192,6 +192,58 @@
     "arguments/chromium-parameters.json": "2fb5892bed62bf92989f27fac861dbf0d7a7643c64be88fb643eec039e91ad4c",
     "qa/verification.json": "1021960d96258c513c99d6462ee807ef06c96ddc01004d7f84f6dd1623bfe335",
     "qa/contract-validation.json": "98f80c60429e72de401aa5bcb1aa915718ac55e100331576a682655c2bdda8f7",
-    "stages/rendering.json": "fd902b36f2bac87cde4c4a93208b553c1bd82c67dfd1eb5143bce979439855d1"
+    "stages/rendering.json": "fd902b36f2bac87cde4c4a93208b553c1bd82c67dfd1eb5143bce979439855d1",
+    "logs/clean-build.txt": "1dd8d08cc3ee9ca4949d5a4986ea1684e2b1600aca38e029e081bd6bed0961bb",
+    "preview.json": "9b279333215b38f232877e234d87f6f9ad302168b8f6ea40925a35e03d9cc941",
+    "packaged-build.json": "83345761ea0256de3e14dcdebe8091687a4befb50c4c01bfb6d4f030ae949792",
+    "ml-presentation.json": "e35d4ee6ce30c71dfb37fc9a577c9786da978ae021cb3f73fed35d53dad7b51b"
+  },
+  "cleanBuild": {
+    "sourceCommit": "19c9a1b7de998a774420c5c691cc9a6a95deb7a5",
+    "version": "1.0.0",
+    "commit": "19c9a1b7de99",
+    "dirty": false,
+    "contentId": "06d714d3831d500d87be3d392ebe5b0d5d110a6146c4cb2edfccff3db9aecfc5",
+    "builtAt": "2026-10-18T10:40:01.193Z",
+    "bytes": 39352727,
+    "allRecordedSourceAndServedHashesMatch": true
+  },
+  "preview": {
+    "receipt": "preview.json",
+    "artifactSHA256": "600ea829b2bdea3d5f6082e4e8437747b66335081e012301cc1534ebaffa9d86",
+    "requiredSiblingAssets": [],
+    "checks": [
+      {
+        "context": "isolated HTTP file",
+        "activity": "V04-1",
+        "pythonGrade": "passed"
+      },
+      {
+        "context": "isolated HTTP file",
+        "activity": "ML-F11-1",
+        "pythonGrade": "passed"
+      },
+      {
+        "context": "isolated HTTP file",
+        "repeatedCurriculumSwitchAndMLMenus": "passed"
+      },
+      {
+        "context": "opaque HTML-file sandbox",
+        "navigation": "Data to ML",
+        "visualsAndOriginalIndicators": "passed"
+      }
+    ],
+    "pageErrors": []
+  },
+  "finalMLPresentation": {
+    "receipt": "ml-presentation.json",
+    "activities": 338,
+    "renders": 676,
+    "widths": [
+      390,
+      1440
+    ],
+    "pageErrors": [],
+    "checks": "Visible arguments and supplied state, workflow steps counted as direct children, reference removal, teaching before task, editor starters and equal syntax/argument font sizes."
   }
 }
