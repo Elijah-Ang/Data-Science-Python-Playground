@@ -136,13 +136,13 @@ body[data-foundations] [hidden] { display:none !important; }
 .py-builtin { color:#82cfff; }
 .py-operator { color:#89ddff; }
 @media(min-width:801px) {
- .foundations-main:has(.foundation-split) { height:calc(100dvh - 108px); min-height:540px; display:flex; flex-direction:column; padding-top:16px; padding-bottom:16px; }
+ .foundations-main:has(.foundation-split) { min-height:calc(100dvh - 108px); display:flex; flex-direction:column; padding-top:16px; padding-bottom:24px; }
  .foundations-main:has(.foundation-split) .foundation-breadcrumb { margin-bottom:10px; }
  .foundation-lesson-heading { padding-bottom:10px; }
  .foundation-lesson-heading h2 { margin:5px 0; }
- .foundation-split { flex:1; min-height:0; overflow:hidden; }
- .foundation-content { height:100%; overflow:auto; overscroll-behavior:contain; padding-right:12px; }
- .foundation-code-pane { position:static; height:100%; display:flex; flex-direction:column; }
+ .foundation-split { flex:none; min-height:0; height:var(--lesson-pane-height,calc(100dvh - 330px)); overflow:hidden; }
+ .foundation-split > .foundation-content { height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; padding-right:12px; }
+ .foundation-code-pane { position:static; height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; display:flex; flex-direction:column; }
  .foundation-editor-head,.foundation-actions,.foundation-runtime,.foundation-feedback { flex-shrink:0; }
  .foundation-editor-wrap { flex:0 0 clamp(320px,38vh,400px); min-height:320px; overflow:hidden; }
  :is(#foundationEditor,#mlEditor) { height:100%; min-height:100%; max-height:none; resize:none; }
@@ -264,7 +264,9 @@ body[data-foundations] [hidden] { display:none !important; }
 .teaching-example { padding:14px 16px; border-left:3px solid var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 5%,var(--panel)); }
 .teaching-example h4 { font:700 13px/1.5 var(--body); margin:0 0 6px; color:var(--lesson-accent); }
 .foundation-content .teaching-example p,.foundation-content .teaching-note { font-size:14px; line-height:1.65; }
-.teaching-example-output { width:100%; margin-top:12px; border-collapse:collapse; table-layout:fixed; font-size:13px; text-align:left; }
+.teaching-example-table-scroll { max-width:100%; overflow-x:auto; }
+.teaching-example-output { width:100%; margin-top:12px; border-collapse:collapse; table-layout:auto; font-size:13px; text-align:left; }
+.teaching-example-table-scroll .teaching-example-output thead code.code-identifier { white-space:nowrap; overflow-wrap:normal; }
 .teaching-example-output caption { padding-bottom:7px; text-align:left; font-weight:700; }
 .teaching-example-output th,.teaching-example-output td { padding:7px 8px; border-bottom:1px solid var(--border-soft); overflow-wrap:anywhere; }
 .teaching-example-output tbody th { font-weight:500; }
@@ -386,13 +388,6 @@ body[data-foundations]:is([data-deck="regression"],[data-deck="clustering"],[dat
 .foundation-content :is(.foundation-practice-brief,.foundation-task,.teaching-reference),
 .foundation-task-reminder { min-width:0; overflow-wrap:anywhere; }
 .foundation-lesson-copy { overflow-wrap:anywhere; }
-/* Column identity also uses an underline, so meaning never relies on colour. */
-code.code-identifier[data-code-role="column"] {
-  text-decoration:underline;
-  text-decoration-thickness:2px;
-  text-underline-offset:.2em;
-  border-bottom:2px solid currentColor;
-}
 .learning-instructions { padding-inline-start:1.6em; max-width:68ch; }
 .learning-instructions > li { padding-inline-start:.2em; margin-block:.55em; }
 .learning-name-key { font-size:.85em; line-height:1.6; max-width:68ch; }
@@ -413,3 +408,185 @@ code.code-identifier[data-code-role="column"] {
   -webkit-box-decoration-break:clone;
   box-decoration-break:clone;
 }
+
+/* Desktop has the original independent reading and Python panes. Supporting
+   help stays inside the left pane. */
+.foundation-reference-content { min-width:0; }
+.foundation-reference-content > h3 { margin:0; }
+.foundation-reference-content > details { margin:0; padding-bottom:6px; }
+.foundation-reference-content summary { min-height:44px; padding-block:6px; }
+.foundation-reference-content .foundation-reference-body { display:grid; gap:12px; padding-top:10px; }
+.foundation-reference-content .foundation-parameter-entry { margin:10px 0; padding:10px 12px; }
+.foundation-reference-content:empty { display:none; }
+.foundation-editor-head { flex-wrap:wrap; }
+.foundation-editor-head button { min-height:44px; }
+.foundation-actions button { min-height:44px; }
+.foundation-task-reminder { max-height:none; overflow:visible; }
+.task-recall summary { cursor:pointer; min-height:44px; align-content:center; font-size:13px; }
+.task-recall > :not(summary) { margin-block:10px; }
+.foundation-editor-wrap {
+  --editor-lines:12;
+  --editor-line-height:23.4px;
+  /* Include the two visible context lines above the learner's starter. */
+  height:clamp(220px,calc((var(--editor-lines) + 2) * var(--editor-line-height) + 36px),420px);
+}
+:is(#foundationEditor,#mlEditor) { height:100%; min-height:100%; max-height:none; resize:none; }
+@media(min-width:801px) {
+  .foundation-editor-wrap { flex-basis:auto; flex-shrink:0; min-height:220px; }
+  .foundation-code-pane { align-self:start; }
+  .foundation-split > .ml-choice { height:100%; max-height:100%; overflow:auto; overscroll-behavior:contain; }
+}
+@media(max-width:800px) {
+  .foundation-split { height:auto; max-height:none; overflow:visible; }
+  .foundation-lesson-heading { gap:12px; }
+  .foundation-split > :is(.foundation-content,.foundation-code-pane,.ml-choice) { height:auto; max-height:none; overflow:visible; overscroll-behavior:auto; }
+  .foundation-editor-wrap { --editor-line-height:28.8px; height:clamp(260px,calc((var(--editor-lines) + 2) * var(--editor-line-height) + 36px),520px); }
+  .foundation-code-pane .foundation-actions { position:static; }
+  .foundation-content { padding-right:0; }
+}
+/* Touch tablets use the same legible native input as phones, including the
+   overlaid syntax and line numbers, without disabling browser zoom. */
+@media(any-pointer:coarse) {
+  :is(#foundationEditor,#mlEditor,#foundationHighlight,#mlHighlight),.foundation-line-numbers { font-size:16px; }
+  .foundation-editor-wrap { --editor-line-height:28.8px; height:clamp(260px,calc((var(--editor-lines) + 2) * var(--editor-line-height) + 36px),520px); }
+}
+
+/* Teaching controls are native, labelled and large enough for touch. */
+.teaching-explorer { min-width:0; padding:14px; border:1px solid var(--border-soft); border-radius:4px; background:var(--panel); }
+.teaching-visual-controls { display:flex; flex-wrap:wrap; align-items:end; gap:12px; margin:12px 0; padding:0; border:0; }
+.teaching-visual-controls legend { margin-bottom:8px; font-weight:700; }
+.teaching-visual-controls label { display:grid; gap:5px; flex:1 1 130px; min-width:0; font-size:14px; }
+.teaching-explorer .teaching-visual-controls select { min-height:44px; width:100%; max-width:100%; padding:8px; border:1px solid var(--border); border-radius:3px; background:var(--panel); color:var(--ink); font:16px var(--body); }
+.teaching-visual-controls select:focus-visible,.teaching-visual-scroll:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
+.teaching-visual-scroll { max-width:100%; overflow-x:auto; }
+.teaching-visual-scroll .data-teaching-visual { display:block; min-width:420px; width:100%; height:auto; }
+.teaching-visual-scroll .data-teaching-visual.is-tree { min-width:0; }
+.teaching-explorer .accent { fill:color-mix(in srgb,var(--lesson-accent) 20%,var(--panel)); stroke:var(--lesson-accent); }
+.teaching-explorer .accent-stroke { stroke:var(--lesson-accent); stroke-width:3; }
+.teaching-visual-result { font-size:14px; line-height:1.6; overflow-wrap:anywhere; }
+.teaching-visual-result p { margin-block:8px; }
+
+/* Small operations retain the same observations while showing what the current
+   pandas call changes. Tables scroll locally instead of widening the lesson. */
+.operation-explorer { margin-block:16px; }
+.operation-tables { display:grid; grid-template-columns:minmax(0,1fr); align-items:start; gap:12px; }
+.operation-inputs,.operation-table-scroll { min-width:0; max-width:100%; }
+.operation-inputs { display:grid; gap:12px; }
+.operation-table-scroll { overflow-x:auto; padding:12px; border:1px solid var(--border-soft); border-radius:8px; background:color-mix(in srgb,var(--panel) 75%,transparent); }
+.operation-table { width:100%; margin:0; font-size:14px; table-layout:auto; border-collapse:collapse; }
+.operation-table :is(th,td) { padding:9px 12px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.operation-table thead th { background:color-mix(in srgb,var(--ink) 3%,var(--panel)); }
+.operation-table tbody tr:last-child :is(th,td) { border-bottom:0; }
+.foundation-content .operation-table thead code.code-identifier { white-space:nowrap; overflow-wrap:normal; }
+.operation-table caption { text-align:left; font-weight:700; margin-bottom:10px; font-size:13px; color:var(--ink-muted); }
+.operation-arrow { justify-self:center; color:var(--lesson-accent); font-size:24px; transform:rotate(90deg); }
+.operation-changed { background:color-mix(in srgb,var(--lesson-accent) 9%,var(--panel)); font-weight:600; box-shadow:none; }
+.operation-explorer :is(select,input):focus-visible,.operation-table-scroll:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
+.operation-scalar { display:grid; gap:8px; min-width:0; padding:8px 12px; border-left:3px solid var(--lesson-accent); }
+.operation-scalar output { overflow-wrap:anywhere; font-size:16px; }
+.operation-explorer pre { max-width:100%; overflow-x:auto; }
+.foundation-content .teaching-table-illustration { margin:18px 0; padding:16px; border:1px solid var(--border-soft); border-radius:8px; }
+.teaching-table-illustration>pre { margin-top:0; }
+.illustration-file { margin:12px 0; }
+.illustration-file strong { font:600 13px/1.5 var(--body); }
+.illustration-file pre { margin-top:6px; }
+.illustration-file samp { font:14px/1.7 var(--mono); }
+@media(max-width:1100px) {
+  .operation-tables { grid-template-columns:minmax(0,1fr); }
+  .operation-arrow { justify-self:center; transform:rotate(90deg); }
+}
+
+.teaching-orientation { padding:12px 14px; border-left:3px solid var(--lesson-accent); background:color-mix(in srgb,var(--lesson-accent) 5%,var(--panel)); }
+.teaching-orientation p + p { margin-top:8px; }
+.teaching-workflow { min-width:0; }
+.teaching-workflow pre { margin-top:10px; }
+.workflow-code-change { padding:0; color:inherit; background:color-mix(in srgb,var(--lesson-accent) 20%,transparent); border-left:2px solid var(--lesson-accent); box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.teaching-essential > summary { color:var(--ink); }
+/* Explain current arguments in plain rows; the reference table wraps prose. */
+.foundation-parameter-teaching { display:grid; gap:12px; }
+.foundation-parameter-teaching > h3 { margin:0; }
+.foundation-parameter-parts { margin:0; }
+.foundation-parameter-row { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:14px; padding:8px 0; border-bottom:1px solid var(--border-soft); }
+.foundation-parameter-row:last-child { border-bottom:0; }
+.foundation-parameter-row :is(dt,dd) { min-width:0; margin:0; font-size:16px; line-height:1.6; overflow-wrap:anywhere; }
+.foundation-parameter-row dt { font-weight:700; }
+.foundation-parameter-reference table { table-layout:fixed; font:14px/1.6 var(--body); }
+.foundation-parameter-reference :is(th,td) { vertical-align:top; padding:8px; white-space:normal; overflow-wrap:anywhere; }
+.foundation-parameter-reference tr > :first-child { width:27%; }
+.foundation-parameter-reference tr > :last-child { width:18%; }
+@media(max-width:480px) { .foundation-parameter-row { grid-template-columns:minmax(0,1fr); gap:3px; } }
+/* Long tuple assignments stay readable inside syntax definitions. */
+.teaching-syntax-parts :is(dt,dd) { min-width:0; }
+.teaching-syntax-parts dt { display:block; }
+@media(max-width:480px) { .teaching-syntax-parts > div { grid-template-columns:minmax(0,1fr); } }
+
+/* Lesson data and its task stay together in the independent reading pane. */
+.foundation-data-preview { margin-block:20px 12px; min-width:0; }
+.foundation-content > .foundation-task-reminder { margin-block:0 20px; padding:16px; border:1px solid var(--border-soft); border-left:3px solid var(--lesson-accent); border-radius:4px; }
+.foundation-content > .foundation-task-reminder .practice-question { font:700 18px/1.45 var(--body); text-transform:none; letter-spacing:normal; color:var(--ink); }
+.foundation-content > .foundation-task-reminder :is(p,li) { font-size:16px; }
+.foundation-content :is(.teaching-syntax-parts,.foundation-parameter-parts) dt > code { font:700 16px/1.6 var(--mono); }
+
+/* Argument alternatives stay visible and match the syntax-description type size. */
+.foundation-content :is(.foundation-syntax,.foundation-parameter-parts) .foundation-argument-values code,
+.foundation-content .foundation-parameter-teaching pre code { font-size: 16px; }
+.foundation-argument-values { margin: 6px 0 0; }
+
+/* Syntax and argument explanations use the same reading hierarchy. */
+.foundation-content .teaching-syntax-heading,
+.foundation-content .foundation-parameter-teaching > h3 { font:700 18px/1.5 var(--body); color:var(--ink); margin:20px 0 8px; }
+.foundation-content .foundation-syntax.teaching-syntax-parts dd { font:400 16px/1.6 var(--body); }
+.foundation-content .foundation-syntax.teaching-syntax-parts dt { color:var(--ink); }
+
+/* Aligned teaching rows; bullet points make alternatives easy to scan. */
+.foundation-parameter-teaching { gap:0; }
+.argument-table-heading,.foundation-parameter-row { display:grid; grid-template-columns:minmax(7rem,1fr) minmax(0,2.5fr); gap:18px; }
+.argument-table-heading { padding:10px 14px; border:1px solid var(--border-soft); border-bottom:0; border-radius:8px 8px 0 0; background:color-mix(in srgb,var(--ink) 3%,var(--panel)); font:700 13px/1.5 var(--body); color:var(--ink-muted); }
+.foundation-parameter-parts { margin:0; border:1px solid var(--border-soft); border-radius:0 0 8px 8px; overflow:hidden; }
+.foundation-parameter-row { padding:14px; }
+.foundation-content :is(.argument-points,.foundation-argument-values) { margin:0; padding-left:18px; font:400 16px/1.6 var(--body); }
+.foundation-content :is(.argument-points,.foundation-argument-values) li { margin:0; padding-left:2px; }
+.foundation-content :is(.argument-points,.foundation-argument-values) li+li { margin-top:5px; }
+.foundation-content :is(.argument-points,.foundation-argument-values)+:is(.argument-points,.foundation-argument-values) { margin-top:7px; }
+.foundation-content .ml-syntax-parts { border:1px solid var(--border-soft); border-radius:8px; overflow:hidden; }
+.foundation-content .ml-syntax-parts>div { padding:14px; gap:18px; }
+.foundation-content .ml-syntax-parts>div:last-child { border-bottom:0; }
+@media(max-width:480px) {
+ .argument-table-heading { display:none; }
+ .foundation-parameter-parts { border-radius:8px; }
+ .foundation-parameter-row,.foundation-content .ml-syntax-parts>div { grid-template-columns:minmax(0,1fr); gap:8px; padding:14px 12px; }
+}
+
+/* Clickable code is the control; there is no separate settings form. */
+.inline-code-editor { margin:14px 0; min-width:0; }
+.foundation-content .inline-code-cue { display:flex; align-items:center; gap:10px; font:400 14px/1.5 var(--body); margin:0 0 8px; color:var(--ink-muted); }
+.inline-code-mouse { display:inline-block; flex:0 0 26px; width:26px; height:32px; background:url('../assets/teaching/pixel-pointer.png') center/contain no-repeat; image-rendering:pixelated; }
+.foundation-content pre.inline-code-program { white-space:pre-wrap; overflow:visible; overflow-wrap:anywhere; padding:12px; }
+.foundation-content .inline-code-source { font:14px/2.8 var(--mono); white-space:pre-wrap; }
+.inline-code-argument { display:inline-block; max-width:100%; white-space:normal; }
+.foundation-content .inline-code-value { max-width:100%; }
+.foundation-content .inline-code-value { --slot-color:#69b8a5; display:inline; min-height:44px; padding:8px 5px; margin:0 1px; border:1px solid color-mix(in srgb,var(--slot-color) 45%,transparent); border-bottom:2px solid var(--slot-color); border-radius:5px; background:color-mix(in srgb,var(--slot-color) 10%,#25272a); color:#f5f2e9; font:600 14px/1.5 var(--mono); cursor:pointer; white-space:pre-wrap; overflow-wrap:anywhere; }
+.inline-code-value.code-slot-1 { --slot-color:#b598d0; }
+.inline-code-value.code-slot-2 { --slot-color:#df9c86; }
+.inline-code-value.code-slot-3 { --slot-color:#d4b769; }
+.inline-code-value.code-slot-4 { --slot-color:#85b3d2; }
+.inline-code-value.code-slot-5 { --slot-color:#d39bbc; }
+.inline-code-value:is(:hover,[aria-expanded="true"]) { background:color-mix(in srgb,var(--slot-color) 22%,#25272a); }
+.inline-code-value:focus-visible,.inline-code-options button:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:3px; }
+.inline-code-options { position:fixed; inset:auto; margin:0; z-index:10000; padding:6px; overflow-y:auto; border:1px solid var(--border); border-radius:5px; box-shadow:0 4px 18px #0003; background:var(--panel); color:var(--ink); }
+.inline-code-options [role="option"] { display:block; width:100%; min-height:44px; padding:9px 12px; border:0; border-radius:3px; background:transparent; color:inherit; text-align:left; font:16px/1.5 var(--body); cursor:pointer; overflow-wrap:anywhere; }
+.inline-code-options [aria-selected="true"] { background:color-mix(in srgb,var(--lesson-accent) 15%,var(--panel)); font-weight:700; }
+.inline-code-options [role="option"]:hover { background:color-mix(in srgb,var(--lesson-accent) 10%,var(--panel)); }
+[data-theme="dark"] .foundation-content .inline-code-value { --slot-color:#66bda6; }
+[data-theme="dark"] .inline-code-value.code-slot-1 { --slot-color:#bc99df; }
+[data-theme="dark"] .inline-code-value.code-slot-2 { --slot-color:#ee9d83; }
+[data-theme="dark"] .inline-code-value.code-slot-3 { --slot-color:#dfc068; }
+[data-theme="dark"] .inline-code-value.code-slot-4 { --slot-color:#88bce0; }
+[data-theme="dark"] .inline-code-value.code-slot-5 { --slot-color:#e69cc4; }
+
+/* Keep explanatory diagrams readable inside narrow reading panes. */
+.foundation-concept-scroll { max-width:100%; overflow-x:auto; }
+.foundation-content .foundation-concept-scroll .concept-visual { min-width:390px; }
+.foundation-concept-scroll:focus-visible { outline:3px solid var(--lesson-accent); outline-offset:2px; }
+.foundation-content .teaching-illustration figcaption { font-size:14px; color:var(--ink); margin:8px 0; }
+.foundation-content .teaching-illustration .teaching-example-output { font-size:14px; }

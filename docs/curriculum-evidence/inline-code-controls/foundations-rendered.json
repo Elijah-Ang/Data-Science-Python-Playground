@@ -1,0 +1,304 @@
+{
+  "rounds": {
+    "count": 338,
+    "failures": []
+  },
+  "clipping": [],
+  "explorers": [
+    {
+      "route": "#visualise/V04/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V08/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 2,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V09/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V11/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 2,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V16/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V27/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V33/0",
+      "width": 1400,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V04/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V08/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 2,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V09/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V11/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 2,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V16/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V27/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V33/0",
+      "width": 1400,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V04/0",
+      "width": 834,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V08/0",
+      "width": 834,
+      "theme": "light",
+      "options": 2,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V09/0",
+      "width": 834,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V11/0",
+      "width": 834,
+      "theme": "light",
+      "options": 2,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V16/0",
+      "width": 834,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V27/0",
+      "width": 834,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V33/0",
+      "width": 834,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V04/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V08/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 2,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V09/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V11/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 2,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V16/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V27/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V33/0",
+      "width": 834,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V04/0",
+      "width": 320,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V08/0",
+      "width": 320,
+      "theme": "light",
+      "options": 2,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V09/0",
+      "width": 320,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V11/0",
+      "width": 320,
+      "theme": "light",
+      "options": 2,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V16/0",
+      "width": 320,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V27/0",
+      "width": 320,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V33/0",
+      "width": 320,
+      "theme": "light",
+      "options": 3,
+      "contrast": 12.07
+    },
+    {
+      "route": "#visualise/V04/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V08/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 2,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V09/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V11/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 2,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V16/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V27/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    },
+    {
+      "route": "#visualise/V33/0",
+      "width": 320,
+      "theme": "dark",
+      "options": 3,
+      "contrast": 13.64
+    }
+  ],
+  "pageErrors": []
+}

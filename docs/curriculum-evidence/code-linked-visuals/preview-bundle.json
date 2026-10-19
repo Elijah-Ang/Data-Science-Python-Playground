@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "33dc91eb4fcd2aad0be7fd9610302bc364ca0800",
+  "buildContentId": "7def961f5f3c944711d538793e8b5378baa504152910cb53ea53125cd02daafd",
+  "archive": "docs/curriculum-evidence/review-refinement/curriculum-preview.zip",
+  "archiveBytes": 2582083,
+  "archiveSHA256": "1e4e7583b5c5c0ee6e946a11d2cccbac2e5c864fde981b7f99a6b7c290312b71",
+  "htmlBytes": 5112720,
+  "htmlSHA256": "0074337939c44fb651ae9149cd6b7f31fbe3088e7a287cf0a2f6697bd1d05dbe",
+  "entries": [
+    "curriculum-preview/OPEN-IN-BROWSER.html",
+    "curriculum-preview/READ-ME.txt"
+  ],
+  "zipIntegrity": "passed",
+  "previewChecks": "preview.json"
+}

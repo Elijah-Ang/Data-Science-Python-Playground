@@ -21,4 +21,4 @@ for i,exercise in enumerate(activities):
         print('FAIL',exercise['id'],json.dumps(failures[-1]),flush=True)
     else:print('PASS',exercise['id'],flush=True)
 assert not failures,json.dumps(failures,indent=2)
-print(len(activities),'Python activities passed; other exercises are accessible decisions/self-review.')
+print(len(activities),'Python activities passed; all ML activities use the Python editor.')

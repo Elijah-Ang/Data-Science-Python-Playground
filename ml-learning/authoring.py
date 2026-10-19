@@ -350,6 +350,9 @@ def assemble():
     import audit_repair_core, audit_repair_classification, audit_repair_discovery, audit_repair_challenges
     for repair in (audit_repair_core, audit_repair_classification, audit_repair_discovery, audit_repair_challenges):
         registry=repair.apply(registry)
+    registry=model_bridges.complete_coverage(registry)
+    import code_practice
+    registry=code_practice.apply(registry)
     for exercise in [e for c in registry['cards'] for e in c['exercises']]+[c['exercise'] for c in registry['challenges']]:
         if exercise['kind']=='python' and exercise.get('label')=='Follow':
             exercise['starter']=exercise['solution']
@@ -358,15 +361,9 @@ def assemble():
                 if check['name']=='Requested evidence':
                     check['message']='Check the requested values, labels, row and feature order, and fitted evidence against this task. Reuse supplied fitted state when the task asks for a transform.'
         if exercise['kind']=='python' and not exercise.get('assessment'):
-            if exercise.get('validationDesign'):exercise['task']+=' '+exercise['validationDesign']
-            if exercise.get('protect'):
-                protection=exercise['protect']
-                if protection.get('time'):
-                    exercise['task']+=' Reserve the final 20% in chronological order for the final test.'
-                else:
-                    exercise['task']+=' Reserve 20% for the final test with random_state=42'+(', stratified by '+protection['target'] if protection.get('stratified') else '')+'.'
             workflow_contract(exercise)
-    return registry
+    import curriculum_coherence, visual_progression
+    return visual_progression.apply(curriculum_coherence.apply(registry))
 
 if __name__=='__main__':
     # Imported author modules use this same registry rather than a second __main__.

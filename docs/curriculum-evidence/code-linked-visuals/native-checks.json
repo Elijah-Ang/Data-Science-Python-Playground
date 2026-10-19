@@ -1,0 +1,42 @@
+{
+  "baseline": "64c2909",
+  "runtime": "Python 3.10.21; NumPy 1.26.4; pandas 2.2.0; SciPy 1.12.0; sklearn 1.4.2; Seaborn 0.13.2; Matplotlib 3.5.2",
+  "checks": [
+    {
+      "command": "python tests/test_foundations_operation_visuals.py",
+      "exitCode": 0,
+      "stdout": "{\n  \"lessons\": 47,\n  \"native_operation_states\": 106,\n  \"oracles\": [\n    \"pandas labelled operations\",\n    \"NumPy array values\",\n    \"sklearn StandardScaler\"\n  ],\n  \"passed\": true\n}\n",
+      "stderr": "/workspace/Data-Science-Python-Playground/tests/test_foundations_operation_visuals.py:13: DeprecationWarning: \nPyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),\n(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)\nbut was not found to be installed on your system.\nIf this would cause problems for you,\nplease provide us feedback at https://github.com/pandas-dev/pandas/issues/54466\n        \n  import pandas as pd\n"
+    },
+    {
+      "command": "python tests/test_visual_code_geometry.py",
+      "exitCode": 0,
+      "stdout": "{\n  \"controls_with_distinct_python_ASTs\": 97,\n  \"code_states\": 251,\n  \"native_artist_and_SVG_geometry_states\": [\n    [\n      \"scatter\",\n      \"x:value\"\n    ],\n    [\n      \"scatter\",\n      \"value:x\"\n    ],\n    [\n      \"scatter\",\n      \"cost:value\"\n    ],\n    [\n      \"count-bars\",\n      \"group\"\n    ],\n    [\n      \"count-bars\",\n      \"shift\"\n    ],\n    [\n      \"mean-bars\",\n      \"count\"\n    ],\n    [\n      \"mean-bars\",\n      \"mean\"\n    ],\n    [\n      \"mean-bars\",\n      \"median\"\n    ],\n    [\n      \"boxplot\",\n      \"x\"\n    ],\n    [\n      \"boxplot\",\n      \"y\"\n    ],\n    [\n      \"log-scale\",\n      \"linear\"\n    ],\n    [\n      \"log-scale\",\n      \"log\"\n    ],\n    [\n      \"exact-bars\",\n      \"mean\"\n    ],\n    [\n      \"exact-bars\",\n      \"sum\"\n    ],\n    [\n      \"exact-bars\",\n      \"median\"\n    ]\n  ],\n  \"passed\": true\n}\n",
+      "stderr": "/workspace/Data-Science-Python-Playground/tests/test_visual_code_geometry.py:17: DeprecationWarning: \nPyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),\n(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)\nbut was not found to be installed on your system.\nIf this would cause problems for you,\nplease provide us feedback at https://github.com/pandas-dev/pandas/issues/54466\n        \n  import pandas as pd\n"
+    },
+    {
+      "command": "python tests/test_visual_scientific_scenes.py",
+      "exitCode": 0,
+      "stdout": "{\n  \"scenes\": 26,\n  \"displayed_python_states\": 25,\n  \"oracles\": [\n    \"SciPy Gaussian KDE\",\n    \"NumPy histogram/quantiles/correlation\",\n    \"pandas sample SD/aggregation\",\n    \"sklearn least squares\",\n    \"native seaborn/Matplotlib output\"\n  ],\n  \"passed\": true\n}\n",
+      "stderr": "/workspace/Data-Science-Python-Playground/tests/test_visual_scientific_scenes.py:6: DeprecationWarning: \nPyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),\n(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)\nbut was not found to be installed on your system.\nIf this would cause problems for you,\nplease provide us feedback at https://github.com/pandas-dev/pandas/issues/54466\n        \n  import pandas as pd\n"
+    },
+    {
+      "command": "python tests/test_teaching_visual_models.py",
+      "exitCode": 0,
+      "stdout": "Computed KNN votes, tree paths, linear SVM weights, training-only polynomial curves and every PCA score agree with scikit-learn fits.\nEvery RBF decision probe/support vector and tree-complexity prediction agrees with an independent sklearn fit.\nInteger bins, explicit interval widths and all seven listed estimators produce the stated Python results.\n",
+      "stderr": "/workspace/Data-Science-Python-Playground/tests/test_teaching_visual_models.py:116: DeprecationWarning: \nPyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),\n(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)\nbut was not found to be installed on your system.\nIf this would cause problems for you,\nplease provide us feedback at https://github.com/pandas-dev/pandas/issues/54466\n        \n  import pandas as pd\n"
+    },
+    {
+      "command": "python tests/test_ml_visual_progression.py",
+      "exitCode": 0,
+      "stdout": "{\n  \"operationStates\": 26,\n  \"cards\": 110,\n  \"explicitLaterVisuals\": [\n    \"ML-R10-2\",\n    \"ML-C08-2\"\n  ],\n  \"newTaskIntroductions\": 17,\n  \"passed\": true\n}\n",
+      "stderr": "/workspace/Data-Science-Python-Playground/tests/test_ml_visual_progression.py:6: DeprecationWarning: \nPyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),\n(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)\nbut was not found to be installed on your system.\nIf this would cause problems for you,\nplease provide us feedback at https://github.com/pandas-dev/pandas/issues/54466\n        \n  import pandas as pd\n"
+    },
+    {
+      "command": "python tests/test_model_family_visuals.py",
+      "exitCode": 0,
+      "stdout": "{\n  \"states\": 21,\n  \"families\": 8,\n  \"passed\": true,\n  \"checks\": [\n    \"native fitted coordinates/centroids\",\n    \"actual Ward heights and horizontal cuts\",\n    \"fixed observation identities\",\n    \"training-only neural scale\",\n    \"real loss curves and held-away macro F1\",\n    \"code/figure settings\"\n  ]\n}\n",
+      "stderr": "/workspace/Data-Science-Python-Playground/tests/test_model_family_visuals.py:7: DeprecationWarning: \nPyarrow will become a required dependency of pandas in the next major release of pandas (pandas 3.0),\n(to allow more performant data types, such as the Arrow string type, and better interoperability with other libraries)\nbut was not found to be installed on your system.\nIf this would cause problems for you,\nplease provide us feedback at https://github.com/pandas-dev/pandas/issues/54466\n        \n  import pandas as pd\n"
+    }
+  ]
+}

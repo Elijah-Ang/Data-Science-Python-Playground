@@ -1,0 +1,603 @@
+{
+  "id": "V02-1",
+  "sourceId": "V02",
+  "sourceRound": 1,
+  "retrieves": null,
+  "exercise": {
+    "id": "V02-1",
+    "label": "Follow",
+    "dataset": "cycle_commutes",
+    "task": "Finish the prepared distance/time scatter with title Cycle commutes, x Distance (km) and y Travel time (minutes). Keep every prepared pair, arrange and display fig. Chart: title \"Cycle commutes\"; x \"Distance (km)\"; y \"Travel time (minutes)\".",
+    "solution": "ax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+    "starter": "____(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+    "hint": "Name both measured units and the observed commute population.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter"
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "figure",
+      "variant": "chart-labels",
+      "label": "Concept sketch: finish title, x label and y label"
+    },
+    "demand": "Name both measured units and the observed commute population.",
+    "steps": [
+      "Finish the prepared distance/time scatter with title Cycle commutes, x Distance (km) and y Travel time (minutes).",
+      "Keep every prepared pair, arrange and display fig.",
+      "Chart: title \"Cycle commutes\"; x \"Distance (km)\"; y \"Travel time (minutes)\"."
+    ],
+    "requiredKeywords": [],
+    "setupDescription": "A prepared scatter of all commute pairs.",
+    "decision": "Name both measured units and the observed commute population.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle"
+    ],
+    "fixtureFeature": "Paired distance and travel time have physical units; labels must identify the actual measurements.",
+    "question": "How does commute time vary with distance?",
+    "contextPlot": {
+      "x": "distance_km",
+      "y": "minutes",
+      "title": "Cycle commutes",
+      "xlabel": "Distance (km)",
+      "ylabel": "Travel time (minutes)"
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one recorded commute",
+    "datasetRationale": "Paired distance and travel time have physical units; labels must identify the actual measurements.",
+    "parameterTeaching": {
+      "introduces": [
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize"
+      ],
+      "prerequisites": [
+        "V01"
+      ]
+    },
+    "concepts": {
+      "introduces": [
+        "matplotlib.labels"
+      ],
+      "reuses": [
+        "matplotlib.figure-axes"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V01"
+      ]
+    },
+    "stageSummary": "Label the chart.",
+    "brief": {
+      "question": "How does commute time vary with distance?",
+      "rows": "One row: one recorded commute.",
+      "result": "Finish the prepared distance/time scatter with title Cycle commutes, x Distance (km) and y Travel time (minutes).",
+      "constraints": [
+        "Keep every prepared pair, arrange and display fig.",
+        "Chart: title \"Cycle commutes\"; x \"Distance (km)\"; y \"Travel time (minutes)\"."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "ride",
+        "distance_km",
+        "minutes"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": [
+        {
+          "text": "title \"Cycle commutes\"; x \"Distance (km)\"; y \"Travel time (minutes)\".",
+          "role": "literal"
+        }
+      ]
+    },
+    "syntaxGuidance": {
+      "current": [
+        [
+          "ax.set(title=..., xlabel=..., ylabel=...)",
+          "Name the prepared chart and both axes."
+        ],
+        [
+          "ax.set_title(...); ax.set_xlabel(...); ax.set_ylabel(...)",
+          "Set the same labels one at a time."
+        ]
+      ],
+      "reminders": [
+        [
+          "fig.tight_layout()",
+          "Arrange the labels on the supplied Figure."
+        ],
+        [
+          "plt.show()",
+          "Display the finished Figure."
+        ]
+      ],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Label the chart.",
+      "why": "Name both measured units and the observed commute population.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "ride": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "distance_km": [
+      2,
+      5,
+      3,
+      8,
+      4,
+      6
+    ],
+    "minutes": [
+      10,
+      23,
+      14,
+      37,
+      19,
+      27
+    ]
+  },
+  "inputSHA256": "0c588d082e95e1a859933b4feb9943cf40c9b1aadf1ad3791e1cde2075d4fcd1",
+  "visibleWorkspaceSHA256": "d94e4868e4a440806668652adbf592d4be4a03f9ec6b62d8eaaf83314ac5e639",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\n____(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+  "context": "A prepared scatter of all commute pairs. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "61951fd7161fe470ef00a9c83b9c39eb90bc992034ff679e2b9c4874d60f43a7",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.361,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7738c5f51d87f5fdf7b9f7493db10547ee0ef599be324ecfb0280271d8dd151f",
+          "bytes": 17923,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d94e4868e4a440806668652adbf592d4be4a03f9ec6b62d8eaaf83314ac5e639",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.303,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7738c5f51d87f5fdf7b9f7493db10547ee0ef599be324ecfb0280271d8dd151f",
+          "bytes": 17923,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V02-1-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set_title('Cycle commutes')\nax.set_xlabel('Distance (km)')\nax.set_ylabel('Travel time (minutes)')\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "226d7a8751858635b96aaba59164f9cf28744d3595e130f4763d0b2f690cab23",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.293,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7738c5f51d87f5fdf7b9f7493db10547ee0ef599be324ecfb0280271d8dd151f",
+          "bytes": 17923,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V02-1-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nplt.show()",
+      "codeSHA256": "d815e7a425cddfdfe4e1152f075ff1c861f4838c1b54de124f1fce5d4b33783f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.274,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'cycle commutes'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "cbefe72e0e4fdb1e184e622ae625c36d46a6a31d734e2b6650c13b1f42845f59",
+          "bytes": 12466,
+          "width": 584,
+          "height": 408,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set_xlabel('Distance (km)')\nax.set_ylabel('Travel time (minutes)')\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "973a74f2f0f53b3856bd7737c30637a058ee8ed871710593175aeb5d53f4a522",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.299,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'cycle commutes'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "140fa2bc4f30e728873c453a3047177a3ec638afade5e9f08e006cc8e49b0253",
+          "bytes": 15374,
+          "width": 648,
+          "height": 428,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "0b2ab1d4c0e457b3491cceaf4397605a75acfe4271e6caf3868f21e38222cd67",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.323,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'cycle commutes'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "cfda10589bdccb7810ad153c433574192daaadae548c6a34d16f0fc0fb6db83c",
+          "bytes": 17806,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "f9a634fefa8ff7dba35084b9190a39cac2fbda3d8dcf7b275cc6c21061a2d81e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.324,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "81e3bf0358a931aae8039a8e9056eceba95d661650655582176d6769f8560aa8",
+          "bytes": 17935,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['minutes'] = df['minutes'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "082d77ff5ab1f7b7b52eafd9e68a7eda54c12ddba213a7ce2e7817d5c4053a0c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.298,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7647dd583caa6f849e37f0c474d53934d1be52372e273b631dcdb2d708c8c5d4",
+          "bytes": 18740,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "0abf16d538adc47987572a0f2944a5b0faec141d8a48f5782fa6f6538a07cbb8",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.5,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7738c5f51d87f5fdf7b9f7493db10547ee0ef599be324ecfb0280271d8dd151f",
+          "bytes": 17923,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7738c5f51d87f5fdf7b9f7493db10547ee0ef599be324ecfb0280271d8dd151f",
+          "bytes": 17923,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ride\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"distance_km\": [2, 5, 3, 8, 4, 6],\n    \"minutes\": [10, 23, 14, 37, 19, 27],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"distance_km\", y=\"minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Cycle commutes\", xlabel=\"Distance (km)\", ylabel=\"Travel time (minutes)\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d94e4868e4a440806668652adbf592d4be4a03f9ec6b62d8eaaf83314ac5e639",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.29,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Cycle commutes",
+          "sha256": "7738c5f51d87f5fdf7b9f7493db10547ee0ef599be324ecfb0280271d8dd151f",
+          "bytes": 17923,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

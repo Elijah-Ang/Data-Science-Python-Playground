@@ -1,6 +1,6 @@
 {
-  "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
-  "sha256": "bf52cd47f9ec9c969d5db0a644b78ebadc4a93e4ad0cecb3570faf673464270c",
+  "commit": "curriculum-coherence-2026-10-13",
+  "sha256": "c3c1b005417ec787b95fea6e9cce8e2d74b554c2f17bc5d16dd1c564f5027ef3",
   "cards": 110,
   "lessons": 93,
   "reviews": 17,
@@ -1810,5 +1810,18 @@
     ],
     "addedPractices": 12,
     "preservedOriginalPractices": 326
+  },
+  "previousBaseline": {
+    "commit": "3f5e734654fdf05553d503ee113964d2c1ff713e",
+    "sha256": "bf52cd47f9ec9c969d5db0a644b78ebadc4a93e4ad0cecb3570faf673464270c"
+  },
+  "review": "docs/curriculum-coherence.md",
+  "reviewedFromCommit": "8a72b291a3c4",
+  "presentationReview": "2026-10-14: activity visual and argument-display corrections; existing task, Python and grading contract hashes unchanged.",
+  "previousStageVisualSHA256": "1f9cdacf847be50d139f88230e6ae6c2f3e918da0bafb1d5a8d41ad0c1d35824",
+  "stageVisualReview": {
+    "baselineCommit": "97ca093eb9e838924fddb5c3f6208d3e88f88dae",
+    "scope": "Follow-only concept introductions, focused fixed-data interactions and explicit concise later-stage teaching. Tasks, Python, datasets and checks are unchanged.",
+    "evidence": "docs/curriculum-evidence/stage-visuals"
   }
 }

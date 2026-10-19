@@ -1,0 +1,7881 @@
+{
+  "engine": "chromium",
+  "activities": 338,
+  "renders": 676,
+  "widths": [
+    390,
+    1440
+  ],
+  "pageErrors": [],
+  "records": [
+    {
+      "id": "ML-F01-1",
+      "visibleWords": 236,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1717.46875,
+      "width": 390
+    },
+    {
+      "id": "ML-F01-2",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F01-3",
+      "visibleWords": 141,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F02-1",
+      "visibleWords": 282,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1675.25,
+      "width": 390
+    },
+    {
+      "id": "ML-F02-2",
+      "visibleWords": 238,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1365.375,
+      "width": 390
+    },
+    {
+      "id": "ML-F02-3",
+      "visibleWords": 250,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1474.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-F03-1",
+      "visibleWords": 227,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1525.84375,
+      "width": 390
+    },
+    {
+      "id": "ML-F03-2",
+      "visibleWords": 175,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1284.0625,
+      "width": 390
+    },
+    {
+      "id": "ML-F03-3",
+      "visibleWords": 145,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F04-1",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1717.484375,
+      "width": 390
+    },
+    {
+      "id": "ML-F04-2",
+      "visibleWords": 187,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1344.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-F04-3",
+      "visibleWords": 217,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1508.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-F05-1",
+      "visibleWords": 249,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1861.765625,
+      "width": 390
+    },
+    {
+      "id": "ML-F05-2",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1546.984375,
+      "width": 390
+    },
+    {
+      "id": "ML-F05-3",
+      "visibleWords": 112,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F06-1",
+      "visibleWords": 270,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1709.625,
+      "width": 390
+    },
+    {
+      "id": "ML-F06-2",
+      "visibleWords": 114,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F06-3",
+      "visibleWords": 136,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F07-1",
+      "visibleWords": 256,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1626.765625,
+      "width": 390
+    },
+    {
+      "id": "ML-F07-2",
+      "visibleWords": 221,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1385.171875,
+      "width": 390
+    },
+    {
+      "id": "ML-F07-3",
+      "visibleWords": 243,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1447.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-F08-1",
+      "visibleWords": 238,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1483.09375,
+      "width": 390
+    },
+    {
+      "id": "ML-F08-2",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F08-3",
+      "visibleWords": 155,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F09-1",
+      "visibleWords": 254,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1607.578125,
+      "width": 390
+    },
+    {
+      "id": "ML-F09-2",
+      "visibleWords": 176,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1323.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-F09-3",
+      "visibleWords": 234,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1471.109375,
+      "width": 390
+    },
+    {
+      "id": "ML-F10-1",
+      "visibleWords": 213,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1595.234375,
+      "width": 390
+    },
+    {
+      "id": "ML-F10-2",
+      "visibleWords": 100,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F10-3",
+      "visibleWords": 115,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W01-1",
+      "visibleWords": 321,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1987.625,
+      "width": 390
+    },
+    {
+      "id": "ML-W01-2",
+      "visibleWords": 179,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1292.3125,
+      "width": 390
+    },
+    {
+      "id": "ML-W01-3",
+      "visibleWords": 131,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W02-1",
+      "visibleWords": 209,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1339.0625,
+      "width": 390
+    },
+    {
+      "id": "ML-W02-2",
+      "visibleWords": 203,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1388.0625,
+      "width": 390
+    },
+    {
+      "id": "ML-W02-3",
+      "visibleWords": 127,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W03-1",
+      "visibleWords": 232,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1597.015625,
+      "width": 390
+    },
+    {
+      "id": "ML-W03-2",
+      "visibleWords": 170,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1309.609375,
+      "width": 390
+    },
+    {
+      "id": "ML-W03-3",
+      "visibleWords": 278,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1534.109375,
+      "width": 390
+    },
+    {
+      "id": "ML-W04-1",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1722.25,
+      "width": 390
+    },
+    {
+      "id": "ML-W04-2",
+      "visibleWords": 175,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1376.34375,
+      "width": 390
+    },
+    {
+      "id": "ML-W04-3",
+      "visibleWords": 109,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W04-4",
+      "visibleWords": 213,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1491.34375,
+      "width": 390
+    },
+    {
+      "id": "ML-W05-1",
+      "visibleWords": 269,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1804.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-W05-2",
+      "visibleWords": 158,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1237.109375,
+      "width": 390
+    },
+    {
+      "id": "ML-W05-3",
+      "visibleWords": 190,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1393.109375,
+      "width": 390
+    },
+    {
+      "id": "ML-W06-1",
+      "visibleWords": 270,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1522.390625,
+      "width": 390
+    },
+    {
+      "id": "ML-W06-2",
+      "visibleWords": 160,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1260.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-W06-3",
+      "visibleWords": 182,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1338.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-W07-1",
+      "visibleWords": 238,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1602.875,
+      "width": 390
+    },
+    {
+      "id": "ML-W07-2",
+      "visibleWords": 166,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1279.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-W07-3",
+      "visibleWords": 196,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1435.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-W08-1",
+      "visibleWords": 278,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1640.21875,
+      "width": 390
+    },
+    {
+      "id": "ML-W08-2",
+      "visibleWords": 139,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W08-3",
+      "visibleWords": 266,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1440.0625,
+      "width": 390
+    },
+    {
+      "id": "ML-W09-1",
+      "visibleWords": 219,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1629.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-W09-2",
+      "visibleWords": 165,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1296.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-W09-3",
+      "visibleWords": 164,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1296.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-W09-4",
+      "visibleWords": 106,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W10-1",
+      "visibleWords": 236,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1754.515625,
+      "width": 390
+    },
+    {
+      "id": "ML-W10-2",
+      "visibleWords": 105,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W10-3",
+      "visibleWords": 140,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W11-1",
+      "visibleWords": 408,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2036.828125,
+      "width": 390
+    },
+    {
+      "id": "ML-W11-2",
+      "visibleWords": 142,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W11-3",
+      "visibleWords": 150,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W12-1",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1580.234375,
+      "width": 390
+    },
+    {
+      "id": "ML-W12-2",
+      "visibleWords": 168,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1326.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-W12-3",
+      "visibleWords": 189,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1435.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-W13-1",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1563.78125,
+      "width": 390
+    },
+    {
+      "id": "ML-W13-2",
+      "visibleWords": 170,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1332.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-W13-3",
+      "visibleWords": 109,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W14-1",
+      "visibleWords": 217,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1446.640625,
+      "width": 390
+    },
+    {
+      "id": "ML-W14-2",
+      "visibleWords": 175,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1319.75,
+      "width": 390
+    },
+    {
+      "id": "ML-W14-3",
+      "visibleWords": 225,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1444.25,
+      "width": 390
+    },
+    {
+      "id": "ML-W14-4",
+      "visibleWords": 122,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R01-1",
+      "visibleWords": 228,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1641.90625,
+      "width": 390
+    },
+    {
+      "id": "ML-R01-2",
+      "visibleWords": 172,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1384.375,
+      "width": 390
+    },
+    {
+      "id": "ML-R01-3",
+      "visibleWords": 116,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R01-4",
+      "visibleWords": 541,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2061.59375,
+      "width": 390
+    },
+    {
+      "id": "ML-R02-1",
+      "visibleWords": 251,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1643.71875,
+      "width": 390
+    },
+    {
+      "id": "ML-R02-2",
+      "visibleWords": 121,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R02-3",
+      "visibleWords": 201,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1455.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-R03-1",
+      "visibleWords": 346,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1781.453125,
+      "width": 390
+    },
+    {
+      "id": "ML-R03-2",
+      "visibleWords": 122,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R03-3",
+      "visibleWords": 123,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R04-1",
+      "visibleWords": 220,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1552.125,
+      "width": 390
+    },
+    {
+      "id": "ML-R04-2",
+      "visibleWords": 192,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1446.46875,
+      "width": 390
+    },
+    {
+      "id": "ML-R04-3",
+      "visibleWords": 136,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R04-4",
+      "visibleWords": 566,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2173.1875,
+      "width": 390
+    },
+    {
+      "id": "ML-R05-1",
+      "visibleWords": 316,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2075.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-R05-2",
+      "visibleWords": 193,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1409.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-R05-3",
+      "visibleWords": 137,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R06-1",
+      "visibleWords": 300,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1884.71875,
+      "width": 390
+    },
+    {
+      "id": "ML-R06-2",
+      "visibleWords": 256,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1564.15625,
+      "width": 390
+    },
+    {
+      "id": "ML-R06-3",
+      "visibleWords": 154,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R07-1",
+      "visibleWords": 330,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2112.734375,
+      "width": 390
+    },
+    {
+      "id": "ML-R07-2",
+      "visibleWords": 278,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1819.953125,
+      "width": 390
+    },
+    {
+      "id": "ML-R07-3",
+      "visibleWords": 291,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1944.953125,
+      "width": 390
+    },
+    {
+      "id": "ML-R07-4",
+      "visibleWords": 662,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2569.671875,
+      "width": 390
+    },
+    {
+      "id": "ML-R08-1",
+      "visibleWords": 406,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2314.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-R08-2",
+      "visibleWords": 262,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1811.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-R08-3",
+      "visibleWords": 265,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1811.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-R08-4",
+      "visibleWords": 229,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R09-1",
+      "visibleWords": 342,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2173.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-R09-2",
+      "visibleWords": 267,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1869.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-R09-3",
+      "visibleWords": 334,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2070.578125,
+      "width": 390
+    },
+    {
+      "id": "ML-R09-4",
+      "visibleWords": 661,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2520.765625,
+      "width": 390
+    },
+    {
+      "id": "ML-R10-1",
+      "visibleWords": 325,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2077.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-R10-2",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1800.171875,
+      "width": 390
+    },
+    {
+      "id": "ML-R10-3",
+      "visibleWords": 197,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R11-1",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1700.125,
+      "width": 390
+    },
+    {
+      "id": "ML-R11-2",
+      "visibleWords": 122,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R11-3",
+      "visibleWords": 148,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C01-1",
+      "visibleWords": 228,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1647.515625,
+      "width": 390
+    },
+    {
+      "id": "ML-C01-2",
+      "visibleWords": 174,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1267.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-C01-3",
+      "visibleWords": 195,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1377.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-C02-1",
+      "visibleWords": 267,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1816.65625,
+      "width": 390
+    },
+    {
+      "id": "ML-C02-2",
+      "visibleWords": 123,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C02-3",
+      "visibleWords": 217,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1416,
+      "width": 390
+    },
+    {
+      "id": "ML-C03-1",
+      "visibleWords": 222,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1619.609375,
+      "width": 390
+    },
+    {
+      "id": "ML-C03-2",
+      "visibleWords": 162,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1236.75,
+      "width": 390
+    },
+    {
+      "id": "ML-C03-3",
+      "visibleWords": 196,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1424.25,
+      "width": 390
+    },
+    {
+      "id": "ML-C04-1",
+      "visibleWords": 221,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1621.078125,
+      "width": 390
+    },
+    {
+      "id": "ML-C04-2",
+      "visibleWords": 165,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1291.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-C04-3",
+      "visibleWords": 195,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1464.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-C05-1",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1711.953125,
+      "width": 390
+    },
+    {
+      "id": "ML-C05-2",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C05-3",
+      "visibleWords": 248,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1722.125,
+      "width": 390
+    },
+    {
+      "id": "ML-C06-1",
+      "visibleWords": 254,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1639.546875,
+      "width": 390
+    },
+    {
+      "id": "ML-C06-2",
+      "visibleWords": 200,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1408.921875,
+      "width": 390
+    },
+    {
+      "id": "ML-C06-3",
+      "visibleWords": 228,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1502.421875,
+      "width": 390
+    },
+    {
+      "id": "ML-C06-4",
+      "visibleWords": 577,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2132.390625,
+      "width": 390
+    },
+    {
+      "id": "ML-C07-1",
+      "visibleWords": 254,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1848.1875,
+      "width": 390
+    },
+    {
+      "id": "ML-C07-2",
+      "visibleWords": 121,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C07-3",
+      "visibleWords": 126,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C07-4",
+      "visibleWords": 134,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C08-1",
+      "visibleWords": 389,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2235.15625,
+      "width": 390
+    },
+    {
+      "id": "ML-C08-2",
+      "visibleWords": 405,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2461.203125,
+      "width": 390
+    },
+    {
+      "id": "ML-C08-3",
+      "visibleWords": 266,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C08-4",
+      "visibleWords": 648,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2592.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-C09-1",
+      "visibleWords": 345,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1853.890625,
+      "width": 390
+    },
+    {
+      "id": "ML-C09-2",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C09-3",
+      "visibleWords": 223,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C10-1",
+      "visibleWords": 405,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2550.71875,
+      "width": 390
+    },
+    {
+      "id": "ML-C10-2",
+      "visibleWords": 339,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2187.6875,
+      "width": 390
+    },
+    {
+      "id": "ML-C10-3",
+      "visibleWords": 221,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C10-4",
+      "visibleWords": 697,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2628.28125,
+      "width": 390
+    },
+    {
+      "id": "ML-C11-1",
+      "visibleWords": 367,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2129.71875,
+      "width": 390
+    },
+    {
+      "id": "ML-C11-2",
+      "visibleWords": 241,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C11-3",
+      "visibleWords": 242,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C12-1",
+      "visibleWords": 259,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1703.640625,
+      "width": 390
+    },
+    {
+      "id": "ML-C12-2",
+      "visibleWords": 196,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1334.875,
+      "width": 390
+    },
+    {
+      "id": "ML-C12-3",
+      "visibleWords": 139,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C12-4",
+      "visibleWords": 561,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2069.84375,
+      "width": 390
+    },
+    {
+      "id": "ML-C13-1",
+      "visibleWords": 209,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1399.84375,
+      "width": 390
+    },
+    {
+      "id": "ML-C13-2",
+      "visibleWords": 180,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1267.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-C13-3",
+      "visibleWords": 216,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1447.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-C14-1",
+      "visibleWords": 400,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2366.203125,
+      "width": 390
+    },
+    {
+      "id": "ML-C14-2",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C14-3",
+      "visibleWords": 294,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1928.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-C14-4",
+      "visibleWords": 231,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C14-5",
+      "visibleWords": 634,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2574.28125,
+      "width": 390
+    },
+    {
+      "id": "ML-C15-1",
+      "visibleWords": 249,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1785.390625,
+      "width": 390
+    },
+    {
+      "id": "ML-C15-2",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C15-3",
+      "visibleWords": 121,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C15-4",
+      "visibleWords": 575,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2101.34375,
+      "width": 390
+    },
+    {
+      "id": "ML-C16-1",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1587.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-C16-2",
+      "visibleWords": 126,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C16-3",
+      "visibleWords": 185,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1303.484375,
+      "width": 390
+    },
+    {
+      "id": "ML-C16-4",
+      "visibleWords": 135,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C17-1",
+      "visibleWords": 288,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1994.84375,
+      "width": 390
+    },
+    {
+      "id": "ML-C17-2",
+      "visibleWords": 176,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1434.921875,
+      "width": 390
+    },
+    {
+      "id": "ML-C17-3",
+      "visibleWords": 327,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2083.828125,
+      "width": 390
+    },
+    {
+      "id": "ML-C17-4",
+      "visibleWords": 539,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2140.640625,
+      "width": 390
+    },
+    {
+      "id": "ML-C18-1",
+      "visibleWords": 240,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1769.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-C18-2",
+      "visibleWords": 119,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C18-3",
+      "visibleWords": 190,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1505.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-C18-4",
+      "visibleWords": 109,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C18-5",
+      "visibleWords": 544,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2197.265625,
+      "width": 390
+    },
+    {
+      "id": "ML-C19-1",
+      "visibleWords": 249,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1779.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-C19-2",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C19-3",
+      "visibleWords": 136,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N01-1",
+      "visibleWords": 260,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1836.4375,
+      "width": 390
+    },
+    {
+      "id": "ML-N01-2",
+      "visibleWords": 100,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N01-3",
+      "visibleWords": 132,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N02-1",
+      "visibleWords": 266,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1944.09375,
+      "width": 390
+    },
+    {
+      "id": "ML-N02-2",
+      "visibleWords": 116,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N02-3",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N03-1",
+      "visibleWords": 197,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1494.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-N03-2",
+      "visibleWords": 164,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1362.421875,
+      "width": 390
+    },
+    {
+      "id": "ML-N03-3",
+      "visibleWords": 129,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N03-4",
+      "visibleWords": 568,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2109.140625,
+      "width": 390
+    },
+    {
+      "id": "ML-N04-1",
+      "visibleWords": 296,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2055.75,
+      "width": 390
+    },
+    {
+      "id": "ML-N04-2",
+      "visibleWords": 168,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1427.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-N04-3",
+      "visibleWords": 190,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1505.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-N04-4",
+      "visibleWords": 251,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1606.546875,
+      "width": 390
+    },
+    {
+      "id": "ML-N04-5",
+      "visibleWords": 573,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2255.015625,
+      "width": 390
+    },
+    {
+      "id": "ML-N05-1",
+      "visibleWords": 254,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1859.328125,
+      "width": 390
+    },
+    {
+      "id": "ML-N05-2",
+      "visibleWords": 126,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N05-3",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N05-4",
+      "visibleWords": 124,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N06-1",
+      "visibleWords": 275,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1931.9375,
+      "width": 390
+    },
+    {
+      "id": "ML-N06-2",
+      "visibleWords": 98,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N06-3",
+      "visibleWords": 104,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U01-1",
+      "visibleWords": 230,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1617.71875,
+      "width": 390
+    },
+    {
+      "id": "ML-U01-2",
+      "visibleWords": 112,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U01-3",
+      "visibleWords": 140,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U02-1",
+      "visibleWords": 206,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1442.6875,
+      "width": 390
+    },
+    {
+      "id": "ML-U02-2",
+      "visibleWords": 172,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1333.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-U02-3",
+      "visibleWords": 134,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U03-1",
+      "visibleWords": 259,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1892.125,
+      "width": 390
+    },
+    {
+      "id": "ML-U03-2",
+      "visibleWords": 179,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1389.171875,
+      "width": 390
+    },
+    {
+      "id": "ML-U03-3",
+      "visibleWords": 183,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1436.421875,
+      "width": 390
+    },
+    {
+      "id": "ML-U03-4",
+      "visibleWords": 283,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1483.921875,
+      "width": 390
+    },
+    {
+      "id": "ML-U04-1",
+      "visibleWords": 241,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1646.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-U04-2",
+      "visibleWords": 179,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1392.484375,
+      "width": 390
+    },
+    {
+      "id": "ML-U04-3",
+      "visibleWords": 182,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1392.484375,
+      "width": 390
+    },
+    {
+      "id": "ML-U04-4",
+      "visibleWords": 131,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U05-1",
+      "visibleWords": 226,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1691.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-U05-2",
+      "visibleWords": 185,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1365.296875,
+      "width": 390
+    },
+    {
+      "id": "ML-U05-3",
+      "visibleWords": 129,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U06-1",
+      "visibleWords": 262,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1849.109375,
+      "width": 390
+    },
+    {
+      "id": "ML-U06-2",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U06-3",
+      "visibleWords": 137,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U07-1",
+      "visibleWords": 230,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1783.734375,
+      "width": 390
+    },
+    {
+      "id": "ML-U07-2",
+      "visibleWords": 169,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1358.125,
+      "width": 390
+    },
+    {
+      "id": "ML-U07-3",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U07-4",
+      "visibleWords": 312,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1780.03125,
+      "width": 390
+    },
+    {
+      "id": "ML-U08-1",
+      "visibleWords": 221,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1618.078125,
+      "width": 390
+    },
+    {
+      "id": "ML-U08-2",
+      "visibleWords": 179,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1392.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-U08-3",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U09-1",
+      "visibleWords": 228,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1603.328125,
+      "width": 390
+    },
+    {
+      "id": "ML-U09-2",
+      "visibleWords": 213,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1501.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-U09-3",
+      "visibleWords": 137,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U10-1",
+      "visibleWords": 297,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1895.25,
+      "width": 390
+    },
+    {
+      "id": "ML-U10-2",
+      "visibleWords": 119,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U10-3",
+      "visibleWords": 147,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P01-1",
+      "visibleWords": 394,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2328.625,
+      "width": 390
+    },
+    {
+      "id": "ML-P01-2",
+      "visibleWords": 234,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P01-3",
+      "visibleWords": 260,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P02-1",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1498.828125,
+      "width": 390
+    },
+    {
+      "id": "ML-P02-2",
+      "visibleWords": 202,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1525.921875,
+      "width": 390
+    },
+    {
+      "id": "ML-P02-3",
+      "visibleWords": 227,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1579.671875,
+      "width": 390
+    },
+    {
+      "id": "ML-P02-4",
+      "visibleWords": 282,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1523.171875,
+      "width": 390
+    },
+    {
+      "id": "ML-P03-1",
+      "visibleWords": 206,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1625.125,
+      "width": 390
+    },
+    {
+      "id": "ML-P03-2",
+      "visibleWords": 162,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1371.34375,
+      "width": 390
+    },
+    {
+      "id": "ML-P03-3",
+      "visibleWords": 92,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P04-1",
+      "visibleWords": 265,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1856.609375,
+      "width": 390
+    },
+    {
+      "id": "ML-P04-2",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1539.578125,
+      "width": 390
+    },
+    {
+      "id": "ML-P04-3",
+      "visibleWords": 211,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1544.546875,
+      "width": 390
+    },
+    {
+      "id": "ML-P05-1",
+      "visibleWords": 261,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1867.25,
+      "width": 390
+    },
+    {
+      "id": "ML-P05-2",
+      "visibleWords": 120,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P05-3",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1530.796875,
+      "width": 390
+    },
+    {
+      "id": "ML-P06-1",
+      "visibleWords": 328,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2028.265625,
+      "width": 390
+    },
+    {
+      "id": "ML-P06-2",
+      "visibleWords": 298,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1893.125,
+      "width": 390
+    },
+    {
+      "id": "ML-P06-3",
+      "visibleWords": 244,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P07-1",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1695.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-P07-2",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1543.234375,
+      "width": 390
+    },
+    {
+      "id": "ML-P07-3",
+      "visibleWords": 187,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1441.984375,
+      "width": 390
+    },
+    {
+      "id": "ML-P07-4",
+      "visibleWords": 131,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M01-1",
+      "visibleWords": 289,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1820.875,
+      "width": 390
+    },
+    {
+      "id": "ML-M01-2",
+      "visibleWords": 124,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M01-3",
+      "visibleWords": 123,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M01-4",
+      "visibleWords": 127,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M02-1",
+      "visibleWords": 287,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1692.0625,
+      "width": 390
+    },
+    {
+      "id": "ML-M02-2",
+      "visibleWords": 115,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M02-3",
+      "visibleWords": 124,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M03-1",
+      "visibleWords": 422,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2604.921875,
+      "width": 390
+    },
+    {
+      "id": "ML-M03-2",
+      "visibleWords": 260,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M03-3",
+      "visibleWords": 271,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M04-1",
+      "visibleWords": 281,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1935.6875,
+      "width": 390
+    },
+    {
+      "id": "ML-M04-2",
+      "visibleWords": 136,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M04-3",
+      "visibleWords": 153,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F-R1-1",
+      "visibleWords": 234,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1431.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-F-R1-2",
+      "visibleWords": 225,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1457.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-F-R1-3",
+      "visibleWords": 226,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1431.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-F-R2-1",
+      "visibleWords": 218,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1408.109375,
+      "width": 390
+    },
+    {
+      "id": "ML-F-R2-2",
+      "visibleWords": 225,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1416.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-F-R2-3",
+      "visibleWords": 138,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W-R1-1",
+      "visibleWords": 247,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1471.5625,
+      "width": 390
+    },
+    {
+      "id": "ML-W-R1-2",
+      "visibleWords": 230,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1489.3125,
+      "width": 390
+    },
+    {
+      "id": "ML-W-R1-3",
+      "visibleWords": 232,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1494.8125,
+      "width": 390
+    },
+    {
+      "id": "ML-W-R2-1",
+      "visibleWords": 149,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W-R2-2",
+      "visibleWords": 160,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-W-R2-3",
+      "visibleWords": 250,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1572.359375,
+      "width": 390
+    },
+    {
+      "id": "ML-R-R1-1",
+      "visibleWords": 242,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1551.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-R-R1-2",
+      "visibleWords": 241,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1533.828125,
+      "width": 390
+    },
+    {
+      "id": "ML-R-R1-3",
+      "visibleWords": 125,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-R-R2-1",
+      "visibleWords": 233,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1470.75,
+      "width": 390
+    },
+    {
+      "id": "ML-R-R2-2",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1525.5,
+      "width": 390
+    },
+    {
+      "id": "ML-R-R2-3",
+      "visibleWords": 244,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1517.25,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R1-1",
+      "visibleWords": 237,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1619.984375,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R1-2",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1660.984375,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R1-3",
+      "visibleWords": 288,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1651.484375,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R2-1",
+      "visibleWords": 163,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R2-2",
+      "visibleWords": 152,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R2-3",
+      "visibleWords": 243,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1619.984375,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R3-1",
+      "visibleWords": 153,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R3-2",
+      "visibleWords": 168,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-C-R3-3",
+      "visibleWords": 161,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N-R1-1",
+      "visibleWords": 142,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N-R1-2",
+      "visibleWords": 159,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-N-R1-3",
+      "visibleWords": 180,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U-R1-1",
+      "visibleWords": 134,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U-R1-2",
+      "visibleWords": 156,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U-R1-3",
+      "visibleWords": 239,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1416,
+      "width": 390
+    },
+    {
+      "id": "ML-U-R2-1",
+      "visibleWords": 155,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-U-R2-2",
+      "visibleWords": 208,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1493.75,
+      "width": 390
+    },
+    {
+      "id": "ML-U-R2-3",
+      "visibleWords": 151,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-P-R1-1",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1544.78125,
+      "width": 390
+    },
+    {
+      "id": "ML-P-R1-2",
+      "visibleWords": 212,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1536,
+      "width": 390
+    },
+    {
+      "id": "ML-P-R1-3",
+      "visibleWords": 152,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M-R1-1",
+      "visibleWords": 153,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M-R1-2",
+      "visibleWords": 149,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-M-R1-3",
+      "visibleWords": 162,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F-K1-1",
+      "visibleWords": 350,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2139.890625,
+      "width": 390
+    },
+    {
+      "id": "ML-W-K1-1",
+      "visibleWords": 234,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1516.484375,
+      "width": 390
+    },
+    {
+      "id": "ML-R-K1-1",
+      "visibleWords": 221,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1371.59375,
+      "width": 390
+    },
+    {
+      "id": "ML-C-K1-1",
+      "visibleWords": 274,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1664.171875,
+      "width": 390
+    },
+    {
+      "id": "ML-N-K1-1",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1434.671875,
+      "width": 390
+    },
+    {
+      "id": "ML-N-K2-1",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1394.921875,
+      "width": 390
+    },
+    {
+      "id": "ML-U-K1-1",
+      "visibleWords": 237,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1461.0625,
+      "width": 390
+    },
+    {
+      "id": "ML-P-K1-1",
+      "visibleWords": 239,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 1462.59375,
+      "width": 390
+    },
+    {
+      "id": "ML-M-K1-1",
+      "visibleWords": 199,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 390
+    },
+    {
+      "id": "ML-F11-1",
+      "visibleWords": 720,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2292.640625,
+      "width": 390
+    },
+    {
+      "id": "ML-F11-2",
+      "visibleWords": 691,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2073.078125,
+      "width": 390
+    },
+    {
+      "id": "ML-F11-3",
+      "visibleWords": 609,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2162.015625,
+      "width": 390
+    },
+    {
+      "id": "ML-F12-1",
+      "visibleWords": 703,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2289.046875,
+      "width": 390
+    },
+    {
+      "id": "ML-F12-2",
+      "visibleWords": 689,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2104.125,
+      "width": 390
+    },
+    {
+      "id": "ML-F12-3",
+      "visibleWords": 606,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2141.3125,
+      "width": 390
+    },
+    {
+      "id": "ML-W15-1",
+      "visibleWords": 681,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2231.609375,
+      "width": 390
+    },
+    {
+      "id": "ML-W15-2",
+      "visibleWords": 649,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2073.078125,
+      "width": 390
+    },
+    {
+      "id": "ML-W15-3",
+      "visibleWords": 361,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2165.015625,
+      "width": 390
+    },
+    {
+      "id": "ML-W16-1",
+      "visibleWords": 678,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2176.859375,
+      "width": 390
+    },
+    {
+      "id": "ML-W16-2",
+      "visibleWords": 664,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2107.578125,
+      "width": 390
+    },
+    {
+      "id": "ML-W16-3",
+      "visibleWords": 371,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2173.265625,
+      "width": 390
+    },
+    {
+      "id": "ML-W-K2-1",
+      "visibleWords": 376,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2205.890625,
+      "width": 390
+    },
+    {
+      "id": "ML-W-K3-1",
+      "visibleWords": 373,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 2232.140625,
+      "width": 390
+    },
+    {
+      "id": "ML-F01-1",
+      "visibleWords": 227,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-F01-2",
+      "visibleWords": 107,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F01-3",
+      "visibleWords": 135,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F02-1",
+      "visibleWords": 273,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 397.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-F02-2",
+      "visibleWords": 228,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 456.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F02-3",
+      "visibleWords": 240,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 503.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F03-1",
+      "visibleWords": 218,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-F03-2",
+      "visibleWords": 165,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 401.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F03-3",
+      "visibleWords": 139,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F04-1",
+      "visibleWords": 248,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-F04-2",
+      "visibleWords": 177,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F04-3",
+      "visibleWords": 207,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 488.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F05-1",
+      "visibleWords": 239,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-F05-2",
+      "visibleWords": 195,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F05-3",
+      "visibleWords": 106,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F06-1",
+      "visibleWords": 261,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 451.546875,
+      "width": 1440
+    },
+    {
+      "id": "ML-F06-2",
+      "visibleWords": 108,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F06-3",
+      "visibleWords": 130,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F07-1",
+      "visibleWords": 249,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-F07-2",
+      "visibleWords": 211,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 531.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F07-3",
+      "visibleWords": 233,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 554.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F08-1",
+      "visibleWords": 231,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-F08-2",
+      "visibleWords": 111,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F08-3",
+      "visibleWords": 149,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F09-1",
+      "visibleWords": 248,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-F09-2",
+      "visibleWords": 166,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 476.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F09-3",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 577.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F10-1",
+      "visibleWords": 203,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-F10-2",
+      "visibleWords": 94,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F10-3",
+      "visibleWords": 109,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W01-1",
+      "visibleWords": 316,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 474.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-W01-2",
+      "visibleWords": 169,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 433.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W01-3",
+      "visibleWords": 125,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W02-1",
+      "visibleWords": 201,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 397.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-W02-2",
+      "visibleWords": 193,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 456.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W02-3",
+      "visibleWords": 121,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W03-1",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W03-2",
+      "visibleWords": 160,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W03-3",
+      "visibleWords": 271,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 617.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W04-1",
+      "visibleWords": 237,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W04-2",
+      "visibleWords": 165,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W04-3",
+      "visibleWords": 103,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W04-4",
+      "visibleWords": 203,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 531.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W05-1",
+      "visibleWords": 262,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W05-2",
+      "visibleWords": 148,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W05-3",
+      "visibleWords": 180,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W06-1",
+      "visibleWords": 267,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W06-2",
+      "visibleWords": 150,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W06-3",
+      "visibleWords": 172,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 468.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W07-1",
+      "visibleWords": 230,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W07-2",
+      "visibleWords": 156,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W07-3",
+      "visibleWords": 186,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 523.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W08-1",
+      "visibleWords": 269,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 428.296875,
+      "width": 1440
+    },
+    {
+      "id": "ML-W08-2",
+      "visibleWords": 133,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W08-3",
+      "visibleWords": 256,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 511.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W09-1",
+      "visibleWords": 209,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W09-2",
+      "visibleWords": 155,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W09-3",
+      "visibleWords": 154,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W09-4",
+      "visibleWords": 100,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W10-1",
+      "visibleWords": 227,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 512.828125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W10-2",
+      "visibleWords": 99,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W10-3",
+      "visibleWords": 134,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W11-1",
+      "visibleWords": 405,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 517.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W11-2",
+      "visibleWords": 136,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W11-3",
+      "visibleWords": 144,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W12-1",
+      "visibleWords": 196,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W12-2",
+      "visibleWords": 158,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W12-3",
+      "visibleWords": 179,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W13-1",
+      "visibleWords": 252,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-W13-2",
+      "visibleWords": 160,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W13-3",
+      "visibleWords": 103,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W14-1",
+      "visibleWords": 209,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 420.046875,
+      "width": 1440
+    },
+    {
+      "id": "ML-W14-2",
+      "visibleWords": 165,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 401.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W14-3",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 479.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W14-4",
+      "visibleWords": 116,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R01-1",
+      "visibleWords": 219,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 420.046875,
+      "width": 1440
+    },
+    {
+      "id": "ML-R01-2",
+      "visibleWords": 162,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R01-3",
+      "visibleWords": 110,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R01-4",
+      "visibleWords": 566,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 456.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R02-1",
+      "visibleWords": 243,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-R02-2",
+      "visibleWords": 115,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R02-3",
+      "visibleWords": 191,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 554.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R03-1",
+      "visibleWords": 345,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 557.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-R03-2",
+      "visibleWords": 116,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R03-3",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R04-1",
+      "visibleWords": 210,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-R04-2",
+      "visibleWords": 182,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R04-3",
+      "visibleWords": 130,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R04-4",
+      "visibleWords": 591,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R05-1",
+      "visibleWords": 307,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 466.328125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R05-2",
+      "visibleWords": 183,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R05-3",
+      "visibleWords": 131,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R06-1",
+      "visibleWords": 294,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 514.671875,
+      "width": 1440
+    },
+    {
+      "id": "ML-R06-2",
+      "visibleWords": 246,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 622.078125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R06-3",
+      "visibleWords": 148,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R07-1",
+      "visibleWords": 328,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-R07-2",
+      "visibleWords": 274,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 393.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R07-3",
+      "visibleWords": 287,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 488.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R07-4",
+      "visibleWords": 694,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 456.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R08-1",
+      "visibleWords": 406,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-R08-2",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R08-3",
+      "visibleWords": 261,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R08-4",
+      "visibleWords": 229,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R09-1",
+      "visibleWords": 343,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-R09-2",
+      "visibleWords": 263,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R09-3",
+      "visibleWords": 330,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 601.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R09-4",
+      "visibleWords": 692,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R10-1",
+      "visibleWords": 322,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 451.546875,
+      "width": 1440
+    },
+    {
+      "id": "ML-R10-2",
+      "visibleWords": 254,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 425.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R10-3",
+      "visibleWords": 197,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R11-1",
+      "visibleWords": 236,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 537.921875,
+      "width": 1440
+    },
+    {
+      "id": "ML-R11-2",
+      "visibleWords": 116,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R11-3",
+      "visibleWords": 142,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C01-1",
+      "visibleWords": 219,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C01-2",
+      "visibleWords": 164,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C01-3",
+      "visibleWords": 185,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 433.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C02-1",
+      "visibleWords": 259,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 451.546875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C02-2",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C02-3",
+      "visibleWords": 207,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 479.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C03-1",
+      "visibleWords": 213,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C03-2",
+      "visibleWords": 152,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C03-3",
+      "visibleWords": 186,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 488.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C04-1",
+      "visibleWords": 211,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C04-2",
+      "visibleWords": 155,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C04-3",
+      "visibleWords": 185,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 425.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C05-1",
+      "visibleWords": 239,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C05-2",
+      "visibleWords": 107,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C05-3",
+      "visibleWords": 238,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 479.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C06-1",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C06-2",
+      "visibleWords": 190,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C06-3",
+      "visibleWords": 218,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C06-4",
+      "visibleWords": 603,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C07-1",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 466.328125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C07-2",
+      "visibleWords": 115,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C07-3",
+      "visibleWords": 120,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C07-4",
+      "visibleWords": 128,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C08-1",
+      "visibleWords": 390,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 428.296875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C08-2",
+      "visibleWords": 401,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 456.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C08-3",
+      "visibleWords": 266,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C08-4",
+      "visibleWords": 680,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 464.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C09-1",
+      "visibleWords": 347,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C09-2",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C09-3",
+      "visibleWords": 223,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C10-1",
+      "visibleWords": 401,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C10-2",
+      "visibleWords": 335,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C10-3",
+      "visibleWords": 221,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C10-4",
+      "visibleWords": 729,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C11-1",
+      "visibleWords": 365,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C11-2",
+      "visibleWords": 241,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C11-3",
+      "visibleWords": 242,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C12-1",
+      "visibleWords": 249,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C12-2",
+      "visibleWords": 186,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C12-3",
+      "visibleWords": 133,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C12-4",
+      "visibleWords": 587,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 464.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C13-1",
+      "visibleWords": 200,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C13-2",
+      "visibleWords": 170,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C13-3",
+      "visibleWords": 206,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 523.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C14-1",
+      "visibleWords": 399,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 477.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C14-2",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C14-3",
+      "visibleWords": 290,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 425.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C14-4",
+      "visibleWords": 231,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C14-5",
+      "visibleWords": 665,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 467.328125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C15-1",
+      "visibleWords": 240,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 451.546875,
+      "width": 1440
+    },
+    {
+      "id": "ML-C15-2",
+      "visibleWords": 111,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C15-3",
+      "visibleWords": 115,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C15-4",
+      "visibleWords": 600,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 479.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C16-1",
+      "visibleWords": 251,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C16-2",
+      "visibleWords": 120,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C16-3",
+      "visibleWords": 175,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C16-4",
+      "visibleWords": 129,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C17-1",
+      "visibleWords": 278,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C17-2",
+      "visibleWords": 166,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C17-3",
+      "visibleWords": 317,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 546.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C17-4",
+      "visibleWords": 564,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 508.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C18-1",
+      "visibleWords": 231,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C18-2",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C18-3",
+      "visibleWords": 180,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 468.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C18-4",
+      "visibleWords": 103,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C18-5",
+      "visibleWords": 569,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C19-1",
+      "visibleWords": 241,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-C19-2",
+      "visibleWords": 107,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C19-3",
+      "visibleWords": 130,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N01-1",
+      "visibleWords": 252,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-N01-2",
+      "visibleWords": 94,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N01-3",
+      "visibleWords": 126,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N02-1",
+      "visibleWords": 258,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 526.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-N02-2",
+      "visibleWords": 110,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N02-3",
+      "visibleWords": 107,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N03-1",
+      "visibleWords": 188,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-N03-2",
+      "visibleWords": 154,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-N03-3",
+      "visibleWords": 123,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N03-4",
+      "visibleWords": 594,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-N04-1",
+      "visibleWords": 287,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-N04-2",
+      "visibleWords": 158,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-N04-3",
+      "visibleWords": 180,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 468.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-N04-4",
+      "visibleWords": 246,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 546.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-N04-5",
+      "visibleWords": 600,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 508.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-N05-1",
+      "visibleWords": 245,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-N05-2",
+      "visibleWords": 120,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N05-3",
+      "visibleWords": 111,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N05-4",
+      "visibleWords": 118,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N06-1",
+      "visibleWords": 269,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 502.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-N06-2",
+      "visibleWords": 92,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N06-3",
+      "visibleWords": 98,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U01-1",
+      "visibleWords": 220,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U01-2",
+      "visibleWords": 106,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U01-3",
+      "visibleWords": 134,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U02-1",
+      "visibleWords": 198,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 466.328125,
+      "width": 1440
+    },
+    {
+      "id": "ML-U02-2",
+      "visibleWords": 162,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U02-3",
+      "visibleWords": 128,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U03-1",
+      "visibleWords": 250,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U03-2",
+      "visibleWords": 169,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U03-3",
+      "visibleWords": 173,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U03-4",
+      "visibleWords": 289,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 508.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U04-1",
+      "visibleWords": 232,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U04-2",
+      "visibleWords": 169,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U04-3",
+      "visibleWords": 172,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U04-4",
+      "visibleWords": 125,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U05-1",
+      "visibleWords": 217,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 440.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U05-2",
+      "visibleWords": 175,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 445.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U05-3",
+      "visibleWords": 123,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U06-1",
+      "visibleWords": 255,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 502.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U06-2",
+      "visibleWords": 111,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U06-3",
+      "visibleWords": 131,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U07-1",
+      "visibleWords": 220,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 396.796875,
+      "width": 1440
+    },
+    {
+      "id": "ML-U07-2",
+      "visibleWords": 159,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 370.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-U07-3",
+      "visibleWords": 107,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U07-4",
+      "visibleWords": 311,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 513.828125,
+      "width": 1440
+    },
+    {
+      "id": "ML-U08-1",
+      "visibleWords": 211,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 463.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U08-2",
+      "visibleWords": 169,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 445.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U08-3",
+      "visibleWords": 107,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U09-1",
+      "visibleWords": 218,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U09-2",
+      "visibleWords": 203,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 554.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-U09-3",
+      "visibleWords": 131,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U10-1",
+      "visibleWords": 288,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 526.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-U10-2",
+      "visibleWords": 113,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U10-3",
+      "visibleWords": 141,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P01-1",
+      "visibleWords": 395,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 515.671875,
+      "width": 1440
+    },
+    {
+      "id": "ML-P01-2",
+      "visibleWords": 234,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P01-3",
+      "visibleWords": 260,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P02-1",
+      "visibleWords": 195,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 440.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-P02-2",
+      "visibleWords": 192,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 500.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P02-3",
+      "visibleWords": 217,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 547.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P02-4",
+      "visibleWords": 281,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 524.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P03-1",
+      "visibleWords": 196,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-P03-2",
+      "visibleWords": 152,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P03-3",
+      "visibleWords": 86,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P04-1",
+      "visibleWords": 257,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 471.484375,
+      "width": 1440
+    },
+    {
+      "id": "ML-P04-2",
+      "visibleWords": 195,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 491.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P04-3",
+      "visibleWords": 201,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 577.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P05-1",
+      "visibleWords": 251,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-P05-2",
+      "visibleWords": 114,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P05-3",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 491.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P06-1",
+      "visibleWords": 324,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-P06-2",
+      "visibleWords": 294,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 436.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P06-3",
+      "visibleWords": 244,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P07-1",
+      "visibleWords": 214,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 439.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-P07-2",
+      "visibleWords": 195,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 491.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P07-3",
+      "visibleWords": 177,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 413.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-P07-4",
+      "visibleWords": 125,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M01-1",
+      "visibleWords": 282,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-M01-2",
+      "visibleWords": 118,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M01-3",
+      "visibleWords": 117,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M01-4",
+      "visibleWords": 121,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M02-1",
+      "visibleWords": 278,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-M02-2",
+      "visibleWords": 109,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M02-3",
+      "visibleWords": 118,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M03-1",
+      "visibleWords": 412,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 557.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-M03-2",
+      "visibleWords": 254,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M03-3",
+      "visibleWords": 265,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M04-1",
+      "visibleWords": 273,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 502.984375,
+      "width": 1440
+    },
+    {
+      "id": "ML-M04-2",
+      "visibleWords": 130,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M04-3",
+      "visibleWords": 147,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-R1-1",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 503.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-R1-2",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 456.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-R1-3",
+      "visibleWords": 216,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 479.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-R2-1",
+      "visibleWords": 208,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 491.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-R2-2",
+      "visibleWords": 215,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 523.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-R2-3",
+      "visibleWords": 132,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-R1-1",
+      "visibleWords": 237,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 566.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-R1-2",
+      "visibleWords": 220,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 488.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-R1-3",
+      "visibleWords": 222,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 542.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-R2-1",
+      "visibleWords": 143,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-R2-2",
+      "visibleWords": 154,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-R2-3",
+      "visibleWords": 240,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 586.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-R1-1",
+      "visibleWords": 232,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 554.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-R1-2",
+      "visibleWords": 231,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 577.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-R1-3",
+      "visibleWords": 119,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-R2-1",
+      "visibleWords": 223,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 534.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-R2-2",
+      "visibleWords": 235,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 519.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-R2-3",
+      "visibleWords": 234,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 557.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R1-1",
+      "visibleWords": 227,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 577.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R1-2",
+      "visibleWords": 235,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 523.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R1-3",
+      "visibleWords": 279,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 586.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R2-1",
+      "visibleWords": 157,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R2-2",
+      "visibleWords": 146,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R2-3",
+      "visibleWords": 233,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 554.640625,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R3-1",
+      "visibleWords": 147,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R3-2",
+      "visibleWords": 162,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-R3-3",
+      "visibleWords": 155,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N-R1-1",
+      "visibleWords": 136,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N-R1-2",
+      "visibleWords": 153,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-N-R1-3",
+      "visibleWords": 174,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-R1-1",
+      "visibleWords": 128,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-R1-2",
+      "visibleWords": 150,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-R1-3",
+      "visibleWords": 232,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 503.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-R2-1",
+      "visibleWords": 149,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-R2-2",
+      "visibleWords": 198,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 488.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-R2-3",
+      "visibleWords": 145,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-P-R1-1",
+      "visibleWords": 250,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 480.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-P-R1-2",
+      "visibleWords": 202,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 504.203125,
+      "width": 1440
+    },
+    {
+      "id": "ML-P-R1-3",
+      "visibleWords": 146,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M-R1-1",
+      "visibleWords": 147,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M-R1-2",
+      "visibleWords": 143,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-M-R1-3",
+      "visibleWords": 156,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F-K1-1",
+      "visibleWords": 340,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 562.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-K1-1",
+      "visibleWords": 224,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 571.671875,
+      "width": 1440
+    },
+    {
+      "id": "ML-R-K1-1",
+      "visibleWords": 211,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 393.703125,
+      "width": 1440
+    },
+    {
+      "id": "ML-C-K1-1",
+      "visibleWords": 264,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 546.921875,
+      "width": 1440
+    },
+    {
+      "id": "ML-N-K1-1",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 468.921875,
+      "width": 1440
+    },
+    {
+      "id": "ML-N-K2-1",
+      "visibleWords": 205,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 468.921875,
+      "width": 1440
+    },
+    {
+      "id": "ML-U-K1-1",
+      "visibleWords": 227,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 511.453125,
+      "width": 1440
+    },
+    {
+      "id": "ML-P-K1-1",
+      "visibleWords": 229,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 480.953125,
+      "width": 1440
+    },
+    {
+      "id": "ML-M-K1-1",
+      "visibleWords": 193,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": null,
+      "width": 1440
+    },
+    {
+      "id": "ML-F11-1",
+      "visibleWords": 744,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 560.828125,
+      "width": 1440
+    },
+    {
+      "id": "ML-F11-2",
+      "visibleWords": 715,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F11-3",
+      "visibleWords": 634,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 523.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F12-1",
+      "visibleWords": 728,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 526.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-F12-2",
+      "visibleWords": 714,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-F12-3",
+      "visibleWords": 632,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 468.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W15-1",
+      "visibleWords": 705,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 526.234375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W15-2",
+      "visibleWords": 675,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W15-3",
+      "visibleWords": 351,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 499.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W16-1",
+      "visibleWords": 703,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 494.734375,
+      "width": 1440
+    },
+    {
+      "id": "ML-W16-2",
+      "visibleWords": 687,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 508.140625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W16-3",
+      "visibleWords": 361,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 531.390625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-K2-1",
+      "visibleWords": 366,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 562.890625,
+      "width": 1440
+    },
+    {
+      "id": "ML-W-K3-1",
+      "visibleWords": 363,
+      "disclosures": 3,
+      "visibleDisclosures": 3,
+      "editorTop": 562.890625,
+      "width": 1440
+    }
+  ],
+  "reviewedBuild": {
+    "contentId": "3089e69bdcebdd83e8f2e3e0725472c4383c7b49db56c5b1e5de26fd4becf56a",
+    "baseUrl": "http://127.0.0.1:8000",
+    "runtime": "local",
+    "browserExecutable": "/usr/bin/chromium",
+    "reusedCaptures": false
+  },
+  "sourceHashes": {
+    "code-identifiers.js": "71854dcf3826d8f0837a47a3910a108ffd747acb28f03ab0de289edf6bcacc39",
+    "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652",
+    "ml-learning/visuals.js": "0507357cfc51909bbe0416ac57e0a0e9d4ce6c5d1c2eb3c96c38ab4560a3386a",
+    "ml-learning/learning.css": "3acccfb6d1dc583089df09cfd3873f054cc18220b2f7e1b556614c5727868b9f",
+    "ml-learning/app.js": "a801f44eba7a6f7ab38db2647de02780d15371374b3a39a488f286d056635d9d",
+    "foundations/foundations.css": "cf4cf538e52e0291e2a8a8467ed4c2b0314d286a7befae6b914e7f1dbb951cd5",
+    "foundations/learning-ui.js": "703472bbab76ae4e254e7d9797994755348799f3be07d73114486dd673c36711",
+    "challenges/icon-prompts.json": "0dc553f6934972a3c511d8ef8206439600c7ce321690819d4151efdecb5ea7d8",
+    "challenges/experience.js": "6fc8bbea1eacd53a1ae7e6ed522545451fd05265098b8dc78ef06a56d9e2a695",
+    "challenges/challenges.css": "324f8a144ad28f8a4b43bbb6b4f9002c2896e8cee3460dd562863bfe5b9e65e8"
+  },
+  "wordMetric": "Default-open DOM text, excluding closed disclosure contents; includes editor syntax-overlay text and diagram labels. Uses the same counting rule before and after; this is not a count of words inside a single viewport.",
+  "before": {
+    "activities": 338,
+    "width": 390,
+    "scope": "Built UI immediately before this presentation revision, captured during the same workspace session.",
+    "records": [
+      {
+        "id": "ML-F01-1",
+        "visibleWords": 345,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 2032.765625
+      },
+      {
+        "id": "ML-F01-2",
+        "visibleWords": 158,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F01-3",
+        "visibleWords": 179,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F02-1",
+        "visibleWords": 390,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1963.296875
+      },
+      {
+        "id": "ML-F02-2",
+        "visibleWords": 317,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1504.015625
+      },
+      {
+        "id": "ML-F02-3",
+        "visibleWords": 327,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1597.015625
+      },
+      {
+        "id": "ML-F03-1",
+        "visibleWords": 326,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1793.453125
+      },
+      {
+        "id": "ML-F03-2",
+        "visibleWords": 251,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1383.265625
+      },
+      {
+        "id": "ML-F03-3",
+        "visibleWords": 184,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F04-1",
+        "visibleWords": 450,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2482.28125
+      },
+      {
+        "id": "ML-F04-2",
+        "visibleWords": 336,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1916.515625
+      },
+      {
+        "id": "ML-F04-3",
+        "visibleWords": 382,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2150.515625
+      },
+      {
+        "id": "ML-F05-1",
+        "visibleWords": 389,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2461.4375
+      },
+      {
+        "id": "ML-F05-2",
+        "visibleWords": 399,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2333.3125
+      },
+      {
+        "id": "ML-F05-3",
+        "visibleWords": 150,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F06-1",
+        "visibleWords": 345,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1886.046875
+      },
+      {
+        "id": "ML-F06-2",
+        "visibleWords": 155,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F06-3",
+        "visibleWords": 175,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F07-1",
+        "visibleWords": 390,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1972.8125
+      },
+      {
+        "id": "ML-F07-2",
+        "visibleWords": 300,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1550.0625
+      },
+      {
+        "id": "ML-F07-3",
+        "visibleWords": 369,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1973.0625
+      },
+      {
+        "id": "ML-F08-1",
+        "visibleWords": 322,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1693.765625
+      },
+      {
+        "id": "ML-F08-2",
+        "visibleWords": 156,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F08-3",
+        "visibleWords": 190,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F09-1",
+        "visibleWords": 386,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1979.875
+      },
+      {
+        "id": "ML-F09-2",
+        "visibleWords": 253,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1472.0625
+      },
+      {
+        "id": "ML-F09-3",
+        "visibleWords": 314,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1619.8125
+      },
+      {
+        "id": "ML-F10-1",
+        "visibleWords": 279,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1719.15625
+      },
+      {
+        "id": "ML-F10-2",
+        "visibleWords": 144,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F10-3",
+        "visibleWords": 153,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W01-1",
+        "visibleWords": 459,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2508.046875
+      },
+      {
+        "id": "ML-W01-2",
+        "visibleWords": 281,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1631.515625
+      },
+      {
+        "id": "ML-W01-3",
+        "visibleWords": 170,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W02-1",
+        "visibleWords": 341,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1845.921875
+      },
+      {
+        "id": "ML-W02-2",
+        "visibleWords": 351,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1960.015625
+      },
+      {
+        "id": "ML-W02-3",
+        "visibleWords": 169,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W03-1",
+        "visibleWords": 369,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2140.6875
+      },
+      {
+        "id": "ML-W03-2",
+        "visibleWords": 301,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1808.8125
+      },
+      {
+        "id": "ML-W03-3",
+        "visibleWords": 381,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1832.8125
+      },
+      {
+        "id": "ML-W04-1",
+        "visibleWords": 421,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2440.859375
+      },
+      {
+        "id": "ML-W04-2",
+        "visibleWords": 303,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1816.609375
+      },
+      {
+        "id": "ML-W04-3",
+        "visibleWords": 152,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W04-4",
+        "visibleWords": 326,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1743.859375
+      },
+      {
+        "id": "ML-W05-1",
+        "visibleWords": 459,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2540.71875
+      },
+      {
+        "id": "ML-W05-2",
+        "visibleWords": 298,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1771.3125
+      },
+      {
+        "id": "ML-W05-3",
+        "visibleWords": 310,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1707.5625
+      },
+      {
+        "id": "ML-W06-1",
+        "visibleWords": 428,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2144.8125
+      },
+      {
+        "id": "ML-W06-2",
+        "visibleWords": 318,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1847.0625
+      },
+      {
+        "id": "ML-W06-3",
+        "visibleWords": 316,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1705.3125
+      },
+      {
+        "id": "ML-W07-1",
+        "visibleWords": 415,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2286.734375
+      },
+      {
+        "id": "ML-W07-2",
+        "visibleWords": 301,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1787.8125
+      },
+      {
+        "id": "ML-W07-3",
+        "visibleWords": 352,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2022.5625
+      },
+      {
+        "id": "ML-W08-1",
+        "visibleWords": 407,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2183.890625
+      },
+      {
+        "id": "ML-W08-2",
+        "visibleWords": 180,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W08-3",
+        "visibleWords": 398,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1924.765625
+      },
+      {
+        "id": "ML-W09-1",
+        "visibleWords": 386,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2300.296875
+      },
+      {
+        "id": "ML-W09-2",
+        "visibleWords": 329,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1971.5625
+      },
+      {
+        "id": "ML-W09-3",
+        "visibleWords": 337,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1957.3125
+      },
+      {
+        "id": "ML-W09-4",
+        "visibleWords": 150,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W10-1",
+        "visibleWords": 312,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1923.90625
+      },
+      {
+        "id": "ML-W10-2",
+        "visibleWords": 148,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W10-3",
+        "visibleWords": 181,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W11-1",
+        "visibleWords": 599,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2757.125
+      },
+      {
+        "id": "ML-W11-2",
+        "visibleWords": 188,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W11-3",
+        "visibleWords": 194,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W12-1",
+        "visibleWords": 373,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2286.65625
+      },
+      {
+        "id": "ML-W12-2",
+        "visibleWords": 345,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2040.5625
+      },
+      {
+        "id": "ML-W12-3",
+        "visibleWords": 261,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1532.0625
+      },
+      {
+        "id": "ML-W13-1",
+        "visibleWords": 438,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2296.453125
+      },
+      {
+        "id": "ML-W13-2",
+        "visibleWords": 321,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1904.8125
+      },
+      {
+        "id": "ML-W13-3",
+        "visibleWords": 150,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W14-1",
+        "visibleWords": 272,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1480.8125
+      },
+      {
+        "id": "ML-W14-2",
+        "visibleWords": 278,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1589.515625
+      },
+      {
+        "id": "ML-W14-3",
+        "visibleWords": 362,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1859.515625
+      },
+      {
+        "id": "ML-W14-4",
+        "visibleWords": 159,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R01-1",
+        "visibleWords": 369,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2163.453125
+      },
+      {
+        "id": "ML-R01-2",
+        "visibleWords": 314,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1878.203125
+      },
+      {
+        "id": "ML-R01-3",
+        "visibleWords": 163,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R01-4",
+        "visibleWords": 693,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2528.71875
+      },
+      {
+        "id": "ML-R02-1",
+        "visibleWords": 401,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2251.390625
+      },
+      {
+        "id": "ML-R02-2",
+        "visibleWords": 166,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R02-3",
+        "visibleWords": 323,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1910.75
+      },
+      {
+        "id": "ML-R03-1",
+        "visibleWords": 495,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2394.875
+      },
+      {
+        "id": "ML-R03-2",
+        "visibleWords": 167,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R03-3",
+        "visibleWords": 175,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R04-1",
+        "visibleWords": 339,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1949.859375
+      },
+      {
+        "id": "ML-R04-2",
+        "visibleWords": 329,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 1896.796875
+      },
+      {
+        "id": "ML-R04-3",
+        "visibleWords": 179,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R04-4",
+        "visibleWords": 714,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2640.3125
+      },
+      {
+        "id": "ML-R05-1",
+        "visibleWords": 512,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2883.15625
+      },
+      {
+        "id": "ML-R05-2",
+        "visibleWords": 359,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2001.5
+      },
+      {
+        "id": "ML-R05-3",
+        "visibleWords": 194,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R06-1",
+        "visibleWords": 403,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2121.640625
+      },
+      {
+        "id": "ML-R06-2",
+        "visibleWords": 389,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2020.984375
+      },
+      {
+        "id": "ML-R06-3",
+        "visibleWords": 205,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R07-1",
+        "visibleWords": 480,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2484.46875
+      },
+      {
+        "id": "ML-R07-2",
+        "visibleWords": 366,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2020.53125
+      },
+      {
+        "id": "ML-R07-3",
+        "visibleWords": 388,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2187.78125
+      },
+      {
+        "id": "ML-R07-4",
+        "visibleWords": 827,
+        "disclosures": 24,
+        "visibleDisclosures": 24,
+        "editorTop": 3193.046875
+      },
+      {
+        "id": "ML-R08-1",
+        "visibleWords": 586,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 3166.40625
+      },
+      {
+        "id": "ML-R08-2",
+        "visibleWords": 415,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2466.328125
+      },
+      {
+        "id": "ML-R08-3",
+        "visibleWords": 431,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2518.828125
+      },
+      {
+        "id": "ML-R08-4",
+        "visibleWords": 287,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R09-1",
+        "visibleWords": 480,
+        "disclosures": 16,
+        "visibleDisclosures": 16,
+        "editorTop": 2821.40625
+      },
+      {
+        "id": "ML-R09-2",
+        "visibleWords": 407,
+        "disclosures": 16,
+        "visibleDisclosures": 16,
+        "editorTop": 2450.125
+      },
+      {
+        "id": "ML-R09-3",
+        "visibleWords": 451,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2453.640625
+      },
+      {
+        "id": "ML-R09-4",
+        "visibleWords": 808,
+        "disclosures": 24,
+        "visibleDisclosures": 24,
+        "editorTop": 3117.890625
+      },
+      {
+        "id": "ML-R10-1",
+        "visibleWords": 486,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2846.96875
+      },
+      {
+        "id": "ML-R10-2",
+        "visibleWords": 421,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2534.125
+      },
+      {
+        "id": "ML-R10-3",
+        "visibleWords": 260,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R11-1",
+        "visibleWords": 358,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2055.046875
+      },
+      {
+        "id": "ML-R11-2",
+        "visibleWords": 170,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R11-3",
+        "visibleWords": 191,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C01-1",
+        "visibleWords": 303,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1771.4375
+      },
+      {
+        "id": "ML-C01-2",
+        "visibleWords": 245,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1364
+      },
+      {
+        "id": "ML-C01-3",
+        "visibleWords": 268,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1473.5
+      },
+      {
+        "id": "ML-C02-1",
+        "visibleWords": 344,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1993.078125
+      },
+      {
+        "id": "ML-C02-2",
+        "visibleWords": 165,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C02-3",
+        "visibleWords": 286,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1512.203125
+      },
+      {
+        "id": "ML-C03-1",
+        "visibleWords": 302,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1804.03125
+      },
+      {
+        "id": "ML-C03-2",
+        "visibleWords": 241,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1385.453125
+      },
+      {
+        "id": "ML-C03-3",
+        "visibleWords": 320,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1764.953125
+      },
+      {
+        "id": "ML-C04-1",
+        "visibleWords": 345,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2124.75
+      },
+      {
+        "id": "ML-C04-2",
+        "visibleWords": 248,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1457
+      },
+      {
+        "id": "ML-C04-3",
+        "visibleWords": 328,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1940.75
+      },
+      {
+        "id": "ML-C05-1",
+        "visibleWords": 396,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2308.125
+      },
+      {
+        "id": "ML-C05-2",
+        "visibleWords": 158,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C05-3",
+        "visibleWords": 419,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2440.015625
+      },
+      {
+        "id": "ML-C06-1",
+        "visibleWords": 449,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2459.84375
+      },
+      {
+        "id": "ML-C06-2",
+        "visibleWords": 398,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2193.5
+      },
+      {
+        "id": "ML-C06-3",
+        "visibleWords": 439,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2329.25
+      },
+      {
+        "id": "ML-C06-4",
+        "visibleWords": 747,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2652.015625
+      },
+      {
+        "id": "ML-C07-1",
+        "visibleWords": 398,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2402.921875
+      },
+      {
+        "id": "ML-C07-2",
+        "visibleWords": 159,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C07-3",
+        "visibleWords": 164,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C07-4",
+        "visibleWords": 179,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C08-1",
+        "visibleWords": 617,
+        "disclosures": 16,
+        "visibleDisclosures": 16,
+        "editorTop": 3125.328125
+      },
+      {
+        "id": "ML-C08-2",
+        "visibleWords": 689,
+        "disclosures": 18,
+        "visibleDisclosures": 18,
+        "editorTop": 3620.65625
+      },
+      {
+        "id": "ML-C08-3",
+        "visibleWords": 317,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C08-4",
+        "visibleWords": 821,
+        "disclosures": 24,
+        "visibleDisclosures": 24,
+        "editorTop": 3226.296875
+      },
+      {
+        "id": "ML-C09-1",
+        "visibleWords": 506,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2596.75
+      },
+      {
+        "id": "ML-C09-2",
+        "visibleWords": 261,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C09-3",
+        "visibleWords": 275,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C10-1",
+        "visibleWords": 649,
+        "disclosures": 17,
+        "visibleDisclosures": 17,
+        "editorTop": 3503.390625
+      },
+      {
+        "id": "ML-C10-2",
+        "visibleWords": 531,
+        "disclosures": 18,
+        "visibleDisclosures": 18,
+        "editorTop": 3121.203125
+      },
+      {
+        "id": "ML-C10-3",
+        "visibleWords": 279,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C10-4",
+        "visibleWords": 872,
+        "disclosures": 25,
+        "visibleDisclosures": 25,
+        "editorTop": 3354.90625
+      },
+      {
+        "id": "ML-C11-1",
+        "visibleWords": 524,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2902.640625
+      },
+      {
+        "id": "ML-C11-2",
+        "visibleWords": 286,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C11-3",
+        "visibleWords": 296,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C12-1",
+        "visibleWords": 394,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2160.3125
+      },
+      {
+        "id": "ML-C12-2",
+        "visibleWords": 309,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 1602.203125
+      },
+      {
+        "id": "ML-C12-3",
+        "visibleWords": 188,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C12-4",
+        "visibleWords": 719,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2536.96875
+      },
+      {
+        "id": "ML-C13-1",
+        "visibleWords": 331,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1788.453125
+      },
+      {
+        "id": "ML-C13-2",
+        "visibleWords": 324,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1761.5
+      },
+      {
+        "id": "ML-C13-3",
+        "visibleWords": 357,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 1862
+      },
+      {
+        "id": "ML-C14-1",
+        "visibleWords": 621,
+        "disclosures": 17,
+        "visibleDisclosures": 17,
+        "editorTop": 3246.375
+      },
+      {
+        "id": "ML-C14-2",
+        "visibleWords": 276,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C14-3",
+        "visibleWords": 456,
+        "disclosures": 17,
+        "visibleDisclosures": 17,
+        "editorTop": 2655.765625
+      },
+      {
+        "id": "ML-C14-4",
+        "visibleWords": 283,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C14-5",
+        "visibleWords": 810,
+        "disclosures": 25,
+        "visibleDisclosures": 25,
+        "editorTop": 3259.78125
+      },
+      {
+        "id": "ML-C15-1",
+        "visibleWords": 370,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2237.1875
+      },
+      {
+        "id": "ML-C15-2",
+        "visibleWords": 157,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C15-3",
+        "visibleWords": 161,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C15-4",
+        "visibleWords": 727,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2568.46875
+      },
+      {
+        "id": "ML-C16-1",
+        "visibleWords": 369,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1875.59375
+      },
+      {
+        "id": "ML-C16-2",
+        "visibleWords": 172,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C16-3",
+        "visibleWords": 307,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1582.25
+      },
+      {
+        "id": "ML-C16-4",
+        "visibleWords": 187,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C17-1",
+        "visibleWords": 473,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2662.078125
+      },
+      {
+        "id": "ML-C17-2",
+        "visibleWords": 336,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 1990.25
+      },
+      {
+        "id": "ML-C17-3",
+        "visibleWords": 542,
+        "disclosures": 16,
+        "visibleDisclosures": 16,
+        "editorTop": 2911.65625
+      },
+      {
+        "id": "ML-C17-4",
+        "visibleWords": 693,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2634.015625
+      },
+      {
+        "id": "ML-C18-1",
+        "visibleWords": 421,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2457.359375
+      },
+      {
+        "id": "ML-C18-2",
+        "visibleWords": 159,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C18-3",
+        "visibleWords": 340,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2025.25
+      },
+      {
+        "id": "ML-C18-4",
+        "visibleWords": 149,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C18-5",
+        "visibleWords": 706,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2675.765625
+      },
+      {
+        "id": "ML-C19-1",
+        "visibleWords": 325,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1906.734375
+      },
+      {
+        "id": "ML-C19-2",
+        "visibleWords": 156,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C19-3",
+        "visibleWords": 186,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N01-1",
+        "visibleWords": 413,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 2219.984375
+      },
+      {
+        "id": "ML-N01-2",
+        "visibleWords": 142,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N01-3",
+        "visibleWords": 172,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N02-1",
+        "visibleWords": 399,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2431.578125
+      },
+      {
+        "id": "ML-N02-2",
+        "visibleWords": 160,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N02-3",
+        "visibleWords": 155,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N03-1",
+        "visibleWords": 362,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2087.046875
+      },
+      {
+        "id": "ML-N03-2",
+        "visibleWords": 356,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2060
+      },
+      {
+        "id": "ML-N03-3",
+        "visibleWords": 176,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N03-4",
+        "visibleWords": 734,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2628.765625
+      },
+      {
+        "id": "ML-N04-1",
+        "visibleWords": 559,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 3019.21875
+      },
+      {
+        "id": "ML-N04-2",
+        "visibleWords": 326,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 1961.5
+      },
+      {
+        "id": "ML-N04-3",
+        "visibleWords": 365,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2092
+      },
+      {
+        "id": "ML-N04-4",
+        "visibleWords": 418,
+        "disclosures": 15,
+        "visibleDisclosures": 15,
+        "editorTop": 2167
+      },
+      {
+        "id": "ML-N04-5",
+        "visibleWords": 740,
+        "disclosures": 22,
+        "visibleDisclosures": 22,
+        "editorTop": 2759.765625
+      },
+      {
+        "id": "ML-N05-1",
+        "visibleWords": 371,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2277.8125
+      },
+      {
+        "id": "ML-N05-2",
+        "visibleWords": 166,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N05-3",
+        "visibleWords": 157,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N05-4",
+        "visibleWords": 160,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N06-1",
+        "visibleWords": 362,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2142.609375
+      },
+      {
+        "id": "ML-N06-2",
+        "visibleWords": 140,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N06-3",
+        "visibleWords": 154,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U01-1",
+        "visibleWords": 294,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1741.640625
+      },
+      {
+        "id": "ML-U01-2",
+        "visibleWords": 154,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U01-3",
+        "visibleWords": 181,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U02-1",
+        "visibleWords": 289,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1565.046875
+      },
+      {
+        "id": "ML-U02-2",
+        "visibleWords": 261,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1482.5
+      },
+      {
+        "id": "ML-U02-3",
+        "visibleWords": 180,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U03-1",
+        "visibleWords": 433,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2455.796875
+      },
+      {
+        "id": "ML-U03-2",
+        "visibleWords": 305,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 1729.25
+      },
+      {
+        "id": "ML-U03-3",
+        "visibleWords": 283,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1575.5
+      },
+      {
+        "id": "ML-U03-4",
+        "visibleWords": 382,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1583.75
+      },
+      {
+        "id": "ML-U04-1",
+        "visibleWords": 362,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2038.34375
+      },
+      {
+        "id": "ML-U04-2",
+        "visibleWords": 301,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1748.75
+      },
+      {
+        "id": "ML-U04-3",
+        "visibleWords": 304,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1748.75
+      },
+      {
+        "id": "ML-U04-4",
+        "visibleWords": 171,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U05-1",
+        "visibleWords": 357,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2141.03125
+      },
+      {
+        "id": "ML-U05-2",
+        "visibleWords": 304,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1754
+      },
+      {
+        "id": "ML-U05-3",
+        "visibleWords": 170,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U06-1",
+        "visibleWords": 386,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2276.78125
+      },
+      {
+        "id": "ML-U06-2",
+        "visibleWords": 160,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U06-3",
+        "visibleWords": 188,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U07-1",
+        "visibleWords": 352,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2171.78125
+      },
+      {
+        "id": "ML-U07-2",
+        "visibleWords": 279,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1692.203125
+      },
+      {
+        "id": "ML-U07-3",
+        "visibleWords": 155,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U07-4",
+        "visibleWords": 478,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2150.28125
+      },
+      {
+        "id": "ML-U08-1",
+        "visibleWords": 359,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2118.5
+      },
+      {
+        "id": "ML-U08-2",
+        "visibleWords": 310,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1830.5
+      },
+      {
+        "id": "ML-U08-3",
+        "visibleWords": 160,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U09-1",
+        "visibleWords": 327,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1888.25
+      },
+      {
+        "id": "ML-U09-2",
+        "visibleWords": 307,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1676.75
+      },
+      {
+        "id": "ML-U09-3",
+        "visibleWords": 195,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U10-1",
+        "visibleWords": 437,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2398.421875
+      },
+      {
+        "id": "ML-U10-2",
+        "visibleWords": 168,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U10-3",
+        "visibleWords": 191,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P01-1",
+        "visibleWords": 539,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2856.171875
+      },
+      {
+        "id": "ML-P01-2",
+        "visibleWords": 283,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P01-3",
+        "visibleWords": 306,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P02-1",
+        "visibleWords": 326,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1872.3125
+      },
+      {
+        "id": "ML-P02-2",
+        "visibleWords": 341,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1995.5
+      },
+      {
+        "id": "ML-P02-3",
+        "visibleWords": 358,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1995.5
+      },
+      {
+        "id": "ML-P02-4",
+        "visibleWords": 398,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1715
+      },
+      {
+        "id": "ML-P03-1",
+        "visibleWords": 332,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2105.546875
+      },
+      {
+        "id": "ML-P03-2",
+        "visibleWords": 300,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 1850.296875
+      },
+      {
+        "id": "ML-P03-3",
+        "visibleWords": 134,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P04-1",
+        "visibleWords": 401,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2363.28125
+      },
+      {
+        "id": "ML-P04-2",
+        "visibleWords": 332,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1960.25
+      },
+      {
+        "id": "ML-P04-3",
+        "visibleWords": 304,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1719.5
+      },
+      {
+        "id": "ML-P05-1",
+        "visibleWords": 403,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2408.171875
+      },
+      {
+        "id": "ML-P05-2",
+        "visibleWords": 164,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P05-3",
+        "visibleWords": 355,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2009.75
+      },
+      {
+        "id": "ML-P06-1",
+        "visibleWords": 455,
+        "disclosures": 13,
+        "visibleDisclosures": 13,
+        "editorTop": 2584.625
+      },
+      {
+        "id": "ML-P06-2",
+        "visibleWords": 431,
+        "disclosures": 14,
+        "visibleDisclosures": 14,
+        "editorTop": 2475.828125
+      },
+      {
+        "id": "ML-P06-3",
+        "visibleWords": 292,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P07-1",
+        "visibleWords": 348,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2140.59375
+      },
+      {
+        "id": "ML-P07-2",
+        "visibleWords": 327,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1960.25
+      },
+      {
+        "id": "ML-P07-3",
+        "visibleWords": 309,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1859
+      },
+      {
+        "id": "ML-P07-4",
+        "visibleWords": 168,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M01-1",
+        "visibleWords": 370,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1935.359375
+      },
+      {
+        "id": "ML-M01-2",
+        "visibleWords": 179,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M01-3",
+        "visibleWords": 178,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M01-4",
+        "visibleWords": 179,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M02-1",
+        "visibleWords": 365,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1842.234375
+      },
+      {
+        "id": "ML-M02-2",
+        "visibleWords": 160,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M02-3",
+        "visibleWords": 166,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M03-1",
+        "visibleWords": 484,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 2728.84375
+      },
+      {
+        "id": "ML-M03-2",
+        "visibleWords": 303,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M03-3",
+        "visibleWords": 310,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M04-1",
+        "visibleWords": 355,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 2062.609375
+      },
+      {
+        "id": "ML-M04-2",
+        "visibleWords": 179,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M04-3",
+        "visibleWords": 194,
+        "disclosures": 8,
+        "visibleDisclosures": 8,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F-R1-1",
+        "visibleWords": 322,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1624.015625
+      },
+      {
+        "id": "ML-F-R1-2",
+        "visibleWords": 370,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2029.765625
+      },
+      {
+        "id": "ML-F-R1-3",
+        "visibleWords": 319,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1667.515625
+      },
+      {
+        "id": "ML-F-R2-1",
+        "visibleWords": 289,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1504.3125
+      },
+      {
+        "id": "ML-F-R2-2",
+        "visibleWords": 309,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1541.8125
+      },
+      {
+        "id": "ML-F-R2-3",
+        "visibleWords": 182,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W-R1-1",
+        "visibleWords": 347,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1770.265625
+      },
+      {
+        "id": "ML-W-R1-2",
+        "visibleWords": 337,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1722.265625
+      },
+      {
+        "id": "ML-W-R1-3",
+        "visibleWords": 356,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1915.765625
+      },
+      {
+        "id": "ML-W-R2-1",
+        "visibleWords": 189,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W-R2-2",
+        "visibleWords": 200,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-W-R2-3",
+        "visibleWords": 388,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 2069.8125
+      },
+      {
+        "id": "ML-R-R1-1",
+        "visibleWords": 382,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2053.25
+      },
+      {
+        "id": "ML-R-R1-2",
+        "visibleWords": 350,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1841
+      },
+      {
+        "id": "ML-R-R1-3",
+        "visibleWords": 169,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-R-R2-1",
+        "visibleWords": 310,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1593.203125
+      },
+      {
+        "id": "ML-R-R2-2",
+        "visibleWords": 416,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2184.953125
+      },
+      {
+        "id": "ML-R-R2-3",
+        "visibleWords": 392,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2097.953125
+      },
+      {
+        "id": "ML-C-R1-1",
+        "visibleWords": 328,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 1816
+      },
+      {
+        "id": "ML-C-R1-2",
+        "visibleWords": 388,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2190.5
+      },
+      {
+        "id": "ML-C-R1-3",
+        "visibleWords": 468,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 2378.75
+      },
+      {
+        "id": "ML-C-R2-1",
+        "visibleWords": 217,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C-R2-2",
+        "visibleWords": 206,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C-R2-3",
+        "visibleWords": 365,
+        "disclosures": 12,
+        "visibleDisclosures": 12,
+        "editorTop": 1952
+      },
+      {
+        "id": "ML-C-R3-1",
+        "visibleWords": 205,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C-R3-2",
+        "visibleWords": 220,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-C-R3-3",
+        "visibleWords": 208,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N-R1-1",
+        "visibleWords": 184,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N-R1-2",
+        "visibleWords": 201,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-N-R1-3",
+        "visibleWords": 221,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U-R1-1",
+        "visibleWords": 176,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U-R1-2",
+        "visibleWords": 198,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U-R1-3",
+        "visibleWords": 357,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1830.953125
+      },
+      {
+        "id": "ML-U-R2-1",
+        "visibleWords": 197,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-U-R2-2",
+        "visibleWords": 343,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2019.203125
+      },
+      {
+        "id": "ML-U-R2-3",
+        "visibleWords": 190,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-P-R1-1",
+        "visibleWords": 384,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 1964.453125
+      },
+      {
+        "id": "ML-P-R1-2",
+        "visibleWords": 357,
+        "disclosures": 11,
+        "visibleDisclosures": 11,
+        "editorTop": 2083.703125
+      },
+      {
+        "id": "ML-P-R1-3",
+        "visibleWords": 191,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M-R1-1",
+        "visibleWords": 194,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M-R1-2",
+        "visibleWords": 190,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-M-R1-3",
+        "visibleWords": 203,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F-K1-1",
+        "visibleWords": 512,
+        "disclosures": 18,
+        "visibleDisclosures": 18,
+        "editorTop": 2688.078125
+      },
+      {
+        "id": "ML-W-K1-1",
+        "visibleWords": 360,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1882.59375
+      },
+      {
+        "id": "ML-R-K1-1",
+        "visibleWords": 377,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1733.96875
+      },
+      {
+        "id": "ML-C-K1-1",
+        "visibleWords": 489,
+        "disclosures": 10,
+        "visibleDisclosures": 10,
+        "editorTop": 2106.03125
+      },
+      {
+        "id": "ML-N-K1-1",
+        "visibleWords": 387,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1902.78125
+      },
+      {
+        "id": "ML-N-K2-1",
+        "visibleWords": 386,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1863.03125
+      },
+      {
+        "id": "ML-U-K1-1",
+        "visibleWords": 347,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1665.203125
+      },
+      {
+        "id": "ML-P-K1-1",
+        "visibleWords": 348,
+        "disclosures": 9,
+        "visibleDisclosures": 9,
+        "editorTop": 1666.46875
+      },
+      {
+        "id": "ML-M-K1-1",
+        "visibleWords": 251,
+        "disclosures": 7,
+        "visibleDisclosures": 7,
+        "editorTop": NaN
+      },
+      {
+        "id": "ML-F11-1",
+        "visibleWords": 861,
+        "disclosures": 20,
+        "visibleDisclosures": 20,
+        "editorTop": 2793.296875
+      },
+      {
+        "id": "ML-F11-2",
+        "visibleWords": 842,
+        "disclosures": 21,
+        "visibleDisclosures": 21,
+        "editorTop": 2600.078125
+      },
+      {
+        "id": "ML-F11-3",
+        "visibleWords": 759,
+        "disclosures": 21,
+        "visibleDisclosures": 21,
+        "editorTop": 2664.828125
+      },
+      {
+        "id": "ML-F12-1",
+        "visibleWords": 860,
+        "disclosures": 20,
+        "visibleDisclosures": 20,
+        "editorTop": 2868.453125
+      },
+      {
+        "id": "ML-F12-2",
+        "visibleWords": 857,
+        "disclosures": 21,
+        "visibleDisclosures": 21,
+        "editorTop": 2683.625
+      },
+      {
+        "id": "ML-F12-3",
+        "visibleWords": 769,
+        "disclosures": 21,
+        "visibleDisclosures": 21,
+        "editorTop": 2696.625
+      },
+      {
+        "id": "ML-W15-1",
+        "visibleWords": 822,
+        "disclosures": 19,
+        "visibleDisclosures": 19,
+        "editorTop": 2724.265625
+      },
+      {
+        "id": "ML-W15-2",
+        "visibleWords": 810,
+        "disclosures": 20,
+        "visibleDisclosures": 20,
+        "editorTop": 2621.328125
+      },
+      {
+        "id": "ML-W15-3",
+        "visibleWords": 524,
+        "disclosures": 20,
+        "visibleDisclosures": 20,
+        "editorTop": 2720.328125
+      },
+      {
+        "id": "ML-W16-1",
+        "visibleWords": 828,
+        "disclosures": 19,
+        "visibleDisclosures": 19,
+        "editorTop": 2722.015625
+      },
+      {
+        "id": "ML-W16-2",
+        "visibleWords": 808,
+        "disclosures": 20,
+        "visibleDisclosures": 20,
+        "editorTop": 2626.578125
+      },
+      {
+        "id": "ML-W16-3",
+        "visibleWords": 519,
+        "disclosures": 20,
+        "visibleDisclosures": 20,
+        "editorTop": 2702.328125
+      },
+      {
+        "id": "ML-W-K2-1",
+        "visibleWords": 517,
+        "disclosures": 18,
+        "visibleDisclosures": 18,
+        "editorTop": 2754.078125
+      },
+      {
+        "id": "ML-W-K3-1",
+        "visibleWords": 548,
+        "disclosures": 18,
+        "visibleDisclosures": 18,
+        "editorTop": 2832.828125
+      }
+    ]
+  },
+  "summary": {
+    "medianDefaultWordsBefore": 326.5,
+    "medianDefaultWordsAfter": 217.0,
+    "maximumDisclosuresBefore": 25,
+    "disclosuresAfterEveryActivity": 3,
+    "maximumDefaultWordsAfter": 720,
+    "allActivityPreservationPassed": true,
+    "desktopIndependentPaneGatePassed": true,
+    "curriculumAndGraderSourceChanged": false
+  },
+  "representativeExamples": [
+    {
+      "id": "ML-F11-1",
+      "wordsBefore": 861,
+      "wordsAfter": 720,
+      "disclosuresBefore": 20,
+      "disclosuresAfter": 3,
+      "editorTopBefore": 2793.296875,
+      "editorTopAfter": 2292.640625
+    },
+    {
+      "id": "ML-C08-1",
+      "wordsBefore": 617,
+      "wordsAfter": 389,
+      "disclosuresBefore": 16,
+      "disclosuresAfter": 3,
+      "editorTopBefore": 3125.328125,
+      "editorTopAfter": 2235.15625
+    },
+    {
+      "id": "ML-C10-1",
+      "wordsBefore": 649,
+      "wordsAfter": 405,
+      "disclosuresBefore": 17,
+      "disclosuresAfter": 3,
+      "editorTopBefore": 3503.390625,
+      "editorTopAfter": 2550.71875
+    },
+    {
+      "id": "ML-C14-1",
+      "wordsBefore": 621,
+      "wordsAfter": 400,
+      "disclosuresBefore": 17,
+      "disclosuresAfter": 3,
+      "editorTopBefore": 3246.375,
+      "editorTopAfter": 2366.203125
+    },
+    {
+      "id": "ML-N04-1",
+      "wordsBefore": 559,
+      "wordsAfter": 296,
+      "disclosuresBefore": 14,
+      "disclosuresAfter": 3,
+      "editorTopBefore": 3019.21875,
+      "editorTopAfter": 2055.75
+    },
+    {
+      "id": "ML-M03-1",
+      "wordsBefore": 484,
+      "wordsAfter": 422,
+      "disclosuresBefore": 9,
+      "disclosuresAfter": 3,
+      "editorTopBefore": 2728.84375,
+      "editorTopAfter": 2604.921875
+    }
+  ],
+  "focusedFinalChecks": "docs/curriculum-evidence/ml-final-navigation-semantics.json",
+  "limits": "System Chromium desktop/phone emulation; WebKit and physical devices were not exercised locally. The full UI and 23-collection gates ran on build 361101858852, followed by these final named branch/column/inventory checks on 3089e69bdceb."
+}

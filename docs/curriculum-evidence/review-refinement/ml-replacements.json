@@ -1,0 +1,1646 @@
+{
+  "reviewedBaseline": "22dd9684fff1df41dd167506798a50a1d660c559",
+  "replacementCount": 112,
+  "previousKinds": {
+    "reflection": 68,
+    "decision": 44
+  },
+  "decks": {
+    "foundations": 11,
+    "workflow": 13,
+    "regression": 12,
+    "classification": 27,
+    "networks": 13,
+    "clustering": 16,
+    "pca": 7,
+    "comparison": 13
+  },
+  "activityCount": 338,
+  "pythonActivities": 338,
+  "independentChallenges": 19,
+  "policy": "Stable IDs, lesson order and reasoning objectives; actual computations on explicit supplied evidence; no prose input or literal answer-string quiz.",
+  "activities": [
+    {
+      "id": "ML-F01-2",
+      "lesson": "ML-F01",
+      "deck": "foundations",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Duration prediction has a numeric target. Grouping and PCA use X without a prediction target; they answer different exploratory questions.",
+      "codeTask": "Select the task rows that have a known outcome into answer. Keep the request and outcome columns; grouping and compression have no prediction target.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "13b29fc33624e1f02061e35a81ba484ab5e339ff61b2b138c96a6680b2a16ee1"
+    },
+    {
+      "id": "ML-F01-3",
+      "lesson": "ML-F01",
+      "deck": "foundations",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Cancellation prediction requires historical outcomes aligned to inputs available before cancellation. Clusters describe similarity in the supplied measurements; they do not establish cancellation labels or predictive accuracy. Obtain suitable outcome data for supervised evaluation, or explicitly study usage patterns without claiming that a cluster predicts cancellation.",
+      "codeTask": "Store the nonmissing count for each supplied column in answer. Use the cancellation count to see which historical evidence is absent.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "361f5cb803c27109deacffda0d9e17f9985f84c8126f66a28f89569021fe1b9a"
+    },
+    {
+      "id": "ML-F03-3",
+      "lesson": "ML-F03",
+      "deck": "foundations",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "predict reuses the old coefficients; fit estimates new coefficients from labelled training data. A refit on new-city training rows must still be evaluated on held-away rows representing the intended use. Neither executing fit nor finding a new slope establishes that the model generalises.",
+      "codeTask": "Use the supplied fitted delivery line to predict the new-city distances. Store the predictions in answer and preserve the fitted slope; predict does not learn the new traffic pattern.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "34da97d437face99a9183a061a02093860952ebe422b076e01da26242c885196"
+    },
+    {
+      "id": "ML-F05-3",
+      "lesson": "ML-F05",
+      "deck": "foundations",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "RMSE is in minutes. It is a summary, not a guarantee for every prediction.",
+      "codeTask": "Calculate residuals = actual minus predicted and store RMSE in answer. The result uses minutes, not squared minutes.",
+      "outputs": [
+        "residuals",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "93516eae51883bfbb10c89f00eea6ddee8d9b6bc3f55f9f6fe13c75658126c98"
+    },
+    {
+      "id": "ML-F06-2",
+      "lesson": "ML-F06",
+      "deck": "foundations",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Fitting can capture accidental patterns specific to the sample. New observations did not influence those fitted parameters, so their errors reveal a different question.",
+      "codeTask": "Both columns measure RMSE (smaller is better). Copy the supplied evidence into answer and add gap = validation minus training. Compare validation quality before using the gap as a diagnostic.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "26d05a62d79465433ba252df30ac978fb81555379c53bbabdbf3a67dacc90db6"
+    },
+    {
+      "id": "ML-F06-3",
+      "lesson": "ML-F06",
+      "deck": "foundations",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The gap suggests poor generalisation. Simplify or regularise using training validation; inspect writer differences and input quality. Keep writers disjoint if the intended use is new writers. Random image splitting may leak writer-specific information and overstate performance on unfamiliar writers.",
+      "codeTask": "Keep only evaluation rows whose writer was absent from the fitting writers. Store the rows in answer. This tests unfamiliar writers rather than familiar writers with new images.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "58e32f1ef90c2f21c8b015a207dbefa0fa3f8b7c6d3025b2453ff7f449070372"
+    },
+    {
+      "id": "ML-F08-2",
+      "lesson": "ML-F08",
+      "deck": "foundations",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Meaning decides the task. Binary and multiclass labels may be numeric codes without being measured quantities.",
+      "codeTask": "Count each acceptability code into answer. Keep the codes as category labels rather than averaging them as measured quantities.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "6098097fdaaaba1c699daa081212c22768bd57167436f416388f669fae1dbe1d"
+    },
+    {
+      "id": "ML-F08-3",
+      "lesson": "ML-F08",
+      "deck": "foundations",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Total care minutes supports a quantitative workload estimate and calls for regression, with historical care duration measured consistently. Department classification answers a different question; labels alone do not give the amount of care within each department. Confirm the planning horizon and which patient inputs are available at the scheduling time.",
+      "codeTask": "Sum care_minutes by department into answer. The named categories identify work types; the numeric outcome measures the staffing demand.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "5ab8426a5a47810760ae3aca7519588279adda841824e134d16424db04788191"
+    },
+    {
+      "id": "ML-F10-2",
+      "lesson": "ML-F10",
+      "deck": "foundations",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Arrival is only known after the event and directly reveals the outcome.",
+      "codeTask": "Select only columns flagged as known at dispatch. Store their names as a list in answer; completed duration is the later outcome.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "d5334dc015e5ae3263ce354a6e7b12380da6c0d061add575c2ce98d37a600491"
+    },
+    {
+      "id": "ML-F10-3",
+      "lesson": "ML-F10",
+      "deck": "foundations",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Island may be useful in this sampled geography but may not transfer to new islands or a different collection process. Strong validation within one context does not settle external usefulness.",
+      "codeTask": "Compute each island’s species proportions into answer. Compare the context mix before extending a classifier’s claim to a new island.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "pd.crosstab(..., normalize=\"index\")"
+      ],
+      "executableSHA256": "c3ae3a6c5ed34e8658cb0fb78c2ca459f646bce97cb52da2de38feb301262c29"
+    },
+    {
+      "id": "ML-W01-3",
+      "lesson": "ML-W01",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "value_counts describes the supplied training-label distribution. It cannot prove that deployment has the same mix or that the sample is representative. Request collection and sampling context, compare relevant independent evidence, and qualify the scope of the model rather than inspecting final rows to redesign it.",
+      "codeTask": "Compute outcome proportions separately for the two centres into answer. This describes the supplied samples, not future deployment performance.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "b19dc4530f9f6c9454b2e957bcefc0ccd4f73ecc9f9dcc56af0b7ed6988ec203"
+    },
+    {
+      "id": "ML-W02-3",
+      "lesson": "ML-W02",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "The majority reference can look strong on accuracy while having zero recall for the minority class.",
+      "codeTask": "Calculate accuracy in accuracy and minority recall in answer for the supplied always-majority predictions.",
+      "outputs": [
+        "accuracy",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0e167d39e8d8583dc287763a9ba122f607a6acffa81503df7cf37079b9aeb6c3"
+    },
+    {
+      "id": "ML-W04-3",
+      "lesson": "ML-W04",
+      "deck": "workflow",
+      "stage": "Practise",
+      "previousKind": "decision",
+      "originalReasoning": "Service categories have no implied metric order; weight is measured and weekend is already an indicator.",
+      "codeTask": "Create a named one-hot indicator table for service and store it in answer. Codes name services; they do not measure size.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "4fd8d7fe0beb23403d7c0c0ee667dba1d786992ef359399f239224dec1eef141"
+    },
+    {
+      "id": "ML-W08-2",
+      "lesson": "ML-W08",
+      "deck": "workflow",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Fold validation partitions the training population. Final-test rows stay outside all candidate fitting and selection.",
+      "codeTask": "Select only development rows into answer. Final-test rows cannot supply training-fold fitting or model selection evidence.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0f2774ec6bd39cbd63c65ee916fb9b4483e08b41f4d49cc255ed9f3c179a252a"
+    },
+    {
+      "id": "ML-W09-4",
+      "lesson": "ML-W09",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "It contains scores on each fold’s validation rows. Naming in the library does not change the role of the protected final test.",
+      "codeTask": "Convert the negative fold scores to positive RMSE values in answer and report their mean in mean_rmse. These are development-fold errors; reserved_rmse is separate final evidence.",
+      "outputs": [
+        "answer",
+        "mean_rmse"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "95d4b8bb0db64cfb521c0f8d5d3168b0f65730ead86c5928d708cfe62c4b3787"
+    },
+    {
+      "id": "ML-W10-2",
+      "lesson": "ML-W10",
+      "deck": "workflow",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "C has a large gap: very low training error but much worse validation error. These are supplied comparable experiments, not a request to tune an unfamiliar model.",
+      "codeTask": "Both columns measure RMSE (smaller is better). Copy the supplied evidence into answer and add gap = validation minus training. Compare validation quality before using the gap as a diagnostic.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "b199252c1df2e31bb3aaeebe080d2dab9e8766a8cf66cce899ccccb4fc891245"
+    },
+    {
+      "id": "ML-W10-3",
+      "lesson": "ML-W10",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "max_depth is a chosen hyperparameter; feature_importances_ is learned during fit. The setting limits complexity and the attribute summarises fitted split reductions. Generalisation to a new workshop needs appropriate validation and population evidence, not just these configuration or fitted-state values.",
+      "codeTask": "Read max_depth from the supplied fitted tree into depth and its feature importances into answer, labelled by feature name. Keep configuration separate from learned values.",
+      "outputs": [
+        "depth",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "bce5932e5e2314bbfd26f11cd6aeb144832d61aa972fdc447b9e09ad0088af16"
+    },
+    {
+      "id": "ML-W11-2",
+      "lesson": "ML-W11",
+      "deck": "workflow",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "B has mean 0.75 versus 0.70 for A. A search can nominate B and refit on training rows without using the final test.",
+      "codeTask": "Compute the mean validation score for each candidate in answer. Scores use a larger-is-better convention; do not use final-test evidence to choose.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "972be29a1755bcf8b8ed922f4bff77ab8549eb69ab7ac5be7070297c1aaaf863"
+    },
+    {
+      "id": "ML-W11-3",
+      "lesson": "ML-W11",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Keep the estimator’s sensible defaults and state that no parameter search is needed. Complete CV, reference comparison, diagnosis and final evaluation; do not introduce tree depth.",
+      "codeTask": "Evaluate the fixed linear recipe and dummy on the same three training folds. Store candidate fold scores in answer. No parameter grid is required for the intended defaults comparison.",
+      "outputs": [
+        "reference_scores",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "ea758e099ca80d6317114a609a1580dba4d3b4d15a9450e7ba1f464312dcbc3c"
+    },
+    {
+      "id": "ML-W13-3",
+      "lesson": "ML-W13",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "The rows have influenced selection. Further work is exploratory; resetting an interface does not erase what has been learned.",
+      "codeTask": "Select only development rows into answer. Final-test rows cannot supply training-fold fitting or model selection evidence.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0f2774ec6bd39cbd63c65ee916fb9b4483e08b41f4d49cc255ed9f3c179a252a"
+    },
+    {
+      "id": "ML-W14-4",
+      "lesson": "ML-W14",
+      "deck": "workflow",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "State the prediction horizon and whether those weather inputs are known or forecast then. Observed future weather is not automatically available for a real advance forecast.",
+      "codeTask": "Keep only measurements available at forecast time in answer. Actual later weather cannot silently stand in for a weather forecast.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "a5a7b9f8f1f71364a9fca95469a6af227965202016821e03e39cc16fc2a1693c"
+    },
+    {
+      "id": "ML-R01-3",
+      "lesson": "ML-R01",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "It is the predicted winpercent change per full unit of the supplied percentile scale, within this model and dataset context. It is not a causal effect of adding a gram of sugar.",
+      "codeTask": "The supplied slope is winpercent points per full sugarpercent unit (0 to 1). Calculate the fitted difference for a 0.1 increase in answer.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "9cb065d87f4dc5a9e716e9d9dc3349b4ae84edbf710b7e0fcd18f27213972e8d"
+    },
+    {
+      "id": "ML-R02-2",
+      "lesson": "ML-R02",
+      "deck": "regression",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Negative R² means worse squared error than the evaluation-mean reference; it does not prove an absence of relationship.",
+      "codeTask": "Compute R² for the supplied predictions in answer and the evaluation-mean squared error in reference_mse. A negative R² is worse than this evaluation reference.",
+      "outputs": [
+        "reference_mse",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8d509ffa7b527e243d79aec374fbf8bb00b2f80720abf5ac6e239873503df93e"
+    },
+    {
+      "id": "ML-R03-2",
+      "lesson": "ML-R03",
+      "deck": "regression",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "The pattern motivates another candidate, selected using training-only evidence.",
+      "codeTask": "Calculate residual = actual minus predicted, then average residuals within the supplied x regions into answer. The pattern can motivate a training-only model investigation.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "bf0a334a806b8bbc8ab812cb8421b627c91a623bb943f3d03b145d0db4604a6c"
+    },
+    {
+      "id": "ML-R03-3",
+      "lesson": "ML-R03",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "No. Countries differ in many ways; observational association and prediction do not identify an intervention effect. Extrapolating beyond the observed range adds another limitation.",
+      "codeTask": "Compute city-level mean income and life expectancy into answer. Preserve city as the observation unit; an aggregate association is not an individual intervention effect.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "3c2ef038c47e05e54c933a3576b812a35dec61efeb23e9cd752e74637586e2f0"
+    },
+    {
+      "id": "ML-R04-3",
+      "lesson": "ML-R04",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "It is the fitted sugar-percentile association with winpercent holding pricepercent fixed, subject to the dataset and model assumptions.",
+      "codeTask": "Use the supplied fitted coefficients to calculate the sugar contribution to a prediction difference in answer while price stays fixed.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "21464feea2b6f7865c2bb6296e2068f8af87ceacd11405202b16636114cc6310"
+    },
+    {
+      "id": "ML-R05-3",
+      "lesson": "ML-R05",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "No. It compares the encoded wine-type categories conditional on the included chemistry predictors and the chosen reference. It does not establish a causal type effect.",
+      "codeTask": "Within each fixed chemistry stratum, subtract red’s fitted score from white’s into answer. Do not replace this conditional comparison with an overall wine-type difference.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "cfe3c7d9d98c8ff7fe7b279cbc73b68557c3c4b9c147436904daff1478692716"
+    },
+    {
+      "id": "ML-R06-3",
+      "lesson": "ML-R06",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The two columns encode the same signal, making individual coefficients non-identifiable or unstable. Keep one unit representation or use a deliberately regularised model. Compare held-out training-fold predictions and errors on matching rows; a changed coefficient does not itself prove a changed predictive relationship.",
+      "codeTask": "Convert square feet back to square metres into converted. Remove the duplicate representation and store only area_m2 in answer.",
+      "outputs": [
+        "converted",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "85ebc07117d23d8fbd57bba2a0b2c84a58fc6f304b1b7f9ddb461e98ac567cc7"
+    },
+    {
+      "id": "ML-R08-4",
+      "lesson": "ML-R08",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The supplied evidence supports the line if predictive RMSE is the selection goal. Extra flexibility does not earn preference merely by fitting training data more closely.",
+      "codeTask": "Validation is RMSE (smaller is better). Create answer by sorting the matching-fold summaries best first. Keep training values alongside them.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "02535f3052343e9c34e5662b5afaca30261faa04108fc0e988032c6e0833872a"
+    },
+    {
+      "id": "ML-R10-3",
+      "lesson": "ML-R10",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Distance helped the fitted tree’s splits; the residuals suggest remaining structure. Importance is model- and sample-dependent and does not establish a causal effect.",
+      "codeTask": "Calculate held-away mean residuals by distance_band into answer, then add absolute_mean_residual. Compare these observation-level errors with the separately supplied feature_importance; importance does not erase prediction error or establish a causal effect.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8c8f176330aa89e1509c48965265910f4588af874a9695ce4ab8d43fbca0c9d4"
+    },
+    {
+      "id": "ML-R11-2",
+      "lesson": "ML-R11",
+      "deck": "regression",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "The evaluated model and inputs showed limited predictive evidence on this sample. Other relationships, features, data or model specifications could behave differently.",
+      "codeTask": "Calculate the mean absolute error by evaluated model into answer. These errors describe the supplied evaluation; they cannot establish that no possible relationship exists.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "c63e75a6a04cf8770ed4ada32d2110d667db3903380083372ce67126949ec6e9"
+    },
+    {
+      "id": "ML-R11-3",
+      "lesson": "ML-R11",
+      "deck": "regression",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The coefficient is a modelled association conditional on included features, not an individual causal guarantee. Confounding, measurement and population limits remain. A suitable intervention or defensible causal design would be needed for an effect claim; prediction validation alone cannot supply it.",
+      "codeTask": "Calculate the fitted prediction change for each study-time interval into answer using the supplied coefficient. These are model predictions, not guaranteed individual effects.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "b22b31e9c1b96955b849ff2f9fb95dfafc2a116bf4ea9a45d7d5d2e8f3e6fb84"
+    },
+    {
+      "id": "ML-C02-2",
+      "lesson": "ML-C02",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "A broader positive prediction set can improve recall while reducing precision.",
+      "codeTask": "For thresholds 0.3 and 0.7, count true positives and false positives. Store the two-row summary in answer, indexed by threshold. Use probability >= threshold for a positive prediction.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "81a9a8acce964949c5aeb3862f339ee2bd86a24c3b8ba4af1623edd22873d15b"
+    },
+    {
+      "id": "ML-C05-2",
+      "lesson": "ML-C05",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Holding other inputs fixed, increasing that feature increases the model’s log-odds for its positive class. It is not an unqualified causal effect or an additive probability change.",
+      "codeTask": "Compute the change in log-odds score for each one-unit increase in the scaled feature into answer, using the supplied positive fitted coefficient. Keep the other inputs fixed.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "c75d8072ce27e2d98620f967e296f949b29dabf4bb035db24543ba8890f945f2"
+    },
+    {
+      "id": "ML-C07-2",
+      "lesson": "ML-C07",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "More scores cross a lower threshold, changing the balance of errors.",
+      "codeTask": "For thresholds 0.3 and 0.7, count true positives and false positives. Store the two-row summary in answer, indexed by threshold. Use probability >= threshold for a positive prediction.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "81a9a8acce964949c5aeb3862f339ee2bd86a24c3b8ba4af1623edd22873d15b"
+    },
+    {
+      "id": "ML-C07-3",
+      "lesson": "ML-C07",
+      "deck": "classification",
+      "stage": "Practise",
+      "previousKind": "decision",
+      "originalReasoning": "The .3 choice meets the stated recall constraint, at the cost of lower supplied precision.",
+      "codeTask": "Keep only the training-validation thresholds satisfying recall >= 0.9 in answer. Preserve precision so the cost of the choice remains visible.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "c3c94bd425a20c545716e285681f43bec9e167b59b8ba66c87b7662f72e54c7f"
+    },
+    {
+      "id": "ML-C07-4",
+      "lesson": "ML-C07",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The threshold encodes a decision trade-off. Its justification depends on class definitions, costs, prevalence and validation evidence; it is not universally best.",
+      "codeTask": "Calculate missed-case cost plus false-alert cost for each training-validation threshold in answer. Each missed case costs 10 and each false alert costs 1.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "e8df6ec7ea87d388c2837949b22d2d923afd0f0081c5b53f7cea6ef0c226b7e9"
+    },
+    {
+      "id": "ML-C08-3",
+      "lesson": "ML-C08",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The configured KNN counts rows, so repeated measurements can dominate its local vote without supplying four independent sources of support. Keep measurements from each machine together when forming training and validation populations for new-machine evaluation; learn the scale within each training population. A majority label describes the configured vote, while reliable transfer to unfamiliar machines requires that appropriate evaluation.",
+      "codeTask": "Count neighbour rows and distinct machines per class into answer. Repeated rows do not supply the same independent-machine evidence as separate machines.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "agg(['count', 'nunique'])"
+      ],
+      "executableSHA256": "62cdc0a03b5b7ae7715f19d3863b6fb4611c326faf95c2fbc1c9bc9f05e016a2"
+    },
+    {
+      "id": "ML-C09-2",
+      "lesson": "ML-C09",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "That row could become its own neighbour, leaking evaluation information.",
+      "codeTask": "Remove the query case from the supplied fitting table into answer before fitting or learning a scale. Keep its row ID as the table index.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8ff45d39fe7496a664e2fd67c1ee4d904e99d54d3d2ea7bc033a2e8407bab276"
+    },
+    {
+      "id": "ML-C09-3",
+      "lesson": "ML-C09",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Distances can be dominated by irrelevant variation and become less informative about local similarity. Validate the chosen representation without selecting features on final-test rows.",
+      "codeTask": "Calculate squared signal distance in signal_distance and total squared distance including the weak feature in answer, relative to the query (0, 0). Compare which row is nearest.",
+      "outputs": [
+        "signal_distance",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "7058c10068730fe538c5d156279ab8c79f4f6969b3cfd4923fd30bbbe93aec08"
+    },
+    {
+      "id": "ML-C10-3",
+      "lesson": "ML-C10",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "They are decision scores. This production SVC has probability=False; probability estimation would be a different configuration.",
+      "codeTask": "Keep signed scores in a column named margin and class-B probabilities in probability_B. Store the renamed table in answer; do not convert margins to probabilities by relabelling them.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "72aef6b37bc211b94575fd1787732daf8c05b866d1af7eda39438eabffe67d99"
+    },
+    {
+      "id": "ML-C11-2",
+      "lesson": "ML-C11",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "More local influence can fit fine detail; validation must establish whether that flexibility transfers.",
+      "codeTask": "Both columns measure macro F1 (larger is better). Copy the supplied evidence into answer and add gap = validation minus training. Compare validation quality before using the gap as a diagnostic.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "74dee29ed420531257582e968295c3af4f0ace994f45e87d1f1d25e02c8b7d05"
+    },
+    {
+      "id": "ML-C11-3",
+      "lesson": "ML-C11",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The kernel depends on feature distances, so units matter. Runtime and data size constrain useful choices; a small score change may not justify substantially greater cost.",
+      "codeTask": "Validation records macro F1. Create answer by selecting candidates with validation >= 0.85 and prediction_ms <= 3. Retain the scaled flag so the representation used for each result is explicit.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8e570ad1d209a6d156f0b31f7b172160f4c27e1625e7520e2ce4c6187698dda1"
+    },
+    {
+      "id": "ML-C12-3",
+      "lesson": "ML-C12",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The selected one-feature rule may offer an interpretable description but limited predictive improvement. It cannot express interactions among several car attributes.",
+      "codeTask": "Calculate the paired One-R minus reference scores in answer and their mean in mean_gain. Use the matching folds, not the training accuracy.",
+      "outputs": [
+        "answer",
+        "mean_gain"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "473d0290f1ad5dbff937c908f6e5ce7aab4990e1d473bbea8af50fa4486e5a06"
+    },
+    {
+      "id": "ML-C14-2",
+      "lesson": "ML-C14",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Separating the classes produces pure children and reduces class mixing. A complete tree chooses and repeats such splits using training data.",
+      "codeTask": "For each proposed child node calculate Gini impurity in gini. Weight children by their row counts and sum within each split into answer. Lower weighted impurity means purer children.",
+      "outputs": [
+        "gini",
+        "answer"
+      ],
+      "newSyntax": [
+        "1 - p_A**2 - p_B**2"
+      ],
+      "executableSHA256": "7fcb709e9606150fba578dc8dce4743e44f1fdd22eb2519be4f98c153da402f2"
+    },
+    {
+      "id": "ML-C14-4",
+      "lesson": "ML-C14",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The gap suggests overfitting to investigate through training-only complexity selection. Safety importance describes this fitted tree’s impurity reductions; it is not proof of a causal effect.",
+      "codeTask": "Create answer from the supplied Car-tree evidence and add fit_gap = training_f1 minus validation_f1. Retain safety_importance; its size describes the fitted tree, not an intervention effect.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "42445776eda4fee212480a4285a5e104da36f301c4f7c7cefd983db907ea1e22"
+    },
+    {
+      "id": "ML-C15-2",
+      "lesson": "ML-C15",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Density has units and can exceed one. Probability is the area over a range and remains between zero and one.",
+      "codeTask": "Find the maximum density in peak_density. Approximate total probability by summing density × the supplied grid spacing into answer. A density height may exceed one while its area is about one.",
+      "outputs": [
+        "peak_density",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "de09b976c84a58b074b580b8c018df06a0da64a087a2c13c607a516b0fa3af96"
+    },
+    {
+      "id": "ML-C15-3",
+      "lesson": "ML-C15",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Conditional independence is an approximation. Correlated evidence can be effectively counted more than once, so probabilities may be overconfident even when classification is useful.",
+      "codeTask": "For these observations from class A, calculate the radius/perimeter correlation matrix in answer. The near-duplicate measurements challenge a conditional-independence interpretation; this correlation alone does not measure probability calibration.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "e78b6d873fe74f7f3338e9a1ec96029836e8af283b6a3d1f5c1fa9722d3ebf22"
+    },
+    {
+      "id": "ML-C16-2",
+      "lesson": "ML-C16",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "BernoulliNB models binary presence and absence evidence.",
+      "codeTask": "Use only the binary presence flags to fit BernoulliNB, then store the fitted probability of each flag within each class in answer. Leave the continuous measurement and named category outside this likelihood.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "np.exp(model.feature_log_prob_)"
+      ],
+      "executableSHA256": "71bd7817c25efc918cf59363dedb3f96af3305d5518ed2b7e876afaee2ade896"
+    },
+    {
+      "id": "ML-C16-4",
+      "lesson": "ML-C16",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "The production NB scenarios are pure-type paths. A valid mixed-likelihood design would require additional modelling work beyond the current workflow.",
+      "codeTask": "Select the three supported pure-type production recipes into answer. Preserve their preparation and estimator names; the mixed-type proposal needs likelihood handling outside the supported routes.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "542d84a4dcc1b3c8a42815cfc9ec3c40eae27cca0c4105cfed051d48251e334e"
+    },
+    {
+      "id": "ML-C18-2",
+      "lesson": "ML-C18",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "QDA permits class-specific covariance and therefore quadratic boundaries.",
+      "codeTask": "For the supplied labelled measurements, calculate the per-class variance of x into answer. Separate covariance models can represent different within-class spreads; LDA uses a pooled covariance.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "d693246052aaf93e9f4da100161078df1c091048f78471a06d5703e744861760"
+    },
+    {
+      "id": "ML-C18-4",
+      "lesson": "ML-C18",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "Production limits QDA to at most ten continuous features. More flexibility also demands sufficient data per class.",
+      "codeTask": "Select the supported QDA scenarios into answer using the supplied production-route table. A covariance calculation being possible does not make an unsupported 30-feature route available.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "60d61d39b6a10d75d46fec3a7a3a937e4c6a81fe5b2d3d0c3c9b7c3efebafc05"
+    },
+    {
+      "id": "ML-C19-2",
+      "lesson": "ML-C19",
+      "deck": "classification",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Unregularised Gaussian discriminants have useful transformation properties, but regularisation changes the covariance estimate relative to an identity target. Units can therefore change the effect of regularisation.",
+      "codeTask": "Calculate the regularised diagonal variances into answer: (1 - reg_param) × variance + reg_param. Compare this result in the supplied coordinate units.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "18a937cbec1f6d03a0b441dbc1351fb3b8f6c5bdd3e1b432f333c16b670abe39"
+    },
+    {
+      "id": "ML-C19-3",
+      "lesson": "ML-C19",
+      "deck": "classification",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "A class covariance can be singular or unstable with too few independent observations relative to dimensions. Consider a supported simpler family such as LDA or logistic regression, or a justified training-only representation, and compare using matched training folds. Regularisation choices must be supported by the implementation; do not invent unsupported Playground settings.",
+      "codeTask": "Calculate observations per feature into answer, indexed by class. Compare the rare class with the common classes before trying a separate covariance estimate on 40 correlated measurements.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "496d4593d542b067f462487b6b095b054495beb792a51e8cc42296a9e6209ef9"
+    },
+    {
+      "id": "ML-N01-2",
+      "lesson": "ML-N01",
+      "deck": "networks",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Neural regression returns a numeric target prediction for each supplied observation. Classification uses class-related outputs.",
+      "codeTask": "Construct an unfitted quantity network with one hidden layer of 8 units. Store its hidden_layer_sizes in answer; fitting a regressor will later learn one numeric target.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "MLPRegressor(hidden_layer_sizes=(8,))"
+      ],
+      "executableSHA256": "d69888bacf6c01198213503d44ea958056c527f938e711cd7086ca80b600841f"
+    },
+    {
+      "id": "ML-N01-3",
+      "lesson": "ML-N01",
+      "deck": "networks",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Concentration uses a regression output in the target units; material labels use classification outputs aligned to classes. Arbitrary numeric category codes do not imply meaningful distances or averages. Select MLPRegressor versus MLPClassifier from the question rather than the storage dtype.",
+      "codeTask": "Select the numeric concentration target into numeric_target and count the material categories into answer. A material code names a class rather than a measured output.",
+      "outputs": [
+        "numeric_target",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "7c2e2671df09ad40a70b9cf397c4f8a3ca116228fc1df9732786c476b2f8883e"
+    },
+    {
+      "id": "ML-N02-2",
+      "lesson": "ML-N02",
+      "deck": "networks",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Scaling can improve optimisation, but must be fitted within the relevant training boundary.",
+      "codeTask": "Transform the incoming observations using the supplied fitted scaler and store them in answer. Reuse its fitting statistics rather than learning new ones from incoming rows.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "06a666a2bbab419e42f5d500d51ed5c3bc81b85bb42fa9da8c2937ab62aa92b0"
+    },
+    {
+      "id": "ML-N02-3",
+      "lesson": "ML-N02",
+      "deck": "networks",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The optimiser is fitting training examples more closely while generalisation evidence worsens. This is consistent with overfitting; falling loss alone is insufficient.",
+      "codeTask": "Compute each metric’s change from its first budget into answer, with columns loss_change and error_rate_change. Compare directions within each metric; training loss and held-away classification error rate have different meanings.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "cc79ae1ba83fe1216ea7786722161a6f1d49bdafb1651b48631bf8c856ffeff6"
+    },
+    {
+      "id": "ML-N03-3",
+      "lesson": "ML-N03",
+      "deck": "networks",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Consider validation variation, convergence, cost and explanatory needs. Similar predictive evidence may favour the simpler stable option; there is no automatic neural-model preference.",
+      "codeTask": "Keep candidates with macro_f1 >= 0.8, prediction_ms <= 3 and zero convergence warnings into answer. This applies the stated constraints without claiming a universally best model.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "cafb6ff126e63704cd422f8b8f6fe6a41ebe4a43b8dc120c49239a157b07d294"
+    },
+    {
+      "id": "ML-N05-2",
+      "lesson": "ML-N05",
+      "deck": "networks",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "The trace supports improved optimisation, while validation checks whether it matters for the task.",
+      "codeTask": "Both loss and validation record log loss on their respective populations. Compute their changes between successive budgets into answer. The first row has no previous budget and should remain missing.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "DataFrame.diff()"
+      ],
+      "executableSHA256": "4d40cd6c9c6d3bfe3e96c7152271ebc6dc322dbace99aa619f981c7081200b87"
+    },
+    {
+      "id": "ML-N05-3",
+      "lesson": "ML-N05",
+      "deck": "networks",
+      "stage": "Practise",
+      "previousKind": "decision",
+      "originalReasoning": "Internal stopping controls a fit. Outer CV supports parameter selection. Final test is reserved for the nominated workflow.",
+      "codeTask": "Keep only the outer-fold validation records in answer for model nomination. Internal stopping and final-test scores have different roles.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "9d169537dff2e0a73ccd9204cd6402d77c3b22dfa80c92df05890e2adb33127c"
+    },
+    {
+      "id": "ML-N05-4",
+      "lesson": "ML-N05",
+      "deck": "networks",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "A random internal split can mix later observations into training used to validate earlier ones. The current chronological regression path disables early stopping and relies on explicit forward validation.",
+      "codeTask": "Select the earlier observations for fitting into answer using time <= 4. Keep the later observations out of any fitting subset, including a proposed internal stopping split.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0deda1e6836f28535410fa18660e3bcbf44cc0c142506150de19a4c974c3feb3"
+    },
+    {
+      "id": "ML-N06-2",
+      "lesson": "ML-N06",
+      "deck": "networks",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "The provided validation evidence does not show a gain. Runtime and stability also matter.",
+      "codeTask": "Both columns measure the same loss objective (smaller is better). Copy the supplied evidence into answer and add gap = validation minus training. Compare validation quality before using the gap as a diagnostic.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "fec0d75342c2990cec40a28b8bf14fe2803f374937fccb8aa5692aee79568085"
+    },
+    {
+      "id": "ML-N06-3",
+      "lesson": "ML-N06",
+      "deck": "networks",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "It compares those specified candidates under that validation design. It does not establish the globally best network, regularisation setting or architecture.",
+      "codeTask": "Validation is macro F1 (larger is better). Create answer by sorting the matching-fold summaries best first. Keep training values alongside them.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "5961d9eb392b3446f636b16a8285a5e855f122e21221f43b491d141b993e8ede"
+    },
+    {
+      "id": "ML-U01-2",
+      "lesson": "ML-U01",
+      "deck": "clustering",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "No target class defines a correct answer during fitting. A later comparison with an external reference may aid interpretation, but does not turn the fitting process into supervised prediction.",
+      "codeTask": "Create answer with just the two current customer measurements. Keep all rows and exclude the later cancellation label from label-independent discovery.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "89264dd0c741c1dae2eef3f002d9bee33594b28226bf040dfa008767f1f93c2d"
+    },
+    {
+      "id": "ML-U01-3",
+      "lesson": "ML-U01",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Segmentation fits similarities in X without y. Cancellation prediction requires a defined outcome, horizon and available inputs, with supervised validation. Cluster identifiers are arbitrary group names; interpreting them as risk probabilities needs separate outcome evidence and an appropriate prediction evaluation.",
+      "codeTask": "Create X with visits and spend for all customers. Separately create answer with the visits, spend and observed cancellation outcome only for labelled customers. Group discovery can use all X rows; evaluating cancellation prediction needs known outcomes.",
+      "outputs": [
+        "X",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "bf134f88aef0a16628a87b7162c5466cbeae93e6509a4abc4982e86764d4dee3"
+    },
+    {
+      "id": "ML-U02-3",
+      "lesson": "ML-U02",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "The fitting boundary changes with the goal. Predictive evaluation requires fold-local transformations.",
+      "codeTask": "Use the supplied scaler fitted on development rows to transform final rows into answer. Store the unchanged training mean in training_mean.",
+      "outputs": [
+        "answer",
+        "training_mean"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "e7f0b100f02644ffc211f669654e03f6e96c5698aedaf9e4185361eef33dc129"
+    },
+    {
+      "id": "ML-U04-4",
+      "lesson": "ML-U04",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "No. Explain the exploratory purpose, differences in size/profile and the trade-off. A defensible grouping need not maximise a single metric.",
+      "codeTask": "Choose selected_k as 2 or 3, then store its group profiles in answer, including original-unit sugar, price and group size. Inspect the small group instead of declaring a winner from the nearly tied silhouettes alone.",
+      "outputs": [
+        "selected_k",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0c29a63c83396a245f85c353bb2bc349f9f1dfc010c285218d95f5718d89eb89"
+    },
+    {
+      "id": "ML-U05-3",
+      "lesson": "ML-U05",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Renaming IDs does not alter group membership. The two measured axes omit other clustering features, so apparent overlap or separation in the picture is incomplete evidence.",
+      "codeTask": "Relabel group IDs using the supplied one-to-one mapping, then calculate original-unit mean length by the new group in answer. Group names do not change membership.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "7f8c4b58d48a4adf49f2a605d90141f57dcf9da1833fd304a5ee1957f8a32fe5"
+    },
+    {
+      "id": "ML-U06-2",
+      "lesson": "ML-U06",
+      "deck": "clustering",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "K-Means optimises squared distance to centroids, not the desired real-world definition of a group. Scale, shape and the selected k must be considered alongside scores.",
+      "codeTask": "Calculate the mean x and y for each supplied assignment into answer. The centroids summarise compact pieces of an elongated cloud; that alone does not prove natural classes.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0cb4f2e2a2335169eef6403d4d9669e91aaaeb9cc4bd56f36064578018f5d081"
+    },
+    {
+      "id": "ML-U06-3",
+      "lesson": "ML-U06",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "K-Means approximates distance geometry with compact regions and can divide a continuum. Inspect original-unit profiles, sizes, stability and the business purpose. Silhouette or inertia supports a geometric comparison; it does not establish that a unique set of natural customer categories exists.",
+      "codeTask": "Calculate size and original-unit spending range for each supplied group into answer. Use the profiles to inspect the chosen resolution along a continuum.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "c7c42316ce17c798ed1ab23fe544338e9514182b029812a49d8207b2c6ddf88b"
+    },
+    {
+      "id": "ML-U07-3",
+      "lesson": "ML-U07",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "It measures the merge according to Ward geometry. It is not a class probability or proof of true groups.",
+      "codeTask": "Read each Ward merge’s distance and observation count from the supplied linkage matrix into answer. The final merge combines all sampled observations.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "linkage_matrix[:, 2:]"
+      ],
+      "executableSHA256": "43d36b56ad41f2d516923eae527460cdf9d126d4f72685f248fbf02f5e550a3d"
+    },
+    {
+      "id": "ML-U08-3",
+      "lesson": "ML-U08",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "State its group sizes, original-unit profiles, relevant separation evidence and usefulness for the exploratory question. A cut is a descriptive choice, not a discovered label truth.",
+      "codeTask": "Use the supplied three-group cut to calculate count and mean length by group into answer. Keep the sample’s observation units in the summary.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "62ebb1b72a45a631c3a06176db88897990dd936eeac4c37bc4661ca2cd1e7c48"
+    },
+    {
+      "id": "ML-U09-3",
+      "lesson": "ML-U09",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Compare on the same sampled population and feature representation, or explicitly describe the different populations and why direct profile differences are not solely algorithm differences.",
+      "codeTask": "Align the two sets of group assignments on their shared sampled row IDs in answer. Preserve both named assignment columns; do not compare different observation populations.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "f8dcaed155c2d24de9732a4efebda75e0b42a33afce9fdcac5b6d5596c687dac"
+    },
+    {
+      "id": "ML-U10-2",
+      "lesson": "ML-U10",
+      "deck": "clustering",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "For these sampled observations and scaled measurements, the chosen Ward cut yields groups with the reported profiles. Other measurements, samples or cuts may support different useful descriptions.",
+      "codeTask": "Select sampled rows, then calculate their group counts and mean length into answer. Store the number of unsampled rows in outside_count; do not assign them these sample labels.",
+      "outputs": [
+        "answer",
+        "outside_count"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "54c4bf7438d944bc49db76982965dd6fd9fc53c879f13e2885e66c77e57fa48c"
+    },
+    {
+      "id": "ML-U10-3",
+      "lesson": "ML-U10",
+      "deck": "clustering",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "The hierarchy describes the sampled urban shops under the chosen features, scaling and cut. It does not automatically assign or validate rural shops. Seek representative rural measurements, compare their distributions and assess whether a comparable grouping is useful before generalising the claim.",
+      "codeTask": "Calculate group counts and mean sales for the fitted urban shops in answer. Store the unassigned rural observations in further_rows with their shop IDs and sales. Keep those rural rows outside the fitted group profiles.",
+      "outputs": [
+        "answer",
+        "further_rows"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "377fb8481eb9ed4934fde11435ba8327dfb718c1cc5fd8d67d8947948ef4753b"
+    },
+    {
+      "id": "ML-P01-2",
+      "lesson": "ML-P01",
+      "deck": "pca",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Compression asks for a lower-dimensional representation preserving variation. Clustering asks for assignments or a hierarchy that describes similarity. PCA does not itself produce groups.",
+      "codeTask": "Transform the two measured columns with the supplied fitted PCA into answer. These are weighted component coordinates, not selected original columns or group IDs. Reuse the supplied axes without fitting again.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "pca.transform(df)"
+      ],
+      "executableSHA256": "51ced752f64548bb3ccbe854ba75da6b6dc66054857717e944c957213624e394"
+    },
+    {
+      "id": "ML-P01-3",
+      "lesson": "ML-P01",
+      "deck": "pca",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Shape alone cannot distinguish selected measurements from learned component coordinates. PCA fits axes using the chosen measurements and projects rows onto those axes. Verify that the stored columns were produced by the fitted PCA transform, rather than by slicing two original columns.",
+      "codeTask": "Compress all three sensors into two component coordinates in answer, using the supplied fitted PCA without refitting. Compare these coordinates with the first two original sensor columns in same_as_slice; their shared two-column shape does not make their meanings identical.",
+      "outputs": [
+        "answer",
+        "same_as_slice"
+      ],
+      "newSyntax": [
+        "np.allclose(left, right)"
+      ],
+      "executableSHA256": "015492266c3f489ba8f0b6079325fa936e34d207448a88ac5cafea4a67a885ae"
+    },
+    {
+      "id": "ML-P03-3",
+      "lesson": "ML-P03",
+      "deck": "pca",
+      "stage": "Transfer",
+      "previousKind": "decision",
+      "originalReasoning": "Variance retention describes the input representation, not prediction correctness.",
+      "codeTask": "Calculate the cumulative explained variance into answer and store the first two components’ total in shown_variance. No classification outcomes are supplied.",
+      "outputs": [
+        "answer",
+        "shown_variance"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "3847c9956780a68e339a741d40e45120398c6cb2716ed375262a1f46c0022917"
+    },
+    {
+      "id": "ML-P05-2",
+      "lesson": "ML-P05",
+      "deck": "pca",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "The axis points in the opposite direction. Distances, variance and the represented information remain equivalent.",
+      "codeTask": "Flip PC1 scores and PC1 weights together. Calculate the PC1 contribution before and after the flip into answer as two columns; they should be identical.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "411e0adda90bbd26fde9ad7d8ce84d48d5fba69e0f0670af118709b1979a00a6"
+    },
+    {
+      "id": "ML-P06-3",
+      "lesson": "ML-P06",
+      "deck": "pca",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "It can help describe how the reference labels relate to the projection. It does not establish supervised accuracy, causal axes, complete separation in all dimensions or a label-independent choice if labels were used to select the representation.",
+      "codeTask": "Join the supplied fixed component coordinates with external labels by row ID into answer. Keep the two PC columns first. Labels are added after the representation was fitted.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "DataFrame.join(external_labels)"
+      ],
+      "executableSHA256": "ad26d74f3595676a6a698daa3bea3463055f364c6701ff40f8efd67ddd04f5dd"
+    },
+    {
+      "id": "ML-P07-4",
+      "lesson": "ML-P07",
+      "deck": "pca",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "PCA describes variance combinations. Naming can be a useful interpretation, but causal claims require evidence beyond a variance decomposition.",
+      "codeTask": "List the three largest absolute weights of the supplied component into answer, preserving feature names and signed weights. They describe a fitted direction, not proven causal factors.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "74be74e40f8052af3c6368867ceb4add40e788052b80a9fbcb039e2c91e35308"
+    },
+    {
+      "id": "ML-M01-2",
+      "lesson": "ML-M01",
+      "deck": "comparison",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Consider linear/logistic models with appropriate encoding, simple rules or trees where compatible; assess task type, flexibility and assumptions. More complex candidates need validation and cost justification. More than one shortlist can be defensible.",
+      "codeTask": "Keep simple supported candidates that handle the mixed inputs and meet the stated prediction budget of 2 ms in answer. Preserve their preparation requirements.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "7d1d506809c430c3dd3bc1d9ddf144c43bc02cca72d380d4f0f302e73fded0a3"
+    },
+    {
+      "id": "ML-M01-3",
+      "lesson": "ML-M01",
+      "deck": "comparison",
+      "stage": "Practise",
+      "previousKind": "decision",
+      "originalReasoning": "Both are exploratory. K-Means uses centroids; hierarchical clustering exposes a hierarchy that can be cut at several resolutions.",
+      "codeTask": "Count distinct group IDs for each method into answer. A fixed K-Means partition and a cut of a hierarchy both need row-aligned assignments; this count describes their chosen resolutions.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "6fa499df43ee79dc945fde005436b5c0b930039ac59887e22c7a5c6a5e54e988"
+    },
+    {
+      "id": "ML-M01-4",
+      "lesson": "ML-M01",
+      "deck": "comparison",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Clarify whether it needs groups, a hierarchy or fewer numeric dimensions, which population/features matter, and what interpretation will be useful. A prediction goal additionally needs a defined target.",
+      "codeTask": "Select the briefs requiring historical prediction outcomes into answer. Keep the requested artifact column to distinguish numeric forecasts from grouping and compression.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8a0302477a361e62b1bdb1bf6ce267e543d82ee9a828145dd09d958f7866a206"
+    },
+    {
+      "id": "ML-M02-2",
+      "lesson": "ML-M02",
+      "deck": "comparison",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "Validation design changed with the model, so score differences do not isolate model-family performance.",
+      "codeTask": "Keep only the forward-fold records in answer. A model comparison for later demand must use the same chronological evaluation design.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "e1f8772b6247989d098a8779ddf2714a3e7d65afb262ca8437c0e1fbba32fbe3"
+    },
+    {
+      "id": "ML-M02-3",
+      "lesson": "ML-M02",
+      "deck": "comparison",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "State the common evaluation design, size/variation of the score difference and relevant practical constraints. Nominate from training evidence, then reserve the final test for that chosen workflow.",
+      "codeTask": "Keep candidates meeting the 2 ms prediction budget in answer and add gain_vs_dummy = 9.0 minus validation_rmse. Selection uses training-fold evidence and the stated constraint.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "721954a35d1c049a6f4205b12db1a859c242a860b18d042e010ae66acc1f403d"
+    },
+    {
+      "id": "ML-M03-2",
+      "lesson": "ML-M03",
+      "deck": "comparison",
+      "stage": "Change",
+      "previousKind": "decision",
+      "originalReasoning": "The supplied linear mean is 4.2 hours versus the dummy's 4.4. That is a 0.2-hour descriptive gain on matching development folds, not a causal claim or a final evaluation.",
+      "codeTask": "Calculate each candidate’s descriptive gain in mean RMSE over the dummy into answer, indexed by model. Use hours. The supplied fold standard deviations cannot establish uncertainty about the paired improvement.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "2897b2276b663922a465802c48c23fc608e9f12f224eb074807946bfa1c34a95"
+    },
+    {
+      "id": "ML-M03-3",
+      "lesson": "ML-M03",
+      "deck": "comparison",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "On the same five development folds for repair jobs at this workshop, illustrative mean RMSE is 4.4 hours for the training-mean dummy, 4.2 for linear and 4.3 for the tree. Linear improves the mean by 0.2 hours (12 minutes), while the tree improves it by 0.1 hours. The fold standard deviations of 0.7, 0.6 and 0.8 hours describe variation, not confidence intervals or a test of the paired improvement. Without paired fold scores, these summaries do not establish a reliable winner. A simpler linear workflow could be nominated provisionally on development evidence and practical cost; then fix the recipe and evaluate it once on the 20 reserved jobs. No final-test result, causal effect, absence of a relationship or transfer to another workshop has been established.",
+      "codeTask": "Create answer retaining all report columns, then add gain_minutes over the dummy and fold_sd_minutes. Read development_rows and reserved_rows from study_size. Keep variation and descriptive gains separate; no paired confidence interval or final-test result can be calculated from these summaries.",
+      "outputs": [
+        "answer",
+        "development_rows",
+        "reserved_rows"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "7b7fbfd5ba00208133cd7d3c48213a4e99e86a6aac6a26df806caebcb07fb9a1"
+    },
+    {
+      "id": "ML-M04-2",
+      "lesson": "ML-M04",
+      "deck": "comparison",
+      "stage": "Change",
+      "previousKind": "reflection",
+      "originalReasoning": "Check variable definitions and availability, population differences, grouped or external validation, error distribution and relevant costs. The original held-out split does not establish performance everywhere.",
+      "codeTask": "Compute observed mean absolute error separately by institution into answer. Check the intended institution’s evidence before making a transport claim.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "010067191cecaf64aa925ad5ba25b8569028aeaa0427ff05281dbb837f4f3c6d"
+    },
+    {
+      "id": "ML-M04-3",
+      "lesson": "ML-M04",
+      "deck": "comparison",
+      "stage": "Transfer",
+      "previousKind": "reflection",
+      "originalReasoning": "Selection into the observed customer sample and a changed policy can alter both input distributions and outcome relationships. Rejected applicants may lack observed outcomes. Establish the intended population, measurement availability and a defensible data-collection/evaluation design; a familiar feature schema does not establish transportability.",
+      "codeTask": "Count observed outcomes by the earlier policy decision into answer. Report missing outcomes in missing_count. The rejected group needs outcome evidence before its performance can be evaluated.",
+      "outputs": [
+        "answer",
+        "missing_count"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "1a9658a30aa8de761529776505a4bb2d9dc0dc73e637f1d11d1480155cb39ec9"
+    },
+    {
+      "id": "ML-F-R2-3",
+      "lesson": "ML-F-R2",
+      "deck": "foundations",
+      "stage": "Retrieval 3",
+      "previousKind": "reflection",
+      "originalReasoning": "B has the lower validation RMSE, 4.5 versus 7.2, despite its larger training-validation gap. The gap describes deterioration from fitting to validation; it is not the selection metric by itself. Judge fit quality, generalisation and sample uncertainty together on comparable held-away rows.",
+      "codeTask": "Both columns measure RMSE (smaller is better). Copy the supplied evidence into answer and add gap = validation minus training. Compare validation quality before using the gap as a diagnostic.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "23a1c16c4a1cb3d1095832fa3f50cac47f61202e2b10d4fe02f15511d74f5eb4"
+    },
+    {
+      "id": "ML-W-R2-1",
+      "lesson": "ML-W-R2",
+      "deck": "workflow",
+      "stage": "Retrieval 1",
+      "previousKind": "decision",
+      "originalReasoning": "Negated scoring makes larger values better; report the observed mean fold RMSE as positive 4. The separate reserved result evaluates the fixed recipe and must not drive another parameter choice.",
+      "codeTask": "Convert the negative fold scores to positive RMSE values in answer and report their mean in mean_rmse. These are development-fold errors; reserved_rmse is separate final evidence.",
+      "outputs": [
+        "answer",
+        "mean_rmse"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "95d4b8bb0db64cfb521c0f8d5d3168b0f65730ead86c5928d708cfe62c4b3787"
+    },
+    {
+      "id": "ML-W-R2-2",
+      "lesson": "ML-W-R2",
+      "deck": "workflow",
+      "stage": "Retrieval 2",
+      "previousKind": "decision",
+      "originalReasoning": "The means are 4.00 and 3.96 on paired folds, a small difference relative to the fold variation. The result does not establish universal superiority. The exposed reserved result cannot be used while still calling it untouched final evidence.",
+      "codeTask": "Compute paired costly-minus-simple RMSE differences in answer and the two means in mean_rmse. Use matching training folds; the exposed reserved score cannot select the candidate.",
+      "outputs": [
+        "answer",
+        "mean_rmse"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0b200eea5d6177c7066aa98415070c55da0db01c3b556a117f41ae660cb1ea80"
+    },
+    {
+      "id": "ML-R-R1-3",
+      "lesson": "ML-R-R1",
+      "deck": "regression",
+      "stage": "Retrieval 3",
+      "previousKind": "reflection",
+      "originalReasoning": "City averages can be associated because of many contextual differences. The fitted city-level coefficient neither identifies a causal intervention effect nor establishes an individual-level effect.",
+      "codeTask": "Compute city-level mean income and life expectancy into answer. Preserve city as the observation unit; an aggregate association is not an individual intervention effect.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "3c2ef038c47e05e54c933a3576b812a35dec61efeb23e9cd752e74637586e2f0"
+    },
+    {
+      "id": "ML-C-R2-1",
+      "lesson": "ML-C-R2",
+      "deck": "classification",
+      "stage": "Retrieval 1",
+      "previousKind": "decision",
+      "originalReasoning": "Both the fitted neighbour population and the learned scale must exclude that validation case. Removing a self-match from a report after fitting leaves the original leakage in place.",
+      "codeTask": "Remove the query case from the supplied fitting table into answer before fitting or learning a scale. Keep its row ID as the table index.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8ff45d39fe7496a664e2fd67c1ee4d904e99d54d3d2ea7bc033a2e8407bab276"
+    },
+    {
+      "id": "ML-C-R2-2",
+      "lesson": "ML-C-R2",
+      "deck": "classification",
+      "stage": "Retrieval 2",
+      "previousKind": "decision",
+      "originalReasoning": "A signed decision score is not a probability, as its range already shows. predict_proba has class-aligned probability semantics, while predictive performance alone does not establish the reliability of probability estimates.",
+      "codeTask": "Keep signed scores in a column named margin and class-B probabilities in probability_B. Store the renamed table in answer; do not convert margins to probabilities by relabelling them.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "72aef6b37bc211b94575fd1787732daf8c05b866d1af7eda39438eabffe67d99"
+    },
+    {
+      "id": "ML-C-R3-1",
+      "lesson": "ML-C-R3",
+      "deck": "classification",
+      "stage": "Retrieval 1",
+      "previousKind": "decision",
+      "originalReasoning": "Continuous measurements, binary evidence and encoded categories require their respective supported paths. Combining unlike likelihood meanings without a separate modelling design is unsupported.",
+      "codeTask": "Use the declared feature kinds to select only the binary flags in answer. Preserve row order and named columns for a Bernoulli recipe.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "c4615cecaa89fb4dfd71754fc02687543b2d263f7270cce84e52f3ad0460b3cf"
+    },
+    {
+      "id": "ML-C-R3-2",
+      "lesson": "ML-C-R3",
+      "deck": "classification",
+      "stage": "Retrieval 2",
+      "previousKind": "decision",
+      "originalReasoning": "Different class shapes motivate QDA when class-specific covariance has support. A rare class with fewer observations than correlated dimensions gives unstable shape estimates; a supported simpler family is a sensible training-only experiment, with no automatic winner.",
+      "codeTask": "Compute observations per feature into answer for each supplied class. Keep the class labels. Small support relative to dimensionality warns that class-specific covariance estimates may be unstable.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "f0a659523f10c15c85920e49032f9231585a53e8b8923b0aadc14bb5ccc2d423"
+    },
+    {
+      "id": "ML-C-R3-3",
+      "lesson": "ML-C-R3",
+      "deck": "classification",
+      "stage": "Retrieval 3",
+      "previousKind": "reflection",
+      "originalReasoning": "Depth 3 has the best supplied validation score despite a lower training fit, so it is the evidence-supported nomination among these candidates. Queue-length importance describes impurity reductions in this fitted tree and can share credit with correlated inputs; it does not establish an intervention effect. Fit the fixed chosen recipe on training rows before one final evaluation.",
+      "codeTask": "Validation is macro F1 (larger is better). Create answer by sorting the matching-fold summaries best first. Keep training values alongside them.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "dfbfcfc4a97d5fa89778d0ec2dbb8fdb088b74a06190054bbcc38de409a4693f"
+    },
+    {
+      "id": "ML-N-R1-1",
+      "lesson": "ML-N-R1",
+      "deck": "networks",
+      "stage": "Retrieval 1",
+      "previousKind": "decision",
+      "originalReasoning": "The tuple lists only hidden-layer widths. Classification output classes follow the fitted material labels; numeric category codes do not turn those labels into a regression quantity.",
+      "codeTask": "Construct the unfitted four-class-task network with hidden widths 16 then 8. Store its hidden_layer_sizes in answer; the number of output classes is learned from labels during fit.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "fda918154183645d8fd704fd5ffdd26119ea0ea31004fb61bfaee8b00ab614e6"
+    },
+    {
+      "id": "ML-N-R1-2",
+      "lesson": "ML-N-R1",
+      "deck": "networks",
+      "stage": "Retrieval 2",
+      "previousKind": "reflection",
+      "originalReasoning": "A improves both the training objective and validation evidence, so testing a larger budget on the same training validation design is defensible while inspecting convergence. B fits training rows more closely as validation error worsens, so more iterations alone have no supplied generalisation support; test an earlier stopping budget or smaller architecture on training evidence. Neither trend authorises selecting from final-test errors.",
+      "codeTask": "For each run, calculate successive changes in loss and validation error into answer. Preserve the budget order and initial missing changes for each run.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0276ebc3e162d2d766bb4ca9e0608cc6d9343bd51c31b753287807c509976547"
+    },
+    {
+      "id": "ML-N-R1-3",
+      "lesson": "ML-N-R1",
+      "deck": "networks",
+      "stage": "Retrieval 3",
+      "previousKind": "decision",
+      "originalReasoning": "Stopping, candidate nomination and final reporting answer different questions. A disappointing final result can qualify the report, but reusing it to tune turns that population into development data.",
+      "codeTask": "Keep only the outer-fold validation records in answer for model nomination. Internal stopping and final-test scores have different roles.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "9d169537dff2e0a73ccd9204cd6402d77c3b22dfa80c92df05890e2adb33127c"
+    },
+    {
+      "id": "ML-U-R1-1",
+      "lesson": "ML-U-R1",
+      "deck": "clustering",
+      "stage": "Retrieval 1",
+      "previousKind": "reflection",
+      "originalReasoning": "Fitting omitted species, but selection of k still used that reference label. Select a grouping from measurement geometry, profiles and exploratory purpose before inspecting species. A later descriptive comparison with species can inform interpretation without becoming the fitting or selection objective.",
+      "codeTask": "Select measurements only into answer. Leave species out of both fitting and choice of group count; an external comparison comes after the grouping is fixed.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "b70f398504458a4d2e9fb26b0eec8f0511321ad26df10748049114a6513dc804"
+    },
+    {
+      "id": "ML-U-R1-2",
+      "lesson": "ML-U-R1",
+      "deck": "clustering",
+      "stage": "Retrieval 2",
+      "previousKind": "reflection",
+      "originalReasoning": "The pricing team may prefer k=2 for broad stable tiers; the reformulation team may prefer k=3 to inspect the four unusual sugar profiles. The small silhouette difference does not settle both purposes. Check original-unit profiles and the stability and adequacy of the four observations before naming a persistent category.",
+      "codeTask": "Choose selected_k as 2 or 3, then store its group profiles in answer, including original-unit sugar, price and group size. Inspect the small group instead of declaring a winner from the nearly tied silhouettes alone.",
+      "outputs": [
+        "selected_k",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "0c29a63c83396a245f85c353bb2bc349f9f1dfc010c285218d95f5718d89eb89"
+    },
+    {
+      "id": "ML-U-R2-1",
+      "lesson": "ML-U-R2",
+      "deck": "clustering",
+      "stage": "Retrieval 1",
+      "previousKind": "reflection",
+      "originalReasoning": "The numeric unit change changes the relative feature contribution to raw distance and can change merges, not just the label. The merge-height magnitudes also use different coordinate scales. Use consistent units and a common scientifically justified representation before comparing algorithms or cuts; standardisation can make this declared unit conversion equivalent.",
+      "codeTask": "Standardise each of the two equivalent unit representations using its declared discovery population. Store them in scaled_mm and answer. Verify that the prepared geometry agrees.",
+      "outputs": [
+        "scaled_mm",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "6646f24829298e243e4e4f8e44d142612d13a25da8d23a4a3ddbec529e8b682a"
+    },
+    {
+      "id": "ML-U-R2-3",
+      "lesson": "ML-U-R2",
+      "deck": "clustering",
+      "stage": "Retrieval 3",
+      "previousKind": "reflection",
+      "originalReasoning": "The unsampled items received no hierarchy assignments; three types are a chosen cut rather than established natural classes; length and width do not measure quality, and group 0 is an arbitrary identifier. Describe the sampled rows under the stated scaled geometry and cut, report their measured profiles, and seek wider representative measurements and relevant quality evidence before making population or quality claims.",
+      "codeTask": "Select sampled rows, then calculate their group counts and mean length into answer. Store the number of unsampled rows in outside_count; do not assign them these sample labels.",
+      "outputs": [
+        "answer",
+        "outside_count"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "54c4bf7438d944bc49db76982965dd6fd9fc53c879f13e2885e66c77e57fa48c"
+    },
+    {
+      "id": "ML-P-R1-3",
+      "lesson": "ML-P-R1",
+      "deck": "pca",
+      "stage": "Retrieval 3",
+      "previousKind": "reflection",
+      "originalReasoning": "Only A kept the reference out of representation selection. B used it to select a view, so its apparent separation is selected evidence. Neither supplies held-out predictive evaluation, proves class recovery in omitted dimensions, or identifies causal factors. If prediction is the goal, selection must occur within an appropriate supervised validation design.",
+      "codeTask": "Join the supplied fixed component coordinates with external labels by row ID into answer. Keep the two PC columns first. Labels are added after the representation was fitted.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [
+        "DataFrame.join(external_labels)"
+      ],
+      "executableSHA256": "ad26d74f3595676a6a698daa3bea3463055f364c6701ff40f8efd67ddd04f5dd"
+    },
+    {
+      "id": "ML-M-R1-1",
+      "lesson": "ML-M-R1",
+      "deck": "comparison",
+      "stage": "Retrieval 1",
+      "previousKind": "reflection",
+      "originalReasoning": "Repair forecasting returns numeric predictions and errors in hours and needs historical durations. Nested discovery returns a linkage/hierarchy with qualified group profiles; compression returns PCA coordinates with retention evidence. The latter two do not need a prediction target. Their geometrical and retention summaries are not supervised accuracy scores and cannot be ranked on a common accuracy leaderboard.",
+      "codeTask": "Select the briefs requiring historical prediction outcomes into answer. Keep the requested artifact column to distinguish numeric forecasts from grouping and compression.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "8a0302477a361e62b1bdb1bf6ce267e543d82ee9a828145dd09d958f7866a206"
+    },
+    {
+      "id": "ML-M-R1-2",
+      "lesson": "ML-M-R1",
+      "deck": "comparison",
+      "stage": "Retrieval 2",
+      "previousKind": "reflection",
+      "originalReasoning": "Both candidates need matching folds that keep every visit from one patient on the same side. Reserve final patients before selection and fit preparation inside each training fold. Re-evaluate both models under that common unseen-patient design. The existing gap combines a model change with a leakage/validation-design change and cannot isolate estimator quality.",
+      "codeTask": "Keep only the held-away patient’s visits in answer, and all other patients in fitting_rows. Use a whole-patient boundary when the goal is unfamiliar patients.",
+      "outputs": [
+        "fitting_rows",
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "b0c355c064c45477ff27be4b9f92a6e28ce856de7d2f9ef2b3a674635e02f864"
+    },
+    {
+      "id": "ML-M-R1-3",
+      "lesson": "ML-M-R1",
+      "deck": "comparison",
+      "stage": "Retrieval 3",
+      "previousKind": "reflection",
+      "originalReasoning": "The line meets the 2 ms constraint; the tree as measured does not. The line’s mean validation RMSE is 2.8 hours below the dummy. Tree-versus-line differences are small and not consistent on every fold, so do not claim universal superiority. Nominate the line from this training evidence and practical constraint, freeze its recipe, then evaluate reserved rows once. Validation variation and future population changes still limit the claim.",
+      "codeTask": "Keep candidates meeting the 2 ms prediction budget in answer and add gain_vs_dummy = 9.0 minus validation_rmse. Selection uses training-fold evidence and the stated constraint.",
+      "outputs": [
+        "answer"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "721954a35d1c049a6f4205b12db1a859c242a860b18d042e010ae66acc1f403d"
+    },
+    {
+      "id": "ML-M-K1-1",
+      "lesson": "ML-M-K1",
+      "deck": "comparison",
+      "stage": "Readiness",
+      "previousKind": "reflection",
+      "originalReasoning": "Wine: small CV difference does not establish universal superiority; consider uncertainty and cost. Penguins: accuracy hides minority errors; inspect macro F1 and per-class evidence. K-Means: either k may be defensible if supported by purpose and profiles. Ward: labels and profiles describe sampled rows only. PCA: the 2D view is distinct from the seven-axis retained representation. None of these establishes causal effects.",
+      "codeTask": "Build five numeric audit outputs from the supplied evidence: candidate RMSE difference, minority misses, cluster-size proportions, unsampled row count and total variance retained in axes beyond the two-axis display. Preserve the names in the starter.",
+      "outputs": [
+        "rmse_difference",
+        "minority_missed",
+        "group_proportions",
+        "unsampled",
+        "omitted_from_display"
+      ],
+      "newSyntax": [],
+      "executableSHA256": "11f0c491ba72950c62fb3d7d103e1de36f457f1789230f41b65f2963d36b2659"
+    }
+  ]
+}

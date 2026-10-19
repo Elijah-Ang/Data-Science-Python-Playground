@@ -1,0 +1,93 @@
+{
+  "baseline": "64c2909bf144fb6e416782eb83fecac563dce0cb",
+  "buildContentId": "7def961f5f3c944711d538793e8b5378baa504152910cb53ea53125cd02daafd",
+  "sourceSHA256": {
+    "foundations/app.js": "8942aa86494bdb97067a6bbb4ced995bd81dd1e341bcacd7b9408e1e9542a9e8",
+    "foundations/visuals.js": "e91e85da2b6e01a20704e2d9a8859d3f4588f4f29018bc58aec9aef22e8642c0",
+    "foundations/operation-visuals.js": "3ecc6b7302870928ffcdbe89792e3fb357780c8b4b9745aca6f9ed2299881c82",
+    "ml-learning/visuals.js": "3d95ad47fac7f9c4087f2f35612a4212c1000cd2db812bc2ce56518b597ea67b",
+    "ml-learning/curriculum_coherence.py": "87fdb12eec1a94bbc4c8f9f17831a8081229aa7b7c6f67ad824a6f813f59cbe9",
+    "ml-learning/visual_progression.py": "831834e835b6bc6f6f6fddc1e77e90c7df0a2434e114d6e10ccb921b327a8789"
+  },
+  "rendered": {
+    "activities": 676,
+    "views": 4056,
+    "widths": [
+      1440,
+      390,
+      320
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "activeControlContexts": 92,
+    "controlStatesPerLayout": 231,
+    "interactiveStates": 1386,
+    "issues": 0,
+    "pageErrors": 0
+  },
+  "native": {
+    "controlRegistriesWithDistinctPythonASTs": 97,
+    "codeStates": 251,
+    "pandasOperationLessons": 47,
+    "pandasOperationStates": 106,
+    "SVGAndNativeArtistStates": 15,
+    "statisticalScenes": 26,
+    "displayedStatisticalPythonStates": 25,
+    "mlFocusedOperationStates": 26,
+    "modelFamilyStates": 21,
+    "checks": 6,
+    "receipt": "native-checks.json"
+  },
+  "additionalBrowserChecks": {
+    "visualiseInitialRoutes": 37,
+    "visualiseViews": 148,
+    "visualiseStates": 176,
+    "mlConcepts": 85,
+    "mlThumbnails": 110,
+    "mlCaptures": 280,
+    "mlFittedPythonFigures": 4,
+    "catalogViews": 324,
+    "editorAndScrollingReceipt": "responsive.json",
+    "previewReceipt": "preview.json"
+  },
+  "commands": [
+    "npm run check",
+    "node tests/test_teaching_visual_interactions.mjs",
+    "node tests/test_foundations_operation_visuals.mjs",
+    "PYTHONPATH=/tmp/stage-black python3 scripts/format-foundations.py --check",
+    "python tests/test_foundations_operation_visuals.py",
+    "python tests/test_visual_code_geometry.py",
+    "python tests/test_visual_scientific_scenes.py",
+    "python tests/test_teaching_visual_models.py",
+    "python tests/test_ml_visual_progression.py",
+    "python tests/test_model_family_visuals.py",
+    "python3 tests/test_stage_visual_progression_browser.py --output docs/curriculum-evidence/code-linked-visuals",
+    "python3 tests/test_visualise_follow_browser.py --evidence-dir docs/curriculum-evidence/code-linked-visuals",
+    "python3 tests/test_foundations_visuals_browser.py --base-url http://127.0.0.1:8015 --executable-path /usr/bin/chromium",
+    "python3 scripts/audit-ml-learning-visuals.py --base-url http://127.0.0.1:8015 --runtime local --executable-path /usr/bin/chromium",
+    "python3 tests/test_visual_context_audit.py --catalog-only --output docs/curriculum-evidence/code-linked-visuals",
+    "python3 tests/test_curriculum_responsive_browser.py --base-url http://127.0.0.1:8015 --focused-only --output docs/curriculum-evidence/code-linked-visuals/responsive.json --screenshots-dir docs/curriculum-evidence/code-linked-visuals/responsive-screenshots",
+    "python3 scripts/build-review-preview.py --output /workspace/curriculum-preview.html",
+    "python3 tests/test_review_preview_browser.py --output docs/curriculum-evidence/code-linked-visuals/preview.json",
+    "python3 tests/test_stage_visual_progression_browser.py --focused --output docs/curriculum-evidence/code-linked-visuals"
+  ],
+  "limitations": [
+    "Chromium rendering and pinned native Python are independently checked; physical Safari/WebKit is not independently tested here.",
+    "Full automated coverage is separate from manual inspection of contact sheets and selected full-size captures.",
+    "Earlier evidence folders retain their historical build identities."
+  ],
+  "merged": false,
+  "deployed": false,
+  "fullSweepBuildContentId": "a9459a679d024ed9b531738050d0e7daf989d04f3f721eeb297f30e27f8b5662",
+  "finalLabelFollowup": {
+    "change": "One explorer configuration line: query label and option display titles only. Option values, calculations, geometry and Python are byte-identical.",
+    "proof": "final-label-delta.json",
+    "receipt": "focused-rendering.json",
+    "views": 114,
+    "states": 108,
+    "issues": 0,
+    "pageErrors": 0
+  }
+}

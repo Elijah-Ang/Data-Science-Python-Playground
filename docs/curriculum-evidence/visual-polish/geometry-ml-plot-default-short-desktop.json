@@ -1,0 +1,159 @@
+{
+  "ok": true,
+  "scene": "ml-plot",
+  "state": "default",
+  "viewport": "short-desktop",
+  "observed_viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "usable_viewport": {
+    "left": 0,
+    "top": 0,
+    "right": 1280,
+    "bottom": 712
+  },
+  "declared_viewport": {
+    "id": "short-desktop",
+    "width": 1280,
+    "height": 720,
+    "full_visual": true
+  },
+  "scene_rect": {
+    "left": 55,
+    "top": 193.953125,
+    "right": 587.5,
+    "bottom": 556.8125,
+    "width": 532.5,
+    "height": 362.859375
+  },
+  "essential": [
+    {
+      "id": "RBF kernel: C=2, gamma=1. The curve marks decision_function=0; rings identify support vectors. Negative scores predict A (teal region); positive scores predict B (coral region).  Larger C penalises training margin violations more strongly. Choose settings using training validation; these scores are not probabilities.",
+      "rect": {
+        "left": 55,
+        "top": 193.953125,
+        "right": 587.5,
+        "bottom": 542.8125,
+        "width": 532.5,
+        "height": 348.859375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 107.01333618164062,
+        "top": 197.2759246826172,
+        "right": 401.2701721191406,
+        "bottom": 215.2759246826172,
+        "width": 294.2568359375,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 190.8759307861328,
+        "top": 471.702880859375,
+        "right": 206.7821807861328,
+        "bottom": 489.7029113769531,
+        "width": 15.90625,
+        "height": 18.000030517578125
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 170.68069458007812,
+        "top": 455.380126953125,
+        "right": 186.58694458007812,
+        "bottom": 473.3800964355469,
+        "width": 15.90625,
+        "height": 17.999969482421875
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 317.2734375,
+        "top": 471.702880859375,
+        "right": 325.2265625,
+        "bottom": 489.7029113769531,
+        "width": 7.953125,
+        "height": 18.000030517578125
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 178.63381958007812,
+        "top": 332.9591369628906,
+        "right": 186.58694458007812,
+        "bottom": 350.95916748046875,
+        "width": 7.953125,
+        "height": 18.000030517578125
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 439.69439697265625,
+        "top": 471.702880859375,
+        "right": 447.64752197265625,
+        "bottom": 489.7029113769531,
+        "width": 7.953125,
+        "height": 18.000030517578125
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 178.63381958007812,
+        "top": 210.53819274902344,
+        "right": 186.58694458007812,
+        "bottom": 228.53819274902344,
+        "width": 7.953125,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 249.6953125,
+        "top": 494.146728515625,
+        "right": 392.8465576171875,
+        "bottom": 512.146728515625,
+        "width": 143.1512451171875,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 115.17472839355469,
+        "top": 336.0196838378906,
+        "right": 186.7372283935547,
+        "bottom": 354.0196838378906,
+        "width": 71.5625,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 137.61856079101562,
+        "top": 514.55029296875,
+        "right": 392.0248107910156,
+        "bottom": 532.55029296875,
+        "width": 254.40625,
+        "height": 18
+      }
+    }
+  ],
+  "scrollers": [],
+  "overlaps": [],
+  "text": [],
+  "issues": [],
+  "notes": [],
+  "limits": "Geometry observations only. Review screenshots and motion for legibility, meaning, scientific truth, intentional composition, and visual quality. Declared essentials must be visible unless a selector explicitly allows dormant elements; hidden alternate roots and incidental marks are ignored."
+}

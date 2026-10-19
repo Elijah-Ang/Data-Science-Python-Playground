@@ -39,7 +39,7 @@ for(const l of c.lessons){
   assert(review&&review.sha256===createHash('sha256').update(JSON.stringify([r.task,r.solution,c.datasets[r.dataset],r.requiredCalls||[],r.requiredKeywords||[],r.forbiddenCalls||[],!!r.unorderedIndex,!!r.unorderedColumns,r.unorderedRowsBy||null,r.plot||null])).digest('hex'),'Task review must be renewed: '+r.id);
   const source=r.retrieves?c.lessons.find(item=>item.id===r.retrieves):l;
   assert.equal(review.fullContractSHA256,createHash('sha256').update(JSON.stringify([l.id,source.guide||null,r,c.datasets[r.dataset]])).digest('hex'),'Renew the complete task/hint/example/grader review: '+r.id);
-  assert(/df|supplied|long table|empty Figure/.test(r.task),r.id);
+  assert(/df|supplied|long table|empty Figure|No data rows/.test(r.task)||/^No data/.test(r.brief.rows)||(r.provenance.supplied.some(object=>object.name==='df')&&/^(?:Each row is |One row: )/.test(r.brief.rows)),r.id+' identifies the input table and row unit or the empty canvas');
   for(const call of r.requiredCalls||[])assert(r.task.includes(call.split(':').pop()),r.id);
  }
 }
@@ -78,7 +78,8 @@ for(const l of c.lessons){
 assert.equal(lesson('V37').rounds[1].dataset,'clinic_pairs');
 assert(lesson('V37').rounds[1].solution.includes('dropna(subset=["wait_minutes", "consult_minutes"])'));
 assert.equal((lesson('V37').rounds[1].solution.match(/plt.subplots\(/g)||[]).length,3,'The checkpoint carries one eligible population through three views');
-assert.equal(lesson('V37').rounds[1].steps.length,4);
+assert(lesson('V37').rounds[1].task.includes('both wait_minutes and consult_minutes known'),'The report states the paired-complete population');
+assert(lesson('V37').rounds[1].task.includes('missing note'),'An unrelated missing note must not remove an eligible visit');
 
 // Rendering describes the contract. Only intentional canvas dimensions are exact.
 const plotRounds=c.lessons.flatMap(l=>l.rounds).filter(r=>r.target==='plot');
@@ -96,7 +97,12 @@ for(const r of lesson('W25').rounds)assert(!(r.requiredKeywords||[]).includes('c
 // Visual regression checks target previously misleading concepts, not just SVG presence.
 for(const l of c.lessons)for(const r of l.rounds){
  assert(visuals.diagram(r.visual).includes('Concept sketch:'),r.id);
- if(r.retrieves)assert.deepEqual(r.visual,c.lessons.find(x=>x.id===r.retrieves).rounds[2].visual,r.id);
+ if(r.retrieves){
+  const sourceVisual=r.id==='VR6-2'?visuals.spec('stacked'):visuals.activityVariants[r.id]?visuals.spec(visuals.activityVariants[r.id]):c.lessons.find(x=>x.id===r.retrieves).rounds[2].visual;
+  assert.equal(r.visual.type,sourceVisual.type,r.id+' retrieves the same chart family');
+  assert.equal(r.visual.variant,sourceVisual.variant,r.id+' retrieves the same chart technique');
+  if(r.retrieves==='V09')assert.equal(r.visual.statistic,r.solution.includes('estimator="median"')?'median':'mean',r.id+' sketch follows this activity’s requested summary');
+ }
 }
 for(const [a,b] of [['I02','I08'],['I12','I13'],['I15','I19'],['I17','W18'],['W07','W08'],['W12','W13'],['W14','W15'],['W21','W22'],['V08','V09'],['V09','V29'],['V13','V14'],['V16','V17'],['V24','V33']]){
  assert.notEqual(visuals.diagram(c.lessons.find(l=>l.id===a).visual),visuals.diagram(c.lessons.find(l=>l.id===b).visual),a+' / '+b);

@@ -1,0 +1,41 @@
+{
+  "viewport": {
+    "width": 820,
+    "height": 1180
+  },
+  "records": [
+    {
+      "coarse": true,
+      "overflow": false,
+      "editorFont": "16px",
+      "highlightFont": "16px",
+      "editorLineHeight": "28.8px",
+      "highlightLineHeight": "28.8px",
+      "editorHeight": 324,
+      "selects": [
+        {
+          "height": 44,
+          "font": "16px"
+        }
+      ],
+      "route": "data-foundations.html#visualise/V16/0"
+    },
+    {
+      "coarse": true,
+      "overflow": false,
+      "editorFont": "16px",
+      "highlightFont": "16px",
+      "editorLineHeight": "28.8px",
+      "highlightLineHeight": "28.8px",
+      "editorHeight": 324,
+      "selects": [
+        {
+          "height": 44,
+          "font": "16px"
+        }
+      ],
+      "route": "ml-learn.html#classification/ML-C14/0"
+    }
+  ],
+  "pageErrors": []
+}

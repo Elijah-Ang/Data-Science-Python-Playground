@@ -15,7 +15,7 @@ for(const card of c.cards){
     assert.equal(card.exercises[0].label,'Follow');
     assert.equal(card.exercises[0].starter,card.exercises[0].solution,card.id+' Follow should run before learners adapt it');
     assert.equal(card.exercises[1].label,'Change');
-    assert(card.exercises.length>=3&&card.exercises.length<=4);
+    assert(card.exercises.length>=3&&card.exercises.length<=5);
     if(card.exercises.some(e=>e.kind==='python')){
       assert(Array.isArray(card.syntaxBreakdown)&&card.syntaxBreakdown.length,card.id+' syntax parts');
       for(const part of card.syntaxBreakdown){
@@ -122,10 +122,14 @@ assert(all.find(e=>e.id==='ML-W01-1').packages.includes('matplotlib'));
 
 // Fitting precedes residuals: its schematic must show the learning transition.
 const visualContext={window:{}};
+vm.runInNewContext(readFileSync('foundations/inline-code.js','utf8'),visualContext);
 vm.runInNewContext(readFileSync('ml-learning/visuals.js','utf8'),visualContext);
 const fitting=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F03').visual);
 const residuals=visualContext.window.MLLearningVisuals.render(c.cards.find(c=>c.id==='ML-F05').visual);
-for(const label of ['Observations X, y','Unfitted estimator','Fitted estimator','Learned line'])assert(fitting.includes(label));
+assert(fitting.includes('Fitted estimator')&&fitting.includes('learned line'));
+const unfitted=visualContext.window.MLLearningVisuals.exploration('F03','unfitted');
+assert(unfitted.svg.includes('Unfitted estimator')&&unfitted.code==='model = LinearRegression()');
+assert(!unfitted.svg.includes('accent-stroke'),'A constructor must not draw a learned line');
 assert(!/residual|actual −|predicted/i.test(fitting));
 assert(residuals.includes('actual −')&&residuals.includes('Residuals measure signed vertical differences.'));
 

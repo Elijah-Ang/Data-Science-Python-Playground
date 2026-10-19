@@ -1,0 +1,41 @@
+{
+  "buildContentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+  "sourceSHA256": {
+    "foundations/inline-code.js": "a2dce5e1b6ead24cf2a5fcb49f541eb8a1e6e6757e0524ba7cbea8d70c7bbc99",
+    "foundations/visuals.js": "a433604f1556b447c35920a90c57b3d99ef4250ff6984feb69cf47b777333250",
+    "foundations/operation-visuals.js": "8b9c32c03563ce494b889a6a8244b8b910074350f70f381eb8befc55e6f03458",
+    "foundations/learning-ui.js": "8d59250e84c0180ddaf8cff73409e9a59c9fcad1639c6329633b03500266f82c",
+    "foundations/foundations.css": "5001bef72c9628c62a240ee09171dd4b67c78a0eb8e2c1d6c366a15a26ccad8d",
+    "foundations/parameter-guide.js": "1cd7c3b10a05b7ad3f0bd158dcb1e58cf4be547f3ae2c194d2be201b88b6fba6",
+    "foundations/teaching.js": "d94aaaea11dc0d97a3c44602c9338ed641d8ffa34724563dd4b9bcc789b00801",
+    "foundations/visualise-guidance.js": "4021731815be3cffeb0f2505f6d4b58d3e45a39bf945036a05393b7eb1a44f34",
+    "ml-learning/visuals.js": "11b8d4bee64768ef8368ad75a526e4cb5929e9f532f285fbaa5dcf238197de8e",
+    "ml-learning/app.js": "0107617a9901e759eec86d53ac1de839aa9244b93a87e07fe60246bb1e34bce8",
+    "ml-learning/learning.css": "e5589cbe37e509603506529d025fddaecaeb9c3e45fb97c19fa5261e82833d0c",
+    "ml-learning/curriculum_coherence.py": "3b53b0c45cbfc056cbae3241848d295ed01cd4ac4b643565f10b0272c074aeb7",
+    "ml-learning/visual_progression.py": "7178b0ed2c3d95f626f08e98842d3b8fa518140c5e17f357ae09a451c51518c9",
+    "assets/teaching/pixel-pointer.png": "97c3021fa79ef1790db0772b0734e49c0a60e9e2d2178a92fba51bf230f4341e",
+    "data-foundations.html": "0432bf34e81e20b070e2d0afdff474820074432988b3d12e0618aecd7097407b",
+    "ml-learn.html": "7404251dc7537a77cf96e88c56ed369aec3b9030cfd5929172d430d710b48dc7",
+    "scripts/build-web.mjs": "2243076d8fb18777dd29ab55e52f8268b8700617a3f7751d71454c231c484edb",
+    "scripts/build-learning-pages.mjs": "606b006a999da59f1d5a1c36656e4a7b369acf4d1d1ff375a5a15cb0a76db74b",
+    "scripts/build-review-preview.py": "c7201beb6b8b8424876bc20d6e32d0425d2c1636ea0654dea2b9cb54746fdd1e",
+    "scripts/build-visual-argument-fits.py": "69c67c7967639cee82ab85d25f0956e11730b2e4eb2bc42789d36234a7ef5a68"
+  },
+  "servedSHA256": {
+    "foundations/inline-code.js": "a2dce5e1b6ead24cf2a5fcb49f541eb8a1e6e6757e0524ba7cbea8d70c7bbc99",
+    "foundations/visuals.js": "a433604f1556b447c35920a90c57b3d99ef4250ff6984feb69cf47b777333250",
+    "foundations/operation-visuals.js": "8b9c32c03563ce494b889a6a8244b8b910074350f70f381eb8befc55e6f03458",
+    "foundations/learning-ui.js": "8d59250e84c0180ddaf8cff73409e9a59c9fcad1639c6329633b03500266f82c",
+    "foundations/foundations.css": "5001bef72c9628c62a240ee09171dd4b67c78a0eb8e2c1d6c366a15a26ccad8d",
+    "foundations/parameter-guide.js": "1cd7c3b10a05b7ad3f0bd158dcb1e58cf4be547f3ae2c194d2be201b88b6fba6",
+    "foundations/teaching.js": "d94aaaea11dc0d97a3c44602c9338ed641d8ffa34724563dd4b9bcc789b00801",
+    "foundations/visualise-guidance.js": "4021731815be3cffeb0f2505f6d4b58d3e45a39bf945036a05393b7eb1a44f34",
+    "ml-learning/visuals.js": "11b8d4bee64768ef8368ad75a526e4cb5929e9f532f285fbaa5dcf238197de8e",
+    "ml-learning/app.js": "0107617a9901e759eec86d53ac1de839aa9244b93a87e07fe60246bb1e34bce8",
+    "ml-learning/learning.css": "e5589cbe37e509603506529d025fddaecaeb9c3e45fb97c19fa5261e82833d0c",
+    "ml-learning/curriculum.json": "c6c6b22b61b83d920f0249e3ec903b4b2b24a7320256cf8fd40a9d4a33fa36ed",
+    "assets/teaching/pixel-pointer.png": "97c3021fa79ef1790db0772b0734e49c0a60e9e2d2178a92fba51bf230f4341e"
+  },
+  "note": "Final source after the documented line-data and facet-label deltas. Data and ML HTML are assembled during the build; direct JS/CSS/asset copies match these source bytes."
+}

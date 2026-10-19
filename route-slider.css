@@ -24,7 +24,42 @@ body[data-playground] .step-route-range:focus-visible { outline:0; }
 body[data-theme="dark"] .step-route-stop[data-state="done"] { box-shadow:0 0 0 3px #72daa7; }
 body[data-playground] .route-tools-copy #routeDescription { display:inline; }
 .step-route-help { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
-code.code-identifier { display:inline; padding:.08em .3em; border:1px solid color-mix(in srgb,var(--ink) 28%,transparent); border-radius:4px; background:color-mix(in srgb,var(--accent) 10%,var(--panel,var(--paper))); color:var(--ink); font-family:var(--mono); font-size:.95em; font-weight:650; overflow-wrap:anywhere; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+/* One quiet shape for exact names; restrained tints retain their semantics. */
+code.code-identifier {
+  display:inline; padding:.03em .24em; border:1px solid transparent; border-radius:4px; background:none;
+  color:var(--ink); font-family:var(--mono); font-size:1em; font-weight:500;
+  text-decoration:none; overflow-wrap:anywhere; cursor:text; box-shadow:none;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone;
+}
+code.code-identifier[data-code-role="column"] {
+  border-color:color-mix(in srgb,var(--cyan) 22%,transparent);
+  background:color-mix(in srgb,var(--cyan) 7%,var(--panel,var(--paper)));
+  color:var(--ink); font-weight:600;
+}
+code.code-identifier[data-code-role="variable"] {
+  border-color:color-mix(in srgb,var(--violet) 22%,transparent);
+  background:color-mix(in srgb,var(--violet) 7%,var(--panel,var(--paper)));
+  color:var(--ink); font-weight:600;
+}
+code.code-identifier:is([data-code-role="syntax"],[data-code-role="function"],[data-code-role="parameter"],[data-code-role="operation"]) {
+  border-color:color-mix(in srgb,var(--ink) 9%,transparent);
+  background:color-mix(in srgb,var(--ink) 3%,var(--panel,var(--paper)));
+  color:var(--ink); font-weight:600;
+}
+code.code-identifier[data-code-focus="true"] { border-color:color-mix(in srgb,var(--lesson-accent,var(--accent)) 45%,transparent); }
+code.code-identifier:is([data-code-role="column"],[data-code-role="variable"],[data-code-role="syntax"],[data-code-role="function"],[data-code-role="parameter"],[data-code-role="operation"]):not(pre code):not(.foundation-editor-wrap code) [class^="py-"] {
+  color:inherit; font-weight:inherit; font-style:normal;
+}
+/* Syntax-coloured code keeps native alignment and selection. */
+pre code.code-identifier[data-code-role], .foundation-editor-wrap code.code-identifier[data-code-role] {
+  padding:0; border:0; border-radius:0; background:none; font-size:inherit;
+  font-weight:inherit; color:inherit; text-decoration:none;
+}
+@media(forced-colors:active) {
+  code.code-identifier[data-code-role="column"] { border-color:CanvasText; }
+  code.code-identifier[data-code-role="variable"] { border-color:CanvasText; }
+  code.code-identifier:is([data-code-role="syntax"],[data-code-role="function"],[data-code-role="parameter"],[data-code-role="operation"]) { border-color:CanvasText; }
+}
 kbd { border-bottom-width:3px; }
 .data-task-instructions { padding:8px 12px; font:500 .75rem/1.6 var(--mono); }
 .data-task-instructions p { margin:3px 0; }

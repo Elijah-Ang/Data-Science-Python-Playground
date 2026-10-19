@@ -1,0 +1,540 @@
+{
+  "lessonCount": 37,
+  "interactiveLessons": 17,
+  "records": [
+    {
+      "id": "V35",
+      "title": "Choose a chart for the question",
+      "visual": {
+        "type": "relationship",
+        "variant": "scatter",
+        "label": "Concept sketch: one point per pair of numeric values"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Four familiar chart types explain which question each answers; no extra control."
+    },
+    {
+      "id": "V01",
+      "title": "Meet Figure and Axes",
+      "visual": {
+        "type": "figure",
+        "variant": "canvas",
+        "label": "Concept sketch: Figure contains the plotting Axes"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "An empty Figure/Axes diagram introduces the plotting structure."
+    },
+    {
+      "id": "V02",
+      "title": "Finish a chart properly",
+      "visual": {
+        "type": "figure",
+        "variant": "chart-labels",
+        "label": "Concept sketch: finish title, x label and y label"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Title and measurement labels are visible; no unrelated transformations."
+    },
+    {
+      "id": "V16",
+      "title": "Scatter plot",
+      "visual": {
+        "type": "relationship",
+        "variant": "scatter",
+        "label": "Concept sketch: one point per pair of numeric values"
+      },
+      "interactive": true,
+      "choices": [
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7",
+        "r8",
+        "r9"
+      ],
+      "audit": "Trace the paired measurements from one fixed row."
+    },
+    {
+      "id": "V04",
+      "title": "Histogram",
+      "visual": {
+        "type": "bars",
+        "variant": "histogram",
+        "label": "Concept sketch: adjacent bins count numeric observations",
+        "choices": [
+          "2",
+          "4",
+          "8"
+        ],
+        "choice": "4",
+        "binMode": "count"
+      },
+      "interactive": true,
+      "choices": [
+        "2",
+        "4",
+        "8"
+      ],
+      "audit": "Vary the number of bins; explicit boundaries remain in Transfer."
+    },
+    {
+      "id": "V08",
+      "title": "Count categories",
+      "visual": {
+        "type": "bars",
+        "variant": "count-bars",
+        "label": "Concept sketch: bar height = number of rows",
+        "statistic": "count",
+        "choice": "count-A",
+        "choices": [
+          "count-A",
+          "count-B",
+          "count-C"
+        ]
+      },
+      "interactive": true,
+      "choices": [
+        "count-A",
+        "count-B",
+        "count-C"
+      ],
+      "audit": "Trace matching records to fixed count bars; category sorting stays in Change."
+    },
+    {
+      "id": "V18",
+      "title": "Line plot",
+      "visual": {
+        "type": "relationship",
+        "variant": "line",
+        "label": "Concept sketch: connect observations in time order"
+      },
+      "interactive": true,
+      "choices": [
+        "none",
+        "o"
+      ],
+      "audit": "Toggle observation markers while retaining the sequence."
+    },
+    {
+      "id": "V09",
+      "title": "Compare averages",
+      "visual": {
+        "type": "bars",
+        "variant": "mean-bars",
+        "label": "Concept sketch: each bar shows one chosen group summary, rather than a record count",
+        "statistic": "mean",
+        "choices": [
+          "mean",
+          "median"
+        ]
+      },
+      "interactive": true,
+      "choices": [
+        "mean",
+        "median"
+      ],
+      "audit": "Choose the taught mean or median estimator on unchanged groups."
+    },
+    {
+      "id": "V13",
+      "title": "Raw points",
+      "visual": {
+        "type": "distribution",
+        "variant": "strip",
+        "label": "Concept sketch: jitter separates points; overlap can remain"
+      },
+      "interactive": true,
+      "choices": [
+        "False",
+        "0.15"
+      ],
+      "audit": "Vary category-direction jitter; preserve every measured value."
+    },
+    {
+      "id": "V11",
+      "title": "Box plot",
+      "visual": {
+        "type": "distribution",
+        "variant": "boxplot",
+        "label": "Concept sketch: box: Q1–Q3; line: median; dot: outlier"
+      },
+      "interactive": true,
+      "choices": [
+        "raw",
+        "box"
+      ],
+      "audit": "Compare observations with their quartiles and whiskers."
+    },
+    {
+      "id": "V03",
+      "title": "Map variables visually",
+      "visual": {
+        "type": "relationship",
+        "variant": "encoding",
+        "label": "Concept sketch: position = x/y; category = colour"
+      },
+      "interactive": true,
+      "choices": [
+        "plain",
+        "hue"
+      ],
+      "audit": "Map the category to colour; preserve coordinates."
+    },
+    {
+      "id": "V17",
+      "title": "Add dimensions to scatter",
+      "visual": {
+        "type": "relationship",
+        "variant": "scatter-dimensions",
+        "label": "Concept sketch: group identity uses colour and shape; marker sizes are constant",
+        "sizeEncoding": false
+      },
+      "interactive": true,
+      "choices": [
+        "colour",
+        "shape"
+      ],
+      "audit": "Add style for the same category; numeric size remains in Change."
+    },
+    {
+      "id": "V22",
+      "title": "Correlation heatmap",
+      "visual": {
+        "type": "matrix",
+        "variant": "correlation-heatmap",
+        "label": "Concept sketch: signed correlations; diagonal always 1"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The annotated, computed correlation matrix uses a fixed scientific dataset."
+    },
+    {
+      "id": "V24",
+      "title": "Multiple subplots",
+      "visual": {
+        "type": "panels",
+        "variant": "subplots",
+        "label": "Concept sketch: one Figure, two different chart types"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The diagram introduces one Figure with two Axes."
+    },
+    {
+      "id": "V25",
+      "title": "Legends and palettes",
+      "visual": {
+        "type": "relationship",
+        "variant": "legend",
+        "label": "Concept sketch: legend maps category to colour AND shape"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The key visibly pairs category colours and marker shapes."
+    },
+    {
+      "id": "V26",
+      "title": "Axes and scales",
+      "visual": {
+        "type": "relationship",
+        "variant": "log-scale",
+        "label": "Concept sketch: equal x spacing = equal ratios on log scale"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Positive log ticks demonstrate equal ratios rather than additive spacing."
+    },
+    {
+      "id": "V27",
+      "title": "Reference lines",
+      "visual": {
+        "type": "relationship",
+        "variant": "references",
+        "label": "Concept sketch: vertical AND horizontal median benchmarks",
+        "choice": "both"
+      },
+      "interactive": true,
+      "choices": [
+        "x",
+        "value",
+        "both"
+      ],
+      "audit": "Add the taught x/value median benchmarks."
+    },
+    {
+      "id": "V29",
+      "title": "Exact precomputed bars",
+      "visual": {
+        "type": "bars",
+        "variant": "exact-bars",
+        "label": "Concept sketch: precomputed values → exact bar heights",
+        "summaryStatistic": "mean"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Thumbnail and Follow both use calculated group means, not totals."
+    },
+    {
+      "id": "V34",
+      "title": "Save a figure",
+      "visual": {
+        "type": "figure",
+        "variant": "export",
+        "label": "Concept sketch: save this Figure as a PNG file"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The Figure-to-PNG diagram explains export without an artificial data control."
+    },
+    {
+      "id": "V36",
+      "title": "Avoid misleading charts",
+      "visual": {
+        "type": "bars",
+        "variant": "honest-bars",
+        "label": "Concept sketch: zero baseline; preserve the same values and order"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The miniature focuses on the zero baseline and preserves category order."
+    },
+    {
+      "id": "V05",
+      "title": "Density curve",
+      "visual": {
+        "type": "distribution",
+        "variant": "density",
+        "label": "Concept sketch: curve height = estimated density",
+        "bandwidth": 1
+      },
+      "interactive": true,
+      "choices": [
+        "0.5",
+        "1",
+        "2"
+      ],
+      "audit": "Vary bw_adjust on fixed observations and a fixed density scale."
+    },
+    {
+      "id": "V06",
+      "title": "ECDF",
+      "visual": {
+        "type": "distribution",
+        "variant": "ecdf",
+        "label": "Concept sketch: ECDF: fraction at or below x"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Computed ECDF steps show exact fractions from visible observations."
+    },
+    {
+      "id": "V07",
+      "title": "Rug marks",
+      "visual": {
+        "type": "distribution",
+        "variant": "rug",
+        "label": "Concept sketch: rug: one tick for each observation"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Rug ticks occupy identical heights so coincident observations really overlap."
+    },
+    {
+      "id": "V10",
+      "title": "Point estimates",
+      "visual": {
+        "type": "distribution",
+        "variant": "point-interval",
+        "label": "Concept sketch: dot = mean; interval = ±1 SD"
+      },
+      "interactive": true,
+      "choices": [
+        "none",
+        "sd"
+      ],
+      "audit": "Show or omit the taught sample-SD intervals; preserve group means."
+    },
+    {
+      "id": "V12",
+      "title": "Violin plot",
+      "visual": {
+        "type": "distribution",
+        "variant": "violin",
+        "label": "Concept sketch: width shows density along the value axis",
+        "densityNorm": "area",
+        "inner": "quart"
+      },
+      "interactive": true,
+      "choices": [
+        "quart",
+        "point"
+      ],
+      "audit": "Switch the taught inner quartiles/observations; preserve density outlines."
+    },
+    {
+      "id": "V14",
+      "title": "Non-overlapping raw points",
+      "visual": {
+        "type": "distribution",
+        "variant": "swarm",
+        "label": "Concept sketch: swarm packs equal values without overlap"
+      },
+      "interactive": true,
+      "choices": [
+        "3",
+        "5",
+        "7"
+      ],
+      "audit": "Change the fixed marker size; preserve measured positions and pack without overlap."
+    },
+    {
+      "id": "V15",
+      "title": "Choose detail to suit the sample",
+      "visual": {
+        "type": "distribution",
+        "variant": "raw-no-jitter",
+        "label": "Concept sketch: one mark per row; no jitter; repeats may overlap"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The raw-point view retains repetitions; no unsupported density-toggle is added."
+    },
+    {
+      "id": "V19",
+      "title": "Understand lineplot aggregation",
+      "visual": {
+        "type": "relationship",
+        "variant": "line-band",
+        "label": "Concept sketch: line = mean; band = ±1 SD at each x"
+      },
+      "interactive": true,
+      "choices": [
+        "none",
+        "sd"
+      ],
+      "audit": "Show or omit the taught SD band; preserve daily means and repeated observations."
+    },
+    {
+      "id": "V20",
+      "title": "Regression view",
+      "visual": {
+        "type": "relationship",
+        "variant": "regression",
+        "label": "Concept sketch: straight fitted trend, with observed points"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The plotted least-squares line is fitted to the visible pairs."
+    },
+    {
+      "id": "V21",
+      "title": "Residual view",
+      "visual": {
+        "type": "relationship",
+        "variant": "residual",
+        "label": "Concept sketch: residual = observed minus fitted; zero line"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Observed-minus-fitted residuals use the same actual observations."
+    },
+    {
+      "id": "V23",
+      "title": "Categorical / matrix heatmap",
+      "visual": {
+        "type": "matrix",
+        "variant": "count-heatmap",
+        "label": "Concept sketch: annotated counts for category pairs"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The heatmap computes category-pair counts; alternative summaries remain later tasks."
+    },
+    {
+      "id": "V28",
+      "title": "Annotate important points",
+      "visual": {
+        "type": "relationship",
+        "variant": "annotation",
+        "label": "Concept sketch: arrow identifies the highest observation"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "The arrow selects the highest observation from the plotted population."
+    },
+    {
+      "id": "V30",
+      "title": "Stacked bars",
+      "visual": {
+        "type": "bars",
+        "variant": "stacked",
+        "label": "Concept sketch: each total is the sum of both components"
+      },
+      "interactive": true,
+      "choices": [
+        "zero",
+        "first"
+      ],
+      "audit": "Set bottom=first; preserve components and make the difference from overlapping components visible."
+    },
+    {
+      "id": "V31",
+      "title": "Pair relationships",
+      "visual": {
+        "type": "panels",
+        "variant": "pair-grid",
+        "label": "Concept sketch: diagonal: distributions; off-diagonal: pairs",
+        "variableCount": 2,
+        "corner": false
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Matching diagonal distributions and off-diagonal pairs use the same observations."
+    },
+    {
+      "id": "V32",
+      "title": "Joint relationships",
+      "visual": {
+        "type": "panels",
+        "variant": "joint-grid",
+        "label": "Concept sketch: scatter plus matching x/y marginal counts"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Central pairs and marginal counts describe one observation set."
+    },
+    {
+      "id": "V33",
+      "title": "Faceting",
+      "visual": {
+        "type": "panels",
+        "variant": "facets",
+        "label": "Concept sketch: same chart and scales, separate subsets"
+      },
+      "interactive": true,
+      "choices": [
+        "pooled",
+        "groups"
+      ],
+      "audit": "Split the same paired observations into panels on shared scales."
+    },
+    {
+      "id": "V37",
+      "title": "Visualise checkpoint",
+      "visual": {
+        "type": "panels",
+        "variant": "report",
+        "label": "Concept sketch: filter first, then compare three views"
+      },
+      "interactive": false,
+      "choices": [],
+      "audit": "Checkpoint: connects distribution, relationship and summary tasks without introducing another control."
+    }
+  ]
+}

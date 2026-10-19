@@ -1,0 +1,1033 @@
+{
+  "id": "V34-2",
+  "sourceId": "V34",
+  "sourceRound": 2,
+  "retrieves": null,
+  "exercise": {
+    "id": "V34-2",
+    "label": "Change",
+    "dataset": "weather",
+    "task": "The supplied setup prepares a four-bin temperature histogram with title \"Weather diary\", x \"temperature\" and y \"Count\", but leaves cramped margins. Keep the title, axis labels and tick labels inside the Figure canvas without clipping; adjust its margins as needed. Export chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it with plt.show().",
+    "solution": "fig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+    "starter": "# Arrange the supplied Figure, export it and then display it\n",
+    "hint": "fig.tight_layout() is one way to fit the title and all labels inside the canvas; manual margin adjustments also work. Save the same Figure before display.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "labels": true,
+      "export": true,
+      "textCaseInsensitive": true,
+      "figureTextFits": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "figure",
+      "variant": "export",
+      "label": "Concept sketch: save this Figure as a PNG file"
+    },
+    "requiredKeywords": [],
+    "rules": {
+      "export": true
+    },
+    "demand": "Repair cramped margins before exporting the finished chart.",
+    "steps": [
+      "The supplied setup prepares a four-bin temperature histogram with title \"Weather diary\", x \"temperature\" and y \"Count\", but leaves cramped margins.",
+      "Keep the title, axis labels and tick labels inside the Figure canvas without clipping; adjust its margins as needed.",
+      "Export chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it with plt.show()."
+    ],
+    "setupDescription": "A labelled four-bin temperature histogram with cramped margins.",
+    "decision": "Repair cramped margins before exporting the finished chart.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V34"
+    ],
+    "fixtureFeature": "Station measurements include two physical units and several category labels; preserve paired records and state each selected population.",
+    "question": "Is the requested report Figure finished before it is exported?",
+    "observationUnit": "one station observation",
+    "datasetRationale": "Station measurements include two physical units and several category labels; preserve paired records and state each selected population.",
+    "parameterTeaching": {
+      "introduces": [
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches"
+      ],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.labels",
+        "matplotlib.figure-axes",
+        "matplotlib.savefig"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "stageSummary": "Make room for labels.",
+    "brief": {
+      "question": "Is the requested report Figure finished before it is exported?",
+      "rows": "One row: one station observation.",
+      "result": "The supplied setup prepares a four-bin temperature histogram with title \"Weather diary\", x \"temperature\" and y \"Count\", but leaves cramped margins.",
+      "constraints": [
+        "Keep the title, axis labels and tick labels inside the Figure canvas without clipping; adjust its margins as needed.",
+        "Export chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it with plt.show()."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "day",
+        "sky",
+        "temperature",
+        "humidity",
+        "station"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Make room for labels.",
+      "why": "Repair cramped margins before exporting the finished chart.",
+      "changedLines": [
+        2
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "day": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun",
+      "Mon"
+    ],
+    "sky": [
+      "Sun",
+      "Rain",
+      "Sun",
+      "Cloud",
+      "Rain",
+      "Sun",
+      "Cloud",
+      "Sun"
+    ],
+    "temperature": [
+      28,
+      24,
+      30,
+      27,
+      23,
+      31,
+      26,
+      29
+    ],
+    "humidity": [
+      62,
+      89,
+      60,
+      74,
+      92,
+      58,
+      78,
+      65
+    ],
+    "station": [
+      "East",
+      "East",
+      "West",
+      "West",
+      "East",
+      "East",
+      "West",
+      "West"
+    ]
+  },
+  "inputSHA256": "ba71d7491f9cc38536c973868290b99df1a7152f5678ed0a7f000c1460acf2b7",
+  "visibleWorkspaceSHA256": "2ae76554b8d535f63fa485193b939255d096730b1ff0ced5ad789b4ea7381635",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\n# Arrange the supplied Figure, export it and then display it\n",
+  "context": "A labelled four-bin temperature histogram with cramped margins. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "fig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "76d1f861b533b468a08562ccb8c626e9393c5ad7b7354c057cc1c290673228ca",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.417,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "05e978c14de9036c2e4b0e82b594b1ed3152d8381fbaac581a5511ce458dbdeb",
+          "bytes": 15729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "2ae76554b8d535f63fa485193b939255d096730b1ff0ced5ad789b4ea7381635",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.553,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "05e978c14de9036c2e4b0e82b594b1ed3152d8381fbaac581a5511ce458dbdeb",
+          "bytes": 15729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-2-full_visible_reference_workspace-1.png"
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-2-full_visible_reference_workspace-2.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.subplots_adjust(left=0.16, bottom=0.18, right=0.94, top=0.88)\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "f32c159e6f6cd352e8ab67d14ed3e4d35980f6d6283bbbf5c38a94efa9a1cb82",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.559,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "a0463193e4fe90bb15436f435a018a7718809ae50484e7b8453210c914bce8d0",
+          "bytes": 15464,
+          "width": 592,
+          "height": 399,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-2-equivalent_focal_work-1.png"
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "786b69cf0906b826bdf910f0b959a1699b244cce4eced1c80cfdf194a77e7757",
+          "bytes": 21676,
+          "width": 808,
+          "height": 544,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-2-equivalent_focal_work-2.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nplt.show()",
+      "codeSHA256": "7316f0426e5f9d01182cf79b7e23f5274e1fe2209b390c8b8bee9204c43eab14",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.487,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the title, axis labels and tick labels inside the Figure canvas (adjust its margins).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "668088cf4a4649b6e658e3ad19a5a7c4195d518a9d2ba48c30ba778472b6b9d5",
+          "bytes": 16117,
+          "width": 658,
+          "height": 470,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_export_dpi",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.subplots_adjust(left=0.16, bottom=0.18, right=0.94, top=0.88)\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=72, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "b92313e1d2b742aec90e9890136a4e08aa657ffe1cf4b635b1c349215fa37da4",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.651,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save the PNG at 150 dpi.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "a0463193e4fe90bb15436f435a018a7718809ae50484e7b8453210c914bce8d0",
+          "bytes": 15464,
+          "width": 592,
+          "height": 399,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "39e20e944bb26ef914eba3d99041e5fd6939da693fc734224242dd30fb8c196d",
+          "bytes": 8506,
+          "width": 388,
+          "height": 262,
+          "dpi": [
+            72.009,
+            72.009
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_tight_export",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.subplots_adjust(left=0.16, bottom=0.18, right=0.94, top=0.88)\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=150, bbox_inches=None)\nplt.show()",
+      "codeSHA256": "084fdd39b7fec8cd7a9c4d6ed8141afccdfffd6eeb45d2f179afc9d8c5dabe02",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.477,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save chart.png with bbox_inches=\"tight\".",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "a0463193e4fe90bb15436f435a018a7718809ae50484e7b8453210c914bce8d0",
+          "bytes": 15464,
+          "width": 592,
+          "height": 399,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "0c93138047bab8897f8ed7cb91e289898b921f60db79ca3df50d9b9894de092f",
+          "bytes": 22417,
+          "width": 900,
+          "height": 600,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "export_after_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nplt.show()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")",
+      "codeSHA256": "71ad81b65e0d0f700751cc82b58a6ae2608b1e3f45fdc631515aa14cc60eb5e7",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.534,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save the finished chart before calling plt.show().",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "05e978c14de9036c2e4b0e82b594b1ed3152d8381fbaac581a5511ce458dbdeb",
+          "bytes": 15729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unfinished_export_before_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\ntitle = ax.get_title()\nax.set_title(\"Incomplete export\")\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.set_title(title)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "1e30b41d40b9d933fef4219c554eba981272359db6db3553cdab60afb8a53831",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.498,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'weather diary'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "7dfd4268039cf32aa1070c0ca060ce722381fbbdeb15e0ee19236c9182b08269",
+          "bytes": 15636,
+          "width": 629,
+          "height": 408,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "d31f54f33e95ba39149cf13d586b6b876ffd302985f8a0da64b488677d3b97b3",
+          "bytes": 22985,
+          "width": 898,
+          "height": 640,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "requested_layout_omitted",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "28750fbd7a05d6918c0e5983e646a14c9472c2d52425fb356bd462380afeb28b",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.568,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the title, axis labels and tick labels inside the Figure canvas (adjust its margins).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "668088cf4a4649b6e658e3ad19a5a7c4195d518a9d2ba48c30ba778472b6b9d5",
+          "bytes": 16117,
+          "width": 658,
+          "height": 470,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "9a34ccacf3f71ecabe79bb14ad9332818a7a5560c6e896482201948591f0785c",
+          "bytes": 22794,
+          "width": 898,
+          "height": 640,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "title_outside_figure_canvas",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.subplots_adjust(left=0.16, bottom=0.18, right=0.94, top=0.98)\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "92731eb47abdc23edcf320c52069fbb916f5eed3f62453c15eb3da4d798a4cd2",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.534,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the title, axis labels and tick labels inside the Figure canvas (adjust its margins).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "ac324d71f2228054b653260caf58cc7c2103a2b91239ac5a3430df5845297649",
+          "bytes": 15737,
+          "width": 592,
+          "height": 443,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "550faf5ca3909098509a3be48a7bcd27283c30cf4194b335abb457a95746159f",
+          "bytes": 22152,
+          "width": 808,
+          "height": 604,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "tick_labels_outside_figure_canvas",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.subplots_adjust(left=0.20, bottom=0.20, right=0.90, top=0.85)\nax.tick_params(axis=\"x\", pad=85)\nax.xaxis.set_label_coords(0.5, 0.05)\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "3423b1b43de8ade6b02e4b4263571a0367feb93bb3beab68fb50e098416acb81",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.508,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the title, axis labels and tick labels inside the Figure canvas (adjust its margins).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "c36d42a1b7df50fe93036267ba965af9e81175ce2ea14ccc5c377c8705e4cf5b",
+          "bytes": 16035,
+          "width": 540,
+          "height": 481,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "335451b4e500ed63490b96a8fd0a531a05cf554a5c7da548d6127532f54d9c9c",
+          "bytes": 22308,
+          "width": 736,
+          "height": 655,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "08d2a5aba66c5d2a6b1b1918e3a951bf0d4306a172d793ce9ba70dfdacaed63d",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.512,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'weather diary'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "dc6eb728d9e96857e045d954e156d5b86d9b8ec467708779ec105ab46d973a03",
+          "bytes": 15624,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.patches[0].set_height(ax.patches[0].get_height() + 1)\nplt.show()",
+      "codeSHA256": "8247395e47a01eac4a7771b09f2885faeac0d9e7800f80290be7e89b42476040",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.611,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the bins, counts and distribution shapes.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "ea2cd90a19f6683b7988bed233b33441dfffebf00fa4a882e2e15a2f57a82f32",
+          "bytes": 15715,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['temperature'] = df['temperature'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "b3682752d22d43f1c7a4b0a6d3f3b3230746b7578e46c6fd3e5cc42ae51a04df",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.599,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the bins, counts and distribution shapes.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "dd2d15a8a6c4abca15a38fe9b6ccc3c0ef7560923d595a2bc45bb72ab59a527f",
+          "bytes": 15855,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "76e4afa1805b98654c7319ec46da6483a0d65b2cb6e48e2834146542f2448f7a",
+          "bytes": 22520,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "b6f6718c365261373abf7f524429bfb7be035b117accaca8ceef628d59cc9f72",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.921,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "05e978c14de9036c2e4b0e82b594b1ed3152d8381fbaac581a5511ce458dbdeb",
+          "bytes": 15729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "05e978c14de9036c2e4b0e82b594b1ed3152d8381fbaac581a5511ce458dbdeb",
+          "bytes": 15729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.histplot(data=df, x=\"temperature\", bins=4, ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"temperature\", ylabel=\"Count\")\nfig.subplots_adjust(left=0.02, bottom=0.02)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "2ae76554b8d535f63fa485193b939255d096730b1ff0ced5ad789b4ea7381635",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.501,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "05e978c14de9036c2e4b0e82b594b1ed3152d8381fbaac581a5511ce458dbdeb",
+          "bytes": 15729,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "060ede3c2ef65d1511f7285deb230c4b883230d611b4e746cb5716c6ea1d387b",
+          "bytes": 22247,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

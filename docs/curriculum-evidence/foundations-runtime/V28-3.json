@@ -1,0 +1,718 @@
+{
+  "id": "V28-3",
+  "sourceId": "V28",
+  "sourceRound": 3,
+  "retrieves": null,
+  "exercise": {
+    "id": "V28-3",
+    "label": "Transfer",
+    "dataset": "installations",
+    "task": "The supplied setup creates selected from active installations and draws their hours/output pairs. Annotate the highest-output active installation as Active peak, offset (8, 8) points with an arrow. Keep the prepared population and labels. Chart: title \"Installation outputs\"; x \"hours\"; y \"output\".",
+    "solution": "peak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+    "starter": "# Choose the data and chart operations from the brief\n",
+    "hint": "Use selected for both idxmax and row lookup. The highest output in df belongs to an inactive installation.",
+    "setup": "selected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "annotations": true,
+      "annotationDetails": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "relationship",
+      "variant": "annotation",
+      "label": "Concept sketch: arrow identifies the highest observation"
+    },
+    "requiredKeywords": [],
+    "rules": {
+      "annotations": true
+    },
+    "demand": "Find the extreme within the plotted population when the global extreme is excluded.",
+    "steps": [
+      "The supplied setup creates selected from active installations and draws their hours/output pairs.",
+      "Annotate the highest-output active installation as Active peak, offset (8, 8) points with an arrow.",
+      "Keep the prepared population and labels.",
+      "Chart: title \"Installation outputs\"; x \"hours\"; y \"output\"."
+    ],
+    "setupDescription": "An active-installation scatter with selected, fig and ax. The title and measurement labels are already supplied.",
+    "decision": "Find the extreme within the plotted population when the global extreme is excluded.",
+    "fixtureFeature": "Global maximum is inactive; active maximum is a different paired record.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V28"
+    ],
+    "question": "Which eligible record and both of its coordinates answer the extreme-value question?",
+    "observationUnit": "one installation",
+    "datasetRationale": "Global maximum is inactive; active maximum is a different paired record.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom",
+        "bw_adjust",
+        "cut",
+        "complementary",
+        "capsize",
+        "inner",
+        "swarmplot.size",
+        "ci",
+        "fmt",
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "prerequisites": [
+        "V27",
+        "I09",
+        "I13L"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.reference-lines",
+        "pandas.loc",
+        "pandas.idxmax",
+        "matplotlib.annotate"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V27",
+        "I09",
+        "I13L"
+      ]
+    },
+    "stageSummary": "Select before annotating.",
+    "brief": {
+      "question": "Which eligible record and both of its coordinates answer the extreme-value question?",
+      "rows": "One row: one installation.",
+      "result": "The supplied setup creates selected from active installations and draws their hours/output pairs.",
+      "constraints": [
+        "Annotate the highest-output active installation as Active peak, offset (8, 8) points with an arrow.",
+        "Keep the prepared population and labels.",
+        "Chart: title \"Installation outputs\"; x \"hours\"; y \"output\"."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": [
+        {
+          "name": "peak",
+          "type": "Python object",
+          "description": "Created by your Python for this task."
+        }
+      ]
+    },
+    "identifiers": {
+      "inputColumns": [
+        "name",
+        "active",
+        "hours",
+        "output"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax",
+        "peak"
+      ],
+      "occurrences": [
+        {
+          "text": "title \"Installation outputs\"; x \"hours\"; y \"output\".",
+          "role": "literal"
+        }
+      ]
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Select before annotating.",
+      "why": "Find the extreme within the plotted population when the global extreme is excluded.",
+      "changedLines": [
+        2
+      ],
+      "changedSyntaxLines": [
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "name": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "active": [
+      true,
+      false,
+      true,
+      true,
+      false
+    ],
+    "hours": [
+      2,
+      3,
+      5,
+      7,
+      9
+    ],
+    "output": [
+      10,
+      99,
+      24,
+      18,
+      60
+    ]
+  },
+  "inputSHA256": "bd0b0069c09f1f78fc5c35d65e3946f37d83fb9b00c95cda0f9241ae89a6dacb",
+  "visibleWorkspaceSHA256": "36a31113b8aafa81b8f2ddbb7609a1b321fbbcfb45c2ee07da9170980e3df867",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\n# Choose the data and chart operations from the brief\n",
+  "context": "An active-installation scatter with selected, fig and ax. The title and measurement labels are already supplied. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "peak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "69124c7c99f1c3eee9dedde94c5baed80dbb3e41f0f587788e3b5a4bce237590",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.252,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "53a299dcb3aab9e6985691abf23f808b2d6b270eb66a5fcd90997e7d6f3a6d31",
+          "bytes": 16194,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "36a31113b8aafa81b8f2ddbb7609a1b321fbbcfb45c2ee07da9170980e3df867",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.336,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "53a299dcb3aab9e6985691abf23f808b2d6b270eb66a5fcd90997e7d6f3a6d31",
+          "bytes": 16194,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V28-3-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\nobservations = df.loc[df[\"active\"]]\npoint = observations.loc[observations['output'].idxmax()]\nannotation = dict(text='Active peak', xy=(point['hours'], point['output']), xytext=(8, 8), textcoords=\"offset points\", arrowprops={\"arrowstyle\": \"->\"})\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "7e18eb2df0c0739ba28b7cce0ef7012aace66ee3b8cb716ce06085a59d03e6ff",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.271,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "53a299dcb3aab9e6985691abf23f808b2d6b270eb66a5fcd90997e7d6f3a6d31",
+          "bytes": 16194,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V28-3-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "aab60ba6d26ebfa56d0ccc19cbba6c86d132273126f3cbe70444bd510272b9d3",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.235,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "9b3ff3254b2db582615feadc4a7d99872abb8f56d73dfc6b1e5868315b7f56af",
+          "bytes": 13954,
+          "width": 584,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_extreme",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\nobservations = df.loc[df[\"active\"]]\npoint = observations.loc[observations['output'].idxmin()]\nannotation = dict(text='Active peak', xy=(point['hours'], point['output']), xytext=(8, 8), textcoords=\"offset points\", arrowprops={\"arrowstyle\": \"->\"})\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "a9d184b723ec9f32ad35a2c8766d9915d68de2bb7804da41de9e7dd4dbf56755",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.26,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the annotations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "576a9c311669fdb3d7a9b1d755f822a5bfc4724b7f9492fd948b0424c59889fc",
+          "bytes": 16294,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_annotation_offset",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\nobservations = df.loc[df[\"active\"]]\npoint = observations.loc[observations['output'].idxmax()]\nannotation = dict(text='Active peak', xy=(point['hours'], point['output']), xytext=(0, 0), textcoords=\"offset points\", arrowprops={\"arrowstyle\": \"->\"})\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "f0041cbe7d25eeac0c8283ae3de26886d31b460bb8e564be5ee0d865118948c8",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.277,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the annotation arrow and text offset.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "662994cae804e93dd999fedfdd33eee3246afce85a5f1dce15ba9fd0f6e18d8e",
+          "bytes": 16144,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_annotation_arrow",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\nobservations = df.loc[df[\"active\"]]\npoint = observations.loc[observations['output'].idxmax()]\nannotation = dict(text='Active peak', xy=(point['hours'], point['output']), xytext=(8, 8), textcoords=\"offset points\", arrowprops=None)\nax.annotate(**annotation)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "12281db63987e4bc38dafd9a7ac2ac5367249b832ca54cbc0c3b9bc4f3f478eb",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.311,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the annotation arrow and text offset.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "eb95f0a7f9b032b893ce2ada3d43153e99aed84a9eeb7f95f80440a9cb60a97e",
+          "bytes": 15924,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "e31f47b488698ca779130afe512f322696b2d7cc58c335099fdff8ce679470c3",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.299,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'installation outputs'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "8d8628e6aa42ff4c8d3e3655a0ee48b9a8374e397915caaa8d100169434caa75",
+          "bytes": 16082,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "727fba091a4808e455f9156b623c3111caf9039da22f4901d596e9c902677ea7",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.329,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "dc1509859709acda8c4cced54309f7626a1465922724a5e42285d11f2060d4cf",
+          "bytes": 16197,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['output'] = df['output'] + 123\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "f5972cd3928985b0d8f82a50ab7bea4a860d5c6f7515343757909956df129f0e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.297,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "f86c2f30204d9e88b98d8f164255d5019e2fabf107c26fd3d2ec94ef9b3d3573",
+          "bytes": 16928,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "8840e7a2981d8ca5fb662e2efe4c2a3653b2bb4470d53252ac4c035e587cb281",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.535,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "53a299dcb3aab9e6985691abf23f808b2d6b270eb66a5fcd90997e7d6f3a6d31",
+          "bytes": 16194,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "53a299dcb3aab9e6985691abf23f808b2d6b270eb66a5fcd90997e7d6f3a6d31",
+          "bytes": 16194,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"name\": [\"A\", \"B\", \"C\", \"D\", \"E\"],\n    \"active\": [True, False, True, True, False],\n    \"hours\": [2, 3, 5, 7, 9],\n    \"output\": [10, 99, 24, 18, 60],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df[df[\"active\"]]\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"hours\", y=\"output\", ax=ax)\nax.set(title=\"Installation outputs\", xlabel=\"hours\", ylabel=\"output\")\n\n# Your work\npeak = selected.loc[selected[\"output\"].idxmax()]\nax.annotate(\n    \"Active peak\",\n    xy=(peak[\"hours\"], peak[\"output\"]),\n    xytext=(8, 8),\n    textcoords=\"offset points\",\n    arrowprops={\"arrowstyle\": \"->\"},\n)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "36a31113b8aafa81b8f2ddbb7609a1b321fbbcfb45c2ee07da9170980e3df867",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.266,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Installation outputs",
+          "sha256": "53a299dcb3aab9e6985691abf23f808b2d6b270eb66a5fcd90997e7d6f3a6d31",
+          "bytes": 16194,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

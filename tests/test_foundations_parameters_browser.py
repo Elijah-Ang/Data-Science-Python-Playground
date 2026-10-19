@@ -1,4 +1,4 @@
-"""Build-ready rendered/source agreement probe; invoke through local adapter."""
+"""Verify current teaching and native reference disclosures in rendered lessons."""
 import argparse
 import json
 from pathlib import Path
@@ -6,16 +6,84 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--base-url", default="http://127.0.0.1:8771")
+parser.add_argument("--base-url", default="http://127.0.0.1:8000")
 parser.add_argument("--engine", choices=("chromium", "webkit"), default="chromium")
+parser.add_argument("--browser-executable")
 parser.add_argument("--output", default="tests/evidence/foundations/parameters")
 args = parser.parse_args()
 out = Path(args.output)
 out.mkdir(parents=True, exist_ok=True)
 errors, records, expected_first = [], [], {}
 
+
+def parameter_ids(entries):
+    return entries.evaluate_all("items=>items.map(item=>item.dataset.parameter)")
+
+
+def assert_no_overflow(page, state):
+    assert not page.evaluate(
+        "Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1"
+    ), state
+
+
+def inspect_guidance(page, guidance, state):
+    """Current meanings stay visible; reference contents are removed from lessons."""
+    current = page.locator(".foundation-parameter-teaching")
+    current_ids = [item["id"] for item in guidance["introduces"] + guidance["extends"]]
+    reference_expected = guidance["reference"]
+    assert current.count() == bool(current_ids), state
+    assert parameter_ids(current.locator(".foundation-parameter-row")) == current_ids, state
+    assert parameter_ids(page.locator('[data-parameter]:visible')) == current_ids, state
+    assert not set(current_ids).intersection(item["id"] for item in guidance["reminders"]), state
+    assert current.locator("details").count() == 0, state
+    for level, definitions in (("introduce", guidance["introduces"]), ("extend", guidance["extends"])):
+        for definition in definitions:
+            entry = current.locator(f'[data-parameter="{definition["id"]}"]')
+            assert entry.get_attribute("data-guidance") == level, state
+            assert entry.is_visible(), state
+            assert entry.locator('dt code[data-code-role="parameter"]').inner_text() == definition["keyword"], state
+            choices=entry.locator('.foundation-argument-values')
+            assert choices.is_visible() and choices.get_attribute('aria-label')=='Accepted values', state
+            assert choices.locator('li').count()>0 and entry.locator('dd>.argument-points>li').count(), state
+            assert choices.locator('code').count()>0, state
+            assert choices.locator('code').evaluate_all('nodes=>nodes.every(e=>getComputedStyle(e).fontSize==="16px")'), state
+            meaning = entry.locator("dd").inner_text()
+            assert meaning and len(meaning.split()) >= 3, (state, definition["id"])
+            assert entry.locator("pre, details").count() == 0, state
+            # Full authored contracts survive in the registry; the visible row
+            # explains this use without repeating every contract field.
+            for key in ("forms", "range", "default", "effect", "example", "caveat", "source"):
+                assert definition[key], (state, definition["id"], key)
+
+    assert current.locator('pre code').evaluate_all('nodes=>nodes.every(e=>getComputedStyle(e).fontSize==="16px")'), state
+
+    support = page.locator('.foundation-reference-content')
+    assert support.locator(":scope > details > summary").all_inner_texts() == ["Hint", "Reveal solution"], state
+    assert support.locator("details details").count() == 0, state
+    assert support.locator("details[open]").count() == 0, state
+    assert page.locator('.foundation-reference,.foundation-parameter-reference,.foundation-reference-body').count() == 0, state
+    assert page.locator('.foundation-content > .foundation-task-reminder').count() == 1, state
+    assert parameter_ids(page.locator('[data-parameter]:visible')) == current_ids, state
+    assert support.locator("details[open]").count() == 0, state
+    assert_no_overflow(page, (state, "help closed"))
+    return {
+        "introduces": [item["id"] for item in guidance["introduces"]],
+        "extends": [item["id"] for item in guidance["extends"]],
+        "reminders": [item["id"] for item in guidance["reminders"]],
+        "reference": [item["id"] for item in reference_expected],
+        "referenceRemoved": True,
+        "flatDisclosures": 2,
+    }
+
+
 with sync_playwright() as pw:
-    browser = getattr(pw, args.engine).launch()
+    launch = {}
+    executable = args.browser_executable
+    if args.engine == "chromium" and not executable and Path("/usr/bin/chromium").is_file():
+        executable = "/usr/bin/chromium"
+    if executable:
+        launch["executable_path"] = executable
+    browser = getattr(pw, args.engine).launch(**launch)
     context = browser.new_context(viewport={"width": 1440, "height": 1000})
     page = context.new_page()
     page.on("pageerror", lambda error: errors.append(str(error)))
@@ -24,6 +92,7 @@ with sync_playwright() as pw:
     rounds = page.evaluate("""FoundationsCurriculum.lessons.filter(l=>l.deck==='visualise')
       .flatMap(l=>l.rounds.map((r,index)=>({id:l.id,round:r.id,index,title:l.title})))""")
     assert len({item["id"] for item in rounds}) == 43
+    assert len(rounds) == 132
     for width in (1440, 320):
         page.set_viewport_size({"width": width, "height": 1000})
         for item in rounds:
@@ -33,79 +102,36 @@ with sync_playwright() as pw:
               &&document.querySelector('.foundation-lesson-heading h2')?.textContent===r.title
               &&Array.from(document.querySelectorAll('.foundation-practices li'))
                 .findIndex(e=>e.hasAttribute('aria-current'))===r.index""", arg=item)
-            expected = page.evaluate("""r=>{
+            guidance = page.evaluate("""r=>{
               const lesson=FoundationsCurriculum.lessons.find(l=>l.id===r.id);
-              return FoundationParameters.entriesFor(FoundationsCurriculum,lesson,lesson.rounds[r.index]);
+              return FoundationParameters.guidanceFor(FoundationsCurriculum,lesson,lesson.rounds[r.index]);
             }""", item)
             if item["index"] == 0:
-                expected_first[item["id"]] = expected
-            guides = page.locator(".foundation-parameter-guide")
-            assert guides.count() == (1 if expected else 0), (width, item)
-            entries = page.locator(".foundation-parameter-entry")
-            assert entries.count() == len(expected), (width, item)
-            for index, definition in enumerate(expected):
-                entry = entries.nth(index)
-                assert entry.get_attribute("data-parameter") == definition["id"], (width, item, definition["id"])
-                assert entry.locator("h4").inner_text() == definition["keyword"] + " · " + definition["purpose"]
-                assert entry.locator("dt").all_inner_texts() == [
-                    "Accepted forms", "Meaningful range", "Default", "Effect", "Example", "For this function"
-                ]
-                for field_index, field in enumerate(("forms", "range", "default", "effect", "example")):
-                    dd = entry.locator("dd").nth(field_index)
-                    actual_field = dd.inner_text()
-                    actual_content = dd.text_content()
-                    field_visible = dd.is_visible()
-
-                    def diagnostic(**extra):
-                        return {
-                            "width": width, "lesson": item["id"], "round": item["round"],
-                            "parameter": definition["id"], "field": field,
-                            "actual": repr(actual_field),
-                            "expected": repr(definition[field]),
-                            "actualTextContent": repr(actual_content),
-                            "dom": dd.evaluate("e=>({textContent:e.textContent,innerHTML:e.innerHTML})"),
-                            "visible": field_visible,
-                            **extra,
-                        }
-
-                    assert field_visible, diagnostic()
-                    assert actual_content == definition[field], diagnostic()
-                    if field == "example":
-                        code = dd.locator("pre > code")
-                        assert dd.locator("pre").count() == 1 and code.count() == 1 and dd.locator("code").count() == 1, diagnostic()
-                        code_visible = code.is_visible()
-                        actual_code = code.inner_text()
-                        assert code_visible, diagnostic(actualCode=repr(actual_code), codeVisible=code_visible)
-                        assert actual_code == definition[field], diagnostic(actualCode=repr(actual_code), codeVisible=code_visible)
-                    else:
-                        assert actual_field == definition[field], diagnostic()
-                assert entry.locator("dd").last.inner_text() == definition["caveat"] + " Version-matched source"
-                assert entry.locator("dd a").get_attribute("href") == definition["source"]
-                assert entry.locator("details").count() == 0
-                entry.locator("h4").scroll_into_view_if_needed()
-                assert entry.locator("h4").is_visible()
-            assert not page.evaluate("Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1"), (width, item)
+                expected_first[item["id"]] = guidance
+            evidence = inspect_guidance(page, guidance, (width, item))
             assert page.locator("progress,[role=progressbar],#forgetProgress,#resetLearningDialog,#storageStatus,.foundation-continue").count() == 0
-            if item["id"] in ("V09", "V13", "V14", "V15", "V19", "V30", "V37") and item["index"] == 0 and expected:
-                guides.screenshot(path=str(out / f"{args.engine}-{width}-{item['id']}.png"))
-            records.append({"width": width, **item, "parameters": [entry["id"] for entry in expected]})
+            if item["id"] in ("V09", "V13", "V14", "V15", "V19", "V30", "V37") and item["index"] == 0:
+                current = page.locator(".foundation-parameter-teaching")
+                if current.count():
+                    current.screenshot(path=str(out / f"{args.engine}-{width}-{item['id']}-current.png"))
+            records.append({"width": width, **item, **evidence})
     context.close()
+    static_records = []
     static = browser.new_context(java_script_enabled=False, viewport={"width": 320, "height": 740})
     page = static.new_page()
-    for lesson_id, expected in expected_first.items():
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    for lesson_id, guidance in expected_first.items():
         page.goto(args.base_url + "/data-foundations-" + lesson_id + ".html")
-        article = page.locator('article[aria-label="Lesson content"]')
-        assert article.is_visible()
-        entries = article.locator(".foundation-parameter-entry")
-        assert entries.count() == len(expected), ("no-JS", lesson_id)
-        for index, definition in enumerate(expected):
-            assert entries.nth(index).get_attribute("data-parameter") == definition["id"], ("no-JS", lesson_id)
-            assert entries.nth(index).locator("pre code").inner_text() == definition["example"]
-        assert not page.evaluate("Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1"), ("no-JS", lesson_id)
+        assert page.locator('article[aria-label="Lesson content"]').is_visible()
+        static_records.append({"lesson": lesson_id, **inspect_guidance(page, guidance, ("no-JS", lesson_id))})
     static.close()
     browser.close()
 
 assert not errors, errors
-record = {"engine": args.engine, "visualiseLessons": len(expected_first), "renderedRounds": len(records), "sourceAgreement": records, "pageErrors": errors, "noJavaScriptWidth": 320}
+record = {
+    "engine": args.engine, "executable": executable, "visualiseLessons": len(expected_first),
+    "renderedRounds": len(records), "sourceAgreement": records, "pageErrors": errors,
+    "noJavaScriptWidth": 320, "staticDisclosures": static_records
+}
 (out / f"{args.engine}-parameters.json").write_text(json.dumps(record, indent=2) + "\n")
-print(args.engine, len(records), "rendered round/viewport states and 43 static 320px lessons agree with reusable parameter entries")
+print(args.engine, len(records), "round/viewport states and 43 static 320px lessons verify concise current teaching, complete registry contracts, and visible data, task and two help disclosures")

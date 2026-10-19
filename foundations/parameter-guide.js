@@ -1,6 +1,6 @@
 /* Shared, version-pinned reference for the options used by Visualise lessons.
- * The inventory reads final assembled teaching, so later authoring overrides
- * cannot silently introduce an unexplained option. No learner state is stored.
+ * Code inventory audits final assembly; authored progression chooses current
+ * teaching. Reused syntax stays available on demand. No learner state is stored.
  */
 (function(root){
 'use strict';
@@ -182,13 +182,198 @@ function entriesFor(curriculum,lesson,round){
  const found=roundKeywords(lesson,round,curriculum);
  const groups=new Map();
  for(const item of found){const definition=lookup(item.function,item.keyword);if(!definition)continue;const group=groups.get(definition.id)||{...definition,functions:[]};if(!group.functions.includes(item.function))group.functions.push(item.function);groups.set(definition.id,group);}
+ for(const id of [...(round.parameterTeaching?.introduces||[]),...(round.parameterTeaching?.extends||[])]){
+  if(!registry[id])throw new Error(round.id+': unknown authored parameter '+id);
+  if(!groups.has(id))groups.set(id,{...registry[id],functions:[]});
+ }
  return [...groups.values()];
 }
-function render(curriculum,lesson,round){
- const entries=entriesFor(curriculum,lesson,round);if(!entries.length)return '';
- return `<section class="foundation-parameter-guide" aria-label="Chart parameter guide"><h3>Understand the options</h3><p>These reusable explanations cover the options introduced in this practice, including its setup, hint and solution. Defaults refer to Seaborn 0.13.2, Matplotlib 3.5.2 and pandas 2.2.0.</p>${entries.map(item=>`<section class="foundation-parameter-entry" data-parameter="${esc(item.id)}"><h4><code>${esc(item.keyword)}</code> · ${esc(item.purpose)}</h4>${item.functions.some(fn=>fn!=='reference')?`<p><strong>Used in:</strong> ${item.functions.filter(fn=>fn!=='reference').map(fn=>`<code>${esc(fn)}</code>`).join(', ')}</p>`:''}<dl><dt>Accepted forms</dt><dd>${esc(item.forms)}</dd><dt>Meaningful range</dt><dd>${esc(item.range)}</dd><dt>Default</dt><dd>${esc(item.default)}</dd><dt>Effect</dt><dd>${esc(item.effect)}</dd><dt>Example</dt><dd><pre><code>${esc(item.example)}</code></pre></dd><dt>For this function</dt><dd>${esc(item.caveat)} <a href="${esc(item.source)}" target="_blank" rel="noopener">Version-matched source</a></dd></dl></section>`).join('')}</section>`;
+function guidanceFor(curriculum,lesson,round){
+ const entries=entriesFor(curriculum,lesson,round),plan=round.parameterTeaching||{introduces:[],extends:[],reuses:[],prerequisites:[]};
+ const introduces=new Set(plan.introduces),extendsSet=new Set(plan.extends),reuses=new Set(plan.reuses);
+ return {introduces:entries.filter(item=>introduces.has(item.id)),extends:entries.filter(item=>extendsSet.has(item.id)&&!introduces.has(item.id)),reminders:entries.filter(item=>reuses.has(item.id)&&!introduces.has(item.id)&&!extendsSet.has(item.id)),reference:entries,prerequisites:plan.prerequisites||[]};
 }
-const api={versions:{seaborn:'0.13.2',matplotlib:'3.5.2',pandas:'2.2.0'},sources,registry,keywords,lookup,authoredFields,inventory,entriesFor,render};
+function parameterCode(item){return `<code data-code-role="parameter">${esc(item.keyword)}</code>`;}
+const conciseMeanings={
+ data:'The table the plot reads from.',
+ x:'Choose the column shown along the horizontal axis.',
+ y:'Choose the column shown along the vertical axis.',
+ ax:'The plotting area where this chart is drawn.',
+ figsize:'Set the picture’s width and height in inches.',
+ bins:'Choose how values are divided into intervals. Use a number of bins or a list of their edges.',
+ hue:'Give each category a different colour, or show a number using a colour scale.',
+ style:'Give each category a different marker shape or line pattern.',
+ size:'Use a column to set the sizes of the dots. Larger numbers give larger dot areas.',
+ order:'List the categories in the order you want them to appear.',
+ estimator:'Choose one result per group: the average, middle value, total, or another calculation.',
+ 'lineplot.estimator':'Choose one result at each x value. None keeps every observation; "mean" averages them; "median" takes their middle value.',
+ palette:'Choose the colours used for the groups or colour scale.',
+ alpha:'Set how see-through the marks are: 0 hides them; 1 makes them solid.',
+ marker:'Choose a shape for each point on the line. None draws the line without markers.',
+ errorbar:'Show how spread out the observations are, or how uncertain the calculated result is. None hides the interval.',
+ bw_adjust:'Choose how smooth the density curve looks. Larger numbers make it smoother.',
+ cut:'Choose how far the density curve extends beyond the observed values. Use 0 to stop at the smallest and largest observations.',
+ jitter:'Move dots sideways to separate values that overlap. Their measured heights stay the same.',
+ inner:'Choose the marks drawn inside each violin: quartiles, individual observations, or no marks.',
+ ascending:'True puts smaller values first; False puts larger values first.',
+ subset:'Choose the columns to check for missing values.',
+ aggfunc:'Choose how repeated row/column pairs are combined, such as their average or total.',
+ values:'Choose the measurement column to calculate with.',
+ 'pivot_table.index':'Choose the column whose categories become row labels.',
+ columns:'Choose the column whose categories become column headings.',
+ numeric_only:'True calculates using only number and True/False columns.',
+ sort:'True puts x values in order before joining them with a line.'
+};
+// Visible alternatives accompany each current argument, rather than a hidden reference.
+const acceptedValues={
+ data:[['df','DataFrame'],['{"x": [1, 2]}','mapping'],['[1, 2, 3]','one-variable data']],
+ x:[['"distance"','column name'],['df["distance"]','Series'],['[1, 2, 3]','aligned values']],
+ y:[['"minutes"','column name'],['df["minutes"]','Series'],['[3, 5, 7]','aligned values']],
+ hue:[['"group"','column name'],['df["group"]','aligned categories or numbers']],
+ style:[['"group"','column name'],['df["group"]','aligned category levels']],
+ size:[['"weight"','column name'],['df["weight"]','aligned size values']],
+ 'stripplot.size':[['3','small radius'],['5','default radius'],['8','larger radius']],
+ 'swarmplot.size':[['3','small radius'],['5','default radius'],['8','larger radius']],
+ ax:[['ax','single panel'],['axes[0]','first panel'],['axes[1, 0]','grid panel']],
+ figsize:[['(6, 4)','width and height in inches'],['(10, 4)','wider canvas']],
+ nrows:[['1','one row'],['2','two rows; any positive integer']],
+ ncols:[['1','one column'],['2','two columns; any positive integer']],
+ sharex:[['False','independent'],['True','all panels'],['"row"','within rows'],['"col"','within columns']],
+ sharey:[['False','independent'],['True','all panels'],['"row"','within rows'],['"col"','within columns']],
+ title:[['"Delivery times"','any text string']],
+ xlabel:[['"Distance (km)"','any text string']],
+ ylabel:[['"Time (minutes)"','any text string']],
+ bins:[['4','four equal-width bins over the data range'],['[0, 2, 4, 6]','three intervals of width 2; values outside 0–6 are excluded'],['[0, 2, 5, 10]','three unequal-width intervals'],['"auto"','automatic rule; also "fd", "doane", "scott", "stone", "rice", "sturges", "sqrt"']],
+ bw_adjust:[['0.5','less smoothing'],['1','default smoothing'],['2','more smoothing; any positive number']],
+ cut:[['0','stop at observed extremes'],['2','extend by two bandwidths; any nonnegative number']],
+ order:[['["A", "B", "C"]','explicit category order'],['ranked.index','labels from a sorted summary']],
+ hue_order:[['["local", "express"]','category list'],['summary.index','Index of category labels']],
+ style_order:[['["local", "express"]','category list'],['summary.index','Index of category labels']],
+ estimator:[['"mean"','average'],['"median"','middle value'],['"sum"','total'],['"min"','minimum'],['"max"','maximum'],['"std"','standard deviation'],['mode_value','custom scalar function for the most frequent value']],
+ 'lineplot.estimator':[['None','keep observations'],['"mean"','average repeated x values'],['"median"','middle value'],['"sum"','total'],['mode_value','custom scalar function']],
+ errorbar:[['None','no interval'],['"sd"','observed standard deviation'],['"pi"','observed percentile interval'],['"se"','standard error'],['"ci"','bootstrap confidence interval'],['("ci", 95)','method and level'],['interval_function','function returning (low, high)']],
+ n_boot:[['1000','default resample count'],['2000','more resamples; positive integer']],
+ seed:[['7','integer seed'],['None','unseeded'],['np.random.default_rng(7)','NumPy Generator']],
+ jitter:[['False','no displacement'],['True','default displacement'],['0.15','random offset up to ±0.15 category units']],
+ ci:[['None','no confidence band'],['95','95% band; percentage from 0 to 100']],
+ color:[['"blue"','colour name'],['"#3366cc"','hex colour'],['(0.2, 0.4, 0.8)','RGB channels from 0 to 1']],
+ palette:[['"deep"','named palette'],['["blue", "orange"]','colour list'],['{"A": "blue", "B": "orange"}','category mapping']],
+ alpha:[['0','invisible'],['0.5','half transparent'],['1','opaque'],['None','artist default']],
+ marker:[['"o"','circle'],['"s"','square'],['"*"','star'],['"^"','triangle'],['"x"','cross'],['None','no marker']],
+ capsize:[['0','no caps'],['0.15','cap width relative to category spacing']],
+ inner:[['"box"','mini box plot'],['"quart"','quartiles'],['"point"','observations'],['"stick"','observation lines'],['None','no interior marks']],
+ annot:[['True','write matrix values'],['False','omit labels'],['labels','same-shape array of custom labels']],
+ fmt:[['"d"','integers'],['".0f"','no decimals'],['".2f"','two decimals'],['".0%"','proportions as percentages']],
+ cmap:[['"Blues"','sequential amounts'],['"coolwarm"','signed differences'],['plt.get_cmap("viridis")','colormap object']],
+ vmin:[['0','numeric lower endpoint'],['-1','correlation lower endpoint'],['None','infer from data']],
+ vmax:[['100','numeric upper endpoint'],['1','correlation upper endpoint'],['None','infer from data']],
+ center:[['0','neutral value for signed data'],['None','no specified centre']],
+ complementary:[['False','fraction at or below x'],['True','fraction above x']],
+ legend:[['"auto"','infer detail'],['"brief"','sample numeric levels'],['"full"','every level'],['False','hide legend']],
+ labels:[['["Train", "Test"]','one text label per legend handle']],
+ 'legend.title':[['"Group"','title text'],['None','no title']],
+ col:[['"group"','column defining panel columns']],
+ row:[['"group"','column defining panel rows']],
+ height:[['3','panel height in inches; positive number']],
+ aspect:[['1','square panel dimensions'],['1.5','width = 1.5 × height']],
+ vars:[['["length", "width"]','list of numeric column names']],
+ diag_kind:[['"auto"','infer'],['"hist"','histogram'],['"kde"','density curve'],['None','no diagonal plot']],
+ corner:[['False','full grid'],['True','omit upper triangle']],
+ linestyle:[['"-"','solid'],['"--"','dashed'],['":"','dotted'],['"-."','dash-dot']],
+ 'bar.bottom':[['0','zero baseline'],['first','one preceding height per stacked bar']],
+ label:[['"Online"','legend text'],['["A", "B"]','per-bar labels']],
+ 'set_ylim.bottom':[['0','zero baseline'],['-5','other numeric limit'],['None','keep current limit']],
+ 'subplots_adjust.bottom':[['0.2','Figure fraction; below top']],
+ 'subplots_adjust.left':[['0.2','Figure fraction; left of right']],
+ 'tick_params.axis':[['"x"','horizontal ticks'],['"y"','vertical ticks'],['"both"','both axes']],
+ labelrotation:[['0','horizontal'],['45','diagonal'],['90','vertical; angle in degrees']],
+ xy:[['(10, 20)','target coordinates']],
+ xytext:[['(8, 30)','text coordinates'],['(0, 12)','offset when textcoords="offset points"'],['None','place text at xy']],
+ textcoords:[['"data"','measurement units'],['"axes fraction"','panel fractions'],['"figure fraction"','Figure fractions'],['"offset points"','relative point offset'],['"offset pixels"','relative pixel offset']],
+ xycoords:[['"data"','measurement units'],['"axes fraction"','panel fractions'],['"figure fraction"','Figure fractions']],
+ arrowprops:[['None','no arrow'],['{"arrowstyle": "->"}','forward arrow'],['{"arrowstyle": "<->"}','double-ended arrow']],
+ dpi:[['150','dots per inch; positive number'],['"figure"','use Figure DPI']],
+ bbox_inches:[['None','full Figure'],['"tight"','trim around artists'],['bbox','Matplotlib Bbox in inches']],
+ subset:[['["price"]','one required column'],['["price", "tip"]','several required columns']],
+ numeric_only:[['True','numeric and boolean columns'],['False','attempt all columns']],
+ axis:[['0','row-index direction/alignment; also "index"'],['1','column direction/alignment; also "columns"']],
+ 'pivot_table.index':[['"region"','one row-group column'],['["region", "status"]','multiple row-group columns']],
+ 'DataFrame.index':[['["A", "B"]','one label per row'],['series.index','existing Index']],
+ columns:[['"status"','one column-group key'],['["status", "shift"]','multiple group keys']],
+ values:[['"cost"','one measurement'],['["cost", "duration"]','several measurements']],
+ aggfunc:[['"mean"','average'],['"median"','middle'],['"sum"','total'],['"count"','nonmissing count'],['"size"','row count'],['["mean", "sum"]','several summaries'],['summary_function','custom function']],
+ ascending:[['True','smallest first'],['False','largest first'],['[True, False]','separate directions for two sort keys']],
+ sort:[['True','sort positions before drawing'],['False','preserve supplied row order']]
+};
+const chartKinds={relplot:['scatter','line'],catplot:['strip','swarm','box','violin','boxen','point','bar','count'],displot:['hist','kde','ecdf'],jointplot:['scatter','kde','hist','hex','reg','resid']};
+function valueChoices(item){
+ let choices=acceptedValues[item.id];
+ if(item.id==='kind')choices=[...new Set(item.functions.flatMap(fn=>chartKinds[method(fn)]||[]))].map(value=>[JSON.stringify(value),'']);
+ if(!choices?.length)throw Error('Missing visible argument values: '+item.id);
+ const columnArguments=new Set(['x','y','hue','style','size','col','row','vars','subset','values','pivot_table.index','columns']);
+ return '<ul class="foundation-argument-values" aria-label="Accepted values">'+choices.map(([value,meaning])=>{
+  const role=columnArguments.has(item.id)&&/^(?:[\"']|\[[\"'])/.test(value)?'column':/^(?:df|ax|axes\[[^\]]+\]|first|labels|bbox)$/.test(value)?'variable':'syntax';
+  return '<li><code data-code-role="'+role+'">'+esc(value)+'</code>'+(meaning?' — '+esc(meaning):'')+'</li>';
+ }).join('')+'</ul>';
+}
+function currentDefinition(item,lesson,round,level){
+ let meaning=level==='extend'&&extensionNotes[round.id]?.[item.id] || conciseMeanings[item.id] || item.purpose+' '+item.forms;
+ if(item.id==='errorbar'&&lesson.id==='V09')meaning='None hides intervals; the mean or median bar height stays unchanged.';
+ if(item.id==='lineplot.estimator'&&lesson.id==='V18')meaning='None keeps every observation. "mean" averages observations at the same x value; "median" takes their middle value.';
+ return `<div class="foundation-parameter-row" data-parameter="${esc(item.id)}" data-guidance="${level}"><dt>${parameterCode(item)}</dt><dd><ul class="argument-points"><li>${esc(meaning)}</li></ul>${valueChoices(item)}</dd></div>`;
+}
+// Teach both members of a related pair, while sharing their accepted forms and
+// example. This applies to authored introductions wherever that pair is used.
+const pairedIntroductions={
+ y:{after:'x',purpose:'Choose the vertical coordinate.',explanation:'Like x, y accepts a column-name string in data or an aligned vector; its default is None. Here y maps pressure_kpa to vertical position while x keeps volume_ml horizontal. Changing y changes the vertical measurement. Keep both values from the same observation.',example:'sns.scatterplot(data=df, x="volume_ml", y="pressure_kpa", ax=ax)'},
+ vmax:{after:'vmin',purpose:'Choose the upper end of the colour scale.',explanation:'vmax accepts a number or None, like vmin; None infers the upper limit from the data. For correlations, vmin=-1 and vmax=1 fix one comparable scale across charts. Changing either endpoint changes colour mapping, rather than the correlation values.',example:'sns.heatmap(matrix, vmin=-1, vmax=1, center=0, ax=ax)'},
+ xytext:{after:'xy',purpose:'Place the annotation text away from its anchor.',explanation:'Use a pair (x, y) or None. The default None places text at xy. textcoords determines the pair’s units; it defaults to xycoords. With textcoords="offset points", xytext=(0, 12) moves text 12 points above xy while leaving the measured anchor unchanged.',example:'ax.annotate("Peak", xy=(10, 20), xytext=(0, 12), textcoords="offset points")'}
+};
+const extensionExamples={
+ 'V04-3':{bins:'sns.histplot(data=df, x="weight_kg", bins=[0, 2, 5, 10], ax=ax)'},
+ 'V13-3':{order:'medians = df.groupby("bench")["reading"].median()\nranked = medians.sort_values()\norder = ranked.index'},
+ 'V11-2':{order:'ranked = medians.sort_values(ascending=False)\norder = ranked.index'},
+ 'V17-3':{size:'plotted["speed_kmh"] = plotted["distance_km"] / plotted["minutes"] * 60'},
+ 'V19-1':{'lineplot.estimator':'sns.lineplot(data=df, x="day", y="sales", estimator="mean", errorbar="sd", ax=ax)',errorbar:'errorbar="sd"'},
+ 'V10-1':{errorbar:'sns.pointplot(data=df, x="batch", y="result", estimator="mean", errorbar="sd", ax=ax)'},
+ 'V12-1':{cut:'sns.violinplot(data=df, x="group", y="measurement", cut=0, ax=ax)'},
+ 'V23-2':{axis:'row_totals = counts.sum(axis=1)\nproportions = counts.div(row_totals, axis=0)'},
+ 'V23-3':{aggfunc:'aggfunc="mean"'},
+ 'V33-1':{kind:'sns.relplot(data=df, x="minutes", y="thickness", col="workshop", kind="scatter", height=3)'},
+ 'V33-2':{kind:'sns.catplot(data=df, x="method", y="thickness", col="workshop", kind="box", height=3)'},
+ 'V33-3':{kind:'sns.relplot(data=df, x="inflow", y="outflow", col="region", kind="scatter", height=3)'}
+};
+const extensionNotes={
+ 'V04-3':{bins:'An integer chooses a count of equal-width bins. A sequence instead states the interval edges; [0, 2, 5, 10] gives three unequal-width intervals.'},
+ 'V13-3':{order:'The same plotting argument now receives the Index extracted from a sorted grouped Series, rather than a hand-written list.'},
+ 'V11-2':{order:'Median-based ordering also works with horizontal boxes. Keep category labels and their summary values paired while sorting.'},
+ 'V17-3':{size:'Calculate speed in km/h first, then map that derived numeric column to marker area.'},
+ 'V19-1':{'lineplot.estimator':'This dataset has repeated times. estimator="mean" creates one mean per time; selecting one replicate and using None creates a different, observed trajectory.',errorbar:'errorbar="sd" describes the spread of observed replicates at each time. It is not a confidence interval for the mean.'},
+ 'V10-1':{errorbar:'This optional lesson introduces the interpretation of observation-spread intervals. errorbar="sd" shows one standard deviation, rather than uncertainty about an estimate.'},
+ 'V12-1':{cut:'For a violin, cut limits the density outline beyond the observed range; it does not delete observations.'},
+ 'V23-2':{axis:'sum(axis=1) works across columns to calculate a total for each row. div(..., axis=0) instead aligns that Series by row label before dividing. They use different directions because summation and alignment are different operations.'},
+ 'V23-3':{aggfunc:'Use a measured mean inside each category-pair cell. A count of rows and a mean measurement answer different questions; missing combinations remain missing.'},
+ 'V33-1':{kind:'For relplot, kind="scatter" makes relationship panels. It does not select a univariate distribution.'},
+ 'V33-2':{kind:'catplot uses kinds such as "box" for category distributions. This is a different family from relplot’s paired relationships.'},
+ 'V33-3':{kind:'Choose relplot(kind="scatter") for inflow/outflow relationships. displot(kind="hist") would answer a different, one-variable distribution question.'}
+};
+function renderCurrent(curriculum,lesson,round){
+ const g=guidanceFor(curriculum,lesson,round);if(!g.introduces.length&&!g.extends.length)return '';
+ const rows=g.introduces.map(item=>currentDefinition(item,lesson,round,'introduce')).join('')+g.extends.map(item=>currentDefinition(item,lesson,round,'extend')).join('');
+ const mode=g.introduces.some(item=>item.id==='estimator')?'<p>For mode, pass a function that returns one value. def names the function; values receives a group and return sends one summary back. mode() finds the most frequent values; iloc[0] chooses the smallest when tied:</p><pre><code>def mode_value(values):\n    return pd.Series(values).mode().iloc[0]</code></pre>':'';
+ const estimator=g.introduces.some(item=>item.id==='estimator')?'<table class="teaching-example-output"><caption>Same measurements: 2, 2, 8</caption><thead><tr><th scope="col">Summary</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Mean</th><td>4</td></tr><tr><th scope="row">Median</th><td>2</td></tr><tr><th scope="row">Sum</th><td>12</td></tr></tbody></table>':'';
+ return `<section class="foundation-parameter-guide foundation-parameter-teaching" aria-label="Current parameter teaching"><h3>Arguments</h3><div class="argument-table-heading" aria-hidden="true"><span>Argument</span><span>Meaning and values</span></div><dl class="foundation-parameter-parts">${rows}</dl>${estimator}${mode}</section>`;
+}
+function renderReference(curriculum,lesson,round){
+ const g=guidanceFor(curriculum,lesson,round);if(!g.reference.length)return '';
+ return `<section class="foundation-parameter-guide foundation-parameter-reference" aria-label="Parameter reference"><h3>Argument reference</h3><div class="foundation-table-scroll"><table data-code-table="teaching"><thead><tr><th scope="col">Argument</th><th scope="col">Meaning and accepted forms</th><th scope="col">Default</th></tr></thead><tbody>${g.reference.map(item=>`<tr data-parameter="${esc(item.id)}" data-guidance="reference"><th scope="row">${parameterCode(item)}<br><a href="${esc(item.source)}" target="_blank" rel="noopener">API source</a></th><td>${esc(item.purpose)} ${esc(item.forms)}</td><td>${esc(item.default)}</td></tr>`).join('')}</tbody></table></div></section>`;
+}
+function render(curriculum,lesson,round,{level}={}){
+ if(level==='current')return renderCurrent(curriculum,lesson,round);
+ if(level==='reference')return renderReference(curriculum,lesson,round);
+ return renderCurrent(curriculum,lesson,round)+renderReference(curriculum,lesson,round);
+}
+const api={versions:{seaborn:'0.13.2',matplotlib:'3.5.2',pandas:'2.2.0'},sources,registry,keywords,lookup,authoredFields,inventory,entriesFor,guidanceFor,acceptedValues,valueChoices,renderCurrent,renderReference,render};
 if(typeof module==='object'&&module.exports)module.exports=api;
 else root.FoundationParameters=api;
 })(typeof window==='undefined'?globalThis:window);

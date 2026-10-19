@@ -1,0 +1,148 @@
+{
+  "ok": true,
+  "scene": "histogram",
+  "state": "two-bins",
+  "viewport": "short-desktop",
+  "observed_viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "usable_viewport": {
+    "left": 0,
+    "top": 0,
+    "right": 1280,
+    "bottom": 712
+  },
+  "declared_viewport": {
+    "id": "short-desktop",
+    "width": 1280,
+    "height": 720,
+    "full_visual": true
+  },
+  "scene_rect": {
+    "left": 55,
+    "top": 227.515625,
+    "right": 587.5,
+    "bottom": 493.453125,
+    "width": 532.5,
+    "height": 265.9375
+  },
+  "essential": [
+    {
+      "id": "2 bins. Heights count observations in each interval.",
+      "rect": {
+        "left": 55,
+        "top": 227.515625,
+        "right": 587.5,
+        "bottom": 479.453125,
+        "width": 532.5,
+        "height": 251.9375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 112.11862182617188,
+        "top": 240.99929809570312,
+        "right": 148.83737182617188,
+        "bottom": 256.9992980957031,
+        "width": 36.71875,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 81.51403045654297,
+        "top": 414.4253234863281,
+        "right": 88.85778045654297,
+        "bottom": 430.42529296875,
+        "width": 7.34375,
+        "height": 15.999969482421875
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 81.51403045654297,
+        "top": 261.40234375,
+        "right": 88.85778045654297,
+        "bottom": 277.40234375,
+        "width": 7.34375,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 116.19923400878906,
+        "top": 267.1832275390625,
+        "right": 123.54297637939453,
+        "bottom": 283.1832275390625,
+        "width": 7.343742370605469,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 112.11862182617188,
+        "top": 432.7880859375,
+        "right": 119.46237182617188,
+        "bottom": 448.7880859375,
+        "width": 7.34375,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 325.33062744140625,
+        "top": 386.2010803222656,
+        "right": 332.6743469238281,
+        "bottom": 402.2010803222656,
+        "width": 7.343719482421875,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 321.25,
+        "top": 432.7880859375,
+        "right": 343.2812194824219,
+        "bottom": 448.7880859375,
+        "width": 22.031219482421875,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 515.0791015625,
+        "top": 432.7880859375,
+        "right": 529.7666015625,
+        "bottom": 448.7880859375,
+        "width": 14.6875,
+        "height": 16
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 484.4744873046875,
+        "top": 456.2515869140625,
+        "right": 521.1932373046875,
+        "bottom": 472.2515869140625,
+        "width": 36.71875,
+        "height": 16
+      }
+    }
+  ],
+  "scrollers": [],
+  "overlaps": [],
+  "text": [],
+  "issues": [],
+  "notes": [],
+  "limits": "Geometry observations only. Review screenshots and motion for legibility, meaning, scientific truth, intentional composition, and visual quality. Declared essentials must be visible unless a selector explicitly allows dormant elements; hidden alternate roots and incidental marks are ignored."
+}

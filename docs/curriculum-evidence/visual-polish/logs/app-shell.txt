@@ -1,0 +1,30 @@
+
+> data-science-python-playground@1.0.0 check:app-shell
+> node scripts/check-app-shell.mjs && node tests/test_ad_mode.mjs && node tests/test_public_learning.mjs && node tests/test_light_default.mjs && node tests/test_tour_content.mjs && npm run check:learning-pages
+
+App shell, PWA metadata, local assets, and Capacitor configuration verified.
+Ad policy: legacy bypass removed, private/native exclusion, blocked storage, preview and page coverage passed.
+Public pages: canonical URLs, sitemap, link/asset targets and removed-library exclusion passed.
+Light defaults, legacy-system migration and explicit theme preferences passed.
+Tour: 25 exact-interface targets, script-free desktop/mobile snapshots, slow movement and garden entry.
+
+> data-science-python-playground@1.0.0 check:learning-pages
+> python3 scripts/build-learning-identifiers.py --check && node tests/test_learning_pages.mjs && node tests/test_code_identifiers.mjs && node tests/test_learning_language.mjs && node tests/test_foundations_prerequisites.mjs && node tests/test_foundations_operation_visuals.mjs && node tests/test_foundations_stage_teaching.mjs && node tests/test_foundations_guidance.mjs && node tests/test_teaching_visual_interactions.mjs && python3 tests/test_ml_curriculum_coherence.py
+
+Authored identifier contexts: 725 activity identities.
+Static learning: 220 substantive lessons, 49 complete independent briefs, 23 ML model collections, legacy routes, canonical URLs, sitemap, offline inventory, checkpoint fixes and privacy disclosures passed.
+Axis identifiers align; ordinary prose and labels remain plain; filler removed.
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.005s
+
+OK
+Explicit occurrence roles, scoped ambiguous names, literal strings, output columns and worked-example objects verified.
+Final I19S, W19, W22 and V09 semantics verified; every Foundations worked Python block remains undecorated.
+676 Foundations/ML activities have readable action steps and literal-preserving contexts; price columns, Python objects, prose, conditions, glossary and report evidence verified.
+Prerequisites: four ordered lessons, twelve practices, concrete examples, earlier teaching links and all original 326 activity identities preserved.
+Operation visual contracts: 47 Follow lessons, 106 meaningful fixed-data states.
+{"activities":338,"additions":{"inspect":20,"wrangle":11,"visualise":14},"familiarOrIntroductory":293,"repeatedLaterVisuals":0}
+Authored guidance: 110 cards, 338 practices; inventory, prerequisite order, distinct stages, concise briefs, parameter disclosure, provenance and named corrections verified.
+Teaching visuals: data conservation, statistics, neighbour voting, tree paths, SVM margins, fitted curves, PCA transforms and accessible delegated interactions verified.
+110 cards, 338 activities, 19 challenges: teaching levels, 14 supervised model milestones, unsupervised sequences, supplied fitted-state provenance and named repairs passed.

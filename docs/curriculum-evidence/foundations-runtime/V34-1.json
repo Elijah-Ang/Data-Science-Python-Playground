@@ -1,0 +1,890 @@
+{
+  "id": "V34-1",
+  "sourceId": "V34",
+  "sourceRound": 1,
+  "retrieves": null,
+  "exercise": {
+    "id": "V34-1",
+    "label": "Follow",
+    "dataset": "report_checks",
+    "task": "Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it. Preserve every measured pair.",
+    "solution": "fig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+    "starter": "____(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+    "hint": "Export the stated finished Figure before display.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "export": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "figure",
+      "variant": "export",
+      "label": "Concept sketch: save this Figure as a PNG file"
+    },
+    "demand": "Export the stated finished Figure before display.",
+    "steps": [
+      "Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it.",
+      "Preserve every measured pair."
+    ],
+    "requiredKeywords": [],
+    "setupDescription": "A finished report scatter ready to export.",
+    "decision": "Export the stated finished Figure before display.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle"
+    ],
+    "fixtureFeature": "An already prepared chart isolates export responsibility; changing its evidence would not repair layout or produce a finished handoff.",
+    "question": "Which finished Figure belongs in the report handoff?",
+    "contextPlot": {
+      "x": "input",
+      "y": "reading",
+      "title": "Report measurements",
+      "xlabel": "input",
+      "ylabel": "reading"
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one report measurement",
+    "datasetRationale": "An already prepared chart isolates export responsibility; changing its evidence would not repair layout or produce a finished handoff.",
+    "parameterTeaching": {
+      "introduces": [
+        "dpi",
+        "bbox_inches"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle"
+      ],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "concepts": {
+      "introduces": [
+        "matplotlib.savefig"
+      ],
+      "reuses": [
+        "matplotlib.labels",
+        "matplotlib.figure-axes"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "stageSummary": "Export the finished chart.",
+    "brief": {
+      "question": "Which finished Figure belongs in the report handoff?",
+      "rows": "One row: one report measurement.",
+      "result": "Export the supplied labelled and arranged input/reading scatter as chart.png at 150 dpi with bbox_inches=\"tight\" before displaying it.",
+      "constraints": [
+        "Preserve every measured pair."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "record",
+        "input",
+        "reading"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [
+        [
+          "fig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")",
+          "Export the supplied, finished Figure with the requested file and resolution."
+        ],
+        [
+          "dpi=150",
+          "Save at 150 pixels per inch."
+        ],
+        [
+          "bbox_inches=\"tight\"",
+          "Include surrounding labels in the saved image."
+        ],
+        [
+          "ax.set(xlabel=..., ylabel=...)",
+          "Complete missing report axis labels before export."
+        ]
+      ],
+      "reminders": [
+        [
+          "plt.show()",
+          "Display the same Figure after exporting it."
+        ],
+        [
+          "fig.tight_layout()",
+          "Repair spacing before exporting an unfinished handoff."
+        ]
+      ],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Export the finished chart.",
+      "why": "Export the stated finished Figure before display.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "record": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "input": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "reading": [
+      3,
+      7,
+      6,
+      11,
+      10,
+      15
+    ]
+  },
+  "inputSHA256": "0c4726416f42dc5c1be3b90b2b8c382669c1d5826741d9a72b5f29c9788f4e47",
+  "visibleWorkspaceSHA256": "94545eeca7cbe0c993d0cc3e5a36dac2f60d9edfc97071c41e6a4a43db5a9c94",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\n____(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+  "context": "A finished report scatter ready to export. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "fig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "739c311cdbda9789c5d78cf4fea50f6ad398d1630902d0afd770de8824b243e4",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.461,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "94545eeca7cbe0c993d0cc3e5a36dac2f60d9edfc97071c41e6a4a43db5a9c94",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.335,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-1-full_visible_reference_workspace-1.png"
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-1-full_visible_reference_workspace-2.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.tight_layout()\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "b83bba5aa97d72b8a589089b9c3bebd3dc7ec2dd34acc0ad3adc6f96bb05f839",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.29,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-1-equivalent_focal_work-1.png"
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-1-equivalent_focal_work-2.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nplt.show()",
+      "codeSHA256": "c6156b9f8a6e7eec7e406d7eaea0230f038c920962e6b8ab7e10ef6a4b1cd765",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.212,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save chart.png before displaying the figure.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_export_dpi",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.tight_layout()\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=72, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "b04106f344cc6dc93597e7177dfac561622e454afa4d922e3b351a65fcf8df98",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.301,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save the PNG at 150 dpi.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "353ef097768bef4de0e79a6cae482c2f46377605757180f20a82d8b393f4b724",
+          "bytes": 8071,
+          "width": 424,
+          "height": 280,
+          "dpi": [
+            72.009,
+            72.009
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_tight_export",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.tight_layout()\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=150, bbox_inches=None)\nplt.show()",
+      "codeSHA256": "5d91715fe569af66e329c312846a3cafe408472440c3d0f9b7be9ee9c86482f2",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.287,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save chart.png with bbox_inches=\"tight\".",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "3ce1ffb00e63da65b78eff4cc3f31afb9c288a51a461a8c632d88445ee941256",
+          "bytes": 19793,
+          "width": 900,
+          "height": 600,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "export_after_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.tight_layout()\nplt.show()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")",
+      "codeSHA256": "1d2dc5cca758dc942427215f3304ecf5300a91069d9d956bb5d7f0f3be818720",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.365,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save the finished chart before calling plt.show().",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unfinished_export_before_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\ntitle = ax.get_title()\nax.set_title(\"Incomplete export\")\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.set_title(title)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "aad23be7ff17b0074f6cd20fd2f30c59716563cec94e74380e18d44d0dbfbe31",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.314,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'report measurements'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "1722b0bd3d1ad5c851ac951aa28f2011c72b331828a81b214b3d43c4f4c07cdc",
+          "bytes": 14247,
+          "width": 632,
+          "height": 408,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "75b1a9ebcc64ef99fb0fe0a8e47bd28fb56a895f6390350df1e23b7b00718502",
+          "bytes": 18699,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "0d35ea095f34b538584d35d154c3f760f5cb2e66663f59400db19dd79d6f91b6",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.316,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'report measurements'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "7641ea8c0c8a99b965fc5388f992a7515b57ae5267c451a0fc4a49c25dfbe36f",
+          "bytes": 13227,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "93a46ac6d3c6b5c26558b1ab6dfd4639f82a7d20ee392a2ffc60e46d09750e1f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.531,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "12401f50c84de4b42ad06963742691d49e6ee1523323c93a75b8c75a9608dfb1",
+          "bytes": 14436,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['reading'] = df['reading'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "48107024c01a042124e1616d30278f3ead81dd2b26ae8e4d641b1c26782a4620",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.589,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "6c08300a5ecf3ffa21387cf6466b8d16200cc2dbfca89283a0a2a7a7bb72bdf7",
+          "bytes": 17220,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "7158669ee1603d99fff417d151eea66cc669afd6452ce8c75d460c608e4ce2cb",
+          "bytes": 23722,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "750ded48221cf6b8683fbfdce9bc2549d6e3a4bf3a06b4075ee765c104bd6c75",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.78,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"record\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"input\": [1, 2, 3, 4, 5, 6],\n    \"reading\": [3, 7, 6, 11, 10, 15],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"input\", y=\"reading\", ax=ax)\nax.set(title=\"Report measurements\", xlabel=\"input\", ylabel=\"reading\")\nfig.tight_layout()\n\n# Your work\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "94545eeca7cbe0c993d0cc3e5a36dac2f60d9edfc97071c41e6a4a43db5a9c94",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.579,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Report measurements",
+          "sha256": "adbd8719fd7d95f4be9774b3d22240f8d4cec6be0df3e324bf5851c6b4c47b58",
+          "bytes": 14437,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "ea477c9f292989d752d30341cc6f763ffa2e4c7f45c6b97eb2ec1a6da8371cff",
+          "bytes": 19644,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

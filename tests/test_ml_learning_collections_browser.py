@@ -2,18 +2,20 @@
 import argparse
 import json
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 from playwright.sync_api import sync_playwright
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--base-url', default='http://127.0.0.1:8765')
 parser.add_argument('--engine', default='chromium', choices=['chromium', 'webkit'])
 parser.add_argument('--evidence', default='work/four-improvements/ml-collections-browser')
+parser.add_argument('--executable-path',help='Optional local browser binary; CI uses Playwright engines by default.')
 args = parser.parse_args()
 out = Path(args.evidence)
 out.mkdir(parents=True, exist_ok=True)
 
 with sync_playwright() as playwright:
-    browser = getattr(playwright, args.engine).launch()
+    browser = getattr(playwright, args.engine).launch(**({'executable_path':args.executable_path} if args.executable_path else {}))
     context = browser.new_context(viewport={'width': 1440, 'height': 1000})
     page = context.new_page()
     errors = []
@@ -24,6 +26,14 @@ with sync_playwright() as playwright:
 
     def activity(identifier):
         page.wait_for_function('(id)=>window.MLLearning?.activity?.id===id', arg=identifier)
+
+    def file_name(address):
+        return urlsplit(address).path.rsplit('/',1)[-1]
+
+    def route_state(file, **expected):
+        assert file_name(page.url)==file,page.url
+        actual=parse_qs(urlsplit(page.url).query)
+        assert all(actual.get(key)==[str(value)] for key,value in expected.items()),(page.url,expected)
 
     def collection(slug, title, prefix=''):
         page.goto(args.base_url+'/ml-learn-collection-'+slug+'.html'+prefix)
@@ -36,18 +46,20 @@ with sync_playwright() as playwright:
     assert page.locator('.foundation-deck[data-collection]').count() == 23
     page.locator('[data-collection="simple-linear"]').click()
     page.get_by_role('heading', name='Simple linear regression', exact=True).wait_for()
-    assert page.url.endswith('ml-learn-collection-simple-linear.html?from=learn')
+    route_state('ml-learn-collection-simple-linear.html',**{'from':'learn'})
     page.locator('.lesson-card').first.click()
     activity('ML-R01-1')
-    assert page.url.endswith('ml-learn-ML-R01.html?from=learn&collection=simple-linear')
+    route_state('ml-learn-ML-R01.html',**{'from':'learn','collection':'simple-linear'})
     assert page.locator('link[rel="canonical"]').get_attribute('href') == 'https://dataplayground.science/ml-learn-ML-R01.html'
     assert 'Simple linear regression' in page.locator('.foundation-breadcrumb').inner_text()
-    assert page.locator('.back-playground').get_attribute('href') == 'ml-learn-collection-simple-linear.html?from=learn'
+    back=page.locator('.back-playground').get_attribute('href')
+    assert file_name(back)=='ml-learn-collection-simple-linear.html'
+    assert parse_qs(urlsplit(back).query).get('from')==['learn']
     starter = page.evaluate('MLLearning.activity.starter')
     page.locator('#mlEditor').fill('# transient collection edit\n')
     page.get_by_role('link', name='Next practice →', exact=True).click()
     activity('ML-R01-2')
-    assert 'from=learn&practice=1&collection=simple-linear' in page.url
+    route_state('ml-learn-ML-R01.html',**{'from':'learn','practice':1,'collection':'simple-linear'})
     page.go_back()
     activity('ML-R01-1')
     assert page.locator('#mlEditor').input_value() == starter
@@ -68,7 +80,7 @@ with sync_playwright() as playwright:
     for entry in ['ml-learn-ML-R01.html', 'ml-learn.html#regression/ML-R01/0', 'ml-learn-ML-R01.html?collection=neural-quantity', 'ml-learn-ML-R01.html?collection=missing']:
         page.goto(args.base_url+'/'+entry)
         activity('ML-R01-1')
-        assert page.locator('.back-playground').get_attribute('href') == 'ml-learn-regression.html'
+        assert file_name(page.locator('.back-playground').get_attribute('href')) == 'ml-learn-regression.html'
         assert page.locator('link[rel="canonical"]').get_attribute('href') == 'https://dataplayground.science/ml-learn-ML-R01.html'
     # Keep the lesson.deck requirement: a card under the wrong legacy deck is not a lesson.
     page.goto(args.base_url+'/ml-learn.html#classification/ML-R01/0')
@@ -88,8 +100,8 @@ with sync_playwright() as playwright:
     page.wait_for_function("window.MLLearning?.activity?.id.startsWith('ML-N-R1-')")
     page.get_by_role('link', name='Choose a neural route →', exact=True).click()
     page.get_by_role('heading', name='Shared neural foundations', exact=True).wait_for()
-    assert page.locator('a[href="ml-learn-collection-neural-classification.html"]').count() == 1
-    assert page.locator('a[href="ml-learn-collection-neural-quantity.html"]').count() == 1
+    assert page.locator('a[href*="ml-learn-collection-neural-classification.html"]').count() == 1
+    assert page.locator('a[href*="ml-learn-collection-neural-quantity.html"]').count() == 1
 
     inventory = page.evaluate('MLLearning.curriculum.collections')
     for width in [1440, 390, 320]:
@@ -113,8 +125,18 @@ with sync_playwright() as playwright:
         readonly.goto(args.base_url+'/ml-learn-collection-'+slug+'.html')
         assert readonly.get_by_role('heading', name=title, level=2, exact=True).is_visible()
         readonly.locator('.lesson-card').first.click()
-        assert len(readonly.locator('article[aria-label="Lesson content"]').inner_text()) > 700
-        assert readonly.locator('article pre').count() > 0
+        assert len(readonly.locator('article[aria-label="Lesson content"]').inner_text()) > 100
+        assert readonly.locator('.teaching-overview').count()==1
+        # First-use code, complete scripts and reference remain available with
+        # semantic HTML disclosure even without browser enhancement.
+        assert readonly.locator('article pre, #mlEditor').count() > 0
+        reference=readonly.locator('section[aria-label="Reference and help"]')
+        assert reference.count()==1 and reference.locator(':scope > details').count()==3
+        assert reference.locator(':scope > details > summary').all_text_contents()==['Reference','Hints','Explained solution']
+        assert not reference.locator(':scope > details[open]').count()
+        assert not reference.locator('details details').count()
+        reference.locator('.ml-reference > summary').click()
+        assert reference.locator('.ml-reference').get_attribute('open') is not None
         readonly.locator('.foundation-navigation a').last.click()
         assert '.html' in readonly.url
         assert readonly.locator('article[aria-label="Lesson content"]').count() == 1

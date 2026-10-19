@@ -1,0 +1,104 @@
+{
+  "ok": true,
+  "scene": "code-menu",
+  "state": "open",
+  "viewport": "short-desktop",
+  "observed_viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "usable_viewport": {
+    "left": 0,
+    "top": 0,
+    "right": 1280,
+    "bottom": 712
+  },
+  "declared_viewport": {
+    "id": "short-desktop",
+    "width": 1280,
+    "height": 720,
+    "full_visual": true
+  },
+  "scene_rect": {
+    "left": 309.859375,
+    "top": 186.328125,
+    "right": 629.859375,
+    "bottom": 464.328125,
+    "width": 320,
+    "height": 278
+  },
+  "essential": [
+    {
+      "id": "button",
+      "rect": {
+        "left": 316.859375,
+        "top": 193.328125,
+        "right": 622.859375,
+        "bottom": 237.328125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 316.859375,
+        "top": 237.328125,
+        "right": 622.859375,
+        "bottom": 281.328125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 316.859375,
+        "top": 281.328125,
+        "right": 622.859375,
+        "bottom": 325.328125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 316.859375,
+        "top": 325.328125,
+        "right": 622.859375,
+        "bottom": 369.328125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 316.859375,
+        "top": 369.328125,
+        "right": 622.859375,
+        "bottom": 413.328125,
+        "width": 306,
+        "height": 44
+      }
+    },
+    {
+      "id": "button",
+      "rect": {
+        "left": 316.859375,
+        "top": 413.328125,
+        "right": 622.859375,
+        "bottom": 457.328125,
+        "width": 306,
+        "height": 44
+      }
+    }
+  ],
+  "scrollers": [],
+  "overlaps": [],
+  "text": [],
+  "issues": [],
+  "notes": [],
+  "limits": "Geometry observations only. Review screenshots and motion for legibility, meaning, scientific truth, intentional composition, and visual quality. Declared essentials must be visible unless a selector explicitly allows dormant elements; hidden alternate roots and incidental marks are ignored."
+}

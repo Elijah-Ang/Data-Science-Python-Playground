@@ -1,0 +1,640 @@
+{
+  "id": "V36-1",
+  "sourceId": "V36",
+  "sourceRound": 1,
+  "retrieves": null,
+  "exercise": {
+    "id": "V36-1",
+    "label": "Follow",
+    "dataset": "travel_costs",
+    "task": "Choose a zero or truncated baseline to make bar lengths represent the observed mean costs. Preserve the supplied highest-first ranking. Arrange and display the repaired Figure.",
+    "solution": "ax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()",
+    "starter": "ax.set_ylim(____)\nfig.tight_layout()\nplt.show()",
+    "hint": "Choose zero as the defensible bar baseline while preserving the ranked means.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "categorical": true,
+      "barGeometry": true,
+      "zeroBaseline": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "bars",
+      "variant": "honest-bars",
+      "label": "Concept sketch: zero baseline; deliberate category order"
+    },
+    "demand": "Choose zero as the defensible bar baseline while preserving the ranked means.",
+    "requiredKeywords": [],
+    "preserveData": false,
+    "reflection": null,
+    "bridge": null,
+    "steps": [
+      "Choose a zero or truncated baseline to make bar lengths represent the observed mean costs.",
+      "Preserve the supplied highest-first ranking.",
+      "Arrange and display the repaired Figure."
+    ],
+    "setupDescription": "A misleading draft of exact travel-cost mean bars.",
+    "decision": "Choose zero as the defensible bar baseline while preserving the ranked means.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle"
+    ],
+    "fixtureFeature": "Unequal category means expose misleading bar baselines and nonlinear length comparisons; the values must survive the axis repair.",
+    "question": "Which baseline represents the travel-cost mean ratios fairly?",
+    "contextPlot": {
+      "x": "mode",
+      "y": "Mean cost",
+      "title": "Travel expense receipts",
+      "xlabel": "mode",
+      "ylabel": "Mean cost"
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one travel receipt",
+    "datasetRationale": "Unequal category means expose misleading bar baselines and nonlinear length comparisons; the values must survive the axis repair.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "prerequisites": [
+        "V29",
+        "V26"
+      ]
+    },
+    "concepts": {
+      "introduces": [
+        "chart.fair-comparison"
+      ],
+      "reuses": [
+        "matplotlib.bar",
+        "matplotlib.scales"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V29",
+        "V26"
+      ]
+    },
+    "stageSummary": "Restore the zero baseline.",
+    "brief": {
+      "question": "Which baseline represents the travel-cost mean ratios fairly?",
+      "rows": "One row: one travel receipt.",
+      "result": "Choose a zero or truncated baseline to make bar lengths represent the observed mean costs.",
+      "constraints": [
+        "Preserve the supplied highest-first ranking.",
+        "Arrange and display the repaired Figure."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "receipt",
+        "mode",
+        "cost"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [
+        [
+          "ax.set_ylim(bottom=0)",
+          "Restore the baseline of the supplied mean-cost bars."
+        ],
+        [
+          "ax.set_yscale(\"linear\")",
+          "Repair a draft that uses a logarithmic bar axis."
+        ],
+        [
+          "ax.set_ylim(0, 25)",
+          "Use the common zero-based report range."
+        ]
+      ],
+      "reminders": [
+        [
+          "fig.tight_layout(); plt.show()",
+          "Arrange and display the repaired Figure."
+        ]
+      ],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Restore the zero baseline.",
+      "why": "Choose zero as the defensible bar baseline while preserving the ranked means.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "receipt": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "mode": [
+      "Bus",
+      "Bus",
+      "Rail",
+      "Rail",
+      "Ferry",
+      "Ferry"
+    ],
+    "cost": [
+      2,
+      4,
+      5,
+      9,
+      6,
+      10
+    ]
+  },
+  "inputSHA256": "7be1c35de6fe7c603de855d08c8dc6c76af9d25f3f42a842930ca4ae04b48b37",
+  "visibleWorkspaceSHA256": "281f32b1272c02ee81d122ac42e75c8c2a94d608e8319f29854d3c12d5cbe41e",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(____)\nfig.tight_layout()\nplt.show()",
+  "context": "A misleading draft of exact travel-cost mean bars. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "9eded8b6f182ac450e6acbb7c922a36b44618c9c4d90373cb600b3e5b654c218",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.232,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ec1ae0ba1f2e898093342ee4cd802af00249769e3d0cd6f4bfc0445d78d779be",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "281f32b1272c02ee81d122ac42e75c8c2a94d608e8319f29854d3c12d5cbe41e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.207,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ec1ae0ba1f2e898093342ee4cd802af00249769e3d0cd6f4bfc0445d78d779be",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V36-1-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ybound(lower=0)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "7bf7f0d98505aa2ca40e528b500582d5cd0d25de17a7270b215f3bc17feb5fdb",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.24,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ec1ae0ba1f2e898093342ee4cd802af00249769e3d0cd6f4bfc0445d78d779be",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V36-1-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nplt.show()",
+      "codeSHA256": "df4c178e2514fb183e71d548f2c3be11f7819ac43cced6b6e6a03e75b08b12be",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.265,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the visible observations and axis bounds.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ce8651441412ec42d8e6c26a7ab962b24b853c3d9c52108fdada43ded155569a",
+          "bytes": 13375,
+          "width": 575,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "misleading_baseline",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ybound(lower=3)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "4d810f1fb2fa21a2d1731e306fa3656eb8c4a53e7a4efae3d058c9a4e0f4fefd",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.207,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the visible observations and axis bounds.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "2e8cf39497e8884e9b72da1332028726157bf9b7b207f777b49baeb549b11bc6",
+          "bytes": 13487,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(bottom=0)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "252e743980cd56bc560a90b1fcb8d79ec87e9ef2b4bf9227b645d30acf38fa53",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.269,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'travel expense receipts'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "cf33e4746005de14fa5c3615850edc2939e8e2597eda8686c34e1f74cf0d3923",
+          "bytes": 13067,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(bottom=0)\nfig.tight_layout()\nheights = [bar.get_height() for bar in ax.patches]\nfor bar, height in zip(ax.patches, heights[::-1]):\n    bar.set_height(height)\nplt.show()",
+      "codeSHA256": "77d03e049a25218ea15b4dc3239fc4830cefd0c67ff56489ed3d826b1247c700",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.251,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the category labels, bar heights and baselines; expected ('Ferry', [[0.0, 8.0]]).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "d7bf0e00427029d06656fde17f8f1f227cb59a34fdc8c9736ce01dc3e6facfc4",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\n# Learner edits the supplied values before their marks are drawn.\ndf['cost'] = df['cost'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "c1f53ad6bb216d9ea80772f91d8987eda02b8301714a6e8cd7017a99529741eb",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.212,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the category labels, bar heights and baselines; expected ('Ferry', [[0.0, 8.0]]).",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "be74ad6ba49883b8fb986ffe9d04c8b998743632de5bae8a094d1a399251c506",
+          "bytes": 15825,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\nax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "aa77b602ab370f9419df68da03357ddb386f063b3a402a67ea1ccb773adbde10",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.444,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ec1ae0ba1f2e898093342ee4cd802af00249769e3d0cd6f4bfc0445d78d779be",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ec1ae0ba1f2e898093342ee4cd802af00249769e3d0cd6f4bfc0445d78d779be",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"receipt\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"mode\": [\"Bus\", \"Bus\", \"Rail\", \"Rail\", \"Ferry\", \"Ferry\"],\n    \"cost\": [2, 4, 5, 9, 6, 10],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(6, 4))\nmeans = df.groupby(\"mode\")[\"cost\"].mean().sort_values(ascending=False)\nax.bar(means.index, means.values)\nax.set(title=\"Travel expense receipts\", xlabel=\"mode\", ylabel=\"Mean cost\")\nax.set_ylim(bottom=3)\n\n# Your work\nax.set_ylim(bottom=0)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "281f32b1272c02ee81d122ac42e75c8c2a94d608e8319f29854d3c12d5cbe41e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.295,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Travel expense receipts",
+          "sha256": "ec1ae0ba1f2e898093342ee4cd802af00249769e3d0cd6f4bfc0445d78d779be",
+          "bytes": 14420,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

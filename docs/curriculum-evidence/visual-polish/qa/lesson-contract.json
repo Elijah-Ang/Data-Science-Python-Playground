@@ -1,0 +1,420 @@
+{
+  "version": 1,
+  "scope": "repair",
+  "revision": "visual-polish-2026-10-18",
+  "sources": [
+    "foundations/AGENTS.md",
+    "foundations/visuals.js",
+    "foundations/operation-visuals.js",
+    "foundations/teaching.js",
+    "ml-learning/visuals.js",
+    "tests/test_inline_code_models.py"
+  ],
+  "scenes": [
+    {
+      "id": "histogram",
+      "reading_ids": [
+        "Understand the idea",
+        "What the syntax does",
+        "Arguments"
+      ],
+      "question": "Do bins count and position observations correctly?",
+      "objects": [
+        "fixed-observations",
+        "code",
+        "result"
+      ],
+      "operation": "Change an offered code value or read the native before/after result.",
+      "consequence": "The result follows the displayed Python, with unchanged source observations and correct geometry.",
+      "renderer": "Existing pure JavaScript model; semantic HTML and SVG. Floating UI owns only menu placement.",
+      "layout": "Preserve the independent reading/editor panes, original colours, Follow/Change/Transfer and mobile page flow. Table source/results flow at native text size; measure their current reading subsection separately. On phones retain the existing labelled local horizontal plot pan, with full SVG-coordinate bounds checked separately; the collector does not certify simultaneous viewport fit of that inherited wide plot.",
+      "retained_ids": [],
+      "essential_selectors": [
+        "svg",
+        "svg text"
+      ],
+      "controls": [],
+      "states": [
+        "default",
+        "two-bins",
+        "other-column"
+      ],
+      "viewports": [
+        {
+          "id": "desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": "short-desktop",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "id": "phone",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "checks": [
+        {
+          "id": "native-bins",
+          "kind": "model",
+          "hard": true,
+          "expected": "Counts, edges, widths and SVG bar scale agree with native Seaborn, including explicit/unequal edges."
+        },
+        {
+          "id": "plot-fit",
+          "kind": "geometry",
+          "hard": true,
+          "expected": "Plot marks and labels fit the SVG and the measured subsection.",
+          "viewports": [
+            "desktop",
+            "short-desktop"
+          ]
+        },
+        {
+          "id": "plot-review",
+          "kind": "visual",
+          "hard": true,
+          "expected": "Bars meet the x-axis, labels are readable and code is linked to the result."
+        }
+      ],
+      "selector": "[data-foundation-explorer=\"histogram\"] .teaching-visual-scroll"
+    },
+    {
+      "id": "table-transform",
+      "reading_ids": [
+        "Understand the idea",
+        "What the syntax does",
+        "Arguments"
+      ],
+      "question": "Which column changes when I rename it?",
+      "objects": [
+        "fixed-observations",
+        "code",
+        "result"
+      ],
+      "operation": "Change an offered code value or read the native before/after result.",
+      "consequence": "The result follows the displayed Python, with unchanged source observations and correct geometry.",
+      "renderer": "Existing pure JavaScript model; semantic HTML and SVG. Floating UI owns only menu placement.",
+      "layout": "Preserve the independent reading/editor panes, original colours, Follow/Change/Transfer and mobile page flow. Table source/results flow at native text size; measure their current reading subsection separately.",
+      "retained_ids": [],
+      "essential_selectors": [
+        "table",
+        "caption",
+        "th",
+        "td"
+      ],
+      "controls": [],
+      "states": [
+        {
+          "id": "source",
+          "selector": "[data-operation-explorer=\"W02\"] .operation-inputs .operation-table-scroll"
+        },
+        {
+          "id": "result",
+          "selector": "[data-operation-explorer=\"W02\"] .operation-tables > .operation-table-scroll"
+        }
+      ],
+      "viewports": [
+        {
+          "id": "desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": "short-desktop",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "id": "phone",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "checks": [
+        {
+          "id": "native-rename",
+          "kind": "model",
+          "hard": true,
+          "expected": "Displayed cells match the actual pandas rename; all observations stay fixed."
+        },
+        {
+          "id": "table-fit",
+          "kind": "geometry",
+          "hard": true,
+          "expected": "The current native table is legible and unwarped in the reading pane."
+        },
+        {
+          "id": "table-review",
+          "kind": "visual",
+          "hard": true,
+          "expected": "Source and result use full reading width with a clear directional relationship."
+        }
+      ],
+      "selector": "[data-operation-explorer=\"W02\"] .operation-table-scroll"
+    },
+    {
+      "id": "argument-row",
+      "reading_ids": [
+        "Understand the idea",
+        "What the syntax does",
+        "Arguments"
+      ],
+      "question": "What can I put into bins?",
+      "objects": [
+        "fixed-observations",
+        "code",
+        "result"
+      ],
+      "operation": "Change an offered code value or read the native before/after result.",
+      "consequence": "The result follows the displayed Python, with unchanged source observations and correct geometry.",
+      "renderer": "Existing pure JavaScript model; semantic HTML and SVG. Floating UI owns only menu placement.",
+      "layout": "Preserve the independent reading/editor panes, original colours, Follow/Change/Transfer and mobile page flow. Table source/results flow at native text size; measure their current reading subsection separately.",
+      "retained_ids": [],
+      "essential_selectors": [
+        "dt",
+        "dd",
+        "li"
+      ],
+      "controls": [],
+      "states": [
+        "default"
+      ],
+      "viewports": [
+        {
+          "id": "desktop",
+          "width": 1440,
+          "height": 900,
+          "full_visual": false
+        },
+        {
+          "id": "short-desktop",
+          "width": 1280,
+          "height": 720,
+          "full_visual": false
+        },
+        {
+          "id": "phone",
+          "width": 390,
+          "height": 844,
+          "full_visual": false
+        }
+      ],
+      "checks": [
+        {
+          "id": "arguments",
+          "kind": "visual",
+          "hard": true,
+          "expected": "Meaning and accepted values use separate bullet points with aligned argument/description columns."
+        },
+        {
+          "id": "argument-access",
+          "kind": "accessibility",
+          "hard": true,
+          "expected": "Native definition/list semantics and 16px code/description text; content remains accessible through the user-requested reading-pane scroll."
+        }
+      ],
+      "selector": ".foundation-parameter-row[data-parameter=\"bins\"]"
+    },
+    {
+      "id": "code-menu",
+      "reading_ids": [
+        "Understand the idea",
+        "What the syntax does",
+        "Arguments"
+      ],
+      "question": "Can I select another value without losing my place?",
+      "objects": [
+        "fixed-observations",
+        "code",
+        "result"
+      ],
+      "operation": "Change an offered code value or read the native before/after result.",
+      "consequence": "The result follows the displayed Python, with unchanged source observations and correct geometry.",
+      "renderer": "Existing pure JavaScript model; semantic HTML and SVG. Floating UI owns only menu placement.",
+      "layout": "Preserve the independent reading/editor panes, original colours, Follow/Change/Transfer and mobile page flow. Table source/results flow at native text size; measure their current reading subsection separately.",
+      "retained_ids": [],
+      "essential_selectors": [
+        "[role=\"option\"]"
+      ],
+      "controls": [
+        "highlighted-code-value"
+      ],
+      "states": [
+        "open",
+        "changed"
+      ],
+      "viewports": [
+        {
+          "id": "desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": "short-desktop",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "id": "phone",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "checks": [
+        {
+          "id": "menu-fit",
+          "kind": "geometry",
+          "hard": true,
+          "expected": "One anchored menu stays inside the viewport, flips/updates on scroll and resize."
+        },
+        {
+          "id": "menu-keys",
+          "kind": "interaction",
+          "hard": true,
+          "expected": "Arrow keys, Home/End, Enter, Escape and touch select a value and return focus to its code."
+        },
+        {
+          "id": "menu-access",
+          "kind": "accessibility",
+          "hard": true,
+          "expected": "Options have readable contrast, labels and minimum 44px targets."
+        }
+      ],
+      "selector": ".inline-code-options"
+    },
+    {
+      "id": "ml-plot",
+      "reading_ids": [
+        "Understand the idea",
+        "What the syntax does",
+        "Arguments"
+      ],
+      "question": "Does changing C/gamma change the correctly fitted SVM?",
+      "objects": [
+        "fixed-observations",
+        "code",
+        "result"
+      ],
+      "operation": "Change an offered code value or read the native before/after result.",
+      "consequence": "The result follows the displayed Python, with unchanged source observations and correct geometry.",
+      "renderer": "Existing pure JavaScript model; semantic HTML and SVG. Floating UI owns only menu placement.",
+      "layout": "Preserve the independent reading/editor panes, original colours, Follow/Change/Transfer and mobile page flow. Table source/results flow at native text size; measure their current reading subsection separately. On phones retain the existing labelled local horizontal plot pan, with full SVG-coordinate bounds checked separately; the collector does not certify simultaneous viewport fit of that inherited wide plot.",
+      "retained_ids": [],
+      "essential_selectors": [
+        "svg",
+        "svg text"
+      ],
+      "controls": [],
+      "states": [
+        "default",
+        "changed"
+      ],
+      "viewports": [
+        {
+          "id": "desktop",
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "id": "short-desktop",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "id": "phone",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "checks": [
+        {
+          "id": "native-svm",
+          "kind": "model",
+          "hard": true,
+          "expected": "Predictions, decision values and support vectors match an independent sklearn fit for every offered combination."
+        },
+        {
+          "id": "ml-fit",
+          "kind": "geometry",
+          "hard": true,
+          "expected": "Actual vector marks and labels fit their viewport and have no nonfinite geometry.",
+          "viewports": [
+            "desktop",
+            "short-desktop"
+          ]
+        },
+        {
+          "id": "ml-review",
+          "kind": "visual",
+          "hard": true,
+          "expected": "The prepared observations retain identity; only the chosen fitted model changes."
+        }
+      ],
+      "selector": "[data-ml-explorer=\"C11\"] .teaching-visual-scroll"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@floating-ui/dom",
+      "status": "chosen",
+      "job": "Anchor code-choice menus and prevent viewport overflow.",
+      "source": "app/code-menu-position.js",
+      "call": "computePosition; autoUpdate; offset; flip; shift; size",
+      "runtime_action": "Opening a highlighted code value attaches a positioning observer; closing it cancels observers and obsolete updates."
+    },
+    {
+      "name": "Svelte",
+      "status": "omitted",
+      "reason": "Preserve the existing vanilla JavaScript state/rendering architecture for this repair."
+    },
+    {
+      "name": "D3",
+      "status": "omitted",
+      "reason": "Existing deterministic numeric models and vector renderers remain; native Seaborn/sklearn and actual SVG coordinates independently verify the repaired scale."
+    },
+    {
+      "name": "Rough Notation / GSAP / Three / ELK / Scrollama",
+      "status": "omitted",
+      "reason": "The requested repair softens identifiers, preserves narrative navigation and improves exact tables/plots; it does not add graph routing, spatial content or scroll-driven animation."
+    }
+  ],
+  "annotations": [],
+  "mlu": {
+    "full_guides_read": true,
+    "articles_reviewed": [
+      "bias-variance",
+      "cross-validation",
+      "decision-tree",
+      "double-descent",
+      "double-descent2",
+      "equality-of-odds",
+      "linear-regression",
+      "logistic-regression",
+      "neural-networks",
+      "precision-recall",
+      "random-forest",
+      "reinforcement-learning",
+      "roc-auc",
+      "train-test-validation"
+    ],
+    "techniques": [
+      {
+        "article": "precision-recall",
+        "source": "https://github.com/aws-samples/aws-mlu-explain/blob/1ef330e547786940623b4016dd278d46befba691/code/precision-recall/src/Components/ConfusionMatrix.svelte",
+        "transfer": "Use native table layout for exact record/result comparisons instead of shrinking table diagrams inside SVG.",
+        "state_trace": "The reference connects count stores to native table cells. Here the existing pure operation model derives cells from fixed observations and selected code; a native full-width table displays that result.",
+        "corrected_limitations": "No dependency on pixels/DOM for scientific truth, no copied article values or clinical claims, no hover-only explanation, and no layout/framework migration."
+      }
+    ]
+  },
+  "user_constraints": [
+    "The reading pane and Python pane must retain independent scrolling.",
+    "Remove Visualise illustration datasets; keep the actual exercise dataframe and task.",
+    "Preserve stateless learning, exercise IDs, programs, progression, colours and identity.",
+    "Use plain direct syntax descriptions and visible point-form argument values."
+  ]
+}

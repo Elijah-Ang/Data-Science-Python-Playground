@@ -1,0 +1,680 @@
+{
+  "id": "V15-3",
+  "sourceId": "V15",
+  "sourceRound": 3,
+  "retrieves": null,
+  "exercise": {
+    "id": "V15-3",
+    "label": "Transfer",
+    "dataset": "ceramic_checks",
+    "task": "The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1]. Replace only the first panel with every mass_g observation by batch using jitter=False. Restore its title Observations and labels batch and mass_g. Preserve the second panel and all its evidence.",
+    "solution": "axes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+    "starter": "# Choose the data and chart operations from the brief\n",
+    "hint": "Clear and redraw axes[0] only. Clearing axes[1] or all Figures erases valid evidence.",
+    "setup": "fig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "layout": true,
+      "categorical": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "distribution",
+      "variant": "strip",
+      "label": "Concept sketch: jitter separates points; overlap can remain"
+    },
+    "requiredKeywords": [],
+    "demand": "Target a local repair and preserve an unaffected chart.",
+    "preserveData": false,
+    "bridge": null,
+    "steps": [
+      "The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1].",
+      "Replace only the first panel with every mass_g observation by batch using jitter=False.",
+      "Restore its title Observations and labels batch and mass_g.",
+      "Preserve the second panel and all its evidence."
+    ],
+    "setupDescription": "Two panels: an unsuitable density draft at axes[0], and a valid paired scatter at axes[1].",
+    "decision": "Target a local repair and preserve an unaffected chart.",
+    "fixtureFeature": "Two values per group; an unrelated paired view must remain intact during repair.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V15"
+    ],
+    "question": "Which observed evidence should replace a draft that exceeds the sample detail?",
+    "observationUnit": "one ceramic sample",
+    "datasetRationale": "Two values per group; an unrelated paired view must remain intact during repair.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom",
+        "bw_adjust",
+        "cut",
+        "complementary",
+        "capsize",
+        "inner",
+        "swarmplot.size"
+      ],
+      "prerequisites": [
+        "V12",
+        "V13"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "seaborn.stripplot",
+        "seaborn.violinplot",
+        "chart.sample-detail"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V12",
+        "V13"
+      ]
+    },
+    "stageSummary": "Explain a new sample.",
+    "brief": {
+      "question": "Which observed evidence should replace a draft that exceeds the sample detail?",
+      "rows": "One row: one ceramic sample.",
+      "result": "The supplied setup has an over-detailed violin draft on axes[0] and a legitimate paired scatter on axes[1].",
+      "constraints": [
+        "Replace only the first panel with every mass_g observation by batch using jitter=False.",
+        "Restore its title Observations and labels batch and mass_g.",
+        "Preserve the second panel and all its evidence."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "batch",
+        "mass_g",
+        "volume_ml"
+      ],
+      "variables": [
+        "df"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Explain a new sample.",
+      "why": "Target a local repair and preserve an unaffected chart.",
+      "changedLines": [
+        2
+      ],
+      "changedSyntaxLines": [
+        1,
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "batch": [
+      "A",
+      "A",
+      "B",
+      "B",
+      "C",
+      "C"
+    ],
+    "mass_g": [
+      3,
+      7,
+      4,
+      6,
+      2,
+      8
+    ],
+    "volume_ml": [
+      1,
+      3,
+      2,
+      5,
+      1,
+      4
+    ]
+  },
+  "inputSHA256": "5d7c0646bb0a843113e845f437b29a185dbea2b34426dd7593630c2debb46601",
+  "visibleWorkspaceSHA256": "3d7f1081714577ef6f5f58664eb3f980c5a5dfe53e5410a38ca0ac1edec9d90e",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\n# Choose the data and chart operations from the brief\n",
+  "context": "Two panels: an unsuitable density draft at axes[0], and a valid paired scatter at axes[1]. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "axes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "72049bffb3fbfe34a4c8743233b722290908d1ce66ad3d41e1965587385fe745",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.792,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "72d98cfdc3c885d8d81f13e859f8592cb288ade4c1a1d76dc8d48785b901313f",
+          "bytes": 22511,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "3d7f1081714577ef6f5f58664eb3f980c5a5dfe53e5410a38ca0ac1edec9d90e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.763,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "72d98cfdc3c885d8d81f13e859f8592cb288ade4c1a1d76dc8d48785b901313f",
+          "bytes": 22511,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V15-3-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\nfor artist in [*axes[0].lines, *axes[0].collections, *axes[0].patches]:\n    artist.remove()\nsns.stripplot(x=df[\"batch\"], y=df[\"mass_g\"], jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "b9b574042209047b8b2883dcec8276ff91228b8cc030030a79ff902449f1a836",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.72,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "9aaad0e24389724bd3b08e343094581e58875d6ebbcc850c4cab9e0b64ebd927",
+          "bytes": 22413,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V15-3-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "a6a1b0bf246efee4ac4c28caf7a0bec39b83d83985ecfdd348c1df9359ee8164",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.775,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'observations'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Draft density / Paired measurements",
+          "sha256": "b0b0ef0e97ffdb8c278163b4dd53095373e2edf93751718c76de51e1e5102c16",
+          "bytes": 25747,
+          "width": 916,
+          "height": 431,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_panel_cleared",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\nfor artist in [*axes[1].lines, *axes[1].collections, *axes[1].patches]:\n    artist.remove()\nsns.stripplot(x=df[\"batch\"], y=df[\"mass_g\"], jitter=False, ax=axes[1])\naxes[1].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "5de020afd25814e6c8b51ca0810e53ea224bd438445bf6968f3073868515d116",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.707,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'observations'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Draft density / Observations",
+          "sha256": "9b4ecae79e86f193cee7dc31ef7c76d2a44ba697fbf98f0aea7e351f39b3f1bd",
+          "bytes": 23524,
+          "width": 1088,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "summary_instead_of_raw_points",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\nfor artist in [*axes[0].lines, *axes[0].collections, *axes[0].patches]:\n    artist.remove()\nsns.boxplot(x=df[\"batch\"], y=df[\"mass_g\"], ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "160b60769549ab211ce442eeddad246517b2e9fa0fdf9f4a3edc24193fb1ee3a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.595,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "843d8c8cb4333edaeaab58c93b38feb507a7617a1e18ad3d319480515ecbb332",
+          "bytes": 22286,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "raw_points_appended_to_draft",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "ac7855919a744135681283e13384c8f58dace21a52c013d59388b97349c4b2fa",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.676,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "c4d7549aae2c3e43c56cbb5ff260c20faeb9233b0fef3a915e8d8f796fcf3db5",
+          "bytes": 30072,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\naxes[0].set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "c3c85faa9733ea143f89e126dfef3379b8e62ba5ce917634390e91350144638f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.776,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'observations'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title / Paired measurements",
+          "sha256": "ea51ea0325b088ffb1d1376e45b875d0422313d0da2624a01e704fc83b194575",
+          "bytes": 21918,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nfor collection in axes[0].collections:\n    coordinates = collection.get_offsets().copy()\n    coordinates[:, 0] += 1\n    collection.set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "5736b9f1a92b88025bf0de4164d01adfdd2ab7ed9a2f22252d9b1949e5d6acc7",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.717,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "2be5f403c58718218f5b54c2b695723891199e789b15ad94f349710822ecec62",
+          "bytes": 22215,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['mass_g'] = df['mass_g'] + 123\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "874d04d511c99163d3d2f9b5670e5bb5cd95cd23896c6fc25f2f81bb3dfeb10e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.738,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "443897065753977d3bb4e4e43d815017b24a051281a036f77827caa945d5701e",
+          "bytes": 25052,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "8b857904239efa4fb8b0bf32d89d5b82deb751cbc5cbd30fc06d38c802335772",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 1.228,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "72d98cfdc3c885d8d81f13e859f8592cb288ade4c1a1d76dc8d48785b901313f",
+          "bytes": 22511,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "72d98cfdc3c885d8d81f13e859f8592cb288ade4c1a1d76dc8d48785b901313f",
+          "bytes": 22511,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"batch\": [\"A\", \"A\", \"B\", \"B\", \"C\", \"C\"],\n    \"mass_g\": [3, 7, 4, 6, 2, 8],\n    \"volume_ml\": [1, 3, 2, 5, 1, 4],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, axes = plt.subplots(1, 2, figsize=(10, 4))\nsns.violinplot(data=df, x=\"batch\", y=\"mass_g\", inner=None, cut=0, ax=axes[0])\naxes[0].set(title=\"Draft density\", xlabel=\"batch\", ylabel=\"mass_g\")\nsns.scatterplot(data=df, x=\"volume_ml\", y=\"mass_g\", ax=axes[1])\naxes[1].set(title=\"Paired measurements\", xlabel=\"volume_ml\", ylabel=\"mass_g\")\n\n# Your work\naxes[0].clear()\nsns.stripplot(data=df, x=\"batch\", y=\"mass_g\", jitter=False, ax=axes[0])\naxes[0].set(title=\"Observations\", xlabel=\"batch\", ylabel=\"mass_g\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "3d7f1081714577ef6f5f58664eb3f980c5a5dfe53e5410a38ca0ac1edec9d90e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.691,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Observations / Paired measurements",
+          "sha256": "72d98cfdc3c885d8d81f13e859f8592cb288ade4c1a1d76dc8d48785b901313f",
+          "bytes": 22511,
+          "width": 1088,
+          "height": 427,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

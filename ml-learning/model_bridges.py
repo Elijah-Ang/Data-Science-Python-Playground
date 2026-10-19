@@ -2,29 +2,108 @@
 from authoring import py
 from packages import required
 
-IDS={'R09','C10','C15','N03','U07','P02'}
+LEGACY_IDS={'R09','C10','C15','N03','U07','P02'}
+# One guided application per model family; existing short rounds are retained.
+COVERAGE_IDS={'R01','R04','R07','C06','C08','C12','C14','C17','C18','N04','U03'}
+IDS=LEGACY_IDS|COVERAGE_IDS
 
 def _finish(card, exercise):
-    exercise.update(id=card['id']+'-4',version=1,label='Apply',demand='Build a guided full workflow',modelBridge=True)
+    exercise.update(id=card['id']+'-'+str(len(card['exercises'])+1),version=1,label='Apply',demand='Build a guided full workflow',modelBridge=True)
     exercise['packages']=required(exercise)
     card['exercises'].append(exercise)
     card['minutes']='25–40'
 
-def _supervised(card, dataset, task, model_name, *, tree=False, estimator=None, import_line=None, passthrough=False):
+def _supervised(card, dataset, task, model_name, *, tree=False, estimator=None, import_line=None, passthrough=False, prepare=None, expansion=None, extra_imports=''):
     from mastery import exercise
     e=exercise(dataset,task,support='guided',tree=tree)
     if estimator:
-        assert 'LogisticRegression(max_iter=1000)' in e['solution']
-        e['solution']=e['solution'].replace('LogisticRegression(max_iter=1000)',estimator)
-        e['solution']=e['solution'].replace('from sklearn.linear_model import LogisticRegression',import_line)
-        e['starter']=e['starter'].replace('from sklearn.linear_model import LogisticRegression',import_line)
+        original='LogisticRegression(max_iter=1000)' if e['assessment']['classification'] else 'LinearRegression()'
+        original_import='from sklearn.linear_model import '+('LogisticRegression' if e['assessment']['classification'] else 'LinearRegression')
+        assert original in e['solution']
+        e['solution']=e['solution'].replace(original,estimator)
+        e['solution']=e['solution'].replace(original_import,import_line)
+        e['starter']=e['starter'].replace(original_import,import_line)
     if passthrough:
         e['solution']=e['solution'].replace("('prepare', StandardScaler())","('prepare', 'passthrough')")
         e['solution']=e['solution'].replace('from sklearn.preprocessing import StandardScaler\n','')
         e['starter']=e['starter'].replace('from sklearn.preprocessing import StandardScaler\n','')
+    if prepare:
+        original='StandardScaler()' if e['assessment']['classification'] else "'passthrough'"
+        e['solution']=e['solution'].replace("('prepare', "+original+")", "('prepare', "+prepare+")")
+    if extra_imports:
+        e['solution']=extra_imports+'\n'+e['solution']
+        e['starter']=extra_imports+'\n'+e['starter']
+    if expansion:
+        e['solution']=e['solution'].replace("Pipeline([('prepare',", "Pipeline([('polynomial', "+expansion+"), ('prepare',")
+    # This authored list extends the open-choice grader only for this model's
+    # bridge. Readiness checkpoints continue accepting their existing families.
+    e['assessment']['allowedModels']=[model_name]
+    e['task']+=' Features: '+', '.join(e['assessment']['available'])+'; target: '+e['assessment']['target']+'.'
     e['hints']=dict(think=task+' Which inputs and error matter at prediction time?',tools=f'Build a named Pipeline ending in {model_name}; use the matching folds, dummy and scoring string shown by the earlier complete workflow.',approach=f'Fill the eight numbered sections in order. Validate {model_name} and its dummy on training rows before fitting the final copy and opening reserved rows once.')
     e['checks'].insert(-1,dict(name='Model in the full workflow',test=f"type(candidates[chosen_name].steps[-1][1]).__name__ == {model_name!r}",message=f'Put {model_name} in the named Pipeline and validate that same recipe before its final fit.',success=f'The validated Pipeline uses {model_name}.'))
+    e['checks'].insert(-1,dict(name='Declared workflow measurements',test='set(feature_names)==set('+repr(e['assessment']['available'])+') and len(feature_names)=='+str(len(e['assessment']['available'])),message='Use the declared feature measurements for this guided comparison. Independent challenges support justified feature choices.'))
+    # Model-specific methodology remains observable rather than being inferred
+    # from a familiar final-estimator name or coincidental predictions.
+    if model_name in ('LogisticRegression','KNeighborsClassifier','SVC','MLPClassifier','TransformedTargetRegressor'):
+        e['checks'].insert(-1,dict(name='Fold-local input scaling',test="trace.preparation_matches(final_model,[{'columns':list(X_train.columns),'operation':'scale'}])",message='Keep a fitted input StandardScaler inside the candidate Pipeline, so each training fold learns its own coordinates.'))
+    if tree:
+        e['checks'].insert(-1,dict(name='Declared tree depth',test='candidates[chosen_name].steps[-1][1].max_depth==3',message='Use the requested depth-three tree in the same validated and final recipe.'))
+    if model_name=='KNeighborsClassifier':
+        e['checks'].insert(-1,dict(name='Declared neighbourhood',test='candidates[chosen_name].steps[-1][1].n_neighbors==3',message='Keep the requested three-neighbour vote when validating and fitting the selected recipe.'))
+    if model_name=='QuadraticDiscriminantAnalysis':
+        e['checks'].insert(-1,dict(name='Regularised covariance',test='0<candidates[chosen_name].steps[-1][1].reg_param<=1',message='Use positive covariance regularisation in this QDA application.'))
+    if model_name=='TransformedTargetRegressor':
+        e['checks'].insert(-1,dict(name='Neural target transformation',test="type(final_model.steps[-1][1].regressor_).__name__=='MLPRegressor' and type(final_model.steps[-1][1].transformer_).__name__=='StandardScaler' and final_model.steps[-1][1].transformer_.with_mean and final_model.steps[-1][1].transformer_.with_std",message='Fit an MLPRegressor with its separate training-fitted target StandardScaler. The outer predict reverses that target scale before RMSE in kWh.'))
+    if expansion:
+        e['checks'].insert(-1,dict(name='Fold-local feature expansion',test='trace.preparation_matches(final_model,[],polynomial=True) and final_model.steps[0][1].degree==2',message='Keep degree-two expansion, no bias column and StandardScaler before Ridge, fitted separately within each fold.'))
+    if model_name=='OneRClassifier':
+        e['checks'].insert(-1,dict(name='Declared numeric rule inputs',test="type(final_model.steps[0][1]).__name__=='OneRPreprocessor' and set(final_model.steps[0][1].numeric_features)==set(X_train.columns) and not final_model.steps[0][1].categorical_features",message='Declare length and width as numeric measurements and learn their interval preparation inside each fold.'))
     e['reasoningPrompt']='Quote the dummy and candidate fold scores, defend the candidate chosen for this question, and name one model-specific failure mode. Explain why a good training score alone would not settle the choice.'
+    _finish(card,e)
+
+def complete_coverage(registry):
+    """Append applications after historical repairs have reviewed their rounds."""
+    cards={c['id']:c for c in registry['cards']}
+    cards['ML-C06']['models']=['logistic']
+    _supervised(cards['ML-R01'],'LINE24','Estimate delivery duration in minutes with a complete line workflow. Compare a mean dummy and inspect training-only residuals before one final evaluation.','LinearRegression')
+    _supervised(cards['ML-R04'],'ENERGY72','Estimate monthly household electricity use in kWh from area and planned occupants. Exclude the later invoice; interpret the two-input model and residuals.','LinearRegression')
+    _supervised(cards['ML-R07'],'LINE24','Compare a degree-two feature recipe with a mean dummy for duration in minutes. Keep expansion and scaling inside training folds; inspect validation error and state the danger of extrapolating a curved fit.','Ridge',estimator='Ridge(alpha=1.0)',import_line='from sklearn.linear_model import Ridge',prepare='StandardScaler()',expansion='PolynomialFeatures(degree=2, include_bias=False)',extra_imports='from sklearn.preprocessing import PolynomialFeatures, StandardScaler')
+    _supervised(cards['ML-C06'],'CLASS180','Build and validate the complete scaled logistic classifier for measured specimens. Compare a majority dummy, inspect training-only class errors and evaluate the reserved rows once.','LogisticRegression')
+    _supervised(cards['ML-C08'],'CLASS180','Build a complete three-neighbour classifier for measured specimens. Keep scaling inside training folds, compare a majority dummy and inspect class errors before one final evaluation.','KNeighborsClassifier',estimator='KNeighborsClassifier(n_neighbors=3)',import_line='from sklearn.neighbors import KNeighborsClassifier')
+    _supervised(cards['ML-C12'],'CLASS180','Build a complete One-R workflow for measured specimens. Learn numeric bins inside each fold; compare its single-feature rule with a majority dummy before one final evaluation.','OneRClassifier',estimator='OneRClassifier(bins=5)',import_line='from ml_helpers import OneRClassifier, OneRPreprocessor',prepare="OneRPreprocessor(numeric_features=['length', 'width'], categorical_features=[])")
+    _supervised(cards['ML-C14'],'CLASS180','Build a depth-three classification tree for measured specimens. Compare a majority dummy and training-only class errors before evaluating the reserved rows once.','DecisionTreeClassifier',tree=True)
+    _supervised(cards['ML-C17'],'CLASS180','Build an LDA classifier for measured specimens. Inspect the shared-covariance assumption and training-only class errors; compare a majority dummy before one final evaluation.','LinearDiscriminantAnalysis',estimator="LinearDiscriminantAnalysis(solver='lsqr', shrinkage='auto')",import_line='from sklearn.discriminant_analysis import LinearDiscriminantAnalysis',passthrough=True)
+    _supervised(cards['ML-C18'],'CLASS180','Build a regularised QDA classifier for measured specimens. Compare a majority dummy and inspect class support before one final evaluation; discuss the extra class-covariance parameters.','QuadraticDiscriminantAnalysis',estimator='QuadraticDiscriminantAnalysis(reg_param=0.1)',import_line='from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis',passthrough=True)
+    _supervised(cards['ML-N04'],'ENERGY72','Estimate monthly electricity use in kWh with a neural regressor. Scale inputs and target separately inside each fit, compare a mean dummy and inspect residuals before one final RMSE in kWh.','TransformedTargetRegressor',estimator='TransformedTargetRegressor(regressor=MLPRegressor(hidden_layer_sizes=(8,), max_iter=500, random_state=42), transformer=StandardScaler())',import_line='from sklearn.compose import TransformedTargetRegressor\nfrom sklearn.neural_network import MLPRegressor',prepare='StandardScaler()',extra_imports='from sklearn.preprocessing import StandardScaler')
+    _kmeans(cards['ML-U03'])
+    from model_guides import apply
+    return apply(registry)
+
+def _kmeans(card):
+    code='''from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+# 1. Select measurements; there is no prediction target y.
+X = df[['length_mm', 'width_cm']]
+# 2. Prepare the declared discovery population.
+scaler = StandardScaler()
+scaled = scaler.fit_transform(X)
+# 3. Fit a grouping in the same prepared geometry.
+model = KMeans(n_clusters=3, n_init=20, random_state=42)
+labels = model.fit_predict(scaled)
+# 4. Inspect group separation and original-unit profiles.
+separation = silhouette_score(scaled, labels)
+profiles = X.groupby(labels).mean()
+print('Silhouette:', separation)
+print('Original-unit profiles:', profiles)
+# 5. Interpret the scale, chosen k and population limits.
+'''
+    e=py('Scale length_mm and width_cm on the declared measurement population, then fit three clusters. Store labels, their silhouette separation and original-unit profiles. Explain why the groups are not known classes.',code,[
+        dict(name='Declared measurements and scale',test="X.equals(df[['length_mm','width_cm']]) and np.allclose(scaled,_prepared_values(X,numeric=list(X.columns)))",message='Use these two original measurements and fit a common scale to the declared discovery population.'),
+        dict(name='Fitted grouping',test="model.n_clusters==3 and model.n_init==20 and np.array_equal(labels,model.labels_) and trace.fit_matches(scaled,None,'KMeans')",message='Fit the three-centroid recipe to the scaled measurements and retain one fitted assignment per row.'),
+        dict(name='Separation and original units',test="np.isclose(separation,silhouette_score(scaled,labels)) and profiles.equals(X.groupby(labels).mean())",message='Describe the same labels in scaled silhouette geometry and original measurement units.'),
+    ],dataset='CLUSTER36',outputs=['labels','separation','profiles'])
+    e.update(starter=code.replace('scaled = scaler.fit_transform(X)','scaled = ...').replace('labels = model.fit_predict(scaled)','labels = ...').replace('separation = silhouette_score(scaled, labels)','separation = ...').replace('profiles = X.groupby(labels).mean()','profiles = ...'),hints=dict(think='Select measurements without y; the group IDs do not mean known classes.',tools='Use StandardScaler, KMeans(n_clusters=3, n_init=20, random_state=42), silhouette_score and groupby.',approach='Select measurements, prepare, fit groups, inspect separation and describe profiles in original units.'),explanation='The declared population supplies measurements without outcomes. Scaling defines distance, K-Means learns three centres, and silhouette describes separation under this geometry. Profiles retain millimetres and centimetres; neither a score nor a cluster number proves a natural category.',reasoningPrompt='Quote separation and profiles. Explain how the measurement choice, scale and k limit the interpretation.')
     _finish(card,e)
 
 HIERARCHY_SOLUTION='''from sklearn.preprocessing import StandardScaler
@@ -51,7 +130,7 @@ labels = cut_tree(linkage_matrix, n_clusters=chosen_k).ravel()
 profiles = sample.groupby(labels).mean()
 print('Cut evidence:', cut_scores)
 print('Original-unit profiles:', profiles)
-# 8. Explain sampling, scale and cut limits in the interpretation field.
+# 8. Inspect the printed profiles within this sample, scale and cut.
 '''
 HIERARCHY_STARTER='''from sklearn.preprocessing import StandardScaler
 from scipy.cluster.hierarchy import linkage, cut_tree

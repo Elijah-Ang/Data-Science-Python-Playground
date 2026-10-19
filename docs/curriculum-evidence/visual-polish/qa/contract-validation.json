@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "complete": true,
+  "mode": "acceptance",
+  "project_root": "/workspace/Data-Science-Python-Playground",
+  "expected_checks": 82,
+  "recorded_checks": 82,
+  "missing_checks": [],
+  "errors": [],
+  "blockers": [],
+  "warnings": [],
+  "limits": "Checks schema, declared coverage (including the bundled MLU article catalogue), and local artifact existence. It cannot certify actual reading, scientific truth, package execution, screenshot inspection, or visual quality; those require observed review."
+}

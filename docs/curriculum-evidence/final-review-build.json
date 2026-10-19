@@ -1,0 +1,39 @@
+{
+  "build": {
+    "version": "1.0.0",
+    "commit": "af6d57352809",
+    "dirty": true,
+    "contentId": "44729a3eb07e8e59fdf0a224b3026a156e2e7227d4df4c821fa645c183458419",
+    "builtAt": "2026-10-13T11:35:52.165Z",
+    "bytes": 39377404
+  },
+  "sourceSHA256": {
+    "foundations/app.js": "4cbe1410de7f63f5925a19076f25e9ecb6cf2ddad9cc09a996b26074d0b742d5",
+    "foundations/teaching.js": "eee3082a1bd89ec3eb64df47c13299c61a261954c7a3f8f0420406fc972240af",
+    "foundations/visuals.js": "b892d8564b43c84675cbdad68588fb033079cc899ef7679ec02feb9fb9408a60",
+    "foundations/learning-ui.js": "703472bbab76ae4e254e7d9797994755348799f3be07d73114486dd673c36711",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/foundations.css": "cf4cf538e52e0291e2a8a8467ed4c2b0314d286a7befae6b914e7f1dbb951cd5",
+    "ml-learning/app.js": "a801f44eba7a6f7ab38db2647de02780d15371374b3a39a488f286d056635d9d",
+    "ml-learning/learning.css": "3acccfb6d1dc583089df09cfd3873f054cc18220b2f7e1b556614c5727868b9f",
+    "code-identifiers.js": "71854dcf3826d8f0837a47a3910a108ffd747acb28f03ab0de289edf6bcacc39",
+    "learning-identifiers.js": "67cbaaf53b27f7053ca2ec613cadad157e4ccf0c0e3c64fb5872e5f381b9cfb1",
+    "learning-language.js": "428b531a5b8b0e50449ecea78632755f320d74f8e12a4f3461784d42a41dd37d",
+    "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652"
+  },
+  "sourceAssetsMatchBuilt": true,
+  "repositoryCheck": "npm run check passed",
+  "validationScope": "Exhaustive activity presentation checks plus focused source-identical checks after table/semantic corrections; final build regenerates identical JS/CSS and static HTML from frozen sources.",
+  "evidence": [
+    "responsive-coverage.json",
+    "responsive-follow-up.json",
+    "foundations-teaching-browser.json",
+    "foundations-parameters-browser.json",
+    "foundations-parameters-targeted-final.json",
+    "ml-presentation-revision.json",
+    "ui-revision-runtime.json",
+    "foundations-copy-reduction.json",
+    "foundations-runtime/summary.json",
+    "standalone-preview.json"
+  ]
+}

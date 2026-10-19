@@ -271,6 +271,10 @@ const curriculum={version:1,datasets,decks,lessons:ordered,setupCode};
 (typeof module!=='undefined'?require('./progression.js'):root.progressFoundations)(curriculum);
 (typeof module!=='undefined'?require('./clarity.js'):root.FoundationClarity).clarify(curriculum);
 (typeof module!=='undefined'?require('./prerequisites.js'):root.teachFoundationPrerequisites)(curriculum);
+// Author the final teaching intent after all data and practice overlays. Code
+// inventories remain diagnostics; they do not decide what is new to a learner.
+(typeof module!=='undefined'?require('./content-guidance.js'):root.FoundationContentGuidance).apply(curriculum);
+(typeof module!=='undefined'?require('./visualise-guidance.js'):root.FoundationVisualiseGuidance).apply(curriculum);
 // Format final Visualise overrides without rewriting other decks' teaching code.
 if(typeof process==='undefined'||!process.env.FOUNDATIONS_RAW_CODE){
  const inserted={...curriculum,lessons:curriculum.lessons.filter(lesson=>['I06S','I13L','I19S','I19A'].includes(lesson.id))};
@@ -278,6 +282,8 @@ if(typeof process==='undefined'||!process.env.FOUNDATIONS_RAW_CODE){
  const visualise={...curriculum,lessons:curriculum.lessons.filter(lesson=>lesson.deck==='visualise')};
  (typeof module!=='undefined'?require('./code-style.js'):root.styleFoundationsCode)(visualise);
 }
+(typeof module!=='undefined'?require('./visualise-guidance.js'):root.FoundationVisualiseGuidance).finalise(curriculum);
+(typeof module!=='undefined'?require('./visuals.js'):root.FoundationVisuals).align(curriculum);
 if(typeof module!=='undefined')module.exports=curriculum;
 else root.FoundationsCurriculum=curriculum;
 })(typeof window!=='undefined'?window:globalThis);

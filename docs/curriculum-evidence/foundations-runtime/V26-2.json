@@ -1,0 +1,640 @@
+{
+  "id": "V26-2",
+  "sourceId": "V26",
+  "sourceRound": 2,
+  "retrieves": null,
+  "exercise": {
+    "id": "V26-2",
+    "label": "Change",
+    "dataset": "weather",
+    "task": "The supplied setup draws every weather temperature/humidity pair and labels the chart \"Weather diary\", \"Temperature (°C)\" and \"Humidity (%)\". Give this dashboard panel linear limits of 20 to 35 °C on x and 0 to 100% on y. Keep all observations visible; arrange and display fig.",
+    "solution": "ax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()",
+    "starter": "# Set the requested axis scale or limits, then arrange and display fig\n",
+    "hint": "Use ax.set_xlim(20, 35) and ax.set_ylim(0, 100) on the prepared chart.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "limits": true,
+      "textCaseInsensitive": true,
+      "semantic": "scatter"
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "relationship",
+      "variant": "log-scale",
+      "label": "Concept sketch: equal x spacing = equal ratios on log scale"
+    },
+    "requiredKeywords": [],
+    "rules": {
+      "limits": true,
+      "ticks": true
+    },
+    "demand": "Apply common dashboard limits without hiding observations.",
+    "preserveData": false,
+    "reflection": null,
+    "bridge": null,
+    "steps": [
+      "The supplied setup draws every weather temperature/humidity pair and labels the chart \"Weather diary\", \"Temperature (°C)\" and \"Humidity (%)\".",
+      "Give this dashboard panel linear limits of 20 to 35 °C on x and 0 to 100% on y.",
+      "Keep all observations visible; arrange and display fig."
+    ],
+    "setupDescription": "A labelled weather scatter with automatic linear axes.",
+    "decision": "Apply common dashboard limits without hiding observations.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V26"
+    ],
+    "fixtureFeature": "Station measurements include two physical units and several category labels; preserve paired records and state each selected population.",
+    "question": "Which common dashboard limits compare temperature and humidity without hiding observations?",
+    "observationUnit": "one station observation",
+    "datasetRationale": "Station measurements include two physical units and several category labels; preserve paired records and state each selected population.",
+    "parameterTeaching": {
+      "introduces": [
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom"
+      ],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.labels",
+        "matplotlib.scales"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "stageSummary": "Make ticks readable.",
+    "brief": {
+      "question": "Which common dashboard limits compare temperature and humidity without hiding observations?",
+      "rows": "One row: one station observation.",
+      "result": "The supplied setup draws every weather temperature/humidity pair and labels the chart \"Weather diary\", \"Temperature (°C)\" and \"Humidity (%)\".",
+      "constraints": [
+        "Give this dashboard panel linear limits of 20 to 35 °C on x and 0 to 100% on y.",
+        "Keep all observations visible; arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "day",
+        "sky",
+        "temperature",
+        "humidity",
+        "station"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Make ticks readable.",
+      "why": "Apply common dashboard limits without hiding observations.",
+      "changedLines": [
+        1,
+        2
+      ],
+      "changedSyntaxLines": [
+        1,
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "day": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun",
+      "Mon"
+    ],
+    "sky": [
+      "Sun",
+      "Rain",
+      "Sun",
+      "Cloud",
+      "Rain",
+      "Sun",
+      "Cloud",
+      "Sun"
+    ],
+    "temperature": [
+      28,
+      24,
+      30,
+      27,
+      23,
+      31,
+      26,
+      29
+    ],
+    "humidity": [
+      62,
+      89,
+      60,
+      74,
+      92,
+      58,
+      78,
+      65
+    ],
+    "station": [
+      "East",
+      "East",
+      "West",
+      "West",
+      "East",
+      "East",
+      "West",
+      "West"
+    ]
+  },
+  "inputSHA256": "7fb35e1bdb5585dfdb121ad7214cf69da545a043c57b185f2a5a0ffab8aa8fab",
+  "visibleWorkspaceSHA256": "142a0232388fa6437ee5e0f122916c5c029efef3a4e6b1c0263704034b57f6f1",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\n# Set the requested axis scale or limits, then arrange and display fig\n",
+  "context": "A labelled weather scatter with automatic linear axes. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "93cf491198e7c1ebf879f0f9ba67403dbe1852fca6fa8c8cbb09762657c64d49",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.277,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "aef2780f74b494878cb32686cef8fe033575d053d3a05e410de4385d3bcef993",
+          "bytes": 18229,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "142a0232388fa6437ee5e0f122916c5c029efef3a4e6b1c0263704034b57f6f1",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.253,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "aef2780f74b494878cb32686cef8fe033575d053d3a05e410de4385d3bcef993",
+          "bytes": 18229,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V26-2-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set(xlim=(20, 35), ylim=(0, 100))\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "14108cce25e46c7838002f20f8f12a959329b2ccfa6edd22567b3cf0dd30144f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.297,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "aef2780f74b494878cb32686cef8fe033575d053d3a05e410de4385d3bcef993",
+          "bytes": 18229,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V26-2-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "356dce30bc6395da3b660f66b5ad2b3a3634c49536c38f419a6f6972eeb105b4",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.294,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the axis limits.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "1cb152b1fc0598f21db36510e0bd4fdbecacc0a1d0ac33675368b34e3d17b385",
+          "bytes": 19510,
+          "width": 584,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_limits",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set(xlim=(21, 35), ylim=(0, 100))\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "128b4d53ee524d3dbea6867ae6ccdf0b0da349138041dfe041ab6bb9a5e52122",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.294,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the axis limits.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "ad915104f608876921227ff9bf93f93bdf05a7f3304166c035716661ff69b59d",
+          "bytes": 17898,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "ab8625405123314619f0094cb8683949630e4b80fa162e11afdda8315846530a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.383,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'weather diary'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "8134215c3c988d07ce04d3c479bf6e615574be9b3fe6e848ffa2ec6e6b01fd06",
+          "bytes": 18101,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "b07073675c2a891c6c75d32ff90b59f5830715cdbb8e063ca58ddfe9c4d520d9",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.293,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "965ea83287ee388d532e0ca32bae77ffd4fbe60e4d47ce9c00ba32ff0dcc21e7",
+          "bytes": 18225,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['humidity'] = df['humidity'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "b207eec76e4e1b21ea5b3436834c76cbeb54ec7604bfa2bcac07c05f362fac72",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.307,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "cacfd9a66bed2c38c94075b8c43afa9128446b8d44205731dca545e5ee36f5f4",
+          "bytes": 16669,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "df80d4fcff5f0b678a5ab3f2e11993e52f445397ac418e010696b5289dae756c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.519,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "aef2780f74b494878cb32686cef8fe033575d053d3a05e410de4385d3bcef993",
+          "bytes": 18229,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "aef2780f74b494878cb32686cef8fe033575d053d3a05e410de4385d3bcef993",
+          "bytes": 18229,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"day\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\", \"Mon\"],\n    \"sky\": [\"Sun\", \"Rain\", \"Sun\", \"Cloud\", \"Rain\", \"Sun\", \"Cloud\", \"Sun\"],\n    \"temperature\": [28, 24, 30, 27, 23, 31, 26, 29],\n    \"humidity\": [62, 89, 60, 74, 92, 58, 78, 65],\n    \"station\": [\"East\", \"East\", \"West\", \"West\", \"East\", \"East\", \"West\", \"West\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"temperature\", y=\"humidity\", ax=ax)\nax.set(title=\"Weather diary\", xlabel=\"Temperature (°C)\", ylabel=\"Humidity (%)\")\n\n# Your work\nax.set_xlim(20, 35)\nax.set_ylim(0, 100)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "142a0232388fa6437ee5e0f122916c5c029efef3a4e6b1c0263704034b57f6f1",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.308,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Weather diary",
+          "sha256": "aef2780f74b494878cb32686cef8fe033575d053d3a05e410de4385d3bcef993",
+          "bytes": 18229,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

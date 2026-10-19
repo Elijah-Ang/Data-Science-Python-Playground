@@ -1,0 +1,703 @@
+{
+  "id": "V15-2",
+  "sourceId": "V15",
+  "sourceRound": 2,
+  "retrieves": null,
+  "exercise": {
+    "id": "V15-2",
+    "label": "Change",
+    "dataset": "ink_trials",
+    "task": "Clear the supplied illustrative violin draft. Replace it with every raw flow reading by ink using jitter=False, with flow on x and ink on y. Restore title Ink flow trials and labels flow/ink; repeated flow=7 trials are separate records. Detailed density shapes are unsupported by these tiny groups. Chart: title \"Ink flow trials\"; x \"flow\"; y \"ink\".",
+    "solution": "ax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()",
+    "starter": "# Choose the chart operations from the question\n",
+    "hint": "Choose the physical measurement axis when repairing the tiny-sample draft.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "categorical": true,
+      "categoryAxis": "y"
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "distribution",
+      "variant": "strip",
+      "label": "Concept sketch: jitter separates points; overlap can remain"
+    },
+    "requiredKeywords": [],
+    "rules": {
+      "categorical": true
+    },
+    "demand": "Choose the physical measurement axis when repairing the tiny-sample draft.",
+    "preserveData": false,
+    "reflection": null,
+    "bridge": null,
+    "steps": [
+      "Clear the supplied illustrative violin draft.",
+      "Replace it with every raw flow reading by ink using jitter=False, with flow on x and ink on y.",
+      "Restore title Ink flow trials and labels flow/ink; repeated flow=7 trials are separate records.",
+      "Detailed density shapes are unsupported by these tiny groups.",
+      "Chart: title \"Ink flow trials\"; x \"flow\"; y \"ink\"."
+    ],
+    "setupDescription": "An intentionally unsuitable tiny-sample density illustration to repair.",
+    "decision": "Choose the physical measurement axis when repairing the tiny-sample draft.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V15"
+    ],
+    "fixtureFeature": "Only three trials per ink make the supplied detailed density draft unsuitable; duplicates must survive its replacement.",
+    "question": "How can a tiny-sample draft be repaired with flow on the horizontal axis?",
+    "contextPlot": {
+      "x": "flow",
+      "y": "ink",
+      "title": "Ink flow trials",
+      "xlabel": "flow",
+      "ylabel": "ink"
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one ink-flow trial",
+    "datasetRationale": "Only three trials per ink make the supplied detailed density draft unsuitable; duplicates must survive its replacement.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom",
+        "bw_adjust",
+        "cut",
+        "complementary",
+        "capsize",
+        "inner",
+        "swarmplot.size"
+      ],
+      "prerequisites": [
+        "V12",
+        "V13"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "seaborn.stripplot",
+        "seaborn.violinplot",
+        "chart.sample-detail"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V12",
+        "V13"
+      ]
+    },
+    "stageSummary": "Change the mapping.",
+    "brief": {
+      "question": "How can a tiny-sample draft be repaired with flow on the horizontal axis?",
+      "rows": "One row: one ink-flow trial.",
+      "result": "Clear the supplied illustrative violin draft.",
+      "constraints": [
+        "Replace it with every raw flow reading by ink using jitter=False, with flow on x and ink on y.",
+        "Restore title Ink flow trials and labels flow/ink; repeated flow=7 trials are separate records.",
+        "Detailed density shapes are unsupported by these tiny groups.",
+        "Chart: title \"Ink flow trials\"; x \"flow\"; y \"ink\"."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "ink",
+        "flow"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": [
+        {
+          "text": "title \"Ink flow trials\"; x \"flow\"; y \"ink\".",
+          "role": "literal"
+        }
+      ]
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Change the mapping.",
+      "why": "Choose the physical measurement axis when repairing the tiny-sample draft.",
+      "changedLines": [
+        1,
+        2
+      ],
+      "changedSyntaxLines": [
+        1,
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "ink": [
+      "Blue",
+      "Blue",
+      "Blue",
+      "Black",
+      "Black",
+      "Black"
+    ],
+    "flow": [
+      3,
+      7,
+      7,
+      2,
+      5,
+      9
+    ]
+  },
+  "inputSHA256": "f65f792594af607eef0bf48455ae47c0933315f300db943768cc38c9d4d51e89",
+  "visibleWorkspaceSHA256": "d2748ed02465f58040970b5490fe9dacaab8842d23f7b81c4492ce2208cf502d",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\n# Choose the chart operations from the question\n",
+  "context": "An intentionally unsuitable tiny-sample density illustration to repair. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "22a19567674cdc2d32112d7776917a74023f448eb5db2a52ef8abd0522ab7cb3",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.423,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "926a24759894b3f52d3eb0c1d076d3216cbe96d5e841b6fe7e86f7a9786ad3d4",
+          "bytes": 10581,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d2748ed02465f58040970b5490fe9dacaab8842d23f7b81c4492ce2208cf502d",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.483,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "926a24759894b3f52d3eb0c1d076d3216cbe96d5e841b6fe7e86f7a9786ad3d4",
+          "bytes": 10581,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V15-2-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nfor artist in [*ax.lines, *ax.collections, *ax.patches]:\n    artist.remove()\nsns.stripplot(x=df['flow'], y=df['ink'], jitter=False, ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "b0fa62cd45bcfd526522930bf263a55fe619a8a2cb2965642293b86c0318a26f",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.464,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "a7c75ebbb35eee2d15c8001cb72d676e16815020786978e5bdac782ca469a075",
+          "bytes": 10486,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V15-2-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "3424d03eb34b689ba11f71c3c131072e80af006c763e8411a6f4ad18d0f142a1",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.361,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "56f7feaad90bfe5fa19f1550f3e950225094895d5419a5ccb1f3474672aa2af5",
+          "bytes": 16537,
+          "width": 606,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "summary_instead_of_raw_points",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nfor artist in [*ax.lines, *ax.collections, *ax.patches]:\n    artist.remove()\nsns.boxplot(data=df, x='flow', y='ink', ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "0e975535eb934deb429dacba33d32665a4368864a930c60b92e8749ee65c3959",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.42,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "98e0cbc0cb5e06c9c1a9642ab63fc2b87c7f8c4025fc9dd3e9c35e1849bd7cba",
+          "bytes": 10521,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "raw_points_appended_to_draft",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nsns.stripplot(data=df, x='flow', y='ink', jitter=False, ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "4727c1669f4dabb157050fb53638177cd6b45b4f99b89560cc2ed3c4d47f2cc6",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.483,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "dcffb0a2a73a2600efe830db65419cd5d9866104643f56effde2b30007e3b288",
+          "bytes": 17373,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reversed_raw_point_mapping",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nfor artist in [*ax.lines, *ax.collections, *ax.patches]:\n    artist.remove()\nsns.stripplot(x=df['ink'], y=df['flow'], jitter=False, ax=ax)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "28ebcad7c232ceb3f58159ddb62b42055c3cc740114e626ee66e7aa40df1dc1a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.548,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "58b8af936672acd55741e80a6eef50655a3296a328eb92d8dfbc1ff6f6b8c6de",
+          "bytes": 7991,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "6849fd72a7948adc05e999d7608ad0854ee9e8fe455105788a933bb62f4fd484",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.509,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'ink flow trials'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "2ec7e00febc76fbca5abaf8113ee728b524c727aaa398d21d08efd83f175705e",
+          "bytes": 11098,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nfor collection in ax.collections:\n    coordinates = collection.get_offsets().copy()\n    coordinates[:, 1] += 1\n    collection.set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "52de27b7773e48e7a9fce4ba91228adce5dcdb2c4a7a703fbe3fec5eb404936e",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.523,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "4b40075e92cdb9302458662cd78f67d8f1543a4914e1c360cbba2780990ac46a",
+          "bytes": 10339,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['flow'] = df['flow'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "362e0aabdbbd902717d1e9d591e250704938dfa6721a3b7eb8760188d935f8fa",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.486,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "a3a0b75e5bbe1034ad040702a3de64bb7f4979cdc6931c9b44321de548e7bc20",
+          "bytes": 11324,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "75bc0f890dc67b55f3102f76314ae0570c0a7205be13601e30ff0206b5f2f1e0",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.805,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "926a24759894b3f52d3eb0c1d076d3216cbe96d5e841b6fe7e86f7a9786ad3d4",
+          "bytes": 10581,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "926a24759894b3f52d3eb0c1d076d3216cbe96d5e841b6fe7e86f7a9786ad3d4",
+          "bytes": 10581,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"ink\": [\"Blue\", \"Blue\", \"Blue\", \"Black\", \"Black\", \"Black\"],\n    \"flow\": [3, 7, 7, 2, 5, 9],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.violinplot(data=df, x=\"flow\", y=\"ink\", cut=0, inner=None, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\n\n# Your work\nax.clear()\nsns.stripplot(data=df, x=\"flow\", y=\"ink\", jitter=False, ax=ax)\nax.set(title=\"Ink flow trials\", xlabel=\"flow\", ylabel=\"ink\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d2748ed02465f58040970b5490fe9dacaab8842d23f7b81c4492ce2208cf502d",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.489,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Ink flow trials",
+          "sha256": "926a24759894b3f52d3eb0c1d076d3216cbe96d5e841b6fe7e86f7a9786ad3d4",
+          "bytes": 10581,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

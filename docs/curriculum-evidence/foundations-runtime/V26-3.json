@@ -1,0 +1,624 @@
+{
+  "id": "V26-3",
+  "sourceId": "V26",
+  "sourceRound": 3,
+  "retrieves": null,
+  "exercise": {
+    "id": "V26-3",
+    "label": "Transfer",
+    "dataset": "games",
+    "task": "The supplied setup draws every game’s minutes/rating pair and labels the chart \"Board games\", \"minutes\" and \"Rating (0–5)\". Keep linear axes and set the rating axis from 0 to 5, its stated scale. Retain the full dataset and keep every observation visible; arrange and display fig.",
+    "solution": "ax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()",
+    "starter": "# Set the requested axis scale or limits, then arrange and display fig\n",
+    "hint": "Use ax.set_ylim(0, 5); retain the supplied points and their linear scales.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "yLimits": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "relationship",
+      "variant": "log-scale",
+      "label": "Concept sketch: equal x spacing = equal ratios on log scale"
+    },
+    "requiredKeywords": [],
+    "demand": "Use the stated rating scale while retaining the whole population.",
+    "preserveData": false,
+    "reflection": null,
+    "bridge": "ax.set_ylim(lower, upper) sets both ends of the y-axis. Choose limits that retain the observations.",
+    "steps": [
+      "The supplied setup draws every game’s minutes/rating pair and labels the chart \"Board games\", \"minutes\" and \"Rating (0–5)\".",
+      "Keep linear axes and set the rating axis from 0 to 5, its stated scale.",
+      "Retain the full dataset and keep every observation visible; arrange and display fig."
+    ],
+    "setupDescription": "A labelled game scatter containing every record, with automatic linear axes.",
+    "decision": "Use the stated rating scale while retaining the whole population.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V26"
+    ],
+    "fixtureFeature": "Each game has a duration and bounded rating, so selected populations and axis ranges must be explicit.",
+    "question": "Which scale or visible range serves fair comparison while retaining observations?",
+    "observationUnit": "one game",
+    "datasetRationale": "Each game has a duration and bounded rating, so selected populations and axis ranges must be explicit.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.labels",
+        "matplotlib.scales"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "stageSummary": "Show a useful range.",
+    "brief": {
+      "question": "Which scale or visible range serves fair comparison while retaining observations?",
+      "rows": "One row: one game.",
+      "result": "The supplied setup draws every game’s minutes/rating pair and labels the chart \"Board games\", \"minutes\" and \"Rating (0–5)\".",
+      "constraints": [
+        "Keep linear axes and set the rating axis from 0 to 5, its stated scale.",
+        "Retain the full dataset and keep every observation visible; arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "game",
+        "genre",
+        "minutes",
+        "rating",
+        "players"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Show a useful range.",
+      "why": "Use the stated rating scale while retaining the whole population.",
+      "changedLines": [
+        1
+      ],
+      "changedSyntaxLines": [
+        1,
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "game": [
+      "Orbit",
+      "Tiles",
+      "Quest",
+      "Grove",
+      "Castle",
+      "Cards"
+    ],
+    "genre": [
+      "Strategy",
+      "Puzzle",
+      "Adventure",
+      "Strategy",
+      "Adventure",
+      "Puzzle"
+    ],
+    "minutes": [
+      20,
+      15,
+      60,
+      35,
+      45,
+      10
+    ],
+    "rating": [
+      4.1,
+      3.8,
+      4.7,
+      4.4,
+      4.5,
+      3.6
+    ],
+    "players": [
+      "Two",
+      "Solo",
+      "Two",
+      "Solo",
+      "Two",
+      "Solo"
+    ]
+  },
+  "inputSHA256": "810fccdcb7f6d7019837be4a5e682df3390417c0170d3d65e7e3892215196a34",
+  "visibleWorkspaceSHA256": "d718e5968d1c3e272a3c641e2c815a7e9b18ed00bd6a6f4309f6cc7985439c3a",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\n# Set the requested axis scale or limits, then arrange and display fig\n",
+  "context": "A labelled game scatter containing every record, with automatic linear axes. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d1b28c24f1d95a3ebaa8af05e5586aa0e9bcb12e94602e744565fb928fab88ce",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.322,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a4b2d7b745a79e1ac285d9d98ae20ba4b28d06dcd51d8c9c6570816763be5dee",
+          "bytes": 13930,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d718e5968d1c3e272a3c641e2c815a7e9b18ed00bd6a6f4309f6cc7985439c3a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.278,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a4b2d7b745a79e1ac285d9d98ae20ba4b28d06dcd51d8c9c6570816763be5dee",
+          "bytes": 13930,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V26-3-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ybound(lower=0, upper=5)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "4993eea2b5354c25950adb1dfee1a8d778c610e02a5d53848ce88d91a61bf0ab",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.275,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a4b2d7b745a79e1ac285d9d98ae20ba4b28d06dcd51d8c9c6570816763be5dee",
+          "bytes": 13930,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V26-3-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "5656e42cc41f612289b2f59675c88adffe00b6c9cc85fec4c06e5902adcf9309",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.285,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the axis limits.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "ce7ed670843ac34cbcd2fed88adf4af0deb15d4702c40b6a80782541abb48807",
+          "bytes": 16088,
+          "width": 589,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_limits",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ybound(lower=0, upper=6)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "cd64dd76e47bd44ee83aa7ffed6e1e155a6060127f02355ef205d0d18e07e958",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.282,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the axis limits.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "9f5a89f7972d8942a1a84b683dae63bbca22bf914d8e5a3877e487200c5499ff",
+          "bytes": 14095,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ylim(0, 5)\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "2f53b30d3e2467762d23a79dfa79252fbb8c88e09226a0cfacec328a8b2b477b",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.343,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'board games'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "c7c37094b244206cba515309618bb076e278b92d41517c93c0447c8507bcbe13",
+          "bytes": 13871,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ylim(0, 5)\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "fddb6ff0852644d703f4b9508359e13756b0572171dc204e1b49f93a563e4d17",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.249,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a43929eb5fe95e120b68bcb55a76c80d04fdba028fc15a1311f1c7c03b1c5286",
+          "bytes": 13945,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['rating'] = df['rating'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "c6e8ab90ee592a15ef7d63f09b9492cd938eacf28a8e2ea2b4566dd5134ea374",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.28,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "50c2bb378dbbbe9f87ea2c14e50f38f8238f814b455cbc7badb73f7c9805a773",
+          "bytes": 12600,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\nax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "82f00634ba3d69e8aa87bd4fb9191f8bdab9c4604541c5a0005d29ef23e7c7cc",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.503,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a4b2d7b745a79e1ac285d9d98ae20ba4b28d06dcd51d8c9c6570816763be5dee",
+          "bytes": 13930,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a4b2d7b745a79e1ac285d9d98ae20ba4b28d06dcd51d8c9c6570816763be5dee",
+          "bytes": 13930,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"game\": [\"Orbit\", \"Tiles\", \"Quest\", \"Grove\", \"Castle\", \"Cards\"],\n    \"genre\": [\"Strategy\", \"Puzzle\", \"Adventure\", \"Strategy\", \"Adventure\", \"Puzzle\"],\n    \"minutes\": [20, 15, 60, 35, 45, 10],\n    \"rating\": [4.1, 3.8, 4.7, 4.4, 4.5, 3.6],\n    \"players\": [\"Two\", \"Solo\", \"Two\", \"Solo\", \"Two\", \"Solo\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"minutes\", y=\"rating\", ax=ax)\nax.set(title=\"Board games\", xlabel=\"minutes\", ylabel=\"Rating (0–5)\")\n\n# Your work\nax.set_ylim(0, 5)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "d718e5968d1c3e272a3c641e2c815a7e9b18ed00bd6a6f4309f6cc7985439c3a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.291,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Board games",
+          "sha256": "a4b2d7b745a79e1ac285d9d98ae20ba4b28d06dcd51d8c9c6570816763be5dee",
+          "bytes": 13930,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

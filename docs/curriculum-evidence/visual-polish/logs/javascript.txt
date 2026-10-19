@@ -1,0 +1,54 @@
+
+> data-science-python-playground@1.0.0 check:js
+> node --check app/code-menu-position.js && node --check foundations/inline-code.js && node tests/test_inline_code_controls.mjs && node --check foundations/app.js && node --check foundations/variety.js && node --check foundations/parameter-guide.js && node tests/test_foundations_parameters.mjs --built && node --check foundations/refinements.js && node --check foundations/operation-visuals.js && node --check foundations/visuals.js && node --check foundations/worker.js && node --check foundations/curriculum.js && node --check foundations/worker.js && node tests/test_foundations_curriculum.mjs && node tests/test_foundations_teaching.mjs && node tests/test_workflow_challenges.mjs && node tests/test_challenge_icons.mjs && node --check challenges/experience.js && node --check tutorial.js && node --check landing.js && node --check mascot.js && node --check learn.js && node --check ml-app.js && node --check app/app-platform.js && node --check appearance.js && node --check notebook-session.js && node --check worker-bridge.js && node --check dataset-dictionary.js && node tests/test_worker_bridge.mjs && node --check output-ui.js && node --check statistics/app.js && node --check statistics/worker.js && node --check ml-learning/app.js && node --check ml-learning/visuals.js && node --check ml-learning/worker.js && npm run check:ml-learning
+
+1148 illustrative programs retain independently clickable code values and labelled menus, including conditional arguments.
+Parameter guide: 43 cards, 132 rounds, 2717 introduced option occurrences, 68 reusable entries; independent AST coverage and function-specific contracts verified.
+Foundations: 110 ordered cards, 338 unique exercises, complete I/W/V IDs, valid tiny tables, review spacing and Data-only navigation.
+Visual definitions, tiering, task review, stable inserted IDs, distinct schemas and meaningful chart data passed.
+Concept distinctions, signed symmetric correlations, swarm spacing, IQR fences and all visual review fingerprints passed.
+Visual teaching: all 338 exercises, retrieval links, authored guides, syntax coverage and chart alternatives verified.
+Authored choices, visible essential teaching, duplicate flags and retrieval contracts verified.
+{
+  "existingFoundationsExercises": 338,
+  "existingCards": 110,
+  "workflowChallenges": 30,
+  "byDeck": {
+    "inspect": 10,
+    "wrangle": 10,
+    "visualise": 10
+  },
+  "totalExecutableActivities": 368,
+  "reviewedFoundationsBaselineMatch": true
+}
+49 distinct transparent generated workflow icons are present.
+Shared worker transport: asynchronous source lifetime, exactly-once cleanup, serial requests, queued cancellation, restart recovery and startup failure passed.
+
+> data-science-python-playground@1.0.0 check:ml-learning
+> node scripts/sync-ml-workflows.mjs --check && node tests/test_ml_learning_manifest.mjs && node tests/test_ml_learning_collections.mjs && node tests/test_ml_learning_content.mjs && node tests/test_ml_learning_receipts.mjs && node scripts/audit-ml-learning.mjs --check && python3 scripts/audit-ml-learning-help.py && python3 tests/test_ml_learning_visual_audit.py
+
+Learning recipes match the playground manual walkthrough.
+{
+  "acyclic": true,
+  "independentRoutes": true,
+  "models": 17,
+  "challenges": 19,
+  "teaching": {
+    "cards": 85,
+    "exercises": 285
+  },
+  "review": {
+    "cards": 14,
+    "exercises": 42
+  },
+  "checkpoint": {
+    "cards": 11,
+    "exercises": 11
+  }
+}
+23 reference collections: unchanged 110 cards/19 workflows; exact model groups, independent rendered branches, legacy URLs and practice/context routing passed.
+110 cards, 338 exercises, 19 challenges; all production models taught in Core.
+Receipt reuse, stale results, navigation and bounded retention passed.
+Registry audit: 110 cards, 19 challenges, 29 cross-deck Core dependencies.
+357 task/help fingerprints verified; 357 runnable Python answers.
+85 concept visuals, 110 distinct card thumbnails and every primitive/variant dark + 320/390 contact-sheet audit remain current.

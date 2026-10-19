@@ -1,0 +1,963 @@
+{
+  "buildContentId": "681ac0a6dfcb7f5812a97f619c48731479805c089d34cd5fd91d8cd607585c50",
+  "observedStyleHashes": {
+    "foundations/foundations.css": "5001bef72c9628c62a240ee09171dd4b67c78a0eb8e2c1d6c366a15a26ccad8d",
+    "ml-learning/learning.css": "e5589cbe37e509603506529d025fddaecaeb9c3e45fb97c19fa5261e82833d0c",
+    "route-slider.css": "d7b1b7689668e1229074d22b6527ea6a1143b0c4ba2a7c4c640d6e17ae524652"
+  },
+  "focusedOnly": true,
+  "records": [
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 883,
+      "codeScrollHeight": 883,
+      "paneHeight": 3483,
+      "paneBottom": 4124.390625,
+      "contentScroll": "visible",
+      "contentHeight": 2577,
+      "contentScrollHeight": 2577,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 3379,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 86,
+        "layerScrollTop": 86,
+        "selection": 223,
+        "marker": 211,
+        "sourceLines": 13,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "I19S-1",
+      "family": "data",
+      "width": 320
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 813,
+      "codeScrollHeight": 813,
+      "paneHeight": 3862,
+      "paneBottom": 4503.1875,
+      "contentScroll": "visible",
+      "contentHeight": 3026,
+      "contentScrollHeight": 3026,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 3828,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 403,
+        "layerScrollTop": 403,
+        "selection": 465,
+        "marker": 453,
+        "sourceLines": 24,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "W19-1",
+      "family": "data",
+      "width": 320
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 813,
+      "codeScrollHeight": 813,
+      "paneHeight": 3608,
+      "paneBottom": 4291.15625,
+      "contentScroll": "visible",
+      "contentHeight": 2773,
+      "contentScrollHeight": 2773,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 3616,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 259,
+        "layerScrollTop": 259,
+        "selection": 200,
+        "marker": 188,
+        "sourceLines": 19,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "V04-1",
+      "family": "data",
+      "width": 320
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 862,
+      "codeScrollHeight": 862,
+      "paneHeight": 4630,
+      "paneBottom": 5411.53125,
+      "contentScroll": "visible",
+      "contentHeight": 3746,
+      "contentScrollHeight": 3746,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hints",
+        "Explained solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 4687,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 0,
+        "layerScrollTop": 0,
+        "selection": 0,
+        "marker": -1,
+        "sourceLines": 5,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "ML-C14-1",
+      "family": "ml",
+      "width": 320
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 1035,
+      "codeScrollHeight": 1035,
+      "paneHeight": 8992,
+      "paneBottom": 9727.71875,
+      "contentScroll": "visible",
+      "contentHeight": 7935,
+      "contentScrollHeight": 7935,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hints",
+        "Explained solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 8831,
+        "height": 497,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 0,
+        "layerScrollTop": 0,
+        "selection": 0,
+        "marker": -1,
+        "sourceLines": 36,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "ML-F11-1",
+      "family": "ml",
+      "width": 320
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 823,
+      "codeScrollHeight": 823,
+      "paneHeight": 3296,
+      "paneBottom": 3871.234375,
+      "contentScroll": "visible",
+      "contentHeight": 2451,
+      "contentScrollHeight": 2451,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 3163,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 86,
+        "layerScrollTop": 86,
+        "selection": 223,
+        "marker": 211,
+        "sourceLines": 13,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "I19S-1",
+      "family": "data",
+      "width": 390
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 771,
+      "codeScrollHeight": 771,
+      "paneHeight": 3549,
+      "paneBottom": 4043.03125,
+      "contentScroll": "visible",
+      "contentHeight": 2755,
+      "contentScrollHeight": 2755,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 3387,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 403,
+        "layerScrollTop": 403,
+        "selection": 465,
+        "marker": 453,
+        "sourceLines": 24,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "W19-1",
+      "family": "data",
+      "width": 390
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 771,
+      "codeScrollHeight": 771,
+      "paneHeight": 3356,
+      "paneBottom": 3947.03125,
+      "contentScroll": "visible",
+      "contentHeight": 2562,
+      "contentScrollHeight": 2562,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 3291,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 259,
+        "layerScrollTop": 259,
+        "selection": 200,
+        "marker": 188,
+        "sourceLines": 19,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "V04-1",
+      "family": "data",
+      "width": 390
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 839,
+      "codeScrollHeight": 839,
+      "paneHeight": 4336,
+      "paneBottom": 5020.671875,
+      "contentScroll": "visible",
+      "contentHeight": 3475,
+      "contentScrollHeight": 3475,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hints",
+        "Explained solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 4296,
+        "height": 324,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 0,
+        "layerScrollTop": 0,
+        "selection": 0,
+        "marker": -1,
+        "sourceLines": 5,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "ML-C14-1",
+      "family": "ml",
+      "width": 390
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "visible",
+      "codeHeight": 1012,
+      "codeScrollHeight": 1012,
+      "paneHeight": 7767,
+      "paneBottom": 8341.78125,
+      "contentScroll": "visible",
+      "contentHeight": 6733,
+      "contentScrollHeight": 6733,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hints",
+        "Explained solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 7445,
+        "height": 497,
+        "fontSize": "16px",
+        "lineHeight": "28.8px",
+        "paddingTop": "18px",
+        "layerLineHeight": "28.8px",
+        "layerFontSize": "16px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 0,
+        "layerScrollTop": 0,
+        "selection": 0,
+        "marker": -1,
+        "sourceLines": 36,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "ML-F11-1",
+      "family": "ml",
+      "width": 390
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "auto",
+      "codeHeight": 656,
+      "codeScrollHeight": 694,
+      "paneHeight": 658,
+      "paneBottom": 968,
+      "contentScroll": "auto",
+      "contentHeight": 658,
+      "contentScrollHeight": 1920,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 413,
+        "height": 270,
+        "fontSize": "13px",
+        "lineHeight": "23.4px",
+        "paddingTop": "18px",
+        "layerLineHeight": "23.4px",
+        "layerFontSize": "13px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 70,
+        "layerScrollTop": 70,
+        "selection": 223,
+        "marker": 211,
+        "sourceLines": 13,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "I19S-1",
+      "family": "data",
+      "width": 1440
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "auto",
+      "codeHeight": 700,
+      "codeScrollHeight": 700,
+      "paneHeight": 702,
+      "paneBottom": 968,
+      "contentScroll": "auto",
+      "contentHeight": 702,
+      "contentScrollHeight": 2105,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 370,
+        "height": 270,
+        "fontSize": "13px",
+        "lineHeight": "23.4px",
+        "paddingTop": "18px",
+        "layerLineHeight": "23.4px",
+        "layerFontSize": "13px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 327,
+        "layerScrollTop": 327,
+        "selection": 465,
+        "marker": 453,
+        "sourceLines": 24,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "W19-1",
+      "family": "data",
+      "width": 1440
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "auto",
+      "codeHeight": 700,
+      "codeScrollHeight": 700,
+      "paneHeight": 702,
+      "paneBottom": 968,
+      "contentScroll": "auto",
+      "contentHeight": 702,
+      "contentScrollHeight": 2383,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hint",
+        "Reveal solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 370,
+        "height": 270,
+        "fontSize": "13px",
+        "lineHeight": "23.4px",
+        "paddingTop": "18px",
+        "layerLineHeight": "23.4px",
+        "layerFontSize": "13px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 210,
+        "layerScrollTop": 210,
+        "selection": 200,
+        "marker": 188,
+        "sourceLines": 19,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "V04-1",
+      "family": "data",
+      "width": 1440
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "auto",
+      "codeHeight": 673,
+      "codeScrollHeight": 693,
+      "paneHeight": 675,
+      "paneBottom": 968,
+      "contentScroll": "auto",
+      "contentHeight": 675,
+      "contentScrollHeight": 3137,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hints",
+        "Explained solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 396,
+        "height": 270,
+        "fontSize": "13px",
+        "lineHeight": "23.4px",
+        "paddingTop": "18px",
+        "layerLineHeight": "23.4px",
+        "layerFontSize": "13px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 0,
+        "layerScrollTop": 0,
+        "selection": 0,
+        "marker": -1,
+        "sourceLines": 5,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "ML-C14-1",
+      "family": "ml",
+      "width": 1440
+    },
+    {
+      "overflow": false,
+      "teachingBeforeTask": true,
+      "order": true,
+      "stageLinks": 0,
+      "modeControls": 0,
+      "stageDescriptions": true,
+      "currentIndicators": 1,
+      "currentIndicatorText": "Current exercise",
+      "codeScroll": "auto",
+      "codeHeight": 630,
+      "codeScrollHeight": 834,
+      "paneHeight": 632,
+      "paneBottom": 968,
+      "contentScroll": "auto",
+      "contentHeight": 632,
+      "contentScrollHeight": 5342,
+      "referenceOpen": 0,
+      "supportingControls": [
+        "Hints",
+        "Explained solution"
+      ],
+      "nestedSupportingControls": 0,
+      "mobileOrder": true,
+      "editor": {
+        "top": 440,
+        "height": 410,
+        "fontSize": "13px",
+        "lineHeight": "23.4px",
+        "paddingTop": "18px",
+        "layerLineHeight": "23.4px",
+        "layerFontSize": "13px",
+        "layerPaddingTop": "18px",
+        "whiteSpace": "pre",
+        "layerWhiteSpace": "pre",
+        "scrollTop": 0,
+        "layerScrollTop": 0,
+        "selection": 0,
+        "marker": -1,
+        "sourceLines": 36,
+        "hasLabel": true,
+        "described": true
+      },
+      "id": "ML-F11-1",
+      "family": "ml",
+      "width": 1440
+    }
+  ],
+  "pageErrors": [],
+  "identifierStyles": [
+    {
+      "theme": "light",
+      "roles": [
+        {
+          "role": "column",
+          "name": "flavour",
+          "contrast": 9.294553171855748,
+          "underline": "none",
+          "borderStyle": "solid",
+          "borderWidth": "1px",
+          "topBorderStyle": "solid",
+          "bottomBorderStyle": "solid",
+          "shadow": "none",
+          "cursor": "text"
+        },
+        {
+          "role": "variable",
+          "name": "df",
+          "contrast": 9.796416889717149,
+          "underline": "none",
+          "borderStyle": "double",
+          "borderWidth": "3px",
+          "topBorderStyle": "none",
+          "bottomBorderStyle": "none",
+          "shadow": "none",
+          "cursor": "text"
+        },
+        {
+          "role": "syntax",
+          "name": "agg()",
+          "contrast": 10.463943198077876,
+          "underline": "none",
+          "borderStyle": "none",
+          "borderWidth": "0px",
+          "topBorderStyle": "dotted",
+          "bottomBorderStyle": "dotted",
+          "shadow": "none",
+          "cursor": "text"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "roles": [
+        {
+          "role": "column",
+          "name": "flavour",
+          "contrast": 9.083552087924428,
+          "underline": "none",
+          "borderStyle": "solid",
+          "borderWidth": "1px",
+          "topBorderStyle": "solid",
+          "bottomBorderStyle": "solid",
+          "shadow": "none",
+          "cursor": "text"
+        },
+        {
+          "role": "variable",
+          "name": "df",
+          "contrast": 10.37677825710561,
+          "underline": "none",
+          "borderStyle": "double",
+          "borderWidth": "3px",
+          "topBorderStyle": "none",
+          "bottomBorderStyle": "none",
+          "shadow": "none",
+          "cursor": "text"
+        },
+        {
+          "role": "syntax",
+          "name": "agg()",
+          "contrast": 11.162263984261953,
+          "underline": "none",
+          "borderStyle": "none",
+          "borderWidth": "0px",
+          "topBorderStyle": "dotted",
+          "bottomBorderStyle": "dotted",
+          "shadow": "none",
+          "cursor": "text"
+        }
+      ]
+    }
+  ],
+  "independentPaneWheelChecks": [
+    {
+      "family": "data-foundations",
+      "pane": "lesson",
+      "before": {
+        "body": 0,
+        "panes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "body": 0,
+        "panes": [
+          400,
+          0
+        ]
+      },
+      "atBottomBefore": {
+        "body": 0,
+        "panes": [
+          1913,
+          0
+        ]
+      },
+      "atBottomAfter": {
+        "body": 0,
+        "panes": [
+          1913,
+          0
+        ]
+      }
+    },
+    {
+      "family": "data-foundations",
+      "pane": "python",
+      "before": {
+        "body": 0,
+        "panes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "body": 0,
+        "panes": [
+          0,
+          192
+        ]
+      },
+      "atBottomBefore": {
+        "body": 0,
+        "panes": [
+          0,
+          192
+        ]
+      },
+      "atBottomAfter": {
+        "body": 0,
+        "panes": [
+          0,
+          192
+        ]
+      }
+    },
+    {
+      "family": "ml-learn",
+      "pane": "lesson",
+      "before": {
+        "body": 0,
+        "panes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "body": 0,
+        "panes": [
+          400,
+          0
+        ]
+      },
+      "atBottomBefore": {
+        "body": 0,
+        "panes": [
+          4942,
+          0
+        ]
+      },
+      "atBottomAfter": {
+        "body": 0,
+        "panes": [
+          4942,
+          0
+        ]
+      }
+    },
+    {
+      "family": "ml-learn",
+      "pane": "python",
+      "before": {
+        "body": 0,
+        "panes": [
+          0,
+          0
+        ]
+      },
+      "after": {
+        "body": 0,
+        "panes": [
+          0,
+          400
+        ]
+      },
+      "atBottomBefore": {
+        "body": 0,
+        "panes": [
+          0,
+          436
+        ]
+      },
+      "atBottomAfter": {
+        "body": 0,
+        "panes": [
+          0,
+          436
+        ]
+      }
+    }
+  ],
+  "touchChecks": [
+    {
+      "family": "data-foundations",
+      "width": 820,
+      "touch": true,
+      "fontSize": "16px",
+      "lineHeight": "28.8px",
+      "layerFontSize": "16px",
+      "layerLineHeight": "28.8px",
+      "controls": []
+    },
+    {
+      "family": "ml-learn",
+      "width": 820,
+      "touch": true,
+      "fontSize": "16px",
+      "lineHeight": "28.8px",
+      "layerFontSize": "16px",
+      "layerLineHeight": "28.8px",
+      "controls": []
+    }
+  ],
+  "interactionChecks": [
+    "original non-interactive exercise indicators",
+    "indent and undo",
+    "Escape/Tab leaves editor",
+    "reset restores starter",
+    "reference disclosure keeps code",
+    "route navigation updates current exercise",
+    "independent desktop lesson/Python wheel scrolling",
+    "coarse-pointer native editor alignment"
+  ]
+}

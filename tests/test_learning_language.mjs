@@ -53,7 +53,7 @@ const allRounds=data.lessons.flatMap(l=>l.rounds);
 assert(L.activity(allRounds.find(r=>r.id==='I19A-1')).includes('title="Python object">means</code>'));
 assert(L.activity(allRounds.find(r=>r.id==='I19A-1')).includes('title="Python object">counts</code>'));
 const checks=L.activity(allRounds.find(r=>r.id==='I19A-2'));
-assert(checks.includes('Series <code class="code-identifier" data-code-role="variable" title="Python object">checks</code>'));
+assert(checks.includes('title="Python object">checks</code>'),'The supplied checks Series remains a Python object');
 assert(checks.includes('title="Table column">checks</code>'));
 assert(L.activity(allRounds.find(r=>r.id==='I19A-3')).includes('title="Table column">missing</code>'));
 for(const [id,name] of [['I01CSV-1','candy.csv'],['I01CSV-2','cafe.csv'],['I01CSV-3','pets.csv']])assert(L.activity(allRounds.find(r=>r.id===id)).includes('title="Filename">'+name+'</code>'),id+' entire filename is one literal');
@@ -94,5 +94,5 @@ for(const card of ml.cards)for(const ex of card.exercises){
   for(const name of ex.outputs||[])assert(L.context(ex.id).variables.includes(name)||L.context(ex.id).columns.includes(name),ex.id+' declares output name '+name);
   count++;
 }
-assert.equal(count,665);
+assert.equal(count,676);
 console.log(`${count} Foundations/ML activities have readable action steps and literal-preserving contexts; price columns, Python objects, prose, conditions, glossary and report evidence verified.`);

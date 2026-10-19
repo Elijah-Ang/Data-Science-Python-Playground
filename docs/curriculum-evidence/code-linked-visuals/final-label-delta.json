@@ -1,0 +1,10 @@
+{
+  "previousBuild": "a9459a679d024ed9b531738050d0e7daf989d04f3f721eeb297f30e27f8b5662",
+  "currentBuild": "7def961f5f3c944711d538793e8b5378baa504152910cb53ea53125cd02daafd",
+  "changedSource": "ml-learning/visuals.js",
+  "change": "One explorer configuration line: query label and option display titles only. Option values, calculations, geometry and Python are byte-identical.",
+  "before": "'C08-neighbours':{title:'Inspect five-neighbour predictions',label:'Query (x, y)',options:[['0,0','(0, 0)'],['1,0','(1, 0)'],['0,1','(0, 1)']]}",
+  "after": "'C08-neighbours':{title:'Inspect five-neighbour predictions',label:'Query coordinates',options:[['0,0','x=0, y=0'],['1,0','x=1, y=0'],['0,1','x=0, y=1']]}",
+  "restoringThatLineMatchesReviewedSHA256": "b2203ccb08b3e1ec7cf422cfe5c05f3e8a9884723a995703a1e2e2db15e8dadf",
+  "currentSourceSHA256": "3d95ad47fac7f9c4087f2f35612a4212c1000cd2db812bc2ce56518b597ea67b"
+}

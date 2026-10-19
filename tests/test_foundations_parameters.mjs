@@ -39,14 +39,22 @@ for(const entry of Object.values(parameters.registry))for(const item of paramete
 let roundCount=0;
 for(const lesson of visualise)for(const round of lesson.rounds){
  const entries=parameters.entriesFor(curriculum,lesson,round),html=parameters.render(curriculum,lesson,round);
- for(const item of inventory.filter(item=>item.round===round.id))assert(entries.some(entry=>entry.id===item.entry),round.id+' visibly explains '+item.function+'.'+item.keyword);
+ for(const item of inventory.filter(item=>item.round===round.id))assert(entries.some(entry=>entry.id===item.entry),round.id+' retains a reference for '+item.function+'.'+item.keyword);
  for(const item of entries){
   for(const field of ['purpose','forms','range','default','effect','example','caveat','source'])assert.equal(typeof item[field],'string',round.id+' '+item.id+' '+field);
   assert(Object.values(item).every(value=>value!==''),round.id+' complete entry '+item.id);
   assert(html.includes('data-parameter="'+item.id+'"'),round.id+' renders '+item.id);
   assert(/https:\/\/github\.com\/(?:mwaskom\/seaborn\/blob\/v0\.13\.2|matplotlib\/matplotlib\/blob\/v3\.5\.2|pandas-dev\/pandas\/blob\/v2\.2\.0)\//.test(item.source),item.id+' pins a primary source');
  }
- assert(!html.includes('<details'),'Essential option explanations remain visible');
+ const guidance=parameters.guidanceFor(curriculum,lesson,round);
+ const current=parameters.render(curriculum,lesson,round,{level:'current'});
+ const reference=parameters.render(curriculum,lesson,round,{level:'reference'});
+ assert(!current.includes('<details'),'Current essential teaching remains visible');
+ assert(!/<details[^>]*\bopen\b/.test(reference),'Optional reminders and full reference start collapsed');
+ for(const item of guidance.introduces)assert(current.includes('data-parameter="'+item.id+'"'),round.id+' teaches authored introduction '+item.id);
+ for(const item of guidance.reminders)assert(!current.includes('data-parameter="'+item.id+'"'),round.id+' does not promote setup or familiar syntax '+item.id);
+ if(entries.length)assert(reference.includes('foundation-parameter-reference'),round.id+' full reference remains available');
+ assert.equal(html,current+reference,'Browser and static render share the same three levels');
  assert(!html.includes('undefined'),round.id+' contains no missing copy');
  roundCount++;
 }
@@ -81,15 +89,31 @@ assert(parameters.lookup('df.pivot_table','index').id==='pivot_table.index');
 assert(parameters.lookup('ax.legend','title').id==='legend.title');
 assert.equal(parameters.render(curriculum,curriculum.lessons.find(l=>l.id==='I01'),curriculum.lessons.find(l=>l.id==='I01').rounds[0]),'');
 
+const histogram=curriculum.lessons.find(l=>l.id==='V04');
+assert(parameters.renderCurrent(curriculum,histogram,histogram.rounds[0]).includes('data-parameter="bins"'));
+assert(!parameters.renderCurrent(curriculum,histogram,histogram.rounds[1]).includes('data-parameter="figsize"'));
+const average=curriculum.lessons.find(l=>l.id==='V09');
+const introduction=parameters.renderCurrent(curriculum,average,average.rounds[0]);
+for(const value of ['2, 2, 8','Mean','Median','Sum','<td>4</td>','<td>2</td>','<td>12</td>'])assert(introduction.includes(value),value+' is explained at estimator introduction');
+assert(!introduction.includes('lambda'),'Callable alternatives do not introduce lambda prematurely');
+assert(!parameters.renderCurrent(curriculum,average,average.rounds[1]).includes('Same measurements'),'Later estimator use does not repeat the introduction');
+const synthetic={...histogram.rounds[1],solution:histogram.rounds[1].solution+'\nax.set(title="diagnostic", alpha=0.5)'};
+assert(parameters.entriesFor(curriculum,histogram,synthetic).some(item=>item.id==='alpha'));
+assert(!parameters.renderCurrent(curriculum,histogram,synthetic).includes('data-parameter="alpha"'),'Diagnostic scanning never decides current teaching');
+
 // Build and enhancement call the same renderer. This optional check is run
 // after the normal serial build; it does not regenerate while authors edit.
 if(process.argv.includes('--built'))for(const lesson of visualise){
  require('../learning-routes.js');
  const routes=globalThis.LearningRoutes;
  const page=fs.readFileSync(new URL('../dist/'+routes.url('data',lesson.deck+'/'+lesson.id+'/0'),import.meta.url),'utf8');
- const expected=parameters.render(curriculum,lesson,lesson.rounds[0]);
+ const expected=parameters.renderCurrent(curriculum,lesson,lesson.rounds[0]);
  const unstyled=html=>html.replace(/<\/?code\b[^>]*>/g,'');
- assert(unstyled(page).includes(unstyled(expected)),lesson.id+' static page contains the exact shared parameter content, allowing inline identifier decoration');
+ for(const level of ['current']){
+  const section=parameters.render(curriculum,lesson,lesson.rounds[0],{level});
+  assert(unstyled(page).includes(unstyled(section)),lesson.id+' static page contains '+level+' shared parameter content, allowing inline identifier decoration');
+ }
+ assert(!page.includes('foundation-parameter-reference'),lesson.id+' no removed reference content in static lesson');
  for(const block of expected.match(/<pre\b[\s\S]*?<\/pre>/g)||[])assert(page.includes(block),lesson.id+' retains each exact pre/code example, not only its text');
 }
 const unique=[...new Set(inventory.map(item=>item.entry))];

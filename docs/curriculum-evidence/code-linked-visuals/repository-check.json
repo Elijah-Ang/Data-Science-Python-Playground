@@ -1,0 +1,19 @@
+{
+  "command": "npm run check",
+  "exitCode": 0,
+  "logSHA256": "5bd9b865c44252d35e354c3cf274d5e54cb656fe0507a5662604b39fd67036e0",
+  "summary": [
+    "676 Foundations/ML activities have readable action steps and literal-preserving contexts; price columns, Python objects, prose, conditions, glossary and report evidence verified.",
+    "Prerequisites: four ordered lessons, twelve practices, concrete examples, earlier teaching links and all original 326 activity identities preserved.",
+    "Operation visual contracts: 47 Follow lessons, 106 meaningful fixed-data states.",
+    "{\"activities\":338,\"additions\":{\"inspect\":20,\"wrangle\":11,\"visualise\":14},\"familiarOrIntroductory\":293,\"repeatedLaterVisuals\":0}",
+    "Authored guidance: 110 cards, 338 practices; inventory, prerequisite order, distinct stages, concise briefs, parameter disclosure, provenance and named corrections verified.",
+    "Teaching visuals: data conservation, statistics, neighbour voting, tree paths, SVM margins, fitted curves, PCA transforms and accessible delegated interactions verified.",
+    "110 cards, 338 activities, 19 challenges: teaching levels, 14 supervised model milestones, unsupervised sequences, supplied fitted-state provenance and named repairs passed.",
+    "......",
+    "----------------------------------------------------------------------",
+    "Ran 6 tests in 0.004s",
+    "",
+    "OK"
+  ]
+}

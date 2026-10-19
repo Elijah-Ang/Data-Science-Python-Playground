@@ -67,8 +67,10 @@ for l in [l for l in C['lessons'] if l['deck']=='visualise']:
     for r in l['rounds']:
         for field in ('question', 'observationUnit', 'datasetRationale', 'decision'):
             assert r.get(field), (r['id'], field)
-        assert r['question'] in r['task'] and r['observationUnit'] in r['task'], r['id']
-        assert 'These data are useful because' in r['task'], r['id']
+        assert r['brief']['question'] in r['task'], r['id']
+        assert r['brief']['rows'] in r['task'], r['id']
+        assert 'These data are useful because' not in r['task'], r['id']
+        assert r['datasetRationale'], r['id']  # Authoring rationale remains inspectable metadata.
     if not l['review'] and l['id'] != 'V01':
         assert l['rounds'][0]['dataset'] not in ('students', 'weather', 'candy', 'games'), l['id']
         assert l['rounds'][0]['solution'] in l['example'], l['id']

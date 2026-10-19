@@ -43,13 +43,17 @@ const files = [
   "challenges/runtime.py",
   "foundations/editor.js",
   "foundations/learning-ui.js",
+  "foundations/inline-code.js",
   "foundations/parameter-guide.js",
   "foundations/teaching.js",
+  "foundations/operation-visuals.js",
   "foundations/clarity.js",
   "foundations/variety.js",
   "foundations/prerequisites.js",
   "foundations/workspace.js",
   "foundations/curriculum.js",
+  "foundations/content-guidance.js",
+  "foundations/visualise-guidance.js",
   "foundations/refinements.js",
   "foundations/progression.js",
   "foundations/practical.js",
@@ -95,7 +99,7 @@ const files = [
   "manifest.webmanifest",
   "service-worker.js"
 ];
-const directories = ["data", "assets/tour-snapshots", "assets/workflow-icons-generated"];
+const directories = ["data", "assets/tour-snapshots", "assets/workflow-icons-generated", "assets/teaching"];
 const nativeRuntimeFiles = [
   "pyodide.js",
   "pyodide.asm.js",
@@ -158,6 +162,13 @@ if (process.env.DSPP_NATIVE_RUNTIME === "1") {
   }
   await fs.cp(localRuntime, path.join(output, "pyodide"), { recursive: true });
 }
+
+await build({
+  entryPoints: [path.join(root, 'app', 'code-menu-position.js')],
+  outfile: path.join(output, 'foundations', 'code-menu-position.js'),
+  bundle: true, format: 'iife', globalName: 'CodeMenuPosition',
+  platform: 'browser', target: ['safari16'], minify: true, legalComments: 'eof'
+});
 
 await build({
   entryPoints: [path.join(root, "app", "app-platform.js")],

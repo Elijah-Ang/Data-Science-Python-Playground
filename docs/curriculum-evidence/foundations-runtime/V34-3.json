@@ -1,0 +1,927 @@
+{
+  "id": "V34-3",
+  "sourceId": "V34",
+  "sourceRound": 3,
+  "retrieves": null,
+  "exercise": {
+    "id": "V34-3",
+    "label": "Transfer",
+    "dataset": "clinic_pairs",
+    "task": "The supplied setup prepares the complete wait_minutes/consult_minutes pairs from df but leaves both axis labels blank. Finish title Clinic visits and labels Wait (minutes) and Consultation (minutes), arrange the Figure, then save chart.png at 150 dpi with bbox_inches=\"tight\" before displaying. Preserve the prepared pairs, including the visit whose note is missing.",
+    "solution": "ax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+    "starter": "# Finish the missing report labels, arrange fig, export it and display it\n",
+    "hint": "Label and arrange the prepared Figure before saving the explicit fig; a missing unrelated note is not a reason to drop a paired observation.",
+    "setup": "selected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "semantic": "scatter",
+      "export": true,
+      "textCaseInsensitive": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "figure",
+      "variant": "export",
+      "label": "Concept sketch: save this Figure as a PNG file"
+    },
+    "requiredKeywords": [],
+    "demand": "Repair the deliverable labels and export the same complete-pair evidence.",
+    "preserveData": false,
+    "reflection": null,
+    "bridge": null,
+    "steps": [
+      "The supplied setup prepares the complete wait_minutes/consult_minutes pairs from df but leaves both axis labels blank.",
+      "Finish title Clinic visits and labels Wait (minutes) and Consultation (minutes), arrange the Figure, then save chart.png at 150 dpi with bbox_inches=\"tight\" before displaying.",
+      "Preserve the prepared pairs, including the visit whose note is missing."
+    ],
+    "setupDescription": "A complete-pair clinic scatter with blank axis labels.",
+    "decision": "Repair the deliverable labels and export the same complete-pair evidence.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle",
+      "V34"
+    ],
+    "fixtureFeature": "Missing plotting values require pairwise eligibility; a missing unrelated note must survive.",
+    "question": "Is the requested report Figure finished before it is exported?",
+    "observationUnit": "one clinic visit",
+    "datasetRationale": "Missing plotting values require pairwise eligibility; a missing unrelated note must survive.",
+    "parameterTeaching": {
+      "introduces": [],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "linestyle",
+        "dpi",
+        "bbox_inches",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "concepts": {
+      "introduces": [],
+      "reuses": [
+        "matplotlib.labels",
+        "matplotlib.figure-axes",
+        "matplotlib.savefig"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V02"
+      ]
+    },
+    "stageSummary": "Export selected evidence.",
+    "brief": {
+      "question": "Is the requested report Figure finished before it is exported?",
+      "rows": "One row: one clinic visit.",
+      "result": "The supplied setup prepares the complete wait_minutes/consult_minutes pairs from df but leaves both axis labels blank.",
+      "constraints": [
+        "Finish title Clinic visits and labels Wait (minutes) and Consultation (minutes), arrange the Figure, then save chart.png at 150 dpi with bbox_inches=\"tight\" before displaying.",
+        "Preserve the prepared pairs, including the visit whose note is missing."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "visit",
+        "wait_minutes",
+        "consult_minutes",
+        "note",
+        "service"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [],
+      "reminders": [],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Export selected evidence.",
+      "why": "Repair the deliverable labels and export the same complete-pair evidence.",
+      "changedLines": [
+        3
+      ],
+      "changedSyntaxLines": [
+        1
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "visit": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "wait_minutes": [
+      12,
+      null,
+      6,
+      18,
+      9,
+      15
+    ],
+    "consult_minutes": [
+      8,
+      20,
+      14,
+      null,
+      11,
+      7
+    ],
+    "note": [
+      "routine",
+      "routine",
+      null,
+      "routine",
+      "routine",
+      "routine"
+    ],
+    "service": [
+      "Remote",
+      "Clinic",
+      "Clinic",
+      "Remote",
+      "Clinic",
+      "Remote"
+    ]
+  },
+  "inputSHA256": "43b9a4b10df676e037ba96430043baeb4dc61bc29b9fa3a080ea4f1126b7e715",
+  "visibleWorkspaceSHA256": "786fa38214f2917868e8824e01db80491ed6af0bceaed7764d58fa182d38d314",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\n# Finish the missing report labels, arrange fig, export it and display it\n",
+  "context": "A complete-pair clinic scatter with blank axis labels. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "0403c044d01ec4eae58cb876a0c1a51bcfe64464beb258ec439098840655c518",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.449,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "786fa38214f2917868e8824e01db80491ed6af0bceaed7764d58fa182d38d314",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.644,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-3-full_visible_reference_workspace-1.png"
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-3-full_visible_reference_workspace-2.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "ff5b41b47b48a9c582814ebc352431e67051778cdeb22f95726518237d029c33",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.566,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-3-equivalent_focal_work-1.png"
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V34-3-equivalent_focal_work-2.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nplt.show()",
+      "codeSHA256": "6795f4cd82cf9a722967f1dccc865d3940a59556230161e2ea413fc3d0a8c4af",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.401,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'clinic visits'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "26100ae0b5eec31fa967acfd2ee072d7b90bcedd6f2203eb52e357c3905e2afa",
+          "bytes": 13003,
+          "width": 585,
+          "height": 408,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_export_dpi",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=72, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "387dc79406aed96d8f5b81604306f1c413d53f80c7b23454fd29f490ecf5e96c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.596,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save the PNG at 150 dpi.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "b514ffad8a9f287a64ab2c4e488576a743a2d490a78d7a69b3d01e9297ac2006",
+          "bytes": 9482,
+          "width": 424,
+          "height": 280,
+          "dpi": [
+            72.009,
+            72.009
+          ]
+        }
+      ]
+    },
+    {
+      "name": "missing_tight_export",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nplt.figure(fig.number)\nplt.savefig(\"chart.png\", dpi=150, bbox_inches=None)\nplt.show()",
+      "codeSHA256": "25e1ce9b2ea66b135415905689286b58536e315c34239ed6d4448aa8a486c9b5",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.466,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Save chart.png with bbox_inches=\"tight\".",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "2f0ac6b4d701a0f0c1f843cd277506c4d02ca31c1a7af8b24c2e9ac1c25047c2",
+          "bytes": 23618,
+          "width": 900,
+          "height": 600,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "export_after_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nfig.tight_layout()\nplt.show()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")",
+      "codeSHA256": "f16163df086abf51e61b084371890b909510f9a064e342b77f44bbc0da4b1a5c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.445,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'clinic visits'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "a44d85ca9d509320a8c810582aa9b7990eec92db95d867b10974560c61dafcf8",
+          "bytes": 13277,
+          "width": 649,
+          "height": 429,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "68e7ef5a4eed4cf8fce77cffd5630595c5b2b57ffc1de13ddd1f5eb77cf174ec",
+          "bytes": 18326,
+          "width": 884,
+          "height": 583,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unfinished_export_before_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\ntitle = ax.get_title()\nax.set_title(\"Incomplete export\")\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.set_title(title)\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "eaf359d43b021a96d0b9ba4a1ca9a37f2b6be8a8f54f0b440b7751beea1f9117",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.619,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'clinic visits'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "fab4a8c74463afc620a90ffb86d5970d30becb6a572c282e8fa21647617f2746",
+          "bytes": 16847,
+          "width": 632,
+          "height": 408,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "da7068df7c2b110322bbb69db6d585e08d991aae5ec97797d56343cc13563657",
+          "bytes": 24507,
+          "width": 796,
+          "height": 586,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "requested_axis_labels_omitted",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "4459ea593968561adfe8d2aaabbabb6fc57412e58755f8a6e70367161931e739",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.556,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'clinic visits'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Chart from your Python",
+          "sha256": "a44d85ca9d509320a8c810582aa9b7990eec92db95d867b10974560c61dafcf8",
+          "bytes": 13277,
+          "width": 649,
+          "height": 429,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "68e7ef5a4eed4cf8fce77cffd5630595c5b2b57ffc1de13ddd1f5eb77cf174ec",
+          "bytes": 18326,
+          "width": 884,
+          "height": 583,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "4e2856c54ec223ff3421bb720201667900de079bf59462ff5a399ffd4c8eab50",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.479,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'clinic visits'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "b874650969126274a6a9c1528166438a91b1da66e9b2bc078eb480c1ad6d9ec5",
+          "bytes": 17639,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "23ba24b92e47680caed1accdb18716d9ad02483166683252282c6f164b92a02c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.435,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "280cec3fc5cb3b35fb0de5be428b9b9fa71d5cc02080b82ac2c08bc0891ed081",
+          "bytes": 16911,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['consult_minutes'] = df['consult_minutes'] + 123\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "078b564b5a0595bb0fa800e25409f7ee2d9eb5a200965a774da42f75f6c3b56c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.534,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "2641f35991b8412b19543b3684b56c5900a5cf6817d384b8a053cd312aa2e170",
+          "bytes": 19243,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "f5f9deb8d5583490c5497fda50d9cb90a8c2e6a847b83270d08f035702c310e2",
+          "bytes": 26750,
+          "width": 884,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "ab2c3b1d9da3d34e3702922dd222c07f3c2f614aaadad1c89db52ffffe9ea0ef",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.967,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"visit\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"wait_minutes\": [12, None, 6, 18, 9, 15],\n    \"consult_minutes\": [8, 20, 14, None, 11, 7],\n    \"note\": [\"routine\", \"routine\", None, \"routine\", \"routine\", \"routine\"],\n    \"service\": [\"Remote\", \"Clinic\", \"Clinic\", \"Remote\", \"Clinic\", \"Remote\"],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nselected = df.dropna(subset=[\"wait_minutes\", \"consult_minutes\"])\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=selected, x=\"wait_minutes\", y=\"consult_minutes\", ax=ax)\n\n# Your work\nax.set(title=\"Clinic visits\", xlabel=\"Wait (minutes)\", ylabel=\"Consultation (minutes)\")\nfig.tight_layout()\nfig.savefig(\"chart.png\", dpi=150, bbox_inches=\"tight\")\nplt.show()",
+      "codeSHA256": "786fa38214f2917868e8824e01db80491ed6af0bceaed7764d58fa182d38d314",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.54,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Clinic visits",
+          "sha256": "6368eed3abb8e3cd1f3ad4fe1af442ece87ca13d68949c242c5a8a882674be58",
+          "bytes": 16907,
+          "width": 648,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "download",
+          "name": "chart.png",
+          "sha256": "5ea3262e8f2c2501531ba7cb58e02e5c8ee3f183a9ad746b470151ec0f20e26e",
+          "bytes": 23475,
+          "width": 883,
+          "height": 581,
+          "dpi": [
+            150.01239999999999,
+            150.01239999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,9808 @@
+{
+  "engine": "chromium",
+  "executable": "/usr/bin/chromium",
+  "visualiseLessons": 43,
+  "renderedRounds": 264,
+  "sourceAgreement": [
+    {
+      "width": 1440,
+      "id": "V35",
+      "round": "V35-1",
+      "index": 0,
+      "title": "Choose a chart for the question",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V35",
+      "round": "V35-2",
+      "index": 1,
+      "title": "Choose a chart for the question",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V35",
+      "round": "V35-3",
+      "index": 2,
+      "title": "Choose a chart for the question",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V01",
+      "round": "V01-1",
+      "index": 0,
+      "title": "Meet Figure and Axes",
+      "introduces": [
+        "figsize"
+      ],
+      "extends": [],
+      "reminders": [],
+      "reference": [
+        "figsize",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V02",
+      "round": "V02-1",
+      "index": 0,
+      "title": "Finish a chart properly",
+      "introduces": [
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V02",
+      "round": "V02-2",
+      "index": 1,
+      "title": "Finish a chart properly",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize"
+      ],
+      "reference": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V02",
+      "round": "V02-3",
+      "index": 2,
+      "title": "Finish a chart properly",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize"
+      ],
+      "reference": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V16",
+      "round": "V16-1",
+      "index": 0,
+      "title": "Scatter plot",
+      "introduces": [
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V16",
+      "round": "V16-2",
+      "index": 1,
+      "title": "Scatter plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V16",
+      "round": "V16-3",
+      "index": 2,
+      "title": "Scatter plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "subset"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "subset"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V04",
+      "round": "V04-1",
+      "index": 0,
+      "title": "Histogram",
+      "introduces": [
+        "bins"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V04",
+      "round": "V04-2",
+      "index": 1,
+      "title": "Histogram",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V04",
+      "round": "V04-3",
+      "index": 2,
+      "title": "Histogram",
+      "introduces": [],
+      "extends": [
+        "bins"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V08",
+      "round": "V08-1",
+      "index": 0,
+      "title": "Count categories",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "order"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V08",
+      "round": "V08-2",
+      "index": 1,
+      "title": "Count categories",
+      "introduces": [
+        "order"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V08",
+      "round": "V08-3",
+      "index": 2,
+      "title": "Count categories",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR1",
+      "round": "VR1-1",
+      "index": 0,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR1",
+      "round": "VR1-2",
+      "index": 1,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR1",
+      "round": "VR1-3",
+      "index": 2,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR1",
+      "round": "VR1-4",
+      "index": 3,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V18",
+      "round": "V18-1",
+      "index": 0,
+      "title": "Line plot",
+      "introduces": [
+        "lineplot.estimator",
+        "marker",
+        "sort"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "lineplot.estimator",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "sort"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V18",
+      "round": "V18-2",
+      "index": 1,
+      "title": "Line plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V18",
+      "round": "V18-3",
+      "index": 2,
+      "title": "Line plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V09",
+      "round": "V09-1",
+      "index": 0,
+      "title": "Compare averages",
+      "introduces": [
+        "estimator",
+        "errorbar"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V09",
+      "round": "V09-2",
+      "index": 1,
+      "title": "Compare averages",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V09",
+      "round": "V09-3",
+      "index": 2,
+      "title": "Compare averages",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V13",
+      "round": "V13-1",
+      "index": 0,
+      "title": "Raw points",
+      "introduces": [
+        "jitter"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V13",
+      "round": "V13-2",
+      "index": 1,
+      "title": "Raw points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V13",
+      "round": "V13-3",
+      "index": 2,
+      "title": "Raw points",
+      "introduces": [],
+      "extends": [
+        "order"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V11",
+      "round": "V11-1",
+      "index": 0,
+      "title": "Box plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V11",
+      "round": "V11-2",
+      "index": 1,
+      "title": "Box plot",
+      "introduces": [],
+      "extends": [
+        "order"
+      ],
+      "reminders": [
+        "figsize",
+        "ascending",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "ascending",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V11",
+      "round": "V11-3",
+      "index": 2,
+      "title": "Box plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V03",
+      "round": "V03-1",
+      "index": 0,
+      "title": "Map variables visually",
+      "introduces": [
+        "hue"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "color",
+        "legend"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V03",
+      "round": "V03-2",
+      "index": 1,
+      "title": "Map variables visually",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "hue",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "hue",
+        "color",
+        "x",
+        "y",
+        "legend",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V03",
+      "round": "V03-3",
+      "index": 2,
+      "title": "Map variables visually",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "hue",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "hue",
+        "color",
+        "x",
+        "y",
+        "legend",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V17",
+      "round": "V17-1",
+      "index": 0,
+      "title": "Add dimensions to scatter",
+      "introduces": [
+        "style"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V17",
+      "round": "V17-2",
+      "index": 1,
+      "title": "Add dimensions to scatter",
+      "introduces": [
+        "size"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V17",
+      "round": "V17-3",
+      "index": 2,
+      "title": "Add dimensions to scatter",
+      "introduces": [],
+      "extends": [
+        "size"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "size",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR2",
+      "round": "VR2-1",
+      "index": 0,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR2",
+      "round": "VR2-2",
+      "index": 1,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR2",
+      "round": "VR2-3",
+      "index": 2,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR2",
+      "round": "VR2-4",
+      "index": 3,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "hue",
+        "style",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "hue",
+        "style",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V22",
+      "round": "V22-1",
+      "index": 0,
+      "title": "Correlation heatmap",
+      "introduces": [
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V22",
+      "round": "V22-2",
+      "index": 1,
+      "title": "Correlation heatmap",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V22",
+      "round": "V22-3",
+      "index": 2,
+      "title": "Correlation heatmap",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V24",
+      "round": "V24-1",
+      "index": 0,
+      "title": "Multiple subplots",
+      "introduces": [
+        "nrows",
+        "ncols"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel",
+        "nrows",
+        "ncols"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V24",
+      "round": "V24-2",
+      "index": 1,
+      "title": "Multiple subplots",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V24",
+      "round": "V24-3",
+      "index": 2,
+      "title": "Multiple subplots",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V25",
+      "round": "V25-1",
+      "index": 0,
+      "title": "Legends and palettes",
+      "introduces": [
+        "palette",
+        "legend.title"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "palette",
+        "ax",
+        "legend.title",
+        "title",
+        "xlabel",
+        "ylabel",
+        "hue_order",
+        "alpha"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V25",
+      "round": "V25-2",
+      "index": 1,
+      "title": "Legends and palettes",
+      "introduces": [
+        "alpha",
+        "hue_order",
+        "style_order"
+      ],
+      "extends": [],
+      "reminders": [
+        "palette",
+        "legend.title",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "palette",
+        "alpha",
+        "legend.title",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "hue_order",
+        "style_order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V25",
+      "round": "V25-3",
+      "index": 2,
+      "title": "Legends and palettes",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "legend.title",
+        "style",
+        "palette",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "legend.title",
+        "labels",
+        "style",
+        "palette",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V26",
+      "round": "V26-1",
+      "index": 0,
+      "title": "Axes and scales",
+      "introduces": [
+        "set_ylim.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V26",
+      "round": "V26-2",
+      "index": 1,
+      "title": "Axes and scales",
+      "introduces": [
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V26",
+      "round": "V26-3",
+      "index": 2,
+      "title": "Axes and scales",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V27",
+      "round": "V27-1",
+      "index": 0,
+      "title": "Reference lines",
+      "introduces": [
+        "linestyle"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V27",
+      "round": "V27-2",
+      "index": 1,
+      "title": "Reference lines",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V27",
+      "round": "V27-3",
+      "index": 2,
+      "title": "Reference lines",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "linestyle",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "linestyle",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR3",
+      "round": "VR3-1",
+      "index": 0,
+      "title": "Review \u00b7 Explain the evidence",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR3",
+      "round": "VR3-2",
+      "index": 1,
+      "title": "Review \u00b7 Explain the evidence",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR3",
+      "round": "VR3-3",
+      "index": 2,
+      "title": "Review \u00b7 Explain the evidence",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V29",
+      "round": "V29-1",
+      "index": 0,
+      "title": "Exact precomputed bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V29",
+      "round": "V29-2",
+      "index": 1,
+      "title": "Exact precomputed bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V29",
+      "round": "V29-3",
+      "index": 2,
+      "title": "Exact precomputed bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V34",
+      "round": "V34-1",
+      "index": 0,
+      "title": "Save a figure",
+      "introduces": [
+        "dpi",
+        "bbox_inches"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "dpi",
+        "bbox_inches"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V34",
+      "round": "V34-2",
+      "index": 1,
+      "title": "Save a figure",
+      "introduces": [
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "dpi",
+        "bbox_inches",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "dpi",
+        "bbox_inches",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V34",
+      "round": "V34-3",
+      "index": 2,
+      "title": "Save a figure",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "dpi",
+        "bbox_inches",
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "dpi",
+        "bbox_inches",
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V36",
+      "round": "V36-1",
+      "index": 0,
+      "title": "Avoid misleading charts",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "ascending",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom"
+      ],
+      "reference": [
+        "figsize",
+        "ascending",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V36",
+      "round": "V36-2",
+      "index": 1,
+      "title": "Avoid misleading charts",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V36",
+      "round": "V36-3",
+      "index": 2,
+      "title": "Avoid misleading charts",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V37",
+      "round": "V37-1",
+      "index": 0,
+      "title": "Visualise checkpoint",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V37",
+      "round": "V37-2",
+      "index": 1,
+      "title": "Visualise checkpoint",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V37",
+      "round": "V37-3",
+      "index": 2,
+      "title": "Visualise checkpoint",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V05",
+      "round": "V05-1",
+      "index": 0,
+      "title": "Density curve",
+      "introduces": [
+        "bw_adjust",
+        "cut"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bw_adjust",
+        "cut",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V05",
+      "round": "V05-2",
+      "index": 1,
+      "title": "Density curve",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V05",
+      "round": "V05-3",
+      "index": 2,
+      "title": "Density curve",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V06",
+      "round": "V06-1",
+      "index": 0,
+      "title": "ECDF",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "complementary"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V06",
+      "round": "V06-2",
+      "index": 1,
+      "title": "ECDF",
+      "introduces": [
+        "complementary"
+      ],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V06",
+      "round": "V06-3",
+      "index": 2,
+      "title": "ECDF",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V07",
+      "round": "V07-1",
+      "index": 0,
+      "title": "Rug marks",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V07",
+      "round": "V07-2",
+      "index": 1,
+      "title": "Rug marks",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "cut",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "cut",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V07",
+      "round": "V07-3",
+      "index": 2,
+      "title": "Rug marks",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "bins",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "bins",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V10",
+      "round": "V10-1",
+      "index": 0,
+      "title": "Point estimates",
+      "introduces": [
+        "capsize"
+      ],
+      "extends": [
+        "errorbar"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "capsize",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V10",
+      "round": "V10-2",
+      "index": 1,
+      "title": "Point estimates",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V10",
+      "round": "V10-3",
+      "index": 2,
+      "title": "Point estimates",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V12",
+      "round": "V12-1",
+      "index": 0,
+      "title": "Violin plot",
+      "introduces": [
+        "inner"
+      ],
+      "extends": [
+        "cut"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V12",
+      "round": "V12-2",
+      "index": 1,
+      "title": "Violin plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V12",
+      "round": "V12-3",
+      "index": 2,
+      "title": "Violin plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "jitter",
+        "color",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V14",
+      "round": "V14-1",
+      "index": 0,
+      "title": "Non-overlapping raw points",
+      "introduces": [
+        "swarmplot.size"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "swarmplot.size",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V14",
+      "round": "V14-2",
+      "index": 1,
+      "title": "Non-overlapping raw points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V14",
+      "round": "V14-3",
+      "index": 2,
+      "title": "Non-overlapping raw points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V15",
+      "round": "V15-1",
+      "index": 0,
+      "title": "Choose detail to suit the sample",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "jitter"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "jitter"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V15",
+      "round": "V15-2",
+      "index": 1,
+      "title": "Choose detail to suit the sample",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "reference": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V15",
+      "round": "V15-3",
+      "index": 2,
+      "title": "Choose detail to suit the sample",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "inner",
+        "cut",
+        "ax"
+      ],
+      "reference": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "inner",
+        "cut",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR4",
+      "round": "VR4-1",
+      "index": 0,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR4",
+      "round": "VR4-2",
+      "index": 1,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR4",
+      "round": "VR4-3",
+      "index": 2,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR4",
+      "round": "VR4-4",
+      "index": 3,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "reference": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V19",
+      "round": "V19-1",
+      "index": 0,
+      "title": "Understand lineplot aggregation",
+      "introduces": [],
+      "extends": [
+        "lineplot.estimator",
+        "errorbar"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "lineplot.estimator",
+        "errorbar",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V19",
+      "round": "V19-2",
+      "index": 1,
+      "title": "Understand lineplot aggregation",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V19",
+      "round": "V19-3",
+      "index": 2,
+      "title": "Understand lineplot aggregation",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V20",
+      "round": "V20-1",
+      "index": 0,
+      "title": "Regression view",
+      "introduces": [
+        "ci"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ci",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V20",
+      "round": "V20-2",
+      "index": 1,
+      "title": "Regression view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V20",
+      "round": "V20-3",
+      "index": 2,
+      "title": "Regression view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V21",
+      "round": "V21-1",
+      "index": 0,
+      "title": "Residual view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V21",
+      "round": "V21-2",
+      "index": 1,
+      "title": "Residual view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V21",
+      "round": "V21-3",
+      "index": 2,
+      "title": "Residual view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V23",
+      "round": "V23-1",
+      "index": 0,
+      "title": "Categorical / matrix heatmap",
+      "introduces": [
+        "fmt"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "annot",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "aggfunc"
+      ],
+      "reference": [
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "aggfunc"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V23",
+      "round": "V23-2",
+      "index": 1,
+      "title": "Categorical / matrix heatmap",
+      "introduces": [],
+      "extends": [
+        "axis"
+      ],
+      "reminders": [
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "DataFrame.index"
+      ],
+      "reference": [
+        "axis",
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "DataFrame.index"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V23",
+      "round": "V23-3",
+      "index": 2,
+      "title": "Categorical / matrix heatmap",
+      "introduces": [],
+      "extends": [
+        "aggfunc"
+      ],
+      "reminders": [
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "aggfunc",
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR5",
+      "round": "VR5-1",
+      "index": 0,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR5",
+      "round": "VR5-2",
+      "index": 1,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR5",
+      "round": "VR5-3",
+      "index": 2,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR5",
+      "round": "VR5-4",
+      "index": 3,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "aggfunc",
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "vmin",
+        "vmax",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "aggfunc",
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "vmin",
+        "vmax",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V28",
+      "round": "V28-1",
+      "index": 0,
+      "title": "Annotate important points",
+      "introduces": [
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V28",
+      "round": "V28-2",
+      "index": 1,
+      "title": "Annotate important points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V28",
+      "round": "V28-3",
+      "index": 2,
+      "title": "Annotate important points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V30",
+      "round": "V30-1",
+      "index": 0,
+      "title": "Stacked bars",
+      "introduces": [
+        "label",
+        "bar.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "label",
+        "bar.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V30",
+      "round": "V30-2",
+      "index": 1,
+      "title": "Stacked bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "set_ylim.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "set_ylim.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V30",
+      "round": "V30-3",
+      "index": 2,
+      "title": "Stacked bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V31",
+      "round": "V31-1",
+      "index": 0,
+      "title": "Pair relationships",
+      "introduces": [
+        "vars",
+        "diag_kind"
+      ],
+      "extends": [],
+      "reminders": [
+        "data",
+        "hue",
+        "ax"
+      ],
+      "reference": [
+        "data",
+        "vars",
+        "hue",
+        "diag_kind",
+        "corner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V31",
+      "round": "V31-2",
+      "index": 1,
+      "title": "Pair relationships",
+      "introduces": [
+        "corner"
+      ],
+      "extends": [],
+      "reminders": [
+        "vars",
+        "diag_kind",
+        "data"
+      ],
+      "reference": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V31",
+      "round": "V31-3",
+      "index": 2,
+      "title": "Pair relationships",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data",
+        "hue"
+      ],
+      "reference": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data",
+        "hue"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V32",
+      "round": "V32-1",
+      "index": 0,
+      "title": "Joint relationships",
+      "introduces": [
+        "kind"
+      ],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "kind"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V32",
+      "round": "V32-2",
+      "index": 1,
+      "title": "Joint relationships",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "kind",
+        "linestyle"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "kind",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V32",
+      "round": "V32-3",
+      "index": 2,
+      "title": "Joint relationships",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "kind",
+        "data",
+        "x",
+        "y",
+        "linestyle"
+      ],
+      "reference": [
+        "kind",
+        "data",
+        "x",
+        "y",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V33",
+      "round": "V33-1",
+      "index": 0,
+      "title": "Faceting",
+      "introduces": [
+        "col",
+        "height"
+      ],
+      "extends": [
+        "kind"
+      ],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "bins"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V33",
+      "round": "V33-2",
+      "index": 1,
+      "title": "Faceting",
+      "introduces": [],
+      "extends": [
+        "kind"
+      ],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "height"
+      ],
+      "reference": [
+        "kind",
+        "data",
+        "x",
+        "y",
+        "col",
+        "height"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "V33",
+      "round": "V33-3",
+      "index": 2,
+      "title": "Faceting",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR6",
+      "round": "VR6-1",
+      "index": 0,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR6",
+      "round": "VR6-2",
+      "index": 1,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR6",
+      "round": "VR6-3",
+      "index": 2,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data"
+      ],
+      "reference": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 1440,
+      "id": "VR6",
+      "round": "VR6-4",
+      "index": 3,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "kind",
+        "bins",
+        "height",
+        "data",
+        "x",
+        "col"
+      ],
+      "reference": [
+        "kind",
+        "bins",
+        "height",
+        "data",
+        "x",
+        "col"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V35",
+      "round": "V35-1",
+      "index": 0,
+      "title": "Choose a chart for the question",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V35",
+      "round": "V35-2",
+      "index": 1,
+      "title": "Choose a chart for the question",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V35",
+      "round": "V35-3",
+      "index": 2,
+      "title": "Choose a chart for the question",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V01",
+      "round": "V01-1",
+      "index": 0,
+      "title": "Meet Figure and Axes",
+      "introduces": [
+        "figsize"
+      ],
+      "extends": [],
+      "reminders": [],
+      "reference": [
+        "figsize",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V02",
+      "round": "V02-1",
+      "index": 0,
+      "title": "Finish a chart properly",
+      "introduces": [
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V02",
+      "round": "V02-2",
+      "index": 1,
+      "title": "Finish a chart properly",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize"
+      ],
+      "reference": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V02",
+      "round": "V02-3",
+      "index": 2,
+      "title": "Finish a chart properly",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize"
+      ],
+      "reference": [
+        "title",
+        "xlabel",
+        "ylabel",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V16",
+      "round": "V16-1",
+      "index": 0,
+      "title": "Scatter plot",
+      "introduces": [
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V16",
+      "round": "V16-2",
+      "index": 1,
+      "title": "Scatter plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V16",
+      "round": "V16-3",
+      "index": 2,
+      "title": "Scatter plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "subset"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "subset"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V04",
+      "round": "V04-1",
+      "index": 0,
+      "title": "Histogram",
+      "introduces": [
+        "bins"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V04",
+      "round": "V04-2",
+      "index": 1,
+      "title": "Histogram",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V04",
+      "round": "V04-3",
+      "index": 2,
+      "title": "Histogram",
+      "introduces": [],
+      "extends": [
+        "bins"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V08",
+      "round": "V08-1",
+      "index": 0,
+      "title": "Count categories",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "order"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V08",
+      "round": "V08-2",
+      "index": 1,
+      "title": "Count categories",
+      "introduces": [
+        "order"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V08",
+      "round": "V08-3",
+      "index": 2,
+      "title": "Count categories",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR1",
+      "round": "VR1-1",
+      "index": 0,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR1",
+      "round": "VR1-2",
+      "index": 1,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR1",
+      "round": "VR1-3",
+      "index": 2,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR1",
+      "round": "VR1-4",
+      "index": 3,
+      "title": "Review \u00b7 Choose and build",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "ax",
+        "order",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V18",
+      "round": "V18-1",
+      "index": 0,
+      "title": "Line plot",
+      "introduces": [
+        "lineplot.estimator",
+        "marker",
+        "sort"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "lineplot.estimator",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "sort"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V18",
+      "round": "V18-2",
+      "index": 1,
+      "title": "Line plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V18",
+      "round": "V18-3",
+      "index": 2,
+      "title": "Line plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V09",
+      "round": "V09-1",
+      "index": 0,
+      "title": "Compare averages",
+      "introduces": [
+        "estimator",
+        "errorbar"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V09",
+      "round": "V09-2",
+      "index": 1,
+      "title": "Compare averages",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V09",
+      "round": "V09-3",
+      "index": 2,
+      "title": "Compare averages",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V13",
+      "round": "V13-1",
+      "index": 0,
+      "title": "Raw points",
+      "introduces": [
+        "jitter"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V13",
+      "round": "V13-2",
+      "index": 1,
+      "title": "Raw points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V13",
+      "round": "V13-3",
+      "index": 2,
+      "title": "Raw points",
+      "introduces": [],
+      "extends": [
+        "order"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V11",
+      "round": "V11-1",
+      "index": 0,
+      "title": "Box plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V11",
+      "round": "V11-2",
+      "index": 1,
+      "title": "Box plot",
+      "introduces": [],
+      "extends": [
+        "order"
+      ],
+      "reminders": [
+        "figsize",
+        "ascending",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "ascending",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V11",
+      "round": "V11-3",
+      "index": 2,
+      "title": "Box plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V03",
+      "round": "V03-1",
+      "index": 0,
+      "title": "Map variables visually",
+      "introduces": [
+        "hue"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "color",
+        "legend"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V03",
+      "round": "V03-2",
+      "index": 1,
+      "title": "Map variables visually",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "hue",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "hue",
+        "color",
+        "x",
+        "y",
+        "legend",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V03",
+      "round": "V03-3",
+      "index": 2,
+      "title": "Map variables visually",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "hue",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "hue",
+        "color",
+        "x",
+        "y",
+        "legend",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V17",
+      "round": "V17-1",
+      "index": 0,
+      "title": "Add dimensions to scatter",
+      "introduces": [
+        "style"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V17",
+      "round": "V17-2",
+      "index": 1,
+      "title": "Add dimensions to scatter",
+      "introduces": [
+        "size"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V17",
+      "round": "V17-3",
+      "index": 2,
+      "title": "Add dimensions to scatter",
+      "introduces": [],
+      "extends": [
+        "size"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "size",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR2",
+      "round": "VR2-1",
+      "index": 0,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR2",
+      "round": "VR2-2",
+      "index": 1,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR2",
+      "round": "VR2-3",
+      "index": 2,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "jitter",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR2",
+      "round": "VR2-4",
+      "index": 3,
+      "title": "Review \u00b7 Compare observations",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "hue",
+        "style",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "hue",
+        "style",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V22",
+      "round": "V22-1",
+      "index": 0,
+      "title": "Correlation heatmap",
+      "introduces": [
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V22",
+      "round": "V22-2",
+      "index": 1,
+      "title": "Correlation heatmap",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V22",
+      "round": "V22-3",
+      "index": 2,
+      "title": "Correlation heatmap",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V24",
+      "round": "V24-1",
+      "index": 0,
+      "title": "Multiple subplots",
+      "introduces": [
+        "nrows",
+        "ncols"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel",
+        "nrows",
+        "ncols"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V24",
+      "round": "V24-2",
+      "index": 1,
+      "title": "Multiple subplots",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V24",
+      "round": "V24-3",
+      "index": 2,
+      "title": "Multiple subplots",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V25",
+      "round": "V25-1",
+      "index": 0,
+      "title": "Legends and palettes",
+      "introduces": [
+        "palette",
+        "legend.title"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "palette",
+        "ax",
+        "legend.title",
+        "title",
+        "xlabel",
+        "ylabel",
+        "hue_order",
+        "alpha"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V25",
+      "round": "V25-2",
+      "index": 1,
+      "title": "Legends and palettes",
+      "introduces": [
+        "alpha",
+        "hue_order",
+        "style_order"
+      ],
+      "extends": [],
+      "reminders": [
+        "palette",
+        "legend.title",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "palette",
+        "alpha",
+        "legend.title",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "hue_order",
+        "style_order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V25",
+      "round": "V25-3",
+      "index": 2,
+      "title": "Legends and palettes",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "legend.title",
+        "style",
+        "palette",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "legend.title",
+        "labels",
+        "style",
+        "palette",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V26",
+      "round": "V26-1",
+      "index": 0,
+      "title": "Axes and scales",
+      "introduces": [
+        "set_ylim.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V26",
+      "round": "V26-2",
+      "index": 1,
+      "title": "Axes and scales",
+      "introduces": [
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V26",
+      "round": "V26-3",
+      "index": 2,
+      "title": "Axes and scales",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V27",
+      "round": "V27-1",
+      "index": 0,
+      "title": "Reference lines",
+      "introduces": [
+        "linestyle"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V27",
+      "round": "V27-2",
+      "index": 1,
+      "title": "Reference lines",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V27",
+      "round": "V27-3",
+      "index": 2,
+      "title": "Reference lines",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "linestyle",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "linestyle",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR3",
+      "round": "VR3-1",
+      "index": 0,
+      "title": "Review \u00b7 Explain the evidence",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR3",
+      "round": "VR3-2",
+      "index": 1,
+      "title": "Review \u00b7 Explain the evidence",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "ax",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR3",
+      "round": "VR3-3",
+      "index": 2,
+      "title": "Review \u00b7 Explain the evidence",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "linestyle",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V29",
+      "round": "V29-1",
+      "index": 0,
+      "title": "Exact precomputed bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V29",
+      "round": "V29-2",
+      "index": 1,
+      "title": "Exact precomputed bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V29",
+      "round": "V29-3",
+      "index": 2,
+      "title": "Exact precomputed bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V34",
+      "round": "V34-1",
+      "index": 0,
+      "title": "Save a figure",
+      "introduces": [
+        "dpi",
+        "bbox_inches"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "dpi",
+        "bbox_inches"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V34",
+      "round": "V34-2",
+      "index": 1,
+      "title": "Save a figure",
+      "introduces": [
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "dpi",
+        "bbox_inches",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "dpi",
+        "bbox_inches",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "subplots_adjust.left",
+        "subplots_adjust.bottom"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V34",
+      "round": "V34-3",
+      "index": 2,
+      "title": "Save a figure",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "dpi",
+        "bbox_inches",
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "dpi",
+        "bbox_inches",
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V36",
+      "round": "V36-1",
+      "index": 0,
+      "title": "Avoid misleading charts",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "ascending",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom"
+      ],
+      "reference": [
+        "figsize",
+        "ascending",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V36",
+      "round": "V36-2",
+      "index": 1,
+      "title": "Avoid misleading charts",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V36",
+      "round": "V36-3",
+      "index": 2,
+      "title": "Avoid misleading charts",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "set_ylim.bottom",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V37",
+      "round": "V37-1",
+      "index": 0,
+      "title": "Visualise checkpoint",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V37",
+      "round": "V37-2",
+      "index": 1,
+      "title": "Visualise checkpoint",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "subset",
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V37",
+      "round": "V37-3",
+      "index": 2,
+      "title": "Visualise checkpoint",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V05",
+      "round": "V05-1",
+      "index": 0,
+      "title": "Density curve",
+      "introduces": [
+        "bw_adjust",
+        "cut"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bw_adjust",
+        "cut",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V05",
+      "round": "V05-2",
+      "index": 1,
+      "title": "Density curve",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V05",
+      "round": "V05-3",
+      "index": 2,
+      "title": "Density curve",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V06",
+      "round": "V06-1",
+      "index": 0,
+      "title": "ECDF",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "complementary"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V06",
+      "round": "V06-2",
+      "index": 1,
+      "title": "ECDF",
+      "introduces": [
+        "complementary"
+      ],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V06",
+      "round": "V06-3",
+      "index": 2,
+      "title": "ECDF",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V07",
+      "round": "V07-1",
+      "index": 0,
+      "title": "Rug marks",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V07",
+      "round": "V07-2",
+      "index": 1,
+      "title": "Rug marks",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "cut",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "cut",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V07",
+      "round": "V07-3",
+      "index": 2,
+      "title": "Rug marks",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "bins",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "bins",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V10",
+      "round": "V10-1",
+      "index": 0,
+      "title": "Point estimates",
+      "introduces": [
+        "capsize"
+      ],
+      "extends": [
+        "errorbar"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "capsize",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V10",
+      "round": "V10-2",
+      "index": 1,
+      "title": "Point estimates",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V10",
+      "round": "V10-3",
+      "index": 2,
+      "title": "Point estimates",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V12",
+      "round": "V12-1",
+      "index": 0,
+      "title": "Violin plot",
+      "introduces": [
+        "inner"
+      ],
+      "extends": [
+        "cut"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V12",
+      "round": "V12-2",
+      "index": 1,
+      "title": "Violin plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V12",
+      "round": "V12-3",
+      "index": 2,
+      "title": "Violin plot",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "cut",
+        "inner",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "jitter",
+        "color",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V14",
+      "round": "V14-1",
+      "index": 0,
+      "title": "Non-overlapping raw points",
+      "introduces": [
+        "swarmplot.size"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "swarmplot.size",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V14",
+      "round": "V14-2",
+      "index": 1,
+      "title": "Non-overlapping raw points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V14",
+      "round": "V14-3",
+      "index": 2,
+      "title": "Non-overlapping raw points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "swarmplot.size",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "order",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V15",
+      "round": "V15-1",
+      "index": 0,
+      "title": "Choose detail to suit the sample",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "jitter"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "jitter"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V15",
+      "round": "V15-2",
+      "index": 1,
+      "title": "Choose detail to suit the sample",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "reference": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V15",
+      "round": "V15-3",
+      "index": 2,
+      "title": "Choose detail to suit the sample",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "inner",
+        "cut",
+        "ax"
+      ],
+      "reference": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "inner",
+        "cut",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR4",
+      "round": "VR4-1",
+      "index": 0,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR4",
+      "round": "VR4-2",
+      "index": 1,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "ax",
+        "complementary",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR4",
+      "round": "VR4-3",
+      "index": 2,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "errorbar",
+        "estimator",
+        "capsize",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR4",
+      "round": "VR4-4",
+      "index": 3,
+      "title": "Review \u00b7 distribution detail",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "reference": [
+        "jitter",
+        "title",
+        "xlabel",
+        "ylabel",
+        "x",
+        "y",
+        "figsize",
+        "data",
+        "cut",
+        "inner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V19",
+      "round": "V19-1",
+      "index": 0,
+      "title": "Understand lineplot aggregation",
+      "introduces": [],
+      "extends": [
+        "lineplot.estimator",
+        "errorbar"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "lineplot.estimator",
+        "errorbar",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V19",
+      "round": "V19-2",
+      "index": 1,
+      "title": "Understand lineplot aggregation",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V19",
+      "round": "V19-3",
+      "index": 2,
+      "title": "Understand lineplot aggregation",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V20",
+      "round": "V20-1",
+      "index": 0,
+      "title": "Regression view",
+      "introduces": [
+        "ci"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ci",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V20",
+      "round": "V20-2",
+      "index": 1,
+      "title": "Regression view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V20",
+      "round": "V20-3",
+      "index": 2,
+      "title": "Regression view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V21",
+      "round": "V21-1",
+      "index": 0,
+      "title": "Residual view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V21",
+      "round": "V21-2",
+      "index": 1,
+      "title": "Residual view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V21",
+      "round": "V21-3",
+      "index": 2,
+      "title": "Residual view",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V23",
+      "round": "V23-1",
+      "index": 0,
+      "title": "Categorical / matrix heatmap",
+      "introduces": [
+        "fmt"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "annot",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "aggfunc"
+      ],
+      "reference": [
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "aggfunc"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V23",
+      "round": "V23-2",
+      "index": 1,
+      "title": "Categorical / matrix heatmap",
+      "introduces": [],
+      "extends": [
+        "axis"
+      ],
+      "reminders": [
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "DataFrame.index"
+      ],
+      "reference": [
+        "axis",
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "DataFrame.index"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V23",
+      "round": "V23-3",
+      "index": 2,
+      "title": "Categorical / matrix heatmap",
+      "introduces": [],
+      "extends": [
+        "aggfunc"
+      ],
+      "reminders": [
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "aggfunc",
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR5",
+      "round": "VR5-1",
+      "index": 0,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR5",
+      "round": "VR5-2",
+      "index": 1,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "ci",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR5",
+      "round": "VR5-3",
+      "index": 2,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "x",
+        "y",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR5",
+      "round": "VR5-4",
+      "index": 3,
+      "title": "Review \u00b7 models and matrices",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "aggfunc",
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "vmin",
+        "vmax",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "aggfunc",
+        "annot",
+        "fmt",
+        "figsize",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "cmap",
+        "vmin",
+        "vmax",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V28",
+      "round": "V28-1",
+      "index": 0,
+      "title": "Annotate important points",
+      "introduces": [
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V28",
+      "round": "V28-2",
+      "index": 1,
+      "title": "Annotate important points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V28",
+      "round": "V28-3",
+      "index": 2,
+      "title": "Annotate important points",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V30",
+      "round": "V30-1",
+      "index": 0,
+      "title": "Stacked bars",
+      "introduces": [
+        "label",
+        "bar.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "label",
+        "bar.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V30",
+      "round": "V30-2",
+      "index": 1,
+      "title": "Stacked bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "set_ylim.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "set_ylim.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V30",
+      "round": "V30-3",
+      "index": 2,
+      "title": "Stacked bars",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V31",
+      "round": "V31-1",
+      "index": 0,
+      "title": "Pair relationships",
+      "introduces": [
+        "vars",
+        "diag_kind"
+      ],
+      "extends": [],
+      "reminders": [
+        "data",
+        "hue",
+        "ax"
+      ],
+      "reference": [
+        "data",
+        "vars",
+        "hue",
+        "diag_kind",
+        "corner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V31",
+      "round": "V31-2",
+      "index": 1,
+      "title": "Pair relationships",
+      "introduces": [
+        "corner"
+      ],
+      "extends": [],
+      "reminders": [
+        "vars",
+        "diag_kind",
+        "data"
+      ],
+      "reference": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V31",
+      "round": "V31-3",
+      "index": 2,
+      "title": "Pair relationships",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data",
+        "hue"
+      ],
+      "reference": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data",
+        "hue"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V32",
+      "round": "V32-1",
+      "index": 0,
+      "title": "Joint relationships",
+      "introduces": [
+        "kind"
+      ],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "kind"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V32",
+      "round": "V32-2",
+      "index": 1,
+      "title": "Joint relationships",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "kind",
+        "linestyle"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "kind",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V32",
+      "round": "V32-3",
+      "index": 2,
+      "title": "Joint relationships",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "kind",
+        "data",
+        "x",
+        "y",
+        "linestyle"
+      ],
+      "reference": [
+        "kind",
+        "data",
+        "x",
+        "y",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V33",
+      "round": "V33-1",
+      "index": 0,
+      "title": "Faceting",
+      "introduces": [
+        "col",
+        "height"
+      ],
+      "extends": [
+        "kind"
+      ],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "bins"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V33",
+      "round": "V33-2",
+      "index": 1,
+      "title": "Faceting",
+      "introduces": [],
+      "extends": [
+        "kind"
+      ],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "height"
+      ],
+      "reference": [
+        "kind",
+        "data",
+        "x",
+        "y",
+        "col",
+        "height"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "V33",
+      "round": "V33-3",
+      "index": 2,
+      "title": "Faceting",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR6",
+      "round": "VR6-1",
+      "index": 0,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR6",
+      "round": "VR6-2",
+      "index": 1,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bar.bottom",
+        "label",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR6",
+      "round": "VR6-3",
+      "index": 2,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data"
+      ],
+      "reference": [
+        "vars",
+        "diag_kind",
+        "corner",
+        "data"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "width": 320,
+      "id": "VR6",
+      "round": "VR6-4",
+      "index": 3,
+      "title": "Review \u00b7 figures and composition",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "kind",
+        "bins",
+        "height",
+        "data",
+        "x",
+        "col"
+      ],
+      "reference": [
+        "kind",
+        "bins",
+        "height",
+        "data",
+        "x",
+        "col"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    }
+  ],
+  "pageErrors": [],
+  "noJavaScriptWidth": 320,
+  "staticDisclosures": [
+    {
+      "lesson": "V35",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V01",
+      "introduces": [
+        "figsize"
+      ],
+      "extends": [],
+      "reminders": [],
+      "reference": [
+        "figsize",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V02",
+      "introduces": [
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V16",
+      "introduces": [
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V04",
+      "introduces": [
+        "bins"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V08",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "order"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "VR1",
+      "introduces": [],
+      "extends": [],
+      "reminders": [],
+      "reference": [],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V18",
+      "introduces": [
+        "lineplot.estimator",
+        "marker",
+        "sort"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "lineplot.estimator",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "sort"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V09",
+      "introduces": [
+        "estimator",
+        "errorbar"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V13",
+      "introduces": [
+        "jitter"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "jitter",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V11",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V03",
+      "introduces": [
+        "hue"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "color",
+        "legend"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V17",
+      "introduces": [
+        "style"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "VR2",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V22",
+      "introduces": [
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V24",
+      "introduces": [
+        "nrows",
+        "ncols"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "y",
+        "title",
+        "xlabel",
+        "ylabel",
+        "nrows",
+        "ncols"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V25",
+      "introduces": [
+        "palette",
+        "legend.title"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "hue",
+        "style",
+        "palette",
+        "ax",
+        "legend.title",
+        "title",
+        "xlabel",
+        "ylabel",
+        "hue_order",
+        "alpha"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V26",
+      "introduces": [
+        "set_ylim.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V27",
+      "introduces": [
+        "linestyle"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "linestyle"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "VR3",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "vmin",
+        "vmax",
+        "center",
+        "annot",
+        "figsize",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V29",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V34",
+      "introduces": [
+        "dpi",
+        "bbox_inches"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "dpi",
+        "bbox_inches"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V36",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "ascending",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom"
+      ],
+      "reference": [
+        "figsize",
+        "ascending",
+        "title",
+        "xlabel",
+        "ylabel",
+        "set_ylim.bottom"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V37",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "y"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V05",
+      "introduces": [
+        "bw_adjust",
+        "cut"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bw_adjust",
+        "cut",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V06",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "complementary"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V07",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "bins",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V10",
+      "introduces": [
+        "capsize"
+      ],
+      "extends": [
+        "errorbar"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "estimator",
+        "errorbar",
+        "capsize",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V12",
+      "introduces": [
+        "inner"
+      ],
+      "extends": [
+        "cut"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V14",
+      "introduces": [
+        "swarmplot.size"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "swarmplot.size",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V15",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "jitter"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "cut",
+        "inner",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "jitter"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "VR4",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "bw_adjust",
+        "cut",
+        "x",
+        "ax",
+        "figsize",
+        "data",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V19",
+      "introduces": [],
+      "extends": [
+        "lineplot.estimator",
+        "errorbar"
+      ],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "lineplot.estimator",
+        "errorbar",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V20",
+      "introduces": [
+        "ci"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ci",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V21",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V23",
+      "introduces": [
+        "fmt"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "annot",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "aggfunc"
+      ],
+      "reference": [
+        "figsize",
+        "annot",
+        "fmt",
+        "cmap",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "aggfunc"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "VR5",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "lineplot.estimator",
+        "errorbar",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "marker",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V28",
+      "introduces": [
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext",
+        "textcoords",
+        "arrowprops"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V30",
+      "introduces": [
+        "label",
+        "bar.bottom"
+      ],
+      "extends": [],
+      "reminders": [
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "reference": [
+        "figsize",
+        "label",
+        "bar.bottom",
+        "title",
+        "xlabel",
+        "ylabel"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V31",
+      "introduces": [
+        "vars",
+        "diag_kind"
+      ],
+      "extends": [],
+      "reminders": [
+        "data",
+        "hue",
+        "ax"
+      ],
+      "reference": [
+        "data",
+        "vars",
+        "hue",
+        "diag_kind",
+        "corner",
+        "ax"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V32",
+      "introduces": [
+        "kind"
+      ],
+      "extends": [],
+      "reminders": [
+        "data",
+        "x",
+        "y"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "kind"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "V33",
+      "introduces": [
+        "col",
+        "height"
+      ],
+      "extends": [
+        "kind"
+      ],
+      "reminders": [
+        "data",
+        "x",
+        "y",
+        "bins"
+      ],
+      "reference": [
+        "data",
+        "x",
+        "y",
+        "col",
+        "kind",
+        "height",
+        "bins"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    },
+    {
+      "lesson": "VR6",
+      "introduces": [],
+      "extends": [],
+      "reminders": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "reference": [
+        "textcoords",
+        "arrowprops",
+        "figsize",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "title",
+        "xlabel",
+        "ylabel",
+        "xy",
+        "xytext"
+      ],
+      "referenceRemoved": true,
+      "flatDisclosures": 2
+    }
+  ]
+}

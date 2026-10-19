@@ -1,0 +1,553 @@
+{
+  "passed": true,
+  "contexts": 48,
+  "records": [
+    {
+      "route": "visualise/V33/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "x": "cost",
+        "y": "x",
+        "col": "shift"
+      },
+      "code": "g = sns.relplot(data=example, x=\"cost\", y=\"x\",\n    col=\"shift\", kind=\"scatter\")",
+      "minContrast": 11.1039708742652
+    },
+    {
+      "route": "visualise/V18/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "x": "period",
+        "y": "cost",
+        "estimator": "median",
+        "marker": "*"
+      },
+      "code": "sns.lineplot(data=example, x=\"period\", y=\"cost\",\n    estimator=\"median\", marker=\"*\",\n    errorbar=None, ax=ax)  # hide the interval band",
+      "minContrast": 10.978615546533872
+    },
+    {
+      "route": "wrangle/W06/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "choice": "rating",
+        "ascending": "False"
+      },
+      "code": "df = df.sort_values(\"rating\", ascending=False).reset_index(drop=True)\ndf",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "wrangle/W19/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "choice": "shelf",
+        "method": "sum"
+      },
+      "code": "df.groupby(\"shelf\", as_index=False).agg(\n    amount=(\"price\", \"sum\"), records=(\"price\", \"size\")\n)",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "classification/ML-C11/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "choice": "10",
+        "gamma": "0.1"
+      },
+      "code": "example_model = SVC(kernel=\"rbf\", C=10, gamma=0.1)\nexample_model.fit(example_X_prepared, example_y)\nexample_model.n_support_  # A: 4, B: 4",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "classification/ML-C14/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "width": "7",
+        "length": "8"
+      },
+      "code": "example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[[\"width\", \"length\"]], example[\"class\"])\nrow = pd.DataFrame([{\"width\": 7, \"length\": 8}])\nexample_model.predict(row)  # A",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "clustering/ML-U06/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "choice": "3",
+        "n_init": "20"
+      },
+      "code": "scaled = StandardScaler().fit_transform(example[[\"x\", \"y\"]])\nexample_model = KMeans(n_clusters=4, n_init=20, random_state=3)\nexample_model.fit(scaled)\ninertia = example_model.inertia_",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "workflow/ML-W07/0",
+      "width": 1440,
+      "theme": "light",
+      "arguments": {
+        "choice": "constant",
+        "fill_value": "-1"
+      },
+      "code": "imputer = SimpleImputer(strategy=\"constant\", fill_value=-1)\nimputer.fit(example_train[[\"distance\"]])\nanswer = imputer.transform(example_train[[\"distance\"]])",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "visualise/V33/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "x": "cost",
+        "y": "x",
+        "col": "shift"
+      },
+      "code": "g = sns.relplot(data=example, x=\"cost\", y=\"x\",\n    col=\"shift\", kind=\"scatter\")",
+      "minContrast": 11.065845428465414
+    },
+    {
+      "route": "visualise/V18/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "x": "period",
+        "y": "cost",
+        "estimator": "median",
+        "marker": "*"
+      },
+      "code": "sns.lineplot(data=example, x=\"period\", y=\"cost\",\n    estimator=\"median\", marker=\"*\",\n    errorbar=None, ax=ax)  # hide the interval band",
+      "minContrast": 10.790920152663514
+    },
+    {
+      "route": "wrangle/W06/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "choice": "rating",
+        "ascending": "False"
+      },
+      "code": "df = df.sort_values(\"rating\", ascending=False).reset_index(drop=True)\ndf",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "wrangle/W19/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "choice": "shelf",
+        "method": "sum"
+      },
+      "code": "df.groupby(\"shelf\", as_index=False).agg(\n    amount=(\"price\", \"sum\"), records=(\"price\", \"size\")\n)",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "classification/ML-C11/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "choice": "10",
+        "gamma": "0.1"
+      },
+      "code": "example_model = SVC(kernel=\"rbf\", C=10, gamma=0.1)\nexample_model.fit(example_X_prepared, example_y)\nexample_model.n_support_  # A: 4, B: 4",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "classification/ML-C14/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "width": "7",
+        "length": "8"
+      },
+      "code": "example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[[\"width\", \"length\"]], example[\"class\"])\nrow = pd.DataFrame([{\"width\": 7, \"length\": 8}])\nexample_model.predict(row)  # A",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "clustering/ML-U06/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "choice": "3",
+        "n_init": "20"
+      },
+      "code": "scaled = StandardScaler().fit_transform(example[[\"x\", \"y\"]])\nexample_model = KMeans(n_clusters=4, n_init=20, random_state=3)\nexample_model.fit(scaled)\ninertia = example_model.inertia_",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "workflow/ML-W07/0",
+      "width": 1440,
+      "theme": "dark",
+      "arguments": {
+        "choice": "constant",
+        "fill_value": "-1"
+      },
+      "code": "imputer = SimpleImputer(strategy=\"constant\", fill_value=-1)\nimputer.fit(example_train[[\"distance\"]])\nanswer = imputer.transform(example_train[[\"distance\"]])",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "visualise/V33/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "x": "cost",
+        "y": "x",
+        "col": "shift"
+      },
+      "code": "g = sns.relplot(data=example, x=\"cost\", y=\"x\",\n    col=\"shift\", kind=\"scatter\")",
+      "minContrast": 11.1039708742652
+    },
+    {
+      "route": "visualise/V18/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "x": "period",
+        "y": "cost",
+        "estimator": "median",
+        "marker": "*"
+      },
+      "code": "sns.lineplot(data=example, x=\"period\", y=\"cost\",\n    estimator=\"median\", marker=\"*\",\n    errorbar=None, ax=ax)  # hide the interval band",
+      "minContrast": 10.978615546533872
+    },
+    {
+      "route": "wrangle/W06/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "choice": "rating",
+        "ascending": "False"
+      },
+      "code": "df = df.sort_values(\"rating\", ascending=False).reset_index(drop=True)\ndf",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "wrangle/W19/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "choice": "shelf",
+        "method": "sum"
+      },
+      "code": "df.groupby(\"shelf\", as_index=False).agg(\n    amount=(\"price\", \"sum\"), records=(\"price\", \"size\")\n)",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "classification/ML-C11/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "choice": "10",
+        "gamma": "0.1"
+      },
+      "code": "example_model = SVC(kernel=\"rbf\", C=10, gamma=0.1)\nexample_model.fit(example_X_prepared, example_y)\nexample_model.n_support_  # A: 4, B: 4",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "classification/ML-C14/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "width": "7",
+        "length": "8"
+      },
+      "code": "example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[[\"width\", \"length\"]], example[\"class\"])\nrow = pd.DataFrame([{\"width\": 7, \"length\": 8}])\nexample_model.predict(row)  # A",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "clustering/ML-U06/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "choice": "3",
+        "n_init": "20"
+      },
+      "code": "scaled = StandardScaler().fit_transform(example[[\"x\", \"y\"]])\nexample_model = KMeans(n_clusters=4, n_init=20, random_state=3)\nexample_model.fit(scaled)\ninertia = example_model.inertia_",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "workflow/ML-W07/0",
+      "width": 390,
+      "theme": "light",
+      "arguments": {
+        "choice": "constant",
+        "fill_value": "-1"
+      },
+      "code": "imputer = SimpleImputer(strategy=\"constant\", fill_value=-1)\nimputer.fit(example_train[[\"distance\"]])\nanswer = imputer.transform(example_train[[\"distance\"]])",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "visualise/V33/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "x": "cost",
+        "y": "x",
+        "col": "shift"
+      },
+      "code": "g = sns.relplot(data=example, x=\"cost\", y=\"x\",\n    col=\"shift\", kind=\"scatter\")",
+      "minContrast": 11.065845428465414
+    },
+    {
+      "route": "visualise/V18/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "x": "period",
+        "y": "cost",
+        "estimator": "median",
+        "marker": "*"
+      },
+      "code": "sns.lineplot(data=example, x=\"period\", y=\"cost\",\n    estimator=\"median\", marker=\"*\",\n    errorbar=None, ax=ax)  # hide the interval band",
+      "minContrast": 10.790920152663514
+    },
+    {
+      "route": "wrangle/W06/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "choice": "rating",
+        "ascending": "False"
+      },
+      "code": "df = df.sort_values(\"rating\", ascending=False).reset_index(drop=True)\ndf",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "wrangle/W19/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "choice": "shelf",
+        "method": "sum"
+      },
+      "code": "df.groupby(\"shelf\", as_index=False).agg(\n    amount=(\"price\", \"sum\"), records=(\"price\", \"size\")\n)",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "classification/ML-C11/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "choice": "10",
+        "gamma": "0.1"
+      },
+      "code": "example_model = SVC(kernel=\"rbf\", C=10, gamma=0.1)\nexample_model.fit(example_X_prepared, example_y)\nexample_model.n_support_  # A: 4, B: 4",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "classification/ML-C14/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "width": "7",
+        "length": "8"
+      },
+      "code": "example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[[\"width\", \"length\"]], example[\"class\"])\nrow = pd.DataFrame([{\"width\": 7, \"length\": 8}])\nexample_model.predict(row)  # A",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "clustering/ML-U06/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "choice": "3",
+        "n_init": "20"
+      },
+      "code": "scaled = StandardScaler().fit_transform(example[[\"x\", \"y\"]])\nexample_model = KMeans(n_clusters=4, n_init=20, random_state=3)\nexample_model.fit(scaled)\ninertia = example_model.inertia_",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "workflow/ML-W07/0",
+      "width": 390,
+      "theme": "dark",
+      "arguments": {
+        "choice": "constant",
+        "fill_value": "-1"
+      },
+      "code": "imputer = SimpleImputer(strategy=\"constant\", fill_value=-1)\nimputer.fit(example_train[[\"distance\"]])\nanswer = imputer.transform(example_train[[\"distance\"]])",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "visualise/V33/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "x": "cost",
+        "y": "x",
+        "col": "shift"
+      },
+      "code": "g = sns.relplot(data=example, x=\"cost\", y=\"x\",\n    col=\"shift\", kind=\"scatter\")",
+      "minContrast": 11.1039708742652
+    },
+    {
+      "route": "visualise/V18/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "x": "period",
+        "y": "cost",
+        "estimator": "median",
+        "marker": "*"
+      },
+      "code": "sns.lineplot(data=example, x=\"period\", y=\"cost\",\n    estimator=\"median\", marker=\"*\",\n    errorbar=None, ax=ax)  # hide the interval band",
+      "minContrast": 10.978615546533872
+    },
+    {
+      "route": "wrangle/W06/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "choice": "rating",
+        "ascending": "False"
+      },
+      "code": "df = df.sort_values(\"rating\", ascending=False).reset_index(drop=True)\ndf",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "wrangle/W19/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "choice": "shelf",
+        "method": "sum"
+      },
+      "code": "df.groupby(\"shelf\", as_index=False).agg(\n    amount=(\"price\", \"sum\"), records=(\"price\", \"size\")\n)",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "classification/ML-C11/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "choice": "10",
+        "gamma": "0.1"
+      },
+      "code": "example_model = SVC(kernel=\"rbf\", C=10, gamma=0.1)\nexample_model.fit(example_X_prepared, example_y)\nexample_model.n_support_  # A: 4, B: 4",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "classification/ML-C14/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "width": "7",
+        "length": "8"
+      },
+      "code": "example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[[\"width\", \"length\"]], example[\"class\"])\nrow = pd.DataFrame([{\"width\": 7, \"length\": 8}])\nexample_model.predict(row)  # A",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "clustering/ML-U06/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "choice": "3",
+        "n_init": "20"
+      },
+      "code": "scaled = StandardScaler().fit_transform(example[[\"x\", \"y\"]])\nexample_model = KMeans(n_clusters=4, n_init=20, random_state=3)\nexample_model.fit(scaled)\ninertia = example_model.inertia_",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "workflow/ML-W07/0",
+      "width": 320,
+      "theme": "light",
+      "arguments": {
+        "choice": "constant",
+        "fill_value": "-1"
+      },
+      "code": "imputer = SimpleImputer(strategy=\"constant\", fill_value=-1)\nimputer.fit(example_train[[\"distance\"]])\nanswer = imputer.transform(example_train[[\"distance\"]])",
+      "minContrast": 11.11354106836694
+    },
+    {
+      "route": "visualise/V33/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "x": "cost",
+        "y": "x",
+        "col": "shift"
+      },
+      "code": "g = sns.relplot(data=example, x=\"cost\", y=\"x\",\n    col=\"shift\", kind=\"scatter\")",
+      "minContrast": 11.065845428465414
+    },
+    {
+      "route": "visualise/V18/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "x": "period",
+        "y": "cost",
+        "estimator": "median",
+        "marker": "*"
+      },
+      "code": "sns.lineplot(data=example, x=\"period\", y=\"cost\",\n    estimator=\"median\", marker=\"*\",\n    errorbar=None, ax=ax)  # hide the interval band",
+      "minContrast": 10.790920152663514
+    },
+    {
+      "route": "wrangle/W06/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "choice": "rating",
+        "ascending": "False"
+      },
+      "code": "df = df.sort_values(\"rating\", ascending=False).reset_index(drop=True)\ndf",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "wrangle/W19/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "choice": "shelf",
+        "method": "sum"
+      },
+      "code": "df.groupby(\"shelf\", as_index=False).agg(\n    amount=(\"price\", \"sum\"), records=(\"price\", \"size\")\n)",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "classification/ML-C11/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "choice": "10",
+        "gamma": "0.1"
+      },
+      "code": "example_model = SVC(kernel=\"rbf\", C=10, gamma=0.1)\nexample_model.fit(example_X_prepared, example_y)\nexample_model.n_support_  # A: 4, B: 4",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "classification/ML-C14/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "width": "7",
+        "length": "8"
+      },
+      "code": "example_model = DecisionTreeClassifier(max_depth=2, random_state=42)\nexample_model.fit(example[[\"width\", \"length\"]], example[\"class\"])\nrow = pd.DataFrame([{\"width\": 7, \"length\": 8}])\nexample_model.predict(row)  # A",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "clustering/ML-U06/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "choice": "3",
+        "n_init": "20"
+      },
+      "code": "scaled = StandardScaler().fit_transform(example[[\"x\", \"y\"]])\nexample_model = KMeans(n_clusters=4, n_init=20, random_state=3)\nexample_model.fit(scaled)\ninertia = example_model.inertia_",
+      "minContrast": 11.142428191332451
+    },
+    {
+      "route": "workflow/ML-W07/0",
+      "width": 320,
+      "theme": "dark",
+      "arguments": {
+        "choice": "constant",
+        "fill_value": "-1"
+      },
+      "code": "imputer = SimpleImputer(strategy=\"constant\", fill_value=-1)\nimputer.fit(example_train[[\"distance\"]])\nanswer = imputer.transform(example_train[[\"distance\"]])",
+      "minContrast": 11.142428191332451
+    }
+  ],
+  "pageErrors": []
+}

@@ -1,0 +1,151 @@
+--- I01CSV-1 before
++++ I01CSV-1 after
+@@ -48,7 +48,7 @@
+ </figure>
+ <div class="teaching-example">
+ <h4>A small example</h4>
+-<p>A semicolon-separated file needs <code class="code-identifier" data-code-role="syntax" title="Python syntax">sep=";"</code>.</p>
++<p>In <code class="code-identifier" data-code-role="file" title="Filename">tiny.csv</code>, <code class="code-identifier" data-code-role="syntax" title="Python syntax">name,price</code> supplies two column names. The next line, <code class="code-identifier" data-code-role="syntax" title="Python syntax">A,2</code>, becomes one row.</p>
+ </div>
+ </section>
+  <section class="teaching-worked" data-code-context="example">
+--- I17-1 before
++++ I17-1 after
+@@ -50,53 +50,6 @@
+ </div>
+ <figcaption>one EXTRA duplicate; keep all rows</figcaption>
+ </figure>
+-<div class="teaching-example">
+-<h4>A small example</h4>
+-<p>Rows A/B/A/A produce flags False/False/True/True.</p>
+-<table class="teaching-flags">
+-<caption>Same rows, different keep choices</caption>
+-<thead>
+-<tr>
+-<th scope="col">Row</th>
+-<th scope="col">
+-<code class="code-identifier" data-code-role="literal" title="Literal text">"first"</code>
+-</th>
+-<th scope="col">
+-<code class="code-identifier" data-code-role="literal" title="Literal text">"last"</code>
+-</th>
+-<th scope="col">
+-<code class="code-identifier" data-code-role="literal" title="Literal text">False</code>
+-</th>
+-</tr>
+-</thead>
+-<tbody>
+-<tr>
+-<th scope="row">A · first</th>
+-<td class="flag-false">False</td>
+-<td class="flag-true">True</td>
+-<td class="flag-true">True</td>
+-</tr>
+-<tr>
+-<th scope="row">B · unique</th>
+-<td class="flag-false">False</td>
+-<td class="flag-false">False</td>
+-<td class="flag-false">False</td>
+-</tr>
+-<tr>
+-<th scope="row">A · second</th>
+-<td class="flag-true">True</td>
+-<td class="flag-true">True</td>
+-<td class="flag-true">True</td>
+-</tr>
+-<tr>
+-<th scope="row">A · third</th>
+-<td class="flag-true">True</td>
+-<td class="flag-false">False</td>
+-<td class="flag-true">True</td>
+-</tr>
+-</tbody>
+-</table>
+-</div>
+ </section>
+  <section class="teaching-worked" data-code-context="example">
+ <h3>Follow the code</h3>
+--- W13-1 before
++++ W13-1 after
+@@ -42,7 +42,7 @@
+ </figure>
+ <div class="teaching-example">
+ <h4>A small example</h4>
+-<p>"Int64" stores whole numbers and can also represent missing values.</p>
++<p>Changing labels A/B/A to <code class="code-identifier" data-code-role="literal" title="Literal text">"category"</code> keeps the same three values and row order.</p>
+ </div>
+ </section>
+  <section class="teaching-worked" data-code-context="example">
+--- ML-R08-1 before
++++ ML-R08-1 after
+@@ -76,9 +76,9 @@
+ <dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">
+ <div>
+ <dt>
+-<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['prepare']</code>
+-</dt>
+-<dd>named_steps maps the authored pipeline names to their fitted objects. Reading a contained estimator’s fitted coefficients or preparation schema does not fit again. Use the exact step names from the supplied recipe.<p>
++<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['polynomial']</code>
++</dt>
++<dd>named_steps selects a <code class="code-identifier" data-code-role="function" title="Python function">Pipeline</code> step by its declared name. Here polynomial expands <code class="code-identifier" data-code-role="column" title="Table column">x</code> into power columns. Calling its <code class="code-identifier" data-code-role="function" title="Python function">fit_transform</code> prepares those columns; the scale and prediction model steps have not been fitted.<p>
+ <strong>Values and choices:</strong> The prepare step contains fitted preparation; model contains the prediction estimator. A ColumnTransformer also exposes its named_transformers_ when inspecting encoded categories.</p>
+ </dd>
+ </div>
+--- ML-C05-3 before
++++ ML-C05-3 after
+@@ -3,9 +3,9 @@
+ <dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">
+ <div>
+ <dt>
+-<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['prepare']</code>
++<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['model']</code>
+ </dt>
+-<dd>named_steps maps the authored pipeline names to their fitted objects. Reading a contained estimator’s fitted coefficients or preparation schema does not fit again. Use the exact step names from the supplied recipe.<p>
++<dd>The model step is the fitted classifier. Its coef_ rows belong to the supplied fitted class order, and columns follow the input feature order. Reading these coefficients does not fit the pipeline again.<p>
+ <strong>Values and choices:</strong> The prepare step contains fitted preparation; model contains the prediction estimator. A ColumnTransformer also exposes its named_transformers_ when inspecting encoded categories.</p>
+ </dd>
+ </div>
+--- ML-C10-2 before
++++ ML-C10-2 after
+@@ -3,9 +3,9 @@
+ <dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">
+ <div>
+ <dt>
+-<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['prepare']</code>
++<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['model']</code>
+ </dt>
+-<dd>named_steps maps the authored pipeline names to their fitted objects. Reading a contained estimator’s fitted coefficients or preparation schema does not fit again. Use the exact step names from the supplied recipe.<p>
++<dd>The model step is the fitted SVM. Its n_support_ counts the support vectors for each class in model<code class="code-identifier" data-code-role="syntax" title="Python syntax">.classes_</code> order. Reading these counts does not fit the pipeline again.<p>
+ <strong>Values and choices:</strong> The prepare step contains fitted preparation; model contains the prediction estimator. A ColumnTransformer also exposes its named_transformers_ when inspecting encoded categories.</p>
+ </dd>
+ </div>
+--- ML-C12-1 before
++++ ML-C12-1 after
+@@ -48,9 +48,9 @@
+ <dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">
+ <div>
+ <dt>
+-<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['prepare']</code>
+-</dt>
+-<dd>named_steps maps the authored pipeline names to their fitted objects. Reading a contained estimator’s fitted coefficients or preparation schema does not fit again. Use the exact step names from the supplied recipe.<p>
++<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['model']</code>
++</dt>
++<dd>The model step is the fitted One-R classifier. Its rules_ dictionary stores the learned rules; the preparation step has already supplied the feature representation. Reading rules does not fit again.<p>
+ <strong>Values and choices:</strong> The prepare step contains fitted preparation; model contains the prediction estimator. A ColumnTransformer also exposes its named_transformers_ when inspecting encoded categories.</p>
+ </dd>
+ </div>
+--- ML-N04-1 before
++++ ML-N04-1 after
+@@ -56,9 +56,9 @@
+ <dl class="foundation-syntax teaching-syntax-parts ml-syntax-parts">
+ <div>
+ <dt>
+-<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['prepare']</code>
+-</dt>
+-<dd>named_steps maps the authored pipeline names to their fitted objects. Reading a contained estimator’s fitted coefficients or preparation schema does not fit again. Use the exact step names from the supplied recipe.<p>
++<code class="code-identifier" data-code-role="syntax" title="Python syntax">model.named_steps['model']</code>
++</dt>
++<dd>The model step is the target wrapper. After model<code class="code-identifier" data-code-role="syntax" title="Python syntax">.fit</code>, transformer_ is its fitted target scaler; mean_ records the fitting target mean. This is separate from the outer input scaler.<p>
+ <strong>Values and choices:</strong> The prepare step contains fitted preparation; model contains the prediction estimator. A ColumnTransformer also exposes its named_transformers_ when inspecting encoded categories.</p>
+ </dd>
+ </div>

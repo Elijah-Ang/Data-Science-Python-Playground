@@ -29,16 +29,31 @@ with sync_playwright() as pw:
    records.append(dict(id=c['id'],family=group,theme=theme,width=width,file=name,title=c['title']));return
   page.set_viewport_size({'width':width,'height':1000});page.evaluate('(theme)=>AppAppearance.apply(theme)',theme)
   page.evaluate('(hash)=>location.hash=hash','#'+c['deck']+'/'+c['id']+'/0');page.wait_for_function('(id)=>MLLearning.activity?.id===id',arg=c['exercises'][0]['id'])
-  page.evaluate('document.fonts.ready');figure=page.locator('.ml-concept');figure.scroll_into_view_if_needed();figure.locator('.ml-concept-scroll').evaluate('(e)=>e.scrollLeft=0')
+  page.evaluate('document.fonts.ready');figure=page.locator('.teaching-overview > .ml-concept,.teaching-overview > .teaching-explorer').first
+  # Capture the visible primary visual; supplementary reference diagrams were removed.
+  figure.scroll_into_view_if_needed();scroll=figure.locator('.ml-concept-scroll,.teaching-visual-scroll');
+  if scroll.count():scroll.first.evaluate('(e)=>e.scrollLeft=0')
   assert not page.evaluate('Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)>innerWidth+1'),(c['id'],width)
-  clipped=figure.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox();return b.x<0||b.y<0||b.x+b.width>560.5||b.y+b.height>235.5}).map(n=>n.textContent)')
+  clipped=figure.locator('svg text').evaluate_all('(nodes)=>nodes.filter(n=>{const b=n.getBBox(),v=n.ownerSVGElement.viewBox.baseVal;return b.x<0||b.y<0||b.x+b.width>v.width+.5||b.y+b.height>v.height+.5}).map(n=>n.textContent)')
   assert not clipped,(c['id'],clipped)
-  assert figure.locator('svg').get_attribute('aria-label')==c['exercises'][0].get('visual',c['visual'])['caption']
+  if figure.locator('svg').count():assert figure.locator('svg').get_attribute('aria-label')
+  else:
+   # Operation examples may use a live before/after table rather than a chart.
+   assert figure.locator('.teaching-example-output').count()
+   assert all(figure.locator('table').nth(i).locator('caption').inner_text() for i in range(figure.locator('table').count()))
+  if figure.locator('.ml-concept-scroll').count():assert figure.locator('svg').get_attribute('aria-label')==c['exercises'][0].get('visual',c['visual'])['caption']
+  # A widget can be taller than the independently scrolling reading pane.
+  # Grow the capture viewport so its data, chart and Python are all visible.
+  full_height=max(1000,math.ceil(figure.bounding_box()['height'])+500)
+  page.set_viewport_size({'width':width,'height':full_height})
+  figure.scroll_into_view_if_needed()
   name=f'{c["id"]}-{theme}-{width}.png';figure.screenshot(path=str(out/name))
   # Inspect both ends of scrollable diagrams at phone widths.
   if width<500:
-   figure.locator('.ml-concept-scroll').evaluate('(e)=>e.scrollLeft=e.scrollWidth');figure.screenshot(path=str(out/('right-'+name)))
+   if scroll.count():scroll.first.evaluate('(e)=>e.scrollLeft=e.scrollWidth')
+   figure.screenshot(path=str(out/('right-'+name)))
   records.append(dict(id=c['id'],family=group,theme=theme,width=width,file=name,title=c['title']))
+  page.set_viewport_size({'width':width,'height':1000})
  for c in cards:capture(c,'light',1440,c['visual']['type'])
  for key,c in groups.items():
   for theme,width in [('dark',1440),('light',320),('light',390)]:capture(c,theme,width,key)
@@ -105,6 +120,6 @@ for label,selected in [('teaching',[r for r in records if r['theme']=='light' an
    if r['width']<500:
     right=Image.open(out/('right-'+r['file'])).convert('RGB');right.thumbnail((280,335));sheet.paste(right,(x+305,y+42))
   sheet.save(contact/f'{label}-{start//9+1:02}.jpg',quality=88)
-record=dict(teachingCount=len(cards),primitiveVariantCount=len(groups),thumbnailCount=len(thumbnail_signatures),thumbnailSignatures=thumbnail_signatures,captures=records,cardHashes={c['id']:hashlib.sha256(json.dumps({k:c[k] for k in ['title','goal','explanation','visual']},sort_keys=True).encode()).hexdigest() for c in cards},sourceHashes={f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in ['code-identifiers.js','route-slider.css','ml-learning/visuals.js','ml-learning/learning.css','ml-learning/app.js','foundations/foundations.css','foundations/learning-ui.js','challenges/icon-prompts.json','challenges/experience.js','challenges/challenges.css']})
+record=dict(teachingCount=len(cards),primitiveVariantCount=len(groups),thumbnailCount=len(thumbnail_signatures),thumbnailSignatures=thumbnail_signatures,captures=records,cardHashes={c['id']:hashlib.sha256(json.dumps({k:c[k] for k in ['title','goal','explanation','visual']},sort_keys=True).encode()).hexdigest() for c in cards},sourceHashes={f:hashlib.sha256((ROOT/f).read_bytes()).hexdigest() for f in ['code-identifiers.js','route-slider.css','ml-learning/visuals.js','ml-learning/learning.css','ml-learning/app.js','foundations/foundations.css','foundations/learning-ui.js','foundations/inline-code.js','assets/teaching/pixel-pointer.png','challenges/icon-prompts.json','challenges/experience.js','challenges/challenges.css']})
 (ROOT/'docs/ml-learning-visual-review.json').write_text(json.dumps(record,indent=2,ensure_ascii=False)+'\n')
 print(len(cards),'teaching concepts;',len(groups),'primitive/variant families in dark, 320 and 390;',len(thumbnail_signatures),'unique card thumbnails;',len(records),'captures; four real fitted figures; all 19 collection tiles.')

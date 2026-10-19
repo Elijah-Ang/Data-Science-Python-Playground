@@ -1,0 +1,458 @@
+[
+  {
+    "route": "inspect/I01/0",
+    "heading": "Meet a DataFrame",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ncandy\tprice\nGummy Bear\t1.2\nChoco Pop\t2.1\nMint Bite\t1.5\nBerry Loop\t2.8",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I01CSV/1",
+    "heading": "Load a CSV",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ndrink\tsize\tprice\ttip\tshift\nLatte\tLarge\t6.2\t1\tAM\nTea\tSmall\t3.1\t0.5\tAM\nMocha\tLarge\t6.8\t1.5\tPM\nEspresso\tSmall\t2.5\t0.2\tPM\nLatte\tSmall\t4.8\t0.8\tAM\nTea\tLarge\t4.2\t0.6\tPM",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I01CSV/1",
+    "heading": "Load a CSV",
+    "feedback": "Not yet. Check the requested values, row order, columns and data types.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ndrink;size;price;tip;shift\nLatte;Large;6.2;1;AM\nTea;Small;3.1;0.5;AM\nMocha;Large;6.8;1.5;PM\nEspresso;Small;2.5;0.2;PM\nLatte;Small;4.8;0.8;AM\nTea;Large;4.2;0.6;PM",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I01CSV/2",
+    "heading": "Load a CSV",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\nname\tspecies\tage\tweight\troom\nMilo\tCat\t3\t4.2\tA\nPepper\tDog\t7\t18.5\tB\nLuna\tCat\t2\t3.6\tA\nBean\tRabbit\t4\t2.4\tB\nRex\tDog\t5\t22\tA",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "Not yet. Practise head in this round, as requested in Your task.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ncandy\tflavour\tprice\trating\tshelf\nGummy Bear\tfruity\t1.2\t4.1\tA\nChoco Pop\tchocolate\t2.1\t4.6\tB",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/2",
+    "heading": "Take the first look",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\nindex\tname\tspecies\tage\tweight\troom\n2\tLuna\tCat\t2\t3.6\tA\n1\tPepper\tDog\t7\t18.5\tB\n4\tRex\tDog\t5\t22\tA",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "Not yet. Practise head in this round, as requested in Your task.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\nindex\tcandy\tflavour\tprice\trating\tshelf\n4\tCocoa Cube\tchocolate\t3.4\t4.9\tA\n5\tLemon Drop\tfruity\t1.8\t4\tB",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "Python could not finish. Read the error below, edit your code and run again.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nFile \"your_python.py\", line 22\n    df[\n      ^\nSyntaxError: '[' was never closed",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "Python could not finish. Read the error below, edit your code and run again.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nKeyError: 'unknown'",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "Run finished. Inspect the output, then Check your answer.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\n\nPython finished with no displayed value. Put the value on the last line, use print(...), or use plt.show() for a figure.",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ncandy\tflavour\tprice\trating\tshelf\nGummy Bear\tfruity\t1.2\t4.1\tA\nChoco Pop\tchocolate\t2.1\t4.6\tB",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I02/0",
+    "heading": "Take the first look",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ncandy\tflavour\tprice\trating\tshelf\nGummy Bear\tfruity\t1.2\t4.1\tA\nChoco Pop\tchocolate\t2.1\t4.6\tB",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I01CSV/0",
+    "heading": "Load a CSV",
+    "feedback": "Python could not finish. Read the error below, edit your code and run again.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nNameError: name 'df' is not defined",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I01CSV/0",
+    "heading": "Load a CSV",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\ncandy\tflavour\tprice\trating\tshelf\nGummy Bear\tfruity\t1.2\t4.1\tA\nChoco Pop\tchocolate\t2.1\t4.6\tB\nMint Bite\tmint\t1.5\t3.8\tA\nBerry Loop\tfruity\t2.8\t4.4\tB\nCocoa Cube\tchocolate\t3.4\t4.9\tA\nLemon Drop\tfruity\t1.8\t4\tB",
+    "pageErrors": []
+  },
+  {
+    "route": "wrangle/W28/0",
+    "heading": "Scale numeric columns",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\n[[-1.23382742 -0.53452248]\n [-0.04406526  0.80178373]\n [-0.83724003 -1.33630621]\n [ 0.8813053   0.26726124]\n [ 1.67448007  1.60356745]\n [-0.44065265 -0.80178373]]",
+    "pageErrors": []
+  },
+  {
+    "route": "wrangle/W31/0",
+    "heading": "Wrangle checkpoint",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\norder\tdrink\tsize\tprice\ttip\tdate\n101\tlatte\tLarge\t6.2\t1\t2026-06-01T00:00:00\n102\ttea\tSmall\t3.1\t0.5\t2026-06-02T00:00:00\n103\tmocha\tLarge\tNone\t0.7\tNone\n104\tlatte\tSmall\tNone\t0.8\t2026-06-04T00:00:00\n105\ttea\tSmall\t4.2\t0.6\t2026-06-05T00:00:00\n106\tespresso\tSmall\t2.5\t0.2\t2026-06-06T00:00:00\n107\tmocha\tLarge\t6.8\t1.5\t2026-06-07T00:00:00",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V34/0",
+    "heading": "Save a figure",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG\n\nDownload chart.png",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V37/0",
+    "heading": "Visualise checkpoint",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG\nOpen figure larger\nDownload PNG\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V02/0",
+    "heading": "Finish a chart properly",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V02/0",
+    "heading": "Finish a chart properly",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V02/0",
+    "heading": "Finish a chart properly",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V02/0",
+    "heading": "Finish a chart properly",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V04/0",
+    "heading": "Histogram",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V04/0",
+    "heading": "Histogram",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V04/0",
+    "heading": "Histogram",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V04/0",
+    "heading": "Histogram",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "Not yet. Check the visible observations and axis bounds.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/0",
+    "heading": "Correlation heatmap",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/0",
+    "heading": "Correlation heatmap",
+    "feedback": "Not yet. Check the annotations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/0",
+    "heading": "Correlation heatmap",
+    "feedback": "Not yet. Check the annotations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/1",
+    "heading": "Correlation heatmap",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/1",
+    "heading": "Correlation heatmap",
+    "feedback": "Not yet. Check the annotations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/1",
+    "heading": "Correlation heatmap",
+    "feedback": "Not yet. Check the annotations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/2",
+    "heading": "Correlation heatmap",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/2",
+    "heading": "Correlation heatmap",
+    "feedback": "Not yet. Check the annotations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V22/2",
+    "heading": "Correlation heatmap",
+    "feedback": "Not yet. Check the annotations.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V23/0",
+    "heading": "Categorical / matrix heatmap",
+    "feedback": "Not yet. Check the annotations; expected '2'.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V23/1",
+    "heading": "Categorical / matrix heatmap",
+    "feedback": "Not yet. Check the annotations; expected '0.67'.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V23/2",
+    "heading": "Categorical / matrix heatmap",
+    "feedback": "Not yet. Check the annotations; expected '1.0'.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V35/0",
+    "heading": "Choose a chart for the question",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nscatter",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I05/1",
+    "heading": "What types are these?",
+    "feedback": "Not yet. Display your answer with a final expression, display(...), or print(...).",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\n\nPython finished with no displayed value. Put the value on the last line, use print(...), or use plt.show() for a figure.",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I05/1",
+    "heading": "What types are these?",
+    "feedback": "Not yet. Return a Series (one labelled column).",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nNone",
+    "pageErrors": []
+  },
+  {
+    "route": "inspect/I05/1",
+    "heading": "What types are these?",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nPython result\nindex\tvalue\ndrink\tobject\nsize\tobject\nprice\tfloat64\ntip\tfloat64\nshift\tobject",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V08/1",
+    "heading": "Count categories",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V37/1",
+    "heading": "Visualise checkpoint",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG\nOpen figure larger\nDownload PNG\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  },
+  {
+    "route": "visualise/V16/0",
+    "heading": "Scatter plot",
+    "feedback": "That matches the task. Read the output, then try the next practice.",
+    "runtime": "Python ready \u00b7 runs on your device",
+    "output": "Output\nOpen figure larger\nDownload PNG",
+    "pageErrors": []
+  }
+]

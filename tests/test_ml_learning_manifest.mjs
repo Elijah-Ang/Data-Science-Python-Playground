@@ -12,7 +12,7 @@ function ancestors(id,path=[]) {
 for(const c of manifest.cards) {
   const deps=ancestors(c.id);
   if(c.tier==='core')for(const id of deps)assert.equal(nodes.get(id).tier,'core',c.id+' depends on optional '+id);
-  if(c.kind==='teaching')assert(c.exercises.length>=2&&c.exercises.length<=4,c.id+': choose 2–4 meaningful exercises');
+  if(c.kind==='teaching')assert(c.exercises.length>=2&&c.exercises.length<=5,c.id+': choose 2–5 meaningful exercises');
 }
 function excludes(id,pattern) {
   for(const a of ancestors(id))assert(!pattern.test(a),id+' has an unintended prerequisite: '+a);

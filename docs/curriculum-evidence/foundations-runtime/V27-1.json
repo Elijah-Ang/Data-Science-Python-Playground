@@ -1,0 +1,674 @@
+{
+  "id": "V27-1",
+  "sourceId": "V27",
+  "sourceRound": 1,
+  "retrieves": null,
+  "exercise": {
+    "id": "V27-1",
+    "label": "Follow",
+    "dataset": "centrifuge_checks",
+    "task": "On the prepared scatter, add dashed lines at median rpm vertically and median yield_g horizontally. Both benchmarks must use their own measurement units. Arrange and display fig.",
+    "solution": "ax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+    "starter": "____(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+    "hint": "Orient each observed median by the measurement it summarizes.",
+    "setup": "fig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")",
+    "target": "plot",
+    "strictDtype": false,
+    "requiredCalls": [],
+    "plot": {
+      "textCaseInsensitive": true,
+      "semantic": "scatter",
+      "lineStyles": true
+    },
+    "checks": null,
+    "forbiddenCalls": [],
+    "resultKind": "Figure",
+    "visual": {
+      "type": "relationship",
+      "variant": "references",
+      "label": "Concept sketch: vertical AND horizontal median benchmarks"
+    },
+    "demand": "Orient each observed median by the measurement it summarizes.",
+    "steps": [
+      "On the prepared scatter, add dashed lines at median rpm vertically and median yield_g horizontally.",
+      "Both benchmarks must use their own measurement units.",
+      "Arrange and display fig."
+    ],
+    "requiredKeywords": [],
+    "setupDescription": "A labelled scatter without benchmarks.",
+    "decision": "Orient each observed median by the measurement it summarizes.",
+    "prerequisites": [
+      "Inspect",
+      "Wrangle"
+    ],
+    "fixtureFeature": "Mean and median yield differ; reference-line orientation must follow the benchmark measurement, not the other axis.",
+    "question": "Where are the middle observed speed and middle observed yield?",
+    "contextPlot": {
+      "x": "rpm",
+      "y": "yield_g",
+      "title": "Centrifuge checks",
+      "xlabel": "rpm",
+      "ylabel": "yield_g"
+    },
+    "varietyAuthored": true,
+    "observationUnit": "one centrifuge run",
+    "datasetRationale": "Mean and median yield differ; reference-line orientation must follow the benchmark measurement, not the other axis.",
+    "parameterTeaching": {
+      "introduces": [
+        "linestyle"
+      ],
+      "extends": [],
+      "reuses": [
+        "ascending",
+        "subset",
+        "numeric_only",
+        "DataFrame.index",
+        "pivot_table.index",
+        "columns",
+        "values",
+        "aggfunc",
+        "axis",
+        "figsize",
+        "title",
+        "xlabel",
+        "ylabel",
+        "data",
+        "x",
+        "y",
+        "ax",
+        "bins",
+        "order",
+        "lineplot.estimator",
+        "marker",
+        "sort",
+        "estimator",
+        "errorbar",
+        "jitter",
+        "hue",
+        "style",
+        "size",
+        "annot",
+        "cmap",
+        "vmin",
+        "vmax",
+        "center",
+        "nrows",
+        "ncols",
+        "palette",
+        "legend.title",
+        "hue_order",
+        "style_order",
+        "alpha",
+        "set_ylim.bottom",
+        "tick_params.axis",
+        "labelrotation"
+      ],
+      "prerequisites": [
+        "V16",
+        "I18S"
+      ]
+    },
+    "concepts": {
+      "introduces": [
+        "matplotlib.reference-lines"
+      ],
+      "reuses": [
+        "seaborn.scatterplot",
+        "pandas.median"
+      ],
+      "extends": [],
+      "prerequisites": [
+        "V16",
+        "I18S"
+      ]
+    },
+    "stageSummary": "Mark measurement medians.",
+    "brief": {
+      "question": "Where are the middle observed speed and middle observed yield?",
+      "rows": "One row: one centrifuge run.",
+      "result": "On the prepared scatter, add dashed lines at median rpm vertically and median yield_g horizontally.",
+      "constraints": [
+        "Both benchmarks must use their own measurement units.",
+        "Arrange and display fig."
+      ]
+    },
+    "provenance": {
+      "supplied": [
+        {
+          "name": "df",
+          "type": "DataFrame",
+          "description": "Loaded from the visible supplied table."
+        },
+        {
+          "name": "fig",
+          "type": "Figure",
+          "description": "Created by the supplied setup."
+        },
+        {
+          "name": "ax",
+          "type": "Axes",
+          "description": "Created by the supplied setup."
+        }
+      ],
+      "created": []
+    },
+    "identifiers": {
+      "inputColumns": [
+        "run",
+        "rpm",
+        "yield_g"
+      ],
+      "variables": [
+        "df",
+        "fig",
+        "ax"
+      ],
+      "occurrences": []
+    },
+    "syntaxGuidance": {
+      "current": [
+        [
+          "ax.axvline(df[\"rpm\"].median(), linestyle=\"--\")",
+          "Add the median rpm as a vertical benchmark."
+        ],
+        [
+          "ax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")",
+          "Add the median yield as a horizontal benchmark."
+        ],
+        [
+          "linestyle=\"--\"",
+          "Draw a dashed line."
+        ],
+        [
+          "mean() / median() / supplied value",
+          "Use the benchmark with the meaning stated in the task."
+        ]
+      ],
+      "reminders": [
+        [
+          "fig.tight_layout(); plt.show()",
+          "Arrange and display the chart with its benchmarks."
+        ]
+      ],
+      "reference": []
+    },
+    "workflow": {
+      "same": "Select rows, draw, label and display.",
+      "changed": "Mark measurement medians.",
+      "why": "Orient each observed median by the measurement it summarizes.",
+      "changedLines": [
+        1,
+        2
+      ],
+      "changedSyntaxLines": [
+        1,
+        2
+      ],
+      "changedTeachingLines": []
+    }
+  },
+  "columns": {
+    "run": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F"
+    ],
+    "rpm": [
+      100,
+      200,
+      300,
+      400,
+      500,
+      600
+    ],
+    "yield_g": [
+      2,
+      4,
+      4,
+      7,
+      9,
+      16
+    ]
+  },
+  "inputSHA256": "a9500d8201d8b7c158eab0fab055dbbfb8018f255b9307d37c5fc5692a1aa0fd",
+  "visibleWorkspaceSHA256": "79f0a4ea956131491ab8bd8ad1a810ec35ce99ca2610c25f932178a81947fe99",
+  "visibleSetup": "import pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")",
+  "visibleStarter": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\n____(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+  "context": "A labelled scatter without benchmarks. The setup is visible and editable above Your work. Run executes both sections from top to bottom.",
+  "responsibilityContract": {
+    "visible_setup_present": true,
+    "setup_description_present": true,
+    "workspace_contains_fixed_setup_once": true,
+    "reference_has_no_new_figure": true,
+    "context_explains_visible_editable_setup": true,
+    "reference_has_no_import_boilerplate": true
+  },
+  "versions": {
+    "python": "3.10.21 (main, Sep 24 2026, 17:54:40) [Clang 22.1.3 ]",
+    "executable": "/tmp/curriculum-validation-venv/bin/python",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "node": "v24.19.0",
+    "matplotlib": "3.5.2",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "seaborn": "0.13.2",
+    "pillow": "12.3.0"
+  },
+  "sourceSHA256": {
+    "foundations/curriculum.js": "6808f68d7f9610ada4e2d4d44e0cfd294b6bbb7d8deb707b44c703faafaf732a",
+    "foundations/clarity.js": "a69b6320ad0e92ab0aba81d2fe0ec4fa9a091f4c91cf4d265426ccfee8fc5b1a",
+    "foundations/variety.js": "b601ea5271ec20f742c49931a24e77f21032d9348b9f42df5cb9a84d108761f0",
+    "foundations/code-style.js": "27b8a332bd7d91ba0d2aa765da728102e6200c3b4d1120973d55f562144f8b0e",
+    "foundations/content-guidance.js": "0daf2f06d7de9d4b1f80db9c78b0dcf05389f23a578f7959e213513921637859",
+    "foundations/visualise-guidance.js": "658aa154a6086d8713d6cfe309d57e4e038b4a180f999df34bbf631df897fb5c",
+    "foundations/parameter-guide.js": "4f5b070c97fda5bb6c71c89369e9227ce6dde290ce2903264e5dac834a1efe0d",
+    "foundations/workspace.js": "21d4270442745be382beadd411537d4f20218271f681bc46062de9fc34326576",
+    "foundations/runtime.py": "65a730b278c80818f78a50d66ae8655b0febb784897df191616d4a0bb7f94abb",
+    "table-serialization.py": "8c7112b92124598809a2275bb82c653ea6f89eea2087c41c927f6b7d5ad5a573"
+  },
+  "cases": [
+    {
+      "name": "model_with_fixed_setup",
+      "code": "ax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "c542ad361218dc8064875c6d3baddacefa40780afe74ff03fe3243d50130f60d",
+      "check": true,
+      "explicitSetup": false,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.358,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7fcb8172cbac39251396d4cc8b3c47ef55fb7d7ebc8f7e0046904067720977b7",
+          "bytes": 17979,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "full_visible_reference_workspace",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "79f0a4ea956131491ab8bd8ad1a810ec35ce99ca2610c25f932178a81947fe99",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.298,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7fcb8172cbac39251396d4cc8b3c47ef55fb7d7ebc8f7e0046904067720977b7",
+          "bytes": 17979,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V27-1-full_visible_reference_workspace-1.png"
+        }
+      ]
+    },
+    {
+      "name": "equivalent_focal_work",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nvertical = ax.axvline\nhorizontal = ax.axhline\nvertical(x=df['rpm'].median(), linestyle=\"--\")\nhorizontal(y=df['yield_g'].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "f80a231ecdec5d72d226a17e6ad950911c07d56346ee108e6e2194b710054ad8",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.302,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7fcb8172cbac39251396d4cc8b3c47ef55fb7d7ebc8f7e0046904067720977b7",
+          "bytes": 17979,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ],
+          "artifact": "/workspace/Data-Science-Python-Playground/docs/curriculum-evidence/foundations-runtime/figures/V27-1-equivalent_focal_work-1.png"
+        }
+      ]
+    },
+    {
+      "name": "no_focal_work_still_show",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nplt.show()",
+      "codeSHA256": "773abf3ba905631a6c823e5ac00d05b6c400366b71799c6e3cbdfeb1007b16fb",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.274,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "fcc226b716288ab3986a592c3d27fb5ed7e0f3e9a96946558044c6e99743d658",
+          "bytes": 14700,
+          "width": 585,
+          "height": 430,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_benchmark",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nvertical = ax.axvline\nhorizontal = ax.axhline\nvertical(x=df['rpm'].median()+1, linestyle=\"--\")\nhorizontal(y=df['yield_g'].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "ab045e62ab4e277d484b3237e7f2d8680a0ae24dde85153f5553e7fe2162966c",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.309,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the lines, markers and reference styles.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "dc197bf2a1d885791d9172f446f98747f119c7ae9747bb41d52c3d1a993de82b",
+          "bytes": 17975,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_line_style",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nvertical = ax.axvline\nhorizontal = ax.axhline\nvertical(x=df['rpm'].median(), linestyle=\":\")\nhorizontal(y=df['yield_g'].median(), linestyle=\":\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "429be8412b6f5072200393dc29e255f12241f762de0da0294cf1650750a235c0",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.339,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the lines, markers and reference styles; expected '--'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7a019a180aae2a7c18f3a57d7f468ce7c809f38bdfee06d7ecc59b4c21859396",
+          "bytes": 19728,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_title",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nax.set_title(\"Incorrect chart title\")\nplt.show()",
+      "codeSHA256": "aaed57eba3943830af3cf44662aba8614c65a79cfb2dbf922900188b8b86b3c1",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.304,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the chart title; expected 'centrifuge checks'.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Incorrect chart title",
+          "sha256": "74d8a962aba4f285e3936cd17438aef1b2b59dc0f8a531f8adeb0e6ff586474a",
+          "bytes": 17522,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "wrong_labelled_pairs_or_counts",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\ncoordinates = ax.collections[0].get_offsets().copy()\ncoordinates[:, 1] = coordinates[::-1, 1]\nax.collections[0].set_offsets(coordinates)\nplt.show()",
+      "codeSHA256": "2320e7636cd1ad3a2fc3068fa85ec8c488a976a7a588e7f5534a4b09c8a511cd",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.313,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the paired observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "c0d87e03d0495ba0524ecc3d06367765b6c635cebfc248a39a4e50671b387a18",
+          "bytes": 17972,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "edited_wrong_supplied_values",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\n# Learner edits the supplied values before their marks are drawn.\ndf['yield_g'] = df['yield_g'] + 123\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "4079e6d7dfab1cf60375b223df65d5bcc0788b10f1657c93328c8c34cd5ac89a",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.299,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the lines, markers and reference styles.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "9db0d225266fcb6197f93b458391c2b9d72edf8d89b32d860f5c7c447dc61d51",
+          "bytes": 20000,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_figure",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "1e0cd097cdf62e5f1d1d7de9b69e225453f7286061c8187ab6650c2caf00c8e4",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": false,
+      "actualPass": false,
+      "passedExpectation": true,
+      "figureCount": 2,
+      "expectedFigureCount": 2,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.582,
+      "response": {
+        "passed": false,
+        "checked": true,
+        "feedback": "Not yet. Check the number of figures, axes and plotted observations.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7fcb8172cbac39251396d4cc8b3c47ef55fb7d7ebc8f7e0046904067720977b7",
+          "bytes": 17979,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        },
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7fcb8172cbac39251396d4cc8b3c47ef55fb7d7ebc8f7e0046904067720977b7",
+          "bytes": 17979,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fresh_reference_after_wrong_setup",
+      "code": "# Supplied setup — editable\nimport pandas as pd\n\ndata = {\n    \"run\": [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\"],\n    \"rpm\": [100, 200, 300, 400, 500, 600],\n    \"yield_g\": [2, 4, 4, 7, 9, 16],\n}\n\ndf = pd.DataFrame(data)\n\nimport matplotlib.pyplot as plt\n\nimport seaborn as sns\n\nfig, ax = plt.subplots(figsize=(6, 4))\nsns.scatterplot(data=df, x=\"rpm\", y=\"yield_g\", ax=ax)\nax.set(title=\"Centrifuge checks\", xlabel=\"rpm\", ylabel=\"yield_g\")\n\n# Your work\nax.axvline(df[\"rpm\"].median(), linestyle=\"--\")\nax.axhline(df[\"yield_g\"].median(), linestyle=\"--\")\nfig.tight_layout()\nplt.show()",
+      "codeSHA256": "79f0a4ea956131491ab8bd8ad1a810ec35ce99ca2610c25f932178a81947fe99",
+      "check": true,
+      "explicitSetup": true,
+      "expectedPass": true,
+      "actualPass": true,
+      "passedExpectation": true,
+      "figureCount": 1,
+      "expectedFigureCount": 1,
+      "inputsUnchanged": true,
+      "elapsedSeconds": 0.301,
+      "response": {
+        "passed": true,
+        "checked": true,
+        "feedback": "That matches the task. Read the output, then try the next practice.",
+        "stdout": "",
+        "error": null
+      },
+      "outputArtifacts": [
+        {
+          "kind": "figure",
+          "alt": "Centrifuge checks",
+          "sha256": "7fcb8172cbac39251396d4cc8b3c47ef55fb7d7ebc8f7e0046904067720977b7",
+          "bytes": 17979,
+          "width": 649,
+          "height": 426,
+          "dpi": [
+            110.00739999999999,
+            110.00739999999999
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

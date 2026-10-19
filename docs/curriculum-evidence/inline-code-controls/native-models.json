@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "chart_states": 444,
+  "model_states": 129,
+  "by_visual": {
+    "scatter": 9,
+    "line": 96,
+    "line-band": 216,
+    "mean-bars": 18,
+    "exact-bars": 18,
+    "point-interval": 24,
+    "histogram": 9,
+    "density": 9,
+    "boxplot": 6,
+    "violin": 12,
+    "facets": 27,
+    "F07": 4,
+    "W07": 5,
+    "C08": 12,
+    "C09": 12,
+    "C08-neighbours": 12,
+    "C11": 9,
+    "C11-gamma": 9,
+    "R08": 12,
+    "C14": 30,
+    "U03": 3,
+    "U06": 6,
+    "U08": 6,
+    "R10-leaf": 9
+  },
+  "oracles": [
+    "Seaborn artist coordinates and heights",
+    "pandas grouped operations",
+    "SciPy density",
+    "sklearn fitted estimators"
+  ]
+}

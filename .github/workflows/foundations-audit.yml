@@ -20,9 +20,18 @@ jobs:
       - run: python -m pip install black==25.1.0
       - run: python scripts/format-foundations.py --check
       - run: node tests/test_foundations_curriculum.mjs
+      - run: node tests/test_foundations_guidance.mjs
       - run: node tests/test_foundations_teaching.mjs
+      - run: node tests/test_foundations_stage_teaching.mjs
+      - run: node tests/test_foundations_operation_visuals.mjs
       - run: node tests/test_foundations_prerequisites.mjs && node tests/test_learning_language.mjs && python scripts/build-learning-identifiers.py --check
       - run: python tests/test_foundations_prerequisites_runtime.py
+      - run: python tests/test_visual_scientific_scenes.py
+      - run: python tests/test_visual_code_geometry.py
+      - run: python tests/test_inline_code_models.py
+      - run: python tests/test_static_table_illustrations.py
+      - run: python tests/test_foundations_operation_visuals.py
+      - run: python tests/test_foundations_concise_examples.py
       - run: node tests/test_foundations_parameters.mjs
       - run: python tests/test_foundations_parameters_runtime.py
       - run: python tests/test_visualise_variety.py
@@ -57,6 +66,7 @@ jobs:
       - run: python tests/test_foundations_cold_start.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_foundations_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --runtime remote --all-solutions
       - run: python tests/test_foundations_teaching_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
+      - run: python tests/test_curriculum_coherence_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }} --output tests/evidence/foundations/coherence
       - run: python tests/test_learning_language_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_foundations_parameters_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}
       - run: python tests/test_workflow_challenges_browser.py --base-url http://127.0.0.1:8000 --engine ${{ matrix.engine }}

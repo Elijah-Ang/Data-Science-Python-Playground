@@ -51,25 +51,24 @@ CHECKS=[
 GUIDED_STEPS='''# 1. Frame the question: which columns exist when the prediction is made?
 feature_names = ...
 target = ...
-X, y = df[feature_names], df[target]
+X, y = ...  # Select the feature table and aligned target.
 # 2. Reserve final rows before exploring or fitting anything.
 X_train, X_test, y_train, y_test = ...
 # 3. Inspect development rows only.
 print(X_train.describe())
 # 4. Put preparation and a simple estimator in a Pipeline.
-candidates = ...
+candidates = ...  # A dictionary with one recipe under the name 'simple'.
 folds = ...
 metric = ...
 # 5. Score a dummy and the candidate on the same training folds.
 reference = ...
 reference_results = cross_validate(reference, X_train, y_train, cv=folds, scoring=metric)
-cv_results = ...
+cv_results = {'simple': cross_validate(candidates['simple'], X_train, y_train, cv=folds, scoring=metric, return_train_score=True)}
 print('Reference validation:', reference_results['test_score'])
-for name, result in cv_results.items():
-    print(name, 'validation:', result['test_score'])
-print('Best candidate minus dummy mean:', max(result['test_score'].mean() for result in cv_results.values()) - reference_results['test_score'].mean())
+print('Candidate validation:', cv_results['simple']['test_score'])
+print('Candidate minus dummy mean:', cv_results['simple']['test_score'].mean() - reference_results['test_score'].mean())
 # 6. Choose from training evidence and inspect training-only errors.
-chosen_name = ...
+chosen_name = 'simple'  # Assess this candidate against the dummy before final evaluation.
 diagnostic_predictions = cross_val_predict(candidates[chosen_name], X_train, y_train, cv=folds)
 print(pd.crosstab(y_train, diagnostic_predictions) if y.nunique() < 10 else pd.DataFrame({'actual': y_train, 'predicted': diagnostic_predictions}))
 # 7. Fix the recipe, fit all training rows, and open final evidence once.
@@ -77,7 +76,7 @@ final_model = clone(candidates[chosen_name]).fit(X_train, y_train)
 final_predictions = ...
 final_score = ...
 print('Final metric:', final_score)
-# 8. In the interpretation field, quote the dummy, validation and final evidence.
+# 8. Inspect the printed dummy, validation and final evidence.
 '''
 
 def guided_starter(solution, classification):
@@ -156,7 +155,7 @@ final_model = clone(candidates[chosen_name]).fit(X_train, y_train)
 final_predictions = final_model.predict(X_test)
 final_score = {'f1_score(y_test, final_predictions, average="macro")' if metric=='f1_macro' else 'balanced_accuracy_score(y_test, final_predictions)' if metric=='balanced_accuracy' else 'mean_absolute_error(y_test, final_predictions)' if metric=='neg_mean_absolute_error' else 'np.sqrt(mean_squared_error(y_test, final_predictions))'}
 print('Final metric:', final_score)
-# 8. Explain the evidence and its limits in the self-review field
+# 8. Inspect the printed evidence; preserve its units and evaluation boundary.
 '''
     # Keep the first complete example readable: introduce only the estimator,
     # splitter and metric this particular workflow actually uses.
@@ -214,7 +213,7 @@ def extend(registry):
       exercise('CLASS180','Rebuild the question, X/y, reference, scoring and final calculation using balanced accuracy. Explain how averaging per-class recall changes the question from macro F1. Identify which class the training-only predictions most often miss.',metric='balanced_accuracy',support='partial_workflow'),
       exercise('SUPPORT120','Use the eight-step Python outline to build an intake-time late-ticket classifier. Explain the cost of missed late tickets and false alerts, exclude closure information, and defend your model and class-balanced metric.',support='guided')]
     leak=[
-      exercise('ENERGY72','Inspect the faulty feature choice below. Before running the repaired example, name when the bill becomes available and explain why its attractive validation score would be misleading. Run the legal workflow and compare with its dummy.',support='worked',bug="feature_names = ['area_m2', 'end_month_bill']  # Why is this not an intake-time prediction?"),
+      exercise('ENERGY72','Inspect the feature choice in Fault to repair. Before running the repaired example, name when the bill becomes available and explain why its attractive validation score would be misleading. Run the legal workflow and compare with its dummy.',support='worked',bug="feature_names = ['area_m2', 'end_month_bill']  # Why is this not an intake-time prediction?"),
       exercise('CLASS180','Repair preprocessing fitted before cross-validation. Put the scaler inside the candidate Pipeline, keep the final test untouched, and explain why scaling all training rows still leaks into each validation fold.',support='partial',bug='scaled = StandardScaler().fit_transform(X_train)\n# cross_validate(LogisticRegression(), scaled, y_train, ...)'),
       exercise('SUPPORT120','A colleague compares three final-test scores and picks the largest. Repair the entire selection workflow on this new ticket question. Explain why the old test score is now exploratory and why a genuinely new test sample is needed for that colleague’s final claim.',bug='for candidate in candidates.values():\n    candidate.fit(X_train, y_train)\n    print(candidate.score(X_test, y_test))\n# Choose the largest test score?')]
     diagnosis=[

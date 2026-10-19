@@ -13,10 +13,14 @@ parser.add_argument('--engine',default='chromium',choices=['chromium','webkit'])
 parser.add_argument('--all-solutions',action='store_true')
 parser.add_argument('--runtime',default='source-local',choices=['source-local','local','remote'])
 parser.add_argument('--start-at',help='Resume a local audit at an activity ID; CI always runs the full list.')
+parser.add_argument('--executable-path',help='Optional local browser binary; CI uses Playwright engines by default.')
 args=parser.parse_args()
 activities=runpy.run_path(str(ROOT/'ml-learning/verticals.py'))['ACTIVITIES']
 if args.all_solutions:
     registry=json.loads(subprocess.check_output(['python3',str(ROOT/'ml-learning/authoring.py')],cwd=ROOT))
+    assert len(registry['cards'])==110
+    assert sum(len(card['exercises']) for card in registry['cards'])==338
+    assert sum(bool(ex.get('modelBridge')) for card in registry['cards'] for ex in card['exercises'])==17
     activities=[e for c in registry['cards'] for e in c['exercises'] if e['kind']=='python']+[c['exercise'] for c in registry['challenges']]
 if args.start_at:
     activities=activities[next(i for i,e in enumerate(activities) if e['id']==args.start_at):]
@@ -26,9 +30,10 @@ seaborn_requirement='seaborn==0.13.2' if args.runtime=='remote' else index_url+'
 config=dict(indexURL=index_url,seaborn=seaborn_requirement,oneR=one_r,source=(ROOT/'ml-learning/fixtures.py').read_text()+'\n'+(ROOT/'ml-learning/runtime.py').read_text())
 files={str(p.relative_to(ROOT)):p.read_text() for p in (ROOT/'data').rglob('*.csv')}
 with sync_playwright() as p:
-    browser=getattr(p,args.engine).launch()
+    browser=getattr(p,args.engine).launch(**({'executable_path':args.executable_path} if args.executable_path else {}))
     page=browser.new_page()
     page.goto(args.base_url+'/learn.html')
+    page.set_default_timeout(180000)
     page.add_script_tag(url=args.base_url+'/worker-bridge.js')
     page.evaluate("""async config=>{
       window.learningGateConfig=config;

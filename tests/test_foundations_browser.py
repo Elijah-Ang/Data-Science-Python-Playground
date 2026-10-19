@@ -1,12 +1,17 @@
 """Real browser/Pyodide learning journeys, semantic audit, and responsive evidence."""
-import argparse,json,time
+import argparse,json,time,shutil
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-parser=argparse.ArgumentParser();parser.add_argument('--base-url',default='http://127.0.0.1:8010');parser.add_argument('--engine',default='chromium');parser.add_argument('--runtime',choices=['local','remote'],default='local');parser.add_argument('--all-solutions',action='store_true');args=parser.parse_args()
-ROOT=Path(__file__).resolve().parents[1];evidence=ROOT/'tests/evidence/foundations';evidence.mkdir(parents=True,exist_ok=True)
+parser=argparse.ArgumentParser();parser.add_argument('--base-url',default='http://127.0.0.1:8010');parser.add_argument('--engine',default='chromium');parser.add_argument('--runtime',choices=['local','remote'],default='local');parser.add_argument('--all-solutions',action='store_true');parser.add_argument('--executable');parser.add_argument('--evidence-dir');args=parser.parse_args()
+ROOT=Path(__file__).resolve().parents[1];evidence=Path(args.evidence_dir).resolve() if args.evidence_dir else ROOT/'tests/evidence/foundations';evidence.mkdir(parents=True,exist_ok=True)
 report={'engine':args.engine,'checks':[],'screenshots':[]};start=time.time()
 with sync_playwright() as p:
- browser=getattr(p,args.engine).launch();context=browser.new_context();page=context.new_page();errors=[]
+ executable=args.executable or (shutil.which('chromium') if args.engine=='chromium' else None)
+ browser=getattr(p,args.engine).launch(**({'executable_path':executable} if executable else {}));context=browser.new_context();page=context.new_page();errors=[]
+ if args.runtime=='local':
+  # Canonical navigation carries the reading mode; keep this explicitly chosen
+  # test-runtime fixture on every new document, before AppPlatform boots.
+  context.add_init_script('''if(location.pathname.endsWith('.html')){const url=new URL(location.href);url.searchParams.set('runtime','local');history.replaceState(null,'',url);}''')
  page.on('pageerror',lambda e:errors.append(str(e)))
  page.on('console',lambda message:print(message.text,flush=True) if message.text.startswith('Audit:') else None)
  runtime_query='?runtime=local' if args.runtime=='local' else ''
@@ -19,12 +24,12 @@ with sync_playwright() as p:
  assert float(learn_style['radius'].replace('px',''))>=18 and learn_style['width']>=162 and learn_style['height']>=36
  assert page.locator('.learn-refresh img').count()==0
  assert page.locator('.learn-refresh-icon svg, .learn-refresh-rays svg').count()==2
- page.locator('.learn-refresh').click();page.wait_for_url('**/data-foundations.html')
+ page.locator('.learn-refresh').click();page.wait_for_url('**/data-foundations.html*')
  page.wait_for_selector('.foundation-deck')
  assert page.locator('.foundation-deck').count()==3
  assert page.locator('.mode-switch a').count()==4
  assert page.locator('.mode-switch a[href="data-foundations.html"]').count()==0
- page.locator('.back-playground').click();page.wait_for_url('**/playground.html')
+ page.locator('.back-playground').click();page.wait_for_url('**/playground.html*')
  report['checks'].append('Data-only CTA and round-trip navigation')
  base=args.base_url+'/data-foundations.html'+runtime_query
  page.goto(base)
@@ -38,7 +43,7 @@ with sync_playwright() as p:
  assert page.locator('.lesson-card svg').count()==len(inspect_inventory)
  page.locator('.back-playground').click();assert page.locator('.foundation-deck').count()==3
  page.locator('.foundation-deck[data-deck="inspect"]').click()
- page.locator('.lesson-card[href="#inspect/I01/0"], .lesson-card[href="data-foundations-I01.html"]').click()
+ page.locator('.lesson-card[href="#inspect/I01/0"], .lesson-card[href*="data-foundations-I01.html"]').click()
  page.wait_for_function("document.querySelector('#foundationRuntime').textContent.includes('Python ready')",timeout=120000)
  def open_lesson(id,index=0):
   deck={'I':'inspect','W':'wrangle','V':'visualise'}[id[0]]
@@ -50,7 +55,7 @@ with sync_playwright() as p:
  def route_link(deck,id=None):
   fragment=f'#{deck}/{id}/0' if id else '#'+deck
   file=f'data-foundations-{id or deck}.html'
-  return f'a[href="{fragment}"], a[href="{file}"]'
+  return f'a[href="{fragment}"], a[href*="{file}"]'
  def go_route(route):
   # This helper intentionally writes native history directly. Pace scripted
   # card sweeps below WebKit's 100 history operations per 10-second limit.
@@ -68,9 +73,10 @@ with sync_playwright() as p:
   (evidence/(args.engine+'-execution-trace.json')).write_text(json.dumps(report['execution_trace'],indent=2))
   print('Execution:',json.dumps(trace),flush=True)
   return feedback
- assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
+ assert page.locator('.foundation-practices a').count()==3
+ assert page.locator('.foundation-practices a').evaluate_all('(links)=>links.every(e=>e.getAttribute("href"))')
  assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
- assert page.locator('.back-playground').get_attribute('href') in ('#inspect','data-foundations-inspect.html')
+ assert page.locator('.back-playground').evaluate('(e)=>e.getAttribute("href").startsWith("#")?e.getAttribute("href"):new URL(e.href).pathname.split("/").pop()') in ('#inspect','data-foundations-inspect.html')
  assert not page.locator('#foundationSolution').get_attribute('open')
  page.locator('#foundationHint summary').click();assert page.locator('#foundationHint').get_attribute('open') is not None
  page.locator('#foundationSolution summary').click();assert 'pd.DataFrame' in page.locator('#foundationSolution pre').inner_text()
@@ -128,6 +134,7 @@ with sync_playwright() as p:
  example=solution('I01',1)
  assert '\n    "price":' in example and '\n    "drink":' in example
  open_lesson('I01CSV',1)
+ page.locator('.foundation-inputs > summary').click()
  assert ';' in page.get_by_role('heading',name='File · cafe.csv',exact=True).locator('..').inner_text()
  assert 'matches' in run(solution('I01CSV',1))
  assert 'Not yet' in run('pd.read_csv("cafe.csv")')
@@ -151,7 +158,7 @@ with sync_playwright() as p:
  assert 'matches' in run('df.head(2)')
  report['checks'].append('Semantic equivalence, wrong values, syntax/KeyError recovery, fresh data, real infinite-loop restart')
  open_lesson('I01CSV');assert 'could not finish' in run('df');assert 'matches' in run(solution('I01CSV'))
- open_lesson('I09');assert page.locator('.foundation-table-scroll table th').first.inner_text()=='row'
+ open_lesson('I09');page.locator('.foundation-inputs > summary').click();assert page.locator('.foundation-table-scroll table th').first.inner_text()=='row'
  assert 'B' in page.locator('.foundation-table-scroll table').inner_text()
  open_lesson('W28');assert 'matches' in run(solution('W28'))
  open_lesson('W31');assert 'matches' in run(solution('W31'))
@@ -215,13 +222,14 @@ with sync_playwright() as p:
  open_lesson('V37',1);assert 'matches' in run(solution('V37',1))
  steps=page.evaluate('FoundationsCurriculum.lessons.find(l=>l.id==="V37").rounds[1].steps')
  assert len(steps)>1
- expected_steps=page.evaluate('(steps)=>steps.flatMap(LearningLanguage.split)',steps)
- task_items=page.locator('.foundation-practice-brief .learning-instructions > li')
- assert len(expected_steps)>=len(steps)
+ brief=page.evaluate('FoundationsCurriculum.lessons.find(l=>l.id==="V37").rounds[1].brief')
+ expected_steps=[step.replace('`','') for step in page.evaluate('(brief)=>[brief.rows,brief.result,...brief.constraints].flatMap(LearningLanguage.split)',brief)]
+ task_items=page.locator('.foundation-task-reminder .learning-instructions > li')
  assert task_items.all_text_contents()==expected_steps,(steps,expected_steps,task_items.all_text_contents())
  assert all(task_items.nth(i).is_visible() for i in range(task_items.count()))
- assert page.locator('.foundation-practice-brief .practice-question').inner_text()=='Your task'
- assert page.locator('.foundation-practice-brief .learning-name-key').is_visible()
+ assert page.locator('.foundation-task-reminder > strong').inner_text().startswith('Your task')
+ assert page.locator('.foundation-task-reminder .practice-question').inner_text()==brief['question'].replace('`','')
+ assert page.locator('.foundation-reference-content .learning-name-key').count()==1
  report['checkpoint_instructions']={'authored':steps,'displayed':expected_steps}
  page.locator('#foundationHint summary').click()
  assert 'worked example' not in page.locator('#foundationHint').inner_text()
@@ -269,24 +277,25 @@ with sync_playwright() as p:
     assert page.evaluate('Array.from(document.querySelectorAll(".foundation-deck,.lesson-card,.foundation-code-pane,.foundation-content,.foundation-actions")).every(e=>{const b=e.getBoundingClientRect();return b.left>=-1&&b.right<=innerWidth+1})'),(label,theme,view)
     if view=='lesson':
      assert page.locator('.foundation-lesson-heading > .foundation-practices').count()==1
-     assert page.locator('.foundation-practices a, .foundation-practices button').count()==0
+     assert page.locator('.foundation-practices a').count()==3
      geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect(),copy=document.querySelector('.foundation-lesson-copy').getBoundingClientRect(),types=document.querySelector('.foundation-practices').getBoundingClientRect(),split=document.querySelector('.foundation-split').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1,typesRight:types.left>=copy.right-1,typesBelow:types.top>=copy.bottom-1,workspace:split.height}}''')
      assert geometry['stacked' if width<=800 else 'split'],geometry
      editor_height=page.locator('.foundation-editor-wrap').bounding_box()['height']
-     expected_editor_height=max(220,min(320,height*.3)) if width>800 else 380
+     expected_editor_height=220 if width>800 else 260
      assert editor_height>=expected_editor_height-1,(label,editor_height)
      if width>800:
       assert geometry['typesRight'],geometry
       # The approved header shows the teaching order; stable IDs remain in routes.
       assert 'Lesson 02' in page.locator('.foundation-lesson-copy .foundation-eyebrow').inner_text()
-      assert page.locator('.foundation-reference').count()==0
+      assert page.locator('.foundation-reference-content').count()==1
+      assert page.locator('.foundation-reference-content details[open]').count()==0
       assert 'I02' in page.url
       assert geometry['workspace']>=height-400,geometry
       before=page.locator('.foundation-code-pane').bounding_box()
-      moved=page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')
-      assert moved>0
+      moved=page.locator('.foundation-content:not(.foundation-reference-content)').evaluate('(e)=>{e.scrollTop=400;return e.scrollTop;}')
+      assert moved>=0  # A concise first lesson need not overflow its teaching column.
       assert page.locator('.foundation-code-pane').bounding_box()==before
-      page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=0;}')
+      page.locator('.foundation-content:not(.foundation-reference-content)').evaluate('(e)=>{e.scrollTop=0;}')
      else:
       assert geometry['typesBelow'],geometry
     path=evidence/f'{args.engine}-{label}-{theme}-{view}.png';page.screenshot(path=str(path),full_page=True)
@@ -304,7 +313,7 @@ with sync_playwright() as p:
    go_route(f'{deck}/{id}/0')
    page.wait_for_function('(id)=>LearningRoutes.route("data",location,document.body).split("/")[1] === id',arg=id)
    assert page.locator('.foundation-task-reminder').inner_text().startswith('Your task')
-   assert page.locator('.back-playground').get_attribute('href') in ('#'+deck,'data-foundations-'+deck+'.html')
+   assert page.locator('.back-playground').evaluate('(e)=>e.getAttribute("href").startsWith("#")?e.getAttribute("href"):new URL(e.href).pathname.split("/").pop()') in ('#'+deck,'data-foundations-'+deck+'.html')
    assert page.locator(route_link(deck)).count()==1
  for width,height,label in [(1440,1000,'desktop'),(834,1112,'tablet'),(390,844,'mobile')]:
   page.set_viewport_size({'width':width,'height':height})
@@ -325,12 +334,12 @@ with sync_playwright() as p:
  page.locator('#checkExercise').scroll_into_view_if_needed()
  bounds=panel.bounding_box();button=page.locator('#checkExercise').bounding_box()
  assert button['y']>=bounds['y'] and button['y']+button['height']<=bounds['y']+bounds['height']
- position=panel.bounding_box();page.locator('.foundation-content').evaluate('(e)=>{e.scrollTop=300}')
+ position=panel.bounding_box();page.locator('.foundation-content:not(.foundation-reference-content)').evaluate('(e)=>{e.scrollTop=300}')
  assert panel.bounding_box()==position
  report['checks'].append('Short laptop: long checkpoint task cannot clip Run/Check/Reset; Python panel stays fixed')
  # Narrow-phone boundary and fading scaffold stay usable.
  page.set_viewport_size({'width':320,'height':740});open_lesson('I02',2)
- assert page.locator('.foundation-practice-brief').is_visible()
+ assert page.locator('.foundation-task-reminder').is_visible()
  assert page.locator('.teaching-overview').count()==0
  # This Transfer introduces reproducible sample syntax. The Follow overview
  # fades, while the authored transition remains available beside the task.

@@ -26,7 +26,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FAMILIES = {"V02", "V16", "V26", "V27", "V28", "V34", "V36"}
 SOURCE_FILES = (
     "foundations/curriculum.js", "foundations/clarity.js",
-    "foundations/variety.js",
+    "foundations/variety.js", "foundations/code-style.js", "foundations/content-guidance.js",
+    "foundations/visualise-guidance.js", "foundations/parameter-guide.js",
     "foundations/workspace.js", "foundations/runtime.py", "table-serialization.py",
 )
 

@@ -1,0 +1,7347 @@
+{
+  "lessons": 37,
+  "actual_follow_views": 148,
+  "interactive_states": 516,
+  "errors": [],
+  "records": [
+    {
+      "id": "V35",
+      "title": "Choose a chart for the question",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V01",
+      "title": "Meet Figure and Axes",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V02",
+      "title": "Finish a chart properly",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V16",
+      "title": "Scatter plot",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "scatter",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V04",
+      "title": "Histogram",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "histogram",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "histogram",
+          "key": "bins",
+          "values": [
+            "2",
+            "4",
+            "8"
+          ],
+          "initial": "4"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V08",
+      "title": "Count categories",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "count-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V18",
+      "title": "Line plot",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "line",
+          "key": "x",
+          "values": [
+            "day",
+            "period"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "None"
+        },
+        {
+          "variant": "line",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V09",
+      "title": "Compare averages",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "mean-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V13",
+      "title": "Raw points",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "strip",
+          "key": "jitter",
+          "values": [
+            "False",
+            "0.15"
+          ],
+          "initial": "0.15"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V11",
+      "title": "Box plot",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "boxplot",
+          "key": "axis",
+          "values": [
+            "x",
+            "y"
+          ],
+          "initial": "y"
+        },
+        {
+          "variant": "boxplot",
+          "key": "column",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V03",
+      "title": "Map variables visually",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "encoding",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "encoding",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "encoding",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V17",
+      "title": "Add dimensions to scatter",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "scatter-dimensions",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "style",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V22",
+      "title": "Correlation heatmap",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V24",
+      "title": "Multiple subplots",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V25",
+      "title": "Legends and palettes",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V26",
+      "title": "Axes and scales",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "log-scale",
+          "key": "choice",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "initial": "log"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V27",
+      "title": "Reference lines",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "references",
+          "key": "choice",
+          "values": [
+            "x",
+            "value",
+            "both"
+          ],
+          "initial": "both"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V29",
+      "title": "Exact precomputed bars",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "exact-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V34",
+      "title": "Save a figure",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V36",
+      "title": "Avoid misleading charts",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V37",
+      "title": "Visualise checkpoint",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V05",
+      "title": "Density curve",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "density",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "density",
+          "key": "bw_adjust",
+          "values": [
+            "0.5",
+            "1",
+            "2"
+          ],
+          "initial": "1"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V06",
+      "title": "ECDF",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V07",
+      "title": "Rug marks",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V10",
+      "title": "Point estimates",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "point-interval",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "point-interval",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "point-interval",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "point-interval",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V12",
+      "title": "Violin plot",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "violin",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "violin",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "violin",
+          "key": "inner",
+          "values": [
+            "quart",
+            "point"
+          ],
+          "initial": "quart"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V14",
+      "title": "Non-overlapping raw points",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "swarm",
+          "key": "size",
+          "values": [
+            "3",
+            "5",
+            "7"
+          ],
+          "initial": "5"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V15",
+      "title": "Choose detail to suit the sample",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V19",
+      "title": "Understand lineplot aggregation",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "line-band",
+          "key": "x",
+          "values": [
+            "day",
+            "cost",
+            "value"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line-band",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line-band",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "line-band",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        },
+        {
+          "variant": "line-band",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V20",
+      "title": "Regression view",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V21",
+      "title": "Residual view",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V23",
+      "title": "Categorical / matrix heatmap",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V28",
+      "title": "Annotate important points",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V30",
+      "title": "Stacked bars",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "stacked",
+          "key": "choice",
+          "values": [
+            "zero",
+            "first"
+          ],
+          "initial": "first"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V31",
+      "title": "Pair relationships",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V32",
+      "title": "Joint relationships",
+      "width": 1440,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V33",
+      "title": "Faceting",
+      "width": 1440,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "facets",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "facets",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "facets",
+          "key": "col",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V35",
+      "title": "Choose a chart for the question",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V01",
+      "title": "Meet Figure and Axes",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V02",
+      "title": "Finish a chart properly",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V16",
+      "title": "Scatter plot",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "scatter",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V04",
+      "title": "Histogram",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "histogram",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "histogram",
+          "key": "bins",
+          "values": [
+            "2",
+            "4",
+            "8"
+          ],
+          "initial": "4"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V08",
+      "title": "Count categories",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "count-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V18",
+      "title": "Line plot",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "line",
+          "key": "x",
+          "values": [
+            "day",
+            "period"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "None"
+        },
+        {
+          "variant": "line",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V09",
+      "title": "Compare averages",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "mean-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V13",
+      "title": "Raw points",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "strip",
+          "key": "jitter",
+          "values": [
+            "False",
+            "0.15"
+          ],
+          "initial": "0.15"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V11",
+      "title": "Box plot",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "boxplot",
+          "key": "axis",
+          "values": [
+            "x",
+            "y"
+          ],
+          "initial": "y"
+        },
+        {
+          "variant": "boxplot",
+          "key": "column",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V03",
+      "title": "Map variables visually",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "encoding",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "encoding",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "encoding",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V17",
+      "title": "Add dimensions to scatter",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "scatter-dimensions",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "style",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V22",
+      "title": "Correlation heatmap",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V24",
+      "title": "Multiple subplots",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V25",
+      "title": "Legends and palettes",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V26",
+      "title": "Axes and scales",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "log-scale",
+          "key": "choice",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "initial": "log"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V27",
+      "title": "Reference lines",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "references",
+          "key": "choice",
+          "values": [
+            "x",
+            "value",
+            "both"
+          ],
+          "initial": "both"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V29",
+      "title": "Exact precomputed bars",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "exact-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V34",
+      "title": "Save a figure",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V36",
+      "title": "Avoid misleading charts",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V37",
+      "title": "Visualise checkpoint",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V05",
+      "title": "Density curve",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "density",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "density",
+          "key": "bw_adjust",
+          "values": [
+            "0.5",
+            "1",
+            "2"
+          ],
+          "initial": "1"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V06",
+      "title": "ECDF",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V07",
+      "title": "Rug marks",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V10",
+      "title": "Point estimates",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "point-interval",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "point-interval",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "point-interval",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "point-interval",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V12",
+      "title": "Violin plot",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "violin",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "violin",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "violin",
+          "key": "inner",
+          "values": [
+            "quart",
+            "point"
+          ],
+          "initial": "quart"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V14",
+      "title": "Non-overlapping raw points",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "swarm",
+          "key": "size",
+          "values": [
+            "3",
+            "5",
+            "7"
+          ],
+          "initial": "5"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V15",
+      "title": "Choose detail to suit the sample",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V19",
+      "title": "Understand lineplot aggregation",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "line-band",
+          "key": "x",
+          "values": [
+            "day",
+            "cost",
+            "value"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line-band",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line-band",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "line-band",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        },
+        {
+          "variant": "line-band",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V20",
+      "title": "Regression view",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V21",
+      "title": "Residual view",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V23",
+      "title": "Categorical / matrix heatmap",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V28",
+      "title": "Annotate important points",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V30",
+      "title": "Stacked bars",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "stacked",
+          "key": "choice",
+          "values": [
+            "zero",
+            "first"
+          ],
+          "initial": "first"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V31",
+      "title": "Pair relationships",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V32",
+      "title": "Joint relationships",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V33",
+      "title": "Faceting",
+      "width": 1440,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "facets",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "facets",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "facets",
+          "key": "col",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V35",
+      "title": "Choose a chart for the question",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V01",
+      "title": "Meet Figure and Axes",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V02",
+      "title": "Finish a chart properly",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V16",
+      "title": "Scatter plot",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "scatter",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V04",
+      "title": "Histogram",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "histogram",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "histogram",
+          "key": "bins",
+          "values": [
+            "2",
+            "4",
+            "8"
+          ],
+          "initial": "4"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V08",
+      "title": "Count categories",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "count-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V18",
+      "title": "Line plot",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "line",
+          "key": "x",
+          "values": [
+            "day",
+            "period"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "None"
+        },
+        {
+          "variant": "line",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V09",
+      "title": "Compare averages",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "mean-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V13",
+      "title": "Raw points",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "strip",
+          "key": "jitter",
+          "values": [
+            "False",
+            "0.15"
+          ],
+          "initial": "0.15"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V11",
+      "title": "Box plot",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "boxplot",
+          "key": "axis",
+          "values": [
+            "x",
+            "y"
+          ],
+          "initial": "y"
+        },
+        {
+          "variant": "boxplot",
+          "key": "column",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V03",
+      "title": "Map variables visually",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "encoding",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "encoding",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "encoding",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V17",
+      "title": "Add dimensions to scatter",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "scatter-dimensions",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "style",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V22",
+      "title": "Correlation heatmap",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V24",
+      "title": "Multiple subplots",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V25",
+      "title": "Legends and palettes",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V26",
+      "title": "Axes and scales",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "log-scale",
+          "key": "choice",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "initial": "log"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V27",
+      "title": "Reference lines",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "references",
+          "key": "choice",
+          "values": [
+            "x",
+            "value",
+            "both"
+          ],
+          "initial": "both"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V29",
+      "title": "Exact precomputed bars",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "exact-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V34",
+      "title": "Save a figure",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V36",
+      "title": "Avoid misleading charts",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V37",
+      "title": "Visualise checkpoint",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V05",
+      "title": "Density curve",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "density",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "density",
+          "key": "bw_adjust",
+          "values": [
+            "0.5",
+            "1",
+            "2"
+          ],
+          "initial": "1"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V06",
+      "title": "ECDF",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V07",
+      "title": "Rug marks",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V10",
+      "title": "Point estimates",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "point-interval",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "point-interval",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "point-interval",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "point-interval",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V12",
+      "title": "Violin plot",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "violin",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "violin",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "violin",
+          "key": "inner",
+          "values": [
+            "quart",
+            "point"
+          ],
+          "initial": "quart"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V14",
+      "title": "Non-overlapping raw points",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "swarm",
+          "key": "size",
+          "values": [
+            "3",
+            "5",
+            "7"
+          ],
+          "initial": "5"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V15",
+      "title": "Choose detail to suit the sample",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V19",
+      "title": "Understand lineplot aggregation",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "line-band",
+          "key": "x",
+          "values": [
+            "day",
+            "cost",
+            "value"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line-band",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line-band",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "line-band",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        },
+        {
+          "variant": "line-band",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V20",
+      "title": "Regression view",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V21",
+      "title": "Residual view",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V23",
+      "title": "Categorical / matrix heatmap",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V28",
+      "title": "Annotate important points",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V30",
+      "title": "Stacked bars",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "stacked",
+          "key": "choice",
+          "values": [
+            "zero",
+            "first"
+          ],
+          "initial": "first"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V31",
+      "title": "Pair relationships",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V32",
+      "title": "Joint relationships",
+      "width": 320,
+      "theme": "light",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V33",
+      "title": "Faceting",
+      "width": 320,
+      "theme": "light",
+      "controls": [
+        {
+          "variant": "facets",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "facets",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "facets",
+          "key": "col",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V35",
+      "title": "Choose a chart for the question",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V01",
+      "title": "Meet Figure and Axes",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V02",
+      "title": "Finish a chart properly",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V16",
+      "title": "Scatter plot",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "scatter",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V04",
+      "title": "Histogram",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "histogram",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "histogram",
+          "key": "bins",
+          "values": [
+            "2",
+            "4",
+            "8"
+          ],
+          "initial": "4"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V08",
+      "title": "Count categories",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "count-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V18",
+      "title": "Line plot",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "line",
+          "key": "x",
+          "values": [
+            "day",
+            "period"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "None"
+        },
+        {
+          "variant": "line",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V09",
+      "title": "Compare averages",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "mean-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "mean-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V13",
+      "title": "Raw points",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "strip",
+          "key": "jitter",
+          "values": [
+            "False",
+            "0.15"
+          ],
+          "initial": "0.15"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V11",
+      "title": "Box plot",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "boxplot",
+          "key": "axis",
+          "values": [
+            "x",
+            "y"
+          ],
+          "initial": "y"
+        },
+        {
+          "variant": "boxplot",
+          "key": "column",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V03",
+      "title": "Map variables visually",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "encoding",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "encoding",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "encoding",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V17",
+      "title": "Add dimensions to scatter",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "scatter-dimensions",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "hue",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "scatter-dimensions",
+          "key": "style",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V22",
+      "title": "Correlation heatmap",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V24",
+      "title": "Multiple subplots",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V25",
+      "title": "Legends and palettes",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V26",
+      "title": "Axes and scales",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "log-scale",
+          "key": "choice",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "initial": "log"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V27",
+      "title": "Reference lines",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "references",
+          "key": "choice",
+          "values": [
+            "x",
+            "value",
+            "both"
+          ],
+          "initial": "both"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V29",
+      "title": "Exact precomputed bars",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "exact-bars",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "exact-bars",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median",
+            "sum"
+          ],
+          "initial": "mean"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V34",
+      "title": "Save a figure",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V36",
+      "title": "Avoid misleading charts",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V37",
+      "title": "Visualise checkpoint",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V05",
+      "title": "Density curve",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "density",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "density",
+          "key": "bw_adjust",
+          "values": [
+            "0.5",
+            "1",
+            "2"
+          ],
+          "initial": "1"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V06",
+      "title": "ECDF",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V07",
+      "title": "Rug marks",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V10",
+      "title": "Point estimates",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "point-interval",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "point-interval",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "point-interval",
+          "key": "estimator",
+          "values": [
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "point-interval",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V12",
+      "title": "Violin plot",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "violin",
+          "key": "x",
+          "values": [
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        },
+        {
+          "variant": "violin",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "violin",
+          "key": "inner",
+          "values": [
+            "quart",
+            "point"
+          ],
+          "initial": "quart"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V14",
+      "title": "Non-overlapping raw points",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "swarm",
+          "key": "size",
+          "values": [
+            "3",
+            "5",
+            "7"
+          ],
+          "initial": "5"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V15",
+      "title": "Choose detail to suit the sample",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V19",
+      "title": "Understand lineplot aggregation",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "line-band",
+          "key": "x",
+          "values": [
+            "day",
+            "cost",
+            "value"
+          ],
+          "initial": "day"
+        },
+        {
+          "variant": "line-band",
+          "key": "y",
+          "values": [
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "line-band",
+          "key": "estimator",
+          "values": [
+            "None",
+            "mean",
+            "median"
+          ],
+          "initial": "mean"
+        },
+        {
+          "variant": "line-band",
+          "key": "marker",
+          "values": [
+            "None",
+            "o",
+            "s",
+            "*",
+            "^",
+            "x"
+          ],
+          "initial": "o"
+        },
+        {
+          "variant": "line-band",
+          "key": "errorbar",
+          "values": [
+            "None",
+            "sd"
+          ],
+          "initial": "sd"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V20",
+      "title": "Regression view",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V21",
+      "title": "Residual view",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V23",
+      "title": "Categorical / matrix heatmap",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V28",
+      "title": "Annotate important points",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V30",
+      "title": "Stacked bars",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "stacked",
+          "key": "choice",
+          "values": [
+            "zero",
+            "first"
+          ],
+          "initial": "first"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "V31",
+      "title": "Pair relationships",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V32",
+      "title": "Joint relationships",
+      "width": 320,
+      "theme": "dark",
+      "controls": [],
+      "passed": true
+    },
+    {
+      "id": "V33",
+      "title": "Faceting",
+      "width": 320,
+      "theme": "dark",
+      "controls": [
+        {
+          "variant": "facets",
+          "key": "x",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "x"
+        },
+        {
+          "variant": "facets",
+          "key": "y",
+          "values": [
+            "x",
+            "value",
+            "cost"
+          ],
+          "initial": "value"
+        },
+        {
+          "variant": "facets",
+          "key": "col",
+          "values": [
+            "None",
+            "group",
+            "shift"
+          ],
+          "initial": "group"
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "states": [
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "light",
+      "key": "bins",
+      "value": "2",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "light",
+      "key": "bins",
+      "value": "4",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "light",
+      "key": "bins",
+      "value": "8",
+      "variant": "histogram"
+    },
+    {
+      "id": "V08",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V08",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "day",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "period",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "o",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "s",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "*",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "^",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "x",
+      "variant": "line"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V13",
+      "width": 1440,
+      "theme": "light",
+      "key": "jitter",
+      "value": "False",
+      "variant": "strip"
+    },
+    {
+      "id": "V13",
+      "width": 1440,
+      "theme": "light",
+      "key": "jitter",
+      "value": "0.15",
+      "variant": "strip"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "light",
+      "key": "axis",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "light",
+      "key": "axis",
+      "value": "y",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "light",
+      "key": "column",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "light",
+      "key": "column",
+      "value": "value",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "light",
+      "key": "column",
+      "value": "cost",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "hue",
+      "value": "None",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "hue",
+      "value": "group",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "light",
+      "key": "hue",
+      "value": "shift",
+      "variant": "encoding"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "hue",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "hue",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "hue",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "style",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "style",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "light",
+      "key": "style",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V26",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "linear",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V26",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "log",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V27",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "x",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "value",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "both",
+      "variant": "references"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "light",
+      "key": "bw_adjust",
+      "value": "0.5",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "light",
+      "key": "bw_adjust",
+      "value": "1",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "light",
+      "key": "bw_adjust",
+      "value": "2",
+      "variant": "density"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "inner",
+      "value": "quart",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "light",
+      "key": "inner",
+      "value": "point",
+      "variant": "violin"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "theme": "light",
+      "key": "size",
+      "value": "3",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "theme": "light",
+      "key": "size",
+      "value": "5",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "theme": "light",
+      "key": "size",
+      "value": "7",
+      "variant": "swarm"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "day",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "o",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "s",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "*",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "^",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "marker",
+      "value": "x",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "line-band"
+    },
+    {
+      "id": "V30",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "zero",
+      "variant": "stacked"
+    },
+    {
+      "id": "V30",
+      "width": 1440,
+      "theme": "light",
+      "key": "choice",
+      "value": "first",
+      "variant": "stacked"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "col",
+      "value": "None",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "col",
+      "value": "group",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "light",
+      "key": "col",
+      "value": "shift",
+      "variant": "facets"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "dark",
+      "key": "bins",
+      "value": "2",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "dark",
+      "key": "bins",
+      "value": "4",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 1440,
+      "theme": "dark",
+      "key": "bins",
+      "value": "8",
+      "variant": "histogram"
+    },
+    {
+      "id": "V08",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V08",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "day",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "period",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "o",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "s",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "*",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "^",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "x",
+      "variant": "line"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V13",
+      "width": 1440,
+      "theme": "dark",
+      "key": "jitter",
+      "value": "False",
+      "variant": "strip"
+    },
+    {
+      "id": "V13",
+      "width": 1440,
+      "theme": "dark",
+      "key": "jitter",
+      "value": "0.15",
+      "variant": "strip"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "dark",
+      "key": "axis",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "dark",
+      "key": "axis",
+      "value": "y",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "dark",
+      "key": "column",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "dark",
+      "key": "column",
+      "value": "value",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 1440,
+      "theme": "dark",
+      "key": "column",
+      "value": "cost",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "hue",
+      "value": "None",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "hue",
+      "value": "group",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "theme": "dark",
+      "key": "hue",
+      "value": "shift",
+      "variant": "encoding"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "hue",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "hue",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "hue",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "style",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "style",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "theme": "dark",
+      "key": "style",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V26",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "linear",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V26",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "log",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V27",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "x",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "value",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "both",
+      "variant": "references"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "dark",
+      "key": "bw_adjust",
+      "value": "0.5",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "dark",
+      "key": "bw_adjust",
+      "value": "1",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "theme": "dark",
+      "key": "bw_adjust",
+      "value": "2",
+      "variant": "density"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "inner",
+      "value": "quart",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "theme": "dark",
+      "key": "inner",
+      "value": "point",
+      "variant": "violin"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "theme": "dark",
+      "key": "size",
+      "value": "3",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "theme": "dark",
+      "key": "size",
+      "value": "5",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "theme": "dark",
+      "key": "size",
+      "value": "7",
+      "variant": "swarm"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "day",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "o",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "s",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "*",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "^",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "marker",
+      "value": "x",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "line-band"
+    },
+    {
+      "id": "V30",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "zero",
+      "variant": "stacked"
+    },
+    {
+      "id": "V30",
+      "width": 1440,
+      "theme": "dark",
+      "key": "choice",
+      "value": "first",
+      "variant": "stacked"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "col",
+      "value": "None",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "col",
+      "value": "group",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 1440,
+      "theme": "dark",
+      "key": "col",
+      "value": "shift",
+      "variant": "facets"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "light",
+      "key": "bins",
+      "value": "2",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "light",
+      "key": "bins",
+      "value": "4",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "light",
+      "key": "bins",
+      "value": "8",
+      "variant": "histogram"
+    },
+    {
+      "id": "V08",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V08",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "day",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "period",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "o",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "s",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "*",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "^",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "x",
+      "variant": "line"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V13",
+      "width": 320,
+      "theme": "light",
+      "key": "jitter",
+      "value": "False",
+      "variant": "strip"
+    },
+    {
+      "id": "V13",
+      "width": 320,
+      "theme": "light",
+      "key": "jitter",
+      "value": "0.15",
+      "variant": "strip"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "light",
+      "key": "axis",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "light",
+      "key": "axis",
+      "value": "y",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "light",
+      "key": "column",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "light",
+      "key": "column",
+      "value": "value",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "light",
+      "key": "column",
+      "value": "cost",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "hue",
+      "value": "None",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "hue",
+      "value": "group",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "light",
+      "key": "hue",
+      "value": "shift",
+      "variant": "encoding"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "hue",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "hue",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "hue",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "style",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "style",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "light",
+      "key": "style",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V26",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "linear",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V26",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "log",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V27",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "x",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "value",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "both",
+      "variant": "references"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "light",
+      "key": "bw_adjust",
+      "value": "0.5",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "light",
+      "key": "bw_adjust",
+      "value": "1",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "light",
+      "key": "bw_adjust",
+      "value": "2",
+      "variant": "density"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "group",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "shift",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "inner",
+      "value": "quart",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "light",
+      "key": "inner",
+      "value": "point",
+      "variant": "violin"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "theme": "light",
+      "key": "size",
+      "value": "3",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "theme": "light",
+      "key": "size",
+      "value": "5",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "theme": "light",
+      "key": "size",
+      "value": "7",
+      "variant": "swarm"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "day",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "o",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "s",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "*",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "^",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "marker",
+      "value": "x",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "light",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "line-band"
+    },
+    {
+      "id": "V30",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "zero",
+      "variant": "stacked"
+    },
+    {
+      "id": "V30",
+      "width": 320,
+      "theme": "light",
+      "key": "choice",
+      "value": "first",
+      "variant": "stacked"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "x",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "y",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "col",
+      "value": "None",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "col",
+      "value": "group",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "light",
+      "key": "col",
+      "value": "shift",
+      "variant": "facets"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "dark",
+      "key": "bins",
+      "value": "2",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "dark",
+      "key": "bins",
+      "value": "4",
+      "variant": "histogram"
+    },
+    {
+      "id": "V04",
+      "width": 320,
+      "theme": "dark",
+      "key": "bins",
+      "value": "8",
+      "variant": "histogram"
+    },
+    {
+      "id": "V08",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V08",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "count-bars"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "day",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "period",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "None",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "o",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "s",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "*",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "^",
+      "variant": "line"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "x",
+      "variant": "line"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V09",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "mean-bars"
+    },
+    {
+      "id": "V13",
+      "width": 320,
+      "theme": "dark",
+      "key": "jitter",
+      "value": "False",
+      "variant": "strip"
+    },
+    {
+      "id": "V13",
+      "width": 320,
+      "theme": "dark",
+      "key": "jitter",
+      "value": "0.15",
+      "variant": "strip"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "dark",
+      "key": "axis",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "dark",
+      "key": "axis",
+      "value": "y",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "dark",
+      "key": "column",
+      "value": "x",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "dark",
+      "key": "column",
+      "value": "value",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V11",
+      "width": 320,
+      "theme": "dark",
+      "key": "column",
+      "value": "cost",
+      "variant": "boxplot"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "hue",
+      "value": "None",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "hue",
+      "value": "group",
+      "variant": "encoding"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "theme": "dark",
+      "key": "hue",
+      "value": "shift",
+      "variant": "encoding"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "hue",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "hue",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "hue",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "style",
+      "value": "None",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "style",
+      "value": "group",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "theme": "dark",
+      "key": "style",
+      "value": "shift",
+      "variant": "scatter-dimensions"
+    },
+    {
+      "id": "V26",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "linear",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V26",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "log",
+      "variant": "log-scale"
+    },
+    {
+      "id": "V27",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "x",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "value",
+      "variant": "references"
+    },
+    {
+      "id": "V27",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "both",
+      "variant": "references"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "sum",
+      "variant": "exact-bars"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "dark",
+      "key": "bw_adjust",
+      "value": "0.5",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "dark",
+      "key": "bw_adjust",
+      "value": "1",
+      "variant": "density"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "theme": "dark",
+      "key": "bw_adjust",
+      "value": "2",
+      "variant": "density"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "point-interval"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "group",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "shift",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "inner",
+      "value": "quart",
+      "variant": "violin"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "theme": "dark",
+      "key": "inner",
+      "value": "point",
+      "variant": "violin"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "theme": "dark",
+      "key": "size",
+      "value": "3",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "theme": "dark",
+      "key": "size",
+      "value": "5",
+      "variant": "swarm"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "theme": "dark",
+      "key": "size",
+      "value": "7",
+      "variant": "swarm"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "day",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "mean",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "estimator",
+      "value": "median",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "o",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "s",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "*",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "^",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "marker",
+      "value": "x",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "None",
+      "variant": "line-band"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "theme": "dark",
+      "key": "errorbar",
+      "value": "sd",
+      "variant": "line-band"
+    },
+    {
+      "id": "V30",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "zero",
+      "variant": "stacked"
+    },
+    {
+      "id": "V30",
+      "width": 320,
+      "theme": "dark",
+      "key": "choice",
+      "value": "first",
+      "variant": "stacked"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "x",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "x",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "value",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "y",
+      "value": "cost",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "col",
+      "value": "None",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "col",
+      "value": "group",
+      "variant": "facets"
+    },
+    {
+      "id": "V33",
+      "width": 320,
+      "theme": "dark",
+      "key": "col",
+      "value": "shift",
+      "variant": "facets"
+    }
+  ],
+  "screenshots": [
+    {
+      "id": "V16",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V16-1440.png"
+    },
+    {
+      "id": "V08",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V08-1440.png"
+    },
+    {
+      "id": "V18",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V18-1440.png"
+    },
+    {
+      "id": "V13",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V13-1440.png"
+    },
+    {
+      "id": "V03",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V03-1440.png"
+    },
+    {
+      "id": "V17",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V17-1440.png"
+    },
+    {
+      "id": "V26",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V26-1440.png"
+    },
+    {
+      "id": "V29",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V29-1440.png"
+    },
+    {
+      "id": "V05",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V05-1440.png"
+    },
+    {
+      "id": "V10",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V10-1440.png"
+    },
+    {
+      "id": "V12",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V12-1440.png"
+    },
+    {
+      "id": "V14",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V14-1440.png"
+    },
+    {
+      "id": "V19",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V19-1440.png"
+    },
+    {
+      "id": "V30",
+      "width": 1440,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V30-1440.png"
+    },
+    {
+      "id": "V16",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V16-320.png"
+    },
+    {
+      "id": "V08",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V08-320.png"
+    },
+    {
+      "id": "V18",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V18-320.png"
+    },
+    {
+      "id": "V13",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V13-320.png"
+    },
+    {
+      "id": "V03",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V03-320.png"
+    },
+    {
+      "id": "V17",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V17-320.png"
+    },
+    {
+      "id": "V26",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V26-320.png"
+    },
+    {
+      "id": "V29",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V29-320.png"
+    },
+    {
+      "id": "V05",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V05-320.png"
+    },
+    {
+      "id": "V10",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V10-320.png"
+    },
+    {
+      "id": "V12",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V12-320.png"
+    },
+    {
+      "id": "V14",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V14-320.png"
+    },
+    {
+      "id": "V19",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V19-320.png"
+    },
+    {
+      "id": "V30",
+      "width": 320,
+      "path": "/workspace/Data-Science-Python-Playground/tests/evidence/stage-visuals/visualise/V30-320.png"
+    }
+  ],
+  "contentId": "06e8df16ea12cba465102924d30c1e187fa384a5e3cb74f7a5cf317adb8b45fc",
+  "mobile_presentation": "Charts retain labelled local horizontal panning for readable text; phones do not initially show every plot in full.",
+  "source_sha256": "a433604f1556b447c35920a90c57b3d99ef4250ff6984feb69cf47b777333250"
+}

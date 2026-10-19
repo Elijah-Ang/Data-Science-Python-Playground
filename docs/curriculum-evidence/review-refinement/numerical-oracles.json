@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-15T05:09:35.705794+00:00",
+  "runtime": {
+    "python": "3.10.21",
+    "numpy": "1.26.4",
+    "pandas": "2.2.0",
+    "scikitLearn": "1.4.2",
+    "scipy": "1.12.0",
+    "matplotlib": "3.5.2"
+  },
+  "dataScenes": {
+    "scenes": 26,
+    "oracles": [
+      "SciPy Gaussian KDE",
+      "NumPy histogram/quantiles/correlation",
+      "pandas sample SD/aggregation",
+      "sklearn least squares"
+    ],
+    "passed": true
+  },
+  "additionalModelFamilies": {
+    "states": 29,
+    "families": 8,
+    "passed": true,
+    "checks": [
+      "native fitted coordinates/centroids",
+      "actual Ward heights and horizontal cuts",
+      "fixed observation identities",
+      "training-only neural scale",
+      "real loss curves and held-away macro F1",
+      "code/figure settings"
+    ]
+  },
+  "coreModelOracle": {
+    "command": "python tests/test_teaching_visual_models.py",
+    "result": "votes, tree paths, linear SVM weights, training-only polynomial curves and every PCA score agree with scikit-learn fits.\nEvery RBF decision probe/support vector and tree-complexity prediction agrees with an independent sklearn fit.\nInteger bins, explicit interval widths and all seven listed estimators produce the stated Python results."
+  },
+  "fittedFixtures": "Validated fitted K-Means assignments/centroids, Ward merges/cuts and network losses/validation for every control state."
+}

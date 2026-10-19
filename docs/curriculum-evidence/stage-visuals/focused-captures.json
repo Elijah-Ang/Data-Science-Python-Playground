@@ -1,0 +1,21 @@
+{
+  "buildContentId": "49bebfce31415248f7f80cb29b8ca4f84976378dafea59abe01156fcfd5266e1",
+  "captures": [
+    {
+      "route": "#wrangle/W02/0",
+      "width": 1440,
+      "height": 1600,
+      "theme": "light",
+      "path": "screenshots/W02-interactive-1440.png",
+      "scope": "Interactive illustration within actual lesson page"
+    },
+    {
+      "route": "#wrangle/W02/0",
+      "width": 390,
+      "height": 1800,
+      "theme": "light",
+      "path": "screenshots/W02-interactive-390.png",
+      "scope": "Interactive illustration within actual lesson page"
+    }
+  ]
+}

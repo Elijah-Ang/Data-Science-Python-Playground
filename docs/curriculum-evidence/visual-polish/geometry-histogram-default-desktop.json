@@ -1,0 +1,192 @@
+{
+  "ok": true,
+  "scene": "histogram",
+  "state": "default",
+  "viewport": "desktop",
+  "observed_viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "usable_viewport": {
+    "left": 0,
+    "top": 0,
+    "right": 1440,
+    "bottom": 892
+  },
+  "declared_viewport": {
+    "id": "desktop",
+    "width": 1440,
+    "height": 900,
+    "full_visual": true
+  },
+  "scene_rect": {
+    "left": 55,
+    "top": 299.046875,
+    "right": 665.9375,
+    "bottom": 601.9375,
+    "width": 610.9375,
+    "height": 302.890625
+  },
+  "essential": [
+    {
+      "id": "4 bins. Heights count observations in each interval.",
+      "rect": {
+        "left": 55,
+        "top": 299.046875,
+        "right": 665.9375,
+        "bottom": 587.9375,
+        "width": 610.9375,
+        "height": 288.890625
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 120.41740417480469,
+        "top": 314.15045166015625,
+        "right": 162.57366943359375,
+        "bottom": 332.15045166015625,
+        "width": 42.15626525878906,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 85.28794860839844,
+        "top": 513.2174072265625,
+        "right": 93.72544860839844,
+        "bottom": 531.2174072265625,
+        "width": 8.4375,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 85.28794860839844,
+        "top": 337.5700988769531,
+        "right": 93.72544860839844,
+        "bottom": 355.5700988769531,
+        "width": 8.4375,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 125.1013412475586,
+        "top": 383.2384033203125,
+        "right": 133.53884887695312,
+        "bottom": 401.2384033203125,
+        "width": 8.437507629394531,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 120.41740417480469,
+        "top": 534.2951049804688,
+        "right": 128.8549041748047,
+        "bottom": 552.2950439453125,
+        "width": 8.4375,
+        "height": 17.99993896484375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 245.12701416015625,
+        "top": 461.30389404296875,
+        "right": 253.56451416015625,
+        "bottom": 479.30389404296875,
+        "width": 8.4375,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 240.44308471679688,
+        "top": 534.2951049804688,
+        "right": 274.1618347167969,
+        "bottom": 552.2950439453125,
+        "width": 33.71875,
+        "height": 17.99993896484375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 365.1526794433594,
+        "top": 500.33660888671875,
+        "right": 373.5902099609375,
+        "bottom": 518.3366088867188,
+        "width": 8.437530517578125,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 360.46875,
+        "top": 534.2951049804688,
+        "right": 385.765625,
+        "bottom": 552.2950439453125,
+        "width": 25.296875,
+        "height": 17.99993896484375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 485.1783447265625,
+        "top": 480.82025146484375,
+        "right": 493.6158752441406,
+        "bottom": 498.82025146484375,
+        "width": 8.437530517578125,
+        "height": 18
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 480.4944152832031,
+        "top": 534.2951049804688,
+        "right": 522.650634765625,
+        "bottom": 552.2950439453125,
+        "width": 42.156219482421875,
+        "height": 17.99993896484375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 582.9553833007812,
+        "top": 534.2951049804688,
+        "right": 599.8147583007812,
+        "bottom": 552.2950439453125,
+        "width": 16.859375,
+        "height": 17.99993896484375
+      }
+    },
+    {
+      "id": "text",
+      "rect": {
+        "left": 547.825927734375,
+        "top": 561.2276611328125,
+        "right": 589.9821166992188,
+        "bottom": 579.2276611328125,
+        "width": 42.15618896484375,
+        "height": 18
+      }
+    }
+  ],
+  "scrollers": [],
+  "overlaps": [],
+  "text": [],
+  "issues": [],
+  "notes": [],
+  "limits": "Geometry observations only. Review screenshots and motion for legibility, meaning, scientific truth, intentional composition, and visual quality. Declared essentials must be visible unless a selector explicitly allows dormant elements; hidden alternate roots and incidental marks are ignored."
+}
