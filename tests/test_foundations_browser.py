@@ -73,8 +73,9 @@ with sync_playwright() as p:
   (evidence/(args.engine+'-execution-trace.json')).write_text(json.dumps(report['execution_trace'],indent=2))
   print('Execution:',json.dumps(trace),flush=True)
   return feedback
- assert page.locator('.foundation-practices a').count()==3
- assert page.locator('.foundation-practices a').evaluate_all('(links)=>links.every(e=>e.getAttribute("href"))')
+ assert page.locator('.foundation-practices > ol > li').count()==3
+ assert page.locator('.foundation-practices > ol > li > strong').all_text_contents()==['Follow','Change','Transfer']
+ assert page.locator('.foundation-practices a').count()==0
  assert page.locator('.foundation-practices [aria-current="step"]').inner_text().startswith('Follow')
  assert page.locator('.back-playground').evaluate('(e)=>e.getAttribute("href").startsWith("#")?e.getAttribute("href"):new URL(e.href).pathname.split("/").pop()') in ('#inspect','data-foundations-inspect.html')
  assert not page.locator('#foundationSolution').get_attribute('open')
@@ -134,8 +135,10 @@ with sync_playwright() as p:
  example=solution('I01',1)
  assert '\n    "price":' in example and '\n    "drink":' in example
  open_lesson('I01CSV',1)
- page.locator('.foundation-inputs > summary').click()
- assert ';' in page.get_by_role('heading',name='File · cafe.csv',exact=True).locator('..').inner_text()
+ assert page.locator('.foundation-data-preview table').is_visible()
+ assert page.locator('.foundation-inputs').count()==0
+ assert 'cafe.csv' in page.locator('.foundation-task-reminder').inner_text()
+ assert ';' in page.evaluate('FoundationsCurriculum.lessons.find(l=>l.id==="I01CSV").rounds[1].files["cafe.csv"]')
  assert 'matches' in run(solution('I01CSV',1))
  assert 'Not yet' in run('pd.read_csv("cafe.csv")')
  open_lesson('I01CSV',2);assert 'matches' in run(solution('I01CSV',2))
@@ -158,7 +161,7 @@ with sync_playwright() as p:
  assert 'matches' in run('df.head(2)')
  report['checks'].append('Semantic equivalence, wrong values, syntax/KeyError recovery, fresh data, real infinite-loop restart')
  open_lesson('I01CSV');assert 'could not finish' in run('df');assert 'matches' in run(solution('I01CSV'))
- open_lesson('I09');page.locator('.foundation-inputs > summary').click();assert page.locator('.foundation-table-scroll table th').first.inner_text()=='row'
+ open_lesson('I09');assert page.locator('.foundation-data-preview').is_visible();assert page.locator('.foundation-table-scroll table th').first.inner_text()=='row'
  assert 'B' in page.locator('.foundation-table-scroll table').inner_text()
  open_lesson('W28');assert 'matches' in run(solution('W28'))
  open_lesson('W31');assert 'matches' in run(solution('W31'))
@@ -229,7 +232,7 @@ with sync_playwright() as p:
  assert all(task_items.nth(i).is_visible() for i in range(task_items.count()))
  assert page.locator('.foundation-task-reminder > strong').inner_text().startswith('Your task')
  assert page.locator('.foundation-task-reminder .practice-question').inner_text()==brief['question'].replace('`','')
- assert page.locator('.foundation-reference-content .learning-name-key').count()==1
+ assert page.locator('.foundation-reference-content .learning-name-key').count()==0
  report['checkpoint_instructions']={'authored':steps,'displayed':expected_steps}
  page.locator('#foundationHint summary').click()
  assert 'worked example' not in page.locator('#foundationHint').inner_text()
@@ -277,7 +280,7 @@ with sync_playwright() as p:
     assert page.evaluate('Array.from(document.querySelectorAll(".foundation-deck,.lesson-card,.foundation-code-pane,.foundation-content,.foundation-actions")).every(e=>{const b=e.getBoundingClientRect();return b.left>=-1&&b.right<=innerWidth+1})'),(label,theme,view)
     if view=='lesson':
      assert page.locator('.foundation-lesson-heading > .foundation-practices').count()==1
-     assert page.locator('.foundation-practices a').count()==3
+     assert page.locator('.foundation-practices > ol > li').count()==3
      geometry=page.evaluate('''()=>{const a=document.querySelector('.foundation-content').getBoundingClientRect(),b=document.querySelector('.foundation-code-pane').getBoundingClientRect(),copy=document.querySelector('.foundation-lesson-copy').getBoundingClientRect(),types=document.querySelector('.foundation-practices').getBoundingClientRect(),split=document.querySelector('.foundation-split').getBoundingClientRect();return {stacked:b.top>=a.bottom-1,split:b.left>=a.right-1,typesRight:types.left>=copy.right-1,typesBelow:types.top>=copy.bottom-1,workspace:split.height}}''')
      assert geometry['stacked' if width<=800 else 'split'],geometry
      editor_height=page.locator('.foundation-editor-wrap').bounding_box()['height']
@@ -345,7 +348,7 @@ with sync_playwright() as p:
  # fades, while the authored transition remains available beside the task.
  assert page.locator('.teaching-transition').is_visible()
  assert page.locator('.teaching-transition .foundation-syntax').count()==1
- assert page.locator('.foundation-revisit a').is_visible()
+ assert page.locator('.foundation-navigation a').first.inner_text().startswith('← Previous practice')
  assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1')
  page.locator('.foundation-skip').focus();page.locator('.foundation-skip').click()
  assert current_route()=='inspect/I02/2'
