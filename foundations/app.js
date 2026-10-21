@@ -64,9 +64,44 @@ function pythonPane(round,controlHelp,challenge=false){
  <div class="foundation-runtime" id="foundationRuntime" role="status">${esc(runtimeStatus)}</div><p class="foundation-feedback" id="foundationFeedback" role="status"></p>
  ${challenge?'<section id="challengeResults" class="challenge-results" aria-label="Check results" aria-live="polite"></section>':''}<div class="foundation-output" id="foundationOutput" role="region" aria-label="Python output"><h3>Output</h3><p class="empty-output">Run your code to see what Python returns.</p></div></section>`;
 }
+// Display-only lesson corrections. Do not mutate the reviewed curriculum:
+// complete exercise objects are cryptographically attested by the tests.
+const coherencePreparation={
+  'V17-3':[
+    'First create `plotted` as a copy of `df` using `df.copy()`.',
+    'In `plotted`, add a `speed_kmh` column: divide `distance_km` by `minutes`, then multiply by 60 to convert km/min into km/h.',
+    'Pass `plotted` as the chart data so marker size can use your new speed column.'
+  ],
+  'V18-3':[
+    'Sort the whole table by `hour` before choosing the baseline; the input order is not chronological.',
+    'In the sorted table, subtract the earliest recorded reading from every reading to create `change`.'
+  ],
+  'V13-3':[
+    'Calculate each `bench` median from the original readings and sort those medians from lowest to highest.',
+    'Use the resulting ordered bench labels for `order`; keep every original reading point.'
+  ],
+  'V29-3':[
+    'Sum `resolved` and `received` separately for each team over all its shifts.',
+    'Compute each team’s overall percentage from its two totals, then draw those values.'
+  ]
+};
+const coachedGaps={
+  'V03-1':['hue','habitat'],
+  'V17-1':['style','instrument'],
+  'V25-1':['palette','colorblind']
+};
+function coachedStarter(round,code){
+  const focus=coachedGaps[round.id];if(!focus)return code;
+  const [parameter,value]=focus;
+  const method=round.solution.match(/\bsns\.(\w+)\s*\(/);
+  if(!method||!/\bsns\.____\s*\(/.test(code))return code;
+  const argument=new RegExp('\\b'+parameter+'\\s*=\\s*"'+value+'"');
+  if(!argument.test(code))return code;
+  return code.replace(/\bsns\.____\s*\(/,'sns.'+method[1]+'(').replace(argument,parameter+'=____');
+}
 function taskMarkup(round){
  const brief=round.brief;
- return (brief?`<h3 class="practice-question">${LearningLanguage.text(brief.question,round.id,true)}</h3>`+LearningLanguage.steps([brief.rows,...(brief.preparation||[]),brief.result,...brief.constraints],round.id):LearningLanguage.steps(round.steps?.length?round.steps:round.task,round.id));
+ return (brief?`<h3 class="practice-question">${LearningLanguage.text(brief.question,round.id,true)}</h3>`+LearningLanguage.steps([brief.rows,...(coherencePreparation[round.id]||[]),brief.result,...brief.constraints],round.id):LearningLanguage.steps(round.steps?.length?round.steps:round.task,round.id));
 }
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{
@@ -116,7 +151,7 @@ function bindEditor(){
  const editor=document.getElementById('foundationEditor'),{round}=view;
  const lineNumbers=document.querySelector('.foundation-line-numbers'),highlight=document.getElementById('foundationHighlight');
  document.querySelector('.foundation-editor-jump')?.addEventListener('click',()=>{editor.scrollIntoView({block:'start',behavior:'instant'});editor.focus({preventScroll:true});});
- editor.value=view.challenge?view.challenge.starter:FoundationWorkspace.code(C,round);
+ editor.value=view.challenge?view.challenge.starter:coachedStarter(round,FoundationWorkspace.code(C,round));
  document.getElementById('jumpToWork').onclick=()=>{const marker=editor.value.indexOf('# Your work\n');const position=marker<0?0:marker+'# Your work\n'.length;editor.focus();editor.setSelectionRange(position,position);editor.scrollTop=editor.value.slice(0,position).split('\n').length*parseFloat(getComputedStyle(editor).lineHeight)-40;editor.dispatchEvent(new Event('scroll'));};
  function numbers(){lineNumbers.textContent=editor.value.split('\n').map((_,i)=>i+1).join('\n');highlight.innerHTML=highlightPython(editor.value)+'\n';syncScroll();}
  function syncScroll(){if(!editor.isConnected)return;lineNumbers.scrollTop=editor.scrollTop;highlight.scrollTop=editor.scrollTop;highlight.scrollLeft=editor.scrollLeft;}
