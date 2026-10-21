@@ -100,7 +100,21 @@
   function syntax(lesson,round){
     const params=new Set([...(round?.parameterTeaching?.introduces||[]),...(round?.parameterTeaching?.extends||[])].map(name=>name.split('.').at(-1)));
     const current=round?.syntaxGuidance?.current || (lesson.syntax||[]).filter(([code])=>!(lesson.syntaxLater||[]).includes(code));
-    const essential=current.filter(p=>!params.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1]));
+    // Explain what the current exercise uses, not a nearby contrast that
+    // belongs in the optional reference (e.g. fixed color vs mapped hue).
+    const usedKeyword=p=>{
+      const code=Array.isArray(p)?p[0]:p.code||'';
+      const match=code.match(/^\s*(hue|color|style|size|palette|bins|jitter|estimator|errorbar|ci|capsize|annot|fmt)\s*=/);
+      return !match||new RegExp('\\b'+match[1]+'\\s*=').test(round?.solution||'');
+    };
+    let essential=current.filter(p=>!params.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1])&&usedKeyword(p));
+    // 'hue' is explicitly introduced by V03, not a familiar parameter.
+    // Earlier filtering mistakenly hid hue and showed color="blue" instead.
+    if(lesson.id==='V03'&&round?.id==='V03-1'){
+      const taught=[...current,...(round.syntaxGuidance?.reminders||[]),...(lesson.syntax||[])].find(p=>/^\s*hue\s*=/.test(Array.isArray(p)?p[0]:p.code||''));
+      if(!taught)throw new Error('V03 Follow needs the hue explanation');
+      essential=[taught,...essential.filter(p=>!/^\s*(?:hue|color)\s*=/.test(Array.isArray(p)?p[0]:p.code||''))];
+    }
     return essential.length?'<h3 class="teaching-syntax-heading">What the syntax does</h3><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,essential)+'</dl>':'';
   }
   function syntaxReference(lesson,round){
