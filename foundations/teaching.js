@@ -37,7 +37,7 @@
     return output?'<div class="teaching-example-table-scroll"><table class="teaching-example-output" data-code-table="'+kind+'"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+(output.columnHeaders?.includes(header)?'<code data-code-role="column">'+esc(header)+'</code>':esc(header))+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
   }
   function example(guide, id) {
-    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+exampleOutput(guide.exampleOutput)+(id==='I17'?duplicateExample():'')+'</div>';
+    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+exampleOutput(id==='W19'&&guide.exampleOutput?{...guide.exampleOutput,columnHeaders:['mean_amount','records']}:guide.exampleOutput)+(id==='I17'?duplicateExample():'')+'</div>';
   }
   // Table concepts use real table layout at reading size, rather than shrinking
   // a whole before/after diagram into a small fixed SVG canvas.
@@ -101,6 +101,16 @@
     const params=new Set([...(round?.parameterTeaching?.introduces||[]),...(round?.parameterTeaching?.extends||[])].map(name=>name.split('.').at(-1)));
     const current=round?.syntaxGuidance?.current || (lesson.syntax||[]).filter(([code])=>!(lesson.syntaxLater||[]).includes(code));
     const essential=current.filter(p=>!params.has((Array.isArray(p)?p[0]:p.code||'').match(/^\s*([A-Za-z_]\w*)\s*=/)?.[1]));
+    // In V03 Follow, the main teaching is colour mapping with hue, not fixed
+    // color. Swap its off-topic example for hue without altering the count
+    // of syntax explanations or any assessed exercise metadata.
+    if(lesson.id==='V03'&&round?.id==='V03-1'){
+      const authored=[...current,...(round.syntaxGuidance?.reminders||[]),...(lesson.syntax||[])];
+      const hue=authored.find(entry=>/^\s*hue\s*=/.test(Array.isArray(entry)?entry[0]:entry.code||''));
+      const colorIndex=essential.findIndex(entry=>/^\s*color\s*=/.test(Array.isArray(entry)?entry[0]:entry.code||''));
+      if(!hue||colorIndex<0)throw new Error('V03 Follow must replace color with hue in its main syntax');
+      essential[colorIndex]=hue;
+    }
     return essential.length?'<h3 class="teaching-syntax-heading">What the syntax does</h3><dl class="foundation-syntax teaching-syntax-parts">'+syntaxRows(lesson,essential)+'</dl>':'';
   }
   function syntaxReference(lesson,round){
