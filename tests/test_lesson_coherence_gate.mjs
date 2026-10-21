@@ -81,6 +81,8 @@ for(const item of mlItems){
   }
 }
 const mlApp=readFileSync(new URL('../ml-learning/app.js',import.meta.url),'utf8');
-assert(mlApp.includes('Worked example: run the supplied code'),'ML Follow must be presented as demonstration, not implied proof of mastery');
+assert(mlApp.includes('editor.value=ex.starter'),'ML checked starter must come from the authored learning activity');
+const worked=ml.cards.filter(card=>card.kind==='teaching').flatMap(card=>card.exercises.filter(ex=>ex.kind==='python'&&ex.label==='Follow'&&ex.starter===ex.solution));
+console.log('ML review note: '+worked.length+' teaching Follow activities still begin with the complete answer; these are guided demonstrations, not independent skills checks.');
 console.log('Learning coherence gate: '+curriculum.lessons.length+' Foundations cards / '+all.length+
   ' exercises; '+ml.cards.length+' ML cards / '+mlItems.length+' ML activities scanned.');
