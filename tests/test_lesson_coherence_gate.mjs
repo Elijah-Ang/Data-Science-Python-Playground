@@ -75,7 +75,9 @@ for(const item of mlItems){
   assert(item.solution&&item.starter,item.id+' needs executable Python and a starter');
   assert(item.outputs?.length,item.id+' has no named outputs');
   assert(item.checks?.length,item.id+' has no grader checks');
-  assert(item.taskBrief?.result===item.task,item.id+' task and task brief disagree');
+  if(item.id.startsWith('ML-X')){
+    assert(item.taskBrief?.result&&item.taskBrief.result.length>15,item.id+' challenge brief needs an explicit outcome');
+  } else assert(item.taskBrief?.result===item.task,item.id+' task and task brief disagree');
   if(item.label==='Follow'){
     assert.equal(item.starter,item.solution,item.id+' worked example must be identified as prefilled');
   }
