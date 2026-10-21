@@ -382,18 +382,18 @@ function finalise(c){
  // blank in which the relevant option has already been supplied.
  const byId=Object.fromEntries(c.lessons.map(lesson=>[lesson.id,lesson]));
  const focus={
-  V03:['hue',/\\bhue\\s*=\\s*"habitat"/],
-  V17:['style',/\\bstyle\\s*=\\s*"instrument"/],
-  V25:['palette',/\\bpalette\\s*=\\s*"colorblind"/],
-  V09:['estimator',/\\bestimator\\s*=\\s*"mean"/],
-  V13:['jitter',/\\bjitter\\s*=\\s*(?:True|False|0(?:\\.\\d+)?)/],
-  V20:['ci',/\\bci\\s*=\\s*None/]
+  V03:['hue',/\bhue\s*=\s*"habitat"/],
+  V17:['style',/\bstyle\s*=\s*"instrument"/],
+  V25:['palette',/\bpalette\s*=\s*"colorblind"/],
+  V09:['estimator',/\bestimator\s*=\s*"mean"/],
+  V13:['jitter',/\bjitter\s*=\s*(?:True|False|0(?:\.\d+)?)/],
+  V20:['ci',/\bci\s*=\s*None/]
  };
  for(const [id,[parameter,pattern]]of Object.entries(focus)){
   const round=byId[id]?.rounds?.[0];if(!round)continue;
   // Do not turn a fully authored exercise into a one-token guessing game.
   // Replace the method blank only when a real parameter is in the solution.
-  if(/\\b(?:sns|ax|plt)\\.____\\s*\\(/.test(round.starter)&&pattern.test(round.solution)){
+  if(/\b(?:sns|ax|plt)\.____\s*\(/.test(round.starter)&&pattern.test(round.solution)){
    round.starter=round.solution.replace(pattern,parameter+'=____');
   }
  }
