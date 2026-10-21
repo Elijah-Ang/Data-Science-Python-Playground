@@ -376,53 +376,6 @@ function changedLines(code,lesson,round){
  });
 }
 function finalise(c){
- // Review-stage coherence is applied after formatting and all content overlays.
- // Leave assessed solutions/tasks/plot contracts unchanged; authored review
- // receipts include those fields. Guide the actual new skill, not a method-name
- // blank in which the relevant option has already been supplied.
- const byId=Object.fromEntries(c.lessons.map(lesson=>[lesson.id,lesson]));
- const focus={
-  V03:['hue',/\bhue\s*=\s*"habitat"/],
-  V17:['style',/\bstyle\s*=\s*"instrument"/],
-  V25:['palette',/\bpalette\s*=\s*"colorblind"/],
-  V09:['estimator',/\bestimator\s*=\s*"mean"/],
-  V13:['jitter',/\bjitter\s*=\s*(?:True|False|0(?:\.\d+)?)/],
-  V20:['ci',/\bci\s*=\s*None/]
- };
- for(const [id,[parameter,pattern]]of Object.entries(focus)){
-  const round=byId[id]?.rounds?.[0];if(!round)continue;
-  // Do not turn a fully authored exercise into a one-token guessing game.
-  // Replace the method blank only when a real parameter is in the solution.
-  if(/\b(?:sns|ax|plt)\.____\s*\(/.test(round.starter)&&pattern.test(round.solution)){
-   round.starter=round.solution.replace(pattern,parameter+'=____');
-  }
- }
- // Concise, explicitly ordered preparation appears before the chart
- // requirement, without spoiling the method choice or changing the checker.
- const preparations={
-  'V17-3':[
-   'First create `plotted` as a copy of `df` using `df.copy()`.',
-   'In `plotted`, add `speed_kmh`: divide `distance_km` by `minutes` and multiply by 60 to convert km/min into km/h.',
-   'Draw from `plotted` (not the original `df`) so the marker-size mapping can read the new speed column.'
-  ],
-  'V18-3':[
-   'Sort complete rows by `hour` before choosing a baseline; the first displayed input row is not necessarily the earliest hour.',
-   'Create `change` by subtracting the earliest chronological reading from each reading in that sorted table.'
-  ],
-  'V13-3':[
-   'Calculate each bench\'s median reading, then sort those medians from lowest to highest.',
-   'Pass the ordered bench labels as `order`; plot all original reading rows, including ties.'
-  ],
-  'V29-3':[
-   'Sum `resolved` and `received` separately for each team across all shifts.',
-   'Calculate each team\'s overall resolution percentage from those totals, then plot the calculated percentages.'
-  ]
- };
- for(const [id,instructions]of Object.entries(preparations)){
-  const round=c.lessons.flatMap(lesson=>lesson.rounds).find(r=>r.id===id);
-  if(!round?.brief)throw new Error(id+': reviewed preparation requires a visible task brief');
-  round.brief.preparation=instructions;
- }
  for(const lesson of visualiseLessons(c))for(const round of lesson.rounds){
   if(!round.workflow)continue;
   round.workflow.changedLines=changedLines(round.solution,lesson,round);
