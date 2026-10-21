@@ -76,7 +76,7 @@ for(const item of mlItems){
   assert(item.outputs?.length,item.id+' has no named outputs');
   assert(item.checks?.length,item.id+' has no grader checks');
   if(item.id.startsWith('ML-X')){
-    assert(item.taskBrief?.result&&item.taskBrief.result.length>15,item.id+' challenge brief needs an explicit outcome');
+    assert(item.task.length>15,item.id+' challenge needs a concrete task');
   } else assert(item.taskBrief?.result===item.task,item.id+' task and task brief disagree');
   if(item.label==='Follow'){
     assert.equal(item.starter,item.solution,item.id+' worked example must be identified as prefilled');
