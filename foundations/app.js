@@ -66,7 +66,7 @@ function pythonPane(round,controlHelp,challenge=false){
 }
 function taskMarkup(round){
  const brief=round.brief;
- return (brief?`<h3 class="practice-question">${LearningLanguage.text(brief.question,round.id,true)}</h3>`+LearningLanguage.steps([brief.rows,brief.result,...brief.constraints],round.id):LearningLanguage.steps(round.steps?.length?round.steps:round.task,round.id));
+ return (brief?`<h3 class="practice-question">${LearningLanguage.text(brief.question,round.id,true)}</h3>`+LearningLanguage.steps([brief.rows,...(brief.preparation||[]),brief.result,...brief.constraints],round.id):LearningLanguage.steps(round.steps?.length?round.steps:round.task,round.id));
 }
 function csvPreview(round){
  return Object.entries(round.files).map(([name,columns])=>{
