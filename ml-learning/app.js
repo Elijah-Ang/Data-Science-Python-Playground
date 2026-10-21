@@ -239,12 +239,7 @@
     return `<section class="ml-workflow-map"><h3>The playground workflow</h3><p>${introduction}</p><ol>${ch.workflowSteps.map(step=>`<li><strong>${esc(step.title)}</strong><span>${esc(step.question)}</span></li>`).join('')}</ol></section>`;
   }
   function taskDescriptor(ex){
-    // A completed Follow starter is a demonstration, not an independent test
-    // of the newly taught concept. Name that distinction rather than letting
-    // a one-click green check imply mastery.
-    const worked=ex.label==='Follow'&&ex.kind==='python'&&ex.starter===ex.solution;
-    const context=worked?'<p class="practice-context">Worked example: run the supplied code and inspect what it produces. Change and Transfer require you to apply the idea yourself.</p>':'';
-    return `<div class="foundation-task-reminder" data-code-context="task" tabindex="0" role="region" aria-label="Current task"><strong>Your task${ex.depth==='deeper'?' · Deeper investigation':''}</strong>${context}${LearningLanguage.activity({...ex,task:ex.task||view?.challenge?.question})}<div class="ml-output-names" aria-label="Requested output variables">${(ex.outputs||[]).map(name=>`<code>${esc(name)}</code>`).join('')}</div></div>`;
+    return `<div class="foundation-task-reminder" data-code-context="task" tabindex="0" role="region" aria-label="Current task"><strong>Your task${ex.depth==='deeper'?' · Deeper investigation':''}</strong>${LearningLanguage.activity({...ex,task:ex.task||view?.challenge?.question})}<div class="ml-output-names" aria-label="Requested output variables">${(ex.outputs||[]).map(name=>`<code>${esc(name)}</code>`).join('')}</div></div>`;
   }
   function pythonPane(ex){
     ex=view?.exercise||ex;
