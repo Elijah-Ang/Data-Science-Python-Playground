@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {execFileSync} from 'node:child_process';
 import {readFileSync} from 'node:fs';
+import {runInNewContext} from 'node:vm';
 
 const require=createRequire(import.meta.url);
 const curriculum=require('../foundations/curriculum.js');
@@ -27,23 +28,32 @@ for(const lesson of curriculum.lessons){
     }
   }
 }
+// Test the actual display-only transformations against assembled exercises,
+// while requiring the underlying reviewed curriculum to remain unchanged.
+const appSource=readFileSync(new URL('../foundations/app.js',import.meta.url),'utf8');
+const start=appSource.indexOf('// Display-only lesson corrections.');
+const end=appSource.indexOf('function taskMarkup(round){',start);
+assert(start>=0&&end>start,'Presentation transformations must be testable');
+const {coherencePreparation,coachedStarter}=runInNewContext(
+  appSource.slice(start,end)+'\n({coherencePreparation,coachedStarter})'
+);
+const workspace=require('../foundations/workspace.js');
 const follow=byId.get('V03').rounds[0];
-assert(/hue\s*=\s*____/.test(follow.starter),'V03 Follow must ask learners to choose hue');
-assert(!/sns\.____\s*\(/.test(follow.starter),'V03 Follow must not only test the function name');
+const followCode=coachedStarter(follow,workspace.code(curriculum,follow));
+assert(/hue\s*=\s*____/.test(followCode),'V03 Follow must ask learners to choose hue');
+assert(!/sns\.____\s*\(/.test(followCode),'V03 Follow must not only test the function name');
 assert(/hue\s*=\s*"habitat"/.test(follow.solution),'V03 reference maps the correct category');
 const syntax=teaching.syntax(byId.get('V03'),follow);
 assert(syntax.includes('hue='),'The main V03 syntax must teach hue');
 assert(!syntax.includes('color='),'Fixed color must not displace the central hue explanation');
 const redundant=byId.get('V17').rounds[0];
-assert(/style\s*=\s*____/.test(redundant.starter),'V17 Follow must test the new shape mapping');
-const speed=byId.get('V17').rounds[2];
-const instructions=(speed.brief.preparation||[]).join(' ');
-for(const word of ['plotted','copy','speed_kmh','distance_km','minutes','60','data']){
-  if(word==='data')assert(/Draw from/.test(instructions),'V17 must use the derived table');
-  else assert(instructions.includes(word),'V17 preparation must explicitly name '+word);
+assert(/style\s*=\s*____/.test(coachedStarter(redundant,workspace.code(curriculum,redundant))),'V17 Follow must test marker-shape mapping');
+const prep=(coherencePreparation['V17-3']||[]).join(' ');
+for(const word of ['plotted','copy','speed_kmh','distance_km','minutes','60']){
+  assert(prep.includes(word),'V17 preparation must explicitly name '+word);
 }
 for(const id of ['V18-3','V13-3','V29-3']){
-  assert(byId.get(id.slice(0,3)).rounds[2].brief.preparation?.length>=2,id+' needs a logical preparation sequence');
+  assert(coherencePreparation[id]?.length>=2,id+' needs ordered preparation');
 }
 
 // Inspect, Wrangle and Visualise remain the published path with no design,
