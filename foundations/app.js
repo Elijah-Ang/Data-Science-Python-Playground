@@ -94,10 +94,13 @@ function coachedStarter(round,code){
   const focus=coachedGaps[round.id];if(!focus)return code;
   const [parameter,value]=focus;
   const method=round.solution.match(/\bsns\.(\w+)\s*\(/);
-  if(!method||!/\bsns\.____\s*\(/.test(code))return code;
+  if(!method||!/(?:\bsns\.)?\b____\s*\(/.test(code))return code;
   const argument=new RegExp('\\b'+parameter+'\\s*=\\s*"'+value+'"');
   if(!argument.test(code))return code;
-  return code.replace(/\bsns\.____\s*\(/,'sns.'+method[1]+'(').replace(argument,parameter+'=____');
+  // Existing formatter may produce either sns.____(...) or bare ____(...).
+  const restored=code.replace(/\bsns\.____\s*\(/,'sns.'+method[1]+'(')
+    .replace(/\b____\s*\(/,'sns.'+method[1]+'(');
+  return restored.replace(argument,parameter+'=____');
 }
 function taskMarkup(round){
  const brief=round.brief;
