@@ -37,7 +37,7 @@
     return output?'<div class="teaching-example-table-scroll"><table class="teaching-example-output" data-code-table="'+kind+'"><caption>'+esc(output.caption)+'</caption><thead><tr>'+output.headers.map(header=>'<th scope="col">'+(output.columnHeaders?.includes(header)?'<code data-code-role="column">'+esc(header)+'</code>':esc(header))+'</th>').join('')+'</tr></thead><tbody>'+output.rows.map(row=>'<tr><th scope="row">'+esc(row[0])+'</th>'+row.slice(1).map(value=>'<td>'+esc(value)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>':'';
   }
   function example(guide, id) {
-    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+exampleOutput(guide.exampleOutput)+(id==='I17'?duplicateExample():'')+'</div>';
+    return '<div class="teaching-example"><h4>A small example</h4><p>'+esc(guide.example)+'</p>'+exampleOutput(id==='W19'&&guide.exampleOutput?{...guide.exampleOutput,columnHeaders:['mean_amount','records']}:guide.exampleOutput)+(id==='I17'?duplicateExample():'')+'</div>';
   }
   // Table concepts use real table layout at reading size, rather than shrinking
   // a whole before/after diagram into a small fixed SVG canvas.
